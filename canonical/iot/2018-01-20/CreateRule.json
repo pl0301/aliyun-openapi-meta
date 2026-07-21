@@ -1,0 +1,281 @@
+{
+  "camel_example": "aliyun iot CreateRule --region cn-hangzhou --TopicType 1 --IotInstanceId 'iot-cn-0pp1n8t0000' --ResourceGroupId 'rg-acfmxazb4ph0000' --Select 'deviceName_as_deviceName,_items.Humidity.value_as_Humidity,_items.Temperature.value_as_Temperature' --ShortTopic '+/thing/event/property/post' --RuleDesc rule_test --DataType JSON --Topic '/sys/g18l000/device1/thing/event/property/post' --Where Temperature_35 --ProductKey a1T27vz0000 --Name iot_test1",
+  "cmd_full_name": "iot create-rule",
+  "cmd_name": "create-rule",
+  "deprecated": false,
+  "description_en": "Creates a rule for a specified topic",
+  "description_zh": "调用该接口对指定Topic新建一个规则",
+  "kebab_example": "aliyun iot create-rule --iot-instance-id iot-cn-0pp1n8t0000 --select deviceName_as_deviceName,_items.Humidity.value_as_Humidity,_items.Temperature.value_as_Temperature --short-topic +/thing/event/property/post --where Temperature_35 --product-key a1T27vz0000 --name iot_test1 --rule-desc rule_test --data-type JSON --topic-type 1 --resource-group-id rg-acfmxazb4ph0000 --topic /sys/g18l000/device1/thing/event/property/post --api-version 2018-01-20 --region cn-hangzhou",
+  "method": "GET|POST",
+  "multi_version": true,
+  "name": "CreateRule",
+  "operation": {
+    "action": "CreateRule",
+    "api_style": "RPC",
+    "api_version": "2018-01-20",
+    "method": "POST",
+    "protocol": "HTTPS",
+    "system_operation_type": "create",
+    "url": ""
+  },
+  "parameters": [
+    {
+      "description_en": "The instance ID. On the **Overview** page in the IoT Platform console, you can view the **ID** of the current instance.\n\n><notice>\n- If this parameter has a value, you must specify this parameter. Otherwise, the call fails.\n- If no **Overview** page exists or no ID value is available, you do not need to specify this parameter.\n\n></notice>\n\nFor more information about instances, see [Overview](~~356505~~).",
+      "description_zh": "实例ID。您可在物联网平台控制台的**实例概览**页面，查看当前实例的**ID**。\n\n><notice>\n- 若有ID值，必须传入该ID值，否则调用会失败。\n- 若无**实例概览**页面或ID值，则无需传入。\n\n></notice>\n\n实例的更多信息，请参见[实例概述](~~356505~~)。",
+      "example": "iot-cn-0pp1n8t****",
+      "help_en": "The instance ID. On the **Overview** page in the IoT Platform console, you can view the **ID** of the current instance.\n\n><notice>\n- If this parameter has a value, you must specify this parameter. Otherwise, the call fails.\n- If no **Overview** page exists or no ID value is available, you do not need to specify this parameter.\n\n></notice>\n\nFor more information about instances, see https://help.aliyun.com/document_detail/356505.html",
+      "help_zh": "实例ID。您可在物联网平台控制台的**实例概览**页面，查看当前实例的**ID**。\n\n><notice>\n- 若有ID值，必须传入该ID值，否则调用会失败。\n- 若无**实例概览**页面或ID值，则无需传入。\n\n></notice>\n\n实例的更多信息，请参见https://help.aliyun.com/document_detail/356505.html",
+      "location": "query",
+      "name": "iot_instance_id",
+      "options": [
+        "--iot-instance-id"
+      ],
+      "raw_name": "IotInstanceId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The SQL SELECT statement to execute. For more information, see [SQL expressions](~~30554~~).\n\n> Specify only the content after SELECT. For example, if the SELECT statement is `SELECT a,b,c`, specify `a,b,c`.",
+      "description_zh": "要执行的SQL SELECT语句。具体内容参照[SQL表达式](~~30554~~)。\n\n> 此处传入的是SELECT下的内容。例如，如果SELECT语句为`SELECT a,b,c`，则此处传入`a,b,c`。",
+      "example": "deviceName() as deviceName, items.Humidity.value as Humidity, items.Temperature.value as Temperature",
+      "help_en": "The SQL SELECT statement to execute. For more information, see https://help.aliyun.com/document_detail/30554.html.\n\n> Specify only the content after SELECT. For example, if the SELECT statement is `SELECT a,b,c`, specify `a,b,c`",
+      "help_zh": "要执行的SQL SELECT语句。具体内容参照https://help.aliyun.com/document_detail/30554.html。\n\n> 此处传入的是SELECT下的内容。例如，如果SELECT语句为`SELECT a,b,c`，则此处传入`a,b,c`",
+      "location": "query",
+      "name": "select",
+      "options": [
+        "--select"
+      ],
+      "raw_name": "Select",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The specific topic to which the rule applies. The format is generally: `${deviceName}/topicShortName`. `${deviceName}` is the name of the specific device, and `topicShortName` is the short name of the topic.\n\n- For basic communication topics or Thing Specification Language model communication topics, the ShortTopic format is generally: `${deviceName}/topicShortName`. `${deviceName}` can be replaced with the wildcard `+` to represent all device names under the product. Valid values of `topicShortName`:\n\n    - `/thing/event/property/post`: property messages reported by devices.\n    - `/thing/event/${tsl.event.identifier}/post`: event messages reported by devices. The value in `${}` is the event identifier in the Thing Specification Language model of the product.\n    - `/thing/lifecycle`: device lifecycle change messages.\n    - `/thing/downlink/reply/message`: result messages of device responses to cloud commands.\n    - `/thing/list/found`: messages reported by gateways about discovered sub-devices.\n    - `/thing/topo/lifecycle`: device topology relationship change messages.\n    - `/thing/event/property/history/post`: historical property messages reported by devices.\n    - `/thing/event/${tsl.event.identifier}/history/post`: historical event messages reported by devices. The value in `${}` is the event identifier in the Thing Specification Language model of the product.\n    - `/ota/upgrade`: device OTA update status notification messages.\n    - `/ota/version/post`: device OTA module version number reporting messages.\n    - `/thing/deviceinfo/update`: device tag change messages.\n    - `/edge/driver/${driver_id}/point_post`: pass-through mode topic messages of IoT Edge. The value in `${}` is the device access driver ID of IoT Edge.\n\n The OTA update batch status notification topic also belongs to basic communication topics. The ShortTopic format is: `${packageId}/${jobId}/ota/job/status`. `${packageId}` is over-the-air update package ID, and `${jobId}` is over-the-air update batch ID.\n- For custom topics, the ShortTopic format is, for example: `${deviceName}/user/get`.\n\n  Call the [QueryProductTopic](~~69647~~) operation to view all custom topic categories under the product.\n\n    When specifying a custom topic, you can use the wildcards `+` and `#`.\n    - `${deviceName}` can be replaced with the wildcard `+` to represent all devices under the product.\n    - Subsequent fields can use `/user/#`, where `#` represents all level names after the `/user` level.\n    For more information about using wildcards, see [Wildcards in topic categories](~~85539~~).\n- The ShortTopic for device status change notification topics: `${deviceName}`.\n\n You can directly use the wildcard `+` to represent status change notifications for all devices under the product.",
+      "description_zh": "应用该规则的具体Topic，格式一般为：`${deviceName}/topicShortName`。其中，`${deviceName}`是具体设备的名称，`topicShortName`是Topic短名称。\n\n- 基础通信Topic或物模型通信Topic的ShortTopic，格式一般为：`${deviceName}/topicShortName`。其中，`${deviceName}`可以使用通配符`+`代替，表示产品下所有设备名称。`topicShortName`取值如下：\n\n    - `/thing/event/property/post `设备上报的属性消息。\n    - `/thing/event/${tsl.event.identifier}/post`设备上报的事件消息，`${}`中是产品物模型中事件identifier。\n    - `/thing/lifecycle` 设备生命周期变更消息。\n    - `/thing/downlink/reply/message`设备响应云端指令的结果消息。\n    - `/thing/list/found`网关上报发现子设备消息。\n    - `/thing/topo/lifecycle`设备拓扑关系变更消息。\n    - `/thing/event/property/history/post`设备历史属性上报消息。\n    - `/thing/event/${tsl.event.identifier}/history/post`设备历史事件上报消息，`${}`中是产品物模型中事件identifier。\n    - `/ota/upgrade`设备OTA升级状态通知消息。\n    - `/ota/version/post`设备OTA模块版本号上报消息。\n    - `/thing/deviceinfo/update`设备标签变更消息。\n    - `/edge/driver/${driver_id}/point_post`物联网边缘计算的透传模式Topic消息，`${}`中是物联网边缘计算的设备接入驱动ID。\n\n OTA升级批次状态通知Topic也属于基础通信Topic，ShortTopic格式为：`${packageId}/${jobId}/ota/job/status`。其中，`${packageId}`是升级包ID，`${jobId}`是升级批次ID。\n- 自定义Topic的ShortTopic，如：`${deviceName}/user/get`。\n\n  调用[QueryProductTopic](~~69647~~)接口，可以查看产品下的所有自定义Topic类。\n\n    指定自定义Topic时，可以使用通配符`+`和`#`。\n    - `${deviceName}`可以使用通配符`+`代替，表示产品下所有设备；\n    - 之后字段可以用`/user/#`，`#`表示`/user`层级之后的所有层级名称。\n    使用通配符，请参见[Topic类中的通配符](~~85539~~)。\n- 设备状态变化通知Topic的ShortTopic：`${deviceName}`。\n\n 可以直接使用通配符`+`，表示产品下所有设备的状态变化通知。",
+      "example": "+/thing/event/property/post",
+      "help_en": "The specific topic to which the rule applies. The format is generally: `${deviceName}/topicShortName`. `${deviceName}` is the name of the specific device, and `topicShortName` is the short name of the topic.\n\n- For basic communication topics or Thing Specification Language model communication topics, the ShortTopic format is generally: `${deviceName}/topicShortName`. `${deviceName}` can be replaced with the wildcard `+` to represent all device names under the product. Valid values of `topicShortName`:\n\n    - `/thing/event/property/post`: property messages reported by devices.\n    - `/thing/event/${tsl.event.identifier}/post`: event messages reported by devices. The value in `${}` is the event identifier in the Thing Specification Language model of the product.\n    - `/thing/lifecycle`: device lifecycle change messages.\n    - `/thing/downlink/reply/message`: result messages of device responses to cloud commands.\n    - `/thing/list/found`: messages reported by gateways about discovered sub-devices.\n    - `/thing/topo/lifecycle`: device topology relationship change messages.\n    - `/thing/event/property/history/post`: historical property messages reported by devices.\n    - `/thing/event/${tsl.event.identifier}/history/post`: historical event messages reported by devices. The value in `${}` is the event identifier in the Thing Specification Language model of the product.\n    - `/ota/upgrade`: device OTA update status notification messages.\n    - `/ota/version/post`: device OTA module version number reporting messages.\n    - `/thing/deviceinfo/update`: device tag change messages.\n    - `/edge/driver/${driver_id}/point_post`: pass-through mode topic messages of IoT Edge. The value in `${}` is the device access driver ID of IoT Edge.\n\n The OTA update batch status notification topic also belongs to basic communication topics. The ShortTopic format is: `${packageId}/${jobId}/ota/job/status`. `${packageId}` is over-the-air update package ID, and `${jobId}` is over-the-air update batch ID.\n- For custom topics, the ShortTopic format is, for example: `${deviceName}/user/get`.\n\n  Call the https://help.aliyun.com/document_detail/69647.html operation to view all custom topic categories under the product.\n\n    When specifying a custom topic, you can use the wildcards `+` and `#`.\n    - `${deviceName}` can be replaced with the wildcard `+` to represent all devices under the product.\n    - Subsequent fields can use `/user/#`, where `#` represents all level names after the `/user` level.\n    For more information about using wildcards, see https://help.aliyun.com/document_detail/85539.html.\n- The ShortTopic for device status change notification topics: `${deviceName}`.\n\n You can directly use the wildcard `+` to represent status change notifications for all devices under the product",
+      "help_zh": "应用该规则的具体Topic，格式一般为：`${deviceName}/topicShortName`。其中，`${deviceName}`是具体设备的名称，`topicShortName`是Topic短名称。\n\n- 基础通信Topic或物模型通信Topic的ShortTopic，格式一般为：`${deviceName}/topicShortName`。其中，`${deviceName}`可以使用通配符`+`代替，表示产品下所有设备名称。`topicShortName`取值如下：\n\n    - `/thing/event/property/post `设备上报的属性消息。\n    - `/thing/event/${tsl.event.identifier}/post`设备上报的事件消息，`${}`中是产品物模型中事件identifier。\n    - `/thing/lifecycle` 设备生命周期变更消息。\n    - `/thing/downlink/reply/message`设备响应云端指令的结果消息。\n    - `/thing/list/found`网关上报发现子设备消息。\n    - `/thing/topo/lifecycle`设备拓扑关系变更消息。\n    - `/thing/event/property/history/post`设备历史属性上报消息。\n    - `/thing/event/${tsl.event.identifier}/history/post`设备历史事件上报消息，`${}`中是产品物模型中事件identifier。\n    - `/ota/upgrade`设备OTA升级状态通知消息。\n    - `/ota/version/post`设备OTA模块版本号上报消息。\n    - `/thing/deviceinfo/update`设备标签变更消息。\n    - `/edge/driver/${driver_id}/point_post`物联网边缘计算的透传模式Topic消息，`${}`中是物联网边缘计算的设备接入驱动ID。\n\n OTA升级批次状态通知Topic也属于基础通信Topic，ShortTopic格式为：`${packageId}/${jobId}/ota/job/status`。其中，`${packageId}`是升级包ID，`${jobId}`是升级批次ID。\n- 自定义Topic的ShortTopic，如：`${deviceName}/user/get`。\n\n  调用https://help.aliyun.com/document_detail/69647.html接口，可以查看产品下的所有自定义Topic类。\n\n    指定自定义Topic时，可以使用通配符`+`和`#`。\n    - `${deviceName}`可以使用通配符`+`代替，表示产品下所有设备；\n    - 之后字段可以用`/user/#`，`#`表示`/user`层级之后的所有层级名称。\n    使用通配符，请参见https://help.aliyun.com/document_detail/85539.html。\n- 设备状态变化通知Topic的ShortTopic：`${deviceName}`。\n\n 可以直接使用通配符`+`，表示产品下所有设备的状态变化通知",
+      "location": "query",
+      "name": "short_topic",
+      "options": [
+        "--short-topic"
+      ],
+      "raw_name": "ShortTopic",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The trigger condition of the rule. For more information, see [SQL expressions](~~30554~~).\n\n> Specify only the content in **Where**. For example, if the **Where** statement is `Where a>10`, specify `a>10`.",
+      "description_zh": "规则的触发条件。具体内容参照[SQL表达式](~~30554~~)。\n\n> 此处传入的是**Where**中的内容。例如，如果**Where**语句为`Where a>10`，则此处传入`a>10`。",
+      "example": "Temperature>35",
+      "help_en": "The trigger condition of the rule. For more information, see https://help.aliyun.com/document_detail/30554.html.\n\n> Specify only the content in **Where**. For example, if the **Where** statement is `Where a>10`, specify `a>10`",
+      "help_zh": "规则的触发条件。具体内容参照https://help.aliyun.com/document_detail/30554.html。\n\n> 此处传入的是**Where**中的内容。例如，如果**Where**语句为`Where a>10`，则此处传入`a>10`",
+      "location": "query",
+      "name": "where",
+      "options": [
+        "--where"
+      ],
+      "raw_name": "Where",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The ProductKey of the product to which the rule applies.",
+      "description_zh": "应用该规则的产品ProductKey。",
+      "example": "a1T27vz****",
+      "help_en": "The ProductKey of the product to which the rule applies",
+      "help_zh": "应用该规则的产品ProductKey",
+      "location": "query",
+      "name": "product_key",
+      "options": [
+        "--product-key"
+      ],
+      "raw_name": "ProductKey",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The rule name. The name can contain Chinese characters, letters, Japanese characters, digits, underscores (_), and hyphens (-). The name must be 1 to 30 characters in length. A Chinese character or Japanese character counts as 2 characters.",
+      "description_zh": "规则名称。支持中文、英文字母、日文、数字、下划线（_）和短划线（-），长度为1~30个字符，一个中文或日文占2个字符。",
+      "example": "iot_test1",
+      "help_en": "The rule name. The name can contain Chinese characters, letters, Japanese characters, digits, underscores (_), and hyphens (-). The name must be 1 to 30 characters in length. A Chinese character or Japanese character counts as 2 characters",
+      "help_zh": "规则名称。支持中文、英文字母、日文、数字、下划线（_）和短划线（-），长度为1~30个字符，一个中文或日文占2个字符",
+      "location": "query",
+      "name": "name",
+      "options": [
+        "--name"
+      ],
+      "raw_name": "Name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description_en": "The description of the rule. The description can be up to 100 characters in length. A Chinese character counts as 1 character.",
+      "description_zh": "规则的描述信息。长度限制为100个字符，一个中文字符计为1个字符。",
+      "example": "rule test",
+      "help_en": "The description of the rule. The description can be up to 100 characters in length. A Chinese character counts as 1 character",
+      "help_zh": "规则的描述信息。长度限制为100个字符，一个中文字符计为1个字符",
+      "location": "query",
+      "name": "rule_desc",
+      "options": [
+        "--rule-desc"
+      ],
+      "raw_name": "RuleDesc",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The data format processed by the rule. This value must match the data format of the device data to be processed. Valid values:\n\n- **JSON** (default): JSON data.\n- **BINARY**: binary data.\n\n> If you set this parameter to **BINARY**, **TopicType** cannot be set to 0 (basic communication topic or Thing Specification Language model communication topic), and data forwarding to <props=\"china\"><ph>time series data storage within the instance, time series databases, </ph></props>Tablestore or ApsaraDB RDS is not supported.",
+      "description_zh": "规则处理的数据格式，需与待处理的设备数据格式一致。取值：\n\n- **JSON**（默认）：JSON数据。\n- **BINARY**：二进制数据。\n\n> 若选择为**BINARY**，**TopicType**不能选择为0（基础通信Topic或物模型通信Topic），且不支持将数据转发至<props=\"china\"><ph>实例内的时序数据存储、时序数据库、</ph></props>表格存储和云数据库RDS版。",
+      "example": "JSON",
+      "help_en": "The data format processed by the rule. This value must match the data format of the device data to be processed. Valid values:\n\n- **JSON** (default): JSON data.\n- **BINARY**: binary data.\n\n> If you set this parameter to **BINARY**, **TopicType** cannot be set to 0 (basic communication topic or Thing Specification Language model communication topic), and data forwarding to <props=\"china\"><ph>time series data storage within the instance, time series databases, </ph></props>Tablestore or ApsaraDB RDS is not supported",
+      "help_zh": "规则处理的数据格式，需与待处理的设备数据格式一致。取值：\n\n- **JSON**（默认）：JSON数据。\n- **BINARY**：二进制数据。\n\n> 若选择为**BINARY**，**TopicType**不能选择为0（基础通信Topic或物模型通信Topic），且不支持将数据转发至<props=\"china\"><ph>实例内的时序数据存储、时序数据库、</ph></props>表格存储和云数据库RDS版",
+      "location": "query",
+      "name": "data_type",
+      "options": [
+        "--data-type"
+      ],
+      "raw_name": "DataType",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "- **0**: a basic communication topic or Thing Specification Language model communication topic as described in the **ShortTopic** parameter, including the OTA upgrade batch status notification topic.\n- **1**: a custom topic.\n- **2**: a device status change notification topic: `/as/mqtt/status/${productKey}/${deviceName}`.",
+      "description_zh": "- **0**：**ShortTopic**参数描述中的基础通信Topic或物模型通信Topic，包含OTA升级批次状态通知Topic。\n- **1**：自定义Topic。\n- **2**：设备状态变化通知Topic：`/as/mqtt/status/${productKey}/${deviceName}`。",
+      "example": "1",
+      "help_en": "- **0**: a basic communication topic or Thing Specification Language model communication topic as described in the **ShortTopic** parameter, including the OTA upgrade batch status notification topic.\n- **1**: a custom topic.\n- **2**: a device status change notification topic: `/as/mqtt/status/${productKey}/${deviceName}`",
+      "help_zh": "- **0**：**ShortTopic**参数描述中的基础通信Topic或物模型通信Topic，包含OTA升级批次状态通知Topic。\n- **1**：自定义Topic。\n- **2**：设备状态变化通知Topic：`/as/mqtt/status/${productKey}/${deviceName}`",
+      "location": "query",
+      "name": "topic_type",
+      "options": [
+        "--topic-type"
+      ],
+      "raw_name": "TopicType",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "description_en": "The resource group ID.\n\n><notice>\n- Currently, IoT Platform supports resource group management only at the instance level. The request parameter **ResourceGroupId** is no longer valid and does not need to be specified.\n- Resource groups previously set by calling this operation remain effective.\n\n></notice>",
+      "description_zh": "资源组ID。\n\n><notice>\n- 目前，物联网平台仅支持实例维度的资源组管理。请求参数**ResourceGroupId**配置已无效，无需再传入。\n- 历史调用本API设置的资源组仍有效。\n\n></notice>\n",
+      "example": "rg-acfmxazb4ph****",
+      "help_en": "The resource group ID.\n\n><notice>\n- Currently, IoT Platform supports resource group management only at the instance level. The request parameter **ResourceGroupId** is no longer valid and does not need to be specified.\n- Resource groups previously set by calling this operation remain effective.\n\n></notice>",
+      "help_zh": "资源组ID。\n\n><notice>\n- 目前，物联网平台仅支持实例维度的资源组管理。请求参数**ResourceGroupId**配置已无效，无需再传入。\n- 历史调用本API设置的资源组仍有效。\n\n></notice>",
+      "location": "query",
+      "name": "resource_group_id",
+      "options": [
+        "--resource-group-id"
+      ],
+      "raw_name": "ResourceGroupId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The complete topic to which to add a rule.\n\nIf you specify this parameter, you do not need to specify **ShortTopic** or **TopicType**.",
+      "description_zh": "待添加规则的完整Topic。\n\n如果传入此参数，无需再传入参数**ShortTopic**和**TopicType**。",
+      "example": "/sys/g18l***/device1/thing/event/property/post",
+      "help_en": "The complete topic to which to add a rule.\n\nIf you specify this parameter, you do not need to specify **ShortTopic** or **TopicType**",
+      "help_zh": "待添加规则的完整Topic。\n\n如果传入此参数，无需再传入参数**ShortTopic**和**TopicType**",
+      "location": "query",
+      "name": "topic",
+      "options": [
+        "--topic"
+      ],
+      "raw_name": "Topic",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "",
+  "product_code": "Iot",
+  "protocol": "HTTP|HTTPS",
+  "v1_parameters": [
+    {
+      "description_en": "The data format processed by the rule. This value must match the data format of the device data to be processed. Valid values:\n\n- **JSON** (default): JSON data.\n- **BINARY**: binary data.\n\n> If you set this parameter to **BINARY**, **TopicType** cannot be set to 0 (basic communication topic or Thing Specification Language model communication topic), and data forwarding to <props=\"china\"><ph>time series data storage within the instance, time series databases, </ph></props>Tablestore or ApsaraDB RDS is not supported.",
+      "description_zh": "规则处理的数据格式，需与待处理的设备数据格式一致。取值：\n\n- **JSON**（默认）：JSON数据。\n- **BINARY**：二进制数据。\n\n> 若选择为**BINARY**，**TopicType**不能选择为0（基础通信Topic或物模型通信Topic），且不支持将数据转发至<props=\"china\"><ph>实例内的时序数据存储、时序数据库、</ph></props>表格存储和云数据库RDS版。",
+      "name": "DataType",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The instance ID. On the **Overview** page in the IoT Platform console, you can view the **ID** of the current instance.\n\n><notice>\n- If this parameter has a value, you must specify this parameter. Otherwise, the call fails.\n- If no **Overview** page exists or no ID value is available, you do not need to specify this parameter.\n\n></notice>\n\nFor more information about instances, see [Overview](~~356505~~).",
+      "description_zh": "实例ID。您可在物联网平台控制台的**实例概览**页面，查看当前实例的**ID**。\n\n><notice>\n- 若有ID值，必须传入该ID值，否则调用会失败。\n- 若无**实例概览**页面或ID值，则无需传入。\n\n></notice>\n\n实例的更多信息，请参见[实例概述](~~356505~~)。",
+      "name": "IotInstanceId",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The rule name. The name can contain Chinese characters, letters, Japanese characters, digits, underscores (_), and hyphens (-). The name must be 1 to 30 characters in length. A Chinese character or Japanese character counts as 2 characters.",
+      "description_zh": "规则名称。支持中文、英文字母、日文、数字、下划线（_）和短划线（-），长度为1~30个字符，一个中文或日文占2个字符。",
+      "name": "Name",
+      "position": "query",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description_en": "The ProductKey of the product to which the rule applies.",
+      "description_zh": "应用该规则的产品ProductKey。",
+      "name": "ProductKey",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The resource group ID.\n\n><notice>\n- Currently, IoT Platform supports resource group management only at the instance level. The request parameter **ResourceGroupId** is no longer valid and does not need to be specified.\n- Resource groups previously set by calling this operation remain effective.\n\n></notice>",
+      "description_zh": "资源组ID。\n\n><notice>\n- 目前，物联网平台仅支持实例维度的资源组管理。请求参数**ResourceGroupId**配置已无效，无需再传入。\n- 历史调用本API设置的资源组仍有效。\n\n></notice>",
+      "name": "ResourceGroupId",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The description of the rule. The description can be up to 100 characters in length. A Chinese character counts as 1 character.",
+      "description_zh": "规则的描述信息。长度限制为100个字符，一个中文字符计为1个字符。",
+      "name": "RuleDesc",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The SQL SELECT statement to execute. For more information, see [SQL expressions](~~30554~~).\n\n> Specify only the content after SELECT. For example, if the SELECT statement is `SELECT a,b,c`, specify `a,b,c`.",
+      "description_zh": "要执行的SQL SELECT语句。具体内容参照[SQL表达式](~~30554~~)。\n\n> 此处传入的是SELECT下的内容。例如，如果SELECT语句为`SELECT a,b,c`，则此处传入`a,b,c`。",
+      "name": "Select",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The specific topic to which the rule applies. The format is generally: `${deviceName}/topicShortName`. `${deviceName}` is the name of the specific device, and `topicShortName` is the short name of the topic.\n\n- For basic communication topics or Thing Specification Language model communication topics, the ShortTopic format is generally: `${deviceName}/topicShortName`. `${deviceName}` can be replaced with the wildcard `+` to represent all device names under the product. Valid values of `topicShortName`:\n\n    - `/thing/event/property/post`: property messages reported by devices.\n    - `/thing/event/${tsl.event.identifier}/post`: event messages reported by devices. The value in `${}` is the event identifier in the Thing Specification Language model of the product.\n    - `/thing/lifecycle`: device lifecycle change messages.\n    - `/thing/downlink/reply/message`: result messages of device responses to cloud commands.\n    - `/thing/list/found`: messages reported by gateways about discovered sub-devices.\n    - `/thing/topo/lifecycle`: device topology relationship change messages.\n    - `/thing/event/property/history/post`: historical property messages reported by devices.\n    - `/thing/event/${tsl.event.identifier}/history/post`: historical event messages reported by devices. The value in `${}` is the event identifier in the Thing Specification Language model of the product.\n    - `/ota/upgrade`: device OTA update status notification messages.\n    - `/ota/version/post`: device OTA module version number reporting messages.\n    - `/thing/deviceinfo/update`: device tag change messages.\n    - `/edge/driver/${driver_id}/point_post`: pass-through mode topic messages of IoT Edge. The value in `${}` is the device access driver ID of IoT Edge.\n\n The OTA update batch status notification topic also belongs to basic communication topics. The ShortTopic format is: `${packageId}/${jobId}/ota/job/status`. `${packageId}` is over-the-air update package ID, and `${jobId}` is over-the-air update batch ID.\n- For custom topics, the ShortTopic format is, for example: `${deviceName}/user/get`.\n\n  Call the [QueryProductTopic](~~69647~~) operation to view all custom topic categories under the product.\n\n    When specifying a custom topic, you can use the wildcards `+` and `#`.\n    - `${deviceName}` can be replaced with the wildcard `+` to represent all devices under the product.\n    - Subsequent fields can use `/user/#`, where `#` represents all level names after the `/user` level.\n    For more information about using wildcards, see [Wildcards in topic categories](~~85539~~).\n- The ShortTopic for device status change notification topics: `${deviceName}`.\n\n You can directly use the wildcard `+` to represent status change notifications for all devices under the product.",
+      "description_zh": "应用该规则的具体Topic，格式一般为：`${deviceName}/topicShortName`。其中，`${deviceName}`是具体设备的名称，`topicShortName`是Topic短名称。\n\n- 基础通信Topic或物模型通信Topic的ShortTopic，格式一般为：`${deviceName}/topicShortName`。其中，`${deviceName}`可以使用通配符`+`代替，表示产品下所有设备名称。`topicShortName`取值如下：\n\n    - `/thing/event/property/post `设备上报的属性消息。\n    - `/thing/event/${tsl.event.identifier}/post`设备上报的事件消息，`${}`中是产品物模型中事件identifier。\n    - `/thing/lifecycle` 设备生命周期变更消息。\n    - `/thing/downlink/reply/message`设备响应云端指令的结果消息。\n    - `/thing/list/found`网关上报发现子设备消息。\n    - `/thing/topo/lifecycle`设备拓扑关系变更消息。\n    - `/thing/event/property/history/post`设备历史属性上报消息。\n    - `/thing/event/${tsl.event.identifier}/history/post`设备历史事件上报消息，`${}`中是产品物模型中事件identifier。\n    - `/ota/upgrade`设备OTA升级状态通知消息。\n    - `/ota/version/post`设备OTA模块版本号上报消息。\n    - `/thing/deviceinfo/update`设备标签变更消息。\n    - `/edge/driver/${driver_id}/point_post`物联网边缘计算的透传模式Topic消息，`${}`中是物联网边缘计算的设备接入驱动ID。\n\n OTA升级批次状态通知Topic也属于基础通信Topic，ShortTopic格式为：`${packageId}/${jobId}/ota/job/status`。其中，`${packageId}`是升级包ID，`${jobId}`是升级批次ID。\n- 自定义Topic的ShortTopic，如：`${deviceName}/user/get`。\n\n  调用[QueryProductTopic](~~69647~~)接口，可以查看产品下的所有自定义Topic类。\n\n    指定自定义Topic时，可以使用通配符`+`和`#`。\n    - `${deviceName}`可以使用通配符`+`代替，表示产品下所有设备；\n    - 之后字段可以用`/user/#`，`#`表示`/user`层级之后的所有层级名称。\n    使用通配符，请参见[Topic类中的通配符](~~85539~~)。\n- 设备状态变化通知Topic的ShortTopic：`${deviceName}`。\n\n 可以直接使用通配符`+`，表示产品下所有设备的状态变化通知。",
+      "name": "ShortTopic",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "The complete topic to which to add a rule.\n\nIf you specify this parameter, you do not need to specify **ShortTopic** or **TopicType**.",
+      "description_zh": "待添加规则的完整Topic。\n\n如果传入此参数，无需再传入参数**ShortTopic**和**TopicType**。",
+      "name": "Topic",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description_en": "- **0**: a basic communication topic or Thing Specification Language model communication topic as described in the **ShortTopic** parameter, including the OTA upgrade batch status notification topic.\n- **1**: a custom topic.\n- **2**: a device status change notification topic: `/as/mqtt/status/${productKey}/${deviceName}`.",
+      "description_zh": "- **0**：**ShortTopic**参数描述中的基础通信Topic或物模型通信Topic，包含OTA升级批次状态通知Topic。\n- **1**：自定义Topic。\n- **2**：设备状态变化通知Topic：`/as/mqtt/status/${productKey}/${deviceName}`。",
+      "name": "TopicType",
+      "position": "query",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "description_en": "The trigger condition of the rule. For more information, see [SQL expressions](~~30554~~).\n\n> Specify only the content in **Where**. For example, if the **Where** statement is `Where a>10`, specify `a>10`.",
+      "description_zh": "规则的触发条件。具体内容参照[SQL表达式](~~30554~~)。\n\n> 此处传入的是**Where**中的内容。例如，如果**Where**语句为`Where a>10`，则此处传入`a>10`。",
+      "name": "Where",
+      "position": "query",
+      "required": false,
+      "type": "string"
+    }
+  ]
+}
