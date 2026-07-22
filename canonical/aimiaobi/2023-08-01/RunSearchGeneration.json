@@ -1,0 +1,841 @@
+{
+  "camel_example": "",
+  "cmd_full_name": "aimiaobi run-search-generation",
+  "cmd_name": "run-search-generation",
+  "deprecated": false,
+  "description_en": "AI Miaosou – Intelligent Search Generation: This API delivers the search and generation capabilities of the Miaosou homepage. It supports general search and media asset search, along with features such as user query clarification, multimodal knowledge search, and multi-agent generation.\n– General Search: Performs semantic retrieval on centralized knowledge data and applies multi-agent post-processing to the results, such as summary generation, abstracting, and timeline summarization.\n– Media Asset Search: Conducts an exhaustive full-text search to retrieve highly relevant knowledge and supports multi-agent post-processing, such as clustering and news extraction",
+  "description_zh": "AI妙搜-智能搜索生成：对应妙搜首页的搜索生成能力。此接口支持通用搜索和媒资搜索。支持用户问题澄清、多模态知识搜索、多agent生成等能力。\n- 通用搜索：可以对数据集中知识进行语义检索，并对搜索结果进行多agent后处理，包括总结生成、摘编、时间线总结等。\n- 媒资搜索：应搜尽搜，全文检索，召回更多相关知识，并可进行多agent后处理，包括聚类、新闻抽取等",
+  "kebab_example": "aliyun aimiaobi run-search-generation --workspace-id llm-xxx --task-id 7AA2AE16-D873-5C5F-9708-15396C382EB1 --prompt '杭州亚运会吉祥物是什么' --original-session-id xxx --chat-config xxx --agent-context '{\"BizContext\":{\"SkipCurrentSupplement\":false,\"SupplementDataType\":\"searchQuery\",\"SupplementEnable\":true,\"AskUserKeywords\":[\"xx\"],\"AskUser\":\"您想了解关于xx的哪些信息？\",\"CurrentStep\":\"think\",\"UserBackKeywords\":[\"xx\"],\"UserBack\":\"地点\",\"MultimodalMediaSelection\":{\"TextSearchResult\":{\"SearchResult\":[{\"DocId\":\"文档-自定义的唯一ID\",\"Chunks\":[\"xx\"],\"SearchSourceName\":\"互联网搜索\",\"Title\":\"文章标题\",\"PubTime\":\"2024-11-25_14:25:59\",\"Source\":\"新华社\",\"Url\":\"https://www.example.com/aaa.docx\",\"SearchSourceType\":\"SystemSearch\",\"SearchSource\":\"QuarkCommonNews\",\"Score\":1.0,\"Content\":\"文章内容\",\"Summary\":\"文章摘要\",\"DocUuid\":\"xxx\"}]},\"SearchModel\":\"TextGenerate\",\"SelectionType\":\"all\",\"SearchModelDataValue\":\"分类1\",\"SessionId\":\"3f7045e099474ba28ceca1b4eb6d6e21\",\"OriginalSessionId\":\"原始会话唯一标识：搜索结果取这个会话中的全量，目前仅媒资搜索场景需要\"},\"NextStep\":\"generate\"}}' --model-id quanmiao-max --file-url http://xxxx --region cn-hangzhou",
+  "method": "POST",
+  "multi_version": false,
+  "name": "RunSearchGeneration",
+  "operation": {
+    "action": "RunSearchGeneration",
+    "api_style": "RPC",
+    "api_version": "2023-08-01",
+    "is_sse": true,
+    "method": "POST",
+    "operation_type": "write",
+    "protocol": "HTTPS",
+    "system_operation_type": "create",
+    "url": "/quanmiao/aimiaosou/runSearchGeneration"
+  },
+  "parameters": [
+    {
+      "example": "llm-xxx",
+      "help_en": "ID of the Alibaba Cloud Model Studio workspace. To learn how to obtain this ID, see https://help.aliyun.com/document_detail/2782167.html",
+      "help_zh": "阿里云百炼业务空间 ID。获取方式请参见https://help.aliyun.com/document_detail/2782167.html",
+      "location": "formData",
+      "name": "workspace_id",
+      "options": [
+        "--workspace-id"
+      ],
+      "raw_name": "WorkspaceId",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "7AA2AE16-D873-5C5F-9708-15396C382EB1",
+      "help_en": "Unique identifier for the session task.\n\n> By default, you do not need to provide a TaskId. The system generates one automatically. If you specify the same TaskId in subsequent requests, those tasks are grouped into the same conversation",
+      "help_zh": "会话任务唯一标识\n> TaskId默认无需填写，系统将自动生成。当后续任务填写的TaskId相同时，表示这些任务属于同一组对话。\n>",
+      "location": "formData",
+      "name": "task_id",
+      "options": [
+        "--task-id"
+      ],
+      "raw_name": "TaskId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "杭州亚运会吉祥物是什么",
+      "help_en": "Search query",
+      "help_zh": "搜索词",
+      "location": "formData",
+      "name": "prompt",
+      "options": [
+        "--prompt"
+      ],
+      "raw_name": "Prompt",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "xxx",
+      "help_en": "Original session identifier. Usually empty. When non-empty, it indicates that the current conversation is based on the referenced session. The system loads parameters and search results from that session and replaces the generated result. Use this for re-generation, changing data sources, or adding new agents",
+      "help_zh": "原会话唯一标识：通常为空，非空时，表示当前对话基于此轮对话生成，会加载原始轮对话参数，搜索结果等，同时会替换生成结果，适用于，重新生成、修改数据源、新增agent生成场景",
+      "location": "formData",
+      "name": "original_session_id",
+      "options": [
+        "--original-session-id"
+      ],
+      "raw_name": "OriginalSessionId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "xxx",
+      "fields": [
+        {
+          "example": "copilotReference",
+          "help_en": "Generation technology:\n\n- copilotReference: Q\\&A-style search\n\n- copilotPrecise: Pure search",
+          "help_zh": "生成技术：\n- copilotReference：问答式搜索\n- copilotPrecise：纯搜索",
+          "name": "generate_technology",
+          "options": [
+            "--generate-technology"
+          ],
+          "raw_name": "GenerateTechnology",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "fields": [
+            {
+              "example": "1725983999999",
+              "help_en": "Start time",
+              "help_zh": "开始时间",
+              "name": "start_time",
+              "options": [
+                "--start-time"
+              ],
+              "raw_name": "StartTime",
+              "required": false,
+              "type": "int"
+            },
+            {
+              "example": "1725983999999",
+              "help_en": "End time",
+              "help_zh": "结束时间",
+              "name": "end_time",
+              "options": [
+                "--end-time"
+              ],
+              "raw_name": "EndTime",
+              "required": false,
+              "type": "int"
+            },
+            {
+              "element_fields": [
+                {
+                  "example": "SystemSearch",
+                  "help_en": "Search source type:\n\n- SystemSearch: Built-in system search\n\n- CustomSemanticSearch: Custom semantic index search\n\n- ThirdSearch: Third-party API search",
+                  "help_zh": "搜索源类型：\n- SystemSearch：系统内置搜索\n- CustomSemanticSearch：自建语义索引搜索\n- ThirdSearch：三方API搜索",
+                  "name": "code",
+                  "options": [
+                    "--code"
+                  ],
+                  "raw_name": "Code",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "QuarkCommonNews",
+                  "help_en": "Unique identifier for the search source: matches the dataset name shown in the console, such as 4cb0eda3fad841758262dbe8d61191",
+                  "help_zh": "搜索源唯一标识：对应页面数据集名称，比如 4cb0eda3fad841758262dbe8d61191",
+                  "name": "dataset_name",
+                  "options": [
+                    "--dataset-name"
+                  ],
+                  "raw_name": "DatasetName",
+                  "required": false,
+                  "type": "string"
+                }
+              ],
+              "element_type": "object",
+              "help_en": "List of search sources",
+              "help_zh": "搜索源列表",
+              "name": "search_sources",
+              "options": [
+                "--search-sources"
+              ],
+              "raw_name": "SearchSources",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "element_type": "string",
+              "help_en": "Search scope list",
+              "help_zh": "搜索范围列表",
+              "name": "multimodal_search_types",
+              "options": [
+                "--multimodal-search-types"
+              ],
+              "raw_name": "MultimodalSearchTypes",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "example": "0.66",
+              "help_en": "Text search threshold: Applies only to custom data sources (range: 0 to 1)",
+              "help_zh": "文本搜索阈值：仅自建数据源(0, 1)",
+              "name": "search_text_min_score",
+              "options": [
+                "--search-text-min-score"
+              ],
+              "raw_name": "SearchTextMinScore",
+              "required": false,
+              "type": "float"
+            },
+            {
+              "example": "0.66",
+              "help_en": "Image search threshold: Applies only to custom data sources (range: 0 to 1)",
+              "help_zh": "图片搜索阈值：仅自建数据源(0, 1)",
+              "name": "search_image_min_score",
+              "options": [
+                "--search-image-min-score"
+              ],
+              "raw_name": "SearchImageMinScore",
+              "required": false,
+              "type": "float"
+            },
+            {
+              "example": "0.66",
+              "help_en": "Video search threshold: Applies only to custom data sources (range: 0 to 1)",
+              "help_zh": "视频搜索阈值：仅自建数据源(0, 1)",
+              "name": "search_video_min_score",
+              "options": [
+                "--search-video-min-score"
+              ],
+              "raw_name": "SearchVideoMinScore",
+              "required": false,
+              "type": "float"
+            },
+            {
+              "example": "0.66",
+              "help_en": "Voice search threshold: Applies only to custom data sources (range: 0 to 1)",
+              "help_zh": "语音搜索阈值：仅自建数据源(0, 1)",
+              "name": "search_audio_min_score",
+              "options": [
+                "--search-audio-min-score"
+              ],
+              "raw_name": "SearchAudioMinScore",
+              "required": false,
+              "type": "float"
+            },
+            {
+              "element_type": "string",
+              "help_en": "Unique category identifier",
+              "help_zh": "类目唯一标识",
+              "name": "category_uuids",
+              "options": [
+                "--category-uuids"
+              ],
+              "raw_name": "CategoryUuids",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "element_type": "string",
+              "help_en": "Tags",
+              "help_zh": "标签",
+              "name": "tags",
+              "options": [
+                "--tags"
+              ],
+              "raw_name": "Tags",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "example": "xxx",
+              "help_en": "Extension field 1",
+              "help_zh": "扩展字段1",
+              "name": "extend_1",
+              "options": [
+                "--extend-1"
+              ],
+              "raw_name": "Extend1",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "xxx",
+              "help_en": "Extension field 2",
+              "help_zh": "扩展字段2",
+              "name": "extend_2",
+              "options": [
+                "--extend-2"
+              ],
+              "raw_name": "Extend2",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "xxx",
+              "help_en": "Extension field 3",
+              "help_zh": "扩展字段3",
+              "name": "extend_3",
+              "options": [
+                "--extend-3"
+              ],
+              "raw_name": "Extend3",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "111111111111",
+              "help_en": "Start creation time, in UNIX timestamp format",
+              "help_zh": "起始创建时间，时间戳形式",
+              "name": "create_time_start",
+              "options": [
+                "--create-time-start"
+              ],
+              "raw_name": "CreateTimeStart",
+              "required": false,
+              "type": "int"
+            },
+            {
+              "example": "111111111111",
+              "help_en": "End creation time, in UNIX timestamp format",
+              "help_zh": "截止创建时间，时间戳形式",
+              "name": "create_time_end",
+              "options": [
+                "--create-time-end"
+              ],
+              "raw_name": "CreateTimeEnd",
+              "required": false,
+              "type": "int"
+            },
+            {
+              "element_type": "string",
+              "help_en": "Array of document IDs",
+              "help_zh": "文档ID数组",
+              "name": "doc_ids",
+              "options": [
+                "--doc-ids"
+              ],
+              "raw_name": "DocIds",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "element_type": "string",
+              "help_en": "Unique document identifier",
+              "help_zh": "文档唯一标识",
+              "name": "doc_uuids",
+              "options": [
+                "--doc-uuids"
+              ],
+              "raw_name": "DocUuids",
+              "required": false,
+              "type": "array"
+            }
+          ],
+          "help_en": "Search parameters",
+          "help_zh": "搜索参数",
+          "name": "search_param",
+          "options": [
+            "--search-param"
+          ],
+          "raw_name": "SearchParam",
+          "required": false,
+          "type": "object"
+        },
+        {
+          "element_type": "string",
+          "help_en": "List of search types",
+          "help_zh": "搜索类型列表",
+          "name": "search_models",
+          "options": [
+            "--search-models"
+          ],
+          "raw_name": "SearchModels",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "example": "concise",
+          "help_en": "Detailedness of the response:\n\n- concise: Concise (default)\n\n- enhance: Enhanced\n\n- free: Free-form\n\n- deepResearch: Research-level",
+          "help_zh": "回答的详细程度：\n- concise：简洁（默认）\n- enhance：增强\n- free：自由\n- deepResearch：研究",
+          "name": "generate_level",
+          "options": [
+            "--generate-level"
+          ],
+          "raw_name": "GenerateLevel",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "false",
+          "help_en": "Enable deep thinking",
+          "help_zh": "是否开启思考",
+          "name": "enable_thinking",
+          "options": [
+            "--enable-thinking"
+          ],
+          "raw_name": "EnableThinking",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "element_type": "string",
+          "help_en": "List of generation options to skip",
+          "help_zh": "跳过的生成选项列表",
+          "name": "exclude_generate_options",
+          "options": [
+            "--exclude-generate-options"
+          ],
+          "raw_name": "ExcludeGenerateOptions",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "example": "# 角色\n你是一个专业的文章检索和问答专家，擅长文章检索和回答用户问题。\n\n# 任务目标\n请你根据检索到的相关文章，回答或表述用户问题“{query}”。\n\n# 任务限制\n- 如果用户问题中提到具体日期，请考虑知识日期做筛选。\n- 生成内容结构条理。\n- 生成内容尽量精简。\n- 不要使用其他数据，不要杜撰。\n- 如果不能回答用户问题，请输出对应语言的拒识文案:\n  - 中文：\"根据已知信息无法回答。\"\n  - 英文：\"Unable to answer based on the known information.\"\n\n# 输入数据\n## 检索到的相关文章\n{content}",
+          "help_en": "Plain-text prompt template for Q\\&A-style search and summary generation. Must include variables {query} and {content}. Example:\n\n```text\n# Role\nYou are an expert article retrieval and Q&A assistant.\n\n# Goal\nAnswer or explain the user's question \"{query}\" using the retrieved articles.\n\n# Constraints\n- Filter by knowledge date if the question mentions a specific date.\n- Structure responses clearly.\n- Keep responses concise.\n- Do not use external data or fabricate answers.\n- If unable to answer, respond in the appropriate language:\n  - Chinese: \"Unable to answer based on known information.\"\n  - English: \"Unable to answer based on the known information.\"\n\n# Input\n## Retrieved articles\n{content}\n```",
+          "help_zh": "问答式搜索-总结生成答案-纯文本prompt模版，必须包含变量 query、content，比如：\n```text\n# 角色\n你是一个专业的文章检索和问答专家，擅长文章检索和回答用户问题。\n\n# 任务目标\n请你根据检索到的相关文章，回答或表述用户问题“{query}”。\n\n# 任务限制\n- 如果用户问题中提到具体日期，请考虑知识日期做筛选。\n- 生成内容结构条理。\n- 生成内容尽量精简。\n- 不要使用其他数据，不要杜撰。\n- 如果不能回答用户问题，请输出对应语言的拒识文案:\n  - 中文：\"根据已知信息无法回答。\"\n  - 英文：\"Unable to answer based on the known information.\"\n\n# 输入数据\n## 检索到的相关文章\n{content}\n```",
+          "name": "model_custom_prompt_template",
+          "options": [
+            "--model-custom-prompt-template"
+          ],
+          "raw_name": "ModelCustomPromptTemplate",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "# 角色\n你是一个专业的文章检索和问答专家，擅长文章检索和回答用户问题。\n\n# 任务目标\n请你根据检索到的相关文章和图片，回答或表述用户问题“{query}”。\n\n# 任务限制\n- 如果用户问题中提到具体日期，请考虑知识日期做筛选。\n- 生成内容结构条理。\n- 生成内容尽量精简。\n- 如果图片内容可以回答，可以忽略文章内容。\n- 不要使用其他数据，不要杜撰。\n- 如果不能回答用户问题，请输出对应语言的拒识文案:\n    - 中文：\"根据已知信息无法回答。\"\n    - 英文：\"Unable to answer based on the known information.\"\n\n# 输入数据\n## 检索到的相关文章\n{content}\n",
+          "help_en": "Plain-text prompt template for Q\\&A-style search and summary generation. Must include variables {query} and {content}. Example:\n\n```text\n# Role\nYou are an expert article retrieval and Q&A assistant.\n\n# Goal\nAnswer or explain the user's question \"{query}\" using the retrieved articles and images.\n\n# Constraints\n- Filter by knowledge date if the question mentions a specific date.\n- Structure responses clearly.\n- Keep responses concise.\n- Ignore article content if image content fully answers the question.\n- Do not use external data or fabricate answers.\n- If unable to answer, respond in the appropriate language:\n    - Chinese: \"Unable to answer based on known information.\"\n    - English: \"Unable to answer based on the known information.\"\n\n# Input\n## Retrieved articles\n{content}\n```",
+          "help_zh": "问答式搜索-总结生成答案-纯文本prompt模版，必须包含变量 query、content，比如：\n```text\n# 角色\n你是一个专业的文章检索和问答专家，擅长文章检索和回答用户问题。\n\n# 任务目标\n请你根据检索到的相关文章和图片，回答或表述用户问题“{query}”。\n\n# 任务限制\n- 如果用户问题中提到具体日期，请考虑知识日期做筛选。\n- 生成内容结构条理。\n- 生成内容尽量精简。\n- 如果图片内容可以回答，可以忽略文章内容。\n- 不要使用其他数据，不要杜撰。\n- 如果不能回答用户问题，请输出对应语言的拒识文案:\n    - 中文：\"根据已知信息无法回答。\"\n    - 英文：\"Unable to answer based on the known information.\"\n\n# 输入数据\n## 检索到的相关文章\n{content}\n```",
+          "name": "model_custom_vl_prompt_template",
+          "options": [
+            "--model-custom-vl-prompt-template"
+          ],
+          "raw_name": "ModelCustomVlPromptTemplate",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "help_en": "Session configuration",
+      "help_zh": "会话配置信息",
+      "location": "formData",
+      "name": "chat_config",
+      "options": [
+        "--chat-config"
+      ],
+      "param_style": "json",
+      "raw_name": "ChatConfig",
+      "required": false,
+      "type": "object"
+    },
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "fields": [
+                {
+                  "example": "all",
+                  "help_en": "The type of referenced data source. Valid values: ‒ all: Retrieves the full data from historical sessions. This value is supported only in clustering scenarios. ‒ selected: Retrieves data from textSearchResult during generation",
+                  "help_zh": "参照数据来源类型，取值范围： ‒ 全量的：all，历史会话中取全量数据，仅支持聚类场景； ‒ 选中的：selected，生成时，会取textSearchResult中数据；",
+                  "name": "selection_type",
+                  "options": [
+                    "--selection-type"
+                  ],
+                  "raw_name": "SelectionType",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "3f7045e099474ba28ceca1b4eb6d6e21",
+                  "help_en": "Unique identifier for the session used as reference during generation. Used for clustering in media asset search",
+                  "help_zh": "生成参照会话唯一标识：搜索生成时当前对话下取数据，比如聚类，目前仅媒资搜索场景-聚类需要",
+                  "name": "session_id",
+                  "options": [
+                    "--session-id"
+                  ],
+                  "raw_name": "SessionId",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "原始会话唯一标识：搜索结果取这个会话中的全量，目前仅媒资搜索场景需要",
+                  "help_en": "Unique identifier for the original session. Used to retrieve full results from that session. Required only for media asset search",
+                  "help_zh": "原始会话唯一标识：搜索结果取这个会话中的全量，目前仅媒资搜索场景需要",
+                  "name": "original_session_id",
+                  "options": [
+                    "--original-session-id"
+                  ],
+                  "raw_name": "OriginalSessionId",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "TextGenerate",
+                  "help_en": "Used only for clustering. Pass ClusterGenerate when performing secondary clustering on cluster subtopics",
+                  "help_zh": "仅聚类，对聚类子类内容二次聚类时传入，ClusterGenerate",
+                  "name": "search_model",
+                  "options": [
+                    "--search-model"
+                  ],
+                  "raw_name": "SearchModel",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "分类1",
+                  "help_en": "When SearchModel = ClusterGenerate, enter the topic name for the subtopic. Include quotation marks if the original value has them",
+                  "help_zh": "searchModel=ClusterGenerate时，取子类topic名称，注意如果原值有引号时也要带上",
+                  "name": "search_model_data_value",
+                  "options": [
+                    "--search-model-data-value"
+                  ],
+                  "raw_name": "SearchModelDataValue",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "fields": [
+                    {
+                      "element_fields": [
+                        {
+                          "example": "SystemSearch",
+                          "help_en": "Search source type. Same as searchSource.code",
+                          "help_zh": "搜索信源类型，同searchSource.code",
+                          "name": "search_source_type",
+                          "options": [
+                            "--search-source-type"
+                          ],
+                          "raw_name": "SearchSourceType",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "QuarkCommonNews",
+                          "help_en": "Unique identifier for the search source. Same as searchSource.datasetName",
+                          "help_zh": "搜索信源唯一标识，同searchSource.datasetName",
+                          "name": "search_source",
+                          "options": [
+                            "--search-source"
+                          ],
+                          "raw_name": "SearchSource",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "互联网搜索",
+                          "help_en": "Name of the search source",
+                          "help_zh": "搜索信源名称",
+                          "name": "search_source_name",
+                          "options": [
+                            "--search-source-name"
+                          ],
+                          "raw_name": "SearchSourceName",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "2024-11-25 14:25:59",
+                          "help_en": "Publication time",
+                          "help_zh": "发布时间",
+                          "name": "pub_time",
+                          "options": [
+                            "--pub-time"
+                          ],
+                          "raw_name": "PubTime",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "新华社",
+                          "help_en": "Source",
+                          "help_zh": "来源",
+                          "name": "source",
+                          "options": [
+                            "--source"
+                          ],
+                          "raw_name": "Source",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "文章标题",
+                          "help_en": "Title",
+                          "help_zh": "标题",
+                          "name": "title",
+                          "options": [
+                            "--title"
+                          ],
+                          "raw_name": "Title",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "文章内容",
+                          "help_en": "Content",
+                          "help_zh": "内容",
+                          "name": "content",
+                          "options": [
+                            "--content"
+                          ],
+                          "raw_name": "Content",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "https://www.example.com/aaa.docx",
+                          "help_en": "Article URL",
+                          "help_zh": "文章URL",
+                          "name": "url",
+                          "options": [
+                            "--url"
+                          ],
+                          "raw_name": "Url",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "文章摘要",
+                          "help_en": "Article summary",
+                          "help_zh": "文章摘要",
+                          "name": "summary",
+                          "options": [
+                            "--summary"
+                          ],
+                          "raw_name": "Summary",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "xxx",
+                          "help_en": "Internal unique document identifier",
+                          "help_zh": "内部文档唯一标识",
+                          "name": "doc_uuid",
+                          "options": [
+                            "--doc-uuid"
+                          ],
+                          "raw_name": "DocUuid",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "1",
+                          "help_en": "Relevance score",
+                          "help_zh": "相关度",
+                          "name": "score",
+                          "options": [
+                            "--score"
+                          ],
+                          "raw_name": "Score",
+                          "required": false,
+                          "type": "float"
+                        },
+                        {
+                          "element_type": "string",
+                          "help_en": "Relevant chunks",
+                          "help_zh": "相关chunk",
+                          "name": "chunks",
+                          "options": [
+                            "--chunks"
+                          ],
+                          "raw_name": "Chunks",
+                          "required": false,
+                          "type": "array"
+                        },
+                        {
+                          "example": "文档-自定义的唯一ID",
+                          "help_en": "Custom unique document ID",
+                          "help_zh": "文档-自定义的唯一ID",
+                          "name": "doc_id",
+                          "options": [
+                            "--doc-id"
+                          ],
+                          "raw_name": "DocId",
+                          "required": false,
+                          "type": "string"
+                        }
+                      ],
+                      "element_type": "object",
+                      "help_en": "List of text search results",
+                      "help_zh": "文本搜索结果列表",
+                      "name": "search_result",
+                      "options": [
+                        "--search-result"
+                      ],
+                      "raw_name": "SearchResult",
+                      "required": false,
+                      "type": "array"
+                    }
+                  ],
+                  "help_en": "Text search results",
+                  "help_zh": "文本搜索结果",
+                  "name": "text_search_result",
+                  "options": [
+                    "--text-search-result"
+                  ],
+                  "raw_name": "TextSearchResult",
+                  "required": false,
+                  "type": "object"
+                }
+              ],
+              "help_en": "User-provided or selected multimodal data",
+              "help_zh": "用户输入或选中的多模态数据",
+              "name": "multimodal_media_selection",
+              "options": [
+                "--multimodal-media-selection"
+              ],
+              "raw_name": "MultimodalMediaSelection",
+              "required": false,
+              "type": "object"
+            },
+            {
+              "example": "false",
+              "help_en": "Skip follow-up questions",
+              "help_zh": "是否跳过反问",
+              "name": "skip_current_supplement",
+              "options": [
+                "--skip-current-supplement"
+              ],
+              "raw_name": "SkipCurrentSupplement",
+              "required": false,
+              "type": "bool"
+            },
+            {
+              "example": "您想了解关于xx的哪些信息？",
+              "help_en": "Follow-up question",
+              "help_zh": "反问",
+              "name": "ask_user",
+              "options": [
+                "--ask-user"
+              ],
+              "raw_name": "AskUser",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "element_type": "string",
+              "help_en": "List of recommended keywords for follow-up questions",
+              "help_zh": "反问推荐关键词列表",
+              "name": "ask_user_keywords",
+              "options": [
+                "--ask-user-keywords"
+              ],
+              "raw_name": "AskUserKeywords",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "example": "地点",
+              "help_en": "User feedback to follow-up questions",
+              "help_zh": "反问用户反馈",
+              "name": "user_back",
+              "options": [
+                "--user-back"
+              ],
+              "raw_name": "UserBack",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "element_type": "string",
+              "help_en": "List of keywords from user feedback to follow-up questions",
+              "help_zh": "反问用户反馈关键词列表",
+              "name": "user_back_keywords",
+              "options": [
+                "--user-back-keywords"
+              ],
+              "raw_name": "UserBackKeywords",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "example": "think",
+              "help_en": "Current step",
+              "help_zh": "当前步骤",
+              "name": "current_step",
+              "options": [
+                "--current-step"
+              ],
+              "raw_name": "CurrentStep",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "generate",
+              "help_en": "Next step",
+              "help_zh": "下一步",
+              "name": "next_step",
+              "options": [
+                "--next-step"
+              ],
+              "raw_name": "NextStep",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "searchQuery",
+              "help_en": "Data type needed for reasoning: searchQuery",
+              "help_zh": "思考-需要补充的数据类型：searchQuery",
+              "name": "supplement_data_type",
+              "options": [
+                "--supplement-data-type"
+              ],
+              "raw_name": "SupplementDataType",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "true",
+              "help_en": "Specifies whether supplementation is required",
+              "help_zh": "思考-是否需要补充",
+              "name": "supplement_enable",
+              "options": [
+                "--supplement-enable"
+              ],
+              "raw_name": "SupplementEnable",
+              "required": false,
+              "type": "bool"
+            }
+          ],
+          "help_en": "Business context",
+          "help_zh": "业务上下文",
+          "name": "biz_context",
+          "options": [
+            "--biz-context"
+          ],
+          "raw_name": "BizContext",
+          "required": false,
+          "type": "object"
+        }
+      ],
+      "help_en": "Context",
+      "help_zh": "上下文",
+      "location": "formData",
+      "name": "agent_context",
+      "options": [
+        "--agent-context"
+      ],
+      "param_style": "json",
+      "raw_name": "AgentContext",
+      "required": false,
+      "type": "object"
+    },
+    {
+      "example": "quanmiao-max",
+      "help_en": "Model ID:\n\n- quanmiao-max: Quanmiao-Max\n\n- quanmiao-plus: Quanmiao-Plus",
+      "help_zh": "模型id：\n- quanmiao-max：全妙-Max\n- quanmiao-plus：全妙-Plus",
+      "location": "formData",
+      "name": "model_id",
+      "options": [
+        "--model-id"
+      ],
+      "raw_name": "ModelId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "http://xxxx",
+      "help_en": "Image URL. Used for image search and hybrid text-and-image (prompt) search generation",
+      "help_zh": "图片url：适用于图搜、图文（prompt）混合搜索生成等场景",
+      "location": "formData",
+      "name": "file_url",
+      "options": [
+        "--file-url"
+      ],
+      "raw_name": "FileUrl",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "/quanmiao/aimiaosou/runSearchGeneration",
+  "product_code": "AiMiaoBi",
+  "protocol": "HTTPS|SSE"
+}
