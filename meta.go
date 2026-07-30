@@ -2,9 +2,8 @@ package aliyunopenapimeta
 
 import (
 	"bytes"
-	"compress/gzip"
 	"embed"
-	"encoding/json"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -14,6 +13,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/klauspost/compress/zstd"
 )
 
 //go:generate go run ./cmd/packmeta -canonical canonical -out packed
@@ -21,49 +22,58 @@ import (
 //go:embed metadatas/products.json
 var embeddedMetadatas embed.FS
 
-//go:embed packed/canonical.index.json
-var canonicalIndex []byte
-
-//go:embed packed/canonical.blob.gz
-var canonicalBlob []byte
+//go:embed packed/canonical.pack
+var canonicalPack []byte
 
 // Metadatas exposes the bundled OpenAPI metadata as one in-binary filesystem.
 // metadatas/products.json is embedded directly. canonical/... is stored as a
-// packed gzip blob and decompressed per file on demand.
-var Metadatas = newPackedMetadataFS(embeddedMetadatas, canonicalIndex, canonicalBlob)
+// binary-indexed zstd pack and decompressed per file on demand.
+var Metadatas = newPackedMetadataFS(embeddedMetadatas, canonicalPack)
+
+const (
+	packMagic      = "ALIMETA1"
+	packHeaderSize = 24
+	packEntrySize  = 24
+	dictionaryID   = 1
+)
 
 type packedMetadataFS struct {
 	metadatas embed.FS
-	indexData []byte
-	blobData  []byte
+	packData  []byte
 
-	once     sync.Once
-	index    packedIndex
-	indexErr error
+	layoutOnce sync.Once
+	layout     packedLayout
+	layoutErr  error
+
+	decoderOnce sync.Once
+	decoder     *zstd.Decoder
+	decoderErr  error
 }
 
-type packedIndex struct {
-	Files map[string]packedFile `json:"files"`
-	Dirs  map[string][]string   `json:"dirs"`
+type packedLayout struct {
+	dictionary []byte
+	entries    []byte
+	paths      []byte
+	blob       []byte
+	count      int
 }
 
 type packedFile struct {
-	Offset int64 `json:"offset"`
-	Size   int64 `json:"size"`
-	Raw    int64 `json:"raw"`
+	offset uint64
+	size   uint32
+	raw    uint32
 }
 
-func newPackedMetadataFS(metadatas embed.FS, indexData, blobData []byte) *packedMetadataFS {
+func newPackedMetadataFS(metadatas embed.FS, packData []byte) *packedMetadataFS {
 	return &packedMetadataFS{
 		metadatas: metadatas,
-		indexData: indexData,
-		blobData:  blobData,
+		packData:  packData,
 	}
 }
 
 func (p *packedMetadataFS) Open(name string) (fs.File, error) {
 	name = cleanName(name)
-	if name == "." || strings.HasPrefix(name, "metadatas/") {
+	if name == "metadatas" || strings.HasPrefix(name, "metadatas/") {
 		return p.metadatas.Open(name)
 	}
 	if p.isDir(name) {
@@ -95,43 +105,64 @@ func (p *packedMetadataFS) ReadFile(name string) ([]byte, error) {
 	if !ok {
 		return nil, fs.ErrNotExist
 	}
-	if entry.Offset < 0 || entry.Size < 0 || entry.Offset+entry.Size > int64(len(p.blobData)) {
+	layout, err := p.loadLayout()
+	if err != nil {
+		return nil, err
+	}
+	end := entry.offset + uint64(entry.size)
+	if end < entry.offset || end > uint64(len(layout.blob)) {
 		return nil, fmt.Errorf("packed canonical entry %s has invalid range", name)
 	}
-	r, err := gzip.NewReader(bytes.NewReader(p.blobData[entry.Offset : entry.Offset+entry.Size]))
+	decoder, err := p.loadDecoder()
 	if err != nil {
-		return nil, fmt.Errorf("open packed canonical %s failed: %w", name, err)
+		return nil, fmt.Errorf("initialize canonical decoder failed: %w", err)
 	}
-	defer r.Close()
-	data, err := io.ReadAll(r)
+	compressed := layout.blob[int(entry.offset):int(end)]
+	data, err := decoder.DecodeAll(compressed, make([]byte, 0, int(entry.raw)))
 	if err != nil {
-		return nil, fmt.Errorf("read packed canonical %s failed: %w", name, err)
+		return nil, fmt.Errorf("decompress packed canonical %s failed: %w", name, err)
+	}
+	if len(data) != int(entry.raw) {
+		return nil, fmt.Errorf("decompressed canonical %s has size %d, want %d", name, len(data), entry.raw)
 	}
 	return data, nil
 }
 
 func (p *packedMetadataFS) ReadDir(name string) ([]fs.DirEntry, error) {
 	name = cleanName(name)
-	if name == "." || name == "metadatas" || strings.HasPrefix(name, "metadatas/") {
+	if name == "metadatas" || strings.HasPrefix(name, "metadatas/") {
 		return p.metadatas.ReadDir(name)
 	}
-	idx, err := p.loadIndex()
+	if name == "." {
+		return []fs.DirEntry{
+			packedDirEntry{name: "canonical", isDir: true},
+			packedDirEntry{name: "metadatas", isDir: true},
+		}, nil
+	}
+	layout, err := p.loadLayout()
 	if err != nil {
 		return nil, err
 	}
-	names, ok := idx.Dirs[name]
-	if !ok {
+	if !p.isDir(name) {
 		return nil, fs.ErrNotExist
 	}
-	entries := make([]fs.DirEntry, 0, len(names))
-	for _, child := range names {
-		childPath := path.Join(name, child)
-		_, isFile := idx.Files[childPath]
-		_, isDir := idx.Dirs[childPath]
-		entries = append(entries, packedDirEntry{
-			name:  child,
-			isDir: isDir && !isFile,
-		})
+
+	prefix := name + "/"
+	start := p.lowerBound(layout, prefix)
+	entries := make([]fs.DirEntry, 0, 64)
+	seen := ""
+	for i := start; i < layout.count; i++ {
+		fullName, ok := p.entryName(layout, i)
+		if !ok || !strings.HasPrefix(fullName, prefix) {
+			break
+		}
+		remainder := strings.TrimPrefix(fullName, prefix)
+		child, rest, hasRest := strings.Cut(remainder, "/")
+		if child == seen {
+			continue
+		}
+		seen = child
+		entries = append(entries, packedDirEntry{name: child, isDir: hasRest && rest != ""})
 	}
 	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
 	return entries, nil
@@ -139,13 +170,16 @@ func (p *packedMetadataFS) ReadDir(name string) ([]fs.DirEntry, error) {
 
 func (p *packedMetadataFS) Stat(name string) (fs.FileInfo, error) {
 	name = cleanName(name)
-	if name == "." || strings.HasPrefix(name, "metadatas") {
+	if name == "." {
+		return packedInfo{name: ".", dir: true}, nil
+	}
+	if name == "metadatas" || strings.HasPrefix(name, "metadatas/") {
 		return fs.Stat(p.metadatas, name)
 	}
 	if entry, ok, err := p.lookupFile(name); err != nil {
 		return nil, err
 	} else if ok {
-		return packedInfo{name: path.Base(name), size: entry.Raw}, nil
+		return packedInfo{name: path.Base(name), size: int64(entry.raw)}, nil
 	}
 	if p.isDir(name) {
 		return packedInfo{name: path.Base(name), dir: true}, nil
@@ -154,37 +188,122 @@ func (p *packedMetadataFS) Stat(name string) (fs.FileInfo, error) {
 }
 
 func (p *packedMetadataFS) lookupFile(name string) (packedFile, bool, error) {
-	idx, err := p.loadIndex()
+	layout, err := p.loadLayout()
 	if err != nil {
 		return packedFile{}, false, err
 	}
-	entry, ok := idx.Files[name]
-	return entry, ok, nil
+	index := p.lowerBound(layout, name)
+	if index >= layout.count {
+		return packedFile{}, false, nil
+	}
+	entryName, ok := p.entryName(layout, index)
+	if !ok {
+		return packedFile{}, false, errors.New("canonical pack contains an invalid path range")
+	}
+	if entryName != name {
+		return packedFile{}, false, nil
+	}
+	entry, ok := p.entry(layout, index)
+	if !ok {
+		return packedFile{}, false, errors.New("canonical pack contains an invalid entry")
+	}
+	return entry, true, nil
 }
 
 func (p *packedMetadataFS) isDir(name string) bool {
-	idx, err := p.loadIndex()
+	if name == "." || name == "canonical" {
+		return true
+	}
+	layout, err := p.loadLayout()
 	if err != nil {
 		return false
 	}
-	_, ok := idx.Dirs[name]
-	return ok
+	prefix := name + "/"
+	index := p.lowerBound(layout, prefix)
+	if index >= layout.count {
+		return false
+	}
+	entryName, ok := p.entryName(layout, index)
+	return ok && strings.HasPrefix(entryName, prefix)
 }
 
-func (p *packedMetadataFS) loadIndex() (*packedIndex, error) {
-	p.once.Do(func() {
-		p.index.Files = map[string]packedFile{}
-		p.index.Dirs = map[string][]string{}
-		if len(p.indexData) == 0 {
-			p.indexErr = fs.ErrNotExist
+func (p *packedMetadataFS) loadLayout() (*packedLayout, error) {
+	p.layoutOnce.Do(func() {
+		if len(p.packData) < packHeaderSize || string(p.packData[:8]) != packMagic {
+			p.layoutErr = errors.New("canonical pack has an invalid header")
 			return
 		}
-		p.indexErr = json.Unmarshal(p.indexData, &p.index)
+		dictionarySize := uint64(binary.LittleEndian.Uint32(p.packData[8:12]))
+		count := uint64(binary.LittleEndian.Uint32(p.packData[12:16]))
+		pathsSize := uint64(binary.LittleEndian.Uint32(p.packData[16:20]))
+		entriesStart := uint64(packHeaderSize) + dictionarySize
+		pathsStart := entriesStart + count*packEntrySize
+		blobStart := pathsStart + pathsSize
+		if entriesStart < dictionarySize || pathsStart < entriesStart || blobStart < pathsStart || blobStart > uint64(len(p.packData)) {
+			p.layoutErr = errors.New("canonical pack has invalid section offsets")
+			return
+		}
+		p.layout = packedLayout{
+			dictionary: p.packData[packHeaderSize:entriesStart],
+			entries:    p.packData[entriesStart:pathsStart],
+			paths:      p.packData[pathsStart:blobStart],
+			blob:       p.packData[blobStart:],
+			count:      int(count),
+		}
 	})
-	if p.indexErr != nil {
-		return nil, p.indexErr
+	if p.layoutErr != nil {
+		return nil, p.layoutErr
 	}
-	return &p.index, nil
+	return &p.layout, nil
+}
+
+func (p *packedMetadataFS) loadDecoder() (*zstd.Decoder, error) {
+	layout, err := p.loadLayout()
+	if err != nil {
+		return nil, err
+	}
+	p.decoderOnce.Do(func() {
+		p.decoder, p.decoderErr = zstd.NewReader(nil,
+			zstd.WithDecoderConcurrency(1),
+			zstd.WithDecoderDictRaw(dictionaryID, layout.dictionary),
+		)
+	})
+	return p.decoder, p.decoderErr
+}
+
+func (p *packedMetadataFS) lowerBound(layout *packedLayout, name string) int {
+	return sort.Search(layout.count, func(index int) bool {
+		entryName, ok := p.entryName(layout, index)
+		return !ok || entryName >= name
+	})
+}
+
+func (p *packedMetadataFS) entryName(layout *packedLayout, index int) (string, bool) {
+	start := index * packEntrySize
+	if index < 0 || start < 0 || start+packEntrySize > len(layout.entries) {
+		return "", false
+	}
+	entry := layout.entries[start : start+packEntrySize]
+	pathOffset := uint64(binary.LittleEndian.Uint32(entry[0:4]))
+	pathLength := uint64(binary.LittleEndian.Uint32(entry[4:8]))
+	pathEnd := pathOffset + pathLength
+	if pathEnd < pathOffset || pathEnd > uint64(len(layout.paths)) {
+		return "", false
+	}
+	return string(layout.paths[pathOffset:pathEnd]), true
+}
+
+func (p *packedMetadataFS) entry(layout *packedLayout, index int) (packedFile, bool) {
+	start := index * packEntrySize
+	if index < 0 || start < 0 || start+packEntrySize > len(layout.entries) {
+		return packedFile{}, false
+	}
+	entry := layout.entries[start : start+packEntrySize]
+	return packedFile{
+		offset: binary.LittleEndian.Uint64(entry[8:16]),
+		size:   binary.LittleEndian.Uint32(entry[16:20]),
+		raw:    binary.LittleEndian.Uint32(entry[20:24]),
+	}, true
 }
 
 func cleanName(name string) string {

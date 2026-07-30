@@ -2,8 +2,7 @@ package main
 
 import (
 	"bytes"
-	"compress/gzip"
-	"encoding/json"
+	"encoding/binary"
 	"flag"
 	"fmt"
 	"io/fs"
@@ -11,18 +10,29 @@ import (
 	"path"
 	"path/filepath"
 	"sort"
-	"strings"
+
+	"github.com/klauspost/compress/zstd"
 )
 
-type indexFile struct {
-	Files map[string]fileEntry `json:"files"`
-	Dirs  map[string][]string  `json:"dirs"`
+const (
+	packMagic     = "ALIMETA1"
+	headerSize    = 24
+	entrySize     = 24
+	dictionaryID  = 1
+	dictionaryMax = 64 << 10
+)
+
+type sourceFile struct {
+	name string
+	raw  []byte
 }
 
-type fileEntry struct {
-	Offset int64 `json:"offset"`
-	Size   int64 `json:"size"`
-	Raw    int64 `json:"raw"`
+type packedFile struct {
+	pathOffset     uint32
+	pathLength     uint32
+	dataOffset     uint64
+	compressedSize uint32
+	rawSize        uint32
 }
 
 func main() {
@@ -30,119 +40,118 @@ func main() {
 	outDir := flag.String("out", "packed", "output directory")
 	flag.Parse()
 
-	idx := indexFile{
-		Files: map[string]fileEntry{},
-		Dirs:  map[string][]string{},
-	}
-	dirChildren := map[string]map[string]bool{}
-	addDir(dirChildren, ".")
-
-	var blob bytes.Buffer
-	err := filepath.WalkDir(*canonicalDir, func(p string, d fs.DirEntry, walkErr error) error {
-		if walkErr != nil {
-			return walkErr
-		}
-		rel, err := filepath.Rel(*canonicalDir, p)
-		if err != nil {
-			return err
-		}
-		name := "canonical"
-		if rel != "." {
-			name = path.Join("canonical", filepath.ToSlash(rel))
-		}
-		if d.IsDir() {
-			addDir(dirChildren, name)
-			addChild(dirChildren, path.Dir(name), path.Base(name))
-			return nil
-		}
-
-		raw, err := os.ReadFile(p)
-		if err != nil {
-			return err
-		}
-		var compressed bytes.Buffer
-		zw, err := gzip.NewWriterLevel(&compressed, gzip.BestCompression)
-		if err != nil {
-			return err
-		}
-		if _, err := zw.Write(raw); err != nil {
-			return err
-		}
-		if err := zw.Close(); err != nil {
-			return err
-		}
-
-		offset := int64(blob.Len())
-		if _, err := blob.Write(compressed.Bytes()); err != nil {
-			return err
-		}
-		idx.Files[name] = fileEntry{
-			Offset: offset,
-			Size:   int64(compressed.Len()),
-			Raw:    int64(len(raw)),
-		}
-		addDir(dirChildren, path.Dir(name))
-		addChild(dirChildren, path.Dir(name), path.Base(name))
-		return nil
-	})
+	files, err := readFiles(*canonicalDir)
 	if err != nil {
 		fatal(err)
 	}
-
-	for dir, children := range dirChildren {
-		names := make([]string, 0, len(children))
-		for child := range children {
-			if child == "." || child == "" {
-				continue
-			}
-			names = append(names, child)
-		}
-		sort.Strings(names)
-		idx.Dirs[dir] = names
+	dictionary := buildDictionary(files)
+	encoder, err := zstd.NewWriter(nil,
+		zstd.WithEncoderLevel(zstd.SpeedDefault),
+		zstd.WithEncoderConcurrency(1),
+		zstd.WithEncoderDictRaw(dictionaryID, dictionary),
+	)
+	if err != nil {
+		fatal(err)
 	}
+	defer encoder.Close()
+
+	var paths bytes.Buffer
+	var blob bytes.Buffer
+	entries := make([]packedFile, 0, len(files))
+	for _, file := range files {
+		compressed := encoder.EncodeAll(file.raw, nil)
+		entries = append(entries, packedFile{
+			pathOffset:     uint32(paths.Len()),
+			pathLength:     uint32(len(file.name)),
+			dataOffset:     uint64(blob.Len()),
+			compressedSize: uint32(len(compressed)),
+			rawSize:        uint32(len(file.raw)),
+		})
+		_, _ = paths.WriteString(file.name)
+		_, _ = blob.Write(compressed)
+	}
+
+	var pack bytes.Buffer
+	pack.Grow(headerSize + len(dictionary) + len(entries)*entrySize + paths.Len() + blob.Len())
+	_, _ = pack.WriteString(packMagic)
+	writeUint32(&pack, uint32(len(dictionary)))
+	writeUint32(&pack, uint32(len(entries)))
+	writeUint32(&pack, uint32(paths.Len()))
+	writeUint32(&pack, 0)
+	_, _ = pack.Write(dictionary)
+	for _, entry := range entries {
+		writeUint32(&pack, entry.pathOffset)
+		writeUint32(&pack, entry.pathLength)
+		writeUint64(&pack, entry.dataOffset)
+		writeUint32(&pack, entry.compressedSize)
+		writeUint32(&pack, entry.rawSize)
+	}
+	_, _ = pack.Write(paths.Bytes())
+	_, _ = pack.Write(blob.Bytes())
 
 	if err := os.MkdirAll(*outDir, 0o755); err != nil {
 		fatal(err)
 	}
-	indexBytes, err := json.Marshal(idx)
-	if err != nil {
+	output := filepath.Join(*outDir, "canonical.pack")
+	if err := os.WriteFile(output, pack.Bytes(), 0o644); err != nil {
 		fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(*outDir, "canonical.index.json"), indexBytes, 0o644); err != nil {
-		fatal(err)
-	}
-	if err := os.WriteFile(filepath.Join(*outDir, "canonical.blob.gz"), blob.Bytes(), 0o644); err != nil {
-		fatal(err)
-	}
-	fmt.Printf("packed %d files into %s (%s index, %s blob)\n",
-		len(idx.Files), *outDir, human(len(indexBytes)), human(blob.Len()))
+	fmt.Printf("packed %d files into %s (%s dictionary, %s paths, %s blob, %s total)\n",
+		len(files), output, human(len(dictionary)), human(paths.Len()), human(blob.Len()), human(pack.Len()))
 }
 
-func addDir(dirs map[string]map[string]bool, dir string) {
-	dir = clean(dir)
-	if _, ok := dirs[dir]; !ok {
-		dirs[dir] = map[string]bool{}
-	}
-	if dir == "." {
-		return
-	}
-	parent := path.Dir(dir)
-	addDir(dirs, parent)
-	addChild(dirs, parent, path.Base(dir))
+func readFiles(canonicalDir string) ([]sourceFile, error) {
+	files := make([]sourceFile, 0, 32_000)
+	err := filepath.WalkDir(canonicalDir, func(name string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		rel, err := filepath.Rel(canonicalDir, name)
+		if err != nil {
+			return err
+		}
+		raw, err := os.ReadFile(name)
+		if err != nil {
+			return err
+		}
+		files = append(files, sourceFile{
+			name: path.Join("canonical", filepath.ToSlash(rel)),
+			raw:  raw,
+		})
+		return nil
+	})
+	sort.Slice(files, func(i, j int) bool { return files[i].name < files[j].name })
+	return files, err
 }
 
-func addChild(dirs map[string]map[string]bool, dir, child string) {
-	dir = clean(dir)
-	addDir(dirs, dir)
-	dirs[dir][child] = true
+func buildDictionary(files []sourceFile) []byte {
+	var dictionary []byte
+	for i := 0; i < len(files) && len(dictionary) < dictionaryMax*5; i += 97 {
+		sample := files[i].raw
+		if len(sample) > 1024 {
+			sample = sample[:1024]
+		}
+		dictionary = append(dictionary, sample...)
+	}
+	if len(dictionary) > dictionaryMax {
+		dictionary = dictionary[len(dictionary)-dictionaryMax:]
+	}
+	return dictionary
 }
 
-func clean(name string) string {
-	name = strings.TrimPrefix(path.Clean(strings.TrimPrefix(name, "/")), "/")
-	if name == "" {
-		return "."
-	}
-	return name
+func writeUint32(dst *bytes.Buffer, value uint32) {
+	var encoded [4]byte
+	binary.LittleEndian.PutUint32(encoded[:], value)
+	_, _ = dst.Write(encoded[:])
+}
+
+func writeUint64(dst *bytes.Buffer, value uint64) {
+	var encoded [8]byte
+	binary.LittleEndian.PutUint64(encoded[:], value)
+	_, _ = dst.Write(encoded[:])
 }
 
 func human(n int) string {
