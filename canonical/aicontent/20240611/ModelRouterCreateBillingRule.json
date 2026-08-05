@@ -1,0 +1,132 @@
+{
+  "camel_example": "",
+  "cmd_full_name": "aicontent model-router-create-billing-rule",
+  "cmd_name": "model-router-create-billing-rule",
+  "deprecated": false,
+  "description_en": "Creates a billing rule",
+  "description_zh": "计费管理/创建计费规则",
+  "kebab_example": "",
+  "method": "POST",
+  "multi_version": false,
+  "name": "ModelRouterCreateBillingRule",
+  "operation": {
+    "action": "ModelRouterCreateBillingRule",
+    "api_style": "ROA",
+    "api_version": "20240611",
+    "body_mapping": {
+      "billing_type": "billingType",
+      "effective_time": "effectiveTime",
+      "expire_time": "expireTime",
+      "model_id": "modelId",
+      "pricing_config": "pricingConfig",
+      "version": "version"
+    },
+    "content_type": "application/json",
+    "method": "POST",
+    "operation_type": "write",
+    "protocol": "HTTPS",
+    "req_body_type": "json",
+    "system_operation_type": "create",
+    "url": "/api/v1/modelRouter/open/billing/rules"
+  },
+  "parameters": [
+    {
+      "example": "1",
+      "help_en": "The model ID",
+      "help_zh": "模型ID",
+      "location": "body",
+      "name": "model_id",
+      "options": [
+        "--model-id"
+      ],
+      "param_style": "json",
+      "raw_name": "modelId",
+      "required": true,
+      "type": "int"
+    },
+    {
+      "example": "configurable",
+      "help_en": "The billing type: configurable",
+      "help_zh": "计费类型：configurable",
+      "location": "body",
+      "name": "billing_type",
+      "options": [
+        "--billing-type"
+      ],
+      "param_style": "json",
+      "raw_name": "billingType",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "{\n\t\t\t\t\"tiers\":[\n\t\t\t\t\t{\n\t\t\t\t\t\t\"input_price\":2.5,\n\t\t\t\t\t\t\"cached_input_price\":2.5,\n\t\t\t\t\t\t\"max_tokens\":32000,\n\t\t\t\t\t\t\"output_price\":10,\n\t\t\t\t\t\t\"thinking_output_price\":10,\n\t\t\t\t\t\t\"thinking_input_price\":2.5,\n\t\t\t\t\t\t\"min_tokens\":0\n\t\t\t\t\t},\n\t\t\t\t\t{\n\t\t\t\t\t\t\"input_price\":4,\n\t\t\t\t\t\t\"cached_input_price\":4,\n\t\t\t\t\t\t\"max_tokens\":128000,\n\t\t\t\t\t\t\"output_price\":16,\n\t\t\t\t\t\t\"thinking_output_price\":16,\n\t\t\t\t\t\t\"thinking_input_price\":4,\n\t\t\t\t\t\t\"min_tokens\":32000\n\t\t\t\t\t},\n\t\t\t\t\t{\n\t\t\t\t\t\t\"input_price\":7,\n\t\t\t\t\t\t\"cached_input_price\":7,\n\t\t\t\t\t\t\"max_tokens\":252000,\n\t\t\t\t\t\t\"output_price\":28,\n\t\t\t\t\t\t\"thinking_output_price\":28,\n\t\t\t\t\t\t\"thinking_input_price\":7,\n\t\t\t\t\t\t\"min_tokens\":128000\n\t\t\t\t\t}\n\t\t\t\t]\n\t\t\t}",
+      "help_en": "The pricingConfig field is a JSON object whose internal field structure varies depending on the billing type.\nToken tiered billing\nApplicable to Chat models. Pricing is tiered based on the number of input tokens, supporting three pricing dimensions: standard mode, thinking mode, and cache hit. JSON format:\njson\n{\n  \"tiers\": [\n    {\n      \"min_tokens\": 0,\n      \"max_tokens\": 32000,\n      \"input_price\": 2.5,\n      \"output_price\": 10,\n      \"thinking_input_price\": 2.5,\n      \"thinking_output_price\": 10,\n      \"cached_input_price\": 2.5\n    },\n    {\n      \"min_tokens\": 32000,\n      \"max_tokens\": 128000,\n      \"input_price\": 4,\n      \"output_price\": 16,\n      \"thinking_input_price\": 4,\n      \"thinking_output_price\": 16,\n      \"cached_input_price\": 4\n    }\n  ]\n}\nField description:\nFieldTypeRequiredDescriptionUnit\ntiersarrayYesTiered pricing array. At least one element is required.-\ntiers[].min_tokensintegerYesLower bound (inclusive) of the token count for the current tier.Token\ntiers[].max_tokensintegerYesUpper bound (exclusive) of the token count for the current tier. A value of 0 indicates no limit.Token\ntiers[].input_pricenumberYesUnit price for input tokens in standard mode.CNY / million tokens\ntiers[].output_pricenumberYesUnit price for output tokens in standard mode.CNY / million tokens\ntiers[].thinking_input_pricenumberNoUnit price for input tokens in thinking mode.CNY / million tokens\ntiers[].thinking_output_pricenumberNoUnit price for output tokens in thinking mode.CNY / million tokens\ntiers[].cached_input_pricenumberNoUnit price for input tokens on cache hit.CNY / million tokens\nConstraints:\nThe min_tokens of the first tier must be 0.\nFor all tiers except the last, max_tokens must be greater than min_tokens.\nAdjacent tiers must be contiguous (the max_tokens of the preceding tier must equal the min_tokens of the following tier). Overlaps or gaps are not allowed.\n\nPer-image billing\nApplicable to ImageGeneration and ImageEdit models. Pricing is based on the number of images generated or processed. JSON format:\njson\n{\n  \"price_per_image\": 0.2\n}\nField description:\nFieldTypeRequiredDescriptionUnit\nprice_per_imagenumberYesUnit price per image.CNY / image\n\nVideo matrix billing\nApplicable to VideoGeneration and VideoImageGeneration models. Pricing is based on a combination of video resolution and whether audio is included.\nNote: The matrix field is used for frontend interactions, but the tiers field must be used when calling the API to save data (the matrix field is automatically converted on the server side). The following shows the standard API format.\nJSON format:\njson\n{\n  \"tiers\": [\n    {\n      \"resolution\": 480,\n      \"has_audio\": 0,\n      \"price_per_second\": 0.24\n    },\n    {\n      \"resolution\": 480,\n      \"has_audio\": 1,\n      \"price_per_second\": 0.24\n    },\n    {\n      \"resolution\": 720,\n      \"has_audio\": 0,\n      \"price_per_second\": 0.24\n    },\n    {\n      \"resolution\": 720,\n      \"has_audio\": 1,\n      \"price_per_second\": 0.24\n    }\n  ],\n  \"default_price_per_second\": 0.24\n}\nField description:\nFieldTypeRequiredDescriptionUnit\ntiersarrayYesVideo matrix pricing array.-\ntiers[].resolutionintegerYesVideo resolution. Valid values: 480, 720, and 1080.Pixel height (p)\ntiers[].has_audiointegerYesSpecifies whether audio is included. Valid values: 0 (no audio) and 1 (with audio).-\ntiers[].price_per_secondnumberYesUnit price per second for this combination.CNY / second\ndefault_price_per_secondnumberNoDefault unit price per second when no matrix entry is matched.CNY / second\nConstraints:\nOnly 480p, 720p, and 1080p resolutions are supported.\nThe combination of resolution and has_audio must be unique.\n\nPer-duration billing\nApplicable to ASR (speech recognition) models. Pricing is based on audio duration. JSON format:\njson\n{\n  \"price_per_unit\": 0.00022\n}\nField description:\nFieldTypeRequiredDescriptionUnit\nprice_per_unitnumberYesUnit price per second of audio.CNY / second\n\nPer-character billing\nApplicable to TTS (speech synthesis) models. Pricing is based on the number of characters in the synthesized text. JSON format:\njson\n{\n  \"price_per_unit\": 0.8\n}\nField description:\nFieldTypeRequiredDescriptionUnit\nprice_per_unitnumberYesUnit price per 10,000 characters.CNY / 10,000 characters\n\nToken flat-rate billing\nApplicable to Embedding, Rerank, MultimodalEmbedding, and MultimodalRerank models. A uniform unit price is applied without tiers. JSON format:\njson\n{\n  \"input_price\": 0.5,\n  \"multimodal_input_price\": 0.5\n}\nField description:\nFieldTypeRequiredDescriptionUnit\ninput_pricenumberYesUnit price for text-only input tokens.CNY / million tokens\nmultimodal_input_pricenumberNoUnit price for multimodal input tokens.CNY / million tokens\n\nOmni-modal multi-dimension billing\nApplicable to ChatFullmodal omni-modal models (such as qwen3.5-omni-plus). Input and output of different modalities including text, audio, image, and video are priced separately. JSON format:\njson\n{\n  \"text_input_price\": 7,\n  \"audio_input_price\": 53,\n  \"image_input_price\": 7,\n  \"video_input_price\": 7,\n  \"text_output_price\": 40,\n  \"audio_output_price\": 213,\n  \"multi_text_output_price\": 0\n}\nField description:\nFieldTypeRequiredDescriptionUnit\ntext_input_pricenumberYesUnit price for text input tokens.CNY / million tokens\naudio_input_pricenumberYesUnit price for audio input tokens.CNY / million tokens\nimage_input_pricenumberNoUnit price for image input tokens.CNY / million tokens\nvideo_input_pricenumberNoUnit price for video input tokens.CNY / million tokens\ntext_output_pricenumberYesUnit price for text output tokens.CNY / million tokens\naudio_output_pricenumberNoUnit price for audio output tokens.CNY / million tokens\nmulti_text_output_pricenumberNoUnit price for text output tokens after multimodal input (separate pricing for text output when the input contains images, audio, or video).CNY / million tokens",
+      "help_zh": "pricingConfig 为 JSON 对象，其内部字段结构根据计费类型不同而变化。\nToken 阶梯计费\n适用于 Chat 类模型。按输入 Token 数量分阶梯计价，支持常规模式、思考模式、缓存命中三种价格维度。JSON 格式：\njson\n{\n  \"tiers\": [\n    {\n      \"min_tokens\": 0,\n      \"max_tokens\": 32000,\n      \"input_price\": 2.5,\n      \"output_price\": 10,\n      \"thinking_input_price\": 2.5,\n      \"thinking_output_price\": 10,\n      \"cached_input_price\": 2.5\n    },\n    {\n      \"min_tokens\": 32000,\n      \"max_tokens\": 128000,\n      \"input_price\": 4,\n      \"output_price\": 16,\n      \"thinking_input_price\": 4,\n      \"thinking_output_price\": 16,\n      \"cached_input_price\": 4\n    }\n  ]\n}\n字段说明：\n字段类型必填语义单位\ntiersarray是阶梯定价数组，至少一个元素-\ntiers[].min_tokensinteger是当前阶梯 Token 数量下限（含）Token\ntiers[].max_tokensinteger是当前阶梯 Token 数量上限（不含），0 表示不限Token\ntiers[].input_pricenumber是常规模式输入 Token 单价元 / 百万 Token\ntiers[].output_pricenumber是常规模式输出 Token 单价元 / 百万 Token\ntiers[].thinking_input_pricenumber否思考模式输入 Token 单价元 / 百万 Token\ntiers[].thinking_output_pricenumber否思考模式输出 Token 单价元 / 百万 Token\ntiers[].cached_input_pricenumber否缓存命中时输入 Token 单价元 / 百万 Token\n约束：\n第一个阶梯的 min_tokens 必须为 0\n非最后一个阶梯的 max_tokens 必须大于 min_tokens\n相邻阶梯必须连续衔接（前一阶梯 max_tokens = 后一阶梯 min_tokens），不允许重叠或间隙\n\n按图片计费\n适用于 ImageGeneration、ImageEdit 类模型。按生成/处理图片的张数计价。JSON 格式：\njson\n{\n  \"price_per_image\": 0.2\n}\n字段说明：\n字段类型必填语义单位\nprice_per_imagenumber是每张图片的计费单价元 / 张\n\n视频矩阵计费\n适用于 VideoGeneration、VideoImageGeneration 类模型。按视频分辨率和是否有音频两个维度组合定价。\n注意： 前端交互时使用 matrix 字段，但调用 API 保存时需使用 tiers 字段（matrix 会在服务端自动转换）。以下给出的是 API 侧的标准格式。\nJSON 格式：\njson\n{\n  \"tiers\": [\n    {\n      \"resolution\": 480,\n      \"has_audio\": 0,\n      \"price_per_second\": 0.24\n    },\n    {\n      \"resolution\": 480,\n      \"has_audio\": 1,\n      \"price_per_second\": 0.24\n    },\n    {\n      \"resolution\": 720,\n      \"has_audio\": 0,\n      \"price_per_second\": 0.24\n    },\n    {\n      \"resolution\": 720,\n      \"has_audio\": 1,\n      \"price_per_second\": 0.24\n    }\n  ],\n  \"default_price_per_second\": 0.24\n}\n字段说明：\n字段类型必填语义单位\ntiersarray是视频矩阵定价数组-\ntiers[].resolutioninteger是视频分辨率，取值：480、720、1080像素高度（p）\ntiers[].has_audiointeger是是否包含音频，取值：0（无声）、1（有声）-\ntiers[].price_per_secondnumber是该组合下的每秒单价元 / 秒\ndefault_price_per_secondnumber否未匹配到矩阵项时的默认每秒单价元 / 秒\n约束：\nresolution 仅支持 480p、720p、1080p\nresolution + has_audio 组合不可重复\n\n按时长计费\n适用于 ASR（语音识别）类模型。按音频时长计价。JSON 格式：\njson\n{\n  \"price_per_unit\": 0.00022\n}\n字段说明：\n字段类型必填语义单位\nprice_per_unitnumber是音频每秒计费单价元 / 秒\n\n按字符计费\n适用于 TTS（语音合成）类模型。按合成文本的字符数计价。JSON 格式：\njson\n{\n  \"price_per_unit\": 0.8\n}\n字段说明：\n字段类型必填语义单位\nprice_per_unitnumber是每万字符计费单价元 / 万字符\n\nToken 统一计费\n适用于 Embedding、Rerank、MultimodalEmbedding、MultimodalRerank 类模型。不区分阶梯，按统一单价计费。JSON 格式：\njson\n{\n  \"input_price\": 0.5,\n  \"multimodal_input_price\": 0.5\n}\n字段说明：\n字段类型必填语义单位\ninput_pricenumber是纯文本输入 Token 单价元 / 百万 Token\nmultimodal_input_pricenumber否多模态输入 Token 单价元 / 百万 Token\n\n全模态多维度计费\n适用于 ChatFullmodal 类全模态模型（如 qwen3.5-omni-plus）。对文本、音频、图片、视频等不同模态的输入和输出分别定价。JSON 格式：\njson\n{\n  \"text_input_price\": 7,\n  \"audio_input_price\": 53,\n  \"image_input_price\": 7,\n  \"video_input_price\": 7,\n  \"text_output_price\": 40,\n  \"audio_output_price\": 213,\n  \"multi_text_output_price\": 0\n}\n字段说明：\n字段类型必填语义单位\ntext_input_pricenumber是文本输入 Token 单价元 / 百万 Token\naudio_input_pricenumber是音频输入 Token 单价元 / 百万 Token\nimage_input_pricenumber否图片输入 Token 单价元 / 百万 Token\nvideo_input_pricenumber否视频输入 Token 单价元 / 百万 Token\ntext_output_pricenumber是文本输出 Token 单价元 / 百万 Token\naudio_output_pricenumber否音频输出 Token 单价元 / 百万 Token\nmulti_text_output_pricenumber否多模态输入后的文本输出 Token 单价（当输入包含图片/音频/视频时，文本输出的单独计价）元 / 百万 Token",
+      "location": "body",
+      "name": "pricing_config",
+      "options": [
+        "--pricing-config"
+      ],
+      "param_style": "json",
+      "raw_name": "pricingConfig",
+      "required": false,
+      "type": "any"
+    },
+    {
+      "example": "2024-01-01T00:00:00Z",
+      "help_en": "The effective period in RFC 3339 format",
+      "help_zh": "生效时间，RFC3339格式",
+      "location": "body",
+      "name": "effective_time",
+      "options": [
+        "--effective-time"
+      ],
+      "param_style": "json",
+      "raw_name": "effectiveTime",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "2025-01-01T00:00:00Z",
+      "help_en": "The expiration time in RFC 3339 format",
+      "help_zh": "过期时间，RFC3339格式",
+      "location": "body",
+      "name": "expire_time",
+      "options": [
+        "--expire-time"
+      ],
+      "param_style": "json",
+      "raw_name": "expireTime",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "1",
+      "help_en": "The billing rule version number",
+      "help_zh": "计费规则版本号",
+      "location": "body",
+      "name": "version",
+      "options": [
+        "--biz-version"
+      ],
+      "param_style": "json",
+      "raw_name": "version",
+      "required": false,
+      "type": "int"
+    }
+  ],
+  "pathPattern": "/api/v1/modelRouter/open/billing/rules",
+  "product_code": "AiContent",
+  "protocol": "HTTPS",
+  "v1_body_parameters": [
+    {
+      "help_en": "The billing rule creation request",
+      "help_zh": "计费规则创建请求",
+      "name": "body",
+      "param_style": "json",
+      "position": "body",
+      "required": false,
+      "type": "string"
+    }
+  ]
+}

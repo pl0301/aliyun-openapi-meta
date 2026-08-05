@@ -1,0 +1,132 @@
+{
+  "cmd_full_name": "adb execute-spark-warehouse-batch-sql",
+  "cmd_name": "execute-spark-warehouse-batch-sql",
+  "deprecated": false,
+  "description_en": "Executes Spark SQL statements in batches",
+  "description_zh": "批量执行Spark SQL",
+  "kebab_example": "aliyun adb execute-spark-warehouse-batch-sql --agency 'Dataworks。' --db-cluster-id amv-bp11q28kvl6880000 --resource-group-name test --query CREATE_TABLE_user_id_INT,_name_STRING_INSERT_INTO_t_VALUE_1,_Bob_SELECT_0_FROM_t --schema adb_demo --execute-result-limit 4096 --execute-time-limit-in-seconds 3600000 --runtime-config '{\"OSSURL\":\"oss://testBucketname/\"}' --api-version 2021-12-01 --region cn-hangzhou",
+  "method": "POST",
+  "multi_version": true,
+  "name": "ExecuteSparkWarehouseBatchSQL",
+  "operation": {
+    "action": "ExecuteSparkWarehouseBatchSQL",
+    "api_style": "RPC",
+    "api_version": "2021-12-01",
+    "content_type": "application/x-www-form-urlencoded",
+    "method": "POST",
+    "operation_type": "write",
+    "protocol": "HTTPS",
+    "req_body_type": "formData",
+    "system_operation_type": "none",
+    "url": ""
+  },
+  "parameters": [
+    {
+      "example": "Dataworks。",
+      "help_en": "The name of the client",
+      "help_zh": "客户标记提交的客户端类型，可以是任意合法的纯英文字符串，如Aliyun Dataworks",
+      "location": "formData",
+      "name": "agency",
+      "options": [
+        "--agency"
+      ],
+      "raw_name": "Agency",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "amv-bp11q28kvl688****",
+      "help_en": "The cluster ID",
+      "help_zh": "集群ID",
+      "location": "formData",
+      "name": "db_cluster_id",
+      "options": [
+        "--db-cluster-id"
+      ],
+      "raw_name": "DBClusterId",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "test",
+      "help_en": "The name of the resource group",
+      "help_zh": "资源组名称",
+      "location": "formData",
+      "name": "resource_group_name",
+      "options": [
+        "--resource-group-name"
+      ],
+      "raw_name": "ResourceGroupName",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "CREATE TABLE user(id INT, name STRING);\nINSERT INTO t VALUE(1, 'Bob');\nSELECT * FROM t;",
+      "help_en": "The SQL statements that you want to execute in batches. Separate multiple SQL statements with semicolons (;). The execution engine executes the SQL statements in sequence in the same session",
+      "help_zh": "需要批量执行的SQL语句。多个SQL之间用英文分号（;）分隔。 执行引擎会按照顺序在同一个会话中依次执行这些SQL",
+      "location": "formData",
+      "name": "query",
+      "options": [
+        "--query"
+      ],
+      "raw_name": "Query",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "adb_demo",
+      "help_en": "The name of the database",
+      "help_zh": "数据库名称",
+      "location": "formData",
+      "name": "schema",
+      "options": [
+        "--schema"
+      ],
+      "raw_name": "Schema",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "4096",
+      "help_en": "The maximum amount of execution result data that can be written to Object Storage Service (OSS). Unit: MB. Default value: 4096. The size of compressed objects is difficult to estimate. The data that is actually written to OSS is smaller than the specified value",
+      "help_zh": "抽取部分数据写入 OSS。单位为 MB，默认值为 4096。由于压缩后文件的大小难以准确估计，实际写入到OSS中的数据会小于此处的配置值",
+      "location": "formData",
+      "name": "execute_result_limit",
+      "options": [
+        "--execute-result-limit"
+      ],
+      "raw_name": "ExecuteResultLimit",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "3600000",
+      "help_en": "The maximum execution duration. Unit: seconds. If a set of SQL statements fail to be executed for the specified period of time after submission, they are marked as a timeout error. The default value is 360000 seconds, which is equivalent to 100 hours",
+      "help_zh": "最大允许可执行时长，单位为秒（s）。如果一组SQL在提交后长时间未能执行成功，会被标记为超时失败。默认值为360000秒即为100小时",
+      "location": "formData",
+      "name": "execute_time_limit_in_seconds",
+      "options": [
+        "--execute-time-limit-in-seconds"
+      ],
+      "raw_name": "ExecuteTimeLimitInSeconds",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "{\n \"OSSURL\": \"oss://testBucketname/\"\n}",
+      "help_en": "The additional runtime parameter. Specify the parameter in the JSON format",
+      "help_zh": "执行SQL时的额外运行参数，输入结构需要是一个JSON字符串。\n\n这里允许写入所有Apache Spark官方文档中的运行时SQL配置。\n\n同时此处还包含了用于当前API的控制参数，对写OSS的行为进行控制，说明如下：\n\n‒ `spark.adb.sqlOutputFormat`: 写入到OSS中的文件格式，默认值是`CSV`。可选值为`CSV`,`JSON`。\n\n‒ `spark.adb.sqlOutputPartitions`: 写入到OSS中的SQL结果的分区数，默认值为1。\n\n‒ `spark.adb.sqlOutputLocation`：指定写入OSS的地址，SQL执行结果的抽样会被写入到该地址。此配置为空，则不会讲SQL执行结果的抽样数据写入OSS。\n\n‒ `spark.adb.sqlIgnorePersistError`：是否忽略写抽样结果时发生的错误，默认值为`false`。当配置为`true`时，执行过程中SQL执行成功，但SQL结果的抽样信息写入OSS失败不会打断执行步骤",
+      "location": "formData",
+      "name": "runtime_config",
+      "options": [
+        "--runtime-config"
+      ],
+      "raw_name": "RuntimeConfig",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "",
+  "product_code": "adb",
+  "protocol": "HTTPS"
+}

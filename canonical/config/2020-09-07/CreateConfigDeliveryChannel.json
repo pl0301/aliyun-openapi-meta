@@ -1,0 +1,182 @@
+{
+  "cmd_full_name": "config create-config-delivery-channel",
+  "cmd_name": "create-config-delivery-channel",
+  "deprecated": false,
+  "description_en": "Creates a delivery channel to deliver resource data to Simple Log Service (SLS), Object Storage Service (OSS), or Simple Message Queue (formerly MNS)",
+  "description_zh": "创建投递渠道，将资源数据投递到日志服务SLS、对象存储 OSS 或轻量消息队列（原 MNS）进行储存",
+  "kebab_example": "aliyun config create-config-delivery-channel --delivery-channel-name testoss --delivery-channel-type OSS --delivery-channel-target-arn acs:oss:cn-shanghai:1009318965420000:new-bucket --delivery-channel-condition '[{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\",\"ACS::CDN::Domain\",\"ACS::CEN::CenBandwidthPackage\",\"ACS::CEN::CenInstance\",\"ACS::CEN::Flowlog\",\"ACS::DdosCoo::Instance\"],\"multiple\":true}]' --oversized-data-oss-target-arn acs:oss:cn-shanghai:1009318965420000:new-bucket --description My_OSS_delivery. --client-token 1594295238-f9361358-5843-4294-8d30-b5183fac0000 --configuration-snapshot true --compliant-snapshot false --configuration-item-change-notification false --non-compliant-notification false --delivery-snapshot-time 09:10Z --api-version 2020-09-07 --region cn-hangzhou",
+  "method": "GET|POST",
+  "multi_version": true,
+  "name": "CreateConfigDeliveryChannel",
+  "operation": {
+    "action": "CreateConfigDeliveryChannel",
+    "api_style": "RPC",
+    "api_version": "2020-09-07",
+    "method": "POST",
+    "operation_type": "write",
+    "protocol": "HTTPS",
+    "system_operation_type": "create",
+    "url": ""
+  },
+  "parameters": [
+    {
+      "example": "testoss",
+      "help_en": "The name of the delivery channel.\n\nIf you do not set this parameter, the value is left empty",
+      "help_zh": "投递渠道名称。\n\n如果未设置该参数，默认为空",
+      "location": "query",
+      "name": "delivery_channel_name",
+      "options": [
+        "--delivery-channel-name"
+      ],
+      "raw_name": "DeliveryChannelName",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "OSS",
+      "help_en": "The type of the delivery channel. Valid values:\n\nOSS: Object Storage Service.\n\nMNS: Simple Message Queue (formerly MNS).\n\nSLS: Simple Log Service",
+      "help_zh": "投递渠道类型。取值：\nOSS：对象存储。\nMNS：轻量消息队列（原 MNS）\nSLS：日志服务",
+      "location": "query",
+      "name": "delivery_channel_type",
+      "options": [
+        "--delivery-channel-type"
+      ],
+      "raw_name": "DeliveryChannelType",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "acs:oss:cn-shanghai:100931896542****:new-bucket",
+      "help_en": "The ARN of the delivery destination. Valid values:\n\nIf the delivery channel is OSS, the value is in the format of `acs:oss:{RegionId}:{accountId}:{bucketName}`. Example: `acs:oss:cn-shanghai:100931896542****:new-bucket`.\n\nIf the delivery channel is MNS, the value is in the format of `acs:mns:{RegionId}:{accountId}:/topics/{topicName}`. Example: `acs:mns:cn-shanghai:100931896542****:/topics/topic1`.\n\nIf the delivery channel is SLS, the value is in the format of `acs:log:{RegionId}:{accountId}:project/{projectName}/logstore/{logstoreName}`. Example: `acs:log:cn-shanghai:100931896542****:project/project1/logstore/logstore1`",
+      "help_zh": "投递渠道目标地址的ARN。取值：\n\n当投递渠道为OSS时，格式为`acs:oss:{RegionId}:{accountId}:{bucketName}`，例如：`acs:oss:cn-shanghai:100931896542****:new-bucket`。\n\n当投递渠道为MNS时，格式为`acs:mns:{RegionId}:{accountId}:/topics/{topicName}`，例如：`acs:mns:cn-shanghai:100931896542****:/topics/topic1`。\n\n当投递渠道为SLS时，格式为`acs:log:{RegionId}:{accountId}:project/{projectName}/logstore/{logstoreName}`，例如：`acs:log:cn-shanghai:100931896542****:project/project1/logstore/logstore1`",
+      "location": "query",
+      "name": "delivery_channel_target_arn",
+      "options": [
+        "--delivery-channel-target-arn"
+      ],
+      "raw_name": "DeliveryChannelTargetArn",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "[{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\",\"ACS::CDN::Domain\",\"ACS::CEN::CenBandwidthPackage\",\"ACS::CEN::CenInstance\",\"ACS::CEN::Flowlog\",\"ACS::DdosCoo::Instance\"],\"multiple\":true}]",
+      "help_en": "An additional rule for the delivery channel. Use this rule to specify filter conditions for subscriptions.\n\nIf you subscribe to compliance events, you can specify the minimum risk level and resource types as follows:\n\nTo specify the minimum risk level of events, use `{\"filterType\":\"RuleRiskLevel\",\"value\":\"1\",\"multiple\":false}`.\n\n    `value` specifies the risk level to filter. Valid values: 1 for high, 2 for medium, and 3 for low.\n\n    `multiple` specifies whether the filter supports multiple values. The risk level filter supports only a single value. Therefore, set `multiple` to `false` when you deliver compliance events.\n\nTo specify the resource types of events, use `{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ACK::Cluster\",\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\"],\"multiple\":true}`.\n\n    `values` specifies the resource types to which you want to subscribe. The value is a JSON array of resource types.\n    Example:\n    `[{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\",\"ACS::CDN::Domain\",\"ACS::CEN::CenBandwidthPackage\",\"ACS::CEN::CenInstance\",\"ACS::CEN::Flowlog\",\"ACS::DdosCoo::Instance\"],\"multiple\":true}]`\n\n    `multiple` specifies whether the filter supports multiple values. The resource type filter supports multiple values. If you select multiple resource types, set `multiple` to `true`.\n\nYou can also specify a risk level and resource types at the same time. Example:\n    `[{\"filterType\":\"RuleRiskLevel\",\"value\":\"2\",\"multiple\":false},{\"filterType\":\"ResourceType\",\"values\":[\"ACS::CDN::Domain\",\"ACS::ActionTrail::Trail\"],\"multiple\":true}]`\n\nIf you subscribe to resource configuration deliveries, you can specify the resource types as `{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ACK::Cluster\",\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\"],\"multiple\":true}`.\n\n  `values` specifies the resource types that you want to deliver. The value is a JSON array of resource types.\n  Example:\n  `[{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\",\"ACS::CDN::Domain\",\"ACS::CEN::CenBandwidthPackage\",\"ACS::CEN::CenInstance\",\"ACS::CEN::Flowlog\",\"ACS::DdosCoo::Instance\"],\"multiple\":true}]`",
+      "help_zh": "投递渠道附加规则，用于指定订阅内容过滤条件。\n\n如果您指定订阅合规事件的最低风险等级和资源类型，具体如下：\n\n订阅事件的最低风险等级为`{\"filterType\":\"RuleRiskLevel\",\"value\":\"1\",\"multiple\":false}`。\n\n     \n    `value`表示您需要过滤的风险等级。取值：1表示高风险，2表示中风险，3表示低风险。\n\n    `multiple`表示该组过滤字段是否支持多指，风险等级只支持单值过滤，即投递合规事件类型内容的`multiple`字段只可填写`false`。\n\n订阅事件的资源类型为`{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ACK::Cluster\",\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\"],\"multiple\":true}`。\n    \n      \n    `values`表示您需要订阅事件的资源类型，是一个资源类型的JSON数组。\n    例如：\n`[{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\",\"ACS::CDN::Domain\",\"ACS::CEN::CenBandwidthPackage\",\"ACS::CEN::CenInstance\",\"ACS::CEN::Flowlog\",\"ACS::DdosCoo::Instance\"],\"multiple\":true}]`\n\n    `multiple`表示该组过滤字段是否支持多指，资源类型支持多值过滤，选中多种资源类型时，`multiple`字段可填写`true`。\n\n也可以同时指定风险等级和资源类型，例如：\n`[{\"filterType\":\"RuleRiskLevel\",\"value\":\"2\",\"multiple\":false},{\"filterType\":\"ResourceType\",\"values\":[\"ACS::CDN::Domain\",\"ACS::ActionTrail::Trail\"],\"multiple\":true}]`\n\n如果您指定订阅资源配置投递的资源类型，资源类型为`{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ACK::Cluster\",\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\"],\"multiple\":true}`。\n    \n      \n    `values`表示您需要投递的资源类型，是一个资源类型的JSON数组。\n    例如：\n`[{\"filterType\":\"ResourceType\",\"values\":[\"ACS::ActionTrail::Trail\",\"ACS::CBWP::CommonBandwidthPackage\",\"ACS::CDN::Domain\",\"ACS::CEN::CenBandwidthPackage\",\"ACS::CEN::CenInstance\",\"ACS::CEN::Flowlog\",\"ACS::DdosCoo::Instance\"],\"multiple\":true}]`",
+      "location": "query",
+      "name": "delivery_channel_condition",
+      "options": [
+        "--delivery-channel-condition"
+      ],
+      "raw_name": "DeliveryChannelCondition",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "acs:oss:cn-shanghai:100931896542****:new-bucket",
+      "help_en": "The ARN of the OSS bucket to which the oversized data is delivered when the size of the data exceeds the limit of the delivery channel. The format is `acs:oss:{RegionId}:{accountId}:{bucketName}`.\n\nIf you do not set this parameter, Cloud Config delivers only the summary of the data.\n\nThis parameter is supported only for SLS and MNS delivery channels. The delivery channel limit for SLS is 1 MB. The delivery channel limit for MNS is 64 KB",
+      "help_zh": "当投递数据超过投递渠道限制时，投递数据转存到对象存储OSS的目标存储空间。格式为`acs:oss:{RegionId}:{accountId}:{bucketName}`。\n\n如果您未设置该参数，配置审计仅投递概要信息。\n\n仅支持投递渠道SLS和MNS。日志服务SLS的投递渠道限制是1 MB，轻量消息队列（原 MNS）的投递渠道限制是64 KB",
+      "location": "query",
+      "name": "oversized_data_oss_target_arn",
+      "options": [
+        "--oversized-data-oss-target-arn"
+      ],
+      "raw_name": "OversizedDataOSSTargetArn",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "My OSS delivery.",
+      "help_en": "The description of the delivery channel",
+      "help_zh": "投递渠道描述",
+      "location": "query",
+      "name": "description",
+      "options": [
+        "--description"
+      ],
+      "raw_name": "Description",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "1594295238-f9361358-5843-4294-8d30-b5183fac****",
+      "help_en": "A client token. It is used to ensure the idempotence of the request. You can use the client to generate the value, but you must make sure that the value is unique among different requests.\n\n`ClientToken` can contain only ASCII characters and cannot exceed 64 characters in length. For more information, see https://help.aliyun.com/document_detail/25693.html",
+      "help_zh": "保证请求幂等性。从您的客户端生成一个参数值，确保不同请求间该参数值唯一。\n\n`ClientToken`只支持ASCII字符，且不能超过64个字符。更多信息，请参见https://help.aliyun.com/document_detail/25693.html",
+      "location": "query",
+      "name": "client_token",
+      "options": [
+        "--client-token"
+      ],
+      "raw_name": "ClientToken",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "true",
+      "help_en": "Specifies whether to deliver scheduled resource snapshots. Cloud Config delivers scheduled resource snapshots to OSS or SLS at `04:00Z` and `16:00Z` (UTC) every day. Valid values:\n\ntrue: Deliver scheduled resource snapshots.\n\nfalse (default): Do not deliver scheduled resource snapshots.\n\nIf the delivery channel is OSS, you must set at least one of `ConfigurationSnapshot` (scheduled resource snapshots) and `ConfigurationItemChangeNotification` (resource configuration histories) to true.\n\nIf the delivery channel is SLS, you must set at least one of `ConfigurationSnapshot` (scheduled resource snapshots), `ConfigurationItemChangeNotification` (resource configuration histories), `CompliantSnapshot` (compliance snapshots), and `NonCompliantNotification` (non-compliant events) to true",
+      "help_zh": "是否接收资源定时快照。每天`04:00Z`和`16:00Z`（UTC时间），配置审计定时向对象存储OSS或SLS投递资源定时快照。取值：\ntrue：接收资源定时快照。\nfalse（默认值）：不接收资源定时快照。\n\n当投递渠道为OSS时，`ConfigurationSnapshot`（资源定时快照）和`ConfigurationItemChangeNotification`（配置变更历史）至少二选一。\n\n当投递渠道为SLS时，`ConfigurationSnapshot`（资源定时快照）、`ConfigurationItemChangeNotification`（配置变更历史）、`CompliantSnapshot`（合规快照）和`NonCompliantNotification`（资源不合规事件）至少四选一",
+      "location": "query",
+      "name": "configuration_snapshot",
+      "options": [
+        "--configuration-snapshot"
+      ],
+      "raw_name": "ConfigurationSnapshot",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "false",
+      "help_en": "Specifies whether to deliver compliance snapshots. Cloud Config delivers the compliance and non-compliance information of resources to SLS. Valid values:\n\ntrue: Deliver compliance snapshots.\n\nfalse: Do not deliver compliance snapshots",
+      "help_zh": "是否接收合规快照。配置审计向日志服务SLS投递资源合规和不合规信息。取值：\ntrue：接收合规快照。\nfalse：不接收合规快照",
+      "location": "query",
+      "name": "compliant_snapshot",
+      "options": [
+        "--compliant-snapshot"
+      ],
+      "raw_name": "CompliantSnapshot",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "false",
+      "help_en": "Specifies whether to deliver resource configuration histories. When the configuration of a resource changes, Cloud Config delivers the resource configuration history to OSS, SLS, or MNS. Valid values:\n\ntrue: Deliver resource configuration histories.\n\nfalse (default): Do not deliver resource configuration histories.\n\nIf the delivery channel is OSS, you must set at least one of `ConfigurationSnapshot` (scheduled resource snapshots) and `ConfigurationItemChangeNotification` (resource configuration histories) to true.\n\nIf the delivery channel is SLS, you must set at least one of `ConfigurationSnapshot` (scheduled resource snapshots), `CompliantSnapshot` (compliance snapshots), `ConfigurationItemChangeNotification` (resource configuration histories), and `NonCompliantNotification` (non-compliant events) to true.\n\nIf the delivery channel is MNS, you must set at least one of `ConfigurationItemChangeNotification` (resource configuration histories) and `NonCompliantNotification` (non-compliant events) to true",
+      "help_zh": "是否接收资源配置变更历史。当资源配置变更时，配置审计向对象存储OSS、日志服务SLS或轻量消息队列（原 MNS）投递资源配置变更历史。取值：\ntrue：接收资源配置变更历史。\nfalse（默认值）：不接收资源配置变更历史。\n\n当投递渠道为OSS时，`ConfigurationSnapshot`（资源定时快照）和`ConfigurationItemChangeNotification`（配置变更历史）至少二选一。\n\n当投递渠道为SLS时，`ConfigurationSnapshot`（资源定时快照）、`CompliantSnapshot`（合规快照）、`ConfigurationItemChangeNotification`（配置变更历史）和`NonCompliantNotification`（资源不合规事件）至少四选一。\n\n当投递渠道为MNS时，`ConfigurationItemChangeNotification`（配置变更历史）和`NonCompliantNotification`（资源不合规事件）至少二选一",
+      "location": "query",
+      "name": "configuration_item_change_notification",
+      "options": [
+        "--configuration-item-change-notification"
+      ],
+      "raw_name": "ConfigurationItemChangeNotification",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "false",
+      "help_en": "Specifies whether to deliver non-compliant events. When a resource is evaluated as non-compliant, Cloud Config delivers the non-compliant event to SLS or MNS. Valid values:\n\ntrue: Deliver non-compliant events.\n\nfalse (default): Do not deliver non-compliant events.\n\nIf the delivery channel is SLS, you must set at least one of `ConfigurationSnapshot` (scheduled resource snapshots), `CompliantSnapshot` (compliance snapshots), `ConfigurationItemChangeNotification` (resource configuration histories), and `NonCompliantNotification` (non-compliant events) to true.\n\nIf the delivery channel is MNS, you must set at least one of `ConfigurationItemChangeNotification` (resource configuration histories) and `NonCompliantNotification` (non-compliant events) to true",
+      "help_zh": "是否接收资源不合规事件。当资源不合规时，配置审计向日志服务SLS或轻量消息队列（原 MNS）投递资源不合规事件。取值： \ntrue：接收资源不合规事件。\nfalse（默认值）：不接收资源不合规事件。\n\n当投递渠道为SLS时，`ConfigurationSnapshot`（资源定时快照）、`CompliantSnapshot`（合规快照）、`ConfigurationItemChangeNotification`（配置变更历史）和`NonCompliantNotification`（资源不合规事件）至少四选一。\n\n当投递渠道为MNS时，`ConfigurationItemChangeNotification`（配置变更历史）和`NonCompliantNotification`（资源不合规事件）至少二选一",
+      "location": "query",
+      "name": "non_compliant_notification",
+      "options": [
+        "--non-compliant-notification"
+      ],
+      "raw_name": "NonCompliantNotification",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "09:10Z",
+      "help_en": "The time when Cloud Config starts to deliver scheduled resource snapshots every day.\n\nThe value must be in the `HH:mmZ` format (UTC).\n\nWhen you enable scheduled resource snapshot delivery, you can use this parameter to customize the delivery time. If you do not set this parameter, the snapshots are delivered at `04:00Z` and `16:00Z` (UTC) by default",
+      "help_zh": "资源定时快照每日开始投递的时间。\n\n格式为`HH:mmZ`（UTC时间）。\n\n当您开启资源定时快照投递时，可通过该参数自定义投递时间。如果您未设置该参数，则每天默认`04:00Z`和`16:00Z`开始投递",
+      "location": "query",
+      "name": "delivery_snapshot_time",
+      "options": [
+        "--delivery-snapshot-time"
+      ],
+      "raw_name": "DeliverySnapshotTime",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "",
+  "product_code": "Config",
+  "protocol": "HTTP|HTTPS"
+}
