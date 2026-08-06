@@ -4,7 +4,6 @@ import (
 	"embed"
 )
 
-//go:embed metadatas
-//go:embed en-US
-//go:embed zh-CN
+//go:embed canonical
+//go:embed metadatas/products.json
 var Metadatas embed.FS
