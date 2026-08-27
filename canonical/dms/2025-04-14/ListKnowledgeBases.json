@@ -2,6 +2,86 @@
   "camel_example": "",
   "cmd_full_name": "dms list-knowledge-bases",
   "cmd_name": "list-knowledge-bases",
+  "components": {
+    "schemas": {
+      "OneMetaKnowledgeBase": {
+        "description_en": "Represents a knowledge base",
+        "description_zh": "知识库对象结构",
+        "properties": {
+          "Creator": {
+            "description_en": "The creator of the knowledge base",
+            "description_zh": "创建者",
+            "example": "20464374909***",
+            "title": "创建者",
+            "type": "string"
+          },
+          "Description": {
+            "description_en": "The description of the knowledge base",
+            "description_zh": "知识库描述",
+            "example": "order knowledgebase",
+            "title": "知识库描述",
+            "type": "string"
+          },
+          "Domain": {
+            "description_en": "The domain of the knowledge base",
+            "description_zh": "知识库作用域",
+            "example": "vehicle",
+            "type": "string"
+          },
+          "ExtraInfo": {
+            "description_en": "Additional information about the knowledge base",
+            "description_zh": "知识库其他信息",
+            "example": "{\"keywords\":\"sales,vehicle brand\"}",
+            "type": "string"
+          },
+          "GmtCreate": {
+            "description_en": "The time when the knowledge base was created",
+            "description_zh": "创建时间",
+            "example": "2026-05-14 11:30:00",
+            "title": "创建时间",
+            "type": "string"
+          },
+          "GmtModified": {
+            "description_en": "The time when the knowledge base was last modified",
+            "description_zh": "修改时间",
+            "example": "2026-05-14 11:30:39",
+            "title": "修改时间",
+            "type": "string"
+          },
+          "KbUuid": {
+            "description_en": "The UUID of the knowledge base",
+            "description_zh": "知识库uuid标识",
+            "example": "kb-***",
+            "title": "知识库uuid标识",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the knowledge base",
+            "description_zh": "知识库名字",
+            "example": "order_kb",
+            "title": "知识库名字",
+            "type": "string"
+          },
+          "State": {
+            "description_en": "The state of the knowledge base. Valid values include 0 (No data) and 1 (Available)",
+            "description_zh": "知识库状态：\n0：无数据\n1：可用",
+            "example": "1",
+            "format": "int32",
+            "title": "知识库状态：\n0：无数据\n1：可用",
+            "type": "integer"
+          },
+          "Tag": {
+            "description_en": "The tag of the knowledge base",
+            "description_zh": "知识库标签",
+            "example": "4phsj52f81ymlm***",
+            "title": "知识库标签",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Returns a paginated list of knowledge bases",
   "description_zh": "分页查询知识库的列表",
@@ -66,6 +146,8 @@
       "help_en": "The maximum number of entries to return on each page. Use this parameter with the `NextToken` parameter to implement pagination",
       "help_zh": "限定每次返回的最大条数，可以和NextToken搭配使用实现翻页能力",
       "location": "formData",
+      "maximum": "100",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -88,6 +170,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "name",
+        "id"
+      ],
       "example": "name",
       "help_en": "The sort field. Valid values:\n\n`id`: Sorts by knowledge base ID. This is the default.\n\n`name`: Sorts by knowledge base name",
       "help_zh": "排序字段，取值：\n\nid：知识库ID（默认值）\nname: 知识库名字",
@@ -101,6 +187,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ASC",
+        "DESC"
+      ],
       "example": "Desc",
       "help_en": "The sort order. Valid values:\n\nASC: Ascending order. This is the default.\n\nDESC: Descending order",
       "help_zh": "排序方向。取值范围：\nASC（默认值）：升序\nDESC：降序",
@@ -116,5 +206,78 @@
   ],
   "pathPattern": "",
   "product_code": "Dms",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response object",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Data": {
+            "description_en": "A list of knowledge base objects",
+            "description_zh": "返回的结构体",
+            "items": {
+              "$ref": "#/components/schemas/OneMetaKnowledgeBase",
+              "description_en": "The details of a knowledge base",
+              "description_zh": "返回结果"
+            },
+            "type": "array"
+          },
+          "ErrorCode": {
+            "description_en": "The error code returned if the request fails",
+            "description_zh": "错误码，请求异常时返回",
+            "example": "UnknownError",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "Specified parameter Tag is not valid.",
+            "type": "string"
+          },
+          "MaxResults": {
+            "default": "20",
+            "description_en": "The number of entries returned on the current page",
+            "description_zh": "分页大小",
+            "example": "20",
+            "format": "int32",
+            "maximum": "100",
+            "minimum": "0",
+            "type": "integer"
+          },
+          "NextToken": {
+            "description_en": "The token used to retrieve the next page of results.\n\nIf this parameter is empty, all results have been returned.\n\nIf a value is returned, use it in the next request to retrieve the next page of results",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。取值：\n\n如果NextToken为空表示没有下一次查询。\n如果NextToken有返回值，该取值表示下一次查询开始的令牌",
+            "example": "NesLoKLEdIZrKhDT7I2gS****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "E0D21075-CD3E-4D98-8264-FD8AD04A63B6",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. `true` indicates success, and `false` indicates failure",
+            "description_zh": "请求是否成功，返回值如下：true：请求成功                                 false：请求失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The total number of knowledge bases matching the query. This feature is not currently supported and the returned value is always `0`",
+            "description_zh": "满足条件的知识库总数（目前暂不支持，返回值恒定为0）",
+            "example": "0",
+            "format": "int64",
+            "required": false,
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

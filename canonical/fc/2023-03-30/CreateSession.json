@@ -2,6 +2,538 @@
   "camel_example": "aliyun fc POST /2023-03-30/functions/my-func/sessions --region cn-hangzhou --qualifier aliasName1 --header \"Content-Type=application/json\" --body \"example-string\"",
   "cmd_full_name": "fc create-session",
   "cmd_name": "create-session",
+  "components": {
+    "schemas": {
+      "CreateSessionInput": {
+        "description_en": "The parameters for creating a session",
+        "description_zh": "创建会话的参数",
+        "properties": {
+          "allowInternetAccess": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "disableSessionIdReuse": {
+            "description_en": "Default value: False. This indicates that after a session with a specific SessionID expires, you can send requests with the same SessionID. The system treats it as a new session and binds it to a new instance. If set to True, the SessionID cannot be reused after the session expires",
+            "description_zh": "默认值 False，表示在 SessionID 会话过期后，可携带相同SessionID继续发起请求，系统将视为新会话绑定新实例。当配置为 True，表示在 SessionID 会话过期后，不可复用 SessionID",
+            "example": "false",
+            "title": "默认值 False，表示在 SessionID 会话过期后，可携带相同SessionID继续发起请求，系统将视为新会话绑定新实例。当配置为 True，表示在 SessionID 会话过期后，不可复用 SessionID。",
+            "type": "boolean"
+          },
+          "enableAutoPause": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "enableAutoResume": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "juiceFsConfig": {
+            "$ref": "#/components/schemas/JuiceFsConfig",
+            "description_en": "",
+            "description_zh": "JuiceFs 挂载配置",
+            "title": "JuiceFs 挂载配置"
+          },
+          "nasConfig": {
+            "$ref": "#/components/schemas/NASConfig",
+            "description_en": "The NAS configuration. After this parameter is configured, instances associated with the session can access the specified NAS resources",
+            "description_zh": "NAS配置，配置后Session关联的实例可以访问指定NAS资源"
+          },
+          "network": {
+            "$ref": "#/components/schemas/CreateSessionNetworkConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "ossMountConfig": {
+            "$ref": "#/components/schemas/OSSMountConfig",
+            "description_en": "The OSS mount configuration. After this parameter is configured, instances associated with the session can access the specified OSS resources",
+            "description_zh": "OSS配置，配置后Session关联的实例可以访问指定OSS资源"
+          },
+          "polarFsConfig": {
+            "$ref": "#/components/schemas/PolarFsConfig",
+            "description_en": "The PolarFs configuration. After this parameter is configured, instances associated with the session can access the specified PolarFs resources",
+            "description_zh": "PolarFs配置，配置后Session关联的实例可以访问指定PolarFs资源"
+          },
+          "sessionId": {
+            "description_en": "The custom session ID. If not specified, the server generates one. If specified, this value is used as the session ID. This parameter applies only to the HEADER_FIELD affinity mode. Format: the length is limited to [0,64]. The first character must be from a-zA-Z0-9_. Subsequent characters can be from a-zA-Z0-9_-",
+            "description_zh": "可自定义会话ID。不配置时由服务端生成。若配置则将此配置作为会话ID。仅适用于HEADER_FIELD亲和模式，\n格式规范：长度限制[0,64]，仅以 a-zA-Z0-9_ 字符做首字符，非首字符可为 a-zA-Z0-9_-",
+            "example": "custom-test-session-id",
+            "maxLength": 64,
+            "minLength": 0,
+            "title": "可自定义会话ID。不配置时由服务端生成。若配置则将此配置作为会话ID。仅适用于HEADER_FIELD亲和模式。",
+            "type": "string"
+          },
+          "sessionIdleTimeoutInSeconds": {
+            "description_en": "The session idle timeout",
+            "description_zh": "Session 闲置过期时间",
+            "example": "1800",
+            "format": "int64",
+            "title": "Session 闲置过期时间",
+            "type": "integer"
+          },
+          "sessionTTLInSeconds": {
+            "description_en": "The session lifetime",
+            "description_zh": "Session生命周期",
+            "example": "21600",
+            "format": "int64",
+            "title": "Session生命周期",
+            "type": "integer"
+          }
+        },
+        "title": "创建会话的参数",
+        "type": "object"
+      },
+      "CreateSessionNetworkConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "allowOut": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "allowPublicTraffic": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "denyOut": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maskRequestHost": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "JuiceFsConfig": {
+        "description_en": "Specifies the configuration for JuiceFS",
+        "description_zh": "JuiceFs 配置",
+        "properties": {
+          "envs": {
+            "additionalProperties": {
+              "description_en": "The value of the environment variable",
+              "description_zh": "",
+              "type": "string"
+            },
+            "description_en": "A map of environment variables (key-value pairs) to set for the JuiceFS client",
+            "description_zh": "自定义环境变量",
+            "title": "自定义环境变量",
+            "type": "object"
+          },
+          "mountPoints": {
+            "description_en": "An array of JuiceFsMountConfig objects, each specifying the configuration for a mount point",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/JuiceFsMountConfig",
+              "description_en": "The configuration for a single mount point",
+              "description_zh": ""
+            },
+            "type": "array"
+          }
+        },
+        "title": "JuiceFs 配置",
+        "type": "object"
+      },
+      "JuiceFsMountConfig": {
+        "description_en": "Configuration for mounting a JuiceFS volume",
+        "description_zh": "",
+        "properties": {
+          "args": {
+            "description_en": "An array of strings containing additional command-line arguments for the mount command. For example, use these arguments to set cache sizes or other performance-tuning options",
+            "description_zh": "",
+            "items": {
+              "description_en": "A single command-line argument or option string",
+              "description_zh": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mountDir": {
+            "description_en": "The path within the function's local filesystem to mount the volume. For example, /mnt/data. This parameter is required",
+            "description_zh": "挂载到函数上的目录",
+            "title": "挂载到函数上的目录",
+            "type": "string"
+          },
+          "remoteDir": {
+            "description_en": "The subdirectory within the JuiceFS volume to mount. If not specified, the root of the volume is mounted",
+            "description_zh": "JuiceFs 远端目录",
+            "title": "JuiceFs 远端目录",
+            "type": "string"
+          },
+          "token": {
+            "description_en": "The authentication token to access the JuiceFS volume",
+            "description_zh": "token 信息",
+            "title": "token 信息",
+            "type": "string"
+          },
+          "volumeName": {
+            "description_en": "The name of the JuiceFS volume to mount. This parameter is required",
+            "description_zh": "JuiceFs 名称",
+            "title": "JuiceFs 名称",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NASConfig": {
+        "description_en": "The information about the configurations of the File Storage NAS (NAS) file system",
+        "description_zh": "NAS配置",
+        "properties": {
+          "groupId": {
+            "description_en": "The group ID",
+            "description_zh": "群组ID",
+            "example": "100",
+            "format": "int32",
+            "required": false,
+            "title": "群组ID。",
+            "type": "integer"
+          },
+          "mountPoints": {
+            "description_en": "The mount targets",
+            "description_zh": "挂载点列表",
+            "items": {
+              "$ref": "#/components/schemas/NASMountConfig",
+              "description_en": "The information about the mount target",
+              "description_zh": "挂载点信息"
+            },
+            "maxItems": 5,
+            "required": false,
+            "title": "挂载点列表。",
+            "type": "array"
+          },
+          "userId": {
+            "description_en": "The account ID",
+            "description_zh": "账号ID",
+            "example": "100",
+            "format": "int32",
+            "required": false,
+            "title": "账号ID。",
+            "type": "integer"
+          }
+        },
+        "title": "NAS配置",
+        "type": "object"
+      },
+      "NASMountConfig": {
+        "description_en": "The information about the File Storage NAS (NAS) mount targets",
+        "description_zh": "NAS挂载点列表",
+        "properties": {
+          "enableTLS": {
+            "description_en": "Specifies whether to use the Transport Layer Security (TLS) protocol to secure data transmission. Note: Only General-purpose NAS supports transmission encryption",
+            "description_zh": "使用传输加密方式挂载。 说明：仅通用型NAS支持传输加密",
+            "example": "true",
+            "required": false,
+            "title": "使用传输加密方式挂载。 说明：仅通用型NAS支持传输加密",
+            "type": "boolean"
+          },
+          "mountDir": {
+            "description_en": "The local mount directory",
+            "description_zh": "本地挂载目录",
+            "example": "/home/test",
+            "maxLength": 64,
+            "required": false,
+            "title": "本地挂载目录。",
+            "type": "string"
+          },
+          "serverAddr": {
+            "description_en": "The address of a NAS server",
+            "description_zh": "NAS服务器地址",
+            "example": "***-uni85.cn-hangzhou.nas.com:/",
+            "maxLength": 128,
+            "required": false,
+            "title": "NAS服务器地址。",
+            "type": "string"
+          }
+        },
+        "title": "NAS挂载点列表",
+        "type": "object"
+      },
+      "OSSMountConfig": {
+        "description_en": "The mount configurations of Object Storage Service (OSS)",
+        "description_zh": "OSS挂载配置",
+        "properties": {
+          "mountPoints": {
+            "description_en": "The OSS mount targets",
+            "description_zh": "OSS挂载点列表",
+            "items": {
+              "$ref": "#/components/schemas/OSSMountPoint",
+              "description_en": "The configurations of the OSS mount target",
+              "description_zh": "OSS挂载点配置"
+            },
+            "maxItems": 5,
+            "required": false,
+            "title": "OSS挂载点配置。",
+            "type": "array"
+          }
+        },
+        "title": "OSS挂载配置",
+        "type": "object"
+      },
+      "OSSMountPoint": {
+        "description_en": "OSS mount target configurations",
+        "description_zh": "OSS挂载点配置",
+        "properties": {
+          "bucketName": {
+            "description_en": "The OSS bucket that you want to mount",
+            "description_zh": "挂载的OSS Bucket",
+            "example": "my-bucket",
+            "maxLength": 64,
+            "minLength": 3,
+            "required": false,
+            "title": "挂载的OSS Bucket。",
+            "type": "string"
+          },
+          "bucketPath": {
+            "description_en": "The path of the mounted OSS bucket",
+            "description_zh": "挂载的OSS Bucket路径",
+            "example": "/my-dir",
+            "maxLength": 128,
+            "required": false,
+            "title": "挂载的OSS Bucket路径。",
+            "type": "string"
+          },
+          "endpoint": {
+            "description_en": "The OSS endpoint",
+            "description_zh": "OSS访问地址",
+            "example": "http://oss-cn-shanghai.aliyuncs.com",
+            "maxLength": 128,
+            "required": false,
+            "title": "OSS访问地址。",
+            "type": "string"
+          },
+          "mountDir": {
+            "description_en": "The mount directory",
+            "description_zh": "挂载目录",
+            "example": "/mnt/dir",
+            "maxLength": 64,
+            "minLength": 2,
+            "required": false,
+            "title": "挂载目录。",
+            "type": "string"
+          },
+          "readOnly": {
+            "description_en": "Specifies whether it is read-only",
+            "description_zh": "是否只读",
+            "example": "true",
+            "required": false,
+            "title": "是否只读。",
+            "type": "boolean"
+          }
+        },
+        "title": "OSS挂载点配置",
+        "type": "object"
+      },
+      "PolarFsConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "groupId": {
+            "description_en": "The group ID",
+            "description_zh": "群组ID",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          },
+          "mountPoints": {
+            "description_en": "The mount points",
+            "description_zh": "挂载点列表",
+            "items": {
+              "$ref": "#/components/schemas/PolarFsMountConfig",
+              "description_en": "挂载点信息",
+              "description_zh": "挂载点信息"
+            },
+            "type": "array"
+          },
+          "userId": {
+            "description_en": "The account ID",
+            "description_zh": "账号ID",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PolarFsMountConfig": {
+        "description_en": "Specifies the configuration for mounting a PolarFS file system",
+        "description_zh": "",
+        "properties": {
+          "instanceId": {
+            "description_en": "The ID of the PolarFS file system instance to mount",
+            "description_zh": "",
+            "type": "string"
+          },
+          "mountDir": {
+            "description_en": "The local mount directory in the function's runtime environment",
+            "description_zh": "",
+            "type": "string"
+          },
+          "readOnly": {
+            "description_en": "Specifies whether the file system is mounted as read-only. If `true`, write operations are prohibited",
+            "description_zh": "只读挂载",
+            "title": "只读挂载",
+            "type": "boolean"
+          },
+          "remoteDir": {
+            "description_en": "The directory within the PolarFS file system to mount",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Session": {
+        "description_en": "The session information",
+        "description_zh": "会话信息",
+        "properties": {
+          "allowInternetAccess": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "containerId": {
+            "description_en": "The instance ID of the function associated with the session",
+            "description_zh": "Session关联的函数实例ID",
+            "example": "c-68999e02-16a1955c-d2a03d1ccs",
+            "title": "Session关联的函数实例ID",
+            "type": "string"
+          },
+          "createdTime": {
+            "description_en": "The time when the session was created",
+            "description_zh": "Session 的创建时间",
+            "example": "2025-04-01T08:15:27Z",
+            "title": "Session 的创建时间",
+            "type": "string"
+          },
+          "disableSessionIdReuse": {
+            "description_en": "Specifies whether to disable session ID reuse after the session expires. Valid values:\nFalse: After the session expires, you can use the same session ID to initiate requests. The system treats it as a new session and binds it to a new instance.\nTrue: After the session expires, the session ID cannot be reused.\n\nDefault value: False",
+            "description_zh": "默认值 False，表示在 SessionID 会话过期后，可携带相同SessionID继续发起请求，系统将视为新会话绑定新实例。当配置为 True，表示在 SessionID 会话过期后，不可复用 SessionID",
+            "example": "false",
+            "title": "默认值 False，表示在 SessionID 会话过期后，可携带相同SessionID继续发起请求，系统将视为新会话绑定新实例。当配置为 True，表示在 SessionID 会话过期后，不可复用 SessionID。",
+            "type": "boolean"
+          },
+          "enableAutoPause": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "enableAutoResume": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "functionName": {
+            "description_en": "The name of the function to which the session belongs",
+            "description_zh": "Session所属函数名称",
+            "example": "functionName1",
+            "title": "Session所属函数名称",
+            "type": "string"
+          },
+          "juiceFsConfig": {
+            "$ref": "#/components/schemas/JuiceFsConfig",
+            "description_en": "",
+            "description_zh": "JuiceFs 挂载配置",
+            "title": "JuiceFs 挂载配置"
+          },
+          "lastModifiedTime": {
+            "description_en": "The time when the session was last updated",
+            "description_zh": "Session上一次被更新的时间",
+            "example": "2025-04-01T18:15:27Z",
+            "title": "Session上一次被更新的时间。",
+            "type": "string"
+          },
+          "nasConfig": {
+            "$ref": "#/components/schemas/NASConfig",
+            "description_en": "The NAS configuration. After configuration, the instance associated with the session can access the specified NAS resource",
+            "description_zh": "NAS配置，配置后Session关联的实例可以访问指定NAS资源"
+          },
+          "network": {
+            "$ref": "#/components/schemas/CreateSessionNetworkConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "ossMountConfig": {
+            "$ref": "#/components/schemas/OSSMountConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "polarFsConfig": {
+            "$ref": "#/components/schemas/PolarFsConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "qualifier": {
+            "description_en": "The qualifier passed when the customer created the session. If not specified, the default value is LATEST",
+            "description_zh": "客户创建 Session 时传入的 Qualifier，如未传则为默认值 LATEST",
+            "example": "AliasName1",
+            "title": "客户创建 Session 时传入的 Qualifier，如未传则为默认值 LATEST",
+            "type": "string"
+          },
+          "sessionAffinityType": {
+            "description_en": "The session affinity type",
+            "description_zh": "会话亲和类型",
+            "example": "HEADER_FIELD",
+            "title": "会话亲和类型",
+            "type": "string"
+          },
+          "sessionId": {
+            "description_en": "The unique identifier of the function session",
+            "description_zh": "函数会话唯一标识",
+            "example": "81f70ae156904eb9b7d43e12f511fe58",
+            "title": "函数会话唯一标识",
+            "type": "string"
+          },
+          "sessionIdleTimeoutInSeconds": {
+            "description_en": "The session idle timeout",
+            "description_zh": "Session 闲置过期时间",
+            "example": "1800",
+            "format": "int64",
+            "title": "Session 闲置过期时间",
+            "type": "integer"
+          },
+          "sessionStatus": {
+            "description_en": "The session status. Valid values:\nActive: The session is valid.\nExpired: The session has expired",
+            "description_zh": "Session 状态：Active 代表 Session 有效，Expired代表 Session已过期",
+            "example": "Active",
+            "title": "Session 状态：Active 代表 Session 有效，Expired代表 Session已过期",
+            "type": "string"
+          },
+          "sessionTTLInSeconds": {
+            "description_en": "The maximum session lifetime",
+            "description_zh": "Session 生命周期最大值",
+            "example": "21600",
+            "format": "int64",
+            "title": "Session 生命周期最大值",
+            "type": "integer"
+          },
+          "trafficAccessToken": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "title": "会话信息",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates an explicit session resource. The system automatically generates a unique SessionID, pre-allocates a function instance, and binds it to the session. You can specify TTL and IdleTimeout. This operation applies to the HEADER_FIELD or GENERATED_COOKIE affinity types, enabling session warm-up and configuration initialization. After the call, you can include the session in InvokeFunction requests for request routing",
   "description_zh": "创建一个显式会话资源。系统自动生成唯一 SessionID，预分配函数实例并绑定会话，支持指定 TTL 和 IdleTimeout。适用于 HEADER_FIELD 或 GENERATED_COOKIE 亲和类型，实现会话预热与配置初始化，调用后即可在 InvokeFunction 请求携带，用于路由请求",
@@ -121,6 +653,7 @@
                 "example": "/home/test",
                 "help_en": "The local mount directory",
                 "help_zh": "本地挂载目录",
+                "max_length": "64",
                 "name": "mount_dir",
                 "options": [
                   "--mount-dir"
@@ -133,6 +666,7 @@
                 "example": "***-uni85.cn-hangzhou.nas.com:/",
                 "help_en": "The address of a NAS server",
                 "help_zh": "NAS服务器地址",
+                "max_length": "128",
                 "name": "server_addr",
                 "options": [
                   "--server-addr"
@@ -183,6 +717,8 @@
       "help_en": "The custom session ID. If not specified, the server generates one. If specified, this value is used as the session ID. This parameter applies only to the HEADER_FIELD affinity mode. Format: the length is limited to [0,64]. The first character must be from a-zA-Z0-9_. Subsequent characters can be from a-zA-Z0-9_-",
       "help_zh": "可自定义会话ID。不配置时由服务端生成。若配置则将此配置作为会话ID。仅适用于HEADER_FIELD亲和模式，\n格式规范：长度限制[0,64]，仅以 a-zA-Z0-9_ 字符做首字符，非首字符可为 a-zA-Z0-9_-",
       "location": "body",
+      "max_length": "64",
+      "min_length": "0",
       "name": "session_id",
       "options": [
         "--session-id"
@@ -213,6 +749,8 @@
                 "example": "my-bucket",
                 "help_en": "The OSS bucket that you want to mount",
                 "help_zh": "挂载的OSS Bucket",
+                "max_length": "64",
+                "min_length": "3",
                 "name": "bucket_name",
                 "options": [
                   "--bucket-name"
@@ -225,6 +763,7 @@
                 "example": "/my-dir",
                 "help_en": "The path of the mounted OSS bucket",
                 "help_zh": "挂载的OSS Bucket路径",
+                "max_length": "128",
                 "name": "bucket_path",
                 "options": [
                   "--bucket-path"
@@ -237,6 +776,7 @@
                 "example": "http://oss-cn-shanghai.aliyuncs.com",
                 "help_en": "The OSS endpoint",
                 "help_zh": "OSS访问地址",
+                "max_length": "128",
                 "name": "endpoint",
                 "options": [
                   "--endpoint"
@@ -249,6 +789,8 @@
                 "example": "/mnt/dir",
                 "help_en": "The mount directory",
                 "help_zh": "挂载目录",
+                "max_length": "64",
+                "min_length": "2",
                 "name": "mount_dir",
                 "options": [
                   "--mount-dir"
@@ -598,6 +1140,17 @@
   "pathPattern": "/2023-03-30/functions/[functionName]/sessions",
   "product_code": "FC",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "$ref": "#/components/schemas/Session",
+        "description_en": "The session resource information",
+        "description_zh": "会话资源信息",
+        "title_en": "",
+        "title_zh": "会话资源信息"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The session configuration",

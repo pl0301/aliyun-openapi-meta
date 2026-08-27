@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cpfs-099394bd928c****",
       "help_en": "The ID of the file system",
       "help_zh": "文件系统ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "df-194433a5be31****",
       "help_en": "The ID of the data flow",
       "help_zh": "数据流动ID",
@@ -47,12 +49,15 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "element": {
         "fields": [
           {
             "example": "/prefix1/prefix2/",
             "help_en": "The auto-refresh directory. CPFS automatically checks whether data in this directory on the source has been updated and imports the updated data.\n\nLimits:\n\nThe path must be 2 to 1,024 characters in length.\nThe path must be encoded in UTF-8.\nThe path must start and end with a forward slash (/).\n\nThe directory must already exist in CPFS and must be in a fileset that has data flow enabled",
             "help_zh": "自动更新目录，CPFS仅自动检查该目录下的源端数据是否发生更新并自动导入更新的数据。\n\n限制：\n\n长度为2~1024个字符。\n使用UTF-8编码。\n必须以正斜线（/）开头和结尾。\n\n该目录必须是CPFS上的已有目录，且必须位于开启了数据流动的Fileset中",
+            "max_length": "1024",
+            "min_length": "2",
             "name": "refresh_path",
             "options": [
               "--refresh-path"
@@ -77,6 +82,10 @@
       "type": "array"
     },
     {
+      "enum": [
+        "None",
+        "ImportChanged"
+      ],
       "example": "None",
       "help_en": "The auto-refresh policy. This policy determines how data updates from the source are imported to CPFS. Valid values:\n\nNone: Data updates from the source are not automatically imported to CPFS. You can use a data flow task to import data updates from the source.\nImportChanged: Data updates from the source are automatically imported to CPFS",
       "help_zh": "自动更新策略，源端数据更新以后，数据更新导入到CPFS的策略。包括：\n\nNone：源端的数据更新不自动导入CPFS，用户可通过数据流动任务导入源端的数据更新。\nImportChanged：源端的数据更新自动导入CPFS",
@@ -94,6 +103,8 @@
       "help_en": "The auto-refresh interval. CPFS checks the directory for data updates at this interval. If data updates exist, an auto-refresh task is started. Unit: minutes.\n\nValid values: 10 to 525600. Default value: 10",
       "help_zh": "自动更新的间隔时间。每隔该时间间隔，CPFS会检查目录内是否存在数据更新，如果有数据更新，启动自动更新任务。单位为分钟。\n\n取值范围：10~525600。默认值：10",
       "location": "query",
+      "maximum": "525600",
+      "minimum": "5",
       "name": "auto_refresh_interval",
       "options": [
         "--auto-refresh-interval"
@@ -120,6 +131,8 @@
       "help_en": "The client token that is used to ensure the idempotence of the request. You can use the client to generate the token, but make sure that the token is unique among different requests.\n\nThe token can contain only ASCII characters and cannot exceed 64 characters in length. For more information, see https://help.aliyun.com/document_detail/25693.html.\n\nIf you do not specify this parameter, the system automatically uses the RequestId of the API request as the ClientToken. The RequestId may differ for each API request",
       "help_zh": "保证请求幂等性，从您的客户端生成一个参数值，确保不同的请求间该参数值唯一。\n\nClientToken只支持ASCII字符，且不能超过64个字符。更多信息，请参见https://help.aliyun.com/document_detail/25693.html。\n\n若用户未指定，则系统自动使用API请求的RequestId作为ClientToken标识。每次API请求的RequestId可能不一样",
       "location": "query",
+      "max_length": "64",
+      "min_length": "1",
       "name": "client_token",
       "options": [
         "--client-token"
@@ -131,5 +144,22 @@
   ],
   "pathPattern": "",
   "product_code": "NAS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "98696EF0-1607-4E9D-B01D-F20930B6****",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

@@ -19,6 +19,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "immdoctest",
       "help_en": "The project name",
       "help_zh": "项目名称",
@@ -32,6 +33,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "oss://bucket1/object",
       "help_en": "The storage location of the source data.\n\nThe OSS address follows the format `oss://bucket/object`, where bucket is the name of an OSS bucket in the same region as the current project, and object is the file path",
       "help_zh": "源数据的存储位置。\n\nOSS地址规则为`oss://bucket/object`，其中bucket为和当前项目处于同一区域的OSS Bucket名称，object为文件路径",
@@ -58,6 +60,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "oss://bucket1/imm-format-convert-tgt/session123/",
       "help_en": "The destination location for the converted output. Set TgtUri and SrcUri to the same OSS bucket for easier permission management. \n\nThe generated target files are persistently stored. Set this parameter to the /imm-format-convert-tgt/${name} path under the OSS bucket for easier maintenance.\n\nYou can manually delete the converted target files. If you do not delete them, they are retained for long-term use but consume storage space. To automatically delete target files, configure OSS lifecycle rules (https://help.aliyun.com/document_detail/31904.html) under the /imm-format-convert-tgt prefix",
       "help_zh": "转换后输出内容的目标位置，建议TgtUri和SrcUri在同一个OSS Bucket中，便于权限管理。 \n\n生成的目标文件会持久化保存，推荐设置为OSS Bucket下的/imm-format-convert-tgt/${name}路径，便于维护管理。\n\n您可以主动删除转换后的目标文件，如果不主动删除则会长期保留以备使用，但是会占用存储空间。如果希望自动的删除目标文件，您也可以在/imm-format-convert-tgt前缀下配置OSS的生命周期 (https://help.aliyun.com/document_detail/31904.html)",
@@ -346,5 +349,53 @@
   ],
   "pathPattern": "",
   "product_code": "imm",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "CreateTime": {
+            "description_en": "The time when the task was created",
+            "description_zh": "任务的创建时间",
+            "example": "2020-11-11T06:51:17.5Z",
+            "type": "string"
+          },
+          "Percent": {
+            "description_en": "The task progress percentage. Currently, only two values are returned: 0 and 100.\n\nThis parameter returns 100 only when the conversion succeeds. In all other cases, the value is 0",
+            "description_zh": "任务进度的百分比。当前只有0和100两个结果。\n\n只有当转换成功时，此参数的返回值才为100，其他情况均为0",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "当次请求的Request ID",
+            "example": "FF3B7D81-66AE-47E0-BF69-157DCF187514",
+            "type": "string"
+          },
+          "Status": {
+            "description_en": "The task execution status. Valid values:\n\nRunning: The task is running.\nFinished: The task is complete and the conversion succeeded.\nFailed: The task is complete and the conversion failed",
+            "description_zh": "任务运行状态。包括如下选项：\n\nRunning：任务运行中。\nFinished：任务执行完成，转换成功。\nFailed：任务执行完成，转换失败",
+            "example": "Running",
+            "type": "string"
+          },
+          "TaskId": {
+            "description_en": "The task ID.\n\nYou can obtain the TaskId of an asynchronous document conversion task from the task query tab of the corresponding project in the Intelligent Media Management (IMM) console",
+            "description_zh": "任务ID。\n\n异步文档格式转换任务的TaskId可以通过智能媒体管理控制台对应项目的任务查询页签获取",
+            "example": "formatconvert-00bec802-073a-4b61-ba3b-39bc2fdd169b",
+            "type": "string"
+          },
+          "TgtLoc": {
+            "description_en": "The location of the output target file. This value is the same as the TgtUri request parameter",
+            "description_zh": "输出目标文件的位置，和请求参数中的TgtUri相同",
+            "example": "oss://bucket1/imm-format-convert-tgt/session123/",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

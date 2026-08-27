@@ -2,6 +2,269 @@
   "camel_example": "aliyun imm GenerateWebofficeToken --region cn-hangzhou --User 'example-string' --ProjectName 'test-project' --UserData '{\"id\":\"test-id\",\"name\":\"test-name\"}' --CredentialConfig 'example-string' --SourceURI 'oss://test-bucket/test-object.docx' --Referer 0 --Hidecmb false --Filename 'test-Object.pptx' --PreviewPages 5 --ExternalUploaded false --Notification 'example-string' --CachePreview true --Permission 'example-string' --NotifyTopicName 'test-topic' --Watermark 'example-string' --Password 123456",
   "cmd_full_name": "imm generate-weboffice-token",
   "cmd_name": "generate-weboffice-token",
+  "components": {
+    "schemas": {
+      "CredentialConfig": {
+        "description_en": "The authorization chain settings. In most cases, this parameter is left empty.\n\nIf Account A is used to call an API operation of Intelligent Media Management (IMM) to process Object Storage Service (OSS) data in Account B, you must set the ServiceRole parameter to a role in Account A, and set the Chain parameter to a role in Account B",
+        "description_zh": "链式授权配置对象，一般留空即可。\n假设当前使用A账号调用IMM接口处理B账号中的OSS数据。\nServiceRole参数应配置A账号中的角色，Chain参数应设置B账号准备好的角色，通过上述配置完成后，就可以使用A账号调用IMM接口处理B账号中的OSS数据",
+        "properties": {
+          "Chain": {
+            "description_en": "The authorization chains. All roles in the array must have the `sts:AssumeRole` permission. You need to only grant other permissions, such as read and write permissions on OSS, to the last role in the array. You can grant permissions in the RAM console",
+            "description_zh": "需要传递授权的链列表，数组中的所有角色都需要赋予访问 `sts:AssumeRole` 权限。\n只有数组中的最后一个角色需要额外配置需要真正访问的其他权限，比如OSS的读写权限，可以通过RAM控制台进行授权操作",
+            "items": {
+              "description_en": "The authorization chain",
+              "description_zh": "授权链对象",
+              "properties": {
+                "AssumeRoleFor": {
+                  "description_en": "The ID of the account that you use to grant permissions",
+                  "description_zh": "提供授权的账号ID",
+                  "example": "10232100246xxxxx",
+                  "title": "授权对象",
+                  "type": "string"
+                },
+                "Role": {
+                  "description_en": "The RAM role that can be assumed",
+                  "description_zh": "允许扮演的RAM角色",
+                  "example": "AliyunOSSRole",
+                  "title": "授权角色",
+                  "type": "string"
+                },
+                "RoleType": {
+                  "description_en": "The role type. Valid values:\n\nuser: Alibaba Cloud account.\nservice: Alibaba Cloud service",
+                  "description_zh": "角色类型，可选值如下。\nuser：阿里云账号。\nservice：阿里云服务",
+                  "example": "user",
+                  "title": "授权方类型",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "授权链",
+            "type": "array"
+          },
+          "Policy": {
+            "description_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+            "description_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+            "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+            "title": "权限策略",
+            "type": "string"
+          },
+          "ServiceRole": {
+            "description_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+            "description_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+            "example": "AliyunSTSAssumeForIMMServiceRole",
+            "title": "服务角色",
+            "type": "string"
+          }
+        },
+        "title": "链式授权配置",
+        "type": "object"
+      },
+      "MNS": {
+        "description_en": "Message notification parameters for ApsaraMQ for MNS",
+        "description_zh": "轻量消息队列（原 MNS）消息通知参数",
+        "properties": {
+          "TopicName": {
+            "description_en": "Specifies the name of the ApsaraMQ for MNS topic, which can be found in the topic list for the current region in the left-side navigation pane of the ApsaraMQ for MNS console (https://mns.console.aliyun.com/). This parameter is required for ApsaraMQ for MNS message notification",
+            "description_zh": "轻量消息队列SMQ（原 MNS）主题名称。可登录轻量消息队列SMQ（原MNS）控制台 (https://mns.console.aliyun.com/),在左侧导航栏中点击当前地域下主题列表中获取。如果需使用轻量消息队列（原 MNS）做消息通知，该参数必填",
+            "example": "topic1",
+            "title": "TopicName",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "Notification": {
+        "description_en": "The notification object. It supports multiple message middleware. For more information about the message format, see [Asynchronous notification message format]（https://help.aliyun.com/document_detail/2743997.html）. Choose one of the following methods to receive messages:\n\nActivate and integrate with the [EventBridge]（https://help.aliyun.com/document_detail/161886.html） service in the same region as Intelligent Media Management (IMM) to receive task notifications promptly. For more information, see [IMM events]（https://help.aliyun.com/document_detail/205730.html）.\n\nActivate the [MNS]（https://help.aliyun.com/document_detail/27412.html） service in the same region as IMM and configure a subscription.\n\nActivate the [RocketMQ]（https://help.aliyun.com/document_detail/29530.html） service in the same region as IMM, and create a RocketMQ 4.0 instance, Topic, and Group.\n\n\n<notice>\n\n  The Notification object does not support custom webhook addresses.\n\n</notice>",
+        "description_zh": "消息通知对象，支持多种消息中间件，消息格式详情请见[异步通知消息格式]（https://help.aliyun.com/document_detail/2743997.html），请选择其中一种方式接收消息，使用方式如下所示：\n在与智能媒体管理相同的地域下开通并接入[事件总线EventBridge]（https://help.aliyun.com/document_detail/161886.html）服务，及时获取任务信息通知。更多信息，请参见[智能媒体管理IMM事件]（https://help.aliyun.com/document_detail/205730.html）。\n在与智能媒体管理相同的地域下开通[MNS]（https://help.aliyun.com/document_detail/27412.html）服务，并配置订阅关系。\n在与智能媒体管理相同的地域下开通[RocketMQ]（https://help.aliyun.com/document_detail/29530.html）服务，并创建RocketMQ 4.0实例、Topic、Group。\n<notice>Notification不支持自定义回调地址。></notice>",
+        "properties": {
+          "ExtendedMessageURI": {
+            "description_en": "Use an Object Storage Service (OSS) file to receive task notifications. If you provide the URI of this file, detailed task execution information is written to the file in a JSON structure. Normally, you receive notifications through [EventBridge]（https://help.aliyun.com/document_detail/161886.html）, [MNS]（https://help.aliyun.com/document_detail/27412.html）, or [RocketMQ]（https://help.aliyun.com/document_detail/29530.html）. However, some tasks generate large amounts of information, such as archive previews or decompression tasks. For these tasks, provide this file to get the complete execution results.\n\nThe OSS URI format is oss\\://${Bucket}/${Object}. `${Bucket}` is the name of an OSS bucket in the same region as the current project. `${Object}` is the full path of the file, including the file name extension.\n\n<notice>\n\nThis file is not a notification method. It only serves as a medium to receive detailed task execution information. Task status is sent through standard message notifications. This file contains only the detailed execution information.\n\n</notice>",
+            "description_zh": "使用OSS文件接受任务消息通知。提供该文件地址后，任务执行的具体信息会以JSON结构写入到该文件中。一般情况下，您只需要通过[事件总线EventBridge]（https://help.aliyun.com/document_detail/161886.html）服务、[MNS]（https://help.aliyun.com/document_detail/27412.html）服务或[RocketMQ]（https://help.aliyun.com/document_detail/29530.html）服务接受消息通知，但部分任务执行的信息会比较大（例如压缩包文件预览、解压任务），您可以通过提供该文件获取具体的任务执行结果。\n\nOSS地址规则为oss://${Bucket}/${Object}，其中`${Bucket}`为和当前项目处于同一地域(Region)的OSS Bucket名称，`${Object}`为包含文件扩展名的文件完整路径。\n\n\n<notice>该文件并不作为消息通知的方式，仅作为接受任务执行具体信息的载体。任务的状态信息会通过消息通知的方式发送，该文件仅包含任务执行的具体信息。 \n</notice>",
+            "example": "oss://test-bucket/test-object.json",
+            "title": "ExtendedMessageURI",
+            "type": "string"
+          },
+          "MNS": {
+            "$ref": "#/components/schemas/MNS",
+            "description_en": "The MNS notification parameter object",
+            "description_zh": "MNS通知参数对象",
+            "title": "MNS"
+          },
+          "RocketMQ": {
+            "$ref": "#/components/schemas/RocketMQ",
+            "description_en": "The RocketMQ notification parameter object",
+            "description_zh": "RocketMQ通知参数对象",
+            "title": "RocketMQ"
+          }
+        },
+        "type": "object"
+      },
+      "RocketMQ": {
+        "description_en": "RocketMQ message notification parameters",
+        "description_zh": "RocketMQ消息通知参数",
+        "properties": {
+          "InstanceId": {
+            "description_en": "The RocketMQ instance ID. Required for RocketMQ message notifications",
+            "description_zh": "RocketMQ实例Id。如果需使用RocketMQ做消息通知，该参数必填",
+            "example": "MQ_INST_11111111111_BYcNy2Nc",
+            "title": "InstanceId",
+            "type": "string"
+          },
+          "TopicName": {
+            "description_en": "The name of the RocketMQ topic. Required for RocketMQ message notifications",
+            "description_zh": "RocketMQ Topic名称。如果需使用RocketMQ做消息通知，该参数必填",
+            "example": "topic1",
+            "title": "TopicName",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "WebofficePermission": {
+        "description_en": "The WebOffice user permissions",
+        "description_zh": "WebOffice用户权限信息",
+        "properties": {
+          "Copy": {
+            "description_en": "Specifies whether the user has the copy permission. Valid values:\n\ntrue\nfalse",
+            "description_zh": "是否有拷贝权限。取值范围如下：\n\ntrue：是。\n\nfalse：否",
+            "example": "false",
+            "title": "拷贝",
+            "type": "boolean"
+          },
+          "Export": {
+            "description_en": "Specifies whether the user has the permission to export the file as a PDF file. Valid values:\n\ntrue: The user has the permission to export the file as a PDF file. If you set this parameter to true, you must set the Print parameter to true.\nfalse: The user does not have the permission to export the file as a PDF file",
+            "description_zh": "是否有导出PDF权限。取值范围如下：\n\ntrue：是，同时需要将Print权限设置为true才可导出。\n\nfalse：否",
+            "example": "false",
+            "title": "导出",
+            "type": "boolean"
+          },
+          "History": {
+            "description_en": "Specifies whether the user has the permission to view historical versions. Valid values:\n\ntrue\nfalse",
+            "description_zh": "是否有查看历史版本权限。取值范围如下：\n\ntrue：是。\n\nfalse：否",
+            "example": "true",
+            "title": "查看历史版本",
+            "type": "boolean"
+          },
+          "Print": {
+            "description_en": "Specifies whether the user has the printing permission. Valid values:\n\ntrue\nfalse",
+            "description_zh": "是否有打印权限。取值范围如下：\n\ntrue：是。\n\nfalse：否",
+            "example": "false",
+            "title": "打印",
+            "type": "boolean"
+          },
+          "Readonly": {
+            "description_en": "Specifies whether the user has read-only access to the file. Valid values:\n\ntrue\nfalse",
+            "description_zh": "是否文件为预览模式。取值范围如下：\n\ntrue：是，文件为预览模式。\n\nfalse：否，文件为编辑模式",
+            "example": "false",
+            "title": "只读模式",
+            "type": "boolean"
+          },
+          "Rename": {
+            "description_en": "Specifies whether the user has the permission to rename a file. Valid values:\n\ntrue\nfalse\n\nYou can query the operation information only based a notification sent to Simple Message Queue (SMQ). A rename event is included in the notification",
+            "description_zh": "是否有重命名文件权限。取值范围如下：\n\ntrue：是。\n\nfalse：否。\n\n只提供消息通知功能，重命名事件会发送到MNS中",
+            "example": "true",
+            "title": "重命名",
+            "type": "boolean"
+          }
+        },
+        "title": "Weboffice 用户权限",
+        "type": "object"
+      },
+      "WebofficeUser": {
+        "description_en": "The WebOffice user information",
+        "description_zh": "Weboffice用户信息",
+        "properties": {
+          "Avatar": {
+            "description_en": "The custom URL of the avatar picture. The avatar picture is displayed on the WebOffice page",
+            "description_zh": "用户头像URL地址。该字段为自定义，可以传入业务相关的用户头像URL地址，用户信息在WebOffice页面会进行展示",
+            "example": "http://example.com/?id=user1",
+            "title": "头像",
+            "type": "string"
+          },
+          "Id": {
+            "description_en": "The custom user ID. The user ID is displayed on the WebOffice page. A user ID can contain letters and digits and cannot exceed 15 characters in length",
+            "description_zh": "用户Id。该字段为自定义，可以传入业务相关的用户Id，用户信息在WebOffice页面会进行展示。由字母和数字组成，不超过15个字符",
+            "example": "user1",
+            "title": "Id",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The custom username. The username is displayed on the WebOffice page. The username must meet the following requirements:\n\nA username can contain digits, letters, hyphens (-), underscores (_), plus signs (+), forward slashes (/), equal signs (=), and at signs (@).\nA username can contain up to 32 characters",
+            "description_zh": "用户名。该字段为自定义，可以传入业务相关的用户名，用户信息在WebOffice页面会进行展示。命名规则如下：\n\n只能包含数字、大小写字母、短划线（-）、下划线（_）、加号（+）、正斜线（/）、等于号（=）和at（@）。\n\n不能超过32个字符",
+            "example": "test-user1",
+            "title": "名字",
+            "type": "string"
+          }
+        },
+        "title": "Weboffice 用户",
+        "type": "object"
+      },
+      "WebofficeWatermark": {
+        "description_en": "The WebOffice watermark information",
+        "description_zh": "WebOffice水印信息对象",
+        "properties": {
+          "FillStyle": {
+            "description_en": "The color and transparency of the text watermark",
+            "description_zh": "文字水印的颜色和透明度",
+            "example": "rgba(192, 192, 192, 0.6)",
+            "title": "字体颜色",
+            "type": "string"
+          },
+          "Font": {
+            "description_en": "The font of the text watermark",
+            "description_zh": "文字水印的字体信息",
+            "example": "bold 20px Serif",
+            "title": "字体样式",
+            "type": "string"
+          },
+          "Horizontal": {
+            "description_en": "The horizontal spacing of the text watermark. Unit: pixel",
+            "description_zh": "文字水印水平间距，单位为像素（px）",
+            "example": "50",
+            "format": "int64",
+            "title": "水平间距",
+            "type": "integer"
+          },
+          "Rotate": {
+            "description_en": "The rotation of the text watermark. Unit: radian",
+            "description_zh": "文字水印的旋转度，单位为弧度",
+            "example": "-0.7853982",
+            "format": "float",
+            "title": "旋转角度",
+            "type": "number"
+          },
+          "Type": {
+            "description_en": "The watermark type. Valid values:\n\n0: no watermark.\n1: text watermark",
+            "description_zh": "水印类型。取值范围如下：\n\n0：无水印。\n\n1：文字水印",
+            "example": "1",
+            "format": "int64",
+            "title": "水印类型，目前仅支持文字水印，0: 无水印；1: 文字水印",
+            "type": "integer"
+          },
+          "Value": {
+            "description_en": "The watermark text.\n\nThis parameter takes effect only if you set the Type parameter to 1",
+            "description_zh": "文字水印的文字。\n当Type取值为1时，才能设置此参数",
+            "example": "example",
+            "title": "水印文字",
+            "type": "string"
+          },
+          "Vertical": {
+            "description_en": "The vertical spacing of the text watermark. Unit: pixel",
+            "description_zh": "文字水印垂直间距，单位为像素（px）",
+            "example": "100",
+            "format": "int64",
+            "title": "垂直间距",
+            "type": "integer"
+          }
+        },
+        "title": "Weboffice 水印",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the preview and editing credentials for a document",
   "description_zh": "获取文档预览编辑凭证",
@@ -583,5 +846,67 @@
   ],
   "pathPattern": "",
   "product_code": "imm",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The Weboffice access credentials",
+        "description_zh": "Weboffice 访问凭证",
+        "properties": {
+          "AccessToken": {
+            "description_en": "The Weboffice access credential",
+            "description_zh": "Weboffice 访问凭证",
+            "example": "2d73dd5d87524c5e8a194c3eb5********",
+            "title_en": "",
+            "title_zh": "access token",
+            "type": "string"
+          },
+          "AccessTokenExpiredTime": {
+            "description_en": "The expiration time of the access credential. The credential expires in 30 minutes. Format: YYYY-MM-DDTHH:mm:ss",
+            "description_zh": "访问凭证的过期时间。过期时间30分钟。格式为:YYYY-MM-DDTHH:mm:ss",
+            "example": "2021-08-30T13:13:11.347146982Z",
+            "title_en": "",
+            "title_zh": "access token 过期时间",
+            "type": "string"
+          },
+          "RefreshToken": {
+            "description_en": "The Weboffice refresh credential",
+            "description_zh": "Weboffice 刷新凭证",
+            "example": "e374995ec532432bb678074d36********",
+            "title_en": "",
+            "title_zh": "refresh token",
+            "type": "string"
+          },
+          "RefreshTokenExpiredTime": {
+            "description_en": "The expiration time of the refresh credential. The credential expires in 1 day. Format: YYYY-MM-DDTHH:mm:ss",
+            "description_zh": "刷新凭证的过期时间。过期时间 1 天。格式为:YYYY-MM-DDTHH:mm:ss",
+            "example": "2021-08-31T12:43:11.347146982Z",
+            "title_en": "",
+            "title_zh": "refresh token 过期时间",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1759315A-CB33-0A75-A72B-62D7********",
+            "title_en": "",
+            "title_zh": "请求 id",
+            "type": "string"
+          },
+          "WebofficeURL": {
+            "description_en": "The Weboffice entry URL for previewing or editing documents online.\nThis URL cannot be opened directly in a browser. You must use it together with the Weboffice JS-SDK and the access credential (AccessToken) to preview or edit documents. For more information, see [Getting Started]（https://help.aliyun.com/document_detail/468066.html）",
+            "description_zh": "Weboffice 入口 URL。在线预览或者编辑文档。\n无法通过浏览器直接打开，需要配合Weboffice JS-SDK，和访问凭证（AccessToken）一起才可以预览或编辑文档。更多信息，请参见[快速入门]（https://help.aliyun.com/document_detail/468066.html）",
+            "example": "https://office-cn-shanghai.imm.aliyuncs.com/office/s/dd221b2cdb44fb66e9070d1d70a8b9bbb6d6fff7?_w_tokentype=1",
+            "title_en": "",
+            "title_zh": "预览编辑地址",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "文档转换任务",
+        "type": "object"
+      }
+    },
+    "500": {}
+  }
 }

@@ -2,6 +2,119 @@
   "camel_example": "aliyun paistudio POST /api/v1/nodes/lingjunxxxx-mgxxx-xxxx --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"ResourceGroupId\":\"rgaekzbrflewn6jjq\",\"OperationParameters\":\"example-string\",\"Operation\":\"Cordon\"}",
   "cmd_full_name": "paistudio operate-node",
   "cmd_name": "operate-node",
+  "components": {
+    "schemas": {
+      "NodeCordonParameters": {
+        "description_en": "Parameter settings for cordoning a node",
+        "description_zh": "节点禁止调度参数配置",
+        "properties": {
+          "Comment": {
+            "description_en": "User-configurable reason for disabling scheduling  ",
+            "description_zh": "用户可配置禁止调度原因",
+            "example": "this is a comment",
+            "title": "用户可配置禁止调度原因",
+            "type": "string"
+          },
+          "QuotaId": {
+            "description_en": "Quota ID, used when disabling edge zone scheduling in a workspace  ",
+            "description_zh": "Quota Id，在工作空间禁止节点调度时使用",
+            "example": "quota1dkoutl3tj1",
+            "title": "Quota Id，在工作空间禁止节点调度时使用",
+            "type": "string"
+          },
+          "WorkspaceId": {
+            "description_en": "Workspace ID, used when disabling edge zone scheduling in a workspace  ",
+            "description_zh": "Workspace Id，在工作空间禁止节点调度时使用",
+            "example": "12345",
+            "title": "Workspace Id，在工作空间禁止节点调度时使用",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NodeDrainParameters": {
+        "description_en": "Parameters for the node drain operation",
+        "description_zh": "清空节点操作参数",
+        "properties": {
+          "Force": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "PodFromSubProducts": {
+            "description_en": "Delete pods of the specified job types  ",
+            "description_zh": "清空指定任务类型的Pod",
+            "items": {
+              "description_en": "Job Type: dlc/dsw/eas/tensorboard  ",
+              "description_zh": "任务类型：dlc/dsw/eas/tensorboard",
+              "example": "dlc",
+              "title": "任务类型：dlc/dsw/eas/tensorboard",
+              "type": "string"
+            },
+            "title": "清空指定任务类型的Pod",
+            "type": "array"
+          },
+          "PodNames": {
+            "description_en": "Delete specified pods  ",
+            "description_zh": "清空指定Pod",
+            "items": {
+              "description_en": "Pod name  ",
+              "description_zh": "Pod名称",
+              "example": "dlcxxxx-master-0",
+              "title": "Pod名称",
+              "type": "string"
+            },
+            "title": "清空指定Pod",
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "NodeOperationParameters": {
+        "description_en": "Node operation parameter settings",
+        "description_zh": "节点操作参数配置",
+        "properties": {
+          "CordonParameters": {
+            "$ref": "#/components/schemas/NodeCordonParameters",
+            "description_en": "Node cordon parameter settings",
+            "description_zh": "节点禁止调度参数配置"
+          },
+          "DrainParameters": {
+            "$ref": "#/components/schemas/NodeDrainParameters",
+            "description_en": "Node drain task instance parameter settings",
+            "description_zh": "节点驱逐任务实例参数配置"
+          },
+          "UncordonParameters": {
+            "$ref": "#/components/schemas/NodeUncordonParameters",
+            "description_en": "Node uncordon parameter settings",
+            "description_zh": "节点启动调度参数配置"
+          }
+        },
+        "type": "object"
+      },
+      "NodeUncordonParameters": {
+        "description_en": "Parameter settings for uncordoning a node",
+        "description_zh": "节点启动调度参数配置",
+        "properties": {
+          "QuotaId": {
+            "description_en": "Quota ID. You can use this ID when you start a workspace or disable scheduling nodes",
+            "description_zh": "Quota Id，启动工作空间禁止调度节点时使用",
+            "example": "quota1ci8g793pgm",
+            "title": "Quota Id，启动工作空间禁止调度节点时使用",
+            "type": "string"
+          },
+          "WorkspaceId": {
+            "description_en": "The ID of the workspace that contains the node to uncordon",
+            "description_zh": "Workspace Id，启动在工作空间禁止调度的节点时使用",
+            "example": "12345",
+            "title": "Workspace Id，启动在工作空间禁止调度的节点时使用",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Use OperateNode to manage nodes",
   "description_zh": "您可以通过OperateNode对节点进行操作",
@@ -55,6 +168,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Cordon",
+        "Uncordon",
+        "Drain"
+      ],
       "example": "Cordon",
       "help_en": "The operation to perform.\n\nCordon: Disables scheduling on the node.\n\nUncordon: Enables scheduling on the node.\n\nDrain: Evicts pods from the node",
       "help_zh": "操作\nCordon：禁止调度\nUncordon：启动调度\nDrain：驱逐Pod",
@@ -225,6 +343,33 @@
   "pathPattern": "/api/v1/nodes/[NodeId]",
   "product_code": "PaiStudio",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "NodeId": {
+            "description_en": "The node ID",
+            "description_zh": "节点ID",
+            "example": "lingjunxxxx-mgxxx-xxxx",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "Id of the request",
+            "example": "96496E6E-00B4-5F55-80F6-1844FA9E92DC",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

@@ -2,6 +2,44 @@
   "camel_example": "aliyun ossutil api put-symlink --bucket examplebucket --key exampledir/exampleobject/txt --region cn-hangzhou --symlink-target oss.jpg --storage-class example-string --object-acl example-string --forbid-overwrite true",
   "cmd_full_name": "oss put-symlink",
   "cmd_name": "put-symlink",
+  "components": {
+    "schemas": {
+      "ObjectACL": {
+        "default": "default",
+        "description_en": "The access control list (ACL) of the object when it is created in OSS.\n\nValid values:\n\ndefault: The object inherits the ACL of the bucket in which it is stored.\nprivate: The object is a private resource. Only the object owner and authorized users have read and access permissions on the object. Other users cannot access the object.\npublic-read: The object is a public-read resource. Only the object owner and authorized users have read and access permissions on the object. Other users have only read permissions on the object. Exercise caution when you set this value.\npublic-read-write: The object is a public-read-write resource. All users have read and access permissions on the object. Exercise caution when you set this value.\n\nFor more information about ACLs, see **[ACL]（https://help.aliyun.com/document_detail/100676.html）**",
+        "description_zh": "指定OSS创建Object时的访问权限。\n取值：\n\ndefault（默认）：Object遵循所在存储空间的访问权限。\nprivate：Object是私有资源。只有Object的拥有者和授权用户有该Object的读写权限，其他用户没有权限操作该Object。\npublic-read：Object是公共读资源。只有Object的拥有者和授权用户有该Object的读写权限，其他用户只有该Object的读权限。请谨慎使用该权限。\npublic-read-write：Object是公共读写资源。所有用户都有该Object的读写权限。请谨慎使用该权限。\n\n关于访问权限的更多信息，请参见**[读写权限ACL]（https://help.aliyun.com/document_detail/100676.html）**",
+        "enum": [
+          "private",
+          "public-read",
+          "public-read-write",
+          "default"
+        ],
+        "example": "public-read",
+        "type": "string"
+      },
+      "StorageClass": {
+        "default": "Standard",
+        "description_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nDeepColdArchive: Deep Cold Archive",
+        "description_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\nDeepColdArchive：深度冷归档存储",
+        "enum": [
+          "Standard",
+          "IA",
+          "Archive",
+          "ColdArchive",
+          "DeepColdArchive"
+        ],
+        "enumValueTitles": {
+          "Archive": "Archive",
+          "ColdArchive": "ColdArchive",
+          "IA": "IA",
+          "Standard": "Standard"
+        },
+        "example": "Standard",
+        "title": "The storage class of a bucket.",
+        "type": "string"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a symbolic link (Symlink) for a target object (TargetObject) in OSS",
   "description_zh": "为OSS的目标文件（TargetObject）创建软链接（Symlink）",
@@ -60,6 +98,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "private",
+        "public-read",
+        "public-read-write",
+        "default"
+      ],
       "example": "public-read",
       "help_en": "The access permissions when OSS creates the object.\n\nValid values:\n\ndefault: The object inherits the access permissions of the bucket in which the object is stored.\nprivate: The object is a private resource. Only the object owner and authorized users have read and write permissions on the object. Other users do not have permissions to perform operations on the object.\npublic-read: The object is a public-read resource. Only the object owner and authorized users have read and write permissions on the object. Other users have only read permissions on the object. Exercise caution when you set this value.\npublic-read-write: The object is a public-read-write resource. All users have read and write permissions on the object. Exercise caution when you set this value.\n\nFor more information about access permissions, see **https://help.aliyun.com/document_detail/100676.html**",
       "help_zh": "指定OSS创建Object时的访问权限。\n\n取值：\n\ndefault（默认）：Object遵循所在存储空间的访问权限。\nprivate：Object是私有资源。只有Object的拥有者和授权用户有该Object的读写权限，其他用户没有权限操作该Object。\npublic-read：Object是公共读资源。只有Object的拥有者和授权用户有该Object的读写权限，其他用户只有该Object的读权限。请谨慎使用该权限。\npublic-read-write：Object是公共读写资源。所有用户都有该Object的读写权限。请谨慎使用该权限。\n\n关于访问权限的更多信息，请参见**https://help.aliyun.com/document_detail/100676.html**",
@@ -73,6 +117,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Standard",
+        "IA",
+        "Archive",
+        "ColdArchive",
+        "DeepColdArchive"
+      ],
       "example": "Standard",
       "help_en": "The storage class of the object.\nFor a bucket of any storage class, if you specify this parameter when you upload an object, the object is stored as the specified storage class. For example, if you specify x-oss-storage-class as Standard when you upload an object to an Infrequent Access (IA) bucket, the object is stored as Standard.\n\nValid values:\nStandard\nIA: Infrequent Access\nArchive\n\nIf the size of a single object of the IA or Archive storage class is less than 64 KB, the object is billed based on 64 KB. We recommend that you do not set the storage class of an object to IA or Archive when you use the PutSymlink operation.\nFor more information about storage classes, see **https://help.aliyun.com/document_detail/51374.html**",
       "help_zh": "指定Object的存储类型。\n对于任意存储类型的Bucket，如果上传Object时指定此参数，则此次上传的Object将存储为指定的类型。例如在IA类型的Bucket中上传Object时，如果指定x-oss-storage-class为Standard，则该Object直接存储为Standard。\n\n取值：\nStandard：标准存储\nIA：低频访问\nArchive：归档存储\n\nIA与Archive类型的单个Object大小如果不足64 KB，则会按64 KB计量计费。建议在使用PutSymlink接口时不要将Object的存储类型指定为IA或Archive。\n关于存储类型的更多信息，请参见**https://help.aliyun.com/document_detail/51374.html**",
@@ -102,6 +153,18 @@
   "pathPattern": "/[key]?symlink",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "headers": {
+        "x-oss-version-id": {
+          "schema": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "5XX": {}
+  },
   "v1_parameters": [
     {
       "help_en": "The bucket name",

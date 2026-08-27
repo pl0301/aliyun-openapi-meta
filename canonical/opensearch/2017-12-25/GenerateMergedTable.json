@@ -2,6 +2,161 @@
   "camel_example": "",
   "cmd_full_name": "opensearch generate-merged-table",
   "cmd_name": "generate-merged-table",
+  "components": {
+    "schemas": {
+      "Schema": {
+        "properties": {
+          "indexSortConfig": {
+            "items": {
+              "properties": {
+                "direction": {
+                  "title": "排序方式ASC, DESC",
+                  "type": "string"
+                },
+                "field": {
+                  "title": "字段",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "倒排索引配置",
+            "type": "array"
+          },
+          "indexes": {
+            "properties": {
+              "filterFields": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "属性字段集合",
+                "type": "array"
+              },
+              "searchFields": {
+                "additionalProperties": {
+                  "properties": {
+                    "analyzer": {
+                      "title": "分析器名称",
+                      "type": "string"
+                    },
+                    "analyzerGeneration": {
+                      "title": "模型定制分析器Generation",
+                      "type": "string"
+                    },
+                    "analyzerType": {
+                      "title": "分析器类型 (AUTO, MODEL, SYSTEM, USER)",
+                      "type": "string"
+                    },
+                    "fields": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "索引字段集合",
+                      "type": "array"
+                    },
+                    "label": {
+                      "title": "索引标签",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "索引字段",
+                "type": "object"
+              }
+            },
+            "title": "索引配置",
+            "type": "object"
+          },
+          "name": {
+            "title": "宽表表名",
+            "type": "string"
+          },
+          "routeField": {
+            "title": "一级分列字段名称",
+            "type": "string"
+          },
+          "routeFieldValues": {
+            "items": {
+              "type": "string"
+            },
+            "title": "一级分列字段热点值清单（配置后启用“二级分列”）",
+            "type": "array"
+          },
+          "secondRouteField": {
+            "title": "二级分列字段名称（当且仅当配置有`routeFieldValues`时生效，默认使用宽表主键）",
+            "type": "string"
+          },
+          "tables": {
+            "additionalProperties": {
+              "properties": {
+                "fields": {
+                  "additionalProperties": {
+                    "properties": {
+                      "joinWith": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "title": "外表链接的数据表集合",
+                        "type": "array"
+                      },
+                      "label": {
+                        "title": "字段标签",
+                        "type": "string"
+                      },
+                      "name": {
+                        "title": "字段名称",
+                        "type": "string"
+                      },
+                      "primaryKey": {
+                        "title": "是否是主键",
+                        "type": "boolean"
+                      },
+                      "type": {
+                        "title": "字段类型 (INT, INT_ARRAY, FLOAT, FLOAT_ARRAY, DOUBLE, DOUBLE_ARRAY, TEXT, SHORT_TEXT, LITERAL, LITERAL_ARRAY, GEO_POINT, TIMESTAMP)",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title": "字段清单",
+                  "type": "object"
+                },
+                "name": {
+                  "title": "表名称",
+                  "type": "string"
+                },
+                "primaryTable": {
+                  "title": "是否是主表",
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "title": "用户数据表",
+            "type": "object"
+          },
+          "ttlField": {
+            "properties": {
+              "name": {
+                "title": "文档时间字段",
+                "type": "string"
+              },
+              "ttl": {
+                "format": "int64",
+                "title": "存活时间（毫秒）",
+                "type": "integer"
+              }
+            },
+            "title": "文档清理配置",
+            "type": "object"
+          }
+        },
+        "title": "应用结构",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries the information about a wide table that is generated after a JOIN operation is performed on multiple tables",
   "description_zh": "获取合并后的宽表",
@@ -398,6 +553,78 @@
   "pathPattern": "/v4/openapi/assist/schema/actions/merge",
   "product_code": "OpenSearch",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "ABCDEFGH",
+            "type": "string"
+          },
+          "result": {
+            "description_en": "The response parameters",
+            "description_zh": "返回结果",
+            "properties": {
+              "fromTable": {
+                "description_en": "The tables on which the JOIN operation is performed",
+                "description_zh": "需要合并的表",
+                "example": "-",
+                "type": "object"
+              },
+              "mergeTable": {
+                "description_en": "The wide table that is generated after the JOIN operation is performed on multiple tables",
+                "description_zh": "合并后的表",
+                "example": "-",
+                "type": "object"
+              },
+              "primaryKey": {
+                "description_en": "The primary key",
+                "description_zh": "主键",
+                "example": "-",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "5XX": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "httpCode": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body parameters",

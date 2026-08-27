@@ -64,6 +64,7 @@
       "help_en": "The number of entries to return on each page. Default value: 20",
       "help_zh": "分批次查询时每次显示的条目数。默认值：20",
       "location": "query",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -88,5 +89,110 @@
   ],
   "pathPattern": "",
   "product_code": "Cbn",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response that is returned",
+        "description_zh": "返回结果",
+        "properties": {
+          "Count": {
+            "description_en": "The number of entries returned on each page",
+            "description_zh": "分批次查询时每次显示的条目数",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Data": {
+            "description_en": "A list of aggregate routes",
+            "description_zh": "聚合路由信息列表",
+            "items": {
+              "description_en": "The information about the aggregate route",
+              "description_zh": "聚合路由信息",
+              "properties": {
+                "Description": {
+                  "description_en": "The description of the aggregate route",
+                  "description_zh": "聚合路由的描述信息",
+                  "example": "desctest",
+                  "type": "string"
+                },
+                "Name": {
+                  "description_en": "The name of the aggregate route",
+                  "description_zh": "聚合路由的名称",
+                  "example": "nametest",
+                  "type": "string"
+                },
+                "RouteType": {
+                  "default": "Static",
+                  "description_en": "The type of the aggregate route.\n\nThe value is set to Static. This indicates that the route is a static route. After the aggregate route is advertised to a VPC, it becomes a custom route entry by default",
+                  "description_zh": "聚合路由的路由类型。\n\n仅取值：Static，表示静态路由。聚合路由被传播至VPC实例后，默认为自定义路由条目",
+                  "example": "Static",
+                  "type": "string"
+                },
+                "Scope": {
+                  "description_en": "The scope of the aggregate route.\n\nThe value is set to VPC. This indicates that the aggregate route is advertised to all VPCs that are associated with the route table of the Enterprise Edition transit router and have route synchronization enabled",
+                  "description_zh": "聚合路由的传播范围。\n\n仅取值：VPC，表示向已与当前企业版转发路由器路由表创建关联转发关系并已开启路由同步功能的所有VPC实例传播聚合路由",
+                  "example": "VPC",
+                  "type": "string"
+                },
+                "ScopeList": {
+                  "description_en": "The list of scopes of the aggregate route.\n\nYou must specify at least one of the Scope and ScopeList properties. We recommend that you specify ScopeList. The elements in ScopeList cannot be the same as the value of Scope",
+                  "description_zh": "聚合路由的传播范围列表。\n聚合路由传播范围和聚合路由传播范围列表必须至少选择一个属性，建议使用聚合路由传播范围列表；聚合路由传播范围列表中元素不能与聚合路由传播范围的值重复",
+                  "items": {
+                    "description_en": "The list of scopes of the aggregate route.\nValid values:\n\nVPC: The aggregate route is advertised to all VPCs that are associated with the route table of the Enterprise Edition transit router and have route synchronization enabled.\n\nVBR: The aggregate route is advertised to all VBRs that are attached to the Enterprise Edition transit router.\n\nPeer: The aggregate route is advertised to transit routers that have an inter-region connection with the Enterprise Edition transit router.\n\nVPN: The aggregate route is advertised to all VPN connections that are attached to the Enterprise Edition transit router.\n\nECR: The aggregate route is advertised to all ECR instances that are attached to the Enterprise Edition transit router",
+                    "description_zh": "聚合路由的传播范围列表。\n取值：\n\nVPC，表示向已与当前企业版转发路由器路由表创建关联转发关系并已开启路由同步功能的所有VPC实例传播聚合路由。\nVBR，表示向已加载到当前企业版转发路由器的VBR实例传播聚合路由。\nPeer，表示向已与当前企业版转发路由器建立了跨地域连接的转发路由器传播聚合路由。\nVPN，表示向已加载到当前企业版转发路由器的VPN实例传播聚合路由。\nECR，表示向已加载到当前企业版转发路由器的ECR实例传播聚合路由",
+                    "example": "VPC",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "Status": {
+                  "description_en": "The advertising status of the aggregate route.\n\nAllConfigured: The aggregate route is advertised to all VPCs.\n\nConfiguring: The aggregate route is being advertised.\n\nConfigFailed: The aggregate route failed to be advertised.\n\nPartialConfigured: The aggregate route is advertised to some VPCs.\n\nDeleting: The aggregate route is being deleted",
+                  "description_zh": "聚合路由的传播状态。\n\nAllConfigured：聚合路由已下发至全部VPC实例。\nConfiguring：聚合路由下发中。\nConfigFailed：聚合路由下发失败。\nPartialConfigured：部分VPC没有被成功下发聚合路由。\nDeleting：聚合路由删除中",
+                  "example": "AllConfigured",
+                  "type": "string"
+                },
+                "TrRouteTableId": {
+                  "description_en": "The ID of the route table of the Enterprise Edition transit router",
+                  "description_zh": "企业版转发路由器路由表ID",
+                  "example": "vtb-6ehgc262hr170qgyc****",
+                  "type": "string"
+                },
+                "TransitRouteTableAggregationCidr": {
+                  "description_en": "The destination CIDR block of the aggregate route",
+                  "description_zh": "聚合路由的目标网段",
+                  "example": "192.168.10.0/24",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "NextToken": {
+            "description_en": "A pagination token. It can be used in the next request to retrieve a new page of results. Valid values:\n\nIf NextToken is empty, no next page exists.\n\nIf a value is returned for NextToken, the value is the token that determines the start point of the next query",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。取值：\n如果NextToken为空表示没有下一次查询。\n如果NextToken有返回值，该取值表示下一次查询开始的令牌",
+            "example": "FFmyTO70tTpLG6I3FmYAXGKPd****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "0C2EE7A8-74D4-4081-8236-CEBDE3BBCF50",
+            "type": "string"
+          },
+          "Total": {
+            "description_en": "The total number of entries",
+            "description_zh": "列表条目数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "ListTokenResult<CbnTrRouteTableAggregationModel>",
+        "type": "object"
+      }
+    }
+  }
 }

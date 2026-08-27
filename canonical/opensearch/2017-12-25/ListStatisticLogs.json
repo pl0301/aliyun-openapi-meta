@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "app_group_name",
       "help_en": "The application name",
       "help_zh": "应用名称",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "hot",
       "help_en": "The module name. This is an enumeration.\n\nhot: hotword rankings\n\nerror: application error logs\n\nslow-log: slow query logs\n\nCurrently, only hot is supported",
       "help_zh": "模块名称，为枚举值\n\nhot 热词榜单\nerror 应用日志\nslow-log 慢日志\n\n目前只支持 hot",
@@ -51,6 +53,8 @@
       "help_en": "The start of the time range to query. The value must be a UNIX timestamp. The default value is the UNIX timestamp for 00:00:00 on the current day",
       "help_zh": "开始时间\n默认为当天0点0分0秒的时间戳",
       "location": "query",
+      "maximum": "9999999999",
+      "minimum": "0",
       "name": "start_time",
       "options": [
         "--start-time"
@@ -76,6 +80,8 @@
       "help_en": "The page number. The default value is 1",
       "help_zh": "页码，默认 pageNumber = 1",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -89,6 +95,8 @@
       "help_en": "The number of entries to return on each page. The default value is 10",
       "help_zh": "每页返回数目，默认 pageSize = 10",
       "location": "query",
+      "maximum": "10000",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -153,84 +161,71 @@
   "pathPattern": "/v4/openapi/app-groups/[appGroupIdentity]/statistic-logs/[moduleName]",
   "product_code": "OpenSearch",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The application name",
-      "help_zh": "应用名称",
-      "name": "appGroupIdentity",
-      "position": "path",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "响应体",
+        "example": "{}",
+        "properties": {
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "F76ACE3D-E510-EE2C-B7B1-39B3136A61EE",
+            "type": "string"
+          },
+          "result": {
+            "description_en": "The returned data. For more information, see:\n\n[Hotword rankings]（https://help.aliyun.com/document_detail/421248.html）",
+            "description_zh": "结果数据，参考：\n\n[热词榜单]（https://help.aliyun.com/document_detail/421248.html）",
+            "example": "[]",
+            "items": {
+              "description_en": "The returned data. For more information, see:\n\n[Hotword rankings]（https://help.aliyun.com/document_detail/187660.html）",
+              "description_zh": "结果数据，参考：\n\n[热词榜单]（https://help.aliyun.com/document_detail/187660.html）",
+              "example": "[       {           \"rawQuery\":\"淘宝\",           \"pv\":100       }     ]",
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "totalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "数据总条数",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
     },
-    {
-      "help_en": "The fields to query. Format: columns=wordsTopPv.\n\nFor more information, see https://help.aliyun.com/document_detail/187665.html",
-      "help_zh": "查询的字段\n格式为 columns=wordsTopPv\n\n参考：https://help.aliyun.com/document_detail/187665.html",
-      "name": "columns",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to use the distinct clause",
-      "help_zh": "是否使用distinct子句",
-      "name": "distinct",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "name": "endTime",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The module name. This is an enumeration.\n\nhot: hotword rankings\n\nerror: application error logs\n\nslow-log: slow query logs\n\nCurrently, only hot is supported",
-      "help_zh": "模块名称，为枚举值\n\nhot 热词榜单\nerror 应用日志\nslow-log 慢日志\n\n目前只支持 hot",
-      "name": "moduleName",
-      "position": "path",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The page number. The default value is 1",
-      "help_zh": "页码，默认 pageNumber = 1",
-      "name": "pageNumber",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of entries to return on each page. The default value is 10",
-      "help_zh": "每页返回数目，默认 pageSize = 10",
-      "name": "pageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The content of the query clause",
-      "help_zh": "query查询子句内容",
-      "name": "query",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The content of the sort clause",
-      "help_zh": "sort排序子句内容",
-      "name": "sortBy",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The start of the time range to query. The value must be a UNIX timestamp. The default value is the UNIX timestamp for 00:00:00 on the current day",
-      "help_zh": "开始时间\n默认为当天0点0分0秒的时间戳",
-      "name": "startTime",
-      "position": "query",
-      "required": false,
-      "type": "int"
+    "5XX": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "httpCode": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

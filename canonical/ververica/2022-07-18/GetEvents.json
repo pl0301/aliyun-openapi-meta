@@ -2,6 +2,55 @@
   "camel_example": "aliyun ververica GET /api/v2/namespaces/default-namespace/events --region cn-hangzhou --pageIndex 1 --deploymentId '58718c99-3b29-4c5e-93bb-c9fc4ec60000' --pageSize 10 --deploymentName 'example-string' --header \"workspace=a14bd5d90a0000\" --header \"Content-Type=application/json\"",
   "cmd_full_name": "ververica get-events",
   "cmd_name": "get-events",
+  "components": {
+    "schemas": {
+      "Event": {
+        "description_en": "event",
+        "description_zh": "event",
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "deploymentId": {
+            "example": "00000000-0000-0000-0000-000000680003",
+            "title": "作业ID",
+            "type": "string"
+          },
+          "eventId": {
+            "example": "00000000-0000-0000-0000-000000000001",
+            "title": "运行事件ID",
+            "type": "string"
+          },
+          "eventName": {
+            "example": "STATE_TRANSITION_IS_COMPLETED",
+            "title": "运行事件名称",
+            "type": "string"
+          },
+          "jobId": {
+            "example": "00000000-0000-0000-0000-000000005043",
+            "title": "作业实例ID",
+            "type": "string"
+          },
+          "message": {
+            "title": "运行事件信息",
+            "type": "string"
+          },
+          "namespace": {
+            "example": "default-namespace",
+            "title": "项目空间",
+            "type": "string"
+          },
+          "workspace": {
+            "example": "edcef******b4f",
+            "title": "工作空间",
+            "type": "string"
+          }
+        },
+        "title": "运行事件",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves runtime events",
   "description_zh": "获取运行事件",
@@ -51,6 +100,8 @@
       "help_en": "The number of entries per page. Default value: 10. Maximum value: 100",
       "help_zh": "分页参数，所请求页码的元素数量，默认值为10，最大值100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -64,6 +115,7 @@
       "help_en": "The page number to retrieve. Default value: 1",
       "help_zh": "分页参数，页码索引，表示所请求页码，默认值为1",
       "location": "query",
+      "minimum": "1",
       "name": "page_index",
       "options": [
         "--page-index"
@@ -101,52 +153,97 @@
   "pathPattern": "/api/v2/namespaces/[namespace]/events",
   "product_code": "ververica",
   "protocol": "HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The ID of the deployed job. If you specify this parameter, the operation returns events only for this job",
-      "help_zh": "已部署作业ID",
-      "name": "deploymentId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "deploymentName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The name of the namespace",
-      "help_zh": "项目空间名称",
-      "name": "namespace",
-      "position": "path",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The page number to retrieve. Default value: 1",
-      "help_zh": "分页参数，页码索引，表示所请求页码，默认值为1",
-      "name": "pageIndex",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of entries per page. Default value: 10. Maximum value: 100",
-      "help_zh": "分页参数，所请求页码的元素数量，默认值为10，最大值100",
-      "name": "pageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The ID of the workspace",
-      "help_zh": "工作空间ID",
-      "name": "workspace",
-      "position": "header",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response data",
+        "description_zh": "响应数据",
+        "properties": {
+          "data": {
+            "description_en": "A list of runtime events matching the filter criteria. Returned only when the request is successful (`success` is `true`)",
+            "description_zh": "当success为true，返回满足条件的作业列表；当success为false，该值为空",
+            "items": {
+              "$ref": "#/components/schemas/Event",
+              "description_en": "A runtime event for a deployed job",
+              "description_zh": "本数据结构用来代表已部署作业的运行事件"
+            },
+            "title_en": "",
+            "title_zh": "当success为true，返回满足条件的作业列表；当success为false，该值为空。",
+            "type": "array"
+          },
+          "errorCode": {
+            "description_en": "The business error code. Returned only when the request fails (that is, `success` is `false`)",
+            "description_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description_en": "The business error message. Returned only when the request fails (that is, `success` is `false`)",
+            "description_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "httpCode": {
+            "description_en": "The business status code. This field always returns `200`. To confirm the request's success, check the `success` parameter",
+            "description_zh": "业务状态码，统一为200；使用success表示业务请求是否成功",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "业务状态码，统一为200；使用success表示业务请求是否成功。",
+            "type": "integer"
+          },
+          "pageIndex": {
+            "description_en": "The page number of the returned page",
+            "description_zh": "分页参数，页码索引，表示所请求页码",
+            "example": "1",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "分页参数，页码索引，表示所请求页码。",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description_en": "The number of entries on this page",
+            "description_zh": "分页参数，所请求页码的元素数量",
+            "example": "10",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "分页参数，所请求页码的元素数量。",
+            "type": "integer"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CBC799F0-AS7S-1D30-8A4F-882ED4DD****",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the business request was successful",
+            "description_zh": "表示业务请求是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "表示业务请求是否成功。",
+            "type": "boolean"
+          },
+          "totalSize": {
+            "description_en": "The total number of entries that match the query",
+            "description_zh": "满足查询条件的所有元素的数量",
+            "example": "4",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "满足查询条件的所有元素的数量。",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "响应数据。",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

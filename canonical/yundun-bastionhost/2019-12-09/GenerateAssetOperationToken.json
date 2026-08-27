@@ -125,6 +125,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Sso",
+        "WebToken",
+        "WebTerminal"
+      ],
       "example": "Sso",
       "help_en": "The O\\&M mode. Valid values:\n\nWebToken: generates an O\\&M token.\n\nSso: logs on to the client.\n\nThis parameter is supported only by bastion hosts of V3.2.44 or later. If you do not specify this parameter, WebToken is used",
       "help_zh": "运维登录方式。取值：\nWebToken：获取运维令牌。\nSso：本地客户端登录。\n仅支持V3.2.44及以上版本使用，为空时默认取值为WebToken",
@@ -138,6 +143,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "SID",
+        "SERVICENAME"
+      ],
       "example": "SID",
       "help_en": "The logon attribute. This parameter is required if you set OperationMode to Sso and use a custom Oracle account. Valid values:\n\nSERVICENAME\n\nSID\n\nThis parameter is supported only by bastion hosts of V3.2.44 or later",
       "help_zh": "登录属性，当OperationMode为Sso且账户为Oracle类型自定义账户时必须指定，取值：\nSERVICENAME\nSID\n仅支持V3.2.44及以上版本使用",
@@ -164,6 +173,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ssh",
+        "sftp"
+      ],
       "example": "ssh",
       "help_en": "The type of the client that you want to use for O\\&M on a Linux asset. This parameter is required if you set OperationMode to Sso and the asset protocol to SSH. Valid values:\n\nssh: opens a client that supports the SSH protocol to perform O\\&M with SSH permissions.\n\nsftp: opens a client that supports the SFTP protocol to perform O\\&M with SFTP permissions.\n\nThis parameter is supported only by bastion hosts of V3.2.44 or later",
       "help_zh": "linux资产运维需打开的本地客户端类型。当OperationMode为Sso且资产协议为SSH时必传。取值：\nssh：打开SSH协议客户端，以SSH权限进行运维。\nsftp：打开SFTP协议客户端，以SFTP权限进行运维。\n仅支持V3.2.44及以上版本使用",
@@ -192,5 +205,81 @@
   ],
   "pathPattern": "",
   "product_code": "Yundun-bastionhost",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AssetOperationToken": {
+            "description_en": "The asset operation token",
+            "description_zh": "响应数据",
+            "properties": {
+              "CountLeft": {
+                "description_en": "The number of remaining uses for the token",
+                "description_zh": "运维令牌剩余可使用的次数",
+                "example": "1",
+                "format": "int64",
+                "type": "integer"
+              },
+              "ExpireTime": {
+                "description_en": "The expiration time of the token. This value is a UNIX timestamp",
+                "description_zh": "运维令牌过期时间。时间戳格式",
+                "example": "1709110797",
+                "format": "int64",
+                "type": "integer"
+              },
+              "HasCountLimit": {
+                "description_en": "Indicates whether the token has a use limit",
+                "description_zh": "是否有使用次数限制",
+                "example": "true",
+                "type": "boolean"
+              },
+              "MaxRenewCount": {
+                "description_en": "The maximum number of times the token can be renewed. A value of 0 indicates that the token cannot be renewed",
+                "description_zh": "最大续期次数，0表示不可续期",
+                "example": "10",
+                "format": "int64",
+                "type": "integer"
+              },
+              "RenewCount": {
+                "description_en": "The number of times the token has been renewed",
+                "description_zh": "已经续期的次数",
+                "example": "1",
+                "format": "int64",
+                "type": "integer"
+              },
+              "SsoUrl": {
+                "description_en": "The single sign-on (SSO) URL",
+                "description_zh": "单点登录链接",
+                "example": "sso://eyJOT0RFX0NPTU1PTiI6eyJNb2R******",
+                "type": "string"
+              },
+              "Token": {
+                "description_en": "The O\\&M token that is requested",
+                "description_zh": "申请的运维令牌",
+                "example": "NmYyMmEzNmMwYzljNGY******",
+                "type": "string"
+              },
+              "TokenId": {
+                "description_en": "The ID of the O\\&M token",
+                "description_zh": "运维令牌ID",
+                "example": "1",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "阿里云为该请求生成的唯一标识符",
+            "example": "EC9BF0F4-8983-491A-BC8C-1B4DD94976DE",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

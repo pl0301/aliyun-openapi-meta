@@ -2,6 +2,174 @@
   "camel_example": "",
   "cmd_full_name": "aicontent model-router-query-client-tree",
   "cmd_name": "model-router-query-client-tree",
+  "components": {
+    "schemas": {
+      "ClientBalanceDTO": {
+        "description_en": "Contains the balance details for a client",
+        "description_zh": "部门余额",
+        "properties": {
+          "balance": {
+            "description_en": "The current balance",
+            "description_zh": "当前余额",
+            "example": "100.00",
+            "format": "double",
+            "title": "当前余额",
+            "type": "number"
+          },
+          "balanceType": {
+            "description_en": "The balance type. Valid values are `amount` or `tokens`",
+            "description_zh": "余额类型：amount（金额）/ tokens（token数量）",
+            "example": "amount",
+            "title": "余额类型：amount（金额）/ tokens（token数量）",
+            "type": "string"
+          },
+          "clientId": {
+            "description_en": "The ID of the client",
+            "description_zh": "部门ID",
+            "example": "1",
+            "format": "int64",
+            "title": "部门ID",
+            "type": "integer"
+          },
+          "enableBalance": {
+            "description_en": "Indicates whether balance-based rate limiting is enabled",
+            "description_zh": "是否启用余额限流",
+            "example": "true",
+            "title": "是否启用余额限流",
+            "type": "boolean"
+          },
+          "gmtCreate": {
+            "description_en": "The creation timestamp",
+            "description_zh": "创建时间",
+            "example": "2024-01-01T00:00:00Z",
+            "title": "创建时间",
+            "type": "string"
+          },
+          "gmtModified": {
+            "description_en": "The last modification timestamp",
+            "description_zh": "更新时间",
+            "example": "2024-01-01T00:00:00Z",
+            "title": "更新时间",
+            "type": "string"
+          },
+          "id": {
+            "description_en": "The unique ID of the balance record",
+            "description_zh": "ID",
+            "example": "1",
+            "format": "int64",
+            "title": "ID",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ClientTreeDTO": {
+        "properties": {
+          "address": {
+            "example": "杭州市",
+            "title": "公司地址",
+            "type": "string"
+          },
+          "allowedModels": {
+            "example": "1,2,3",
+            "title": "允许的模型ID列表，逗号分隔，空表示全部",
+            "type": "string"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/ClientBalanceDTO",
+            "example": "null",
+            "title": "余额信息"
+          },
+          "children": {
+            "example": "[]",
+            "items": {
+              "$ref": "#/components/schemas/ClientTreeDTO"
+            },
+            "title": "子客户列表",
+            "type": "array"
+          },
+          "clientUuid": {
+            "example": "st-xxxx",
+            "title": "客户唯一标识",
+            "type": "string"
+          },
+          "contact": {
+            "example": "13800138000",
+            "title": "联系方式",
+            "type": "string"
+          },
+          "deleteTag": {
+            "example": "0",
+            "format": "int32",
+            "title": "0=启用 非0=禁用",
+            "type": "integer"
+          },
+          "discount": {
+            "example": "1.0",
+            "format": "double",
+            "title": "折扣系数，1.0=无折扣，0.8=八折",
+            "type": "number"
+          },
+          "gmtCreate": {
+            "example": "2024-01-01T00:00:00Z",
+            "title": "创建时间",
+            "type": "string"
+          },
+          "gmtModified": {
+            "example": "2024-01-01T00:00:00Z",
+            "title": "更新时间",
+            "type": "string"
+          },
+          "id": {
+            "example": "1",
+            "format": "int64",
+            "title": "ID",
+            "type": "integer"
+          },
+          "level": {
+            "example": "1",
+            "format": "int32",
+            "title": "层级 1~5",
+            "type": "integer"
+          },
+          "main": {
+            "example": "0",
+            "format": "int32",
+            "title": "0=主账户 1=普通账户",
+            "type": "integer"
+          },
+          "name": {
+            "example": "我的客户",
+            "title": "客户名称",
+            "type": "string"
+          },
+          "nodeType": {
+            "example": "department",
+            "title": "节点类型：department=部门 / user=用户节点（部门树叶子）",
+            "type": "string"
+          },
+          "parentId": {
+            "example": "null",
+            "format": "int64",
+            "title": "父部门ID，NULL=顶层",
+            "type": "integer"
+          },
+          "remark": {
+            "example": "备注",
+            "title": "备注信息",
+            "type": "string"
+          },
+          "userId": {
+            "example": "30001",
+            "format": "int64",
+            "title": "仅 node_type=user 时有值，指向用户ID",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the customer tree structure",
   "description_zh": "客户管理/获取客户树",
@@ -49,5 +217,86 @@
   ],
   "pathPattern": "/api/v1/modelRouter/open/clients/tree",
   "product_code": "AiContent",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "OpenApiResponse<List<ClientTreeDTO>>",
+        "description_zh": "OpenApiResponse<List<ClientTreeDTO>>",
+        "example": "{\n    \"success\": true,\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"总公司\",\n        \"client_uuid\": \"st-xxxx\",\n        \"level\": 1,\n        \"parent_id\": null,\n        \"main\": 0,\n        \"children\": [\n            {\n                \"id\": 2,\n                \"name\": \"分公司1\",\n                \"client_uuid\": \"st-yyyy\",\n                \"level\": 2,\n                \"parent_id\": 1,\n                \"main\": 1,\n                \"children\": []\n            }\n        ]\n    },\n    \"requestId\": \"592A27EF-26D3-1434-98C1-97AD63337852\"\n}",
+        "properties": {
+          "data": {
+            "description_en": "The response data. The customer tree structure list",
+            "description_zh": "返回数据。客户树形结构列表",
+            "items": {
+              "$ref": "#/components/schemas/ClientTreeDTO",
+              "description_en": "Indicates whether the deletion was successful",
+              "description_zh": "是否删除成功",
+              "example": "[]"
+            },
+            "title_en": "",
+            "title_zh": "返回数据。客户树形结构列表",
+            "type": "array"
+          },
+          "errCode": {
+            "description_en": "The fault information code",
+            "description_zh": "错误信息编码",
+            "example": "UNKNOWN_ERROR",
+            "title_en": "",
+            "title_zh": "错误信息编码",
+            "type": "string"
+          },
+          "errMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "未知错误",
+            "title_en": "",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "http状态码",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "http状态码",
+            "type": "integer"
+          },
+          "maxResults": {
+            "description_en": "maxResults",
+            "description_zh": "maxResults",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "nextToken": {
+            "description_en": "nextToken",
+            "description_zh": "nextToken",
+            "example": "xxxx-xxx-xxxxx",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求编号",
+            "example": "xxxx-xxxx-xxxx-xxxxxxxx",
+            "title_en": "",
+            "title_zh": "请求编号",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "OpenApiResponse<List<ClientTreeDTO>>",
+        "type": "object"
+      }
+    }
+  }
 }

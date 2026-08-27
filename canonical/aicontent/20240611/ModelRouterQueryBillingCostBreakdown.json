@@ -2,6 +2,249 @@
   "camel_example": "",
   "cmd_full_name": "aicontent model-router-query-billing-cost-breakdown",
   "cmd_name": "model-router-query-billing-cost-breakdown",
+  "components": {
+    "schemas": {
+      "BillingBillTierDTO": {
+        "properties": {
+          "dimValues": {
+            "example": "{\"context_tier\": \"0-32k\"}",
+            "title": "维度键值映射，key为维度列名，value为展示值",
+            "type": "string"
+          },
+          "payableAmount": {
+            "example": "0.05",
+            "format": "float",
+            "title": "该桶的费用",
+            "type": "number"
+          },
+          "values": {
+            "example": "{\"input_tokens\": 1000, \"output_tokens\": 500}",
+            "title": "用量数值映射，key为指标名，value为数值",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BillingCostBreakdownRespDTO": {
+        "description_en": "The cost breakdown details",
+        "description_zh": "计费明细",
+        "properties": {
+          "columns": {
+            "example": "[]",
+            "items": {
+              "$ref": "#/components/schemas/MetricDefRespDTO"
+            },
+            "title": "列定义，根据查询结果中出现的模型类型动态生成",
+            "type": "array"
+          },
+          "granularity": {
+            "description_en": "Aggregation granularity: hourly or daily  ",
+            "description_zh": "聚合粒度：hourly 或 daily",
+            "example": "hourly",
+            "title": "聚合粒度：hourly 或 daily",
+            "type": "string"
+          },
+          "page": {
+            "description_en": "Current page number  ",
+            "description_zh": "当前页码",
+            "example": "1",
+            "format": "int32",
+            "title": "当前页码",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description_en": "Number of entries per page  ",
+            "description_zh": "每页条数",
+            "example": "20",
+            "format": "int32",
+            "title": "每页条数",
+            "type": "integer"
+          },
+          "rows": {
+            "description_en": "List of billing details data  ",
+            "description_zh": "计费明细数据列表",
+            "example": "[]",
+            "items": {
+              "$ref": "#/components/schemas/BillingCostBreakdownRowDTO",
+              "description_en": "Single billing detail entry  ",
+              "description_zh": "计费单条明细"
+            },
+            "title": "计费明细数据列表",
+            "type": "array"
+          },
+          "total": {
+            "description_en": "Total number of entries  ",
+            "description_zh": "总条数",
+            "example": "100",
+            "format": "int64",
+            "title": "总条数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "BillingCostBreakdownRowDTO": {
+        "description_en": "The billing detail for a single item",
+        "description_zh": "计费单条明细",
+        "properties": {
+          "apiKeyId": {
+            "example": "0",
+            "format": "int64",
+            "title": "API Key ID，0 表示历史数据未细分到 ApiKey",
+            "type": "integer"
+          },
+          "apiKeyName": {
+            "example": "默认密钥",
+            "title": "API Key 名称，对应 api_key_id",
+            "type": "string"
+          },
+          "billingType": {
+            "description_en": "Billing type; currently fixed as total_amount  ",
+            "description_zh": "计费类型，当前固定为 total_amount",
+            "example": "total_amount",
+            "title": "计费类型，当前固定为 total_amount",
+            "type": "string"
+          },
+          "clientId": {
+            "description_en": "Department ID; 0 indicates no associated department  ",
+            "description_zh": "部门ID，0表示无归属部门",
+            "example": "0",
+            "format": "int64",
+            "title": "部门ID，0表示无归属部门",
+            "type": "integer"
+          },
+          "clientName": {
+            "description_en": "Department name  ",
+            "description_zh": "部门名称",
+            "example": "研发部",
+            "title": "部门名称",
+            "type": "string"
+          },
+          "dimValues": {
+            "example": "{\"billing_version\": \"v1\"}",
+            "title": "维度值映射，如计费版本、上下文窗口阶梯等，无维度时省略",
+            "type": "string"
+          },
+          "memberUserId": {
+            "example": "30001",
+            "format": "int64",
+            "title": "成员行：成员ID；部门行为 0",
+            "type": "integer"
+          },
+          "memberUserName": {
+            "example": "张三",
+            "title": "成员行：成员名；部门行为空",
+            "type": "string"
+          },
+          "modelCode": {
+            "description_en": "Model identifier  ",
+            "description_zh": "模型标识符",
+            "example": "qwen-plus",
+            "title": "模型标识符",
+            "type": "string"
+          },
+          "modelId": {
+            "description_en": "Model ID  ",
+            "description_zh": "模型ID",
+            "example": "1",
+            "format": "int64",
+            "title": "模型ID",
+            "type": "integer"
+          },
+          "modelName": {
+            "description_en": "Model name  ",
+            "description_zh": "模型名称",
+            "example": "通义千问-Plus",
+            "title": "模型名称",
+            "type": "string"
+          },
+          "modelSymbol": {
+            "example": "qwen",
+            "title": "模型 symbol（厂商标识）",
+            "type": "string"
+          },
+          "modelType": {
+            "description_en": "Statistics category  ",
+            "description_zh": "统计口径",
+            "example": "llm",
+            "title": "统计口径",
+            "type": "string"
+          },
+          "modelVersion": {
+            "example": "1",
+            "format": "int32",
+            "title": "模型版本号",
+            "type": "integer"
+          },
+          "payableAmount": {
+            "description_en": "Payable amount, rounded to 8 decimal places  ",
+            "description_zh": "应付金额，保留8位小数",
+            "example": "0.00012800",
+            "format": "float",
+            "title": "应付金额，保留8位小数",
+            "type": "number"
+          },
+          "summaryTime": {
+            "description_en": "Statistics time point, Unix timestamp (seconds)  ",
+            "description_zh": "统计时间点，Unix时间戳（秒）",
+            "example": "1700000000",
+            "format": "int64",
+            "title": "统计时间点，Unix时间戳（秒）",
+            "type": "integer"
+          },
+          "tiers": {
+            "example": "[]",
+            "items": {
+              "$ref": "#/components/schemas/BillingBillTierDTO"
+            },
+            "title": "维度桶子表，按上下文分段等计费时展开，无分段时省略",
+            "type": "array"
+          },
+          "values": {
+            "example": "{\"input_tokens\": 512000, \"output_tokens\": 256000}",
+            "title": "用量+费用分项数值映射，key与columns中的key对应",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MetricDefRespDTO": {
+        "description_en": "metric structure",
+        "description_zh": "指标结构",
+        "properties": {
+          "key": {
+            "description_en": "Metric key name  ",
+            "description_zh": "指标键名",
+            "example": "total_calls",
+            "title": "指标键名",
+            "type": "string"
+          },
+          "label": {
+            "description_en": "Metric display name  ",
+            "description_zh": "指标显示名称",
+            "example": "调用次数",
+            "title": "指标显示名称",
+            "type": "string"
+          },
+          "sortable": {
+            "description_en": "Is sortable  ",
+            "description_zh": "是否可排序",
+            "example": "true",
+            "title": "是否可排序",
+            "type": "boolean"
+          },
+          "unit": {
+            "description_en": "Metric unit  ",
+            "description_zh": "指标单位",
+            "example": "次",
+            "title": "指标单位",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries billing details in batches",
   "description_zh": "计费管理/批量查询计费明细",
@@ -179,5 +422,85 @@
   ],
   "pathPattern": "/api/v1/modelRouter/open/billing/cost/breakdown",
   "product_code": "AiContent",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "OpenApiSingleResponse<BillingCostBreakdownRespDTO>",
+        "description_zh": "OpenApiSingleResponse<BillingCostBreakdownRespDTO>",
+        "example": "{\n    \"success\": true,\n    \"data\": {\"granularity\": \"hourly\", \"total\": 100, \"page\": 1, \"page_size\": 20, \"rows\": []},\n    \"requestId\": \"592A27EF-26D3-1434-98C1-97AD63337852\"\n}",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/BillingCostBreakdownRespDTO",
+            "description_en": "The data object",
+            "description_zh": "数据对象",
+            "example": "{}",
+            "title_en": "",
+            "title_zh": "数据对象"
+          },
+          "errCode": {
+            "description_en": "The error message code",
+            "description_zh": "错误信息编码",
+            "example": "UNKNOWN_ERROR",
+            "title_en": "",
+            "title_zh": "错误信息编码",
+            "type": "string"
+          },
+          "errMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "未知错误",
+            "title_en": "",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "http状态码",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "http状态码",
+            "type": "integer"
+          },
+          "maxResults": {
+            "description_en": "The maximum number of results to return",
+            "description_zh": "最大返回数量",
+            "example": "20",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "最大返回数量",
+            "type": "integer"
+          },
+          "nextToken": {
+            "description_en": "The pagination token",
+            "description_zh": "翻页标识",
+            "example": "xxxx-xxx-xxxxx",
+            "title_en": "",
+            "title_zh": "翻页标识",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求编号",
+            "example": "xxxx-xxxx-xxxx-xxxxxxxx",
+            "title_en": "",
+            "title_zh": "请求编号",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "OpenApiSingleResponse<BillingCostBreakdownRespDTO>",
+        "type": "object"
+      }
+    }
+  }
 }

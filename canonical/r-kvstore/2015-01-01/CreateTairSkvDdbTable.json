@@ -34,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call DescribeRegions (https://help.aliyun.com/document_detail/61012.htm) to query available regions. Use this parameter to specify the region in which to create the instance",
       "help_zh": "地域ID，可调用DescribeRegions (https://help.aliyun.com/document_detail/61012.htm)查询，使用此参数指定要创建实例的地域",
@@ -73,6 +74,10 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "tair_skv_ddb_table"
+      ],
       "example": "tair_skv_ddb_table",
       "help_en": "The instance type. Set the value to tair_skv_ddb_table",
       "help_zh": "实例类型，固定取值：tair_skv_ddb_table",
@@ -153,84 +158,112 @@
   "pathPattern": "",
   "product_code": "R-kvstore",
   "protocol": "HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The cluster backup set ID. Some new cluster architectures support this parameter. You can call DescribeClusterBackupList (https://www.alibabacloud.com/help/en/redis/developer-reference/api-r-kvstore-2015-01-01-describeclusterbackuplist-redis) to obtain the ID",
-      "help_zh": "部分新集群架构支持集群备份集 ID，您可以通过 DescribeClusterBackupList (https://help.aliyun.com/zh/redis/developer-reference/api-r-kvstore-2015-01-01-describeclusterbackuplist-redis) 接口获取",
-      "name": "BackupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The client token that is used to ensure the idempotence of the request. You can use the client to generate the value. Make sure that the value is unique among different requests. The token is case-sensitive and cannot exceed 64 ASCII characters in length",
-      "help_zh": "用于保证请求的幂等性。由客户端生成该参数值，要保证在不同请求间唯一，大小写敏感、不超过 64 个 ASCII 字符",
-      "name": "ClientToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The instance type. Set the value to tair_skv_ddb_table",
-      "help_zh": "实例类型，固定取值：tair_skv_ddb_table",
-      "name": "InstanceType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The region ID. You can call DescribeRegions (https://help.aliyun.com/document_detail/61012.htm) to query available regions. Use this parameter to specify the region in which to create the instance",
-      "help_zh": "地域ID，可调用DescribeRegions (https://help.aliyun.com/document_detail/61012.htm)查询，使用此参数指定要创建实例的地域",
-      "name": "RegionId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "name": "RestoreTime",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The table schema configuration in JSON format",
-      "help_zh": "JSON形式的表结构配置信息",
-      "name": "Schema",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "To create an instance from a backup set of an existing instance, specify the source instance ID in this parameter.\n\nThis parameter must be used together with BackupId",
-      "help_zh": "如需基于某个实例的备份集创建新实例，请先在此参数中指定源实例 ID。\n\n说明\n\n本参数需要BackupId与组合使用",
-      "name": "SrcDBInstanceId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The table name. The name must be 2 to 128 characters in length and must start with an uppercase letter, a lowercase letter, or a Chinese character. The name cannot contain the following characters: @/:=\"<>{}[] or spaces",
-      "help_zh": "表名称。 名称为2-128个字符，以大小写字母或中文开头，不支持字符@/:=\"<>{}[]和空格",
-      "name": "TableName",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The parameter settings switch in JSON format",
-      "help_zh": "json形式的参数配置开关",
-      "name": "TtlSpec",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the workspace instance. You can call DescribeInstances (https://www.alibabacloud.com/help/en/redis/developer-reference/api-r-kvstore-2015-01-01-describeinstances-redis) to obtain the ID",
-      "help_zh": "Workspace的实例 ID，可调用 DescribeInstances (https://help.aliyun.com/zh/redis/developer-reference/api-r-kvstore-2015-01-01-describeinstances-redis) 获取",
-      "name": "WorkspaceId",
-      "position": "query",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response object",
+        "description_zh": "对象",
+        "properties": {
+          "Bandwidth": {
+            "description_en": "The bandwidth limit of the instance. Unit: MB/s",
+            "description_zh": "实例带宽限制，单位：MB/s",
+            "example": "96",
+            "format": "int64",
+            "type": "integer"
+          },
+          "ChargeType": {
+            "description_en": "The billing method. Valid values:\nPrePaid: subscription.\nPostPaid: pay-as-you-go",
+            "description_zh": "付费类型，返回值：\n`PrePaid`：预付费。\n`PostPaid`：按量付费",
+            "example": "PostPaid",
+            "type": "string"
+          },
+          "Config": {
+            "description_en": "The detailed configuration of the instance in JSON format. For more information about the parameters, see [Parameter settings]（https://help.aliyun.com/document_detail/43885.html）",
+            "description_zh": "实例的详细配置，格式为JSON字符串。关于各参数的详细解释，请参见[参数配置说明]（https://help.aliyun.com/document_detail/43885.html）",
+            "example": "{\\\"EvictionPolicy\\\":\\\"volatile-lru\\\",\\\"hash-max-ziplist-entries\\\":512,\\\"zset-max-ziplist-entries\\\":128,\\\"zset-max-ziplist-value\\\":64,\\\"set-max-intset-entries\\\":512,\\\"hash-max-ziplist-value\\\":64}",
+            "type": "string"
+          },
+          "ConnectionDomain": {
+            "description_en": "The internal endpoint of the Redis instance",
+            "description_zh": "Redis实例的内网连接地址",
+            "example": "r-bp1zxszhcgatnx**.redis.rds.aliyuncs.com",
+            "type": "string"
+          },
+          "Connections": {
+            "description_en": "The maximum number of connections supported by the instance",
+            "description_zh": "实例连接数限制",
+            "example": "10000",
+            "format": "int64",
+            "type": "integer"
+          },
+          "InstanceId": {
+            "description_en": "The globally unique instance ID",
+            "description_zh": "实例ID（全局唯一）",
+            "example": "r-bp1zxszhcgatnx*",
+            "type": "string"
+          },
+          "InstanceStatus": {
+            "description_en": "The current status of the instance. The value is fixed as Creating",
+            "description_zh": "实例的当前状态，返回值固定为 Creating（创建中）",
+            "example": "Creating",
+            "type": "string"
+          },
+          "OrderId": {
+            "description_en": "The order ID",
+            "description_zh": "订单 id",
+            "example": "20741011111111",
+            "format": "int64",
+            "type": "integer"
+          },
+          "Port": {
+            "description_en": "The Redis service port",
+            "description_zh": "Redis服务端口",
+            "example": "6379",
+            "format": "int32",
+            "type": "integer"
+          },
+          "QPS": {
+            "description_en": "The queries per second (QPS). This value is the theoretical maximum for the current instance specifications",
+            "description_zh": "每秒访问次数，此处为当前规格实例的理论值",
+            "example": "100000",
+            "format": "int64",
+            "type": "integer"
+          },
+          "RegionId": {
+            "description_en": "The region ID",
+            "description_zh": "地域ID",
+            "example": "cn-hangzhou",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "2D9F3768-EDA9-4811-943E-42C8006E****",
+            "type": "string"
+          },
+          "TableName": {
+            "description_en": "The instance name",
+            "description_zh": "实例名称",
+            "example": "apitest",
+            "type": "string"
+          },
+          "TaskId": {
+            "description_en": "The ID of the task flow that is executed for the creation",
+            "description_zh": "创建执行的任务流id",
+            "example": "11111****",
+            "type": "string"
+          },
+          "ZoneId": {
+            "description_en": "The zone ID of the instance",
+            "description_zh": "实例所属的可用区的ID",
+            "example": "cn-hangzhou-b",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

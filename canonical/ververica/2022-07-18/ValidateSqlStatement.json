@@ -2,6 +2,160 @@
   "camel_example": "aliyun ververica POST /api/v2/namespaces/default-namespace/sql-statement/validate --region cn-hangzhou --header \"workspace=a14bd5d90a0000\" --header \"Content-Type=application/json\" --body \"example-string\"",
   "cmd_full_name": "ververica validate-sql-statement",
   "cmd_name": "validate-sql-statement",
+  "components": {
+    "schemas": {
+      "ErrorDetails": {
+        "description_en": "The error details of the verification result of the SQL deployment",
+        "description_zh": "Sql作业代码校验错误细节",
+        "properties": {
+          "columnNumber": {
+            "description_en": "The number of the column at which the error starts",
+            "description_zh": "错误开始列数",
+            "example": "2",
+            "title": "错误开始列数",
+            "type": "string"
+          },
+          "endColumnNumber": {
+            "description_en": "The number of the column at which the error ends",
+            "description_zh": "错误结束列数",
+            "example": "11",
+            "title": "错误结束列数",
+            "type": "string"
+          },
+          "endLineNumber": {
+            "description_en": "The number of the row at which the error ends",
+            "description_zh": "错误结束行数",
+            "example": "5",
+            "title": "错误结束行数",
+            "type": "string"
+          },
+          "invalidflinkConf": {
+            "description_en": "The list of invalid configurations of Realtime Compute for Apache Flink",
+            "description_zh": "无效flink conf列表",
+            "items": {
+              "description_en": "The information about the invalid configurations of Realtime Compute for Apache Flink",
+              "description_zh": "无效flink conf信息",
+              "example": "{\"k:v\"}",
+              "type": "string"
+            },
+            "title": "无效flink conf",
+            "type": "array"
+          },
+          "lineNumber": {
+            "description_en": "The number the row at which the error starts",
+            "description_zh": "错误开始行数",
+            "example": "3",
+            "title": "错误开始行数",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "\"\"",
+            "title": "错误信息",
+            "type": "string"
+          }
+        },
+        "title": "Sql作业代码校验错误细节",
+        "type": "object"
+      },
+      "SqlStatementValidationResult": {
+        "description_en": "The verification result of the SQL deployment",
+        "description_zh": "Sql作业代码校验结果",
+        "properties": {
+          "errorDetails": {
+            "$ref": "#/components/schemas/ErrorDetails",
+            "description_en": "The error message of the verification result",
+            "description_zh": "校验错误信息",
+            "title": "校验错误信息"
+          },
+          "message": {
+            "description_en": "The verification information",
+            "description_zh": "校验信息",
+            "example": "“”",
+            "title": "校验信息",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "校验是否通过",
+            "example": "True",
+            "title": "校验是否通过",
+            "type": "boolean"
+          },
+          "validationResult": {
+            "description_en": "The verification result",
+            "description_zh": "校验结果",
+            "enum": [
+              "VALIDATION_RESULT_INVALID",
+              "VALIDATION_RESULT_INVALID_QUERY",
+              "VALIDATION_RESULT_UNSUPPORTED_QUERY",
+              "VALIDATION_RESULT_INVALID_CONNECTOR_CONFIG",
+              "VALIDATION_RESULT_VALID_INSERT_QUERY",
+              "VALIDATION_RESULT_VALID_SELECT_QUERY",
+              "VALIDATION_RESULT_VALID_DDL_STATEMENT",
+              "VALIDATION_RESULT_VALID_COMMAND_STATEMENT",
+              "VALIDATION_RESULT_INVALID_FLINK_CONFIG"
+            ],
+            "example": "VALIDATION_RESULT_INVALID",
+            "title": "校验结果",
+            "type": "string"
+          }
+        },
+        "title": "Sql作业代码校验结果",
+        "type": "object"
+      },
+      "SqlStatementWithContext": {
+        "description_en": "The code of the deployment",
+        "description_zh": "作业代码内容",
+        "properties": {
+          "additionalDependencies": {
+            "description_en": "The additional dependencies",
+            "description_zh": "附加依赖",
+            "items": {
+              "description_en": "The URL of the additional dependency file",
+              "description_zh": "附加依赖文件的URL地址",
+              "example": "\"oss://xxx\"",
+              "type": "string"
+            },
+            "title": "附加依赖",
+            "type": "array"
+          },
+          "batchMode": {
+            "description_en": "Specifies whether the deployment is a batch deployment",
+            "description_zh": "是否为批作业",
+            "example": "false",
+            "required": true,
+            "title": "是否为批作业",
+            "type": "boolean"
+          },
+          "flinkConfiguration": {
+            "description_en": "The Realtime Compute for Apache Flink configuration",
+            "description_zh": "Flink配置",
+            "title": "Flink配置",
+            "type": "object"
+          },
+          "statement": {
+            "description_en": "The code of the deployment",
+            "description_zh": "代码内容",
+            "example": "CREATE TEMPORARY TABLE datagen_source (\n    name VARCHAR,\n    score BIGINT\n) WITH (\n   'connector' = 'datagen'\n);",
+            "required": true,
+            "title": "代码内容",
+            "type": "string"
+          },
+          "versionName": {
+            "description_en": "The engine version",
+            "description_zh": "引擎版本",
+            "example": "vvr-8.0.6-flink-1.17",
+            "title": "引擎版本",
+            "type": "string"
+          }
+        },
+        "title": "作业代码相关信息",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Verifies the code of an SQL deployment",
   "description_zh": "校验sql作业代码",
@@ -127,6 +281,65 @@
   "pathPattern": "/api/v2/namespaces/[namespace]/sql-statement/validate",
   "product_code": "ververica",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "响应数据",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SqlStatementValidationResult",
+            "description_en": "The returned data, which represents the details of SQL validation results",
+            "description_zh": "本数据结构代表sql验证结果详情"
+          },
+          "errorCode": {
+            "description_en": "If the value of success was false, an error code was returned. If the value of success was true, a null value was returned",
+            "description_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description_en": "If the value of success was false, an error message was returned. If the value of success was true, a null value was returned",
+            "description_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "httpCode": {
+            "description_en": "The status code returned. The value was fixed to 200",
+            "description_zh": "业务状态码，统一为200",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "业务状态码，统一为200；使用success表示业务请求是否成功。",
+            "type": "integer"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CBC799F0-****-1D30-8A4F-882ED4DD5E02",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "表示业务请求是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "表示业务请求是否成功。",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "当success为true，返回创建的作业；当success为false，该值为空。",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The content of the code that you want to verify",

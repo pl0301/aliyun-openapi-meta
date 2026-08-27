@@ -34,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "r-bp1zxszhcgatnx****",
       "help_en": "The instance ID. You can call https://help.aliyun.com/document_detail/473778.html to query the instance ID",
       "help_zh": "实例ID，可调用https://help.aliyun.com/document_detail/473778.html获取",
@@ -125,6 +126,11 @@
       "type": "bool"
     },
     {
+      "enum": [
+        "UPGRADE",
+        "DOWNGRADE",
+        "AUTO"
+      ],
       "example": "DOWNGRADE",
       "help_en": "The type of specification change. This parameter is required when you change the specifications of a subscription instance. Valid values:\n\nUPGRADE: Upgrade. This is the default value.\nDOWNGRADE: Downgrade.\n\nYou must set this parameter to DOWNGRADE when you downgrade a subscription instance.\nIf the price of the target instance type is higher than that of the current instance type, the change is an upgrade. Otherwise, the change is a downgrade. For example, the price of the read/write splitting 8 GB edition (5 read-only nodes) is higher than that of the 16 GB cluster edition. Changing from the latter to the former is an upgrade",
       "help_zh": "变配类型，包年包月实例变配时需要传入本参数，取值：\n\nUPGRADE：升级配置，默认值。\nDOWNGRADE：降级配置。\n\n包年包月实例降级配置时必须将该参数的值设置为DOWNGRADE。\n如果变配的目标规格比现有规格的价格高，则为升级配置，反之为降级配置。例如，读写分离8G版（5只读节点）的价格比16G集群版的价格高，从后者变配到前者为升级配置",
@@ -138,6 +144,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "2.8",
+        "4.0",
+        "5.0",
+        "6.0"
+      ],
       "example": "5.0",
       "help_en": "The major engine version for upgrading a classic instance. Valid values: 2.8, 4.0, and 5.0.\nWhen you upgrade the version, the InstanceClass parameter is required. This indicates that this operation supports version upgrades only when the instance specifications are also changed. To upgrade only the instance version, call https://help.aliyun.com/document_detail/473776.html",
       "help_zh": "适用于经典版实例升级的实例大版本，取值：2.8、4.0或5.0。\n升级版本时InstanceClass参数为必填，表示本接口仅支持在更新实例规格时升级版本。若您仅需升级实例版本，请调用https://help.aliyun.com/document_detail/473776.html",
@@ -181,6 +193,8 @@
       "help_en": "The number of shards. This parameter is applicable only to cloud-native cluster instances. You can use this parameter to specify a custom number of shards.\n\n\nTo change a cloud-native cluster instance to a standard architecture, set ShardCount to 1 and set the instance type to a standard instance type.\nTo change a cloud-native standard instance to a cluster architecture, set ShardCount to a value greater than 1 and set the instance type to a cluster instance type",
       "help_zh": "分片数，本参数仅适用于云原生版集群架构实例，您可以通过该参数实现自定义分片数量。\n\n\n如果要从云原生版集群架构实例变配到标准架构 ，ShardCount 需要显式传 1，并且规格传标准规格。\n如果要从云原生版标准架构实例变配到集群架构，ShardCount 需要显式传大于1的值，并且规格传集群规格",
       "location": "query",
+      "maximum": "4092",
+      "minimum": "1",
       "name": "shard_count",
       "options": [
         "--shard-count"
@@ -194,6 +208,7 @@
       "help_en": "The number of replica nodes in the primary zone. This parameter is applicable only to cloud-native cluster multi-replica instances. You can use this parameter to specify a custom number of replica nodes. Valid values: 1 to 4.\n\nFor multi-zone instances, you can use this parameter together with the SlaveReplicaCount parameter to specify the number of replica nodes in the primary and secondary zones. The sum of this parameter and the SlaveReplicaCount parameter cannot exceed 4",
       "help_zh": "主可用区的备节点数量，本参数仅适用于云原生版集群多副本实例，您可以通过该参数实现自定义备节点数量，取值：1~4。\n\n若实例为多可用区实例，您可以通过该参数与SlaveReplicaCount参数自定义主、备可用区的备节点数量。同时，该参数与SlaveReplicaCount参数的总和不能超过4",
       "location": "query",
+      "minimum": "0",
       "name": "replica_count",
       "options": [
         "--replica-count"
@@ -207,6 +222,7 @@
       "help_en": "The number of replica nodes in the secondary zone",
       "help_zh": "备可用区的备节点数量",
       "location": "query",
+      "minimum": "0",
       "name": "slave_replica_count",
       "options": [
         "--slave-replica-count"
@@ -220,6 +236,8 @@
       "help_en": "The number of read-only nodes in the primary zone. This parameter is applicable only to cloud-native read/write splitting instances.\nFor standard architecture instances, valid values are 0 to 9. A value of 0 indicates that read/write splitting is shutdown and the instance is switched to the standard architecture.\nFor cluster architecture instances, valid values are 1 to 4, which specifies the number of read-only nodes per data shard.\nFor multi-zone instances, you can use this parameter together with the SlaveReadOnlyCount parameter to specify the number of read-only nodes in the primary and secondary zones.\nFor standard architecture instances, the sum of this parameter and SlaveReadOnlyCount cannot exceed 9.\nFor cluster architecture instances, the sum of this parameter and SlaveReadOnlyCount cannot exceed 4",
       "help_zh": "主可用区的只读节点数，本参数仅适用于创建云原生读写分离实例。\n若实例为标准架构，取值为0-9，0表示关闭读写分离，将实例切换为标准架构。\n若实例为集群架构，取值为1-4，表示每数据分片的只读节点数。\n若创建多可用区实例，您可以通过该参数和SlaveReadOnlyCount参数自定义主备可用区的只读节点数量。\n若实例为标准架构，该参数与SlaveReadOnlyCount的总和不能大于9。\n若实例为集群架构，该参数与SlaveReadOnlyCount的总和不能大于4",
       "location": "query",
+      "maximum": "9",
+      "minimum": "0",
       "name": "read_only_count",
       "options": [
         "--read-only-count"
@@ -233,6 +251,8 @@
       "help_en": "The number of read-only nodes in the secondary zone",
       "help_zh": "备可用区的只读节点数量",
       "location": "query",
+      "maximum": "9",
+      "minimum": "0",
       "name": "slave_read_only_count",
       "options": [
         "--slave-read-only-count"
@@ -255,6 +275,12 @@
       "type": "bool"
     },
     {
+      "enum": [
+        "MASTER_SLAVE",
+        "STAND_ALONE",
+        "double",
+        "single"
+      ],
       "example": "MASTER_SLAVE",
       "help_en": "The node type. Valid values:\nMASTER_SLAVE: high availability (dual-replica)\nSTAND_ALONE: single replica\ndouble: dual-replica\nsingle: single replica\nFor cloud-native instances, select MASTER_SLAVE or STAND_ALONE. For classic instances, select double or single",
       "help_zh": "节点类型，取值：\nMASTER_SLAVE：高可用（双副本）\nSTAND_ALONE：单副本\ndouble：双副本\nsingle：单副本\n云原生版实例请选择MASTER_SLAVE或STAND_ALONE，经典版实例请选择double或single",
@@ -268,6 +294,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "essd_pl1",
+        "essd_pl2",
+        "essd_pl3"
+      ],
       "example": "essd_pl1",
       "help_en": "The storage type. Valid values: essd_pl1, essd_pl2, and essd_pl3.\nThis parameter is required only when InstanceType is set to tair_essd and the instance is a Tair ESSD-based cloud disk instance",
       "help_zh": "存储类型，取值为essd_pl1、essd_pl2、essd_pl3。\n当InstanceType取值为tair_essd时，且实例为Tair磁盘ESSD型时，才需要输入本参数",
@@ -309,5 +340,28 @@
   ],
   "pathPattern": "",
   "product_code": "R-kvstore",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response object",
+        "description_zh": "对象",
+        "properties": {
+          "OrderId": {
+            "description_en": "The order ID",
+            "description_zh": "订单ID",
+            "example": "20722623431****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "0DA1D7EF-C80D-432C-8758-7D225182626B",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

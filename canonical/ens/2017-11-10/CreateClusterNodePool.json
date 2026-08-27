@@ -101,6 +101,10 @@
           "type": "array"
         },
         {
+          "enum": [
+            "PostPaid",
+            "PrePaid"
+          ],
           "example": "PostPaid",
           "help_en": "The billing method for the instances",
           "help_zh": "实例计费类型",
@@ -127,6 +131,12 @@
           "type": "array"
         },
         {
+          "enum": [
+            "local_ssd",
+            "local_hdd",
+            "cloud_efficiency",
+            "cloud_ssd"
+          ],
           "example": "cloud_efficiency",
           "help_en": "The category of the system disk. Valid values: `local_ssd`, `local_hdd`, `cloud_efficiency`, and `cloud_ssd`",
           "help_zh": "系统盘类型，枚举值:local_ssd、local_hdd、cloud_efficiency、cloud_ssd",
@@ -166,6 +176,12 @@
           "element": {
             "fields": [
               {
+                "enum": [
+                  "local_ssd",
+                  "local_hdd",
+                  "cloud_efficiency",
+                  "cloud_ssd"
+                ],
                 "example": "cloud_efficiency",
                 "help_en": "The category of the data disk",
                 "help_zh": "磁盘类型",
@@ -269,5 +285,225 @@
   ],
   "pathPattern": "",
   "product_code": "Ens",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response data",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Nodepool": {
+            "description_en": "The configuration of the node pool",
+            "description_zh": "节点池配置",
+            "properties": {
+              "ClusterId": {
+                "description_en": "The cluster ID",
+                "description_zh": "实例ID",
+                "example": "eck-d2666c5f",
+                "type": "string"
+              },
+              "KubernetesConfig": {
+                "description_en": "The Kubernetes-related configuration",
+                "description_zh": "kubernetes相关配置",
+                "properties": {
+                  "PreUserData": {
+                    "description_en": "A Base64-encoded script that executes on an instance after creation but before the node joins the cluster",
+                    "description_zh": "实例创建后，接入集群前执行的脚本，内容需要 base64",
+                    "example": "ZWNobyBvawo=",
+                    "type": "string"
+                  },
+                  "UserData": {
+                    "description_en": "A Base64-encoded script that is executed on an instance after it joins the cluster",
+                    "description_zh": "实例创建后，接入集群后执行的脚本，内容需要 base64",
+                    "example": "ZWNobyBvawo=",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "NodepoolInfo": {
+                "description_en": "Information about the node pool",
+                "description_zh": "节点池信息",
+                "properties": {
+                  "EnsRegionId": {
+                    "description_en": "The ID of the ENS region where the cluster is located",
+                    "description_zh": "集群所在的ENS Region ID ",
+                    "example": "cn-guiyang-14",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description_en": "The name of the node pool",
+                    "description_zh": "集群名称",
+                    "example": "test1",
+                    "type": "string"
+                  },
+                  "NodepoolId": {
+                    "description_en": "The ID of the node pool",
+                    "description_zh": "节点池ID",
+                    "example": "np1176939548ac49e59febe82dcbf1ad56",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "ScalingGroup": {
+                "description_en": "The configuration of the associated scaling group.\n\nThe scaling group is assigned to a specified resource group. If one is not specified during creation, the default resource group is used",
+                "description_zh": "新创建的伸缩组所属的资源组ID。\n将新创建的伸缩组归属到指定的资源组中。如果不指定该参数，则归属为默认资源组",
+                "properties": {
+                  "DataDisks": {
+                    "description_en": "Information about the data disks for the nodes",
+                    "description_zh": "节点数据盘信息",
+                    "items": {
+                      "description_en": "Information about a data disk",
+                      "description_zh": "节点数据盘信息",
+                      "properties": {
+                        "Category": {
+                          "description_en": "The category of the data disk",
+                          "description_zh": "磁盘种类",
+                          "example": "cloud_efficiency",
+                          "type": "string"
+                        },
+                        "Size": {
+                          "description_en": "The size of the data disk, in GB",
+                          "description_zh": "数据盘大小规格，单位：GB",
+                          "example": "80",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "ImageId": {
+                    "description_en": "The ID of the image used for the nodes",
+                    "description_zh": "控制面虚拟机镜像 ID",
+                    "example": "m-67bdk1kpu1ylmt7k33h5dbiov",
+                    "type": "string"
+                  },
+                  "InstanceChargeType": {
+                    "description_en": "The billing method for the instances",
+                    "description_zh": "实例付费方式",
+                    "example": "PrePaid",
+                    "type": "string"
+                  },
+                  "InstanceTypes": {
+                    "description_en": "The instance types for the nodes in the node pool",
+                    "description_zh": "节点池节点实例规格列表",
+                    "items": {
+                      "description_en": "An instance type",
+                      "description_zh": "节点池节点实例规格",
+                      "example": "ens.sn1.small",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "KeyPairName": {
+                    "description_en": "The name of the key pair",
+                    "description_zh": "密钥对名称",
+                    "example": "key-pair-name",
+                    "type": "string"
+                  },
+                  "Password": {
+                    "description_en": "The login password for the instances",
+                    "description_zh": "实例登录密码",
+                    "example": "**********",
+                    "type": "string"
+                  },
+                  "SystemDiskCategory": {
+                    "description_en": "The category of the system disk",
+                    "description_zh": "节点系统盘类型",
+                    "example": "cloud_efficiency",
+                    "type": "string"
+                  },
+                  "SystemDiskSize": {
+                    "description_en": "The size of the system disk, in GB",
+                    "description_zh": "系统盘大小规格，单位：GB",
+                    "example": "80",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "VswitchIds": {
+                    "description_en": "The IDs of the VSwitches for the cluster nodes",
+                    "description_zh": "集群节点所在虚拟交换机id",
+                    "items": {
+                      "description_en": "The ID of the VSwitch",
+                      "description_zh": "集群节点所在虚拟交换机id",
+                      "example": "vsw-58eu2p6v64qw8ihhit1wz7wgv",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Status": {
+                "description_en": "The status of the node pool",
+                "description_zh": "节点池状态信息",
+                "properties": {
+                  "DesiredNodes": {
+                    "description_en": "The desired number of instances",
+                    "description_zh": "期望实例数",
+                    "example": "10",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "FailedNodes": {
+                    "example": "0",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "InitialNodes": {
+                    "description_en": "The number of instances that are being created",
+                    "description_zh": "创建中的实例数",
+                    "example": "0",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "RemovingNodes": {
+                    "description_en": "The number of instances that are being removed",
+                    "description_zh": "删除中的实例数",
+                    "example": "0",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "ServingNodes": {
+                    "description_en": "The number of instances that are in service",
+                    "description_zh": "使用中的实例数",
+                    "example": "10",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "State": {
+                    "description_en": "The state of the node pool. Valid values:\n\n`active`: The node pool is active.\n\n`scaling`: The node pool is scaling out.\n\n`removing_nodes`: The node pool is scaling in",
+                    "description_zh": "节点池状态\n\nactive：已达终态\nscaling：扩容中\nremoving_nodes：缩容中",
+                    "example": "active",
+                    "type": "string"
+                  },
+                  "TotalNodes": {
+                    "description_en": "The total number of instances in the node pool. This includes instances that are being created, are in service, or are being removed",
+                    "description_zh": "总实例数（包含创建中、使用中、删除中的）",
+                    "example": "10",
+                    "format": "int32",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "C0003E8B-B930-4F59-ADC0-0E209A9012A8",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

@@ -2,6 +2,75 @@
   "camel_example": "aliyun cs GET /api/v1/clusters --region cn-hangzhou --cluster_id c3fb96524f9274b4495df0f12a6b50000 --page_number 1 --cluster_spec 'ack.pro.small' --profile Default --name 'cluster-demo' --region_id 'cn-hangzhou' --cluster_type Kubernetes --page_size 10 --header \"Content-Type=application/json\"",
   "cmd_full_name": "cs describe-clusters-v1",
   "cmd_name": "describe-clusters-v1",
+  "components": {
+    "schemas": {
+      "maintenance_window": {
+        "description_en": "The configurations of the cluster maintenance window",
+        "description_zh": "集群维护窗口",
+        "properties": {
+          "duration": {
+            "description_en": "The duration of the cluster maintenance window. \n\nValid values: 1 to 24. \n\nUnit: hours.\n\nDefault value: 3",
+            "description_zh": "维护时长。取值范围[1,24]，单位为小时。\n\n默认值：3h",
+            "example": "3h",
+            "title": "维护时长。取值范围1～24，单位为小时。 默认值：3h。",
+            "type": "string"
+          },
+          "enable": {
+            "description_en": "Specifies whether to enable the cluster maintenance window. Valid values:\n\n`true`: enables the cluster maintenance window.\n`false`: disables the cluster maintenance window.\n\nDefault value: `false`",
+            "description_zh": "是否开启维护窗口。取值：\n`true`：开启维护窗口。\n`false`：不开启维护窗口。\n\n默认值：`false`",
+            "example": "false",
+            "title": "是否开启维护窗口。默认值false。",
+            "type": "boolean"
+          },
+          "maintenance_time": {
+            "description_en": "The start time of the cluster maintenance window. The value follows a standard time format in Golang. Example: 15:04:05Z",
+            "description_zh": "维护起始时间。RFC3339标准格式",
+            "example": "2020-10-15T12:31:00.000+08:00",
+            "title": "维护起始时间。RFC3339标准格式。",
+            "type": "string"
+          },
+          "recurrence": {
+            "description_en": "Defines a maintenance window recurrence rule by using the RFC5545 recurrence rule. Currently, only FREQ=WEEKLY is supported, and you cannot specify COUNT or UNTIL",
+            "description_zh": "使用RFC5545 Recurrence Rule语法定义的维护窗口循环规则，目前仅支持FREQ=WEEKLY，且不支持指定COUNT或UNTIL",
+            "example": "FREQ=WEEKLY;INTERVAL=4;BYDAY=MO,TU",
+            "title": "使用RFC5545 Recurrence Rule语法定义的维护窗口循环规则，目前仅支持FREQ=WEEKLY，且不支持指定COUNT或UNTIL",
+            "type": "string"
+          },
+          "weekly_period": {
+            "description_en": "The day of the week when maintenance is performed. Separate multiple days with commas (,). \n\nValid values: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, and Sunday.\n\nDefault value: `Thursday`",
+            "description_zh": "维护周期，多个值用英文半角逗号（,）分隔。取值：{Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday}\n\n默认值：`Thursday`",
+            "example": "Monday,Thursday",
+            "title": "维护周期。取值范围为:Monday~Sunday，多个值用逗号分隔。 默认值：Thursday。",
+            "type": "string"
+          }
+        },
+        "title": "集群维护窗口。",
+        "type": "object"
+      },
+      "tag": {
+        "description_en": "The configuration of the label",
+        "description_zh": "标签配置",
+        "properties": {
+          "key": {
+            "description_en": "The `key` of the label",
+            "description_zh": "标签`key`值",
+            "example": "env",
+            "title": "key值。",
+            "type": "string"
+          },
+          "value": {
+            "description_en": "The `value` of the label",
+            "description_zh": "标签`value`值",
+            "example": "prod",
+            "title": "value值。",
+            "type": "string"
+          }
+        },
+        "title": "集群Tag配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "You can invoke the DescribeClustersV1 operation to query the list of ACK clusters that meet conditional criteria (such as cluster type and cluster specification) under the current account",
   "description_zh": "您可以调用DescribeClustersV1接口查看本账号下符合条件的ACK集群（例如指定集群类型、集群规格）列表信息",
@@ -127,5 +196,413 @@
   ],
   "pathPattern": "/api/v1/clusters",
   "product_code": "CS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "返回体数据",
+        "properties": {
+          "clusters": {
+            "description_en": "The list of cluster information",
+            "description_zh": "集群信息列表",
+            "items": {
+              "description_en": "The cluster instance",
+              "description_zh": "集群实例",
+              "properties": {
+                "cluster_domain": {
+                  "description_en": "The local domain name of the cluster",
+                  "description_zh": "集群本地域名",
+                  "example": "cluster.local",
+                  "title_en": "",
+                  "title_zh": "集群本地域名",
+                  "type": "string"
+                },
+                "cluster_id": {
+                  "description_en": "The cluster ID",
+                  "description_zh": "集群ID",
+                  "example": "c3fb96524f9274b4495df0f12a6b5****",
+                  "title_en": "",
+                  "title_zh": "集群ID。",
+                  "type": "string"
+                },
+                "cluster_spec": {
+                  "description_en": "The cluster specification",
+                  "description_zh": "集群规格",
+                  "example": "ack.standard",
+                  "title_en": "",
+                  "title_zh": "托管版集群类型，面向托管集群。 • ack.pro.small：专业托管集群。 • ack.standard ：标准托管集群。",
+                  "type": "string"
+                },
+                "cluster_type": {
+                  "description_en": "The cluster type",
+                  "description_zh": "集群类型",
+                  "example": "Kubernetes",
+                  "title_en": "",
+                  "title_zh": "集群类型。",
+                  "type": "string"
+                },
+                "container_cidr": {
+                  "description_en": "The pod CIDR block, which is the Flannel network configuration",
+                  "description_zh": "Pod网络网段，Flannel网络配置",
+                  "example": "172.20.xx.xx/16",
+                  "required": false,
+                  "title_en": "",
+                  "title_zh": "POD网络网段",
+                  "type": "string"
+                },
+                "created": {
+                  "description_en": "The time when the cluster was created",
+                  "description_zh": "集群创建时间",
+                  "example": "2025-04-07T09:57:26+08:00",
+                  "title_en": "",
+                  "title_zh": "集群初始化时间。",
+                  "type": "string"
+                },
+                "current_version": {
+                  "description_en": "The current version of the cluster",
+                  "description_zh": "集群当前版本",
+                  "example": "1.32.1-aliyun.1",
+                  "title_en": "",
+                  "title_zh": "集群当前版本。",
+                  "type": "string"
+                },
+                "deletion_protection": {
+                  "description_en": "Indicates whether deletion protection is enabled for the cluster. This prevents accidental deletion of the cluster through the console or API. Valid values:\n\n`true`: Deletion protection is enabled. The cluster cannot be deleted through the console or API.\n`false`: Deletion protection is not enabled. The cluster can be deleted through the console or API",
+                  "description_zh": "集群删除保护，防止通过控制台或API误删除集群。取值：\n\n`true`：启用集群删除保护，将不能通过控制台或API删除集群。\n`false`：不启用集群删除保护，则能通过控制台或API删除集群",
+                  "example": "true",
+                  "title_en": "",
+                  "title_zh": "集群是否开启删除保护。",
+                  "type": "boolean"
+                },
+                "docker_version": {
+                  "deprecated": true,
+                  "description_en": "The Docker version of the cluster",
+                  "description_zh": "集群Docker版本",
+                  "example": "19.03.5",
+                  "title_en": "",
+                  "title_zh": "集群使用的Docker版本。",
+                  "type": "string"
+                },
+                "external_loadbalancer_id": {
+                  "deprecated": true,
+                  "description_en": "The ID of the Server Load Balancer (SLB) instance for the Ingress of the cluster.\n\nDefault instance type: guaranteed-performance instance (slb.s1.small)",
+                  "description_zh": "集群中Ingress SLB实例。\n\n默认实例规格：性能保障型（slb.s1.small）",
+                  "example": "lb-2vcrbmlevo6kjpgch****",
+                  "title_en": "",
+                  "title_zh": "集群负载均衡服务的ID。",
+                  "type": "string"
+                },
+                "init_version": {
+                  "description_en": "The cluster version. For Kubernetes versions supported by ACK, see [Kubernetes version release overview]（https://help.aliyun.com/document_detail/185269.html）",
+                  "description_zh": "集群版本。ACK支持的Kubernetes版本，请参见[Kubernetes版本发布概览]（https://help.aliyun.com/document_detail/185269.html）",
+                  "example": "1.32.1-aliyun.1",
+                  "title_en": "",
+                  "title_zh": "集群初始化版本。",
+                  "type": "string"
+                },
+                "ip_stack": {
+                  "default": "ipv4",
+                  "description_en": "The IP protocol stack of the cluster. Valid values:\nipv4: creates a cluster that supports only the IPv4 protocol stack.\ndual: creates a cluster that supports the IPv4/IPv6 dual stack",
+                  "description_zh": "集群的IP协议栈，可取值：\nipv4：创建仅支持IPv4协议栈的集群。\ndual：创建支持IPv4/IPv6双栈的集群",
+                  "enum": [
+                    "ipv4",
+                    "dual"
+                  ],
+                  "example": "ipv4",
+                  "title_en": "",
+                  "title_zh": "集群的IP协议栈，可取值：\n- ipv4：创建仅支持IPv4协议栈的集群；\n- dual：创建支持IPv4/IPv6双栈的集群。",
+                  "type": "string"
+                },
+                "maintenance_window": {
+                  "$ref": "#/components/schemas/maintenance_window",
+                  "description_en": "The maintenance window of the cluster. This feature takes effect only for ACK managed clusters and ACK Serverless clusters",
+                  "description_zh": "集群维护窗口，该功能只在ACK托管集群和ACK Serverless集群中生效"
+                },
+                "master_url": {
+                  "description_en": "The access addresses of the cluster API server, including the internal network access address and the public network access address",
+                  "description_zh": "集群API Server访问地址，包含内网访问地址以及公网访问地址",
+                  "example": "{\\\"api_server_endpoint\\\":\\\"\\\",\\\"intranet_api_server_endpoint\\\":\\\"https://192.168.xx.xx:6443\\\"}",
+                  "title_en": "",
+                  "title_zh": "集群访问地址列表。",
+                  "type": "string"
+                },
+                "meta_data": {
+                  "description_en": "The metadata of the cluster",
+                  "description_zh": "集群元数据信息",
+                  "example": "{\\\"Addons\\\":[{\\\"config\\\":***}}",
+                  "title_en": "",
+                  "title_zh": "集群元数据信息。",
+                  "type": "string"
+                },
+                "name": {
+                  "description_en": "The cluster name",
+                  "description_zh": "集群名称",
+                  "example": "cluster-demo",
+                  "title_en": "",
+                  "title_zh": "集群名称。",
+                  "type": "string"
+                },
+                "network_mode": {
+                  "deprecated": true,
+                  "description_en": "The network mode of the cluster. Valid values:\n\n`classic`: classic network.\n`vpc`: virtual private cloud (VPC).\n`overlay`: overlay network.\n`calico`: Calico network",
+                  "description_zh": "集群网络模式。取值：\n\n`classic`：经典网络。\n`vpc`：专有网络。\n`overlay`：叠加网络。\n`calico`：Calico网络",
+                  "example": "vpc",
+                  "title_en": "",
+                  "title_zh": "集群使用的网络类型，例如：VPC网络。",
+                  "type": "string"
+                },
+                "next_version": {
+                  "description_en": "The version to which the cluster can be upgraded",
+                  "description_zh": "集群可升级版本",
+                  "example": "1.xx.x-aliyun.1",
+                  "title_en": "",
+                  "title_zh": "集群可升级版本。",
+                  "type": "string"
+                },
+                "operation_policy": {
+                  "description_en": "The automatic O&M policy of the cluster",
+                  "description_zh": "集群自动运维策略",
+                  "properties": {
+                    "cluster_auto_upgrade": {
+                      "description_en": "The automatic cluster upgrade configuration",
+                      "description_zh": "集群自动升级",
+                      "properties": {
+                        "channel": {
+                          "description_en": "The frequency of automatic cluster upgrades. For more information, see [Upgrade frequency]（https://help.aliyun.com/document_detail/2712866.html）.\n\nValid values:\npatch: the latest patch version.\nstable: the second latest minor version.\nrapid: the latest minor version",
+                          "description_zh": "集群自动升级频次。更多信息，请参见[升级频次]（https://help.aliyun.com/document_detail/2712866.html）。\n\n取值：\npatch：最新补丁版本。\nstable：次新次要版本。\nrapid：最新次要版本",
+                          "example": "patch",
+                          "title_en": "",
+                          "title_zh": "集群自动升级频次。可取值：\n- patch\n- stable\n- rapid",
+                          "type": "string"
+                        },
+                        "enabled": {
+                          "description_en": "Indicates whether automatic cluster upgrade is enabled",
+                          "description_zh": "是否开启集群自动升级",
+                          "example": "true",
+                          "title_en": "",
+                          "title_zh": "是否开启集群自动升级。",
+                          "type": "boolean"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "集群自动升级。",
+                      "type": "object"
+                    }
+                  },
+                  "title_en": "",
+                  "title_zh": "集群自动运维策略。",
+                  "type": "object"
+                },
+                "private_zone": {
+                  "deprecated": true,
+                  "description_en": "The Private Zone configuration of the cluster. Valid values:\n\n`true`: Private Zone is enabled.\n`false`: Private Zone is not enabled",
+                  "description_zh": "集群Private Zone配置。取值：\n\n`true`：启用Private Zone。\n`false`：不启用Private Zone",
+                  "example": "false",
+                  "title_en": "",
+                  "title_zh": "集群是否开启Private Zone。",
+                  "type": "boolean"
+                },
+                "profile": {
+                  "description_en": "The cluster subtype",
+                  "description_zh": "集群子类型",
+                  "example": "Default",
+                  "title_en": "",
+                  "title_zh": "边缘集群表示，用于区分边缘托管版集群。",
+                  "type": "string"
+                },
+                "proxy_mode": {
+                  "description_en": "The kube-proxy mode. Valid values:\n\n`iptables`: a mature and stable kube-proxy mode. Uses iptables rules for service discovery and load balancing of Kubernetes Services. Performance is moderate and affected by scale. Suitable for clusters with a small number of Services.\n`ipvs`: a high-performance kube-proxy mode. Uses the Linux IPVS module for service discovery and load balancing of Kubernetes Services. Suitable for clusters with a large number of Services that require high-performance load balancing",
+                  "description_zh": "kube-proxy代理模式。\n\n`iptables`: 成熟稳定的kube-proxy代理模式，Kubernetes Service的服务发现和负载均衡使用iptables规则配置，但是性能一般，受规模影响较大，适用于集群存在少量的Service。\n`ipvs`：高性能的kube-proxy代理模式，Kubernetes Service的服务发现和负载均衡使用Linux IPVS模块进行配置，适用于集群存在大量的Service，对负载均衡有高性能要求的场景",
+                  "example": "ipvs",
+                  "title_en": "",
+                  "title_zh": "Proxy代理模式，ipvs|iptables",
+                  "type": "string"
+                },
+                "region_id": {
+                  "description_en": "The region ID of the cluster",
+                  "description_zh": "集群所在地域ID",
+                  "example": "cn-beijing",
+                  "title_en": "",
+                  "title_zh": "地域ID。",
+                  "type": "string"
+                },
+                "resource_group_id": {
+                  "description_en": "The resource group ID of the cluster",
+                  "description_zh": "集群资源组ID",
+                  "example": "rg-acfmyvw3wjm****",
+                  "title_en": "",
+                  "title_zh": "集群资源组ID。",
+                  "type": "string"
+                },
+                "security_group_id": {
+                  "description_en": "The security group ID of the cluster",
+                  "description_zh": "集群安全组ID",
+                  "example": "sg-2vcgwsrwgt5mp0yi****",
+                  "title_en": "",
+                  "title_zh": "集群安全组ID。",
+                  "type": "string"
+                },
+                "service_cidr": {
+                  "description_en": "The service CIDR block",
+                  "description_zh": "服务网络网段",
+                  "example": "172.21.xx.xx/20",
+                  "required": true,
+                  "title_en": "",
+                  "title_zh": "服务网络网段",
+                  "type": "string"
+                },
+                "size": {
+                  "description_en": "The current number of nodes in the cluster, including master nodes and worker nodes",
+                  "description_zh": "集群当前节点数量，包含Master节点以及Worker节点",
+                  "example": "5",
+                  "format": "int64",
+                  "title_en": "",
+                  "title_zh": "集群节点数。",
+                  "type": "integer"
+                },
+                "state": {
+                  "description_en": "The running state of the cluster. Valid values:\n\n`initial`: The cluster is being created.\n`failed`: The cluster failed to be created.\n`running`: The cluster is running.\n`updating`: The cluster is being updated.\n`upgrading`: The cluster is being upgraded.\n`removing`: Nodes are being removed.\n`draining`: Nodes are being drained.\n`scaling`: The cluster is being scaled.\n`inactive`: The cluster is inactive.\n`unavailable`: The cluster is unavailable.\n`deleting`: The cluster is being deleted.\n`deleted`: The cluster has been deleted.\n`delete_failed`: The cluster failed to be deleted.\n`waiting`: The cluster is in the accessed state, waiting to be connected.\n`disconnected`: The cluster is disconnected",
+                  "description_zh": "集群运行状态，取值：\n\n`initial`：集群创建中。\n`failed`：集群创建失败。\n`running`：集群运行中。\n`updating`：集群变更中。\n`upgrading`：集群升级中。\n`removing`：节点移除中。\n`draining`：节点排水中。\n`scaling`：集群伸缩中。\n`inactive`：集群不活跃。\n`unavailable`：集群不可用。\n`deleting`：集群删除中。\n`deleted`：集群已经被删除。\n`delete_failed`：集群删除失败。\n`waiting`：等待接入状态。\n`disconnected`：断开状态",
+                  "example": "running",
+                  "title_en": "",
+                  "title_zh": "集群运行状态。",
+                  "type": "string"
+                },
+                "subnet_cidr": {
+                  "deprecated": true,
+                  "description_en": "[This field is deprecated] Use container_cidr to obtain the pod CIDR block",
+                  "description_zh": "【该字段已废弃】请使用container_cidr获取Pod网络网段",
+                  "example": "null",
+                  "title_en": "",
+                  "title_zh": "POD网段地址。【该字段已废弃】请使用container_cidr获取Pod网络网段。",
+                  "type": "string"
+                },
+                "tags": {
+                  "description_en": "The resource tags of the cluster",
+                  "description_zh": "集群资源标签",
+                  "items": {
+                    "$ref": "#/components/schemas/tag",
+                    "description_en": "The resource tags of the cluster",
+                    "description_zh": "集群资源标签"
+                  },
+                  "title_en": "",
+                  "title_zh": "集群标签。",
+                  "type": "array"
+                },
+                "timezone": {
+                  "description_en": "The time zone",
+                  "description_zh": "时区",
+                  "example": "Asia/Shanghai",
+                  "title_en": "",
+                  "title_zh": "时区",
+                  "type": "string"
+                },
+                "updated": {
+                  "description_en": "The time when the cluster was last updated",
+                  "description_zh": "集群更新时间",
+                  "example": "2025-04-07T09:57:26+08:00",
+                  "title_en": "",
+                  "title_zh": "集群更新时间。",
+                  "type": "string"
+                },
+                "vpc_id": {
+                  "description_en": "The VPC ID of the cluster",
+                  "description_zh": "集群专有网络ID",
+                  "example": "vpc-2vcg932hsxsxuqbgl****",
+                  "title_en": "",
+                  "title_zh": "集群所在的VPC ID。",
+                  "type": "string"
+                },
+                "vswitch_id": {
+                  "deprecated": true,
+                  "description_en": "The vSwitch ID of the cluster",
+                  "description_zh": "集群虚拟交换机ID",
+                  "example": "vsw-2vc41xuumx5z2rdma****,vsw-2vc41xuumx5z2rdma****",
+                  "title_en": "",
+                  "title_zh": "集群使用的虚拟交换ID。",
+                  "type": "string"
+                },
+                "vswitch_ids": {
+                  "description_en": "The vSwitches of the cluster control plane",
+                  "description_zh": "集群控制面虚拟交换机",
+                  "items": {
+                    "description_en": "The vSwitches of the cluster control plane",
+                    "description_zh": "集群控制面虚拟交换机",
+                    "example": "vsw-2vc41xuumx5z2rdma****",
+                    "type": "string"
+                  },
+                  "title_en": "",
+                  "title_zh": "集群控制面虚拟交换机。",
+                  "type": "array"
+                },
+                "worker_ram_role_name": {
+                  "deprecated": true,
+                  "description_en": "The name of the worker RAM role that authorizes ECS instances to serve as cluster worker nodes",
+                  "description_zh": "Worker RAM角色名称，授权ECS实例为集群Worker节点",
+                  "example": "KubernetesWorkerRole-ec87d15b-edca-4302-933f-c8a16bf0****",
+                  "title_en": "",
+                  "title_zh": "集群Worker RAM角色。",
+                  "type": "string"
+                },
+                "zone_id": {
+                  "deprecated": true,
+                  "description_en": "The zone ID of the cluster",
+                  "description_zh": "集群所属可用区ID",
+                  "example": "cn-beijing-b",
+                  "title_en": "",
+                  "title_zh": "可用区ID。",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title_en": "",
+            "title_zh": "集群详情列表。",
+            "type": "array"
+          },
+          "page_info": {
+            "description_en": "The pagination information",
+            "description_zh": "分页信息",
+            "properties": {
+              "page_number": {
+                "description_en": "The page number",
+                "description_zh": "分页数",
+                "example": "3",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "分页数。",
+                "type": "integer"
+              },
+              "page_size": {
+                "description_en": "The page size",
+                "description_zh": "单页大小",
+                "example": "20",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "单页大小。",
+                "type": "integer"
+              },
+              "total_count": {
+                "description_en": "The total number of results",
+                "description_zh": "结果总数",
+                "example": "50",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "结果总数。",
+                "type": "integer"
+              }
+            },
+            "title_en": "",
+            "title_zh": "分页信息。",
+            "type": "object"
+          }
+        },
+        "title_en": "",
+        "title_zh": "返回数据体。",
+        "type": "object"
+      }
+    },
+    "5XX": {}
+  }
 }

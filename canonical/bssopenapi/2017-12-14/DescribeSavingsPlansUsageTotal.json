@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "2021-01-01 00:00:00",
       "help_en": "The beginning of the time range to query. The beginning of the time range is included in the query. The time is in the yyyy-MM-dd HH:mm:ss format",
       "help_zh": "要查询的时间范围的开始。开始时间包含在时间范围内。时间格式 yyyy-MM-dd HH:mm:ss",
@@ -47,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "HOUR",
       "help_en": "The time granularity of the usage summary to query. Valid values: MONTH, DAY, and HOUR",
       "help_zh": "查询使用情况摘要的时间粒度。有效值枚举：MONTH、DAY、HOUR",
@@ -64,6 +66,8 @@
       "help_en": "The ID of the account that owns the resource. The resource owner is the account that uses the resource",
       "help_zh": "资源归属账号的ID，资源归属账号是实际使用资源的账号",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "-1",
       "name": "bill_owner_id",
       "options": [
         "--bill-owner-id"
@@ -195,45 +199,106 @@
   "pathPattern": "",
   "product_code": "BssOpenApi",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The ID of the account that owns the resource. The resource owner is the account that uses the resource",
-      "help_zh": "资源归属账号的ID，资源归属账号是实际使用资源的账号",
-      "name": "BillOwnerId",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The end of the time range to query. The end of the time range is not included in the query. If you do not specify this parameter, the current time is used. The time is in the yyyy-MM-dd HH:mm:ss format",
-      "help_zh": "要查询的时间范围的结束时间。不包含结束时间。如果不设置该参数，则结束时间为当前时间。时间格式 yyyy-MM-dd HH:mm:ss",
-      "name": "EndPeriod",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "FilterParam",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The time granularity of the usage summary to query. Valid values: MONTH, DAY, and HOUR",
-      "help_zh": "查询使用情况摘要的时间粒度。有效值枚举：MONTH、DAY、HOUR",
-      "name": "PeriodType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The beginning of the time range to query. The beginning of the time range is included in the query. The time is in the yyyy-MM-dd HH:mm:ss format",
-      "help_zh": "要查询的时间范围的开始。开始时间包含在时间范围内。时间格式 yyyy-MM-dd HH:mm:ss",
-      "name": "StartPeriod",
-      "position": "query",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The status code",
+            "description_zh": "状态码",
+            "example": "success",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The data returned",
+            "description_zh": "返回的查询数据",
+            "properties": {
+              "PeriodCoverage": {
+                "description_en": "The usage data for each time period",
+                "description_zh": "每个时间端的使用率数据",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Percentage": {
+                      "description_en": "The usage rate",
+                      "description_zh": "使用率",
+                      "example": "1",
+                      "format": "float",
+                      "type": "number"
+                    },
+                    "Period": {
+                      "description_en": "The time period of the data. The format is yyyyMMddHH",
+                      "description_zh": "数据所属时间段，格式 yyyyMMddHH",
+                      "example": "2021041500",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "TotalUsage": {
+                "description_en": "The summary of the total usage",
+                "description_zh": "总使用率概览",
+                "properties": {
+                  "PoolValue": {
+                    "description_en": "The total pool value of the savings plan",
+                    "description_zh": "节省计划的总量",
+                    "example": "100",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "PostpaidCost": {
+                    "description_en": "The pay-as-you-go cost",
+                    "description_zh": "后付费价格",
+                    "example": "200",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "SavedCost": {
+                    "description_en": "The savings",
+                    "description_zh": "节省的金额",
+                    "example": "100",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "UsagePercentage": {
+                    "description_en": "The total usage rate",
+                    "description_zh": "总使用率",
+                    "example": "1",
+                    "format": "float",
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The message returned for the call",
+            "description_zh": "接口调用信息",
+            "example": "Successful!",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "79EE7556-0CFD-44EB-9CD6-B3B526E3A85F",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "接口调用是否成功",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

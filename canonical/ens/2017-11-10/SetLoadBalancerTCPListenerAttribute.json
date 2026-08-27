@@ -38,6 +38,8 @@
       "help_en": "The listener port to modify. Valid values: 1 to 65535",
       "help_zh": "需要修改属性的监听端口。取值：1~65535",
       "location": "query",
+      "maximum": "65535",
+      "minimum": "1",
       "name": "listener_port",
       "options": [
         "--listener-port"
@@ -51,6 +53,8 @@
       "help_en": "The description of the listener. The description must be 1 to 80 characters long.\n\nThe description cannot start with `http://` or `https://`",
       "help_zh": "设置监听的描述信息。长度限制为1~80个字符。\n不能以`http://`和`https://`开头",
       "location": "query",
+      "max_length": "80",
+      "min_length": "1",
       "name": "description",
       "options": [
         "--description"
@@ -60,6 +64,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "wrr",
+        "wlc",
+        "rr",
+        "sch",
+        "tch"
+      ],
       "example": "wrr",
       "help_en": "The scheduling algorithm. Valid values:\n\nwrr (Weighted Round Robin): Backend servers with higher weights receive more requests.\n\nwlc (Weighted Least Connections): In addition to the weight of each backend server, this algorithm considers the number of connections to each server. If multiple servers have the same weight, the server with the fewest connections receives the next request.\n\nrr (Round Robin): Requests are distributed to backend servers in sequence.\n\nsch (Source-based Consistent Hashing): Requests from the same source IP address are routed to the same backend server.\n\ntch (Four-tuple-based Consistent Hashing): Requests from the same flow, identified by source IP, destination IP, source port, and destination port, are routed to the same backend server",
       "help_zh": "调度算法。取值：\nwrr：权重值越高的后端服务器，被轮询到的次数（概率）也越高。\nwlc：除了根据每台后端服务器设定的权重值来进行轮询，同时还考虑后端服务器的实际负载（即连接数）。当权重值相同时，当前连接数越小的后端服务器被轮询到的次数（概率）也越高。\nrr：按照访问顺序依次将外部请求依序分发到后端服务器。\nsch：基于源IP地址的一致性hash，相同的源地址会调度到相同的后端服务器。\ntch：基于四元组的一致性 hash（源 IP+目的 IP+源端口+目的端口），相同的流会调度到相同的后端服务器",
@@ -77,6 +88,8 @@
       "help_en": "The session persistence timeout.\n\nDefault value: 0, which disables session persistence.\n\nValid values: 0 to 3600.\n\nUnit: seconds",
       "help_zh": "会话保持的超时时间。\n\n默认值：0，表示关闭会话保持。\n取值：0~3600。\n单位：秒",
       "location": "query",
+      "maximum": "3600",
+      "minimum": "0",
       "name": "persistence_timeout",
       "options": [
         "--persistence-timeout"
@@ -90,6 +103,8 @@
       "help_en": "The connection timeout, in seconds. Valid values: 10 to 900",
       "help_zh": "连接超时时间，取值：10~900，单位：秒",
       "location": "query",
+      "maximum": "900",
+      "minimum": "10",
       "name": "established_timeout",
       "options": [
         "--established-timeout"
@@ -103,6 +118,8 @@
       "help_en": "The number of consecutive successful health checks required to mark an unhealthy backend server as healthy. Valid values: 2 to 10",
       "help_zh": "健康检查连续成功多少次后，将后端服务器的健康检查状态由fail（后台服务器不可达）判定为success（后台服务器可达）。取值：2~10",
       "location": "query",
+      "maximum": "10",
+      "minimum": "2",
       "name": "healthy_threshold",
       "options": [
         "--healthy-threshold"
@@ -116,6 +133,8 @@
       "help_en": "The number of consecutive failed health checks required to mark a healthy backend server as unhealthy. Valid values: 2 to 10",
       "help_zh": "健康检查连续失败多少次后，将后端服务器的健康检查状态由success（后台服务器可达）判定为fail（后台服务器不可达）。取值：2~10",
       "location": "query",
+      "maximum": "10",
+      "minimum": "2",
       "name": "unhealthy_threshold",
       "options": [
         "--unhealthy-threshold"
@@ -129,6 +148,8 @@
       "help_en": "The response timeout for a health check. If a backend ENS instance does not respond within this period, the health check fails.\n\nDefault value: 5.\n\nValid values: 1 to 300.\n\nUnit: seconds.\n\nIf the value of HealthCheckConnectTimeout is less than that of HealthCheckInterval, the HealthCheckConnectTimeout setting is ignored and the HealthCheckInterval value is used as the timeout",
       "help_zh": "接收来自运行状况检查的响应需要等待的时间。如果后端ENS在指定的时间内没有响应，则判定为健康检查失败。\n默认值：5秒。\n取值：1~300。\n单位：秒。\n\n如果HealthCheckConnectTimeout的值小于HealthCheckInterval的值，则HealthCheckConnectTimeout无效，超时时间为HealthCheckInterval的值",
       "location": "query",
+      "maximum": "300",
+      "minimum": "1",
       "name": "health_check_connect_timeout",
       "options": [
         "--health-check-connect-timeout"
@@ -142,6 +163,8 @@
       "help_en": "The port used for health checks. Valid values: 1 to 65535. If omitted, the backend service port (BackendServerPort) is used",
       "help_zh": "健康检查使用的端口，取值：1~65535。不设置此参数时，表示使用后端服务端口（BackendServerPort）",
       "location": "query",
+      "maximum": "65535",
+      "minimum": "1",
       "name": "health_check_connect_port",
       "options": [
         "--health-check-connect-port"
@@ -155,6 +178,8 @@
       "help_en": "The interval between health checks, in seconds. Valid values: 1 to 50",
       "help_zh": "健康检查的时间间隔。取值：1~50，单位：秒",
       "location": "query",
+      "maximum": "50",
+      "minimum": "1",
       "name": "health_check_interval",
       "options": [
         "--health-check-interval"
@@ -168,6 +193,8 @@
       "help_en": "The domain name used for health checks",
       "help_zh": "用于健康检查的域名",
       "location": "query",
+      "max_length": "80",
+      "min_length": "1",
       "name": "health_check_domain",
       "options": [
         "--health-check-domain"
@@ -181,6 +208,8 @@
       "help_en": "The URI for health checks. The URI must be 1 to 80 characters long.\n\nThe URI must start with `/` and must not consist solely of `/`",
       "help_zh": "用于健康检查的URI。长度限制为1~80。\nURL不能只有`/`，但必须以`/`开头",
       "location": "query",
+      "max_length": "80",
+      "min_length": "1",
       "name": "health_check_uri",
       "options": [
         "--health-check-uri"
@@ -203,6 +232,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "tcp",
+        "http"
+      ],
       "example": "tcp",
       "help_en": "The health check type. Valid values:\n\ntcp (default).\n\nhttp",
       "help_zh": "健康检查类型。取值：\ntcp（默认值）。\nhttp",
@@ -216,6 +249,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "on",
+        "off"
+      ],
       "example": "on",
       "help_en": "Whether to enable EIP passthrough. Valid values:\n\non: Enables EIP passthrough.\n\noff (default): Disables EIP passthrough",
       "help_zh": "是否开启EIP透传，取值：\n\non：开启。\noff（默认值）：关闭",
@@ -231,5 +268,26 @@
   ],
   "pathPattern": "",
   "product_code": "Ens",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response schema",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "06F00FBB-3D9E-4CCE-9D43-1A6946A75456",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

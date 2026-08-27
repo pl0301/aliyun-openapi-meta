@@ -83,6 +83,7 @@
       "options": [
         "--check-in"
       ],
+      "pattern": "^\\d{4}(-\\d{2}){2}\\s+\\d{2}(:\\d{2}){2}$",
       "raw_name": "check_in",
       "required": true,
       "type": "string"
@@ -96,6 +97,7 @@
       "options": [
         "--check-out"
       ],
+      "pattern": "^\\d{4}(-\\d{2}){2}\\s+\\d{2}(:\\d{2}){2}$",
       "raw_name": "check_out",
       "required": true,
       "type": "string"
@@ -270,6 +272,10 @@
             "type": "string"
           },
           {
+            "enum": [
+              "1",
+              "2"
+            ],
             "example": "1",
             "help_en": "The customer type.\nWhen the number of occupants is 1, the customer type must be 1 (primary occupant).\nWhen the number of occupants is greater than 1, one must be the primary occupant and the rest must be co-occupants.\nThe difference between primary occupant and co-occupant:\nThe order can be found at the hotel front desk by providing the primary occupant's name, but not the co-occupant's name.\nThe SMS templates for primary occupants and co-occupants are different",
             "help_zh": "入住人类型\n（当入住人的数量等于1时，入住人的类型为1「入住人」）\n（当入住人的数量大于1时，入住人的类型必须时一个入住人，剩下的是合住人）\n（入住人和合住人区别，\n1.到酒店前台报入住人姓名可以查询到订单，合住人的姓名查不出。\n2.入住人和合住人的短信模版不同）",
@@ -282,6 +288,10 @@
             "type": "int"
           },
           {
+            "enum": [
+              "0",
+              "1"
+            ],
             "example": "1",
             "help_en": "The user type",
             "help_zh": "用户类型",
@@ -294,6 +304,10 @@
             "type": "int"
           },
           {
+            "enum": [
+              "0",
+              "1"
+            ],
             "example": "1",
             "help_en": "The employee type",
             "help_zh": "员工类型",
@@ -1003,316 +1017,78 @@
   "pathPattern": "/dtb-hotel/v1/orders/action/create",
   "product_code": "btripOpen",
   "protocol": "HTTPS",
-  "v1_body_parameters": [
-    {
-      "name": "arrival_time",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The external user ID. If organization personnel synchronization is enabled, use the btripUserId. Otherwise, pass the userId corresponding to the distributor's own system user",
-      "help_zh": "外部用户Id（如果组织人员同步了，为btripUserId。没有的话则需要传分销商自己系统用户对应的userId）",
-      "name": "btrip_user_id",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The check-in date",
-      "help_zh": "入住日期",
-      "name": "check_in",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The check-out date",
-      "help_zh": "离店日期",
-      "name": "check_out",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The contact person's email address. This parameter is required if the need_email parameter returned by the pre-order validation operation is true",
-      "help_zh": "联系人邮箱（如果酒店下单前校验接口返回参数中need_email为true，则此处必填）",
-      "name": "contract_email",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The contact person's name",
-      "help_zh": "联系人姓名",
-      "name": "contract_name",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The contact person's mobile phone number",
-      "help_zh": "联系人手机号",
-      "name": "contract_phone",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The corporate payment amount. Unit: cents",
-      "help_zh": "企业支付金额（单位：分）",
-      "name": "corp_pay_price",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The distributor order ID. Regardless of whether the order is created successfully, the distributor order ID is recorded. Do not use the same order ID to place orders multiple times",
-      "help_zh": "分销商订单id，无论创建订单成功与否都会记录分销商订单号，请勿使用同一个订单号多次下单",
-      "name": "dis_order_id",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The extended information in JSON format",
-      "help_zh": "扩展信息，json格式",
-      "name": "extra",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The invoice information",
-      "help_zh": "发票信息区块",
-      "name": "invoice_info",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The item ID",
-      "help_zh": "商品id",
-      "name": "item_id",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The btrip itinerary ID",
-      "help_zh": "btrip行程Id",
-      "name": "itinerary_no",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "name": "leave_time",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The GDS membership card information",
-      "help_zh": "GDS会员卡信息",
-      "name": "member_info",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The occupant information. The number of occupants cannot exceed the number specified during price validation. A maximum of two occupants are allowed per room",
-      "help_zh": "入住人区块（这里的人数不能比验价时的人数多，要么保持一致，一间房最多不能超出俩人）",
-      "name": "occupant_info_list",
-      "param_style": "json",
-      "position": "body",
-      "required": true,
-      "sub_parameters": [
-        {
-          "name": "card_no",
-          "position": "formData",
-          "required": false,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "ApiResult<HotelCreateOrderResponse>",
+        "description_zh": "ApiResult<HotelCreateOrderResponse>",
+        "properties": {
+          "code": {
+            "description_en": "The status code",
+            "description_zh": "状态码",
+            "example": "0",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "The error details",
+            "description_zh": "错误详情",
+            "example": "operation success.",
+            "type": "string"
+          },
+          "module": {
+            "description_en": "The response data",
+            "description_zh": "数据",
+            "properties": {
+              "btrip_order_id": {
+                "description_en": "The business travel sales order ID",
+                "description_zh": "商旅销售订单号",
+                "example": "123",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "商旅销售订单号",
+                "type": "integer"
+              },
+              "payment_no": {
+                "description_en": "The personal payment order number. Used for personal payment integration",
+                "description_zh": "个人支付单单号 在个付对接时使用",
+                "example": "1222222",
+                "type": "string"
+              },
+              "total_price": {
+                "description_en": "The total order price",
+                "description_zh": "订单总价",
+                "example": "100",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "订单总价",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "C61ECFF6-606B-5F66-B81D-D77369043A5F",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request is successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "type": "boolean"
+          },
+          "traceId": {
+            "description_en": "The trace ID",
+            "description_zh": "日志轨迹ID",
+            "example": "21041ce316577904808056433edbb2",
+            "type": "string"
+          }
         },
-        {
-          "name": "card_type",
-          "position": "formData",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "name": "cascade_dept_name",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "cost_center_info",
-          "position": "formData",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "name": "customer_type",
-          "position": "formData",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "name": "department_id",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "department_name",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "email",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "employee_type",
-          "position": "formData",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "name": "first_name",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "is_booker",
-          "position": "formData",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "name": "last_name",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "name",
-          "position": "formData",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "phone",
-          "position": "formData",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "room_no",
-          "position": "formData",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "name": "staff_no",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "user_type",
-          "position": "formData",
-          "required": false,
-          "type": "int"
-        }
-      ],
-      "type": "string"
-    },
-    {
-      "help_en": "The personal payment amount. Unit: cents",
-      "help_zh": "个人支付金额（单位：分）",
-      "name": "person_pay_price",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The promotion information",
-      "help_zh": "优惠信息区块",
-      "name": "promotion_info",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The rate plan ID",
-      "help_zh": "产品编号",
-      "name": "rate_plan_id",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The room ID",
-      "help_zh": "房间id",
-      "name": "room_id",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of rooms",
-      "help_zh": "房间数",
-      "name": "room_num",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "name": "rp_type",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The seller ID",
-      "help_zh": "卖家id",
-      "name": "seller_id",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The standard hotel ID",
-      "help_zh": "标准酒店id",
-      "name": "shid",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The total order price. Unit: cents",
-      "help_zh": "总订单价格（单位：分）",
-      "name": "total_order_price",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The validation result",
-      "help_zh": "渲染结果",
-      "name": "validate_res_key",
-      "position": "body",
-      "required": true,
-      "type": "string"
+        "title_en": "",
+        "title_zh": "ApiResult<HotelCreateOrderResponse>",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

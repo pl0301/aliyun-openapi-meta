@@ -62,6 +62,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "mt-plus",
+        "mt-turbo"
+      ],
       "example": "mt-turbo",
       "help_en": "The translation model",
       "help_zh": "翻译模型",
@@ -90,6 +94,10 @@
     {
       "fields": [
         {
+          "enum": [
+            "bizType",
+            "bizUserId"
+          ],
           "example": "{\"bizUserld\":\"123456\",\"bizType\":session\"}",
           "help_en": "Specifies extended parameters to isolate term interventions",
           "help_zh": "扩展参数配置（bizUserld：业务层面的用户ID，用来区分不\n同业务用户，做到“按用户隔离”的术语干预，互不影响。\nbizType：业务场景类型/标识，用来区分不同场景，做到\n“按场景隔离”的术语干预，互不影响。）",
@@ -118,54 +126,96 @@
   "pathPattern": "/anytrans/translate/intervene/query",
   "product_code": "AnyTrans",
   "protocol": "HTTPS",
-  "v1_body_parameters": [
-    {
-      "help_en": "Extended parameters",
-      "name": "ext",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The translation model",
-      "help_zh": "翻译模型",
-      "name": "scene",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The source language",
-      "help_zh": "源语言",
-      "name": "sourceLanguage",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The target language",
-      "help_zh": "目标语言",
-      "name": "targetLanguage",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The source text to search for intervention terms",
-      "help_zh": "输入包含干预的句子",
-      "name": "text",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the Model Studio workspace used for the request",
-      "help_zh": "当前请求所使用的百炼业务空间 id",
-      "name": "workspaceId",
-      "position": "body",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "code": {
+            "description_en": "The response status code",
+            "description_zh": "响应状态码",
+            "example": "success",
+            "type": "string"
+          },
+          "data": {
+            "description_en": "The returned data",
+            "description_zh": "返回数据",
+            "properties": {
+              "failCount": {
+                "description_en": "The number of items that failed processing",
+                "description_zh": "失败数量",
+                "example": "0",
+                "format": "int64",
+                "type": "integer"
+              },
+              "terms": {
+                "description_en": "A list of identified intervention terms",
+                "description_zh": "干预术语列表",
+                "items": {
+                  "description_en": "An intervention term",
+                  "description_zh": "干预术语",
+                  "properties": {
+                    "src": {
+                      "description_en": "The term in the source language",
+                      "description_zh": "源文本",
+                      "example": "大模型",
+                      "type": "string"
+                    },
+                    "termId": {
+                      "description_en": "The ID of the intervention term",
+                      "description_zh": "干预术语id",
+                      "example": "92669963",
+                      "type": "string"
+                    },
+                    "tgt": {
+                      "description_en": "The translated term in the target language",
+                      "description_zh": "干预后译文",
+                      "example": "LLM",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "http状态码",
+            "example": "200",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "The response message",
+            "description_zh": "响应信息",
+            "example": "success",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求id",
+            "example": "C3C70C8F-E026-17D8-854E-7F8EF2F5C909",
+            "type": "string"
+          },
+          "success": {
+            "default": "true",
+            "description_en": "Indicates if the API call succeeded",
+            "description_zh": "调用是否成功",
+            "enumValueTitles": {
+              "false": "否",
+              "true": "是"
+            },
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

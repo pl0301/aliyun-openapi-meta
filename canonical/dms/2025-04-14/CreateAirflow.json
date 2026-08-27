@@ -2,6 +2,42 @@
   "camel_example": "",
   "cmd_full_name": "dms create-airflow",
   "cmd_name": "create-airflow",
+  "components": {
+    "schemas": {
+      "DataMountInfo": {
+        "description_en": "Specifies the data mount configuration for Airflow",
+        "description_zh": "Airflow数据挂载配置",
+        "properties": {
+          "MountFolderName": {
+            "description_en": "The name of the mount directory. The actual mount path is prefixed with /Workspace/data/",
+            "description_zh": "数据挂载的目录，实际挂载目录会添加前缀/Workspace/data/",
+            "example": "image",
+            "type": "string"
+          },
+          "OssBucket": {
+            "description_en": "The name of the OSS bucket",
+            "description_zh": "OSS的Bucket",
+            "example": "test-bucket",
+            "type": "string"
+          },
+          "Prefix": {
+            "description_en": "The prefix. If this parameter is not specified, the root directory is used",
+            "description_zh": "路径前缀。默认查询根目录",
+            "example": "/prod",
+            "type": "string"
+          },
+          "ReadOnly": {
+            "description_en": "Whether to mount the data volume as read-only.\n\nDefault value: false",
+            "description_zh": "数据卷是否只读。\n\n默认值：false",
+            "example": "false",
+            "type": "boolean"
+          }
+        },
+        "required": false,
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates an Airflow instance in a workspace",
   "description_zh": "在工作空间下创建Airflow实例",
@@ -21,6 +57,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "8630242382****",
       "help_en": "The ID of the DMS workspace",
       "help_zh": "DMS工作空间ID",
@@ -336,6 +373,289 @@
   "pathPattern": "",
   "product_code": "Dms",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AccessDeniedDetail": {
+            "description_en": "Details of the access denial",
+            "description_zh": "拒接访问的信息",
+            "example": "NOT_FOUND",
+            "title_en": "",
+            "title_zh": "拒绝访问的详情",
+            "type": "string"
+          },
+          "ErrorCode": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "UnknownError",
+            "title_en": "",
+            "title_zh": "错误码",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int64",
+            "title_en": "",
+            "title_zh": "http状态码",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "The response message",
+            "description_zh": "日志信息",
+            "example": "Successful",
+            "title_en": "",
+            "title_zh": "日志信息",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "67E910F2-4B62-5B0C-ACA3-7547695C****",
+            "title_en": "",
+            "title_zh": "请求ID",
+            "type": "string"
+          },
+          "Root": {
+            "description_en": "The Airflow data dictionary",
+            "description_zh": "Airflow数据字典",
+            "properties": {
+              "AirflowId": {
+                "description_en": "The ID of the Airflow instance",
+                "description_zh": "Airflow的实例ID",
+                "example": "af-****",
+                "title_en": "airflow id",
+                "title_zh": "airflow id",
+                "type": "string"
+              },
+              "AirflowName": {
+                "description_en": "The name of the Airflow instance",
+                "description_zh": "Airflow实例的名称",
+                "example": "testairflow",
+                "title_en": "",
+                "title_zh": "airflow实例名",
+                "type": "string"
+              },
+              "AirflowVersion": {
+                "description_en": "The Airflow version",
+                "description_zh": "Airflow版本",
+                "example": "3.1",
+                "title_en": "",
+                "title_zh": "Airflow版本",
+                "type": "string"
+              },
+              "AppSpec": {
+                "description_en": "The specifications of the Airflow instance",
+                "description_zh": "Airflow实例的规格",
+                "example": "SMALL",
+                "title_en": "",
+                "title_zh": "airflow规格",
+                "type": "string"
+              },
+              "AppType": {
+                "description_en": "The application type. This value is always airflow",
+                "description_zh": "类型",
+                "example": "airflow",
+                "title_en": "",
+                "title_zh": "类型",
+                "type": "string"
+              },
+              "CustomAirflowCfg": {
+                "description_en": "Custom Airflow configurations",
+                "description_zh": "自定义Airflow配置",
+                "items": {
+                  "description_en": "A custom configuration in the section.key=value format",
+                  "description_zh": "自定义Airflow配置项",
+                  "example": "celery.worker_concurrency=10",
+                  "title_en": "",
+                  "title_zh": "自定义Airflow配置项",
+                  "type": "string"
+                },
+                "title_en": "",
+                "title_zh": "自定义Airflow配置",
+                "type": "array"
+              },
+              "DagsDir": {
+                "description_en": "The directory that Airflow scans for DAGs",
+                "description_zh": "Airflow扫描dag的目录",
+                "example": "default/dags",
+                "title_en": "",
+                "title_zh": "airflow扫描dag的路径",
+                "type": "string"
+              },
+              "DataMountInfoList": {
+                "description_en": "A list of data mount configurations",
+                "description_zh": "数据挂载信息列表",
+                "items": {
+                  "$ref": "#/components/schemas/DataMountInfo",
+                  "description_en": "A data mount configuration",
+                  "description_zh": "数据挂载",
+                  "title_en": "",
+                  "title_zh": "数据挂载"
+                },
+                "title_en": "",
+                "title_zh": "数据挂载信息列表",
+                "type": "array"
+              },
+              "DeployErrorMsg": {
+                "description_en": "The deployment error message",
+                "description_zh": "错误日志信息",
+                "example": "vpc not found",
+                "title_en": "",
+                "title_zh": "错误日志信息",
+                "type": "string"
+              },
+              "Description": {
+                "description_en": "The description of the Airflow instance",
+                "description_zh": "Airflow的描述信息",
+                "example": "order scheduler",
+                "title_en": "",
+                "title_zh": "airflow的描述信息",
+                "type": "string"
+              },
+              "EnableServerless": {
+                "description_en": "Indicates whether to enable serverless workers",
+                "description_zh": "是否开启Worker弹性",
+                "title_en": "",
+                "title_zh": "是否开启Worker弹性",
+                "type": "boolean"
+              },
+              "GmtCreated": {
+                "description_en": "The time the instance was created",
+                "description_zh": "创建时间",
+                "example": "2025-08-12T05:46:01.000+0000",
+                "title_en": "",
+                "title_zh": "创建时间",
+                "type": "string"
+              },
+              "GracefulShutdownTimeout": {
+                "description_en": "The timeout period for a graceful shutdown, in seconds",
+                "description_zh": "Worker退出时的超时时间",
+                "example": "60",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "Worker退出时的超时时间",
+                "type": "integer"
+              },
+              "OssBucketName": {
+                "description_en": "The name of the OSS bucket",
+                "description_zh": "OSS Bucket名称",
+                "example": "oss-test",
+                "title_en": "",
+                "title_zh": "OSS bucktet名字",
+                "type": "string"
+              },
+              "OssPath": {
+                "description_en": "The OSS path",
+                "description_zh": "OSS路径",
+                "example": "/airflow",
+                "title_en": "",
+                "title_zh": "OSS路径",
+                "type": "string"
+              },
+              "PluginsDir": {
+                "description_en": "The plugin directory that Airflow scans",
+                "description_zh": "Airflow扫描的插件目录",
+                "example": "default/plugins",
+                "title_en": "",
+                "title_zh": "airflow扫描的插件路径",
+                "type": "string"
+              },
+              "RequirementFile": {
+                "description_en": "The path to the requirements file",
+                "description_zh": "可安装包的路径",
+                "example": "default/requirements.txt",
+                "title_en": "",
+                "title_zh": "可安装包的路径",
+                "type": "string"
+              },
+              "SecurityGroupId": {
+                "description_en": "The security group ID",
+                "description_zh": "安全组ID",
+                "example": "sg-2ze1nak7h0alg1xxx",
+                "title_en": "",
+                "title_zh": "安全组ID",
+                "type": "string"
+              },
+              "StartupFile": {
+                "description_en": "The file that is loaded when the Airflow instance starts. You can use this file to set environment variables",
+                "description_zh": "Airflow实例的启动时加载的文件，可设置环境变量等",
+                "example": "default/startup.sh",
+                "title_en": "",
+                "title_zh": "airflow实例的启动时加载的文件，可设置环境变量等",
+                "type": "string"
+              },
+              "Status": {
+                "description_en": "The status of the Airflow instance",
+                "description_zh": "Airflow实例状态",
+                "example": "DEPLOYING",
+                "title_en": "",
+                "title_zh": "airflow实例状态",
+                "type": "string"
+              },
+              "VSwitchId": {
+                "description_en": "The VSwitch ID",
+                "description_zh": "交换机ID",
+                "example": "vsw-8vbaf073jawozfpbg****",
+                "title_en": "",
+                "title_zh": "交换机ID",
+                "type": "string"
+              },
+              "VpcId": {
+                "description_en": "The VPC ID",
+                "description_zh": "VPC ID",
+                "example": "vpc-uf63r6coyiw9o5gf****",
+                "title_en": "VPC ID",
+                "title_zh": "VPC ID",
+                "type": "string"
+              },
+              "WorkerServerlessReplicas": {
+                "description_en": "The number of scaled-out worker nodes",
+                "description_zh": "Worker扩展节点的数量",
+                "example": "0",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "Worker扩展节点数",
+                "type": "integer"
+              },
+              "WorkspaceId": {
+                "description_en": "The workspace ID",
+                "description_zh": "工作空间ID",
+                "example": "86302423828****",
+                "title_en": "",
+                "title_zh": "工作空间ID",
+                "type": "string"
+              },
+              "ZoneId": {
+                "description_en": "The zone ID",
+                "description_zh": "可用区ID",
+                "example": "cn-hangzhou-h",
+                "title_en": "",
+                "title_zh": "可用区ID",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "数据字典",
+            "type": "object"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request succeeded. Valid values:\n\ntrue: The request succeeded.\n\nfalse: The request failed",
+            "description_zh": "请求是否成功，返回值：\n\ntrue：请求成功。\nfalse：请求失败",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The name of the Airflow instance",

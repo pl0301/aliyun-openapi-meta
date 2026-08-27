@@ -34,6 +34,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "MIGRATE_MESSAGE"
+      ],
       "example": "MIGRATE_MESSAGE",
       "help_en": "The type of the migration stage",
       "help_zh": "迁移阶段类型",
@@ -47,6 +50,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "MIGRATE_MESSAGE"
+      ],
       "example": "MIGRATE_MESSAGE",
       "help_en": "The operation type",
       "help_zh": "操作类型",
@@ -122,6 +128,8 @@
       "help_en": "The page number",
       "help_zh": "分页页码，查询第几页的返回结果",
       "location": "query",
+      "maximum": "100000000",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -135,6 +143,8 @@
       "help_en": "The number of entries per page",
       "help_zh": "分页大小，每页最多显示的返回结果数量",
       "location": "query",
+      "maximum": "10000",
+      "minimum": "10",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -146,5 +156,252 @@
   ],
   "pathPattern": "/migrations/[migrationId]/stages/[stageType]/operations",
   "product_code": "RocketMQ",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Result\\<MyPage>",
+        "description_zh": "Result<MyPage<MigrationOperationDTO>>",
+        "properties": {
+          "code": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "Instance.NotFound",
+            "title_en": "",
+            "title_zh": "错误码",
+            "type": "string"
+          },
+          "data": {
+            "description_en": "The returned data",
+            "description_zh": "返回结果",
+            "properties": {
+              "list": {
+                "description_en": "The list of entries",
+                "description_zh": "分页数据",
+                "items": {
+                  "description_en": "The list of migration operations",
+                  "description_zh": "迁移操作列表",
+                  "properties": {
+                    "businessStatus": {
+                      "description_en": "The business status of the operation",
+                      "description_zh": "操作业务状态",
+                      "enumValueTitles": {
+                        "ALREADY_MIGRATED": "已迁移",
+                        "DOUBLE_READ": "写源集群冗余读",
+                        "MIGRATE_FINISH": "读写目标集群",
+                        "MIGRATE_WAIT": "读写源集群",
+                        "SWITCH_WRITE": "写目标集群冗余读"
+                      },
+                      "example": "DOUBLE_READ",
+                      "title_en": "",
+                      "title_zh": "操作业务状态,ConnectNetworkBusinessStatusEnum[CONNECT_PENDING(等待打通),CONNECT_DOING(打通中),CONNECT_SUCCESS(打通成功),CONNECT_FAILURE(打通失败),code,desc]",
+                      "type": "string"
+                    },
+                    "createTime": {
+                      "description_en": "The time when the operation was created",
+                      "description_zh": "创建时间",
+                      "example": "2022-08-01 00:00:00",
+                      "title_en": "",
+                      "title_zh": "创建时间",
+                      "type": "string"
+                    },
+                    "migrationId": {
+                      "description_en": "The migration ID",
+                      "description_zh": "迁移ID",
+                      "example": "1",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "迁移ID",
+                      "type": "integer"
+                    },
+                    "operationId": {
+                      "description_en": "The migration operation ID",
+                      "description_zh": "迁移操作ID",
+                      "example": "183",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "迁移操作ID",
+                      "type": "integer"
+                    },
+                    "operationKey": {
+                      "description_en": "The primary key of the operation object.\n\nDuring message migration, the operation object is the topic name",
+                      "description_zh": "操作对象主键\n\n\n\n在消息迁移阶段，操作对象为Topic名称",
+                      "example": "normal-topic-1",
+                      "title_en": "",
+                      "title_zh": "操作对象主键",
+                      "type": "string"
+                    },
+                    "operationParam": {
+                      "description_en": "The operation parameters",
+                      "description_zh": "操作参数",
+                      "properties": {
+                        "paramData": {
+                          "description_en": "The parameter data",
+                          "description_zh": "参数信息",
+                          "example": "{\n      \"action\": \"MIGRATE_FORWARD\",\n      \"targetStage\": \"MIGRATE_FINISH\"\n}",
+                          "title_en": "",
+                          "title_zh": "参数信息",
+                          "type": "any"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "操作参数",
+                      "type": "object"
+                    },
+                    "operationResult": {
+                      "description_en": "The operation result",
+                      "description_zh": "操作结果",
+                      "properties": {
+                        "resultData": {
+                          "description_en": "The operation result",
+                          "description_zh": "操作结果",
+                          "example": "{\n      \"checkStatus\": \"WAIT_CHECK\",\n      \"sourceTopicStatus\": \"PERM_6\",\n      \"targetTopicStatus\": \"PERM_4\",\n      \"checkResult\": {},\n      \"migrateStage\": \"DOUBLE_READ\"\n}",
+                          "title_en": "",
+                          "title_zh": "操作结果",
+                          "type": "any"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "操作结果",
+                      "type": "object"
+                    },
+                    "operationStatus": {
+                      "description_en": "The operation status",
+                      "description_zh": "操作状态",
+                      "enumValueTitles": {
+                        "DOING": "执行中",
+                        "DONE": "已完成",
+                        "FAIL": "已失败",
+                        "INIT": "未开始"
+                      },
+                      "example": "DOING",
+                      "title_en": "",
+                      "title_zh": "操作状态,MigrationOperationStatusEnum[INIT(未开始),DOING(执行中),DONE(已完成),FAIL(已失败),code(编码),desc(描述)]",
+                      "type": "string"
+                    },
+                    "operationType": {
+                      "description_en": "The operation type",
+                      "description_zh": "操作类型",
+                      "enumValueTitles": {
+                        "MIGRATE_MESSAGE": "迁移消息"
+                      },
+                      "example": "MIGRATE_MESSAGE",
+                      "title_en": "",
+                      "title_zh": "操作类型,MigrationOperationTypeEnum[IMPORT_TOPIC(导入主题),IMPORT_CONSUMER_GROUP(导入消费者组),CONNECT_NETWORK(网络打通),REPLACE_ENDPOINT(更换接入点),MIGRATE_MESSAGE(迁移消息),code(编码),desc(描述),param(参数类型),result(结果类型)]",
+                      "type": "string"
+                    },
+                    "stageType": {
+                      "description_en": "The migration stage",
+                      "description_zh": "迁移阶段类型",
+                      "enumValueTitles": {
+                        "MIGRATE_MESSAGE": "消息迁移"
+                      },
+                      "example": "MIGRATE_MESSAGE",
+                      "title_en": "",
+                      "title_zh": "迁移阶段类型",
+                      "type": "string"
+                    },
+                    "updateTime": {
+                      "description_en": "The time when the operation was last updated",
+                      "description_zh": "修改时间",
+                      "example": "2022-08-01 20:05:50",
+                      "title_en": "",
+                      "title_zh": "修改时间",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title_en": "",
+                "title_zh": "分页数据",
+                "type": "array"
+              },
+              "pageNumber": {
+                "description_en": "The page number",
+                "description_zh": "当前页码",
+                "example": "1",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "当前页码",
+                "type": "integer"
+              },
+              "pageSize": {
+                "description_en": "The number of entries per page",
+                "description_zh": "分页大小",
+                "example": "10",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "分页大小",
+                "type": "integer"
+              },
+              "totalCount": {
+                "description_en": "The total number of entries",
+                "description_zh": "总记录数",
+                "example": "1",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "总记录数",
+                "type": "integer"
+              }
+            },
+            "title_en": "",
+            "title_zh": "返回结果",
+            "type": "object"
+          },
+          "dynamicCode": {
+            "description_en": "The dynamic error code",
+            "description_zh": "动态错误码",
+            "example": "InstanceId",
+            "title_en": "",
+            "title_zh": "动态错误码",
+            "type": "string"
+          },
+          "dynamicMessage": {
+            "description_en": "The dynamic error message",
+            "description_zh": "动态错误信息",
+            "example": "consumerGroupId",
+            "title_en": "",
+            "title_zh": "动态错误信息",
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "HTTP状态码",
+            "type": "integer"
+          },
+          "message": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "The topic already exists.",
+            "title_en": "",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "C7E8AE3A-219B-52EE-BE32-4036F5F88833",
+            "title_en": "",
+            "title_zh": "请求ID",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_en": "Result<MyPage<MigrationOperationDTO>>",
+        "title_zh": "Result<MyPage<MigrationOperationDTO>>",
+        "type": "object"
+      }
+    }
+  }
 }

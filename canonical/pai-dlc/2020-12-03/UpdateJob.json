@@ -2,6 +2,969 @@
   "camel_example": "aliyun pai-dlc PUT /api/v1/jobs/dlc0000000000000 --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"JobSpecs\":[\"example-string\"],\"Description\":\"example-string\",\"Accessibility\":\"PUBLIC\",\"Priority\":5}",
   "cmd_full_name": "pai-dlc update-job",
   "cmd_name": "update-job",
+  "components": {
+    "schemas": {
+      "AssignNodeSpec": {
+        "description_en": "",
+        "description_zh": "指定调度节点详情",
+        "properties": {
+          "AntiAffinityHyperNodes": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/HyperNodeSpec",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "type": "array"
+          },
+          "AntiAffinityNodeNames": {
+            "description_en": "",
+            "description_zh": "AntiAffinityNodeNames",
+            "example": "lingjxxxxxxxx",
+            "title": "AntiAffinityNodeNames",
+            "type": "string"
+          },
+          "EnableAssignNode": {
+            "description_en": "",
+            "description_zh": "EnableAssignNode",
+            "example": "true",
+            "title": "EnableAssignNode",
+            "type": "boolean"
+          },
+          "HyperNodes": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/HyperNodeSpec",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "type": "array"
+          },
+          "NodeNames": {
+            "description_en": "",
+            "description_zh": "NodeNames",
+            "example": "lingjxxxxxxxx",
+            "title": "NodeNames",
+            "type": "string"
+          }
+        },
+        "title": "AssignNodeSpec",
+        "type": "object"
+      },
+      "AutoScalingSpec": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AutoscalingMetricSpec": {
+            "$ref": "#/components/schemas/AutoscalingMetricSpec",
+            "description_en": "",
+            "description_zh": "自动伸缩的监控指标配置",
+            "title": "自动伸缩的监控指标配置"
+          },
+          "MaxReplicas": {
+            "description_en": "",
+            "description_zh": "最大副本数量",
+            "format": "int32",
+            "title": "最大副本数量",
+            "type": "integer"
+          },
+          "MinReplicas": {
+            "description_en": "",
+            "description_zh": "最小副本数量",
+            "format": "int32",
+            "title": "最小副本数量",
+            "type": "integer"
+          },
+          "PodsToDelete": {
+            "description_en": "",
+            "description_zh": "指定缩容节点。仅允许通过 UpdateJob修改，缩容数量必须与 PodCount 匹配",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "title": "指定缩容节点。仅允许通过 UpdateJob修改，缩容数量必须与 PodCount 匹配",
+            "type": "array"
+          },
+          "ScalingStrategy": {
+            "description_en": "",
+            "description_zh": "自动伸缩策略，目前支持 Default, ScaleByAPI, RayAutoscaler, CloudMonitorMetric",
+            "title": "自动伸缩策略，目前支持 Default, ScaleByAPI, RayAutoscaler, CloudMonitorMetric",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AutoscalingMetricSpec": {
+        "description_en": "Defines the metric used in an autoscaling policy",
+        "description_zh": "",
+        "properties": {
+          "MetricName": {
+            "description_en": "The name of the metric for autoscaling. This can be a predefined or a custom metric",
+            "description_zh": "",
+            "type": "string"
+          },
+          "StabilizationWindowSeconds": {
+            "description_en": "The cooldown period, in seconds, after a scaling activity. This prevents the service from initiating another scaling action before the effects of the previous one are observable, stabilizing resource fluctuations",
+            "description_zh": "",
+            "format": "int32",
+            "type": "integer"
+          },
+          "TargetValue": {
+            "description_en": "The target value for the specified metric. The autoscaling service tries to maintain the metric at or near this value",
+            "description_zh": "",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Tolerance": {
+            "description_en": "The acceptable deviation from the `TargetValue`, specified as a percentage string. A scaling action is triggered only if the metric value moves outside the range defined by the `TargetValue` and this tolerance. This prevents scaling actions based on minor fluctuations",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ContainerSpec": {
+        "description_en": "The container parameters",
+        "description_zh": "容器参数",
+        "properties": {
+          "Args": {
+            "description_en": "The command parameters",
+            "description_zh": "命令参数",
+            "items": {
+              "description_en": "The parameter",
+              "description_zh": "参数",
+              "example": "-v",
+              "type": "string"
+            },
+            "title": "命令参数",
+            "type": "array"
+          },
+          "Command": {
+            "description_en": "The user command",
+            "description_zh": "用户命令",
+            "items": {
+              "description_en": "The command line",
+              "description_zh": "命令行",
+              "example": "curl www.aliyun.com",
+              "type": "string"
+            },
+            "title": "用户命令",
+            "type": "array"
+          },
+          "Env": {
+            "description_en": "The environment variables",
+            "description_zh": "环境变量",
+            "items": {
+              "$ref": "#/components/schemas/EnvVar",
+              "description_en": "The environment",
+              "description_zh": "环境变量列表"
+            },
+            "title": "环境变量",
+            "type": "array"
+          },
+          "Image": {
+            "description_en": "The endpoint of the container image",
+            "description_zh": "容器镜像地址",
+            "example": "registry.cn-hangzhou.aliyuncs.com/pai-dlc/curl:v1.0.0",
+            "title": "容器镜像地址",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the container",
+            "description_zh": "容器名称",
+            "example": "data-init",
+            "title": "容器名称",
+            "type": "string"
+          },
+          "Resources": {
+            "$ref": "#/components/schemas/ResourceRequirements",
+            "description_en": "The container resources",
+            "description_zh": "容器资源",
+            "title": "容器资源"
+          },
+          "SecurityContext": {
+            "$ref": "#/components/schemas/SecurityContext",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "WorkingDir": {
+            "description_en": "The working directory in the container",
+            "description_zh": "容器内工作目录",
+            "example": "/root",
+            "title": "容器内工作目录",
+            "type": "string"
+          }
+        },
+        "title": "ContainerSpec",
+        "type": "object"
+      },
+      "ElasticSpotSpec": {
+        "description_en": "Configuration for creating spot instances",
+        "description_zh": "",
+        "properties": {
+          "InstanceType": {
+            "description_en": "The spot instance type",
+            "description_zh": "机型",
+            "title": "机型",
+            "type": "string"
+          },
+          "SpotDiscountLimit": {
+            "description_en": "The maximum discount percentage for the spot instance. The system does not select an instance if its discount exceeds this limit. For example, if you set this parameter to `90`, the system considers only instances with a discount of 90% or less",
+            "description_zh": "最高折扣",
+            "format": "double",
+            "title": "最高折扣",
+            "type": "number"
+          },
+          "SpotPriceLimit": {
+            "description_en": "The maximum hourly price you are willing to pay for a spot instance. If omitted, the on-demand price is the default",
+            "description_zh": "最高出价",
+            "format": "double",
+            "title": "最高出价",
+            "type": "number"
+          },
+          "SpotStrategy": {
+            "description_en": "The strategy for allocating spot instances. Valid values:\n\n`LowestPrice`: Launches instances from the spot capacity pool offering the lowest price. This is the default strategy.\n\n`CapacityOptimized`: Launches instances from the spot capacity pool offering optimal capacity",
+            "description_zh": "竞价策略",
+            "title": "竞价策略",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EnvVar": {
+        "description_en": "The environment variables",
+        "description_zh": "环境变量",
+        "properties": {
+          "Name": {
+            "description_en": "The name of the environment variable",
+            "description_zh": "环境变量名称",
+            "example": "ENABLE_DEBUG",
+            "title": "环境变量名称",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "The value of the environment variable",
+            "description_zh": "环境变量值",
+            "example": "true",
+            "title": "环境变量值",
+            "type": "string"
+          }
+        },
+        "title": "EnvVar",
+        "type": "object"
+      },
+      "ExtraPodSpec": {
+        "description_en": "Additional pod configurations",
+        "description_zh": "额外Pod配置",
+        "properties": {
+          "InitContainers": {
+            "description_en": "A list of init containers that run to completion before the main container starts",
+            "description_zh": "初始化容器",
+            "items": {
+              "$ref": "#/components/schemas/ContainerSpec",
+              "description_en": "Configuration for an init container",
+              "description_zh": "容器配置"
+            },
+            "title": "初始化容器",
+            "type": "array"
+          },
+          "Lifecycle": {
+            "$ref": "#/components/schemas/Lifecycle",
+            "description_en": "Defines lifecycle hooks for the main container",
+            "description_zh": "Lifecycle对象"
+          },
+          "MainContainerSecurityContext": {
+            "$ref": "#/components/schemas/SecurityContext",
+            "description_en": "Defines the security context for the main container",
+            "description_zh": "主容器安全上下文",
+            "title": "主容器安全上下文"
+          },
+          "PodAnnotations": {
+            "additionalProperties": {
+              "description_en": "The value for the annotation",
+              "description_zh": "注解。格式：Key=Value",
+              "example": "example-annotation",
+              "type": "string"
+            },
+            "deprecated": true,
+            "description_en": "Key-value pairs to apply to the pod as annotations. Use annotations to attach arbitrary, non-identifying metadata",
+            "description_zh": "Pod注解",
+            "title": "Pod注解",
+            "type": "object"
+          },
+          "PodLabels": {
+            "additionalProperties": {
+              "description_en": "The value for the label",
+              "description_zh": "标签。格式：Key=Value",
+              "example": "example-lable",
+              "type": "string"
+            },
+            "deprecated": true,
+            "description_en": "Key-value pairs to apply to the pod as labels. Use labels to organize and select pods",
+            "description_zh": "Pod标签",
+            "title": "Pod标签",
+            "type": "object"
+          },
+          "SharedVolumeMountPaths": {
+            "description_en": "A list of local directory paths to mount and share among all containers in the pod",
+            "description_zh": "容器间共享的本地目录",
+            "items": {
+              "description_en": "A shared local directory path",
+              "description_zh": "共享的本地目录",
+              "example": "/root/share/",
+              "type": "string"
+            },
+            "title": "容器间共享的本地目录",
+            "type": "array"
+          },
+          "SideCarContainers": {
+            "description_en": "A list of sidecar containers",
+            "description_zh": "伴随容器",
+            "items": {
+              "$ref": "#/components/schemas/ContainerSpec",
+              "description_en": "Configuration for a sidecar container",
+              "description_zh": "容器配置"
+            },
+            "title": "伴随容器",
+            "type": "array"
+          }
+        },
+        "title": "ExtraPodSpec",
+        "type": "object"
+      },
+      "HyperNodeSchedulingConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "MinAvailable": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int32",
+            "type": "integer"
+          },
+          "QualityPolicy": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HyperNodeSpec": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "HyperNodeName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "NodeNames": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImageConfig": {
+        "description_en": "Private image configuration",
+        "description_zh": "私有镜像信息配置",
+        "properties": {
+          "Auth": {
+            "description_en": "Image repository authentication information",
+            "description_zh": "镜像仓库认证信息",
+            "title": "镜像仓库认证信息",
+            "type": "string"
+          },
+          "DockerRegistry": {
+            "description_en": "Image repository address",
+            "description_zh": "镜像仓库地址",
+            "example": "docker****registry.com",
+            "title": "镜像仓库地址",
+            "type": "string"
+          },
+          "Password": {
+            "description_en": "Image repository password",
+            "description_zh": "镜像仓库密码",
+            "example": "password",
+            "title": "镜像仓库密码",
+            "type": "string"
+          },
+          "Username": {
+            "description_en": "Image repository username",
+            "description_zh": "镜像仓库用户名",
+            "example": " username",
+            "title": "镜像仓库用户名",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JobSpec": {
+        "description_en": "The detailed configuration of a specific type of worker, including hardware specifications, runtime image, number of replicas, and more",
+        "description_zh": "描述一种类型的Worker的详细配置，包括硬件规格，运行镜像，副本数量等",
+        "properties": {
+          "AssignNodeSpec": {
+            "$ref": "#/components/schemas/AssignNodeSpec",
+            "description_en": "The assigned scheduling node configuration",
+            "description_zh": "指点调度节点配置",
+            "title": "指点调度节点配置"
+          },
+          "AutoScalingSpec": {
+            "$ref": "#/components/schemas/AutoScalingSpec",
+            "description_en": "The auto scaling configuration",
+            "description_zh": "自动伸缩配置",
+            "title": "自动伸缩配置"
+          },
+          "ConsiderInSuccessPolicy": {
+            "description_en": "Specifies whether this role is considered when determining job success. This parameter takes effect only when the success policy is set to Partial",
+            "description_zh": "判断任务成功时是否考虑该角色，成功策略为Partial时生效",
+            "title": "判断任务成功时是否考虑该角色，成功策略为Partial时生效",
+            "type": "boolean"
+          },
+          "Driver": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "EcsSpec": {
+            "description_en": "The hardware specifications of the worker. Visit [PAI-DLC billing]（https://help.aliyun.com/document_detail/171758.html） for the detailed list of specifications.><notice>Prices vary depending on the specifications.></notice>",
+            "description_zh": "Worker的硬件规格，请访问[PAI-DLC计费说明]（https://help.aliyun.com/document_detail/171758.html）获取详细规格列表。><notice>不同规格的价格会有区别。></notice>",
+            "example": "ecs.c6.large",
+            "type": "string"
+          },
+          "ElasticSpotSpecs": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/ElasticSpotSpec",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "type": "array"
+          },
+          "ExtraPodSpec": {
+            "$ref": "#/components/schemas/ExtraPodSpec",
+            "description_en": "The extra pod configuration",
+            "description_zh": "额外的Pod配置",
+            "title": "额外的Pod配置"
+          },
+          "HyperNodeSchedulingConfig": {
+            "$ref": "#/components/schemas/HyperNodeSchedulingConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "Image": {
+            "description_en": "The runtime image address for this type of worker. Call [ListImages]（https://help.aliyun.com/document_detail/449118.html） to obtain images provided by the PAI platform. You can also specify a third-party public image",
+            "description_zh": "此类Worker的运行镜像地址，可以调用 [ListImages]（https://help.aliyun.com/document_detail/449118.html） 获取PAI平台提供的镜像。也可以指定第三方公开的镜像",
+            "example": "registry-vpc.cn-hangzhou.aliyuncs.com/cloud-dsw/tensorflow:1.12PAI-gpu-py36-cu101-ubuntu18.04",
+            "title": "镜像",
+            "type": "string"
+          },
+          "ImageConfig": {
+            "$ref": "#/components/schemas/ImageConfig",
+            "description_en": "The private image configuration",
+            "description_zh": "私有镜像配置",
+            "title": "私有镜像配置"
+          },
+          "IsCheif": {
+            "deprecated": true,
+            "description_en": "Deprecated due to a spelling error",
+            "description_zh": "单词拼写错误，已废弃",
+            "title": "单词拼写错误，已废弃",
+            "type": "boolean"
+          },
+          "IsChief": {
+            "description_en": "Indicates whether this role is the Chief role. Only one Chief role is allowed",
+            "description_zh": "标记该角色是否是Chief角色，Chief角色只能有一个",
+            "title": "标记该角色是否是Chief角色，Chief角色只能有一个",
+            "type": "boolean"
+          },
+          "LocalMountSpecs": {
+            "description_en": "The list of local mount configurations",
+            "description_zh": "本地挂载配置列表",
+            "items": {
+              "$ref": "#/components/schemas/LocalMountSpec",
+              "description_en": "The local mount configuration",
+              "description_zh": "本地挂载配置",
+              "title": "本地挂载配置"
+            },
+            "title": "本地挂载配置列表",
+            "type": "array"
+          },
+          "OversoldType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "PodCount": {
+            "description_en": "The number of replicas",
+            "description_zh": "副本数量",
+            "example": "1",
+            "format": "int64",
+            "title": "实例数量",
+            "type": "integer"
+          },
+          "QuotaId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "ResourceConfig": {
+            "$ref": "#/components/schemas/ResourceConfig",
+            "description_en": "The resource configuration",
+            "description_zh": "资源配置",
+            "title": "资源配置"
+          },
+          "RestartPolicy": {
+            "description_en": "The restart policy. Valid values: Always, Never, OnFailure, and ExitCode",
+            "description_zh": "重启策略，支持Always，Never，OnFailure，ExitCode四种策略",
+            "example": "ExitCode",
+            "title": "重启策略，支持Always，Never，OnFailure，ExitCode四种策略",
+            "type": "string"
+          },
+          "ServiceSpec": {
+            "$ref": "#/components/schemas/ServiceSpec",
+            "description_en": "The service configuration",
+            "description_zh": "服务配置"
+          },
+          "SpotSpec": {
+            "$ref": "#/components/schemas/SpotSpec",
+            "description_en": "The spot instance configuration",
+            "description_zh": "抢占式实例配置",
+            "title": "抢占式实例配置"
+          },
+          "StartupDependencies": {
+            "description_en": "The dependencies required before this role starts",
+            "description_zh": "该角色启动前需要的依赖",
+            "items": {
+              "$ref": "#/components/schemas/StartupDependency",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "title": "该角色启动前需要的依赖",
+            "type": "array"
+          },
+          "SystemDisk": {
+            "$ref": "#/components/schemas/SystemDisk",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "Type": {
+            "description_en": "Type is closely related to Job Type. Different job types support different worker types.\n\nTFJob: Supports Chief, PS, Worker, Evaluator, and GraphLearn.\n\nPyTorchJob: Supports Worker and Master.\n\nXGBoostJob: Supports Worker and Master.\nOneFlowJob: Supports Worker and Master.\nElasticBatch: Supports Worker and Master.\nRayJob: Supports Head, Worker, and Worker[-xxx].\n\nMaster is optional in PyTorchJob, XGBoostJob, OneFlowJob, and ElasticBatch. If Master is not specified, the system automatically designates the first Worker node as Master",
+            "description_zh": "Type与Job Type紧密相关，不同Job Type支持不同的Worker Type。\n\nTFJob：支持Chief, PS, Worker, Evaluator, GraphLearn。\n\nPyTorchJob: 支持Worker, Master。\n\nXGBoostJob: 支持Worker, Master。\nOneFlowJob：支持Worker, Master。\nElasticBatch：支持Worker, Master。\nRayJob：支持Head, Worker, Worker[-xxx]。\n\nPyTorchJob、XGBoostJob、OneFlowJob和ElasticBatch中的Master是可选的，若未指定，系统会自动将第一个Worker节点作为Master",
+            "example": "Worker",
+            "title": "类型",
+            "type": "string"
+          },
+          "UseSpotInstance": {
+            "deprecated": true,
+            "description_en": "Specifies whether to use spot instances",
+            "description_zh": "是否使用竞价实例",
+            "example": "false",
+            "title": "是否使用竞价实例",
+            "type": "boolean"
+          }
+        },
+        "title": "JobSpec",
+        "type": "object"
+      },
+      "Lifecycle": {
+        "description_en": "",
+        "description_zh": "Lifecycle对象",
+        "properties": {
+          "PostStart": {
+            "description_en": "",
+            "description_zh": "容器启动之后",
+            "properties": {
+              "Exec": {
+                "description_en": "",
+                "description_zh": "执行对象",
+                "properties": {
+                  "Command": {
+                    "description_en": "",
+                    "description_zh": "命令",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "type": "string"
+                    },
+                    "title": "命令",
+                    "type": "array"
+                  }
+                },
+                "title": "执行对象",
+                "type": "object"
+              }
+            },
+            "title": "容器启动之后",
+            "type": "object"
+          },
+          "PreStop": {
+            "description_en": "",
+            "description_zh": "容器停止之前",
+            "properties": {
+              "Exec": {
+                "description_en": "",
+                "description_zh": "执行对象",
+                "properties": {
+                  "Command": {
+                    "description_en": "",
+                    "description_zh": "命令Command",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "title": "",
+                      "type": "string"
+                    },
+                    "title": "命令Command",
+                    "type": "array"
+                  }
+                },
+                "title": "执行对象",
+                "type": "object"
+              }
+            },
+            "title": "容器停止之前",
+            "type": "object"
+          }
+        },
+        "title": "Lifecycle对象",
+        "type": "object"
+      },
+      "LocalMountSpec": {
+        "description_en": "",
+        "description_zh": "本地挂载配置",
+        "properties": {
+          "LocalPath": {
+            "description_en": "",
+            "description_zh": "宿主机本地路径，当MountMode为Block时该字段无效",
+            "title": "宿主机本地路径，当MountMode为Block时该字段无效",
+            "type": "string"
+          },
+          "MountMode": {
+            "description_en": "",
+            "description_zh": "挂载模式，支持Block，Filesystem两种模式",
+            "title": "挂载模式，支持Block，Filesystem两种模式",
+            "type": "string"
+          },
+          "MountPath": {
+            "description_en": "",
+            "description_zh": "容器内挂载绝对路径，必须以/开头，当MountMode为Block时，必须以/dev/开头",
+            "title": "容器内挂载绝对路径，必须以/开头，当MountMode为Block时，必须以/dev/开头",
+            "type": "string"
+          }
+        },
+        "title": "本地挂载配置",
+        "type": "object"
+      },
+      "ResourceConfig": {
+        "description_en": "The resource configurations",
+        "description_zh": "资源配置",
+        "properties": {
+          "CPU": {
+            "description_en": "The number of vCPUs",
+            "description_zh": "CPU核心数",
+            "example": "10",
+            "title": "CPU核心数",
+            "type": "string"
+          },
+          "GPU": {
+            "description_en": "The number of GPUs",
+            "description_zh": "GPU核心数",
+            "example": "3",
+            "title": "GPU核心数",
+            "type": "string"
+          },
+          "GPUType": {
+            "description_en": "The GPU type",
+            "description_zh": "GPU类型",
+            "example": "Tesla-V100-16G",
+            "title": "显卡类型",
+            "type": "string"
+          },
+          "Memory": {
+            "description_en": "The memory size",
+            "description_zh": "内存容量",
+            "example": "10Gi",
+            "title": "内存容量",
+            "type": "string"
+          },
+          "SharedMemory": {
+            "description_en": "The shared memory capacity",
+            "description_zh": "共享内存容量",
+            "example": "5Gi",
+            "title": "共享内存容量",
+            "type": "string"
+          }
+        },
+        "title": "资源配置",
+        "type": "object"
+      },
+      "ResourceRequirements": {
+        "description_en": "Container resources",
+        "description_zh": "容器资源",
+        "properties": {
+          "Limits": {
+            "additionalProperties": {
+              "description_en": "",
+              "description_zh": "",
+              "example": "{'cpu': '1', 'memory': '1000Mi'}",
+              "type": "string"
+            },
+            "description_en": "Resource limits",
+            "description_zh": "资源限制",
+            "title": "资源限制",
+            "type": "object"
+          },
+          "Requests": {
+            "additionalProperties": {
+              "description_en": "",
+              "description_zh": "",
+              "example": "{'cpu': '1', 'memory': '1000Mi'}",
+              "type": "string"
+            },
+            "description_en": "Resource requests",
+            "description_zh": "资源需求",
+            "title": "资源需求",
+            "type": "object"
+          }
+        },
+        "title": "ResourceRequirements",
+        "type": "object"
+      },
+      "SeccompProfile": {
+        "description_en": "The SecurityContext configuration that filters system calls of a process",
+        "description_zh": "过滤进程的系统调用的SecurityContext配置",
+        "properties": {
+          "LocalhostProfile": {
+            "description_en": "The path of the Seccomp profile on the node. This parameter takes effect only when Type is set to Localhost",
+            "description_zh": "节点上的seccomp配置文件路径，仅Type为Localhost生效",
+            "example": "my-profiles/profile-allow.json",
+            "title": "节点上的seccomp配置文件路径，仅Type为Localhost生效",
+            "type": "string"
+          },
+          "Type": {
+            "description_en": "The Seccomp configuration type. Valid values: Localhost, RuntimeDefault, Unconfined",
+            "description_zh": "Seccomp配置类型，取值：Localhost，RuntimeDefault，Unconfined",
+            "example": "Unconfined",
+            "title": "Seccomp配置类型，取值：Localhost，RuntimeDefault，Unconfined",
+            "type": "string"
+          }
+        },
+        "title": "Seccomp安全配置",
+        "type": "object"
+      },
+      "SecurityContext": {
+        "description_en": "The container security context configuration",
+        "description_zh": "容器安全上下文配置",
+        "properties": {
+          "Capabilities": {
+            "$ref": "#/components/schemas/SecurityContextCapabilities",
+            "description_en": "The Linux capabilities configuration of the container",
+            "description_zh": "容器的Linux Capabilities配置",
+            "title": "容器的Linux Capabilities配置"
+          },
+          "Privileged": {
+            "description_en": "Specifies whether to enable privileged mode. This option is available only for specific Lingjun AI Computing Service subscription user scenarios",
+            "description_zh": "特权模式，仅对部分灵骏预付费用户场景开放",
+            "title": "特权模式，仅对部分灵骏预付费用户场景开放",
+            "type": "boolean"
+          },
+          "RunAsGroup": {
+            "description_en": "The GID of the user that runs the container",
+            "description_zh": "运行容器的用户GID",
+            "example": "1000",
+            "format": "int64",
+            "title": "运行容器的用户GID",
+            "type": "integer"
+          },
+          "RunAsUser": {
+            "description_en": "The UID of the user that runs the container",
+            "description_zh": "运行容器的用户UID",
+            "example": "1000",
+            "format": "int64",
+            "title": "运行容器的用户UID",
+            "type": "integer"
+          },
+          "SeccompProfile": {
+            "$ref": "#/components/schemas/SeccompProfile",
+            "description_en": "The Seccomp profile configuration",
+            "description_zh": "Seccomp配置",
+            "title": "Seccomp配置"
+          }
+        },
+        "title": "容器安全上下文",
+        "type": "object"
+      },
+      "SecurityContextCapabilities": {
+        "description_en": "",
+        "description_zh": "Linux Capabilities配置",
+        "properties": {
+          "Add": {
+            "description_en": "",
+            "description_zh": "需要添加的Linux Capability列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "title": "需要添加的Linux Capability列表",
+            "type": "array"
+          },
+          "Drop": {
+            "description_en": "",
+            "description_zh": "需要移除的Linux Capability列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "title": "需要移除的Linux Capability列表",
+            "type": "array"
+          }
+        },
+        "title": "Linux Capabilities配置",
+        "type": "object"
+      },
+      "ServiceSpec": {
+        "description_en": "Service configuration details",
+        "description_zh": "服务配置详情",
+        "properties": {
+          "DefaultPort": {
+            "description_en": "The default port for the service",
+            "description_zh": "服务默认端口",
+            "example": "8080",
+            "format": "int32",
+            "title": "服务默认端口",
+            "type": "integer"
+          },
+          "ExtraPorts": {
+            "description_en": "The list of extra ports for the service",
+            "description_zh": "服务额外端口列表",
+            "items": {
+              "description_en": "An extra port for the service",
+              "description_zh": "服务额外端口",
+              "example": "8081",
+              "format": "int32",
+              "type": "integer"
+            },
+            "title": "服务额外端口列表",
+            "type": "array"
+          },
+          "ServiceMode": {
+            "description_en": "The service pattern. Valid values are PerRole and PerPod. The default value is PerPod",
+            "description_zh": "服务模式，支持PerRole和PerPod，默认为空，空表示PerPod",
+            "enumValueTitles": {
+              "PerPod": "PerPod",
+              "PerRole": "PerRole"
+            },
+            "example": "PerRole",
+            "title": "服务模式，支持PerRole和PerPod",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SpotSpec": {
+        "description_en": "The configurations of the preemptible instance",
+        "description_zh": "抢占式实例配置",
+        "properties": {
+          "SpotDiscountLimit": {
+            "description_en": "The maximum discount. Specify only one of SpotDiscountLimit and SpotPriceLimit",
+            "description_zh": "抢占式实例最高价格折扣上限。参数SpotDiscountLimit和SpotPriceLimit二选一",
+            "example": "0.8",
+            "format": "float",
+            "title": "抢占式实例最高价格折扣上限",
+            "type": "number"
+          },
+          "SpotPriceLimit": {
+            "description_en": "The maximum price. Unit: CNY/minute. Specify only one of SpotDiscountLimit and SpotPriceLimit",
+            "description_zh": "抢占式实例最高价格上限，单位是元/分钟。参数SpotDiscountLimit和SpotPriceLimit二选一",
+            "example": "0.4744",
+            "format": "float",
+            "title": "抢占式实例最高价格上限",
+            "type": "number"
+          },
+          "SpotStrategy": {
+            "description_en": "The spot policy. Valid values:\n\nSpotWithPriceLimit",
+            "description_zh": "抢占式实例抢占策略，可选值：\nSpotWithPriceLimit",
+            "enumValueTitles": {
+              "SpotWithPriceLimit": "SpotWithPriceLimit"
+            },
+            "example": "SpotWithPriceLimit",
+            "title": "抢占式实例抢占策略",
+            "type": "string"
+          }
+        },
+        "title": "抢占式实例规格",
+        "type": "object"
+      },
+      "StartupDependency": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "MinReplicas": {
+            "description_en": "",
+            "description_zh": "依赖的角色最少多少个达到预期Phase视作满足",
+            "required": false,
+            "title": "依赖的角色最少多少个达到预期Phase视作满足",
+            "type": "string"
+          },
+          "OnPhase": {
+            "description_en": "",
+            "description_zh": "依赖的角色到何种阶段视作满足",
+            "required": false,
+            "title": "依赖的角色到何种阶段视作满足",
+            "type": "string"
+          },
+          "Type": {
+            "description_en": "",
+            "description_zh": "依赖的角色类型",
+            "required": false,
+            "title": "依赖的角色类型",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SystemDisk": {
+        "description_en": "",
+        "description_zh": "系统盘配置",
+        "properties": {
+          "Category": {
+            "description_en": "",
+            "description_zh": "系统盘类型，如cloud_essd",
+            "required": false,
+            "title": "系统盘类型，如cloud_essd",
+            "type": "string"
+          },
+          "PerformanceLevel": {
+            "description_en": "",
+            "description_zh": "ESSD云盘的性能等级，如PL0、PL1",
+            "required": false,
+            "title": "ESSD云盘的性能等级，如PL0、PL1",
+            "type": "string"
+          },
+          "Size": {
+            "description_en": "",
+            "description_zh": "系统盘大小，单位为GiB",
+            "format": "int64",
+            "required": false,
+            "title": "系统盘大小，单位为GiB",
+            "type": "integer"
+          }
+        },
+        "title": "系统盘配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates a job's configuration, such as its priority",
   "description_zh": "更新一个任务的配置信息，例如修改一个排队中任务的优先级",
@@ -1104,6 +2067,9 @@
           {
             "fields": [
               {
+                "enum": [
+                  "SpotWithPriceLimit"
+                ],
                 "example": "SpotWithPriceLimit",
                 "help_en": "The spot policy. Valid values:\n\nSpotWithPriceLimit",
                 "help_zh": "抢占式实例抢占策略，可选值：\nSpotWithPriceLimit",
@@ -1456,6 +2422,10 @@
                 "type": "int"
               },
               {
+                "enum": [
+                  "PerPod",
+                  "PerRole"
+                ],
                 "example": "PerRole",
                 "help_en": "The service pattern. Valid values are PerRole and PerPod. The default value is PerPod",
                 "help_zh": "服务模式，支持PerRole和PerPod，默认为空，空表示PerPod",
@@ -1804,6 +2774,35 @@
   "pathPattern": "/api/v1/jobs/[JobId]",
   "product_code": "pai-dlc",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "返回内容",
+        "properties": {
+          "JobId": {
+            "description_en": "The ID of the job",
+            "description_zh": "任务ID",
+            "example": "dlc*************",
+            "title_en": "",
+            "title_zh": "作业ID",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID, used for diagnostics and support",
+            "description_zh": "请求ID，用于诊断和答疑",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "title_en": "",
+            "title_zh": "请求ID",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The job configuration",

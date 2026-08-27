@@ -34,10 +34,12 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "The page number. The start value is 1. The default value is 1",
       "help_zh": "当前页数，起始值为1，默认为1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -51,6 +53,8 @@
       "help_en": "The number of entries per page. The maximum value is 100 and the minimum value is 1. The default value is 20",
       "help_zh": "分页查询时设置的每页行数，最大值100，最小值为1，默认值为20",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -60,6 +64,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "2019-07-04",
       "help_en": "The start date of the query. The format is YYYY-MM-DD.\n\nYou can query data from the last 90 days only. The value of `StartDate` must be greater than or equal to the current date minus 90 days",
       "help_zh": "查询的开始时间，格式：YYYY-MM-DD。\n\n只能查询最近90天的记录，即：`StartDate >= Now - 90`",
@@ -116,6 +121,7 @@
       "help_en": "The threshold for the number of requests. This operation returns domain names whose request count is less than or equal to the specified value. For example, if you set this parameter to 100, domain names with 100 or fewer requests are returned. If you do not specify this parameter, all domain names are returned",
       "help_zh": "查询总量阈值，也可查询相应请求量不大于threshold的数据。例如，如果您将该参数设置为100，可查询出请求量小于100次的域名。为空时查全部的域名",
       "location": "query",
+      "minimum": "0",
       "name": "threshold",
       "options": [
         "--threshold"
@@ -127,5 +133,95 @@
   ],
   "pathPattern": "",
   "product_code": "Alidns",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "PageNumber": {
+            "description_en": "The page number of the returned page",
+            "description_zh": "当前页数，起始值为1，默认为1",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries returned on each page",
+            "description_zh": "分页查询时设置的每页行数，最大值100，默认为20",
+            "example": "5",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The unique request ID",
+            "description_zh": "唯一请求识别码",
+            "example": "CC625C21-8832-4683-BF10-C3CFB1A4FA13",
+            "type": "string"
+          },
+          "Statistics": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Statistic": {
+                "description_en": "The list of statistics",
+                "description_zh": "请求量数据列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Count": {
+                      "description_en": "The number of requests",
+                      "description_zh": "请求量（次）",
+                      "example": "35509014",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DomainName": {
+                      "description_en": "The domain name",
+                      "description_zh": "域名名称",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "DomainType": {
+                      "description_en": "The type of the domain name. The value is not case-sensitive. Valid values:\n\nPUBLIC: An authoritative domain name. This is the default value.\n\nCACHE: An authoritative proxy domain name",
+                      "description_zh": "域名类型，大小写不敏感。取值:\n\nPUBLIC：权威托管域名（默认值）\n\nCACHE：权威代理域名",
+                      "example": "PUBLIC",
+                      "type": "string"
+                    },
+                    "resolveAnalysisStatus": {
+                      "description_en": "The status of the DNS traffic analysis feature for the domain name:\n\nOPEN: Enabled\n\nCLOSE: Disabled",
+                      "description_zh": "域名DNS流量分析开启状态：\n\nOPEN：开启\n\nCLOSE：关闭",
+                      "example": "OPEN",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "TotalItems": {
+            "description_en": "The total number of entries",
+            "description_zh": "数据总个数",
+            "example": "68",
+            "format": "int32",
+            "type": "integer"
+          },
+          "TotalPages": {
+            "description_en": "The total number of pages",
+            "description_zh": "数据分页后总页数",
+            "example": "14",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

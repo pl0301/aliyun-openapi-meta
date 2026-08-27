@@ -51,6 +51,8 @@
       "help_en": "The number of results per page. Default value: 20. Minimum value: 1. Maximum value: 100",
       "help_zh": "每页返回的结果数量。默认值：20，最小值：1，最大值：100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -64,6 +66,7 @@
       "help_en": "The page number. Default value: 1",
       "help_zh": "页码，默认1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -73,6 +76,13 @@
       "type": "int"
     },
     {
+      "enum": [
+        "Errored",
+        "Canceled",
+        "Queue",
+        "Pending",
+        "Success"
+      ],
       "example": "Errored",
       "help_en": "The export status. Valid values:\n\nQueue: queued\nPending: preparing to run\nSuccess: succeeded\nErrored: failed\nCanceled: canceled",
       "help_zh": "导出状态\n\nQueue：排队中\nPending：准备运行\nSuccess：运行成功\nErrored：运行错误\nCanceled：被取消",
@@ -101,5 +111,221 @@
   ],
   "pathPattern": "/exportTasks/[exportTaskId]/exportVersions",
   "product_code": "IaCService",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response struct",
+        "description_zh": "响应体结构",
+        "properties": {
+          "exportTasks": {
+            "description_en": "The list of export task versions",
+            "description_zh": "导出任务版本列表",
+            "items": {
+              "description_en": "The list of export task versions",
+              "description_zh": "导出任务版本列表",
+              "properties": {
+                "createTime": {
+                  "description_en": "The creation time",
+                  "description_zh": "创建时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                  "example": "2025-05-11T02:18:50Z",
+                  "type": "string"
+                },
+                "description": {
+                  "description_en": "The description",
+                  "description_zh": "描述信息",
+                  "example": "this is description\n",
+                  "type": "string"
+                },
+                "elapsedTime": {
+                  "description_en": "The execution duration",
+                  "description_zh": "执行耗时",
+                  "example": "4521",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "exportTaskId": {
+                  "description_en": "The ID of the resource export task",
+                  "description_zh": "资源导出任务ID",
+                  "example": "ex-al1711jl6hd8u5crggeq6v",
+                  "type": "string"
+                },
+                "exportToModule": {
+                  "description_en": "Saves the exported template as a module. If this parameter is not set, the template is automatically saved in the registry",
+                  "description_zh": "将导出后的模板保存为Module。 如果未设置，那么将自动保存在Registry中",
+                  "properties": {
+                    "source": {
+                      "description_en": "The module type in which the exported template is saved. Valid values:\n\nOSS: OSS\nRegistry: Terraform Registry",
+                      "description_zh": "导出后的模板保存的Module类型。可选值：\n\nOSS ：OSS\nRegistry: Terraform Registry",
+                      "example": "OSS",
+                      "type": "string"
+                    },
+                    "sourcePath": {
+                      "description_en": "The path where the template content is saved.\n\nIf Source is set to Registry, the format is: \"cloudregistry::iacservice//\"\n\nIf Source is set to OSS, the format is: \"oss::https://.oss-ap-southeast-1.aliyuncs.com/xxx.zip\"",
+                      "description_zh": "保存模板内容的路径值\n\n当 Source 为 Registry 时，格式为： \"cloudregistry::iacservice//\"\n\n当 Source 为 OSS 时，格式为：\"oss::https://.oss-cn-hangzhou.aliyuncs.com/xxx.zip\"",
+                      "example": "oss::https://.oss-cn-hangzhou.aliyuncs.com/xxx.zip",
+                      "type": "string"
+                    },
+                    "statePath": {
+                      "description_en": "The path of the state file corresponding to the module",
+                      "description_zh": "Module 对应的State文件的路径值",
+                      "example": "/",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "exportVersion": {
+                  "description_en": "The resource export version",
+                  "description_zh": "资源导出版本",
+                  "example": "v3",
+                  "type": "string"
+                },
+                "failedReason": {
+                  "description_en": "The reason for the export failure",
+                  "description_zh": "导出失败原因",
+                  "example": "Reason",
+                  "type": "string"
+                },
+                "includeRules": {
+                  "description_en": "The list of inclusion rules used when exporting resources",
+                  "description_zh": "导出资源时使用的包含规则列表",
+                  "items": {
+                    "description_en": "The list of inclusion rules used when exporting resources",
+                    "description_zh": "导出资源时使用的包含规则列表",
+                    "properties": {
+                      "key": {
+                        "description_en": "The name of the inclusion rule for resource export. Valid values:\n\nResourceType: required. The resource type. Example: ALIYUN::VPC::VPC.\nRegionId: required. The region to which the resource belongs. Only one region is supported. Example: ap-southeast-1.\n\\<ResourceType>:Id: the resource ID. Example: ALIYUN::VPC::VPC:Id.\nResourceGroupId: the resource group ID. Example: rg-1234.\nZoneId: the zone to which the resource belongs. Only one zone is supported. Example: ap-southeast-1h.\n\nMultiple filter conditions are combined by using the AND operator. A resource is matched only if all filter conditions are met",
+                        "description_zh": "资源导出时的包含规则名称。可选值如下：\n\nResourceType：必填，资源类型，例如：ALIYUN::VPC::VPC\nRegionId：必填，资源所属Region，当前只支持一个Region，例如：cn-chengdu\n\\<ResourceType>:Id：资源ID,例如：ALIYUN::VPC::VPC:Id\nResourceGroupId：资源组ID，例如：rg-1234\nZoneId：资源所属Zone，目前只支持一个Zone，例如：cn-hangzhou-h\n\n多个过滤条件之间默认是与的关系，即必须符合所有过滤条件，才视为匹配过滤条件",
+                        "example": "RegionId",
+                        "type": "string"
+                      },
+                      "values": {
+                        "description_en": "The values of the inclusion rules for resource export",
+                        "description_zh": "一组资源导出时的包含规则的值",
+                        "items": {
+                          "description_en": "The values of the inclusion rules for resource export",
+                          "description_zh": "一组资源导出时的包含规则的值",
+                          "example": "cn-chengdu",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "modules": {
+                  "description_en": "The module configuration of the exported resources",
+                  "description_zh": "将资源导出后的Module配置",
+                  "items": {
+                    "description_en": "The module configuration of the exported resources",
+                    "description_zh": "将资源导出后的Module配置",
+                    "properties": {
+                      "source": {
+                        "description_en": "The module type where the exported template is stored. Two formats are supported: CloudRegistry and OSS. If the ExportToModule parameter is specified, both formats are returned. Otherwise, only CloudRegistry is returned",
+                        "description_zh": "导出后的模板所在的Module类型，目前有两种格式：CloudRegistry 和OSS。如果客户指定了参数 ExportToModule，那么这两种都将返回，否则只返回 CloudRegistry",
+                        "example": "OSS",
+                        "type": "string"
+                      },
+                      "sourcePath": {
+                        "description_en": "The download URL of the module where the exported template is stored.\n\nIf Source is set to CloudRegistry, the format is: \"cloudregistry::iacservice//\"\n\nIf Source is set to OSS, the format is: \"oss::https://.oss-ap-southeast-1.aliyuncs.com/xxx.zip\"",
+                        "description_zh": "导出后的模板所在的Module下的下载地址。\n\n当 Source 为 CloudRegistry 时，格式为： \"cloudregistry::iacservice//\"\n\n当 Source 为 OSS 时，格式为：\"oss::https://.oss-cn-hangzhou.aliyuncs.com/xxx.zip\"",
+                        "example": "oss::https://.oss-cn-hangzhou.aliyuncs.com/xxx.zip\n",
+                        "type": "string"
+                      },
+                      "version": {
+                        "description_en": "The version of the module where the exported template is stored",
+                        "description_zh": "导出后的模板所在的Module的版本",
+                        "example": "v1",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "description_en": "The name of the export task",
+                  "description_zh": "导出任务名称",
+                  "example": "TaskName",
+                  "type": "string"
+                },
+                "status": {
+                  "description_en": "The version export status. Valid values:\nQueue: queued\nPending: preparing to run\nSuccess: succeeded\nErrored: failed\nCanceled: canceled",
+                  "description_zh": "版本导出状态。\nQueue：排队中\nPending：准备运行\nSuccess：运行成功\nErrored：运行错误\nCanceled：被取消",
+                  "example": "Running",
+                  "type": "string"
+                },
+                "variables": {
+                  "description_en": "The list of variables. Parameters of the exported resources are set as variables",
+                  "description_zh": "变量列表，将资源导出后的参数设置为变量",
+                  "items": {
+                    "description_en": "The list of variables. Parameters of the exported resources are set as variables",
+                    "description_zh": "变量列表，将资源导出后的参数设置为变量",
+                    "properties": {
+                      "properties": {
+                        "description_en": "The list of Terraform resource properties corresponding to the resource type",
+                        "description_zh": "资源类型对应的Terraform资源的属性列表",
+                        "items": {
+                          "description_en": "The Terraform resource property corresponding to the resource type",
+                          "description_zh": "资源类型对应的Terraform资源的属性",
+                          "example": "tags",
+                          "type": "string"
+                        },
+                        "type": "array"
+                      },
+                      "resourceType": {
+                        "description_en": "The resource type",
+                        "description_zh": "资源类型",
+                        "example": "Vswitch",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "pageNumber": {
+            "description_en": "The page number. Default value: 1",
+            "description_zh": "页码，默认1",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description_en": "The number of results per page. Default value: 20. Minimum value: 1. Maximum value: 100",
+            "description_zh": "每页返回的结果数量。默认值：20，最小值：1，最大值：100",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "860FDEEE-1CA3-55F3-97F6-63FC40B7962D",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "totalCount": {
+            "description_en": "The total number of entries",
+            "description_zh": "总数量",
+            "example": "72",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

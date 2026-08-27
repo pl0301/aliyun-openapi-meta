@@ -2,6 +2,65 @@
   "camel_example": "aliyun ossutil api list-multipart-uploads --bucket examplebucket --region cn-hangzhou --max-uploads 1000 --encoding-type 'example-string' --upload-id-marker 0004B99B8E707874FC2D692FA5D70000 --delimiter '/' --prefix 'fun/' --key-marker 'test1.avi'",
   "cmd_full_name": "oss list-multipart-uploads",
   "cmd_name": "list-multipart-uploads",
+  "components": {
+    "schemas": {
+      "CommonPrefix": {
+        "description_en": "If the delimiter parameter is specified in the request, the response from OSS contains the CommonPrefixes element. This element indicates a set of object names that end with the delimiter and share a common prefix",
+        "description_zh": "如果请求中指定了delimiter参数，则OSS返回的响应中包含CommonPrefixes元素。该元素标明以delimiter结尾，并有共同前缀的Object名称的集合",
+        "properties": {
+          "Prefix": {
+            "description_en": "The common prefix of the query results",
+            "description_zh": "本次查询结果的前缀",
+            "example": "fun/",
+            "title": "The prefix that the names of returned objects contain",
+            "type": "string"
+          }
+        },
+        "title": "Objects whose names contain the same string that ranges from the prefix to the next occurrence of the delimiter are grouped as a single result",
+        "type": "object"
+      },
+      "EncodeType": {
+        "description_en": "Specifies the encoding type used in the response. If the encoding-type parameter is specified in the request, the Key values in the response are encoded",
+        "description_zh": "指明返回结果中编码使用的类型。如果请求的参数中指定了encoding-type，那返回的结果会对Key进行编码",
+        "enum": [
+          "url"
+        ],
+        "example": "url",
+        "title": "specifies the encoding method to use",
+        "type": "string"
+      },
+      "Upload": {
+        "description_en": "The container that stores information about multipart upload events",
+        "description_zh": "保存Multipart Upload事件信息的容器",
+        "properties": {
+          "Initiated": {
+            "description_en": "The time when the multipart upload event was initiated",
+            "description_zh": "Multipart Upload事件初始化的时间",
+            "example": "2012-02-23T04:18:23.000Z",
+            "format": "iso8601",
+            "title": "description",
+            "type": "string"
+          },
+          "Key": {
+            "description_en": "The name of the object for which the multipart upload event is initiated.\n\n\n\nThe returned results are sorted in alphabetical order by object name. For the same object, the results are sorted in alphabetical order by upload ID",
+            "description_zh": "初始化Multipart Upload事件的Object名称。\n\n\n\nOSS的返回结果按照Object名称字典序升序排列，对于同一个Object，则按照UploadId的字典序升序排列",
+            "example": "multipart.data",
+            "title": "description",
+            "type": "string"
+          },
+          "UploadId": {
+            "description_en": "The ID of the multipart upload event",
+            "description_zh": "Multipart Upload事件的ID",
+            "example": "0004B999EF5A239BB9138C6227D6****",
+            "title": "description",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Lists all in-progress multipart upload events",
   "description_zh": "列举所有执行中的Multipart Upload事件",
@@ -99,6 +158,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "url"
+      ],
       "example": "url",
       "help_en": "Specifies the encoding type for the returned content. The Delimiter, KeyMarker, Prefix, NextKeyMarker, and Key elements use UTF-8 characters, but XML 1.0 does not support parsing certain control characters, such as characters with ASCII values from 0 to 10. For control characters that are not supported by the XML 1.0 standard, you can specify encoding-type to encode the returned Delimiter, KeyMarker, Prefix, NextKeyMarker, and Key elements.\n\nDefault value: none",
       "help_zh": "指定对返回的内容进行编码，指定编码的类型。Delimiter、KeyMarker、Prefix、NextKeyMarker和Key使用UTF-8字符，但xml 1.0标准不支持解析一些控制字符，例如ASCII值从0到10的字符。对于包含xml\n                              1.0标准不支持的控制字符，可以通过指定encoding-type对返回的Delimiter、KeyMarker、Prefix、NextKeyMarker和Key进行编码。\n\n默认值：无",
@@ -115,6 +177,106 @@
   "pathPattern": "/?uploads",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body that contains the results of the ListMultipartUpload request",
+        "description_zh": "保存ListMultipartUpload请求结果的响应体",
+        "properties": {
+          "ListMultipartUploadsResult": {
+            "description_en": "The container that stores the results of the ListMultipartUpload request",
+            "description_zh": "保存ListMultipartUpload请求结果的容器",
+            "properties": {
+              "Bucket": {
+                "description_en": "The bucket name",
+                "description_zh": "Bucket名称",
+                "example": "example-bucket",
+                "type": "string"
+              },
+              "CommonPrefixes": {
+                "description_en": "The list that stores common prefixes of object names in the listing results",
+                "description_zh": "保存列举结果中Object名称公共前缀的列表",
+                "items": {
+                  "$ref": "#/components/schemas/CommonPrefix",
+                  "description_en": "The container that stores common prefixes of object names in the listing results",
+                  "description_zh": "保存列举结果中Object名称公共前缀的容器"
+                },
+                "type": "array"
+              },
+              "Delimiter": {
+                "description_en": "The object name grouping character used in this query",
+                "description_zh": "本次查询所用的Object名称分组字符",
+                "example": "/",
+                "type": "string"
+              },
+              "EncodingType": {
+                "description_en": "The encoding type used in the returned results. If the encoding-type request parameter is specified, the Delimiter, KeyMarker, Prefix, NextKeyMarker, and Key elements in the response are encoded",
+                "description_zh": "指明返回结果中编码使用的类型。如果请求参数中指定了encoding-type，那返回的结果会对Delimiter、KeyMarker、Prefix、NextKeyMarker和Key这些元素进行编码",
+                "example": "url",
+                "type": "string"
+              },
+              "IsTruncated": {
+                "description_en": "Indicates whether the returned multipart upload result list is truncated. Valid values:\n\ntrue: Not all results are returned.\n\nfalse (default): All results are returned",
+                "description_zh": "表示本次返回的MultipartUpload结果列表是否被截断。取值范围如下：\n\ntrue：表示本次没有返回全部结果。\n\nfalse（默认）：表示本次已经返回了全部结果",
+                "example": "true",
+                "type": "boolean"
+              },
+              "KeyMarker": {
+                "description_en": "The starting object position of the list",
+                "description_zh": "列表的起始Object位置",
+                "example": "abc",
+                "type": "string"
+              },
+              "MaxUploads": {
+                "description_en": "The maximum number of uploads returned",
+                "description_zh": "返回的最大Upload个数",
+                "example": "20",
+                "format": "int64",
+                "type": "integer"
+              },
+              "NextKeyMarker": {
+                "description_en": "If not all results are returned, the response includes the NextKeyMarker element to indicate the KeyMarker value for the next request",
+                "description_zh": "如果本次没有返回全部结果，响应请求中将包含NextKeyMarker元素，用于表示接下来请求的KeyMarker值",
+                "example": "oss.avi",
+                "type": "string"
+              },
+              "NextUploadIdMarker": {
+                "description_en": "If not all results are returned, the response includes the NextUploadMarker element to indicate the UploadMarker value for the next request",
+                "description_zh": "如果本次没有返回全部结果，响应请求中将包含NextUploadMarker元素，用于表示接下来请求的UploadMarker值",
+                "example": "0004B99B8E707874FC2D692FA5D77D3F",
+                "type": "string"
+              },
+              "Prefix": {
+                "description_en": "The prefix used in this query",
+                "description_zh": "本次查询所用的前缀",
+                "example": "logs/",
+                "type": "string"
+              },
+              "Upload": {
+                "description_en": "The list that stores multipart upload event information",
+                "description_zh": "保存Multipart Upload事件信息的列表",
+                "items": {
+                  "$ref": "#/components/schemas/Upload",
+                  "description_en": "The container that stores multipart upload event information",
+                  "description_zh": "保存Multipart Upload事件信息的容器"
+                },
+                "type": "array"
+              },
+              "UploadIdMarker": {
+                "description_en": "The starting UploadId position of the list",
+                "description_zh": "列表的起始UploadId位置",
+                "example": "0004B999EF5A239BB9138C6227D6****",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "5XX": {}
+  },
   "v1_parameters": [
     {
       "help_en": "The bucket name",

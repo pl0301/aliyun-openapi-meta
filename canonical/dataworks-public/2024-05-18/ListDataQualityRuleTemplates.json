@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "10000",
       "help_en": "The DataWorks workspace ID",
       "help_zh": "DataWorks工作空间ID",
@@ -34,6 +35,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "System\n",
       "help_en": "The creation source of the rule template. This parameter is required.\nSystem: system template\nUserDefined: user-defined template",
       "help_zh": "规则模板的创建来源，必填。\nSystem：系统模板\nUserDefined：用户自定义模板",
@@ -73,10 +75,12 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "10",
       "help_en": "The number of entries per page in a paginated query. Default value: 10",
       "help_zh": "列表分页查询页大小，默认为10",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -86,10 +90,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "The page number of a paginated query. Default value: 1",
       "help_zh": "列表分页查询页码，默认为1",
       "location": "query",
+      "maximum": "200",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -101,5 +108,141 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned data",
+        "description_zh": "返回值",
+        "properties": {
+          "PagingInfo": {
+            "description_en": "The paginated query result of data quality rule templates",
+            "description_zh": "质量规则模版分页查询结果",
+            "properties": {
+              "DataQualityRuleTemplates": {
+                "description_en": "The list of rule templates",
+                "description_zh": "规则模版列表",
+                "items": {
+                  "description_en": "The details of the rule template",
+                  "description_zh": "规则模版详情",
+                  "properties": {
+                    "CheckingConfig": {
+                      "description_en": "The sample verification settings",
+                      "description_zh": "样本校验设置",
+                      "properties": {
+                        "ReferencedSamplesFilter": {
+                          "description_en": "Some types of thresholds require reference samples to be queried, and then the values of the reference samples are aggregated to obtain the threshold for comparison. An expression is used here to indicate the query method of the reference samples",
+                          "description_zh": "有些类型的阈值需要查询出一些参考样本，然后对参考样本的值进行汇总得出进行比较的阈值，这里使用一个表达式来表示参考样本的查询方式",
+                          "example": "{ \"bizdate\": [ \"-1\", \"-7\", \"-1m\" ] }\n",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "The threshold calculation method.\nFixed\nFluctation\nFluctationDiscreate\nAuto\nAverage\nVariance",
+                          "description_zh": "阈值计算方式\nFixed\nFluctation\nFluctationDiscreate\nAuto\nAverage\nVariance",
+                          "example": "Fixed",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Code": {
+                      "description_en": "The code of the rule template",
+                      "description_zh": "规则模版Code",
+                      "example": "USER_DEFINED:123",
+                      "type": "string"
+                    },
+                    "DirectoryPath": {
+                      "description_en": "The category directory in which the custom template is stored. Levels are separated by forward slashes (/). Each level name can be up to 1,024 characters in length and cannot contain whitespace characters or slashes",
+                      "description_zh": "自定义模板被存放的类目目录，斜线分隔层级。每个层级名称最长1024个字符，由不能包含空白字符、不能包含斜线",
+                      "example": "/ods/order_data",
+                      "type": "string"
+                    },
+                    "Name": {
+                      "description_en": "The name of the rule template. It can be a combination of digits, letters, Chinese characters, and half-width or full-width punctuation marks, and can be up to 512 characters in length",
+                      "description_zh": "规则模板名称，数字、英文字母、汉字、半角全角标点符号组合，最长512个字符",
+                      "example": "Table row Count Verification\n",
+                      "type": "string"
+                    },
+                    "ProjectId": {
+                      "description_en": "The DataWorks workspace ID",
+                      "description_zh": "DataWorks工作空间ID",
+                      "example": "2043",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SamplingConfig": {
+                      "description_en": "The settings required for sample collection",
+                      "description_zh": "样本采集所需的设置",
+                      "properties": {
+                        "Metric": {
+                          "description_en": "The name of the sampling metric.\nCount: the number of table rows\nMin: the minimum value of the field\nMax: the maximum value of the field\nAvg: the average value of the field\nDistinctCount: the number of unique values of the field\nDistinctPercent: the ratio of the number of unique values of the field to the number of data rows\nDuplicatedCount: the number of duplicate values of the field\nDuplicatedPercent: the ratio of the number of duplicate values of the field to the number of data rows\nTableSize: the size of the table\nNullValueCount: the number of rows in which the field is null\nNullValuePercent: the ratio of rows in which the field is null\nGroupCount: each value and the corresponding number of data rows after aggregation by field value\nCountNotIn: the number of rows in which the enumeration value does not match\nCountDistinctNotIn: the number of unique values in which the enumeration value does not match\nUserDefinedSql: collect samples by using custom SQL",
+                          "description_zh": "采样的指标名称\nCount：表行数\nMin：字段最小值\nMax：字段最大值\nAvg：字段均值\nDistinctCount：字段唯一值个数\nDistinctPercent：字段唯一值个数与数据行数占比\nDuplicatedCount：字段重复值个数\nDuplicatedPercent：字段重复值个数与数据行数占比\nTableSize：表大小\nNullValueCount：字段为空的行数\nNullValuePercent：字段为空的比例\nGroupCount：按字段值聚合后每个值与对应的数据行数\nCountNotIn：枚举值不匹配行数\nCountDistinctNotIn：枚举值不匹配唯一值个数\nUserDefinedSql：通过自定义SQL做样本采集",
+                          "example": "Max",
+                          "type": "string"
+                        },
+                        "MetricParameters": {
+                          "description_en": "The parameters required for sample collection",
+                          "description_zh": "样本采集时，所需的参数",
+                          "example": "{\"Sql\": \"select count(1) from table;\"}\n",
+                          "type": "string"
+                        },
+                        "SettingConfig": {
+                          "description_en": "The runtime parameter setting statements that are inserted and executed before the sampling statement is executed. This parameter can be up to 1,000 characters in length. Currently, only MaxCompute is supported",
+                          "description_zh": "具体执行采样语句前，插入执行的一些运行时参数设置语句，最长1000个字符。目前只支持MaxCompute",
+                          "example": "SET odps.sql.udf.timeout=600s; \nSET odps.sql.python.version=cp27;\n",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "VisibleScope": {
+                      "description_en": "The available scope of the template:\nTenant: available to all tenants\nProject: available only in the current project",
+                      "description_zh": "模板的可用范围：\nTenant：全租户都可用\nProject：只在当前项目中可用",
+                      "example": "Project",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "PageNumber": {
+                "description_en": "The page number",
+                "description_zh": "页码",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "The number of entries per page",
+                "description_zh": "页大小",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "The total number of entries",
+                "description_zh": "总条数",
+                "example": "42",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The API request ID",
+            "description_zh": "API请求ID",
+            "example": "691CA452-D37A-****",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

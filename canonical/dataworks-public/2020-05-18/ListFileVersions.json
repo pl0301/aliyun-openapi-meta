@@ -22,6 +22,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "100000001",
       "help_en": "The ID of the file. You can call the https://help.aliyun.com/document_detail/173942.html operation to query the ID",
       "help_zh": "文件的ID，您可以通过https://help.aliyun.com/document_detail/173942.html查询对应文件的ID",
@@ -65,6 +66,7 @@
       "help_en": "The page number",
       "help_zh": "请求的数据页数，用于翻页",
       "location": "formData",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -78,6 +80,8 @@
       "help_en": "The number of entries per page. Default value: 10. Maximum value: 100",
       "help_zh": "每页显示的条数，默认为10条，最大100条",
       "location": "formData",
+      "maximum": "100",
+      "minimum": "0",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -89,5 +93,168 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Data": {
+            "description_en": "The file versions",
+            "description_zh": "文件的版本列表",
+            "properties": {
+              "FileVersions": {
+                "description_en": "The details of file versions",
+                "description_zh": "文件的版本详情",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "ChangeType": {
+                      "description_en": "The type of the change to the file of the current version. Valid values: CREATE, UPDATE, and DELETE",
+                      "description_zh": "本次文件版本的变更类型，包括CREATE、UPDATE和DELETE",
+                      "example": "UPDATE",
+                      "type": "string"
+                    },
+                    "Comment": {
+                      "description_en": "The description of the file version",
+                      "description_zh": "本次文件版本的说明",
+                      "example": "Second version submission",
+                      "type": "string"
+                    },
+                    "CommitTime": {
+                      "description_en": "The time when the file version was created. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                      "description_zh": "生成文件版本的毫秒时间戳",
+                      "example": "1593881265000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CommitUser": {
+                      "description_en": "The ID of the Alibaba Cloud account used to create the file of the current version",
+                      "description_zh": "生成本次文件版本的阿里云用户UID",
+                      "example": "73842342****",
+                      "type": "string"
+                    },
+                    "FileContent": {
+                      "description_en": "The code in the file of the current version",
+                      "description_zh": "生成本次文件版本的文件代码",
+                      "example": "SHOW TABLES;",
+                      "type": "string"
+                    },
+                    "FileName": {
+                      "description_en": "The name of the file of the current version",
+                      "description_zh": "生成本次文件版本的文件名",
+                      "example": "ods_user_info_d",
+                      "type": "string"
+                    },
+                    "FilePropertyContent": {
+                      "description_en": "The basic information about the file of the current version",
+                      "description_zh": "生成本次文件版本的文本基本信息",
+                      "example": "{\"fileName\":\"ods_user_info_d\",\"fileType\":10}",
+                      "type": "string"
+                    },
+                    "FileVersion": {
+                      "description_en": "The version of the file",
+                      "description_zh": "文件的版本",
+                      "example": "2",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "IsCurrentProd": {
+                      "description_en": "Indicates whether the file version is the same as the latest file version in the production environment",
+                      "description_zh": "本次文件版本是否为当前生产环境的最新版本",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "NodeContent": {
+                      "description_en": "The scheduling configurations for the node that corresponds to the file of the current version",
+                      "description_zh": "生成本次文件版本的调度配置",
+                      "example": "{\"cycleType\":0,\"cronExpress\":\"00 05 00 * * ?\"}",
+                      "type": "string"
+                    },
+                    "NodeId": {
+                      "description_en": "The ID of the auto triggered node that corresponds to the file of the current version",
+                      "description_zh": "生成文件版本时对应的调度任务ID",
+                      "example": "1234",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Status": {
+                      "description_en": "The status of the file of the current version. Valid values: COMMITTING, COMMITTED, CHECK_OK, PACKAGED, DEPLOYING, DEPLOYED, and CANCELLED",
+                      "description_zh": "文件版本当前的状态，包括COMMITTING（提交中）、COMMITTED或CHECK_OK（已提交）、PACKAGED（准备发布）、DEPLOYING（发布中）、DEPLOYED（已发布）和CANCELLED（取消发布）",
+                      "example": "COMMITTED",
+                      "type": "string"
+                    },
+                    "UseType": {
+                      "description_en": "The functional module to which the file belongs. Valid values: NORMAL, MANUAL, MANUAL_BIZ, SKIP, ADHOCQUERY, and COMPONENT. The value SKIP indicates that the node corresponding to the file is run in dry-run mode",
+                      "description_zh": "文件所属的功能模块，包括NORMAL（数据开发）、MANUAL（手动任务）、MANUAL_BIZ（手动工作流）、SKIP（数据开发的空跑调度）、ADHOCQUERY（临时查询）和COMPONENT（组件管理）",
+                      "example": "NORMAL",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "PageNumber": {
+                "description_en": "The page number of the returned page",
+                "description_zh": "当前数据页的页码",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "The number of entries returned per page",
+                "description_zh": "当前数据页的大小",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "The total number of entries returned",
+                "description_zh": "满足查询条件的数据总条数",
+                "example": "13",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "ErrorCode": {
+            "description_en": "The error code returned",
+            "description_zh": "错误码",
+            "example": "Invalid.Tenant.ConnectionNotExists",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message returned",
+            "description_zh": "错误信息",
+            "example": "The connection does not exist.",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code returned",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "0000-ABCD-EFG****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request is successful",
+            "description_zh": "调用是否成功",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

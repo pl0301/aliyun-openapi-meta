@@ -2,6 +2,175 @@
   "camel_example": "aliyun sls POST /logstores --project ali-test-project --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"encrypt_conf\":\"example-string\",\"telemetryType\":\"None\",\"infrequentAccessTTL\":30,\"maxSplitShard\":64,\"appendMeta\":false,\"enable_tracking\":false,\"shardingPolicy\":\"example-string\",\"ttl\":1,\"mode\":\"standard\",\"autoSplit\":true,\"processorId\":\"processor-nginx-parser-001\",\"logstoreName\":\"my-logstore\",\"resourceGroupId\":\"rg-xxxxxxxx\",\"hot_ttl\":60,\"enableModify\":true,\"shardCount\":2}",
   "cmd_full_name": "sls create-log-store",
   "cmd_name": "create-log-store",
+  "components": {
+    "schemas": {
+      "EncryptConf": {
+        "description_en": "The data structure of the encryption configuration",
+        "description_zh": "加密配置数据结构",
+        "properties": {
+          "enable": {
+            "default": "true",
+            "description_en": "Specifies whether to enable data encryption. Valid values:\n\ntrue\nfalse",
+            "description_zh": "是否启用数据加密。\n\ntrue：是\nfalse：否",
+            "example": "true",
+            "required": true,
+            "title": "enable",
+            "type": "boolean"
+          },
+          "encrypt_type": {
+            "default": "default",
+            "description_en": "The encryption algorithm. Valid values: default and sm4. If enable is set to true, you must configure this parameter",
+            "description_zh": "加密算法类型，支持 default、m4、sm4_ecb、sm4_cbc、sm4_gcm、aes_ecb、aes_cbc、aes_cfb、aes_ofb、aes_gcm。当enable为true时，此项必选",
+            "enumValueTitles": {
+              "aes_cbc": "aes_cbc",
+              "aes_cfb": "aes_cfb",
+              "aes_ecb": "aes_ecb",
+              "aes_gcm": "aes_gcm",
+              "aes_ofb": "aes_ofb",
+              "default": "default",
+              "m4": "m4",
+              "sm4_cbc": "sm4_cbc",
+              "sm4_ecb": "sm4_ecb",
+              "sm4_gcm": "sm4_gcm"
+            },
+            "example": "default",
+            "required": false,
+            "title": "加密算法，只支持default和m4。当 enable 为 true 时，此项必选。",
+            "type": "string"
+          },
+          "user_cmk_info": {
+            "$ref": "#/components/schemas/EncryptUserCmkConf",
+            "description_en": "Optional. If you configure this parameter, the bring-your-own-key (BYOK) key is used. If you do not configure this parameter, the service key of Simple Log Service is used",
+            "description_zh": "可选字段。如果设置该字段，则表示使用自带密钥（BYOK），否则使用日志服务的服务密钥",
+            "example": " {    \"cmk_key_id\" : \"f5136b95-2420-ab31-xxxxxxxxx\"    \"arn\" :  \"acs:ram::13234:role/logsource\"    \"region_id\" : \"cn-hangzhou\"  }"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "EncryptUserCmkConf": {
+        "description_en": "The data structure of the user-defined encryption configuration",
+        "description_zh": "用户加密配置数据结构",
+        "properties": {
+          "arn": {
+            "description_en": "The Alibaba Cloud Resource Name (ARN) of the Resource Access Management (RAM) role",
+            "description_zh": "RAM角色的ARN",
+            "example": "acs:ram::13234:role/logsource",
+            "required": true,
+            "title": "arn",
+            "type": "string"
+          },
+          "cmk_key_id": {
+            "description_en": "The ID of the customer master key (CMK) if you use the bring-your-own-key (BYOK) key",
+            "description_zh": "BYOK的主密钥ID",
+            "example": "f5136b95-2420-ab31-xxxxxxxxx",
+            "required": true,
+            "title": "cmk_key_id",
+            "type": "string"
+          },
+          "region_id": {
+            "description_en": "The ID of the region where the CMK resides",
+            "description_zh": "主密钥所在的地域ID",
+            "example": "cn-hangzhou",
+            "required": true,
+            "title": "region_id",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "ShardingPolicy": {
+        "description_en": "The hash write configuration",
+        "description_zh": "哈希写入配置",
+        "properties": {
+          "enabled": {
+            "description_en": "",
+            "description_zh": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
+            "title": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
+            "type": "boolean"
+          },
+          "queryActiveTime": {
+            "description_en": "",
+            "description_zh": "查询生效时间，Unix Timestamp",
+            "example": "1764659409",
+            "format": "int64",
+            "title": "查询生效时间，Unix Timestamp",
+            "type": "integer"
+          },
+          "shardGroup": {
+            "description_en": "",
+            "description_zh": "ShardGroup 配置，整个 LogStore 的哈希区间将被均为切分成多个大小相同的 ShardGroup。写入的数据计算一级哈希后选择相应的 ShardGroup 写入",
+            "properties": {
+              "groupCount": {
+                "description_en": "",
+                "description_zh": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个",
+                "example": "8",
+                "format": "int32",
+                "required": true,
+                "title": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个。",
+                "type": "integer"
+              },
+              "keys": {
+                "description_en": "",
+                "description_zh": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "example": "userId",
+                  "type": "string"
+                },
+                "required": true,
+                "title": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复。",
+                "type": "array"
+              }
+            },
+            "title": "ShardGroup 配置，整个 LogStore 的哈希区间将被均为切分成多个大小相同的 ShardGroup。写入的数据计算一级哈希后选择相应的 ShardGroup 写入。",
+            "type": "object"
+          },
+          "shardHash": {
+            "description_en": "",
+            "description_zh": "ShardHash 配置，二级哈希。此配置用于在 ShardGroup 内部选择 shard 进行写入",
+            "properties": {
+              "keys": {
+                "description_en": "",
+                "description_zh": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "example": "instanceId",
+                  "type": "string"
+                },
+                "required": true,
+                "title": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复。",
+                "type": "array"
+              },
+              "maxHashCount": {
+                "default": "2",
+                "description_en": "",
+                "description_zh": "表示哈希重试个数，当写入失败时，会切换哈希值进行写入重试。可选值为 1、2、4。1 表示不带重试，2 表示最多一次重试，4 表示最多 3次重试",
+                "enum": [
+                  "1",
+                  "2",
+                  "4"
+                ],
+                "example": "2",
+                "format": "int32",
+                "required": true,
+                "title": "表示哈希重试个数，当写入失败时，会切换哈希值进行写入重试。可选值为 1、2、4。1 表示不带重试，2 表示最多一次重试，4 表示最多 3次重试。",
+                "type": "integer"
+              }
+            },
+            "required": false,
+            "title": "ShardHash 配置，二级哈希。此配置用于在 ShardGroup 内部选择 shard 进行写入",
+            "type": "object"
+          }
+        },
+        "title": "哈希写入配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a Logstore",
   "description_zh": "创建 LogStore",
@@ -110,6 +279,18 @@
           "type": "bool"
         },
         {
+          "enum": [
+            "default",
+            "aes_ecb",
+            "aes_cbc",
+            "aes_gcm",
+            "m4",
+            "aes_cfb",
+            "sm4_ecb",
+            "sm4_cbc",
+            "sm4_gcm",
+            "aes_ofb"
+          ],
           "example": "default",
           "help_en": "The encryption algorithm. Valid values: default and sm4. If enable is set to true, you must configure this parameter",
           "help_zh": "加密算法类型，支持 default、m4、sm4_ecb、sm4_cbc、sm4_gcm、aes_ecb、aes_cbc、aes_cfb、aes_ofb、aes_gcm。当enable为true时，此项必选",
@@ -367,6 +548,11 @@
               "type": "array"
             },
             {
+              "enum": [
+                "1",
+                "2",
+                "4"
+              ],
               "example": "2",
               "help_en": "The maxHashCount",
               "help_zh": "表示哈希重试个数，当写入失败时，会切换哈希值进行写入重试。可选值为 1、2、4。1 表示不带重试，2 表示最多一次重试，4 表示最多 3次重试",
@@ -456,6 +642,61 @@
   "pathPattern": "/logstores",
   "product_code": "Sls",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "headers": {
+        "Connection": {
+          "schema": {
+            "example": "close",
+            "title_en": "是否长链接。取值包括：  close：不是长链接，则每个HTTP请求都会重新建立TCP连接。 keep-alive：长链接，TCP连接建立后保持连接状态，节省连接所需时间和带宽。",
+            "title_zh": "是否长链接。取值包括：  close：不是长链接，则每个HTTP请求都会重新建立TCP连接。 keep-alive：长链接，TCP连接建立后保持连接状态，节省连接所需时间和带宽。",
+            "type": "string"
+          }
+        },
+        "Content-Length": {
+          "schema": {
+            "example": "0",
+            "title_en": "响应内容长度。",
+            "title_zh": "响应内容长度。",
+            "type": "string"
+          }
+        },
+        "Content-Type": {
+          "schema": {
+            "example": "application/json",
+            "title_en": "返回的响应体的内容格式。",
+            "title_zh": "返回的响应体的内容格式。",
+            "type": "string"
+          }
+        },
+        "Date": {
+          "schema": {
+            "example": "Sun, 27 May 2018 08:25:04 GMT",
+            "title_en": "返回响应的时间。",
+            "title_zh": "返回响应的时间。",
+            "type": "string"
+          }
+        },
+        "Server": {
+          "schema": {
+            "example": "nginx",
+            "title_en": "服务器名称。",
+            "title_zh": "服务器名称。",
+            "type": "string"
+          }
+        },
+        "x-log-requestid": {
+          "schema": {
+            "example": "5B0A6B60BB6EE39764D458B5",
+            "title_en": "服务端产生的标识，该请求的唯一ID。",
+            "title_zh": "服务端产生的标识，该请求的唯一ID。",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "201": {}
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body parameters",

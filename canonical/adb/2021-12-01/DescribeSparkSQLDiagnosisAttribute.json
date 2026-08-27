@@ -1,6 +1,126 @@
 {
   "cmd_full_name": "adb describe-spark-sql-diagnosis-attribute",
   "cmd_name": "describe-spark-sql-diagnosis-attribute",
+  "components": {
+    "schemas": {
+      "Adb4MysqlSparkDiagnosisInfo": {
+        "properties": {
+          "DiagnosisCode": {
+            "title": "诊断Code",
+            "type": "string"
+          },
+          "DiagnosisCodeLabel": {
+            "title": "诊断原因",
+            "type": "string"
+          },
+          "DiagnosisMsg": {
+            "title": "诊断建议",
+            "type": "string"
+          },
+          "DiagnosisType": {
+            "example": "APPLICATION",
+            "title": "诊断信息类型",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "OperatorNode": {
+        "description_en": "The Spark operator node",
+        "description_zh": "spark 算子节点",
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/OperatorNode"
+            },
+            "title": "子算子队列",
+            "type": "array"
+          },
+          "id": {
+            "format": "int32",
+            "title": "算子id",
+            "type": "integer"
+          },
+          "levelWidth": {
+            "format": "int32",
+            "title": "算子所在树层级共有多少节点",
+            "type": "integer"
+          },
+          "nodeDepth": {
+            "format": "int32",
+            "title": "算子所在树的层级",
+            "type": "integer"
+          },
+          "nodeName": {
+            "title": "算子名称",
+            "type": "string"
+          },
+          "nodeWidth": {
+            "format": "int32",
+            "title": "该节点在对应层级从左到右的 position",
+            "type": "integer"
+          },
+          "parentId": {
+            "format": "int32",
+            "title": "父算子 id",
+            "type": "integer"
+          },
+          "stats": {
+            "properties": {
+              "bytes": {
+                "format": "int64",
+                "title": "数据量",
+                "type": "integer"
+              },
+              "outputRows": {
+                "format": "int64",
+                "title": "输出行数",
+                "type": "integer"
+              },
+              "parameters": {
+                "required": false,
+                "title": "算子参数",
+                "type": "string"
+              },
+              "peakMemory": {
+                "format": "int64",
+                "title": "消耗内存最大值",
+                "type": "integer"
+              },
+              "timeCost": {
+                "format": "int64",
+                "title": "运行时间",
+                "type": "integer"
+              }
+            },
+            "title": "算子统计信息",
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "SparkOperatorInfo": {
+        "description_en": "The Spark operator information",
+        "description_zh": "Spark 算子信息",
+        "properties": {
+          "MetricValue": {
+            "format": "int64",
+            "title": "metrics 值",
+            "type": "integer"
+          },
+          "OperatorName": {
+            "format": "byte",
+            "title": "算子名称",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries the diagnostic information about a Spark SQL query",
   "description_zh": "查询单个Spark SQL的诊断详情",
@@ -20,6 +140,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "amv-2zeq4788qyy7k662",
       "help_en": "The cluster ID.\n\n\n\nYou can call the https://help.aliyun.com/document_detail/98094.html operation to query the information about all AnalyticDB for MySQL clusters within a region, including cluster IDs",
       "help_zh": "集群ID。\n您可以调用https://help.aliyun.com/document_detail/98094.html接口查看目标地域下所有的集群信息，包括集群ID",
@@ -33,6 +154,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID.\n\nYou can call the https://help.aliyun.com/document_detail/143074.html operation to query the most recent region list",
       "help_zh": "地域ID。\n您可以调用https://help.aliyun.com/document_detail/143074.html接口查看地域ID",
@@ -63,6 +185,8 @@
       "help_en": "The ID of the query executed within the Spark application",
       "help_zh": "Spark 应用内部 query 执行 ID",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "-2",
       "name": "inner_query_id",
       "options": [
         "--inner-query-id"
@@ -87,5 +211,90 @@
   ],
   "pathPattern": "",
   "product_code": "adb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AccessDeniedDetail": {
+            "description_en": "The information about the request denial",
+            "description_zh": "访问被拒绝详细信息",
+            "example": "{}",
+            "type": "string"
+          },
+          "AppId": {
+            "description_en": "The application ID.\n\nYou can call the [ListSparkApps]（https://help.aliyun.com/document_detail/612475.html） operation to query a list of Spark application IDs",
+            "description_zh": "应用ID。\n调用[ListSparkApps]（https://help.aliyun.com/document_detail/612475.html）接口查询Spark应用的ID",
+            "example": "s202411071444hzdvk486d9d2001****",
+            "type": "string"
+          },
+          "DiagnosisInfos": {
+            "description_en": "The queried diagnostic information",
+            "description_zh": "诊断建议集合",
+            "items": {
+              "$ref": "#/components/schemas/Adb4MysqlSparkDiagnosisInfo",
+              "description_en": "The queried diagnostic information",
+              "description_zh": "诊断建议"
+            },
+            "type": "array"
+          },
+          "ElapsedTime": {
+            "description_en": "The execution duration of the query. Unit: milliseconds",
+            "description_zh": "实际运行时间，单位毫秒",
+            "example": "100",
+            "format": "int64",
+            "type": "integer"
+          },
+          "InnerQueryId": {
+            "description_en": "The ID of the query executed within the Spark application",
+            "description_zh": "Spark 应用内部 query 执行 ID",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          },
+          "OperatorListSortedByMetrics": {
+            "description_en": "The operators sorted by metrics",
+            "description_zh": "按 metrics 排序后的算子队列",
+            "properties": {
+              "OperatorListSortedByExclusiveTime": {
+                "description_en": "The operators sorted by the execution duration",
+                "description_zh": "按执行时间排序后的算子队列",
+                "items": {
+                  "$ref": "#/components/schemas/SparkOperatorInfo",
+                  "description_en": "The information about the Spark operator",
+                  "description_zh": "Spark 算子信息"
+                },
+                "type": "array"
+              },
+              "OperatorListSortedByMaxMemory": {
+                "description_en": "The operators sorted by the maximum memory used",
+                "description_zh": "按最大内存消耗排序后的算子队列",
+                "items": {
+                  "$ref": "#/components/schemas/SparkOperatorInfo",
+                  "description_en": "The information about the Spark operator",
+                  "description_zh": "Spark 算子信息"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1AD222E9-E606-4A42-BF6D-8A4442913CEF",
+            "type": "string"
+          },
+          "Root": {
+            "$ref": "#/components/schemas/OperatorNode",
+            "description_en": "The Spark execution plan tree",
+            "description_zh": "Spark 执行计划树"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

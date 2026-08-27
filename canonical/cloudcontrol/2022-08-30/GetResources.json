@@ -22,6 +22,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "List (no parent resource):\n/api/v1/providers/Aliyun/products/Redis/resources/DBInstance\n\nList (has parent resource):\n/api/v1/providers/aliyun/products/Redis/resources/DBInstance/r-2ze8v41uei31lo****/Account\n\nGet (no parent resource):\n/api/v1/providers/Aliyun/products/Redis/resources/DBInstance/r-2ze8v41uei31lo****\n\nGet (has parent resource):\n/api/v1/providers/Aliyun/products/Redis/resources/DBInstance/r-2ze8v41uei31lo****/Account/user****",
       "help_en": "The URL of the request.\n\nThe request URL determines whether the List or Get operation is called.\n\nList: `/api/v1/providers/{provider}/products/{product}/resources/{resourceType}`\n\nGet: `/api/v1/providers/{provider}/products/{product}/resources/{resourceType}/{resourceId}`\n\nThe request URL contains the following variables:\n\nprovider: The cloud service provider. Currently, only `Aliyun` is supported.\n\nproduct: The product code.\n\nresourceType: The https://help.aliyun.com/document_detail/2246871.html. If a parent resource exists, the format is `{parent resource type code}/{parent resource ID}/{resource type code}`.\n\nresourceId: The resource ID",
       "help_zh": "请求路径。\n\n根据不同的请求路径，用户可分别调用资源的List操作或Get操作。\nList：`/api/v1/providers/{provider}/products/{product}/resources/{resourceType}`\n\nGet：`/api/v1/providers/{provider}/products/{product}/resources/{resourceType}/{resourceId}`\n\n请求路径中包含以下变量：\nprovider：云厂商。当前仅支持传入`Aliyun`。\nproduct：产品Code。\nresourceType：https://help.aliyun.com/document_detail/2246871.html。存在父资源时，格式为3。\nresourceId：资源ID",
@@ -95,6 +96,90 @@
   "pathPattern": "/api/v1/providers/[provider]/products/[product]/resources/*",
   "product_code": "cloudcontrol",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response structure",
+        "description_zh": "返回结构",
+        "properties": {
+          "maxResults": {
+            "description_en": "The maximum number of records returned for the current request. This parameter is returned by the List operation",
+            "description_zh": "本次请求所返回的最大记录条数。List操作返回",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "nextToken": {
+            "description_en": "The position where the current call finished reading. An empty value indicates that all data has been read. This parameter is returned by the List operation",
+            "description_zh": "表示当前调用返回读取到的位置，空代表数据已经读取完毕。List操作返回",
+            "example": "AAAAAdDWBF2****",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "resource": {
+            "description_en": "The specified resource. This parameter is returned by the Get operation",
+            "description_zh": "指定资源。Get操作返回",
+            "properties": {
+              "resourceAttributes": {
+                "description_en": "The resource properties in JSON format",
+                "description_zh": "资源属性（JSON格式）",
+                "example": "{\"Status\":\"Available\",\"Description\":\"\",\"AccountPrivilege\":\"RoleReadWrite\",\"InstanceId\":\"r-2ze8v41uei31lo****\",\"RegionId\":\"cn-zhangjiakou\",\"AccountType\":\"Normal\",\"TypeInfo\":{},\"AccountName\":\"cctest\"}",
+                "type": "object"
+              },
+              "resourceId": {
+                "description_en": "The resource ID",
+                "description_zh": "资源ID",
+                "example": "cctest",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "resources": {
+            "description_en": "A list of resources. This parameter is returned by the List operation",
+            "description_zh": "资源列表。List操作返回",
+            "items": {
+              "description_en": "A resource",
+              "description_zh": "资源",
+              "properties": {
+                "resourceAttributes": {
+                  "description_en": "The resource properties in JSON format",
+                  "description_zh": "资源属性（JSON格式）",
+                  "example": "{\"Status\":\"Available\",\"Description\":\"\",\"AccountPrivilege\":\"RoleReadWrite\",\"InstanceId\":\"r-2ze8v41uei31lo****\",\"RegionId\":\"cn-zhangjiakou\",\"AccountType\":\"Normal\",\"TypeInfo\":{},\"AccountName\":\"cctest\"}",
+                  "type": "object"
+                },
+                "resourceId": {
+                  "description_en": "The resource ID",
+                  "description_zh": "资源ID",
+                  "example": "cctest",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "totalCount": {
+            "description_en": "The total number of entries that match the query conditions. This parameter is returned by the List operation",
+            "description_zh": "本次请求条件下的数据总量。List操作返回",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The filter conditions for resources.\n\nSpecify multiple key-value pairs in JSON format to filter resources. If a List or Get operation for a cloud product supports filtering by specific properties, you can use those properties as filter conditions for this parameter.\n\nThe supported filter fields may vary for different resource types. For more information about the supported fields, see the OpenAPI documentation for the specific resource.\n\nFor example, DBInstance resources support filtering by the `EditionType` and `PaymentType` fields",

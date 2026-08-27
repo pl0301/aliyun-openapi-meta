@@ -21,6 +21,12 @@
   },
   "parameters": [
     {
+      "enum": [
+        "ACS::ECS::Instance",
+        "ACS::OSS::Bucket",
+        "ACS::NAS::FileSystem",
+        "ACS::OTS::Instance"
+      ],
       "example": "ACS::ECS::Instance",
       "help_en": "The resource type",
       "help_zh": "资源类型",
@@ -51,6 +57,8 @@
       "help_en": "The maximum number of entries per page for a paged query. Maximum value: 50. Default value: 10",
       "help_zh": "分页查询时每页的最大条目数。最大值为50。默认值为10",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -105,53 +113,146 @@
   "pathPattern": "/api/v1/rules",
   "product_code": "BDRC",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The maximum number of entries per page for a paged query. Maximum value: 50. Default value: 10",
-      "help_zh": "分页查询时每页的最大条目数。最大值为50。默认值为10",
-      "name": "MaxResults",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Specifies whether a next query token exists. Valid values: If NextToken is empty, no more results exist. If NextToken is returned, the value indicates the token for the next query",
-      "help_zh": "是否拥有下一次查询的令牌（Token）。取值：如果NextToken为空表示没有下一次查询。                                 如果NextToken有返回值，该取值表示下一次查询开始的令牌",
-      "name": "NextToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The resource category ID",
-      "help_zh": "资源分类ID",
-      "name": "ResourceCategoryId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "ResourceOwnerIds",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The region ID of the resource",
-      "help_zh": "资源所在地域ID",
-      "name": "ResourceRegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The resource type",
-      "help_zh": "资源类型",
-      "name": "ResourceType",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "BaseResponse<ListResult<Rule>>",
+        "description_zh": "BaseResponse<ListResult<Rule>>",
+        "properties": {
+          "Data": {
+            "description_en": "The returned data",
+            "description_zh": "返回数据",
+            "properties": {
+              "Content": {
+                "description_en": "The collection of records returned in this request",
+                "description_zh": "本次请求所返回的记录集合",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CheckFailedResourceCount": {
+                      "description_en": "The number of resources for which the check failed",
+                      "description_zh": "检查失败的资源数",
+                      "example": "0",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "检查失败的资源数",
+                      "type": "integer"
+                    },
+                    "CheckStatus": {
+                      "description_en": "The check status. Valid values:\nNOT_CHECKED: not checked.\nPASSED: check passed.\nFAILED: check failed.\nCHECKING: checking in progress.\nCHECK_FAILED: check execution failed",
+                      "description_zh": "检查状态 (NOT_CHECKED: 未检查, PASSED: 检查通过, FAILED: 检查未通过, CHECKING: 检查中, CHECK_FAILED: 检查失败)",
+                      "example": "PASSED",
+                      "title_en": "",
+                      "title_zh": "检查状态 (NOT_CHECKED: 未检查, PASSED: 检查通过, FAILED: 检查未通过, CHECKING: 检查中, CHECK_FAILED: 检查失败)",
+                      "type": "string"
+                    },
+                    "CheckTime": {
+                      "description_en": "The check time",
+                      "description_zh": "检查时间",
+                      "example": "1704157635",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "检查时间",
+                      "type": "integer"
+                    },
+                    "ProductType": {
+                      "description_en": "The applicable product type",
+                      "description_zh": "适用的产品类型",
+                      "example": "ecs",
+                      "title_en": "",
+                      "title_zh": "适用的产品类型",
+                      "type": "string"
+                    },
+                    "ResourceType": {
+                      "description_en": "The applicable resource type",
+                      "description_zh": "适用的资源类型",
+                      "example": "ACS::ECS::Instance",
+                      "title_en": "",
+                      "title_zh": "适用的资源类型",
+                      "type": "string"
+                    },
+                    "RiskyResourceCount": {
+                      "description_en": "The number of resources with risks",
+                      "description_zh": "有风险的资源数",
+                      "example": "0",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "有风险的资源数",
+                      "type": "integer"
+                    },
+                    "RuleId": {
+                      "description_en": "The unique identifier of the rule",
+                      "description_zh": "规则的唯一标识",
+                      "example": "rule-bp11ggd8wr762",
+                      "title_en": "",
+                      "title_zh": "规则的唯一标识",
+                      "type": "string"
+                    },
+                    "RuleTemplate": {
+                      "description_en": "The rule template",
+                      "description_zh": "规则模板",
+                      "example": "ecs-backup",
+                      "title_en": "",
+                      "title_zh": "规则模板",
+                      "type": "string"
+                    },
+                    "TotalResourceCount": {
+                      "description_en": "The total number of checked resources",
+                      "description_zh": "检查的总资源数",
+                      "example": "1",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "检查的总资源数",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "MaxResults": {
+                "description_en": "The maximum number of records returned in this request",
+                "description_zh": "本次请求所返回的最大记录条数",
+                "example": "10",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "本次请求所返回的最大记录条数",
+                "type": "integer"
+              },
+              "NextToken": {
+                "description_en": "The position from which the current call starts reading. An empty value indicates that all data has been read",
+                "description_zh": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
+                "example": "0975951c75d7b41464c8d08ae17043ca",
+                "title_en": "",
+                "title_zh": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
+                "type": "string"
+              },
+              "TotalCount": {
+                "description_en": "The total number of records that match the request conditions. This parameter is optional and may not be returned by default",
+                "description_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "example": "42",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The unique identifier of the request",
+            "description_zh": "请求的唯一标识",
+            "example": "86DEBAC9-AB6A-59AB-9E5C-A540E579ECC9",
+            "title_en": "",
+            "title_zh": "请求的唯一标识",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "BaseResponse<ListResult<Rule>>",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

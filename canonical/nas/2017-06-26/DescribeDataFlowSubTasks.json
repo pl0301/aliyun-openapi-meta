@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "bmcpfs-370lx1ev9ss27o0****\n",
       "help_en": "The file system ID",
       "help_zh": "文件系统ID",
@@ -37,6 +38,14 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "DataFlowIds",
+              "DataFlowTaskIds",
+              "DataFlowSubTaskIds",
+              "Status",
+              "SrcFilePath",
+              "DstFilePath"
+            ],
             "example": "DataFlowSubTaskIds",
             "help_en": "The name of the filter key.\n\nValid values:\n\nDataFlowIds: filters by data flow ID.\nDataFlowTaskIds: filters by data flow task ID.\nDataFlowSubTaskIds: filters by data flow streaming task ID.\nStatus: filters by data flow status.\nSrcFilePath: filters by source file path.\nDstFilePath: filters by destination file path",
             "help_zh": "筛选键的名称。\n\n取值：\n\nDataFlowIds: 根据DataFlow ID筛选。\nDataFlowTaskIds：根据数据流动任务的ID筛选。\nDataFlowSubTaskIds：根据数据流动流式任务的ID筛选。\nStatus：根据数据流动状态筛选。\nSrcFilePath：根据源目标文件路径筛选。\nDstFilePath：根据目标文件路径筛选",
@@ -93,6 +102,8 @@
       "help_en": "The maximum number of results per query.\n\nValid values: 20 to 100.\n\nDefault value: 20",
       "help_zh": "每次查询结果的个数限制。\n\n取值范围：20~100\n\n\n默认值：20",
       "location": "query",
+      "maximum": "100",
+      "minimum": "10",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -104,5 +115,183 @@
   ],
   "pathPattern": "",
   "product_code": "NAS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "DataFlowSubTask": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DataFlowSubTask": {
+                "description_en": "The collection of data flow streaming task information",
+                "description_zh": "数据流动流式任务信息合集",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CreateTime": {
+                      "description_en": "The time when the streaming task was created. The time follows the ISO 8601 standard in the yyyy-MM-dd HH:mm:ss format",
+                      "description_zh": "流式任务创建时间。执行 ISO8601 标准表示，返回格式：yyyy-MM-dd HH:mm:ss",
+                      "example": "2024-07-01 19:59:29",
+                      "type": "string"
+                    },
+                    "DataFlowId": {
+                      "description_en": "The data flow ID",
+                      "description_zh": "数据流动ID",
+                      "example": "df-194433a5be31****\n",
+                      "type": "string"
+                    },
+                    "DataFlowSubTaskId": {
+                      "description_en": "The data flow streaming task ID",
+                      "description_zh": "数据流动流式任务ID",
+                      "example": "subTaskId-370kyfmyknxcyzw****\n",
+                      "type": "string"
+                    },
+                    "DataFlowTaskId": {
+                      "description_en": "The data flow task ID",
+                      "description_zh": "数据流动任务ID",
+                      "example": "task-38aa8e890f45****",
+                      "type": "string"
+                    },
+                    "DstFilePath": {
+                      "description_en": "The destination file path.\nLimits:\nThe length is 1 to 1023 characters.\nUTF-8 encoding is used.\nThe path must start with a forward slash (/).\nThe path must end with a file name",
+                      "description_zh": "目标文件路径。\n限制：\n长度为 1~1023 个字符。\n使用 UTF-8 编码。\n必须以正斜线（/）开头。\n必须以文件名称结尾",
+                      "example": "/mnt/file.png\n",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The time when the streaming task ended. The time follows the ISO 8601 standard in the yyyy-MM-dd HH:mm:ss format",
+                      "description_zh": "流式任务结束时间。执行 ISO8601 标准表示，返回格式：yyyy-MM-dd HH:mm:ss",
+                      "example": "2024-07-04 11:14:22",
+                      "type": "string"
+                    },
+                    "ErrorMsg": {
+                      "description_en": "The error message of the task execution failure.\nIf this field is not returned or is empty, no error occurred",
+                      "description_zh": "任务执行失败消息。\n当该字段未返回或者返回为空时，表示没有错误信息",
+                      "example": "file does not exist",
+                      "type": "string"
+                    },
+                    "FileDetail": {
+                      "description_en": "The file information",
+                      "description_zh": "文件信息",
+                      "properties": {
+                        "Checksum": {
+                          "description_en": "The file checksum. Format example: crc64:123456",
+                          "description_zh": "文件校验码。格式示例：crc64:123456",
+                          "example": "crc64:850309505450944****",
+                          "type": "string"
+                        },
+                        "ModifyTime": {
+                          "description_en": "The file modification time as a UNIX timestamp. Unit: ns",
+                          "description_zh": "文件修改时间，unix时间戳。单位：ns",
+                          "example": "1725897600000000000",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "Size": {
+                          "description_en": "The file size. Unit: bytes",
+                          "description_zh": "文件大小。单位：Byte",
+                          "example": "68",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "FileSystemId": {
+                      "description_en": "The file system ID",
+                      "description_zh": "文件系统ID",
+                      "example": "bmcpfs-370lx1ev9ss27o0****\n",
+                      "type": "string"
+                    },
+                    "Progress": {
+                      "description_en": "The execution progress of the data flow streaming task. Valid values: 0 to 10000",
+                      "description_zh": "数据流动流式任务的执行进度。范围：0~10000",
+                      "example": "10000",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ProgressStats": {
+                      "description_en": "The progress information of the data flow streaming task",
+                      "description_zh": "数据流动流式进度信息",
+                      "properties": {
+                        "ActualBytes": {
+                          "description_en": "The actual data volume transferred. Unit: bytes",
+                          "description_zh": "实际流动数据量。单位：Byte",
+                          "example": "68",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "AverageSpeed": {
+                          "description_en": "The average transfer speed. Unit: bytes/s",
+                          "description_zh": "平均流动速度。单位：Byte/s",
+                          "example": "34",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "BytesDone": {
+                          "description_en": "The data volume for which data flow has been completed, including skipped data. Unit: bytes",
+                          "description_zh": "已完成数据流动数据量（包括跳过数据）。单位：Byte",
+                          "example": "68",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "BytesTotal": {
+                          "description_en": "The total data volume scanned at the source. Unit: bytes",
+                          "description_zh": "源端扫描到数据量。单位：Byte",
+                          "example": "68",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SrcFilePath": {
+                      "description_en": "The source file path.\nLimits:\nThe length is 1 to 1023 characters.\nUTF-8 encoding is used.\nThe path must start with a forward slash (/).\nThe path must end with a file name",
+                      "description_zh": "源文件路径。\n限制：\n长度为 1~1023 个字符。\n使用 UTF-8 编码。\n必须以正斜线（/）开头。\n必须以文件名称结尾",
+                      "example": "/test/file.png\n",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The time when the streaming task started. The time follows the ISO 8601 standard in the yyyy-MM-dd HH:mm:ss format",
+                      "description_zh": "流式任务开始执行时间。执行 ISO8601 标准表示，返回格式：yyyy-MM-dd HH:mm:ss",
+                      "example": "2024-07-03 10:43:16",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The current status of the data flow streaming task. Valid values:\n\nEXPIRED: The task has expired.\nCREATED: The task has been created. \nRUNNING: The task is running.\nCOMPLETE: The task is complete.\nCANCELING: The task is being canceled.\nFAILED: The task has failed.\nCANCELED: The task has been canceled",
+                      "description_zh": "当前数据流动流式任务状态。包括：\n\nEXPIRED：任务已终止。\nCREATED：任务已创建完成。 \nRUNNING：任务正在运行中。\nCOMPLETE：任务已完成。\nCANCELING：任务取消中。\nFAILED：任务执行失败。\nCANCELED：任务已取消",
+                      "example": "FAILED",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "NextToken": {
+            "description_en": "If the returned results are truncated, you can use NextToken to initiate a new request to retrieve the content after the current truncation point",
+            "description_zh": "当请求的返回结果被截断时，您可以使用NextToken再次发起请求，获取从当前截断位置之后的内容",
+            "example": "pUJaUwAAAABhdGUyNTk1MQ==",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "98696EF0-1607-4E9D-B01D-F20930B6****",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

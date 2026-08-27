@@ -2,6 +2,142 @@
   "camel_example": "",
   "cmd_full_name": "dlfnext batch-grant-permissions",
   "cmd_name": "batch-grant-permissions",
+  "components": {
+    "schemas": {
+      "ColumnMask": {
+        "properties": {
+          "expression": {
+            "type": "string"
+          },
+          "transform": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FailurePermission": {
+        "description_en": "FailurePermission",
+        "description_zh": "FailurePermission",
+        "properties": {
+          "errorCode": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "空",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "空",
+            "type": "string"
+          },
+          "permission": {
+            "$ref": "#/components/schemas/Permission",
+            "description_en": "The permission information",
+            "description_zh": "权限信息"
+          }
+        },
+        "type": "object"
+      },
+      "Permission": {
+        "description_en": "The permission",
+        "description_zh": "Permission",
+        "properties": {
+          "access": {
+            "description_en": "The access type",
+            "description_zh": "访问类型",
+            "example": "DROP",
+            "type": "string"
+          },
+          "columnMasking": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ColumnMask"
+            },
+            "type": "object"
+          },
+          "columns": {
+            "description_en": "",
+            "description_zh": "",
+            "properties": {
+              "columnNames": {
+                "description_en": "",
+                "description_zh": "",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "excludedColumnNames": {
+                "description_en": "",
+                "description_zh": "",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "database": {
+            "description_en": "The database name",
+            "description_zh": "数据库名称",
+            "example": "database_name",
+            "type": "string"
+          },
+          "expireTime": {
+            "type": "string"
+          },
+          "function": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "principal": {
+            "description_en": "The user resource descriptor",
+            "description_zh": "用户资源描述符",
+            "example": "acs:ram::[accountId]:user/user_name",
+            "type": "string"
+          },
+          "resourceType": {
+            "description_en": "The permission resource type",
+            "description_zh": "权限资源类型",
+            "example": "CATALOG",
+            "type": "string"
+          },
+          "rowFilter": {
+            "$ref": "#/components/schemas/RowFilter"
+          },
+          "table": {
+            "description_en": "The table name",
+            "description_zh": "数据表名称",
+            "example": "table_name",
+            "type": "string"
+          },
+          "view": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RowFilter": {
+        "properties": {
+          "expression": {
+            "type": "string"
+          },
+          "predicate": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Grants permissions in batches",
   "description_zh": "批量授权",
@@ -267,6 +403,99 @@
   "pathPattern": "/dlf/v1/auth/permissions/[catalogId]/batchgrant",
   "product_code": "DlfNext",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "errorMessage": {
+            "description_en": "The error message. This parameter is not empty when success is false, indicating a business error. This parameter is empty when success is true",
+            "description_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空",
+            "example": "空",
+            "type": "string"
+          },
+          "failurePermissions": {
+            "description_en": "The list of permissions that failed to be granted",
+            "description_zh": "授权失败列表",
+            "items": {
+              "$ref": "#/components/schemas/FailurePermission",
+              "description_en": "The permission that failed to be granted",
+              "description_zh": "授权失败项"
+            },
+            "type": "array"
+          },
+          "success": {
+            "description_en": "Indicates whether the API call was successful. Valid values:\ntrue: The API call was successful.\nfalse: The API call failed",
+            "description_zh": "true 接口调用成功，false 接口调用失败",
+            "example": "True",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    },
+    "401": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "500": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

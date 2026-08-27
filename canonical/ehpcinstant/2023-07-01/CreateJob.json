@@ -611,6 +611,10 @@
             "type": "object"
           },
           {
+            "enum": [
+              "false",
+              "true"
+            ],
             "example": "true",
             "help_en": "Specifies whether the job is a long-running job",
             "help_zh": "是否是长时间运行的作业。\ntrue： 后台服务作业。\nfalse： 批处理作业。\n\n默认值：false",
@@ -668,6 +672,10 @@
               "type": "array"
             },
             {
+              "enum": [
+                "false",
+                "true"
+              ],
               "example": "true",
               "help_en": "Specifies whether to create a public IP address for the job",
               "help_zh": "作业是否创建公网IP。\ntrue：创建公网IP。\nfalse： 不创建公网IP。\n\n默认值：false",
@@ -852,6 +860,12 @@
                 "type": "string"
               },
               {
+                "enum": [
+                  "AfterSucceeded",
+                  "AfterFailed",
+                  "AfterAny",
+                  "AfterCorresponding"
+                ],
                 "example": "AfterSucceeded",
                 "help_en": "The dependency type. Valid values:",
                 "help_zh": "依赖类型。取值范围：\n\nAfterSucceeded：所依赖作业或数组作业所有子任务运行成功（退出码为0）。\nAfterFailed：所依赖作业或数组作业任一子任务运行失败（退出码非0）。\nAfterAny：所依赖作业运行结束（成功或失败）。\nAfterCorresponding：所依赖数组作业对应的子任务运行成功（退出码为0）。\n\n默认值：AfterSucceeded",
@@ -893,91 +907,60 @@
   "pathPattern": "",
   "product_code": "EhpcInstant",
   "protocol": "HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The dependency policy",
-      "help_zh": "依赖策略",
-      "name": "DependencyPolicy",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The resource deployment policy",
-      "help_zh": "资源部署策略",
-      "name": "DeploymentPolicy",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The job description",
-      "help_zh": "作业描述",
-      "name": "JobDescription",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The job name. The name must be 2 to 64 characters in length and can contain letters, digits, Chinese characters, hyphens (-), and underscores (_)",
-      "help_zh": "作业名称。长度为 2~64 个字符，支持英文、中文和数字。可以包含短划线（-）和下划线（_）",
-      "name": "JobName",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_zh": "作业调度器类型。\nHPC\nK8S\n\n默认值：HPC",
-      "name": "JobScheduler",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The security policy",
-      "help_zh": "安全策略",
-      "name": "SecurityPolicy",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The task list. Currently, only one task is supported",
-      "help_zh": "任务列表，当前仅支持1个任务",
-      "name": "Tasks",
-      "param_style": "json",
-      "position": "query",
-      "required": true,
-      "sub_parameters": [
-        {
-          "name": "ExecutorPolicy",
-          "position": "query",
-          "required": false,
-          "type": "object"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "JobId": {
+            "description_en": "The job ID",
+            "description_zh": "作业ID",
+            "example": "job-xxxx",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "896D338C-E4F4-41EC-A154-D605E5DE****",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Tasks": {
+            "description_en": "The task list",
+            "description_zh": "任务列表",
+            "items": {
+              "description_en": "The details of the task list",
+              "description_zh": "任务列表详情",
+              "properties": {
+                "ExecutorIds": {
+                  "description_en": "The list of executor IDs contained in the task",
+                  "description_zh": "任务包含的Executor ID列表",
+                  "items": {
+                    "description_en": "The executor ID. The format is JobId-TaskName-ArrayIndex",
+                    "description_zh": "Executor ID。格式为JobId-TaskName-ArrayIndex",
+                    "example": "[\\\"job-xxxx-task0_11-2\\\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "TaskName": {
+                  "description_en": "The task name",
+                  "description_zh": "任务名称",
+                  "example": "task0",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
         },
-        {
-          "name": "TaskName",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "TaskSpec",
-          "position": "query",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "name": "TaskSustainable",
-          "position": "query",
-          "required": false,
-          "type": "bool"
-        }
-      ],
-      "type": "string"
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

@@ -75,6 +75,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID of the stack. You can call the https://help.aliyun.com/document_detail/131035.html operation to query the most recent region list",
       "help_zh": "资源栈所属的地域ID。您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
@@ -305,174 +306,210 @@
   "pathPattern": "",
   "product_code": "ROS",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The client token that is used to ensure the idempotence of the request. You can use the client to generate the token, but you must make sure that the token is unique among different requests.\nThe token can be up to 64 characters in length, and can contain letters, digits, underscores (_), and hyphens (-).\nFor more information, see https://help.aliyun.com/document_detail/134212.html",
-      "help_zh": "保证请求的幂等性。该值由客户端生成，并且必须是全局唯一的。   \n长度不超过64个字符，可包含英文字母、数字、短划线（-）和下划线（_）。   \n更多详情，请参见https://help.aliyun.com/document_detail/134212.html",
-      "name": "ClientToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to disable rollback for the resources when the stack fails to be created. Valid values:\n\ntrue\n\nfalse (default)",
-      "help_zh": "当创建资源栈失败时，是否禁用回滚。取值：\n\ntrue：禁用回滚，即当创建资源栈失败时不进行回滚。\nfalse（默认值）：不禁用回滚，即当创建资源栈失败时进行回滚",
-      "name": "DisableRollback",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to query the parameters that you want to use in compliance precheck.\n\nValid values:\n\ntrue\n\nfalse (default)",
-      "help_zh": "是否获取合规预检参数。\n\n取值：\n\ntrue：获取合规预检参数。\n\nfalse（默认值）：不获取合规预检参数",
-      "name": "EnablePreConfig",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The maximum number of concurrent operations that can be performed on resources. This parameter takes effect only for Terraform stacks.\n\nBy default, this parameter is empty. You can set this parameter to an integer that is greater than or equal to 0.\n\nIf you set this parameter to an integer greater than 0, the integer is used. If you set this parameter to 0 or leave this parameter empty, the default value of Terraform is used. In most cases, the default value of Terraform is 10",
-      "help_zh": "资源最大并发数。仅对Terraform类型资源栈生效。\n\n默认为空，用户可以输入大于等于零的整数。\n\n若设置为大于零的整数，则使用该整数；若设置为零或者不设置，则使用Terraform默认值（通常为10）",
-      "name": "Parallelism",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The parameters of the stack",
-      "help_zh": "参数",
-      "name": "Parameters",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "ParameterKey",
-          "position": "query",
-          "required": true,
-          "type": "string"
+  "responses": {
+    "200": {
+      "headers": {},
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "B288A0BE-D927-4888-B0F7-B35EF84B6E6F",
+            "type": "string"
+          },
+          "Stack": {
+            "description_en": "The information about the stack that is previewed",
+            "description_zh": "资源栈预览数据",
+            "properties": {
+              "Description": {
+                "description_en": "The description of the stack",
+                "description_zh": "资源栈描述",
+                "example": "One ECS instance.",
+                "type": "string"
+              },
+              "DisableRollback": {
+                "description_en": "Indicates whether rollback is disabled for the resources when the stack fails to be created",
+                "description_zh": "是否禁用回滚",
+                "example": "false",
+                "type": "boolean"
+              },
+              "Log": {
+                "description_en": "The log that is generated when the stack is run",
+                "description_zh": "资源栈相关输出日志",
+                "properties": {
+                  "TerraformLogs": {
+                    "description_en": "The Terraform logs. This parameter is returned only if the stack is a Terraform stack.\n\nThis parameter contains the logs of previewing the stack",
+                    "description_zh": "Terraform输出日志。仅Terraform类型资源栈返回该参数。\n\n该参数表示预览资源栈的日志",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Command": {
+                          "description_en": "The name of the Terraform command that is run. Valid values:\n\napply\n\nplan\n\ndestroy\n\nversion\n\nFor more information about Terraform commands, see Basic CLI Features (https://www.terraform.io/cli/commands)",
+                          "description_zh": "执行的Terraform命令名称。取值：\n\napply\n\nplan\n\ndestroy\n\nversion\n\n关于命令含义的更多信息，请参见Command (https://www.terraform.io/cli/commands)",
+                          "example": "apply",
+                          "type": "string"
+                        },
+                        "Content": {
+                          "description_en": "The content of the output stream that is returned after the command is run",
+                          "description_zh": "当前命令在当前输出流中输出的内容",
+                          "example": "Apply complete! Resources: 42 added, 0 changed, 0 destroyed.",
+                          "type": "string"
+                        },
+                        "Stream": {
+                          "description_en": "The output stream. Valid values:\n\nstdout: standard output stream\n\nstderr: standard error stream",
+                          "description_zh": "输出流。取值：\n\nstdout：标准输出。\n\nstderr：标准错误",
+                          "example": "stdout",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Parameters": {
+                "description_en": "The parameters of the stack",
+                "description_zh": "资源栈参数",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "ParameterKey": {
+                      "description_en": "The name of the parameter",
+                      "description_zh": "参数名称",
+                      "example": "ALIYUN::AccountId",
+                      "type": "string"
+                    },
+                    "ParameterValue": {
+                      "description_en": "The value of the parameter",
+                      "description_zh": "参数值",
+                      "example": "151266687691****",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "RegionId": {
+                "description_en": "The region where the stack resides",
+                "description_zh": "资源栈所在地域",
+                "example": "cn-hangzhou",
+                "type": "string"
+              },
+              "Resources": {
+                "description_en": "The resources in the stack",
+                "description_zh": "资源栈中的资源列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AcsResourceType": {
+                      "description_en": "The resource type of an Alibaba Cloud service",
+                      "description_zh": "ACS资源类型",
+                      "example": "ACS::ECS::Instance",
+                      "type": "string"
+                    },
+                    "Action": {
+                      "description_en": "The action that is performed on the resource. Valid values:\n\nAdd\n\nModify\n\nRemove\n\nNone",
+                      "description_zh": "资源行为。取值：\nAdd：增加资源。\nModify：修改资源。\nRemove：删除资源。\nNone：无变化",
+                      "example": "Add",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The description of the resource",
+                      "description_zh": "资源描述",
+                      "example": "ECS instance.",
+                      "type": "string"
+                    },
+                    "LogicalResourceId": {
+                      "description_en": "The logical ID of the resource",
+                      "description_zh": "资源逻辑ID",
+                      "example": "WebServer",
+                      "type": "string"
+                    },
+                    "PhysicalResourceId": {
+                      "description_en": "The physical ID of the resource.\n\nThis parameter is returned only if Action is set to Modify or Remove",
+                      "description_zh": "资源物理ID。\n\n当Action为Modify或Remove时，返回本参数",
+                      "example": "i-a1b2c3***",
+                      "type": "string"
+                    },
+                    "Properties": {
+                      "description_en": "The resource properties",
+                      "description_zh": "资源属性",
+                      "example": "{   \"DiskMappings\": [     {       \"Category\": \"cloud_ssd\",       \"Size\": \"20\"     }   ],   \"SystemDisk_Category\": \"cloud_ssd\",   \"InstanceChargeType\": \"PostPaid\",   \"AutoRenew\": \"False\",   \"WillReplace\": true,   \"ImageId\": \"centos_7\",   \"InstanceType\": \"ecs.g6.large\",   \"AllocatePublicIP\": true,   \"AutoRenewPeriod\": 1,   \"IoOptimized\": \"optimized\",   \"ZoneId\": \"cn-beijing-g\",   \"VSwitchId\": \"\",   \"SecurityGroupId\": \"\",   \"Period\": 1,   \"InternetChargeType\": \"PayByTraffic\",   \"SystemDiskCategory\": \"cloud_efficiency\",   \"InternetMaxBandwidthOut\": 1,   \"VpcId\": \"\",   \"InternetMaxBandwidthIn\": 200,   \"PeriodUnit\": \"Month\" }",
+                      "type": "object"
+                    },
+                    "Replacement": {
+                      "description_en": "Indicates whether a replacement update is performed on the template. Valid values:\n\nTrue: A replacement update is performed on the template.\n\nFalse: A change is made on the template.\n\nConditional: A replacement update may be performed on the template. You can check whether a replacement update is performed when the template is in use.\n\nThis parameter is returned only if Action is set to Modify",
+                      "description_zh": "模板是否为替换更新。取值：\nTrue：替换更新。\nFalse：修改更新。\nConditional：可能是替换更新，模板运行时才能确定。\n\n仅当Action取值为Modify时，返回本参数",
+                      "example": "False",
+                      "type": "string"
+                    },
+                    "RequiredBy": {
+                      "description_en": "The resources on which the stack depends",
+                      "description_zh": "资源栈依赖的资源",
+                      "items": {
+                        "description_en": "The resource on which the stack depends",
+                        "description_zh": "资源栈依赖的资源",
+                        "example": "[\"Resource1\", \"Resource2\"]",
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "ResourceType": {
+                      "description_en": "The resource type",
+                      "description_zh": "资源类型",
+                      "example": "ALIYUN::ECS::Instance",
+                      "type": "string"
+                    },
+                    "Stack": {
+                      "description_en": "The information about the nested stack. The data structure of the value is the same as the data structure of the entire response",
+                      "description_zh": "子资源栈信息。数据结构同整个返回值",
+                      "example": "{}",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "StackName": {
+                "description_en": "The stack name",
+                "description_zh": "资源栈名称",
+                "example": "MyStack",
+                "type": "string"
+              },
+              "StackPolicyBody": {
+                "description_en": "The structure that contains the stack policy body",
+                "description_zh": "资源栈策略内容",
+                "example": "{   \"Statement\": [     {       \"Action\": \"Update:*\",       \"Resource\": \"*\",       \"Effect\": \"Allow\",       \"Principal\": \"*\"     },     {       \"Action\": \"Update:*\",       \"Resource\": \"LogicalResourceId/apple1\",       \"Effect\": \"Deny\",       \"Principal\": \"*\"     }   ] }",
+                "type": "object"
+              },
+              "TemplateDescription": {
+                "description_en": "The description of the template",
+                "description_zh": "模板描述",
+                "example": "One ECS instance.",
+                "type": "string"
+              },
+              "TimeoutInMinutes": {
+                "description_en": "The timeout period for creating the stack.\n\nUnit: minutes",
+                "description_zh": "超时时间。\n\n单位：分钟",
+                "example": "60",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
         },
-        {
-          "name": "ParameterValue",
-          "position": "query",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "type": "array"
-    },
-    {
-      "help_en": "The region ID of the stack. You can call the https://help.aliyun.com/document_detail/131035.html operation to query the most recent region list",
-      "help_zh": "资源栈所属的地域ID。您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
-      "name": "RegionId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The stack ID. You can use this parameter to preview a stack that you want to update.\n\nYou must and can specify only one of StackName and StackId.\n\nIn the scenario in which you preview a stack that you want to create or update, you cannot preview the resources in its nested stacks",
-      "help_zh": "资源栈ID。预览更新资源栈。\n\n您必须且仅能指定StackName或StackId其中一个参数。\n预览创建或更新资源栈的场景中不支持预览嵌套资源栈中的资源",
-      "name": "StackId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The stack name. You can use this parameter to preview the stack that you want to create. The name can be up to 255 characters in length, and can contain digits, letters, hyphens (-), and underscores (_). It must start with a digit or letter.\n\nYou must and can specify only one of StackName and StackId",
-      "help_zh": "资源栈名称。预览创建资源栈。\n长度不超过255个字符，必须以数字或英文字母开头，可包含数字、英文字母、短划线（-）和下划线（_）。\n您必须且仅能指定StackName或StackId其中一个参数",
-      "name": "StackName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The structure that contains the stack policy body. The stack policy body must be 1 to 16,384 bytes in length.\n\nYou can specify only one of StackPolicyBody and StackPolicyURL",
-      "help_zh": "包含资源栈策略主体的结构，长度为1~16,384个字节。  \n\n您仅能指定StackPolicyBody和StackPolicyURL其中一个参数",
-      "name": "StackPolicyBody",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The URL of the file that contains the stack policy. The URL must point to a policy that is located on an HTTP or HTTPS web server or in an Object Storage Service (OSS) bucket, such as oss\\://ros/stack-policy/demo or oss\\://ros/stack-policy/demo?RegionId=cn-hangzhou. The policy file can be up to 16,384 bytes in length. If you do not specify the region ID of the OSS bucket, the value of RegionId is used.\n\nYou can specify only one of StackPolicyBody and StackPolicyURL.\n\nThe URL can be up to 1,350 bytes in length",
-      "help_zh": "包含资源栈策略的文件的位置。URL必须指向位于Web服务器（HTTP或HTTPS）或阿里云OSS存储空间（例如：oss://ros/stack-policy/demo、oss://ros/stack-policy/demo?RegionId=cn-hangzhou）中的策略，策略文件最大长度为16,384个字节。如未指定OSS地域，默认与RegionId取值相同。 \n\n您仅能指定StackPolicyBody和StackPolicyURL其中一个参数。  \n  \nURL最大长度为1350个字节",
-      "name": "StackPolicyURL",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The resources marked as tainted",
-      "help_zh": "标记为脏资源的列表",
-      "name": "TaintResources",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The structure that contains the template body. The template body must be 1 to 524,288 bytes in length. If the length of the template body exceeds the upper limit, we recommend that you add parameters to the HTTP POST request body to prevent request failures caused by excessively long URLs.\n\nYou must and can specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, and TemplateScratchId",
-      "help_zh": "模板主体的结构。长度为1~524,288个字节。如果长度较长，则建议通过HTTP POST+Body Param的方式，将参数放在请求体中进行传递，避免因URL过长而导致请求失败。 \n您必须且仅能指定TemplateBody、TemplateURL、TemplateId和TemplateScratchId其中一个参数",
-      "name": "TemplateBody",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The template ID. This parameter applies to shared and private templates.\n\nYou must and can specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, and TemplateScratchId",
-      "help_zh": "模板ID。支持共享模板和私有模板。\n\n您必须且仅能指定TemplateBody、TemplateURL、TemplateId和TemplateScratchId其中一个参数",
-      "name": "TemplateId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The scenario ID.\n\nFor more information about how to query the scenario ID, see https://help.aliyun.com/document_detail/363050.html.\n\nYou must and can specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, and TemplateScratchId",
-      "help_zh": "资源场景ID。\n\n关于如何获取资源场景ID，请参见https://help.aliyun.com/document_detail/363050.html。\n\n您必须且仅能指定TemplateBody、TemplateURL、TemplateId和TemplateScratchId其中一个参数",
-      "name": "TemplateScratchId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The region ID of the scenario. The default value is the same as the value of RegionId.\n\nYou can call the https://help.aliyun.com/document_detail/131035.html operation to query the most recent region list",
-      "help_zh": "资源场景所属的地域ID，默认与RegionId取值相同。\n\n您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
-      "name": "TemplateScratchRegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The URL of the file that contains the template body. The URL must point to a template that is located on an HTTP or HTTPS web server or in an OSS bucket, such as oss\\://ros/template/demo or oss\\://ros/template/demo?RegionId=cn-hangzhou. The template body can be up to 524,288 bytes in length. If you do not specify the region ID of the OSS bucket, the value of RegionId is used.\n\nYou must and can specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, and TemplateScratchId",
-      "help_zh": "包含模板主体的文件的位置。URL必须指向位于Web服务器（HTTP或HTTPS）或阿里云OSS存储空间（例如：oss://ros/stack-policy/demo、oss://ros/stack-policy/demo?RegionId=cn-hangzhou）中的模板，模板的最大长度为524,288个字节。如未指定OSS地域，默认与RegionId取值相同。 \n\n您必须且仅能指定TemplateBody、TemplateURL、TemplateId和TemplateScratchId其中一个参数",
-      "name": "TemplateURL",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The version of the template. This parameter takes effect only when TemplateId is specified",
-      "help_zh": "模板版本。仅在指定TemplateId时生效",
-      "name": "TemplateVersion",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The timeout period for creating the stack.\n\nUnit: minutes.\n\nDefault value: 60",
-      "help_zh": "创建资源栈的超时时间。\n\n单位：分钟。\n\n默认值：60",
-      "name": "TimeoutInMinutes",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Specifies whether to use the values of parameters that were last used.\n\nValid values:\n\ntrue: The parameters that were last used are reused.\n\nfalse: The parameters that were last used are not reused",
-      "help_zh": "未传递的参数是否使用上次传递的值。\n\n取值：\n\ntrue：未传递的参数使用上次传递的值。\n\nfalse：未传递的参数不使用上次传递的值",
-      "name": "UsePreviousParameters",
-      "position": "query",
-      "required": false,
-      "type": "bool"
+        "type": "object"
+      }
     }
-  ]
+  }
 }

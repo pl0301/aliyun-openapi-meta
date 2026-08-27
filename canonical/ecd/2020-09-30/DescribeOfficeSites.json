@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call https://help.aliyun.com/document_detail/196646.html to query the regions supported by WUYING Workspace",
       "help_zh": "地域ID。可以调用https://help.aliyun.com/document_detail/196646.html获取无影云电脑支持的地域列表",
@@ -34,6 +35,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "SIMPLE",
+        "AD_CONNECTOR"
+      ],
       "example": "SIMPLE",
       "help_en": "The account system type of the office network",
       "help_zh": "办公网络的账号体系类型",
@@ -51,6 +56,8 @@
       "help_en": "The number of entries per page for a paged query",
       "help_zh": "分页查询时每页行数。    \n\n最大值：100。    \n默认值：10",
       "location": "query",
+      "maximum": "500",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -90,6 +97,17 @@
       "type": "array"
     },
     {
+      "enum": [
+        "REGISTERING",
+        "DEREGISTERING",
+        "REGISTERED",
+        "NEEDCONFIGTRUST",
+        "CONFIGTRUSTFAILED",
+        "DEREGISTERED",
+        "ERROR",
+        "CONFIGTRUSTING",
+        "NEEDCONFIGUSER"
+      ],
       "example": "REGISTERED",
       "help_en": "The office network status",
       "help_zh": "办公网络状态",
@@ -103,6 +121,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "SASE",
+        "OFF"
+      ],
       "example": "SASE",
       "help_en": "The Network Security Protection Settings of the office network",
       "help_zh": "办公网络安全防护配置",
@@ -144,5 +166,645 @@
   ],
   "pathPattern": "",
   "product_code": "ecd",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The collection of returned information",
+        "description_zh": "返回信息集合",
+        "properties": {
+          "NextToken": {
+            "description_en": "The token for the next query. If NextToken is empty, no more results exist",
+            "description_zh": "下一个查询开始的Token。NextToken为空表示没有下一个",
+            "example": "caeba0bbb2be03f84eb48b699f0a4883",
+            "type": "string"
+          },
+          "OfficeSites": {
+            "description_en": "The collection of office network information",
+            "description_zh": "办公网络信息集合",
+            "items": {
+              "description_en": "The office network object",
+              "description_zh": "办公网络对象",
+              "properties": {
+                "ADConnectors": {
+                  "description_en": "The collection of AD Connector information",
+                  "description_zh": "AD Connector的信息集合",
+                  "items": {
+                    "description_en": "The AD Connector object",
+                    "description_zh": "AD Connector对象",
+                    "properties": {
+                      "ADConnectorAddress": {
+                        "description_en": "The endpoint of the AD Connector",
+                        "description_zh": "AD Connector的连接地址",
+                        "example": "172.24.*.*",
+                        "type": "string"
+                      },
+                      "ConnectorStatus": {
+                        "description_en": "The status of the AD Connector",
+                        "description_zh": "AD Connector的状态",
+                        "enumValueTitles": {
+                          "CONNECTING": "连接中。需要完成AD域配置。",
+                          "CONNECT_ERROR": "连接错误",
+                          "CREATING": "创建中",
+                          "EXPIRED": "欠费过期",
+                          "RUNNING": "运行中"
+                        },
+                        "example": "RUNNING",
+                        "type": "string"
+                      },
+                      "NetworkInterfaceId": {
+                        "description_en": "The ID of the network interface attached to the AD Connector",
+                        "description_zh": "AD Connector挂载的网卡ID",
+                        "example": "eni-bp1i4wx78lgosrj6****",
+                        "type": "string"
+                      },
+                      "Specification": {
+                        "description_en": "The specification of the AD Connector",
+                        "description_zh": "AD Connector规格",
+                        "enumValueTitles": {
+                          "1": "通用型",
+                          "2": "高级型"
+                        },
+                        "example": "1",
+                        "type": "string"
+                      },
+                      "TrustKey": {
+                        "description_en": "The trust password configured when setting up the AD trust relationship",
+                        "description_zh": "配置AD信任关系时设置的信任密码",
+                        "example": "password123***",
+                        "type": "string"
+                      },
+                      "VSwitchId": {
+                        "description_en": "The vSwitch ID of the network where the AD Connector resides",
+                        "description_zh": "AD Connector所在网络对应的交换机ID",
+                        "example": "vsw-bp19ocz3erfx15uon****",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "AcceleratorId": {
+                  "description_en": "The instance ID of the Alibaba Cloud Global Accelerator (GA)",
+                  "description_zh": "全球加速实例ID",
+                  "example": "ga-bp1astu3yrplkzoo2****",
+                  "type": "string"
+                },
+                "AccessAttribute": {
+                  "description_en": "The access attribute of the office network (workspace)",
+                  "description_zh": "办公网络（工作区）的访问属性",
+                  "example": "Private",
+                  "type": "string"
+                },
+                "AccountType": {
+                  "description_en": "The account type",
+                  "description_zh": "账号类型",
+                  "example": "SIMPLE",
+                  "type": "string"
+                },
+                "AdHostname": {
+                  "description_en": "The hostname of the domain controller",
+                  "description_zh": "域控主机名。\n必须符合Windows主机命名规范",
+                  "example": "beijing-ad01",
+                  "type": "string"
+                },
+                "AuthorityHost": {
+                  "description_en": "The authority URL of the identity authentication service",
+                  "description_zh": "身份认证服务的 Authority 地址",
+                  "example": "https://login.microsoftonline.com",
+                  "type": "string"
+                },
+                "BackupDCHostname": {
+                  "description_en": "The hostname of the backup domain controller",
+                  "description_zh": "备用域控主机名",
+                  "example": "beijing-ad02",
+                  "type": "string"
+                },
+                "BackupDns": {
+                  "description_en": "The DNS address of the backup domain controller",
+                  "description_zh": "备用域控DNS地址",
+                  "example": "172.24.XX.XX",
+                  "type": "string"
+                },
+                "Bandwidth": {
+                  "description_en": "The peak Internet bandwidth. Valid values: 0 to 1000. Unit: Mbit/s",
+                  "description_zh": "公网带宽峰值。可能值：0~1000Mbps。    \n如果为空或0，则表示没有开通互联网访问",
+                  "example": "10",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "CenAttachStatus": {
+                  "description_en": "The status of the CEN instance",
+                  "description_zh": "云企业网CEN的状态",
+                  "example": "attached",
+                  "type": "string"
+                },
+                "CenId": {
+                  "description_en": "The Cloud Enterprise Network (CEN) instance ID",
+                  "description_zh": "云企业网实例ID",
+                  "example": "cen-3gwy16dojz1m65****",
+                  "type": "string"
+                },
+                "CidrBlock": {
+                  "description_en": "The IPv4 CIDR block of the office network VPC",
+                  "description_zh": "办公网络VPC所包含的IPv4网段",
+                  "example": "47.100.XX.XX",
+                  "type": "string"
+                },
+                "ClientId": {
+                  "description_en": "The client ID registered with the identity provider application",
+                  "description_zh": "身份提供方应用注册的客户端 ID",
+                  "example": "a2c8f7e4-1b3d-4c5e-9f0a-6d7b8c9e****",
+                  "type": "string"
+                },
+                "ClientSecret": {
+                  "description_en": "The client secret registered with the identity provider application",
+                  "description_zh": "身份提供方应用注册的客户端密钥",
+                  "example": "sct-9f3e2d1c****",
+                  "type": "string"
+                },
+                "CloudBoxOfficeSite": {
+                  "description_en": "Indicates whether the office network is a CloudBox office network. Valid values:\n\ntrue: CloudBox office network.\nfalse: Internet office network",
+                  "description_zh": "是否为云盒办公网络",
+                  "enumValueTitles": {
+                    "false": "公网办公网络",
+                    "true": "云盒办公网络"
+                  },
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "CreationTime": {
+                  "description_en": "The time when the office network was created. The time is in the ISO 8601 standard (UTC)",
+                  "description_zh": "办公网络创建时间。时间格式为 ISO 8601 标准（UTC 时间）",
+                  "example": "2021-05-06T05:58Z",
+                  "type": "string"
+                },
+                "CustomAccessPoint": {
+                  "description_en": "The custom access gateway address",
+                  "description_zh": "自定义接入网关地址",
+                  "example": "gw-****.com",
+                  "type": "string"
+                },
+                "CustomDnsAddress": {
+                  "description_en": "The custom DNS addresses",
+                  "description_zh": "自定义DNS地址数组",
+                  "items": {
+                    "description_en": "The custom DNS address",
+                    "description_zh": "自定义DNS地址",
+                    "example": " [\"172.24.XX.XX\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "CustomSecurityGroupId": {
+                  "description_en": "The security group ID",
+                  "description_zh": "安全组ID",
+                  "example": "sg-bp1ce64o4g9mdf5u****",
+                  "type": "string"
+                },
+                "DesktopAccessType": {
+                  "description_en": "The access method allowed when connecting to cloud computers.\n\nThe VPC access method depends on the Alibaba Cloud PrivateLink service, which is free of charge. When this parameter is set to `VPC` or `Any`, the system automatically activates the PrivateLink service for you",
+                  "description_zh": "连接云电脑时允许使用的接入方式。\n\nVPC连接方式依赖于阿里云私网连接PrivateLink服务，该服务不收取费用。该参数设置为`VPC`或者`Any`时，系统将自动为您开通私网连接服务",
+                  "enumValueTitles": {
+                    "ANY": "不限制方式。使用客户端连接云电脑时可以自行选择连接方式。",
+                    "INTERNET": "只允许客户端通过公网连接云电脑。[默认值]",
+                    "VPC": "只允许处于VPC网络内的客户端连接云电脑。"
+                  },
+                  "example": "INTERNET",
+                  "type": "string"
+                },
+                "DesktopCount": {
+                  "description_en": "The number of cloud computers that are created",
+                  "description_zh": "已创建的云电脑数量",
+                  "example": "1",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "DesktopVpcEndpoint": {
+                  "description_en": "The endpoint used to connect to cloud desktops over the VPC",
+                  "description_zh": "VPC连接云电脑时所使用的终端节点",
+                  "example": "http://ep-bp1s2vmbj55r5rzc****.epsrv-bp1pcfhpwvlpny01****.cn-hangzhou.privatelink.aliyuncs.com",
+                  "type": "string"
+                },
+                "DnsAddress": {
+                  "description_en": "The DNS addresses of the AD domain",
+                  "description_zh": "AD域对应的DNS地址数组",
+                  "items": {
+                    "description_en": "The DNS address of the AD domain",
+                    "description_zh": "AD域对应的DNS地址",
+                    "example": " [\"172.24.XX.XX\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "DnsUserName": {
+                  "description_en": "The DNS username",
+                  "description_zh": "DNS用户名",
+                  "example": "testDnsUserName\t",
+                  "type": "string"
+                },
+                "DomainName": {
+                  "description_en": "The domain name of the enterprise AD",
+                  "description_zh": "企业AD的域名称",
+                  "example": "example.com",
+                  "type": "string"
+                },
+                "DomainPassword": {
+                  "description_en": "The password of the domain administrator",
+                  "description_zh": "域管理员的用户密码",
+                  "example": "testPassword",
+                  "type": "string"
+                },
+                "DomainUserName": {
+                  "description_en": "The username of the domain administrator",
+                  "description_zh": "域管理员的用户名",
+                  "example": "Administrator",
+                  "type": "string"
+                },
+                "Eid": {
+                  "description_en": "The enterprise ID (EID)",
+                  "description_zh": "企业 ID（EID）",
+                  "example": "e-1234abcd****",
+                  "type": "string"
+                },
+                "EnableAdminAccess": {
+                  "description_en": "Indicates whether local administrator permissions are granted to users of cloud desktops",
+                  "description_zh": "是否为使用云电脑的用户赋予本地管理员权限",
+                  "enumValueTitles": {
+                    "false": "不赋予本地管理员权限",
+                    "true": "赋予本地管理员权限 [默认值]"
+                  },
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "EnableCrossDesktopAccess": {
+                  "description_en": "Indicates whether cross-desktop access within the office network is enabled. After this feature is enabled, cloud desktops within the same office network can access each other over the network",
+                  "description_zh": "是否开启办公网络内云电脑互通。开启后，同一个办公网络内的云电脑之间可以实现相互访问彼此的网络",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "EnableInternetAccess": {
+                  "description_en": "Indicates whether the public network access feature is enabled",
+                  "description_zh": "是否已开通公网访问功能",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "EnableServiceRoute": {
+                  "description_en": "Indicates whether cloud service route access control is enabled",
+                  "description_zh": "是否开启云服务路由访问管控",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "EnvType": {
+                  "description_en": "The environment type. This parameter is not publicly available",
+                  "description_zh": "环境类型，不对外开放",
+                  "example": "Private",
+                  "type": "string"
+                },
+                "FileSystemIds": {
+                  "description_en": "The array of NAS file system IDs",
+                  "description_zh": "NAS文件系统ID数组",
+                  "items": {
+                    "description_en": "The NAS file system ID",
+                    "description_zh": "NAS文件系统ID",
+                    "example": "[\"05b534****\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "IsLdap": {
+                  "description_en": "Indicates whether the directory is an LDAP directory",
+                  "description_zh": "是否为 LDAP 目录",
+                  "type": "boolean"
+                },
+                "LdapUrl": {
+                  "description_en": "The access URL of the LDAP service",
+                  "description_zh": "LDAP 服务的访问地址",
+                  "example": "ldap://192.168.0.10:389",
+                  "type": "string"
+                },
+                "Logs": {
+                  "description_en": "The registration log information",
+                  "description_zh": "注册日志信息",
+                  "items": {
+                    "description_en": "The registration log object",
+                    "description_zh": "注册日志对象",
+                    "properties": {
+                      "Level": {
+                        "description_en": "The log level",
+                        "description_zh": "日志级别",
+                        "enumValueTitles": {
+                          "ERROR": "错误",
+                          "INFO": "信息",
+                          "WARN": "警告"
+                        },
+                        "example": "INFO",
+                        "type": "string"
+                      },
+                      "Message": {
+                        "description_en": "The detailed log information",
+                        "description_zh": "日志详细信息",
+                        "example": "code:success | message:Create Connector complete",
+                        "type": "string"
+                      },
+                      "Step": {
+                        "description_en": "The step corresponding to the log entry",
+                        "description_zh": "日志信息对应的步骤",
+                        "example": "CREATE_CONNECTOR",
+                        "type": "string"
+                      },
+                      "TimeStamp": {
+                        "description_en": "The time when the log was printed. The time is in the ISO 8601 standard (UTC)",
+                        "description_zh": "日志打印时间。时间格式为 ISO 8601 标准（UTC 时间）",
+                        "example": "2021-05-12T09:42Z",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "MfaEnabled": {
+                  "description_en": "Indicates whether multi-factor authentication (MFA) is enabled",
+                  "description_zh": "是否开启多因素认证MFA",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "Name": {
+                  "description_en": "The name of the office network. The name is unique within a region",
+                  "description_zh": "办公网络名称。同一地域下，该名称唯一",
+                  "example": "研发部办公网络",
+                  "type": "string"
+                },
+                "NeedVerifyLoginRisk": {
+                  "description_en": "Indicates whether secondary authentication is required during logon. This parameter applies only to convenience account-based office networks. If secondary authentication is enabled, the system checks whether the logon account has security risks when a convenience user logs on to the client. If a risk is detected, the system sends a verification code to the email address associated with the account. The convenience user can log on to the client only after the verification code is verified",
+                  "description_zh": "仅适用于便捷账号办公网络，表示登录时是否需要二次验证。如果开启了登录二次验证，则便捷用户登录客户端时，系统将检测登录账号是否有安全风险。如果有风险，系统将发送验证码到该账号关联的邮箱，便捷用户使用验证码验证通过后才能登录客户端",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "NeedVerifyZeroDevice": {
+                  "description_en": "Indicates whether trusted device verification is enabled. Valid values:\n\ntrue: Enabled.\nfalse: Not enabled",
+                  "description_zh": "是否开启可信设备校验",
+                  "enumValueTitles": {
+                    "false": "不开启",
+                    "true": "开启"
+                  },
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "NetworkPackageId": {
+                  "description_en": "The Internet access package ID",
+                  "description_zh": "互联网访问包ID",
+                  "example": "np-amtp8e8q1o9e4****",
+                  "type": "string"
+                },
+                "NmVersion": {
+                  "description_en": "The network version. The new version supports products such as WUYING Cloud Application. Valid values:\n\nDEFAULT: Legacy.\nNM: New version",
+                  "description_zh": "网络版本。新版支持无影云应用等产品",
+                  "enumValueTitles": {
+                    "DEFAULT": "旧版",
+                    "NM": "新版"
+                  },
+                  "example": "NM",
+                  "type": "string"
+                },
+                "OfficeSiteId": {
+                  "description_en": "The office network ID",
+                  "description_zh": "办公网络ID",
+                  "example": "cn-hangzhou+dir-363353****",
+                  "type": "string"
+                },
+                "OfficeSiteType": {
+                  "description_en": "The account system type of the office network",
+                  "description_zh": "办公网络账号体系类型",
+                  "enumValueTitles": {
+                    "AD_CONNECTOR": "企业AD账号",
+                    "SIMPLE": "便捷账号"
+                  },
+                  "example": "AD_CONNECTOR",
+                  "type": "string"
+                },
+                "OuName": {
+                  "description_en": "The organizational unit (OU) in the AD domain",
+                  "description_zh": "对接AD域中的组织单元",
+                  "example": "example.com/Domain Controllers",
+                  "type": "string"
+                },
+                "ProtocolType": {
+                  "description_en": "The protocol type",
+                  "description_zh": "协议类型",
+                  "enumValueTitles": {
+                    "ASP": "阿里云自研ASP协议",
+                    "HDX": "HDX协议"
+                  },
+                  "example": "ASP",
+                  "type": "string"
+                },
+                "RdsLicenseAddress": {
+                  "description_en": "The IP address of the RDS license",
+                  "description_zh": "RDS许可证的IP地址",
+                  "example": "47.100.XX.XX",
+                  "type": "string"
+                },
+                "RdsLicenseDomainName": {
+                  "description_en": "The domain name of the RDS license",
+                  "description_zh": "RDS许可证所在的域名称",
+                  "example": "example.com",
+                  "type": "string"
+                },
+                "RdsLicenseStatus": {
+                  "description_en": "The status of the RDS license",
+                  "description_zh": "RDS许可证的状态",
+                  "example": "2",
+                  "type": "string"
+                },
+                "ResourceAmounts": {
+                  "description_en": "The resource count list",
+                  "description_zh": "资源数量列表",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "amount": {
+                        "description_en": "The resource count",
+                        "description_zh": "资源数量",
+                        "example": "1",
+                        "format": "int64",
+                        "type": "integer"
+                      },
+                      "resourceType": {
+                        "description_en": "The resource type",
+                        "description_zh": "资源类型",
+                        "enumValueTitles": {
+                          "desktop": "云电脑",
+                          "desktopGroup": "共享型云电脑"
+                        },
+                        "example": "desktop",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "SecurityProtection": {
+                  "description_en": "The Network Security Protection Settings of the office network",
+                  "description_zh": "办公网络安全防护配置",
+                  "enumValueTitles": {
+                    "OFF": "关闭",
+                    "SASE": "SASE"
+                  },
+                  "example": "SASE",
+                  "type": "string"
+                },
+                "SsoEnabled": {
+                  "description_en": "Indicates whether single sign-on (SSO) is enabled for logon",
+                  "description_zh": "是否开启单点登录SSO",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "SsoType": {
+                  "description_en": "The SSO type",
+                  "description_zh": "SSO类型",
+                  "enumValueTitles": {
+                    "SAML": "SAML"
+                  },
+                  "example": "SAML",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The office network status",
+                  "description_zh": "办公网络状态",
+                  "enumValueTitles": {
+                    "CONFIGTRUSTFAILED": "配置信任关系失败",
+                    "CONFIGTRUSTING": "配置信任关系中",
+                    "DEREGISTERED": "已取消",
+                    "DEREGISTERING": "取消中",
+                    "ERROR": "配置错误",
+                    "NEEDCONFIGTRUST": "需要配置信任关系",
+                    "NEEDCONFIGUSER": "需要配置用户",
+                    "REGISTERED": "已注册",
+                    "REGISTERING": "注册中"
+                  },
+                  "example": "REGISTERED",
+                  "type": "string"
+                },
+                "SubDnsAddress": {
+                  "description_en": "The DNS addresses of the AD subdomain",
+                  "description_zh": "AD子域的DNS地址数组",
+                  "items": {
+                    "description_en": "The DNS address of the AD subdomain",
+                    "description_zh": "AD子域的DNS地址",
+                    "example": " [\"172.24.XX.XX\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "SubDomainName": {
+                  "description_en": "The username of the AD subdomain DNS",
+                  "description_zh": "AD子域DNS的用户名",
+                  "example": "testSubDnsUserName",
+                  "type": "string"
+                },
+                "SubnetMode": {
+                  "description_en": "The subnet mode of the office network. Valid values:\n\n0: follows the office network mode.\n1: semi-managed mode",
+                  "description_zh": "办公网络子网模式",
+                  "enumValueTitles": {
+                    "0": "跟随办公网络模式",
+                    "1": "半管控模式"
+                  },
+                  "example": "0",
+                  "type": "string"
+                },
+                "TenantId": {
+                  "description_en": "The tenant ID of the identity provider",
+                  "description_zh": "身份提供方的租户 ID",
+                  "example": "72f988bf-86f1-41af-91ab-2d7cd011****",
+                  "type": "string"
+                },
+                "TotalEdsCount": {
+                  "description_en": "The number of cloud computers",
+                  "description_zh": "云电脑数量",
+                  "example": "0",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "TotalEdsCountForGroup": {
+                  "description_en": "The number of cloud computers in shared cloud computer groups",
+                  "description_zh": "共享型云电脑内的云电脑数量",
+                  "example": "0",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "TotalResourceAmount": {
+                  "description_en": "The total number of network interface controllers (NICs)",
+                  "description_zh": "网卡总数",
+                  "example": "1",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "TrustPassword": {
+                  "description_en": "This parameter is not yet available",
+                  "description_zh": "该参数暂未开放使用",
+                  "example": "To be hidden.",
+                  "type": "string"
+                },
+                "VSwitchIds": {
+                  "description_en": "The array of vSwitch IDs",
+                  "description_zh": "交换机ID数组",
+                  "items": {
+                    "description_en": "The vSwitch ID",
+                    "description_zh": "交换机ID",
+                    "example": "vsw-bp19ocz3erfx15uon****",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "VpcId": {
+                  "description_en": "The VPC ID of the secure office network",
+                  "description_zh": "安全办公网络VPC ID",
+                  "example": "vpc-uf6tz5k67puge5jn8****",
+                  "type": "string"
+                },
+                "VpcType": {
+                  "description_en": "The usage mode of the VPC",
+                  "description_zh": "VPC的使用方式",
+                  "enumValueTitles": {
+                    "Basic": "基础型",
+                    "Customized": "定制型",
+                    "Standard": "标准型"
+                  },
+                  "example": "Basic",
+                  "type": "string"
+                },
+                "VplVersion": {
+                  "description_en": "The version of the workspace network component (VPL)",
+                  "description_zh": "工作区网络组件（VPL）的版本",
+                  "example": "2.0.0",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1CBAFFAB-B697-4049-A9B1-67E1FC5F****",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of query results",
+            "description_zh": "查询结果总数",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

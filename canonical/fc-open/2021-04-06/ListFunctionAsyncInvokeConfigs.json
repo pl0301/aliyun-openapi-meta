@@ -2,6 +2,45 @@
   "camel_example": "aliyun fc-open GET /2021-04-06/services/demo-service/functions/helloworld/async-invoke-configs --region cn-hangzhou --nextToken 8bj81uI8n0000 --limit 20 --header \"X-Fc-Date=Sat,_14_Jul_2017_07:02:38_GMT\" --header \"X-Fc-Code-Checksum=1506052139770049xxxx\" --header \"X-Fc-Trace-Id=asdf0000\" --header \"X-Fc-Log-Type=Tail\" --header \"X-Fc-Account-Id=1880770869020000\" --header \"X-Fc-Invocation-Type=Async\" --header \"Content-Type=application/json\"",
   "cmd_full_name": "fc-open list-function-async-invoke-configs",
   "cmd_name": "list-function-async-invoke-configs",
+  "components": {
+    "schemas": {
+      "Destination": {
+        "description_en": "The destination structure for the asynchronous invocation",
+        "description_zh": "异步调用目标结构体",
+        "properties": {
+          "destination": {
+            "description_en": "The descriptor for the destination resources of the asynchronous invocation",
+            "description_zh": "异步调用目标资源描述符",
+            "example": "acs:fc:cn-shanghai:xxx:services/s1/functions/f1",
+            "title": "destination",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "DestinationConfig": {
+        "description_en": "The destination configurations for an asynchronous invocation",
+        "description_zh": "异步调用目标的配置信息",
+        "properties": {
+          "onFailure": {
+            "$ref": "#/components/schemas/Destination",
+            "description_en": "The destination struct of a failed callback",
+            "description_zh": "失败的回调目标结构体",
+            "example": "{     \"destination\":\"acs:fc:cn-shanghai:xxx:services/s1/functions/f1\" }"
+          },
+          "onSuccess": {
+            "$ref": "#/components/schemas/Destination",
+            "description_en": "The destination struct of a successful callback",
+            "description_zh": "成功的回调目标结构体",
+            "example": "{     \"destination\":\"acs:fc:cn-shanghai:xxx:services/s1/functions/f1\" }"
+          }
+        },
+        "title": "异步调用目标配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries all asynchronous invocation configurations of a function in a service. If the number of configurations exceeds the value of the limit parameter, the nextToken parameter is returned. You can use the nextToken parameter to query the next page of results",
   "description_zh": "查询一个服务下某个函数的所有异步配置。当配置个数超过limit个数时，将返回nexttoken参数。可以使用该参数进行后续的分页查询",
@@ -153,5 +192,116 @@
   ],
   "pathPattern": "/2021-04-06/services/[serviceName]/functions/[functionName]/async-invoke-configs",
   "product_code": "FC-Open",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The data struct returned",
+        "description_zh": "查询异步配置结果结构体",
+        "properties": {
+          "configs": {
+            "description_en": "The list of asynchronous invocation configurations",
+            "description_zh": "异步配置列表",
+            "items": {
+              "description_en": "The asynchronous invocation configurations",
+              "description_zh": "异步调用配置",
+              "properties": {
+                "createdTime": {
+                  "description_en": "The time when the asynchronous invocation configuration was created",
+                  "description_zh": "创建时间",
+                  "example": "2020-09-10T02:45:02Z",
+                  "title_en": "",
+                  "title_zh": "创建时间",
+                  "type": "string"
+                },
+                "destinationConfig": {
+                  "$ref": "#/components/schemas/DestinationConfig",
+                  "description_en": "The configuration struct of the destination for asynchronous invocations. If you did not configure this parameter, this parameter is null",
+                  "description_zh": "异步调用目标的配置结构体。如果您未进行配置，则该项为空值（Null）",
+                  "example": " {\"onSuccess\": null,\"onFailure\": {\"destination\": \"acs:mns:cn-shanghai:123:/queues/xxx/messages\"}}"
+                },
+                "function": {
+                  "description_en": "The function name",
+                  "description_zh": "函数名称",
+                  "example": "helloworld",
+                  "title_en": "",
+                  "title_zh": "函数名称",
+                  "type": "string"
+                },
+                "lastModifiedTime": {
+                  "description_en": "The time when the configuration was last modified",
+                  "description_zh": "最后更改时间",
+                  "example": "2020-09-10T02:45:02Z",
+                  "title_en": "",
+                  "title_zh": "最后更改时间",
+                  "type": "string"
+                },
+                "maxAsyncEventAgeInSeconds": {
+                  "description_en": "The maximum validity period of a message. If you have not configured this parameter, this parameter is null",
+                  "description_zh": "消息最大存活时长。如果您未进行配置，则该项为空值（Null）",
+                  "example": "300",
+                  "format": "int64",
+                  "title_en": "",
+                  "title_zh": "消息最大存活时长",
+                  "type": "integer"
+                },
+                "maxAsyncRetryAttempts": {
+                  "description_en": "The maximum number of retries allowed after an asynchronous invocation fails. If you have not configured this parameter, this parameter is null",
+                  "description_zh": "异步调用失败后的最大重试次数。如果您未进行配置，则该项为空值（Null）",
+                  "example": "3",
+                  "format": "int64",
+                  "title_en": "",
+                  "title_zh": "异步调用失败后的最大重试次数",
+                  "type": "integer"
+                },
+                "qualifier": {
+                  "description_en": "The version or alias of the service",
+                  "description_zh": "服务所属版本或别名",
+                  "example": "test",
+                  "title_en": "",
+                  "title_zh": "限定符",
+                  "type": "string"
+                },
+                "service": {
+                  "description_en": "The service name",
+                  "description_zh": "服务名称",
+                  "example": "demo-service",
+                  "title_en": "",
+                  "title_zh": "服务名称",
+                  "type": "string"
+                },
+                "statefulInvocation": {
+                  "description_en": "Specifies whether to enable the asynchronous task feature. Valid values:\n\ntrue\nfalse\n\nIf you have not configured this parameter, this parameter is null",
+                  "description_zh": "是否开启异步任务。\n\ntrue：表示已开启异步任务。\nfalse：表示未开启异步任务。  \n\n如果您未进行配置，则该项为空值（Null）",
+                  "example": "true",
+                  "type": "boolean"
+                }
+              },
+              "title_en": "",
+              "title_zh": "异步调用配置",
+              "type": "object"
+            },
+            "title_en": "",
+            "title_zh": "异步配置列表",
+            "type": "array"
+          },
+          "nextToken": {
+            "description_en": "The token used to obtain more results",
+            "description_zh": "下次查询Token",
+            "example": "caeba0be03****f84eb48b699f0a4883",
+            "title_en": "",
+            "title_zh": "下次查询token",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "查询异步配置响应",
+        "type": "object"
+      }
+    },
+    "400": {},
+    "403": {},
+    "404": {},
+    "500": {}
+  }
 }

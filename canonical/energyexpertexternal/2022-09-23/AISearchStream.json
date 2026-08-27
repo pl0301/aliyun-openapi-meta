@@ -2,6 +2,70 @@
   "camel_example": "aliyun energyexpertexternal POST /api/v1/aiSearch/searchStream --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"question\":\"“my_net_is_slow,_what_can_I_do0”\",\"resourceTypeNeeded\":[\"“text”\"],\"message\":[\"example-string\"],\"folderId\":\"1a851c4a-1d65-11ef-99a7-ssfsfdd\"}",
   "cmd_full_name": "energyexpertexternal ai-search-stream",
   "cmd_name": "ai-search-stream",
+  "components": {
+    "schemas": {
+      "AISearchMessageItem": {
+        "description_en": "Conversation history information",
+        "description_zh": "历史对话信息",
+        "properties": {
+          "content": {
+            "description_en": "Combine the user's question and the API's text response from one conversation round to form part of the conversation context.\n\nThe recommended format is: user: \\<question>\naisearch: \\<previous_answer>",
+            "description_zh": "一轮对话中用户提出的问题与接口返回的文本内容进行拼接，形成完整的对话上下文中的一部分。\n此内容需要用户自行拼接，推荐格式为：\n\"user：+问题 +\\naisearch：+ 上一轮的回答\"",
+            "example": "\"user：How to test my network speed?\\naisearch：To check your network speed, you can use...\"",
+            "type": "string"
+          },
+          "params": {
+            "description_en": "The structured information that appears in a single conversation round",
+            "description_zh": "记录一轮对话中出现的结构化信息",
+            "example": "{\n \"miniapp_id\": \"test_miniapp\",\n      \"title\": \"testApp\",\n      \"version\": \"1.0.5\",\n      \"description\": \"description-mock\",\n      \"slogan\": \"slogan-mock\",\n      \"icon\": \"https://img.alicdn.com/test_icon.png\",\n      \"detail_desc\": \"detail-mock\"\n}",
+            "type": "any"
+          },
+          "type": {
+            "description_en": "The content type of the conversation history information.\n\n\"text\" for text records, \"miniapp\" for Mini Program information records in structured elements, or \"product\" for product information records in structured elements.\n\nIf type is \"text\", enter the combined content of a single conversation round in the content field. Leave the params field empty.\n\nIf type is \"miniapp\" or \"product\", enter the structured information in JSON format in the params field. Leave the content field empty",
+            "description_zh": "历史对话信息内容类型。\n“text”（表示文字记录）、“miniapp”（表示结构化元素中的小程序信息记录）以及 “product”（表示结构化元素中的商品信息记录）\ntype为“text”时，仅在content字段中输入拼接的一轮对话内容，params字段保持为空\ntyep为“miniapp”或“product”时，仅在params字段中输入JSON形式的结构化信息，content字段保持为空",
+            "enumValueTitles": {
+              "miniapp": "miniapp",
+              "product": "product",
+              "text": "text"
+            },
+            "example": "miniapp",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AISearchStreamItem": {
+        "description_en": "The streaming event structure",
+        "description_zh": "流式事件结构",
+        "properties": {
+          "content": {
+            "description_en": "Text content of the streaming output. This field is only displayed when type is text",
+            "description_zh": "流式输出的文字内容，本字段仅在type为text时显示输出",
+            "example": "“network problem can be”",
+            "type": "string"
+          },
+          "params": {
+            "description_en": "This field is used to output structured information content in the streaming result. When type is miniapp, structured resources related to mini programs are output; when type is product, structured resources related to products are output. All content is presented in JSON format",
+            "description_zh": "该字段用于输出流式结果中的结构化信息内容，当 type 为 miniapp 时，输出小程序相关的结构化资源；当 type 为 product 时，输出商品相关的结构化资源，所有内容均以 JSON 格式呈现",
+            "example": " [{\"type\": \"miniapp\", \"score\": 0.7404107, \"resourceId\": \"ja9bQZwBg5VwSU7n5Ijs\", \"miniappId\": null, \"title\": \"更新后的智能搜索测试助手\", \"version\": \"1.0.5\", \"description\": \"这是一个用于测试 AI 搜索功能的演示小程序\", \"slogan\": \"搜索即所得\", \"icon\": \"https://img.alicdn.com/test_icon.png\", \"url\": null, \"detailDescription\": \"该小程序提供了完整的 AI 搜索链路测试。\"}]",
+            "type": "any"
+          },
+          "type": {
+            "description_en": "Streaming data type",
+            "description_zh": "流式数据类型",
+            "enumValueTitles": {
+              "miniapp": "miniapp",
+              "product": "product",
+              "text": "text"
+            },
+            "example": "text",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "The AISearch Q&A interface answers customer questions using structured element information from the database and content retrieved from the knowledge base",
   "description_zh": "AISearch 问答接口，根据用户在数据库中存储的结构化元素信息以及知识库中的检索内容，生成对客户问题的回答",
@@ -48,6 +112,11 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "product",
+              "miniapp",
+              "text"
+            ],
             "example": "miniapp",
             "help_en": "The content type of the conversation history information.\n\n\"text\" for text records, \"miniapp\" for Mini Program information records in structured elements, or \"product\" for product information records in structured elements.\n\nIf type is \"text\", enter the combined content of a single conversation round in the content field. Leave the params field empty.\n\nIf type is \"miniapp\" or \"product\", enter the structured information in JSON format in the params field. Leave the content field empty",
             "help_zh": "历史对话信息内容类型。\n“text”（表示文字记录）、“miniapp”（表示结构化元素中的小程序信息记录）以及 “product”（表示结构化元素中的商品信息记录）\ntype为“text”时，仅在content字段中输入拼接的一轮对话内容，params字段保持为空\ntyep为“miniapp”或“product”时，仅在params字段中输入JSON形式的结构化信息，content字段保持为空",
@@ -132,6 +201,32 @@
   "pathPattern": "/api/v1/aiSearch/searchStream",
   "product_code": "energyExpertExternal",
   "protocol": "HTTPS|SSE",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AISearchStreamItem",
+            "description_en": "Returned data",
+            "description_zh": "返回数据"
+          },
+          "requestId": {
+            "description_en": "ID of the request",
+            "description_zh": "Id of the request",
+            "example": "3F21E33A-42F8-50BC-89DE-DC0B96B967DD",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "Request body parameters",

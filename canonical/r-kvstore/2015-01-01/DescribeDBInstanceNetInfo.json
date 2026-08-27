@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "r-bp1zxszhcgatnx****",
       "help_en": "The instance ID",
       "help_zh": "实例ID",
@@ -34,6 +35,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Private",
+        "Public"
+      ],
       "help_en": "The network type",
       "help_zh": "The NetType",
       "location": "query",
@@ -49,21 +54,121 @@
   "pathPattern": "",
   "product_code": "R-kvstore",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The instance ID",
-      "help_zh": "实例ID",
-      "name": "InstanceId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The network type",
-      "name": "NetType",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "InstanceNetworkType": {
+            "description_en": "The network type. Valid values:\n\nCLASSIC: Classic Network.\n\nVPC: VPC",
+            "description_zh": "网络类型，返回值：\nCLASSIC：经典网络。\nVPC：专有网络",
+            "example": "CLASSIC",
+            "type": "string"
+          },
+          "NetInfoItems": {
+            "description_en": "Details about the instance's network connections",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "InstanceNetInfo": {
+                "description_en": "An array of network connection details for the instance",
+                "description_zh": "实例的网络信息列表",
+                "items": {
+                  "description_en": "The details of a network connection",
+                  "description_zh": "实例的网络信息列表",
+                  "properties": {
+                    "ConnectionString": {
+                      "description_en": "The connection string of the instance",
+                      "description_zh": "实例的连接地址",
+                      "example": "r-bp1zxszhcgatnx****.redis.rds.aliyuncs.com",
+                      "type": "string"
+                    },
+                    "DBInstanceNetType": {
+                      "description_en": "The network type. Valid values:\n\n0: public network.\n\n1: Classic Network.\n\n2: VPC network",
+                      "description_zh": "该网络信息所属的网络类型：\n0：公网。\n1：经典网络。\n2：专有网络",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "DirectConnection": {
+                      "description_en": "Indicates whether the address is for a direct connection. Valid values:\n\n0: The address is not for a direct connection.\n\n1: The address is for a direct connection",
+                      "description_zh": "是否为直连地址，返回值：\n0：非直连地址。\n1：直连地址",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ExpiredTime": {
+                      "description_en": "The validity period of the Classic Network connection string, in seconds",
+                      "description_zh": "实例经典网络地址的有效时间，单位：秒",
+                      "example": "5183778",
+                      "type": "string"
+                    },
+                    "IPAddress": {
+                      "description_en": "The IP address",
+                      "description_zh": "IP地址",
+                      "example": "172.16.49.***",
+                      "type": "string"
+                    },
+                    "IPType": {
+                      "description_en": "The network type of the IP address. Valid values:\n\nPublic: public network.\n\nInner: Classic Network.\n\nPrivate: VPC network",
+                      "description_zh": "IP地址的网络类型，返回值： \nPublic：公网。\nInner：经典网络。 \nPrivate：VPC网络",
+                      "example": "Inner",
+                      "type": "string"
+                    },
+                    "IsSlaveProxy": {
+                      "description_en": "A value of 1 indicates that this network address is for a replica node in the standby zone.\n\nThis address is returned only when multi-zone read/write splitting is enabled for the instance",
+                      "description_zh": "表示该地址为备可用区的连接地址，取值为1，表示备可用区。\n该地址仅在开通多可用区读写分离架构后返回",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Port": {
+                      "description_en": "The service port of the instance",
+                      "description_zh": "实例的服务端口",
+                      "example": "6379",
+                      "type": "string"
+                    },
+                    "Upgradeable": {
+                      "description_en": "The remaining validity period of the Classic Network connection string, in seconds.\n\nA value of 0 indicates that the connection string does not expire",
+                      "description_zh": "经典网络连接地址的过期时间，即剩余有效时间，单位为秒。\n0表示不会过期。 ",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "VPCId": {
+                      "description_en": "The ID of the VPC to which the instance belongs",
+                      "description_zh": "实例所属的专有网络（VPC）的ID",
+                      "example": "vpc-bp1nme44gek34slfc****",
+                      "type": "string"
+                    },
+                    "VPCInstanceId": {
+                      "description_en": "The ID of the instance associated with the VPC",
+                      "description_zh": "实例ID",
+                      "example": "r-bp1ky7j6qc7umk****",
+                      "type": "string"
+                    },
+                    "VSwitchId": {
+                      "description_en": "The ID of the vSwitch",
+                      "description_zh": "虚拟交换机的ID",
+                      "example": "vsw-bp1e7clcw529l773d****",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "FC77D4E1-2A7C-4F0B-A4CC-CE0B9C314B9B",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

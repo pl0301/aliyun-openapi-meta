@@ -2,6 +2,601 @@
   "camel_example": "aliyun paiautoml POST /api/automl/v1/hpo/experiment --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"Description\":\"This_is_an_AutoML_HPO_experiment.\",\"Accessibility\":\"PRIVATE\",\"WorkspaceId\":\"default\",\"Tag\":[{\"Value\":\"group_name\",\"Key\":\"group\"}],\"HpoExperimentConfiguration\":\"example-string\",\"Name\":\"my_experiment_x\"}",
   "cmd_full_name": "paiautoml create-hpo-experiment",
   "cmd_name": "create-hpo-experiment",
+  "components": {
+    "schemas": {
+      "HpoExperimentConfig": {
+        "description_en": "The request parameters of CreateHpoExperiment",
+        "description_zh": "CreateHpoExperiment API的入参",
+        "properties": {
+          "dlc_config": {
+            "description_en": "dlc_config",
+            "description_zh": "dlc_config",
+            "properties": {
+              "access_id": {
+                "description_en": "access_id",
+                "description_zh": "access_id",
+                "example": "ak字符串",
+                "title": "access_id",
+                "type": "string"
+              },
+              "access_key": {
+                "description_en": "access_key",
+                "description_zh": "access_key",
+                "example": "sk字符串",
+                "title": "access_key",
+                "type": "string"
+              },
+              "endpoint": {
+                "description_en": "endpoint",
+                "description_zh": "endpoint",
+                "example": "pai-dlc.cn-shanghai.aliyuncs.com",
+                "title": "endpoint",
+                "type": "string"
+              },
+              "protocol": {
+                "description_en": "protocol",
+                "description_zh": "protocol",
+                "example": "https",
+                "title": "protocol",
+                "type": "string"
+              },
+              "region": {
+                "description_en": "region",
+                "description_zh": "region",
+                "example": "cn-hangzhou / cn-beijing / cn-shanghai / cn-shenzhen / cn-hongkong\n",
+                "title": "region",
+                "type": "string"
+              }
+            },
+            "title": "dlc_config",
+            "type": "object"
+          },
+          "k8s_config": {
+            "description_en": "No configuration required",
+            "description_zh": "不需要配置",
+            "properties": {
+              "nni_container_cpu_limit": {
+                "description_en": "nni_container_cpu_limit",
+                "description_zh": "nni_container_cpu_limit",
+                "example": "不需要配置",
+                "title": "nni_container_cpu_limit",
+                "type": "string"
+              },
+              "nni_container_memory_limit": {
+                "description_en": "nni_container_memory_limit",
+                "description_zh": "nni_container_memory_limit",
+                "example": "不需要配置",
+                "title": "nni_container_memory_limit",
+                "type": "string"
+              },
+              "nni_container_requested_cpu": {
+                "description_en": "nni_container_requested_cpu",
+                "description_zh": "nni_container_requested_cpu",
+                "example": "不需要配置",
+                "title": "nni_container_requested_cpu",
+                "type": "string"
+              },
+              "nni_container_requested_memory": {
+                "description_en": "nni_container_requested_memory",
+                "description_zh": "nni_container_requested_memory",
+                "example": "不需要配置",
+                "title": "nni_container_requested_memory",
+                "type": "string"
+              }
+            },
+            "title": "k8s_config",
+            "type": "object"
+          },
+          "metric_config": {
+            "description_en": "metric_config",
+            "description_zh": "metric_config",
+            "properties": {
+              "final_mode": {
+                "description_en": "Specifies how to calculate the final metric from the intermediate metrics. Valid values: final, best, avg",
+                "description_zh": "如任务运行过程中，存在很多中间metric，那么需要确定最终metric的计算方式，取值必须为final/best/avg之一",
+                "example": "final, best, avg",
+                "required": true,
+                "title": "final_mode",
+                "type": "string"
+              },
+              "metric_dict": {
+                "description_en": "The name and weight of metrics. Use this parameter if you need to consider multiple metrics at the same time. Note: The weight can be negative, and the sum of the weights is not necessarily 1",
+                "description_zh": "当有多只指标需要同时考虑时，可以通过配置指标名称及对应权重的方式实现。注：权重可以为负值，权重之和可以不为1，用户自定义",
+                "example": "{'auc':0.25, 'recall':0.5, 'precision':0.25}",
+                "required": true,
+                "title": "metric_dict",
+                "type": "object"
+              },
+              "metric_source": {
+                "description_en": "metric_source",
+                "description_zh": "metric_source",
+                "items": {
+                  "description_en": "Source of the metric. For example, an OSS file path or an SQL statement to obtain the metric from a MaxCompute table",
+                  "description_zh": "指标的来源，对于oss源，可以是一个文件路径；对于MaxCompute表格，需要是一个获取具体结果的sql语句",
+                  "example": "对于table类型，为从Table获取metric的MaxCompute语句，如：select count(*) as cnt from nni_test1_${exp_id}_${trial_id};\n对于summary类型，为summary所在路径，如：oss://test-nni/examples/search/pai/metric/metric_${exp_id}_${trial_id}/\n对于stdout类型，为从那一条cmd抽取metric，如：cmd1 （序号从1开始）",
+                  "type": "string"
+                },
+                "required": true,
+                "title": "metric_source",
+                "type": "array"
+              },
+              "metric_type": {
+                "description_en": "The metric type of the user evaluation trial. Valid values: summary, table, json, stdout",
+                "description_zh": "用户评价trial的指标类型，必须为summary/table/json/stdout之一",
+                "example": "table, summary, stdout或者json",
+                "required": true,
+                "title": "metric_type",
+                "type": "string"
+              },
+              "source_list_final_mode": {
+                "description_en": "Specifies how to calculate the final metric if multiple metric sources are used. Optional. Default value: final_mode. Valid values: final, best, and avg",
+                "description_zh": "可选，默认值为final_mode，可选值为final/best/avg,用于有多个metric_source时最终metric如何计算",
+                "example": "avg",
+                "title": "source_list_final_mode",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "metric_config",
+            "type": "object"
+          },
+          "monitor_config": {
+            "description_en": "DingTalk group monitoring configurations",
+            "description_zh": "钉钉群监控配置",
+            "properties": {
+              "at_mobiles": {
+                "description_en": "The phone number of the group member to be @ mentioned. Phone numbers of non-members are de-identified",
+                "description_zh": "在监控内容里添加@人的手机号，且只有在群内的成员才可被@，非群内成员手机号会被脱敏",
+                "example": "[1472583690]",
+                "title": "at_mobiles",
+                "type": "string"
+              },
+              "at_user_ids": {
+                "description_en": "The userid of the member to be @ mentioned",
+                "description_zh": "被@人的用户userid",
+                "example": "[1234567890]",
+                "title": "at_user_ids",
+                "type": "string"
+              },
+              "is_at_all": {
+                "description_en": "Specifies whether to @ mention everyone",
+                "description_zh": "是否@所有人",
+                "example": "True/False",
+                "title": "is_at_all",
+                "type": "string"
+              },
+              "keyword": {
+                "description_en": "The custom keyword for the custom robot",
+                "description_zh": "添加自定义机器人：自定义关键词",
+                "example": "monitor",
+                "title": "keyword",
+                "type": "string"
+              },
+              "url": {
+                "description_en": "The Webhook URL of the custom robot",
+                "description_zh": "url为创建自定义机器人对应的Webhook地址",
+                "example": "https://oapi.dingtalk.com/robot/send?access_token=${UID}\n参考https://open.dingtalk.com/document/robots/custom-robot-access去添加自定义机器人，获取url",
+                "title": "url",
+                "type": "string"
+              }
+            },
+            "title": "monitor_config",
+            "type": "object"
+          },
+          "odps_config": {
+            "description_en": "MaxCompute configurations",
+            "description_zh": "MaxCompute相关配置",
+            "properties": {
+              "access_id": {
+                "description_en": "access_id",
+                "description_zh": "access_id",
+                "example": "ak字符串",
+                "title": "access_id",
+                "type": "string"
+              },
+              "access_key": {
+                "description_en": "access_key",
+                "description_zh": "access_key",
+                "example": "sk字符串",
+                "title": "access_key",
+                "type": "string"
+              },
+              "end_point": {
+                "description_en": "end_point",
+                "description_zh": "end_point",
+                "example": "http://service.cn-beijing.maxcompute.aliyun.com/api",
+                "title": "end_point",
+                "type": "string"
+              },
+              "log_view_host": {
+                "description_en": "log_view_host",
+                "description_zh": "log_view_host",
+                "example": "http://logview.odps.aliyun.com",
+                "title": "log_view_host",
+                "type": "string"
+              },
+              "project_name": {
+                "description_en": "The name of the MaxCompute project",
+                "description_zh": "maxcompute 项目名称",
+                "example": "my_project_x",
+                "title": "project_name",
+                "type": "string"
+              },
+              "region": {
+                "description_en": "region",
+                "description_zh": "region",
+                "example": "cn-hangzhou / cn-beijing / cn-shanghai / cn-shenzhen / cn-hongkong",
+                "title": "region",
+                "type": "string"
+              },
+              "role_arn": {
+                "description_en": "The service-linked role for PAIAutoML. If this parameter is specified, AccessKey ID and Secret are not required",
+                "description_zh": "PAIAutoML服务关联角色。填写该值后，可不提供ak/sk",
+                "example": "acs:ram::xxx:role/aliyunserviceroleforpaiautoml\n",
+                "title": "role_arn",
+                "type": "string"
+              }
+            },
+            "title": "odps_config",
+            "type": "object"
+          },
+          "oss_config": {
+            "description_en": "Object Storage Service (OSS) configurations",
+            "description_zh": "oss配置",
+            "properties": {
+              "accessKeyID": {
+                "description_en": "accessKeyID",
+                "description_zh": "accessKeyID",
+                "example": "ak字符串",
+                "title": "accessKeyID",
+                "type": "string"
+              },
+              "accessKeySecret": {
+                "description_en": "accessKeySecret",
+                "description_zh": "accessKeySecret",
+                "example": "sk字符串",
+                "title": "accessKeySecret",
+                "type": "string"
+              },
+              "endpoint": {
+                "description_en": "endpoint",
+                "description_zh": "endpoint",
+                "example": "http://oss-cn-beijing.aliyuncs.com",
+                "title": "endpoint",
+                "type": "string"
+              },
+              "role_arn": {
+                "description_en": "The service-linked role for PAIAutoML. If this parameter is specified, AccessKey ID and Secret are not required",
+                "description_zh": "PAIAutoML服务关联角色。填写该值后，可不提供ak/sk",
+                "example": "acs:ram::xxx:role/aliyunserviceroleforpaiautoml",
+                "title": "role_arn",
+                "type": "string"
+              }
+            },
+            "title": "oss_config",
+            "type": "object"
+          },
+          "output_config": {
+            "description_en": "output_config",
+            "description_zh": "output_config",
+            "properties": {
+              "model_path": {
+                "description_en": "If you use the Service Edition, you can configure model_path to obtain the optimal model",
+                "description_zh": "如果使用服务版，可以配置model_path用来获取最优模型",
+                "example": "oss://bucket/foo/bar/model/model_${exp_id}_${trial_id}",
+                "title": "model_path",
+                "type": "string"
+              },
+              "summary_path": {
+                "description_en": "If you use the Standalone Edition, you can configure a summary to view TensorBoard locally",
+                "description_zh": "如果使用单机版，可以配置summary用于本地查看TensorBoard",
+                "example": "oss://bucket/foo/bar/model_${exp_id}_${trial_id}/",
+                "title": "summary_path",
+                "type": "string"
+              }
+            },
+            "title": "output_config",
+            "type": "object"
+          },
+          "paiflow_config": {
+            "description_en": "paiflow_config",
+            "description_zh": "paiflow_config",
+            "properties": {
+              "access_key_id": {
+                "description_en": "access_key_id",
+                "description_zh": "access_key_id",
+                "example": "ak字符串",
+                "title": "access_key_id",
+                "type": "string"
+              },
+              "access_key_secret": {
+                "description_en": "access_key_secret",
+                "description_zh": "access_key_secret",
+                "example": "sk字符串",
+                "title": "access_key_secret",
+                "type": "string"
+              },
+              "region_id": {
+                "description_en": "region_id",
+                "description_zh": "region_id",
+                "example": "cn-hangzhou / cn-beijing / cn-shanghai / cn-shenzhen / cn-hongkong\n",
+                "title": "region_id",
+                "type": "string"
+              },
+              "workspace_id": {
+                "description_en": "The ID of the PAI workspace",
+                "description_zh": "PAI工作空间workspace ID",
+                "example": "12345",
+                "title": "workspace_id",
+                "type": "string"
+              }
+            },
+            "title": "paiflow_config",
+            "type": "object"
+          },
+          "params_config": {
+            "description_en": "params_config",
+            "description_zh": "params_config",
+            "properties": {
+              "params_src_dst_filepath": {
+                "description_en": "The source and destination paths of params_config",
+                "description_zh": "参数配置的源头路径和最终输出路径",
+                "example": "src_path,dst_file_path",
+                "items": {
+                  "description_en": "The source and destination paths. The values are strings separated by commas",
+                  "description_zh": "src和dst路径字符串，用逗号隔开",
+                  "example": "./local/path/foo.config,oss://bucket/remote/path/bar.config",
+                  "type": "string"
+                },
+                "title": "params_src_dst_filepath",
+                "type": "array"
+              }
+            },
+            "title": "params_config",
+            "type": "object"
+          },
+          "platform_config": {
+            "description_en": "platform_config",
+            "description_zh": "platform_config",
+            "properties": {
+              "cmd": {
+                "description_en": "The list of commands to be executed on the background computing platform",
+                "description_zh": "在后台计算平台上需要执行的命令列表",
+                "items": {
+                  "description_en": "The commands to be executed",
+                  "description_zh": "用于标记执行的命令",
+                  "example": "pai -name kmeans -project foo -Dseed 1",
+                  "required": true,
+                  "type": "string"
+                },
+                "required": true,
+                "title": "a list of commands to be executed",
+                "type": "array"
+              },
+              "name": {
+                "description_en": "The name of the platform where the experiment is executed",
+                "description_zh": "用于标记任务执行的平台",
+                "example": "DLC, MaxCompute,paiflow, etc",
+                "required": true,
+                "title": "name of the computation platform",
+                "type": "string"
+              },
+              "resume": {
+                "description_en": "Specifies whether to enable resume. For example, if the first line succeeds and the second line fails due to insufficient resources, you can enable resume to start from the second line",
+                "description_zh": "用于用户一次运行时，比如说第一行任务成功，第二行由于资源不足失败，可以开启续跑，从第二行命令开始运行",
+                "example": "0/1。\n1表示启用。不填写不启用",
+                "title": "resume",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "platform_config",
+            "type": "object"
+          },
+          "schedule_config": {
+            "description_en": "schedule_config",
+            "description_zh": "schedule_config",
+            "properties": {
+              "day": {
+                "description_en": "day",
+                "description_zh": "day",
+                "example": "everyday",
+                "title": "day",
+                "type": "string"
+              },
+              "end_time": {
+                "description_en": "end_time",
+                "description_zh": "end_time",
+                "example": "23:56",
+                "title": "end_time",
+                "type": "string"
+              },
+              "start_time": {
+                "description_en": "start_time",
+                "description_zh": "start_time",
+                "example": "11:10",
+                "title": "start_time",
+                "type": "string"
+              }
+            },
+            "title": "schedule_config",
+            "type": "object"
+          },
+          "search_space": {
+            "description_en": "The search space of the hyperparameter. The value is a JSON string",
+            "description_zh": "超参所搜空间，json字符串",
+            "example": "{\n    \"${tree_count}\":{\"_type\":\"choice\",\"_value\":[5,10,3]},\n    \"${max_depth}\":{\"_type\":\"randint\",\"_value\":[3,6]}\n}",
+            "title": "search_space",
+            "type": "object"
+          },
+          "ts_config": {
+            "description_en": "ts_config",
+            "description_zh": "ts_config",
+            "properties": {
+              "access_key_id": {
+                "description_en": "access_key_id",
+                "description_zh": "access_key_id",
+                "example": "ak字符串",
+                "title": "access_key_id",
+                "type": "string"
+              },
+              "access_key_secret": {
+                "description_en": "access_key_secret",
+                "description_zh": "access_key_secret",
+                "example": "sk字符串",
+                "title": "access_key_secret",
+                "type": "string"
+              },
+              "endpoint": {
+                "description_en": "endpoint",
+                "description_zh": "endpoint",
+                "example": "pai.cn-shanghai.aliyuncs.com",
+                "title": "endpoint",
+                "type": "string"
+              },
+              "region_id": {
+                "description_en": "region_id",
+                "description_zh": "region_id",
+                "example": "cn-hangzhou / cn-beijing / cn-shanghai / cn-shenzhen / cn-hongkong\n",
+                "title": "region_id",
+                "type": "string"
+              }
+            },
+            "title": "ts_config",
+            "type": "object"
+          },
+          "yml_config": {
+            "description_en": "The run time configurations of the hyperparameter optimization (HPO) experiment",
+            "description_zh": "HPO运行时配置",
+            "properties": {
+              "assessor": {
+                "description_en": "assessor",
+                "description_zh": "assessor",
+                "properties": {
+                  "class_args": {
+                    "description_en": "class_args",
+                    "description_zh": "class_args",
+                    "properties": {
+                      "earlystop": {
+                        "description_en": "Specifies whether to enable EarlyStop",
+                        "description_zh": "是否开启earlystop",
+                        "example": "True, False",
+                        "title": "earlystop",
+                        "type": "boolean"
+                      },
+                      "moving_avg": {
+                        "description_en": "Specifies whether to use the average moving of all history to determine EarlyStop",
+                        "description_zh": "早停判断时，采用所有历史的滑动平均值作为判断标准",
+                        "example": "true",
+                        "title": "moving_avg",
+                        "type": "string"
+                      },
+                      "optimize_mode": {
+                        "description_en": "The optimization mode",
+                        "description_zh": "优化的方向",
+                        "example": "maximize/minimize",
+                        "title": "optimize_mode",
+                        "type": "string"
+                      },
+                      "proportion": {
+                        "description_en": "The proportion of the optimal value of this hyperparameter search to the historical value",
+                        "description_zh": "本次超参搜索的最优值和历史记录的proportion值比较",
+                        "example": "0.5",
+                        "format": "float",
+                        "title": "proportion",
+                        "type": "number"
+                      },
+                      "start_step": {
+                        "description_en": "The step from which EarlyStop can be triggered",
+                        "description_zh": "从第几步开始进行早停判定",
+                        "example": "2",
+                        "format": "int32",
+                        "title": "start_step",
+                        "type": "integer"
+                      }
+                    },
+                    "title": "class_args",
+                    "type": "object"
+                  },
+                  "name": {
+                    "description_en": "The name of the class used for evaluation",
+                    "description_zh": "评估使用的类名称",
+                    "example": "PAIAssessor",
+                    "title": "name",
+                    "type": "string"
+                  }
+                },
+                "title": "assessor",
+                "type": "object"
+              },
+              "debug": {
+                "description_en": "Specifies whether to debug",
+                "description_zh": "debug开启标记",
+                "example": "false/true",
+                "title": "debug",
+                "type": "boolean"
+              },
+              "experiment_name": {
+                "description_en": "The name of the experiment",
+                "description_zh": "实验名称",
+                "example": "my_hpo_exp_3",
+                "title": "experiment_name",
+                "type": "string"
+              },
+              "log_level": {
+                "description_en": "The log level",
+                "description_zh": "日志级别",
+                "example": "debug",
+                "title": "log_level",
+                "type": "string"
+              },
+              "max_trial_number": {
+                "description_en": "The maximum number of trials for an experiment. Note that the experiment may end before all trials are run",
+                "description_zh": "一个实验最多可运行的trial数量。实验可能在还没运行到这么多trials时就结束了",
+                "example": "20",
+                "format": "int32",
+                "title": "maxTrialNumber",
+                "type": "integer"
+              },
+              "trial_concurrency": {
+                "description_en": "The maximum number of concurrent trials",
+                "description_zh": "最大的trial并发数",
+                "example": "5",
+                "format": "int32",
+                "title": "trialConcurrency",
+                "type": "integer"
+              },
+              "tuner": {
+                "description_en": "The HPO algorithm",
+                "description_zh": "超参调优使用的算法",
+                "properties": {
+                  "class_args": {
+                    "description_en": "The parameters of the HPO algorithm",
+                    "description_zh": "超参调优算法使用到的参数",
+                    "title": "class_args",
+                    "type": "object"
+                  },
+                  "name": {
+                    "description_en": "The name of the HPO algorithm",
+                    "description_zh": "超参调优使用的算法名称",
+                    "example": "TPE",
+                    "title": "name",
+                    "type": "string"
+                  }
+                },
+                "title": "tuner",
+                "type": "object"
+              }
+            },
+            "title": "yml_config",
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "calling HPO CreateExperiment",
   "description_zh": "calling HPO CreateExperiment",
@@ -1102,6 +1697,56 @@
   "pathPattern": "/api/automl/v1/hpo/experiment",
   "product_code": "paiAutoML",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "响应体",
+        "properties": {
+          "AccessDeniedDetail": {
+            "additionalProperties": {
+              "description_en": "The information about the request denial",
+              "description_zh": "访问被拒绝详细信息",
+              "example": "{\"AuthPrincipalType\": \"sub\", \"PolicyType\": \"AccountLevelIdentityBasedPolicy\", \"NoPermissionType\": \"NoPermission\"}",
+              "type": "string"
+            },
+            "description_en": "The information about the request denial",
+            "description_zh": "访问被拒绝详细信息",
+            "type": "object"
+          },
+          "Code": {
+            "description_en": "The internal error code. This parameter is returned if an exception occurred",
+            "description_zh": "内部错误码。只在响应出错时被设置",
+            "example": "INVALID_INPUT_PARAMS",
+            "type": "string"
+          },
+          "ExperimentId": {
+            "description_en": "The ID of the HPO experiment",
+            "description_zh": "HPO实验id",
+            "example": "sORVEck",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The error message. This parameter is returned if an exception occurred",
+            "description_zh": "响应错误信息。只在响应出错时被设置",
+            "example": "Missing 'user_id' in request.",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the POP request",
+            "description_zh": "POP的请求id",
+            "example": "3F190916-B3E5-5D1E-AD0C-35C0DF105F51",
+            "type": "string"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

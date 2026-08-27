@@ -2,6 +2,32 @@
   "camel_example": "aliyun aiworkspace POST /api/v1/datasets --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"Options\":\"{\\\"mountPath\\\":\\\"/mnt/data/\\\"}\",\"Description\":\"This_is_a_description_of_the_dataset.\",\"Accessibility\":\"PRIVATE\",\"SourceType\":\"USER\",\"SourceId\":\"jdnhf000fnrimv\",\"WorkspaceId\":\"47800\",\"Uri\":\"nas://09f0000f2.cn-hangzhou/\",\"Name\":\"myName\",\"VersionLabels\":[\"example-string\"],\"SourceDatasetVersion\":\"v2\",\"DataSourceType\":\"NAS\",\"DataSize\":10000,\"DataType\":\"COMMON\",\"DataCount\":500,\"Property\":\"DIRECTORY\",\"MountAccessReadWriteRoleIdList\":[\"PAI.AlgoOperator\"],\"VersionDescription\":\"This_is_a_description_of_the_first_dataset_version.\",\"Labels\":[\"example-string\"],\"SourceDatasetId\":\"d-bvfasdfxxxxj8o411\",\"ImportInfo\":\"{\\\"region\\\":\\\"cn-wulanchabu\\\",\\\"fileSystemId\\\":\\\"bmcpfs-xxxxxxxxxxx\\\",\\\"path\\\":\\\"/mnt\\\",\\\"mountTarget\\\":\\\"cpfs-xxxxxxxxxxxx-vpc-gacs9f.cn-wulanchabu.cpfs.aliyuncs.com\\\",\\\"isVpcMount\\\":true}\",\"Edition\":\"ADVANCED\",\"AccessibleRoleIdList\":[\"PAI.AlgoOperator\"],\"Provider\":\"Github\",\"UserId\":\"24857650000023475\",\"ProviderType\":\"Ecs\"}",
   "cmd_full_name": "aiworkspace create-dataset",
   "cmd_name": "create-dataset",
+  "components": {
+    "schemas": {
+      "Label": {
+        "description_en": "The label structure",
+        "description_zh": "标签结构",
+        "properties": {
+          "Key": {
+            "description_en": "The label key. The value can be up to 128 bytes in length and cannot contain equal signs (=) and commas (,)",
+            "description_zh": "标签的key。最长128 字节，不支持等于号（=）与半角逗号（,）",
+            "example": "env",
+            "title": "标签的key",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "The label value. The value can be up to 128 bytes in length and cannot contain equal signs (=) and commas (,)",
+            "description_zh": "标签的value。最长128 字节，不支持等于号（=）与半角逗号（,）",
+            "example": "test",
+            "title": "标签的value",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a dataset",
   "description_zh": "创建一个数据集",
@@ -64,6 +90,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "DIRECTORY",
+        "FILE"
+      ],
       "example": "DIRECTORY",
       "help_en": "The property of the dataset. Valid values:\n\nFILE: A file.\n\nDIRECTORY: A directory",
       "help_zh": "数据集的属性。支持以下取值：\nFILE：文件。\nDIRECTORY：文件夹",
@@ -78,6 +108,15 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NAS",
+        "MAXCOMPUTE",
+        "CPFS",
+        "BMCPFS",
+        "EXTREMENAS",
+        "OSS",
+        "URL"
+      ],
       "example": "NAS",
       "help_en": "The type of the data source. Valid values:\n\nOSS: Object Storage Service (OSS).\n\nNAS: general-purpose Apsara File Storage NAS.\n\nEXTREMENAS: Extreme NAS.\n\nCPFS: general-purpose Cloud Parallel File Storage (CPFS).\n\nBMCPFS: AI Computing Edition of CPFS.\n\nMAXCOMPUTE: MaxCompute.\n\nURL: a public HTTP or HTTPS URL",
       "help_zh": "数据源类型。支持以下取值：\nOSS：阿里云对象存储（OSS）。\nNAS：阿里云文件存储（NAS）通用型。\nEXTREMENAS：阿里云文件存储（NAS）极速型。\nCPFS:  阿里云文件存储（CPFS）通用版。\nBMCPFS：阿里云文件存储（CPFS）智算版。 \nMAXCOMPUTE：阿里云云原生大数据计算服务（MaxCompute）。\nURL：公网HTTP/HTTPS地址",
@@ -106,6 +145,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "VIDEO",
+        "COMMON",
+        "TEXT",
+        "PIC",
+        "AUDIO"
+      ],
       "example": "COMMON",
       "help_en": "The data type of the dataset. The default value is `COMMON`. Valid values:\n\nCOMMON: common\n\nPIC: image\n\nTEXT: text\n\nVIDEO: video\n\nAUDIO: audio",
       "help_zh": "数据集的数据类型，默认为COMMON。支持以下取值：\nCOMMON：普通。\nPIC：图片。\nTEXT：文本。\nVIDEO：视频。\nAUDIO：音频",
@@ -162,6 +208,11 @@
       "type": "array"
     },
     {
+      "enum": [
+        "PAI_PUBLIC_DATASET",
+        "ITAG",
+        "USER"
+      ],
       "example": "USER",
       "help_en": "The source of the data. The default value is USER",
       "help_zh": "数据来源类型，默认为USER",
@@ -232,6 +283,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "PUBLIC",
+        "PRIVATE"
+      ],
       "example": "PRIVATE",
       "help_en": "The visibility of the dataset in the workspace. Valid values:\n\nPRIVATE (default): The dataset is visible only to its owner and administrators in the workspace.\n\nPUBLIC: The dataset is visible to all users in the workspace.\n\nROLE_PUBLIC: The dataset is visible to users with specific workspace roles. The list of roles is specified in the `AccessibleRoleIdList` parameter. The dataset owner and administrators always retain visibility",
       "help_zh": "工作空间可见度。支持以下取值：\nPRIVATE（默认值）：表示工作空间内自己以及管理员可见。\nPUBLIC：工作空间所有用户可见。\nROLE_PUBLIC：指定工作空间角色可见，角色列表参考：AccessibleRoleIdList。该条件下数据集所有者及管理员始终具备可见性",
@@ -376,6 +431,8 @@
       "help_en": "The size of the dataset files, in bytes",
       "help_zh": "数据集文件占据空间的大小。单位Byte ",
       "location": "body",
+      "maximum": "999999999999",
+      "minimum": "1",
       "name": "data_size",
       "options": [
         "--data-size"
@@ -390,6 +447,8 @@
       "help_en": "The number of files in the dataset",
       "help_zh": "数据集文件数量，单位个",
       "location": "body",
+      "maximum": "999999999999",
+      "minimum": "1",
       "name": "data_count",
       "options": [
         "--data-count"
@@ -430,6 +489,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "LOGICAL",
+        "BASIC",
+        "ADVANCED"
+      ],
       "example": "ADVANCED",
       "help_en": "The edition of the dataset. The default value is BASIC. Valid values:\n\nBASIC: Basic. Does not support dataset file metadata management.\n\nADVANCED: Advanced. Supported only for OSS datasets. Each version supports metadata management for up to 1 million files.\n\nLOGICAL: Logical. Supported only for OSS datasets. Each version supports metadata management for up to 3 million files",
       "help_zh": "数据集类型。默认为BASIC，支持以下取值：\n\nBASIC：基础型。不支持数据集文件元数据管理。\nADVANCED：高级型。仅OSS类型支持，每个版本支持最多100万个文件元数据管理。\nLOGICAL：逻辑型。仅OSS类型支持，每个版本支持最多300万个文件元数据管理",
@@ -463,6 +527,33 @@
   "pathPattern": "/api/v1/datasets",
   "product_code": "AIWorkSpace",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Response body",
+        "description_zh": "返回体",
+        "properties": {
+          "DatasetId": {
+            "description_en": "The ID of the dataset",
+            "description_zh": "数据集ID",
+            "example": "d-rbvg5*****jhc9ks92",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "B2C51F93-1C07-5477-9705-5FDB****F19F",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

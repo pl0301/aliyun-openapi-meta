@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "r-bp1zxszhcgatnx****",
       "help_en": "The ID of the instance",
       "help_zh": "实例ID",
@@ -47,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2019-03-10T14:00Z",
       "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询开始时间，格式为<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
@@ -60,6 +62,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2019-03-10T15:00Z",
       "help_en": "The end of the time range to query. The end time must be later than the start time. The time range cannot exceed one day. We recommend that you specify 1 hour. Specify the time in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询结束时间，必须晚于查询开始时间，且起止时间的范围不能超过1天（推荐范围为1小时），格式为<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
@@ -86,6 +89,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "30",
+        "50",
+        "100"
+      ],
       "example": "30",
       "help_en": "The number of entries to return on each page. Valid values: 30, 50, and 100. Default value: 30",
       "help_zh": "每页可展示的最大记录数，取值：30、50、100，默认值为30",
@@ -103,6 +111,8 @@
       "help_en": "The number of the page to return. The value must be an integer that is greater than 0. Default value: 1",
       "help_zh": "页码，取值为大于0且不超过Integer数据类型的最大值，默认值为1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -112,6 +122,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "proxy",
+        "db"
+      ],
       "example": "proxy",
       "help_en": "The type of the slow logs. Default value: db. Valid values:\n\nproxy: slow logs of proxy nodes\ndb: slow logs of data nodes",
       "help_zh": "慢日志类型，取值：\nproxy：代理节点中的慢日志。\ndb：默认值，数据节点中的慢日志",
@@ -138,6 +152,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ASC",
+        "DESC"
+      ],
       "example": "ASC",
       "help_en": "The sorting order of the results to return. Default value: DESC. Valid values:\n\nASC: ascending order\nDESC: descending order",
       "help_zh": "返回结果的排序方式，取值：\nASC：升序。\nDESC：默认值，降序",
@@ -166,5 +184,143 @@
   ],
   "pathPattern": "",
   "product_code": "R-kvstore",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Engine": {
+            "description_en": "The database engine that the instance runs",
+            "description_zh": "数据库类型",
+            "example": "Redis",
+            "type": "string"
+          },
+          "InstanceId": {
+            "description_en": "The ID of the instance",
+            "description_zh": "实例ID",
+            "example": "r-bp10n********",
+            "type": "string"
+          },
+          "Items": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "LogRecords": {
+                "description_en": "The slow query log entries",
+                "description_zh": "由慢日志信息组成的集合",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Account": {
+                      "description_en": "The ID of the account",
+                      "description_zh": "账号ID",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "AccountName": {
+                      "description_en": "The username of the account",
+                      "description_zh": "账号名称",
+                      "example": "demo",
+                      "type": "string"
+                    },
+                    "Command": {
+                      "description_en": "The slow query statement",
+                      "description_zh": "慢查询语句",
+                      "example": "KEYS *",
+                      "type": "string"
+                    },
+                    "DBName": {
+                      "description_en": "The database name",
+                      "description_zh": "数据库名称",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "DataBaseName": {
+                      "description_en": "The database name. This parameter serves the same purpose as the DBName parameter. We recommend that you use the DBName parameter",
+                      "description_zh": "数据库名称，与DBName作用一致，推荐使用DBName参数",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "ElapsedTime": {
+                      "description_en": "The amount of time consumed to execute the slow query statement. Unit: microseconds",
+                      "description_zh": "执行时长，单位为微秒",
+                      "example": "248",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ExecuteTime": {
+                      "description_en": "The start time when the slow query statement was executed. The time is displayed in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "执行开始时间，格式：YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2019-03-12T09:18:41Z",
+                      "type": "string"
+                    },
+                    "IPAddress": {
+                      "description_en": "The IP address of the client",
+                      "description_zh": "客户端的IP地址",
+                      "example": "172.16.88.***",
+                      "type": "string"
+                    },
+                    "NodeId": {
+                      "description_en": "The node ID",
+                      "description_zh": "节点ID",
+                      "example": "r-bp1zxszhcgatnx****-db-0",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number of the returned page",
+            "description_zh": "当前显示的页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageRecordCount": {
+            "description_en": "The number of log entries returned on the current page",
+            "description_zh": "当前页显示的日志数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The maximum number of log entries returned per page",
+            "description_zh": "每页显示的日志数上限",
+            "example": "30",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "686BB8A6-BBA5-47E5-8A75-D2ADE433****",
+            "type": "string"
+          },
+          "StartTime": {
+            "description_en": "The start time of the query",
+            "description_zh": "查询的开始时间",
+            "example": "2019-03-10T14:00Z",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of returned log entries",
+            "description_zh": "日志条目总数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

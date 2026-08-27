@@ -2,6 +2,66 @@
   "camel_example": "aliyun imm RefreshWebofficeToken --region cn-hangzhou --RefreshToken a730ae0d7c6a487d87c661d19900000000 --ProjectName 'test-project' --CredentialConfig 'example-string' --AccessToken 99d1b8b478b641c1b3372f5bd600000000",
   "cmd_full_name": "imm refresh-weboffice-token",
   "cmd_name": "refresh-weboffice-token",
+  "components": {
+    "schemas": {
+      "CredentialConfig": {
+        "description_en": "The authorization chain settings. In most cases, this parameter is left empty.\n\nIf Account A is used to call an API operation of Intelligent Media Management (IMM) to process Object Storage Service (OSS) data in Account B, you must set the ServiceRole parameter to a role in Account A, and set the Chain parameter to a role in Account B",
+        "description_zh": "链式授权配置对象，一般留空即可。\n假设当前使用A账号调用IMM接口处理B账号中的OSS数据。\nServiceRole参数应配置A账号中的角色，Chain参数应设置B账号准备好的角色，通过上述配置完成后，就可以使用A账号调用IMM接口处理B账号中的OSS数据",
+        "properties": {
+          "Chain": {
+            "description_en": "The authorization chains. All roles in the array must have the `sts:AssumeRole` permission. You need to only grant other permissions, such as read and write permissions on OSS, to the last role in the array. You can grant permissions in the RAM console",
+            "description_zh": "需要传递授权的链列表，数组中的所有角色都需要赋予访问 `sts:AssumeRole` 权限。\n只有数组中的最后一个角色需要额外配置需要真正访问的其他权限，比如OSS的读写权限，可以通过RAM控制台进行授权操作",
+            "items": {
+              "description_en": "The authorization chain",
+              "description_zh": "授权链对象",
+              "properties": {
+                "AssumeRoleFor": {
+                  "description_en": "The ID of the account that you use to grant permissions",
+                  "description_zh": "提供授权的账号ID",
+                  "example": "10232100246xxxxx",
+                  "title": "授权对象",
+                  "type": "string"
+                },
+                "Role": {
+                  "description_en": "The RAM role that can be assumed",
+                  "description_zh": "允许扮演的RAM角色",
+                  "example": "AliyunOSSRole",
+                  "title": "授权角色",
+                  "type": "string"
+                },
+                "RoleType": {
+                  "description_en": "The role type. Valid values:\n\nuser: Alibaba Cloud account.\nservice: Alibaba Cloud service",
+                  "description_zh": "角色类型，可选值如下。\nuser：阿里云账号。\nservice：阿里云服务",
+                  "example": "user",
+                  "title": "授权方类型",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "授权链",
+            "type": "array"
+          },
+          "Policy": {
+            "description_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+            "description_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+            "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+            "title": "权限策略",
+            "type": "string"
+          },
+          "ServiceRole": {
+            "description_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+            "description_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+            "example": "AliyunSTSAssumeForIMMServiceRole",
+            "title": "服务角色",
+            "type": "string"
+          }
+        },
+        "title": "链式授权配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Refreshes a Weboffice access token. A Weboffice access token is valid for 30 minutes. After it expires, you can no longer access Weboffice. To continue accessing Weboffice, call this operation to refresh the Weboffice access token and obtain a new token that is also valid for 30 minutes",
   "description_zh": "刷新Weboffice访问凭证。Weboffice访问凭证有效期是30分钟，过期会失效，无法继续访问Weboffice。如果要继续访问Weboffice，可以使用这个接口刷新Weboffice访问凭证，即获取一个新的凭证，新的凭证过期时间也是30分钟",
@@ -153,5 +213,59 @@
   ],
   "pathPattern": "",
   "product_code": "imm",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The Weboffice access token",
+        "description_zh": "Weboffice 访问凭证",
+        "properties": {
+          "AccessToken": {
+            "description_en": "The Weboffice access token",
+            "description_zh": "Weboffice 访问凭证",
+            "example": "4996466c690a4902846ce00f96********",
+            "title_en": "",
+            "title_zh": "access token",
+            "type": "string"
+          },
+          "AccessTokenExpiredTime": {
+            "description_en": "The expiration time of the access token. The access token expires in 30 minutes. Format: ISO 8601 UTC timestamp with millisecond precision",
+            "description_zh": "访问凭证的过期时间。过期时间30分钟。格式为：ISO 8601 UTC 时间戳（毫秒级精度）",
+            "example": "2021-08-31T13:07:28.950065359Z",
+            "title_en": "",
+            "title_zh": "access token 过期时间",
+            "type": "string"
+          },
+          "RefreshToken": {
+            "description_en": "The Weboffice refresh token",
+            "description_zh": "Weboffice 刷新凭证",
+            "example": "72a52ab3702a4123ab5594671a********",
+            "title_en": "",
+            "title_zh": "refresh token",
+            "type": "string"
+          },
+          "RefreshTokenExpiredTime": {
+            "description_en": "The expiration time of the refresh token. The refresh token expires in 1 day. Format: ISO 8601 UTC timestamp with millisecond precision",
+            "description_zh": "刷新凭证的过期时间。过期时间 1 天。格式为：ISO 8601 UTC 时间戳（毫秒级精度）",
+            "example": "2021-09-01T12:37:28.950065359Z",
+            "title_en": "",
+            "title_zh": "refresh token 过期时间",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "501339F9-4B70-0CE2-AB8C-866C********",
+            "title_en": "",
+            "title_zh": "请求 Id",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "文档转换任务",
+        "type": "object"
+      }
+    },
+    "500": {}
+  }
 }

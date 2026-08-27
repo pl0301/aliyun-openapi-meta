@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "pc-****************",
       "help_en": "The cluster ID.\n\nCall the https://help.aliyun.com/document_detail/98094.html operation to view details of all clusters in your account, such as cluster IDs",
       "help_zh": "集群ID。\n您可以通过https://help.aliyun.com/document_detail/98094.html接口查看账号下所有集群的详细信息（如集群ID）",
@@ -34,6 +35,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "AVAILABLE_VERSION",
+        "LATEST_VERSION"
+      ],
       "example": "LATEST_VERSION",
       "help_en": "Specifies whether to return information about the latest version or a list of upgradable versions. Valid values:\n\nLATEST_VERSION: Queries information about the latest version.\n\nAVAILABLE_VERSION: Queries a list of upgradable versions",
       "help_zh": "指定返回最新版本信息或者可升级版本列表。取值范围如下：\n\nLATEST_VERSION：查询最新版本信息。\nAVAILABLE_VERSION：查询可升级版本列表",
@@ -49,5 +54,168 @@
   ],
   "pathPattern": "",
   "product_code": "polardb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "DBClusterId": {
+            "description_en": "The cluster ID",
+            "description_zh": "集群ID",
+            "example": "pc-****************",
+            "type": "string"
+          },
+          "DBLatestStableVersion": {
+            "example": "2.0.16.13.14.0",
+            "type": "string"
+          },
+          "DBLatestVersion": {
+            "description_en": "The latest version of the database kernel",
+            "description_zh": "数据库内核引擎的最新版本",
+            "example": "8.0.1.1.16",
+            "type": "string"
+          },
+          "DBMinorVersion": {
+            "description_en": "The minor version of the database engine.\n\nIf `DBVersion` is 8.0, valid values are:\n\n8.0.2\n\n8.0.1\n\nIf `DBVersion` is 5.7, the value is 5.7.28.\n\nIf `DBVersion` is 5.6, the value is 5.6.16",
+            "description_zh": "数据库引擎小版本号。\n当`DBVersion`为8.0时，取值范围如下：\n    * 8.0.2\n    * 8.0.1\n当`DBVersion`为5.7时，取值为5.7.28。\n\n当`DBVersion`为5.6时，取值为5.6.16",
+            "example": "8.0.1",
+            "type": "string"
+          },
+          "DBRevisionVersion": {
+            "description_en": "The revision version of the database engine.\n\nFor a PolarDB for MySQL 5.6 cluster, this parameter is returned only when the release date of the revision version is later than 20200831. Otherwise, this parameter is empty. For more information about the kernel version of a PolarDB for MySQL cluster, see [Kernel release notes]（https://help.aliyun.com/document_detail/423884.html）",
+            "description_zh": "数据库引擎的修订版本号。\n针对PolarDB MySQL版5.6版本的集群，仅发布日期在20200831之后的`Revision Version`信息会被返回，否则该参数为空。关于PolarDB MySQL版集群的内核版本详情，请参见[内核发布记录]（https://help.aliyun.com/document_detail/423884.html）",
+            "example": "8.0.1.1.7",
+            "type": "string"
+          },
+          "DBRevisionVersionList": {
+            "description_en": "A list of upgradable versions",
+            "description_zh": "可升级的版本信息列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "ReleaseNote": {
+                  "description_en": "The release notes of the version",
+                  "description_zh": "版本发布说明",
+                  "example": "ReleaseNote",
+                  "type": "string"
+                },
+                "ReleaseType": {
+                  "description_en": "The release status of the database version. Valid values:\n\nStable: The current version is stable.\n\nOld: The current version is outdated. Do not upgrade to this version.\n\nHighRisk: The current version has critical bugs. Do not upgrade to this version.\n\nBeta: The current version is a beta version",
+                  "description_zh": "数据库版本发布状态。取值范围如下：\nStable：当前版本状态稳定。\nOld：当前版本过旧，不建议升级到该版本。\nHighRisk：当前版本有严重缺陷，不建议升级到该版本。\nBeta：当前版本为Beta版",
+                  "example": "Stable",
+                  "type": "string"
+                },
+                "RevisionVersionCode": {
+                  "description_en": "The revision version code of the database engine. You can use this code to specify the target version for an upgrade",
+                  "description_zh": "数据库引擎的修订版本Code，用于指定升级到该目标版本",
+                  "example": "20230707",
+                  "type": "string"
+                },
+                "RevisionVersionName": {
+                  "description_en": "The revision version of the database engine",
+                  "description_zh": "数据库引擎的修订版本号",
+                  "example": "8.0.1.1.35.1",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "DBVersion": {
+            "description_en": "The major version of the database engine. Valid values:\n\n8.0\n\n5.7\n\n5.6",
+            "description_zh": "数据库引擎的大版本号，取值范围如下：\n8.0\n5.7\n5.6",
+            "example": "8.0",
+            "type": "string"
+          },
+          "DBVersionStatus": {
+            "description_en": "The status of the current minor version of the database. Valid values:\n\nStable: The current version is stable.\n\nOld: The current version is outdated. Upgrade to the latest version.\n\nHighRisk: The current version has critical bugs. Upgrade to the latest version immediately.\n\nBeta: The current version is a beta version.\n\nFor more information about how to upgrade the minor version of a database, see [Upgrade versions]（https://help.aliyun.com/document_detail/158572.html）",
+            "description_zh": "当前数据库小版本状态，取值范围如下：\nStable：当前版本状态稳定。\nOld：当前版本过旧，建议升级到最新版本。\nHighRisk：当前版本有严重缺陷，请立即升级到最新的版本。\nBeta：当前版本为Beta版。\n关于如何升级数据库小版本，请参见[版本升级]（https://help.aliyun.com/document_detail/158572.html）",
+            "example": "Stable",
+            "type": "string"
+          },
+          "IsLatestStableVersion": {
+            "example": "true",
+            "type": "string"
+          },
+          "IsLatestVersion": {
+            "description_en": "Indicates whether the current database kernel version is the latest version. Valid values:\n\ntrue\n\nfalse",
+            "description_zh": "当前数据库内核引擎版本是否为最新版本，取值范围如下：\n\ntrue\nfalse",
+            "example": "true",
+            "type": "string"
+          },
+          "IsProxyLatestVersion": {
+            "description_en": "Indicates whether the current database proxy version is the latest version. Valid values:\n\ntrue\n\nfalse",
+            "description_zh": "当前数据库代理版本是否为最新版本，取值范围如下：\ntrue\nfalse",
+            "example": "true",
+            "type": "string"
+          },
+          "ProxyLatestVersion": {
+            "description_en": "The latest version of the database proxy",
+            "description_zh": "数据库代理的最新版本",
+            "example": "2.4.17",
+            "type": "string"
+          },
+          "ProxyRevisionVersion": {
+            "description_en": "The version of the database proxy",
+            "description_zh": "数据库代理的版本",
+            "example": "2.4.15",
+            "type": "string"
+          },
+          "ProxyRevisionVersionList": {
+            "description_en": "A list of upgradable proxy versions.\n\nStable: The current version is stable.\n\nOld: This version is outdated and not recommended for upgrades.\n\nHighRisk: This version has critical bugs and is not recommended for upgrades.\n\nBeta: This is a beta version",
+            "description_zh": "数据库Proxy版本发布状态。取值范围如下：\n\nStable：当前版本状态稳定。\nOld：当前版本过旧，不建议升级到该版本。\nHighRisk：当前版本有严重缺陷，不建议升级到该版本。\nBeta：当前版本为Beta版",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "ReleaseNote": {
+                  "description_en": "The release notes of the version",
+                  "description_zh": "版本发布说明",
+                  "example": "ReleaseNote",
+                  "type": "string"
+                },
+                "ReleaseType": {
+                  "description_en": "The release type. Valid values:\n\nLTS: long-term support version.\n\nBETA: preview version",
+                  "description_zh": "发布类型。返回值：\nLTS：长期支持版本。\nBETA：预览版本",
+                  "example": "LTS",
+                  "type": "string"
+                },
+                "RevisionVersionCode": {
+                  "description_en": "The revision version code of the database proxy engine. You can use this code to specify the target version for an upgrade",
+                  "description_zh": "数据库Proxy引擎的修订版本Code，用于指定升级到该目标版本",
+                  "example": "20230707",
+                  "type": "string"
+                },
+                "RevisionVersionName": {
+                  "description_en": "The revision version of the database proxy engine",
+                  "description_zh": "数据库Proxy引擎的修订版本号",
+                  "example": "2.8.24",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "ProxyVersionStatus": {
+            "description_en": "The status of the database proxy version. Valid values:\n\nStable: The current version is stable.\n\nOld: The current version is outdated. Upgrade to the latest version.\n\nHighRisk: The current version has critical bugs. Upgrade to the latest version immediately.\n\nBeta: The current version is a beta version.\n\nFor more information about how to upgrade the database proxy version, see [Upgrade versions]（https://help.aliyun.com/document_detail/158572.html）",
+            "description_zh": "数据库代理的版本状态。取值范围如下：\nStable：当前版本状态稳定。\nOld：当前版本过旧，建议升级到最新版本。\nHighRisk：当前版本有严重缺陷，请立即升级到最新的版本。\nBeta：当前版本为Beta版。\n关于如何升级数据库代理版本，请参见[版本升级]（https://help.aliyun.com/document_detail/158572.html）",
+            "example": "Stable",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "47921222-0D37-4133-8C0D-017DC3******",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

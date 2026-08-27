@@ -21,10 +21,12 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "The page number",
       "help_zh": "页数\n\n<notice>该参数必填></notice>",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -34,10 +36,12 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "10",
       "help_en": "The number of entries per page",
       "help_zh": "分页大小\n<notice>该参数必填></notice>",
       "location": "query",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -47,6 +51,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "ad16fc35-d824-4102-a606-2be51c1aa6dd",
       "help_en": "The ID of the job group",
       "help_zh": "任务组ID",
@@ -125,6 +130,7 @@
       "type": "bool"
     },
     {
+      "doc_required": true,
       "example": "9d53cd72-4050-4419-8c17-acc0bf158147",
       "help_en": "The instance ID",
       "help_zh": "实例ID",
@@ -151,6 +157,23 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NoAnswer",
+        "PerDayCallCountLimit",
+        "InArrears",
+        "OutOfService",
+        "NoStrategy",
+        "EmptyNumber",
+        "JobPerDayCallCountLimit",
+        "NoneRepeatableJobMaxAttemptCountLimit",
+        "ContactSuspended",
+        "VerificationCancelled",
+        "Unknown",
+        "InvalidStrategy",
+        "TimeUp",
+        "CallFailed",
+        "ContactBlockList"
+      ],
       "example": "[\"NoAnswer\"]",
       "help_en": "The list of job failure reasons",
       "help_zh": "作业失败原因列表",
@@ -208,5 +231,392 @@
   ],
   "pathPattern": "",
   "product_code": "OutboundBot",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response object",
+        "description_zh": "返回结果对象",
+        "properties": {
+          "Code": {
+            "description_en": "Code",
+            "description_zh": "Code",
+            "example": "OK",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Jobs": {
+            "description_en": "The jobs",
+            "description_zh": "作业",
+            "properties": {
+              "List": {
+                "description_en": "The job list",
+                "description_zh": "作业列表",
+                "items": {
+                  "description_en": "The job object",
+                  "description_zh": "Job对象",
+                  "properties": {
+                    "Id": {
+                      "description_en": "The job ID",
+                      "description_zh": "作业ID",
+                      "example": "cc231a1d-3c05-4739-8926-193ecf4097ba",
+                      "type": "string"
+                    },
+                    "JobFailureReason": {
+                      "description_en": "The reason for job failure",
+                      "description_zh": "作业失败原因",
+                      "example": "- Unknown（未知错误）\n- NoAnswer（无人接听）\n- InvalidStrategy（无效的策略，策略配置不正确）\n- TimeUp（调度时发现超时）\n- NoStrategy（策略为空或没有找到）\n- CallFailed（呼叫失败）\n-PerDayCallCountLimit（号码每日呼叫次数限制）\n- ContactBlockList（禁止外呼名单）\n- EmptyNumber（空号不再外呼）\n- JobPerDayCallCountLimit（号码每日呼叫次数限制）\n- VerificationCancelled（呼叫前验证不通过取消）\n- ContactSuspended（止呼）\n- InArrears（欠费）\n- OutOfService（停机）\n- NoneRepeatableJobMaxAttemptCountLimit（ 任务最大尝试次数， 当RepeatBy（@see ）为None时生效）",
+                      "type": "string"
+                    },
+                    "LatestTask": {
+                      "description_en": "The latest call",
+                      "description_zh": "最新通话",
+                      "properties": {
+                        "CallDuration": {
+                          "description_en": "The call duration",
+                          "description_zh": "通话时长",
+                          "example": "40000",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "CallDurationDisplay": {
+                          "description_en": "The call duration",
+                          "description_zh": "通话时长",
+                          "example": "40",
+                          "type": "string"
+                        },
+                        "CallTime": {
+                          "description_en": "The call time",
+                          "description_zh": "通话时间",
+                          "example": "1615363297000",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "Contact": {
+                          "description_en": "The contact",
+                          "description_zh": "联系人",
+                          "properties": {
+                            "Honorific": {
+                              "description_en": "The honorific for the contact. If not specified, the value defaults to the same as the name",
+                              "description_zh": "对联系人的尊称，不填入默认与name相同\n客户自定义，在接口调用执行外呼任务时方式时通过json方式传入",
+                              "example": "张先生",
+                              "type": "string"
+                            },
+                            "Id": {
+                              "description_en": "The contact ID, which is a unique identifier generated by the system when the outbound call list is uploaded",
+                              "description_zh": "联系人ID，上传外呼名单时系统生成唯一标识",
+                              "example": "63860deb-6218-45df-b1e0-76f2b166e790",
+                              "type": "string"
+                            },
+                            "JobUuid": {
+                              "description_en": "The job ID",
+                              "description_zh": "作业ID",
+                              "example": "cc231a1d-3c05-4739-8926-193ecf4097ba\n",
+                              "type": "string"
+                            },
+                            "Name": {
+                              "description_en": "The name of the contact, such as John Smith",
+                              "description_zh": "联系人姓名，比如张三",
+                              "example": "张三",
+                              "type": "string"
+                            },
+                            "PhoneNumber": {
+                              "description_en": "The phone number of the contact",
+                              "description_zh": "联系人的电话号码",
+                              "example": "1882020****",
+                              "type": "string"
+                            },
+                            "PreferredPhoneNumber": {
+                              "description_en": "The phone number specified by the callee for communication. If this number is provided, the system calls this number.\nThis is a custom value passed in JSON format when calling the API operation to execute an outbound task",
+                              "description_zh": "交流中被叫人自己指定的电话号码，填入后，会实际呼叫该号码。\n客户自定义，在接口调用执行外呼任务时方式时通过json方式传入",
+                              "example": "134123****",
+                              "type": "string"
+                            },
+                            "ReferenceId": {
+                              "description_en": "The contact ID uploaded by the customer. This ID must be provided by the business side to avoid duplicate name issues",
+                              "description_zh": "客户自己上传的联系人ID,需要由业务方提供，这主要是避免重名现象",
+                              "example": "C01",
+                              "type": "string"
+                            },
+                            "Role": {
+                              "description_en": "The role of the contact in this outbound call task. If not specified, no role distinction is made. For example, in collection tasks, contact roles can include borrower, co-borrower, and guarantor.\n\nCustom-defined by the user. When using the API, pass this value in JSON format",
+                              "description_zh": "该联系人在此外呼业务中的角色，不指定则不区分。对于催收业务中，联系人的角色可以分为借款人，共同借款人，担保人等。\n\n客户自定义，在接口方式时通过json方式传入",
+                              "example": "借款人",
+                              "type": "string"
+                            },
+                            "Round": {
+                              "description_en": "The round number",
+                              "description_zh": "轮次",
+                              "example": "151",
+                              "format": "int32",
+                              "type": "integer"
+                            },
+                            "State": {
+                              "description_en": "The state of the contact, such as Available, WrongNumber, or DoesNotExist.\nCustom-defined by the user. Pass this value in JSON format when calling the API operation to execute an outbound task",
+                              "description_zh": "该联系人的状态，\n比如正常（Available），号码错误（WrongNumber）, 或者是空号（DoesNotExist）等\n客户自定义，在接口调用执行外呼任务时方式时通过json方式传入",
+                              "example": "Available",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "DialExceptionCodes": {
+                          "description_en": "The call exception codes",
+                          "description_zh": "通话异常码",
+                          "items": {
+                            "description_en": "The call exception codes",
+                            "description_zh": "通话异常码",
+                            "properties": {
+                              "Code": {
+                                "description_en": "The error code",
+                                "description_zh": "错误码",
+                                "enumValueTitles": {},
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "Hint": {
+                                "description_en": "The error message",
+                                "description_zh": "错误提示信息",
+                                "enumValueTitles": {},
+                                "example": "无",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "Extras": {
+                          "description_en": "The label names to be collected",
+                          "description_zh": "需收集的标签名称",
+                          "items": {
+                            "description_en": "The pass-through parameter object",
+                            "description_zh": "随路参数对象",
+                            "properties": {
+                              "Key": {
+                                "description_en": "The label key",
+                                "description_zh": "标签Key",
+                                "example": "是否已经接通",
+                                "type": "string"
+                              },
+                              "Value": {
+                                "description_en": "The label value",
+                                "description_zh": "标签Value",
+                                "example": "是",
+                                "type": "string"
+                              }
+                            },
+                            "title_en": "",
+                            "title_zh": "随路参数对象",
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "HangUpDirection": {
+                          "description_en": "The party that hung up the call",
+                          "description_zh": "挂机方",
+                          "example": "被叫用户",
+                          "title_en": "",
+                          "title_zh": "挂机方",
+                          "type": "string"
+                        },
+                        "HasAnswered": {
+                          "description_en": "Indicates whether the call was answered",
+                          "description_zh": "是否接听",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "HasHangUpByRejection": {
+                          "description_en": "Specifies whether the call is hung up due to rejection",
+                          "description_zh": "是否拒识挂机",
+                          "example": "false",
+                          "type": "boolean"
+                        },
+                        "HasLastPlaybackCompleted": {
+                          "description_en": "Indicates whether the playback was completed when the call was hung up",
+                          "description_zh": "挂断时是否完成播报",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "HasReachedEndOfFlow": {
+                          "description_en": "Specifies whether the call has reached the end of the flow",
+                          "description_zh": "是否完结",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "Status": {
+                          "description_en": "The call status",
+                          "description_zh": "通话状态",
+                          "example": "Succeeded",
+                          "type": "string"
+                        },
+                        "StatusName": {
+                          "description_en": "The call status name",
+                          "description_zh": "通话状态名称",
+                          "example": "未呼出-超出每日上限",
+                          "type": "string"
+                        },
+                        "TagHits": {
+                          "description_en": "The label hit information (returned by the legacy canvas)",
+                          "description_zh": "标签命中信息【旧画布返回】",
+                          "items": {
+                            "description_en": "The label hit object (returned by the legacy canvas)",
+                            "description_zh": "标签命中对象【旧画布返回】",
+                            "properties": {
+                              "TagGroup": {
+                                "description_en": "The label group to which the label belongs",
+                                "description_zh": "标签所在标签组",
+                                "example": "动物",
+                                "type": "string"
+                              },
+                              "TagName": {
+                                "description_en": "The label name",
+                                "description_zh": "标签名称",
+                                "example": "猫幼年期,猫幼年期",
+                                "type": "string"
+                              }
+                            },
+                            "title_en": "",
+                            "title_zh": "标签命中对象【旧画布返回】",
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "TaskEndReason": {
+                          "description_en": "The call result",
+                          "description_zh": "通话结果",
+                          "example": "FINISHED",
+                          "type": "string"
+                        },
+                        "VoiceName": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Status": {
+                      "description_en": "The job status",
+                      "description_zh": "作业状态。\nScheduling(0, \"调度中\")\nExecuting(1, \"执行中\")\nSucceeded(2, \"结束-已触达\")\nPaused(3, \"暂停\")\nFailed(4, \"结束-未触达\")\nCancelled(5, \"已取消-人工干预\")\nDrafted(6, \"草稿态\")",
+                      "example": "Succeeded",
+                      "type": "string"
+                    },
+                    "StatusName": {
+                      "description_en": "The job status name",
+                      "description_zh": "作业状态名称",
+                      "example": "结束-已触达",
+                      "type": "string"
+                    }
+                  },
+                  "title_en": "",
+                  "title_zh": "Job对象",
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "PageCount": {
+                "description_en": "The total number of pages",
+                "description_zh": "总页数",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageNumber": {
+                "description_en": "The page number",
+                "description_zh": "页数",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "The number of entries per page",
+                "description_zh": "分页大小",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "RowCount": {
+                "description_en": "The total number of entries",
+                "description_zh": "总条数",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "Labels": {
+            "description_en": "The label information that can be used as filter conditions",
+            "description_zh": "可做筛选条件的标签信息。\n\n显示该任务组中所有具有枚举值的标签信息",
+            "items": {
+              "description_en": "The label object",
+              "description_zh": "标签对象",
+              "properties": {
+                "Name": {
+                  "description_en": "The label name",
+                  "description_zh": "标签名字",
+                  "example": "是否满意",
+                  "type": "string"
+                },
+                "ValueList": {
+                  "description_en": "The list of label values",
+                  "description_zh": "标签值列表",
+                  "items": {
+                    "description_en": "The label value",
+                    "description_zh": "标签值",
+                    "example": "[\"否\",\"是\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "title_en": "",
+              "title_zh": "标签对象",
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "Message": {
+            "description_en": "The prompt message returned by the operation",
+            "description_zh": "接口提示消息",
+            "example": "Success",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "9bdaa1d1-a036-4451-ab11-ca0373679091",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "type": "boolean"
+          },
+          "VariableNames": {
+            "description_en": "The label names to be collected",
+            "description_zh": "需收集的标签名称",
+            "items": {
+              "description_en": "The complete set of label keys",
+              "description_zh": "标签key全集",
+              "example": "是否已经接通",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "title_en": "",
+        "title_zh": "返回结果对象",
+        "type": "object"
+      }
+    }
+  }
 }

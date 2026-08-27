@@ -2,6 +2,166 @@
   "camel_example": "",
   "cmd_full_name": "datalake update-database",
   "cmd_name": "update-database",
+  "components": {
+    "schemas": {
+      "DatabaseInput": {
+        "description_en": "Database object",
+        "description_zh": "数据库对象",
+        "properties": {
+          "CreateTime": {
+            "description_en": "Creation time, required",
+            "description_zh": "创建时间，必填",
+            "example": "1580869631",
+            "format": "int32",
+            "title": "createTime",
+            "type": "integer"
+          },
+          "Description": {
+            "description_en": "The description of the metadatabase",
+            "description_zh": "元数据库描述文本",
+            "example": "this is a hive database",
+            "title": "Description",
+            "type": "string"
+          },
+          "LocationUri": {
+            "description_en": "The storage path of the metabase. For example, you can enter the HDFS path",
+            "description_zh": "元数据库保存路径，例如可填写HDFS路径",
+            "example": "/hdfs/hivedb/data",
+            "title": "locationUri",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the metabase. The verification length is 128. Special characters other than underscores are not supported",
+            "description_zh": "元数据库名称，校验长度128，不支持除下划线以外的特殊字符",
+            "example": "name",
+            "title": "name",
+            "type": "string"
+          },
+          "OwnerName": {
+            "description_en": "The name of the owner",
+            "description_zh": "负责人名称",
+            "example": "zhangsan",
+            "title": "ownerName",
+            "type": "string"
+          },
+          "OwnerType": {
+            "description_en": "The type of the owner. You can set this field to USER, ROLE, or GROUP",
+            "description_zh": "负责人类型，填USER或ROLE或GROUP",
+            "example": "USER",
+            "title": "ownerType",
+            "type": "string"
+          },
+          "Parameters": {
+            "$ref": "#/components/schemas/Parameters",
+            "description_en": "The key-value pairs (KVPs) that define the parameters and attributes of the metadatabase",
+            "description_zh": "定义数据库的参数和属性的键值对"
+          },
+          "Privileges": {
+            "$ref": "#/components/schemas/PrincipalPrivilegeSet",
+            "description_en": "The permissions on the metadatabase. This parameter is optional",
+            "description_zh": "权限，非必填"
+          }
+        },
+        "title": "Database input",
+        "type": "object"
+      },
+      "Parameters": {
+        "additionalProperties": {
+          "description_en": "Parameter key/value",
+          "description_zh": "参数key/value",
+          "example": "key",
+          "type": "string"
+        },
+        "description_en": "Parameters",
+        "description_zh": "Parameters",
+        "title": "parameter map",
+        "type": "object"
+      },
+      "PrincipalPrivilegeSet": {
+        "description_en": "The set of permissions owned by the security principal",
+        "description_zh": "主体所拥有的权限集",
+        "properties": {
+          "GroupPrivileges": {
+            "$ref": "#/components/schemas/Privileges",
+            "description_en": "The set of permissions for the user group",
+            "description_zh": "用户组的权限集"
+          },
+          "RolePrivileges": {
+            "$ref": "#/components/schemas/Privileges",
+            "description_en": "The set of permissions for the role",
+            "description_zh": "角色的权限集"
+          },
+          "UserPrivileges": {
+            "$ref": "#/components/schemas/Privileges",
+            "description_en": "The set of permissions for the user",
+            "description_zh": "用户的权限集"
+          }
+        },
+        "title": "PrincipalPrivilegeSet Object",
+        "type": "object"
+      },
+      "PrivilegeGrantInfo": {
+        "description_en": "The information about permissions",
+        "description_zh": "授权信息",
+        "properties": {
+          "CreateTime": {
+            "description_en": "The time when the instance was created. The value is a UNIX timestamp. Unit: seconds",
+            "description_zh": "创建时间，Unix时间戳秒数",
+            "example": "1606226844",
+            "format": "int32",
+            "title": "createTime",
+            "type": "integer"
+          },
+          "GrantOption": {
+            "description_en": "Whether to grant the authorization permission",
+            "description_zh": "是否授予授权权限",
+            "example": "true",
+            "title": "grantOption",
+            "type": "boolean"
+          },
+          "Grantor": {
+            "description_en": "The subject of the authorization",
+            "description_zh": "授权的主体",
+            "example": "Grantor",
+            "title": "grantor",
+            "type": "string"
+          },
+          "GrantorType": {
+            "description_en": "The type of the authorization principal",
+            "description_zh": "授权主体的类型",
+            "example": "GrantorType",
+            "title": "grantorType",
+            "type": "string"
+          },
+          "Privilege": {
+            "description_en": "The permission information",
+            "description_zh": "权限信息",
+            "example": "Privilege",
+            "title": "privilege",
+            "type": "string"
+          }
+        },
+        "title": "PrivilegeGrantInfo",
+        "type": "object"
+      },
+      "Privileges": {
+        "additionalProperties": {
+          "description_en": "The permissions",
+          "description_zh": "权限列表",
+          "items": {
+            "$ref": "#/components/schemas/PrivilegeGrantInfo",
+            "description_en": "The information about permissions",
+            "description_zh": "授权信息"
+          },
+          "type": "array"
+        },
+        "description_en": "The permission information",
+        "description_zh": "权限信息",
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates the details of a database in a data lake",
   "description_zh": "更新数据湖中数据库的详细信息",
@@ -410,6 +570,69 @@
   "pathPattern": "/api/metastore/catalogs/databases",
   "product_code": "DataLake",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned result",
+        "description_zh": "返回结果",
+        "properties": {
+          "Code": {
+            "description_en": "The status description",
+            "description_zh": "状态描述",
+            "example": "OK",
+            "title_en": "",
+            "title_zh": "Response Code",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The error message",
+            "description_zh": "提示相关错误信息",
+            "example": ".",
+            "title_en": "",
+            "title_zh": "Response Message",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "161F5EFC-E97E-43C0-AACF-FF18FAC912F0",
+            "title_en": "",
+            "title_zh": "RequestId",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue: The request was successful.\n\nfalse: The request failed",
+            "description_zh": "请求是否成功，返回值如下：\n\ntrue：请求成功。\nfalse：请求失败",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "Request is success or not",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Response Object",
+        "type": "object"
+      }
+    },
+    "5XX": {
+      "schema": {
+        "description_en": "Response",
+        "description_zh": "Response",
+        "properties": {
+          "Code": {
+            "description_en": "Response Code",
+            "description_zh": "Response Code",
+            "title_en": "",
+            "title_zh": "Response Code",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The HTTP request body in JSON format",

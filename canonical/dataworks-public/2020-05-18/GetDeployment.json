@@ -48,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "3000001",
       "help_en": "The ID of the deployment task. A deployment task ID is generated when you call the https://help.aliyun.com/document_detail/173944.html or https://help.aliyun.com/document_detail/173956.html operation",
       "help_zh": "发布包的ID。执行https://help.aliyun.com/document_detail/173944.html 和https://help.aliyun.com/document_detail/173956.html时，都会生成一个对应的发布包ID",
@@ -63,5 +64,160 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned data",
+        "description_zh": "返回数据结构",
+        "properties": {
+          "Data": {
+            "description_en": "The details of the deployment package",
+            "description_zh": "发布包的详情",
+            "properties": {
+              "DeployedItems": {
+                "description_en": "The deployed items",
+                "description_zh": "发布项列表",
+                "items": {
+                  "description_en": "The details of the deployed item",
+                  "description_zh": "发布项详情",
+                  "properties": {
+                    "FileId": {
+                      "description_en": "The file ID",
+                      "description_zh": "文件的ID",
+                      "example": "5076****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "FileVersion": {
+                      "description_en": "The version of the file",
+                      "description_zh": "文件的版本",
+                      "example": "7",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Status": {
+                      "description_en": "UNPUBLISHED(0): not published\nSUCCESS(1): Published\nERROR(2): Publishing failed\nCLONED(3): successfully CLONED\nDEPLOY_ERROR(4): Publishing failed\nCLONING(5): CLONING\nREJECT(6): release rejected",
+                      "description_zh": "UNPUBLISHED(0): 未发布\nSUCCESS(1): 发布成功\nERROR(2): 发布失败\nCLONED(3): 克隆成功\nDEPLOY_ERROR(4): 发布失败\nCLONING(5): 克隆中\nREJECT(6): 发布驳回",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "Deployment": {
+                "description_en": "The details of the deployment package",
+                "description_zh": "发布包的详情",
+                "properties": {
+                  "CheckingStatus": {
+                    "description_en": "The check status of one or more files in the deployment task. If the value of the ToEnvironment parameter is 1, the files can be deployed to the production environment only when the value of the Status parameter is 1 and the CheckingStatus parameter is empty. Valid values:\n\n7: The file failed the check.\n8: The file is being checked",
+                    "description_zh": "当前发布包涉及节点的检查状态，当发布包的目标环境是开发环境（toEnviroment=1）时，只有发布包的Status为1并且CheckingStatus为空时，才可以继续进行文件到生产环境的发布。\n7：检查未通过\n8：正在处于检查中的状态",
+                    "example": "7",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "CreateTime": {
+                    "description_en": "The time when the deployment task was created. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                    "description_zh": "发布包生成的毫秒时间戳",
+                    "example": "1593877765000",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "CreatorId": {
+                    "description_en": "The ID of the Alibaba Cloud account used by the user who created the deployment task",
+                    "description_zh": "发布包创建者的阿里云用户ID",
+                    "example": "20030****",
+                    "type": "string"
+                  },
+                  "ErrorMessage": {
+                    "description_en": "The error message that was returned when the deployment package failed. In this case, the value of the Status parameter is 2",
+                    "description_zh": "当发布包执行失败（status为2）后，该字段记录具体的错误信息",
+                    "example": "Success",
+                    "type": "string"
+                  },
+                  "ExecuteTime": {
+                    "description_en": "The time when the deployment task was run. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                    "description_zh": "发布包开始执行的毫秒时间戳",
+                    "example": "1593877765000",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "FromEnvironment": {
+                    "description_en": "The environment in which the deployment task was run. Valid values: 0 and 1. A value of 0 indicates the on-premises environment. A value of 1 indicates the development environment",
+                    "description_zh": "执行本次发布所在的环境，包括0（本地）和1（开发环境）",
+                    "example": "0",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "HandlerId": {
+                    "description_en": "The ID of the Alibaba Cloud account used by the user who ran the deployment task",
+                    "description_zh": "发布包执行者的阿里云用户ID",
+                    "example": "2003****",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description_en": "The name of the deployment task. The value is the same as the name of the specific deployment task that is displayed on the Release Package page in the Deploy module",
+                    "description_zh": "发布包的名称，显示在任务发布>发布包列表页面",
+                    "example": "ods_user_info_d-2020-07-04_20030****",
+                    "type": "string"
+                  },
+                  "Status": {
+                    "description_en": "The status of the deployment task. Valid values: 0, 1, and 2. A value of 0 indicates that the task is ready. A value of 1 indicates that the task was successful. A value of 2 indicates that the task failed",
+                    "description_zh": "发布包当前的状态，包括0（就绪）、1（成功）和2（失败）",
+                    "example": "1",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "ToEnvironment": {
+                    "description_en": "The environment to which the file was deployed. Valid values: 1 and 2. A value of 1 indicates the development environment. A value of 2 indicates the production environment",
+                    "description_zh": "发布文件信息的目标环境，包括1（开发环境）和2（生产环境）",
+                    "example": "1",
+                    "format": "int32",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "ErrorCode": {
+            "description_en": "The error code returned",
+            "description_zh": "错误码",
+            "example": "Invalid.Tenant.ConnectionNotExists",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message returned",
+            "description_zh": "错误信息",
+            "example": "The connection does not exist.",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code returned",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request. You can troubleshoot errors based on the ID",
+            "description_zh": "本次调用的唯一ID。出现错误后，您可以根据该ID排查问题",
+            "example": "0000-ABCD-EFG****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request is successful",
+            "description_zh": "调用是否成功",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

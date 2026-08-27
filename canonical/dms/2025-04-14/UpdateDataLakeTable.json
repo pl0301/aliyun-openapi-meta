@@ -2,6 +2,539 @@
   "camel_example": "",
   "cmd_full_name": "dms update-data-lake-table",
   "cmd_name": "update-data-lake-table",
+  "components": {
+    "schemas": {
+      "DLColumn": {
+        "description_en": "The column property",
+        "description_zh": "列属性",
+        "properties": {
+          "Comment": {
+            "description_en": "The comment of the column",
+            "description_zh": "列的注释",
+            "example": "from deserializer",
+            "title": "comment",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the column",
+            "description_zh": "列的名称",
+            "example": "col",
+            "title": "name",
+            "type": "string"
+          },
+          "Type": {
+            "description_en": "The data type of the column. Valid values: array, bigint, binary, boolean, char, date, decimal, double, float, int, interval, map, set, smallint, string, struct, timestamp, tinyint, union, and varchar",
+            "description_zh": "列的数据类型，包括 array bigint binary boolean char date decimal double float int interval map set smallint string struct timestamp tinyint union varchar",
+            "example": "string",
+            "title": "type",
+            "type": "string"
+          }
+        },
+        "title": "Column",
+        "type": "object"
+      },
+      "DLOrder": {
+        "description_en": "The column sort information",
+        "description_zh": "列排序信息",
+        "properties": {
+          "Col": {
+            "description_en": "The name of the column",
+            "description_zh": "列的名称",
+            "example": "col1",
+            "title": "col",
+            "type": "string"
+          },
+          "Order": {
+            "description_en": "The position of the column in the sort",
+            "description_zh": "该列在排序中的位置",
+            "example": "1",
+            "format": "int32",
+            "title": "order",
+            "type": "integer"
+          }
+        },
+        "title": "Order",
+        "type": "object"
+      },
+      "DLSerdeInfo": {
+        "description_en": "Information about serialization and deserialization",
+        "description_zh": "序列化和反序列化信息",
+        "properties": {
+          "Description": {
+            "description_en": "The description of the serialization",
+            "description_zh": "描述序列化的信息",
+            "example": "\"serialize\"",
+            "title": "description",
+            "type": "string"
+          },
+          "DeserializerClass": {
+            "description_en": "The name of the class used for deserialization",
+            "description_zh": "用于反序列化的具体类名",
+            "example": "org.apache.hadoop.hive.serde2.OpenCSVSerde",
+            "title": "deserializerClass",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the serialization",
+            "description_zh": "序列化名称",
+            "example": "name",
+            "title": "name",
+            "type": "string"
+          },
+          "Parameters": {
+            "description_en": "The key-value pairs of parameters related to serialization",
+            "description_zh": "序列化相关的参数键值对",
+            "example": "{\n  \"serialization.format\": \"1\"\n}",
+            "title": "parameters",
+            "type": "object"
+          },
+          "SerdeType": {
+            "description_en": "The type of serialization",
+            "description_zh": "序列化的类型",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          },
+          "SerializationLib": {
+            "description_en": "The class name of the serialization library",
+            "description_zh": "使用的序列化库的类名称",
+            "example": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+            "title": "serializationLib",
+            "type": "string"
+          },
+          "SerializerClass": {
+            "description_en": "The name of the class used for serialization",
+            "description_zh": "用于序列化的具体类名",
+            "example": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+            "title": "serializerClass",
+            "type": "string"
+          }
+        },
+        "title": "SerdeInfo",
+        "type": "object"
+      },
+      "DLSkewedInfo": {
+        "description_en": "A data structure that stores information about skewed columns",
+        "description_zh": "存储倾斜列信息的数据结构",
+        "properties": {
+          "SkewedColNames": {
+            "description_en": "A list of skewed column names",
+            "description_zh": "倾斜列的名称列表",
+            "items": {
+              "description_en": "A skewed column name",
+              "description_zh": "倾斜字段",
+              "example": "col1",
+              "type": "string"
+            },
+            "title": "skewedColNames",
+            "type": "array"
+          },
+          "SkewedColValueLocationMaps": {
+            "description_en": "A mapping of skewed column values to their locations",
+            "description_zh": "倾斜列值及其位置的映射关系",
+            "example": "{“col1”:\"val1\"}",
+            "title": "skewedColValueLocationMaps",
+            "type": "object"
+          },
+          "SkewedColValues": {
+            "description_en": "A list of skewed column values. Each list provides a set of associated values",
+            "description_zh": "倾斜列值的列表，其中每个列表提供了一组相关联的值",
+            "items": {
+              "description_en": "A list of skewed values",
+              "description_zh": "倾斜值列表",
+              "items": {
+                "description_en": "A skewed value",
+                "description_zh": "倾斜值",
+                "example": "\"123\"",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "skewedColValues",
+            "type": "array"
+          }
+        },
+        "title": "SkewedInfo",
+        "type": "object"
+      },
+      "DLStorageDescriptor": {
+        "description_en": "The data storage information for the data lakehouse table",
+        "description_zh": "湖仓表数据存储信息",
+        "properties": {
+          "BucketCols": {
+            "description_en": "A list of bucket column names that determine the hash distribution of the data",
+            "description_zh": "桶列的名称列表，决定数据的哈希分布",
+            "items": {
+              "description_en": "The name",
+              "description_zh": "名称",
+              "example": "2010",
+              "type": "string"
+            },
+            "title": "bucketCols",
+            "type": "array"
+          },
+          "Columns": {
+            "description_en": "The description of the data columns in the table",
+            "description_zh": "表中数据列的描述信息",
+            "items": {
+              "$ref": "#/components/schemas/DLColumn",
+              "description_en": "The column properties",
+              "description_zh": "列属性"
+            },
+            "title": "columns",
+            "type": "array"
+          },
+          "InputFormat": {
+            "description_en": "The name of the input format class used to read data",
+            "description_zh": "输入格式类的名称，用于读取数据",
+            "example": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+            "title": "inputFormat",
+            "type": "string"
+          },
+          "IsCompressed": {
+            "description_en": "Specifies whether the data is compressed",
+            "description_zh": "是否压缩标识，表示数据是否被压缩存储",
+            "example": "false",
+            "title": "isCompressed",
+            "type": "boolean"
+          },
+          "Location": {
+            "description_en": "The specific location of the data storage",
+            "description_zh": "数据存储的具体位置",
+            "example": "oss://xxx",
+            "title": "location",
+            "type": "string"
+          },
+          "NumBuckets": {
+            "description_en": "The number of buckets",
+            "description_zh": "桶的数量",
+            "example": "-1",
+            "format": "int32",
+            "title": "numBuckets",
+            "type": "integer"
+          },
+          "OriginalColumns": {
+            "description_en": "The description of the original columns",
+            "description_zh": "原始列描述信息",
+            "items": {
+              "$ref": "#/components/schemas/DLColumn",
+              "description_en": "The column properties",
+              "description_zh": "列属性"
+            },
+            "title": "originalColumns",
+            "type": "array"
+          },
+          "OutputFormat": {
+            "description_en": "The name of the output format class used to write data",
+            "description_zh": "输出格式类的名称，用于写入数据",
+            "example": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+            "title": "outputFormat",
+            "type": "string"
+          },
+          "Parameters": {
+            "description_en": "Other parameter mappings for data storage",
+            "description_zh": "数据存储的其他参数映射",
+            "example": "key/value\n",
+            "title": "parameters",
+            "type": "object"
+          },
+          "SerdeInfo": {
+            "$ref": "#/components/schemas/DLSerdeInfo",
+            "description_en": "The serialization and deserialization information",
+            "description_zh": "序列化和反序列化信息",
+            "title": "serdeInfo"
+          },
+          "SkewedInfo": {
+            "$ref": "#/components/schemas/DLSkewedInfo",
+            "description_en": "The data structure that stores information about skewed columns",
+            "description_zh": "存储倾斜列信息的数据结构",
+            "title": "skewedInfo"
+          },
+          "SortCols": {
+            "description_en": "The description of the sorted columns",
+            "description_zh": "排序列的描述信息",
+            "items": {
+              "$ref": "#/components/schemas/DLOrder",
+              "description_en": "The column sorting information",
+              "description_zh": "列排序信息"
+            },
+            "title": "sortCols",
+            "type": "array"
+          }
+        },
+        "title": "StorageDescriptor",
+        "type": "object"
+      },
+      "DLTable": {
+        "description_en": "The details of the table",
+        "description_zh": "表的详细信息",
+        "properties": {
+          "CatalogName": {
+            "description_en": "The name of the data catalog",
+            "description_zh": "数据目录名称",
+            "example": "hive",
+            "title": "catalogName",
+            "type": "string"
+          },
+          "CreateTime": {
+            "description_en": "The time when the table was created",
+            "description_zh": "表的创建时间",
+            "example": "1731586286",
+            "format": "int32",
+            "title": "createTime",
+            "type": "integer"
+          },
+          "CreatorId": {
+            "description_en": "The ID of the table creator",
+            "description_zh": "创建该表的用户ID",
+            "example": "8****",
+            "format": "int64",
+            "title": "creatorId",
+            "type": "integer"
+          },
+          "DbId": {
+            "description_en": "The ID of the database to which the table belongs",
+            "description_zh": "表所属的数据库ID",
+            "example": "19",
+            "format": "int64",
+            "title": "dbId",
+            "type": "integer"
+          },
+          "DbName": {
+            "description_en": "The name of the database to which the table belongs",
+            "description_zh": "表所属的数据库名称",
+            "example": "default",
+            "title": "dbName",
+            "type": "string"
+          },
+          "Description": {
+            "description_en": "The description of the table",
+            "description_zh": "表的描述信息",
+            "example": "test",
+            "title": "description",
+            "type": "string"
+          },
+          "LastAccessTime": {
+            "description_en": "The time when the table was last accessed",
+            "description_zh": "上次访问该表的时间",
+            "example": "1608707407",
+            "format": "int32",
+            "title": "lastAccessTime",
+            "type": "integer"
+          },
+          "Location": {
+            "description_en": "The storage path of the table",
+            "description_zh": "表的存储路径",
+            "example": "oss://xxx",
+            "title": "location",
+            "type": "string"
+          },
+          "ModifierId": {
+            "description_en": "The user who last modified the table",
+            "description_zh": "最后修改该表的用户",
+            "example": "1410769",
+            "format": "int64",
+            "title": "modifierId",
+            "type": "integer"
+          },
+          "Name": {
+            "description_en": "The name of the table",
+            "description_zh": "表的名称",
+            "example": "100g_customer",
+            "title": "name",
+            "type": "string"
+          },
+          "Owner": {
+            "description_en": "The name of the table owner",
+            "description_zh": "表的所有者名称",
+            "example": "zhangsan",
+            "title": "owner",
+            "type": "string"
+          },
+          "OwnerType": {
+            "description_en": "The type of the owner. Valid values: USER, ROLE, and GROUP",
+            "description_zh": "所有者的类型。可填写USER、ROLE或GROUP",
+            "example": "USER",
+            "title": "ownerType",
+            "type": "string"
+          },
+          "Parameters": {
+            "description_en": "The key-value pairs of the parameters",
+            "description_zh": "参数key/value",
+            "example": "{\n      \"EXTERNAL\": \"TRUE\",\n      \"delta.minReaderVersion\": \"1\"}",
+            "title": "parameters",
+            "type": "object"
+          },
+          "PartitionKeys": {
+            "description_en": "The list of partition keys",
+            "description_zh": "表的列属性列表",
+            "items": {
+              "$ref": "#/components/schemas/DLColumn",
+              "description_en": "The column information",
+              "description_zh": "列信息"
+            },
+            "title": "partitionKeys",
+            "type": "array"
+          },
+          "Retention": {
+            "description_en": "The retention period of the table",
+            "description_zh": "该表的保留时间",
+            "example": "300",
+            "format": "int32",
+            "title": "retention",
+            "type": "integer"
+          },
+          "StorageDescriptor": {
+            "$ref": "#/components/schemas/DLStorageDescriptor",
+            "description_en": "The storage description, including the storage features and format details of the table",
+            "description_zh": "存储描述信息，包含表的存储特征和格式详细信息",
+            "title": "StorageDescriptor"
+          },
+          "TableType": {
+            "description_en": "The type of the metadata table, such as MANAGED_TABLE, EXTERNAL_TABLE, VIRTUAL_VIEW, INDEX_TABLE, or MATERIALIZED_VIEW",
+            "description_zh": "元数据表的类型。例如MANAGED_TABLE、EXTERNAL_TABLE、VIRTUAL_VIEW、INDEX_TABLE、MATERIALIZED_VIEW",
+            "example": "EXTERNAL_TABLE",
+            "title": "tableType",
+            "type": "string"
+          },
+          "ViewExpandedText": {
+            "description_en": "The expanded text of the view if the table is a view",
+            "description_zh": "如果表是视图，表示视图的展开文本",
+            "example": "\"\"",
+            "title": "viewExpandedText",
+            "type": "string"
+          },
+          "ViewOriginalText": {
+            "description_en": "The original text of the view if the table is a view",
+            "description_zh": "如果表是视图，表示视图的原始文本",
+            "example": "\"\"",
+            "title": "viewOriginalText",
+            "type": "string"
+          }
+        },
+        "title": "Table",
+        "type": "object"
+      },
+      "DLTableInput": {
+        "description_en": "The details of the table",
+        "description_zh": "表的详细信息",
+        "properties": {
+          "CreateTime": {
+            "description_en": "The time when the table was created",
+            "description_zh": "表的创建时间",
+            "example": "1731586286",
+            "format": "int32",
+            "type": "integer"
+          },
+          "CreatorId": {
+            "description_en": "The ID of the user who created the table",
+            "description_zh": "创建该表的用户ID",
+            "example": "8****",
+            "format": "int64",
+            "type": "integer"
+          },
+          "Description": {
+            "description_en": "The description of the table",
+            "description_zh": "表的描述信息",
+            "example": "test",
+            "type": "string"
+          },
+          "LastAccessTime": {
+            "description_en": "The time when the table was last accessed",
+            "description_zh": "上次访问该表的时间",
+            "example": "1608707407",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Location": {
+            "description_en": "The storage path of the table",
+            "description_zh": "表的存储路径",
+            "example": "oss://xxx",
+            "type": "string"
+          },
+          "ModifierId": {
+            "description_en": "The user who last modified the table",
+            "description_zh": "最后修改该表的用户",
+            "example": "1410769",
+            "format": "int64",
+            "type": "integer"
+          },
+          "Name": {
+            "description_en": "The name of the table",
+            "description_zh": "表的名称",
+            "example": "100g_customer",
+            "title": "name",
+            "type": "string"
+          },
+          "Owner": {
+            "description_en": "The owner of the table",
+            "description_zh": "表的所有者",
+            "example": "zhangsan\n",
+            "type": "string"
+          },
+          "OwnerType": {
+            "description_en": "The type of the owner. Valid values: USER, ROLE, and GROUP",
+            "description_zh": "所有者的类型。可填写USER、ROLE或GROUP",
+            "example": "USER",
+            "type": "string"
+          },
+          "Parameters": {
+            "additionalProperties": {
+              "description_en": "The key and value of the parameter",
+              "description_zh": "参数key/value",
+              "example": "{\n      \"EXTERNAL\": \"TRUE\",\n      \"delta.minReaderVersion\": \"1\"}",
+              "type": "string"
+            },
+            "description_en": "The key-value pair parameters",
+            "description_zh": "键值对参数",
+            "type": "object"
+          },
+          "PartitionKeys": {
+            "description_en": "The list of attribute columns for the table",
+            "description_zh": "表的列属性列表",
+            "items": {
+              "$ref": "#/components/schemas/DLColumn",
+              "description_en": "The column information",
+              "description_zh": "列信息"
+            },
+            "type": "array"
+          },
+          "Retention": {
+            "description_en": "The retention period of the table",
+            "description_zh": "该表的保留时间",
+            "example": "300",
+            "format": "int32",
+            "type": "integer"
+          },
+          "StorageDescriptor": {
+            "$ref": "#/components/schemas/DLStorageDescriptor",
+            "description_en": "The storage description. This includes the storage features and format details of the table",
+            "description_zh": "存储描述信息，包含表的存储特征和格式详细信息",
+            "title": "storageDescriptor"
+          },
+          "TableType": {
+            "description_en": "The type of the metadata table. Examples: MANAGED_TABLE, EXTERNAL_TABLE, VIRTUAL_VIEW, INDEX_TABLE, and MATERIALIZED_VIEW",
+            "description_zh": "元数据表的类型。例如MANAGED_TABLE、EXTERNAL_TABLE、VIRTUAL_VIEW、INDEX_TABLE、MATERIALIZED_VIEW",
+            "example": "EXTERNAL_TABLE\n",
+            "type": "string"
+          },
+          "ViewExpandedText": {
+            "description_en": "If the table is a view, this parameter indicates the expanded text of the view",
+            "description_zh": "如果表是视图，表示视图的展开文本",
+            "example": "\"\"",
+            "type": "string"
+          },
+          "ViewOriginalText": {
+            "description_en": "If the table is a view, this parameter indicates the original text of the view",
+            "description_zh": "如果表是视图，表示视图的原始文本",
+            "example": "\"\"",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates the information of a data lake table",
   "description_zh": "调用此API可更新湖仓表信息",
@@ -732,5 +1265,49 @@
   ],
   "pathPattern": "",
   "product_code": "Dms",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "ErrorCode": {
+            "description_en": "The error code returned if the request fails",
+            "description_zh": "错误码，请求异常时返回",
+            "example": "UnknownError",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message returned if the request fails",
+            "description_zh": "调用失败时，返回的错误信息",
+            "example": "UnknownError",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID, used for log tracing and troubleshooting",
+            "description_zh": "请求ID，用于定位日志，排查问题",
+            "example": "C5B8E84B-42B6-4374-AD5A-6264E175****",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue: The request was successful.\n\nfalse: The request failed",
+            "description_zh": "请求是否成功，返回值如下：\n\ntrue：请求成功。                                 \nfalse：请求失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "Table": {
+            "$ref": "#/components/schemas/DLTable",
+            "description_en": "The details of the table",
+            "description_zh": "表的详细信息"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

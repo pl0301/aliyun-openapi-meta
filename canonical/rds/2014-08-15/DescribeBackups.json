@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "rm-uf6wjk5****",
       "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
@@ -103,6 +104,8 @@
       "help_en": "The number of entries per page. Valid values:\n\n30\n50\n100\n\nDefault value: 30",
       "help_zh": "每页记录数，取值：\n30\n50\n100\n\n默认值：30",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "30",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -116,6 +119,8 @@
       "help_en": "The number of the page to return. Valid values: any non-zero positive integer.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -140,5 +145,252 @@
   ],
   "pathPattern": "",
   "product_code": "Rds",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回参数详情",
+        "properties": {
+          "Items": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Backup": {
+                "description_en": "The returned backup sets",
+                "description_zh": "备份集列表",
+                "items": {
+                  "description_en": "The details of the returned backup sets",
+                  "description_zh": "备份集列表详情",
+                  "properties": {
+                    "BackupDownloadLinkByDB": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "BackupDownloadLinkByDB": {
+                          "description_en": "An array consisting of URLs from which you can download backup sets of individual databases",
+                          "description_zh": "单库备份下载链接列表。\n\n云盘实例不返回该参数",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "单库备份下载链接详情",
+                            "properties": {
+                              "DataBase": {
+                                "description_en": "The name of the database",
+                                "description_zh": "数据库名称",
+                                "example": "dbs",
+                                "type": "string"
+                              },
+                              "DownloadLink": {
+                                "description_en": "The public URL from which you can download the backup set",
+                                "description_zh": "下载链接地址",
+                                "example": "https://cn-hangzhou.bak.rds.aliyuncs.com/custins53664665/hins18676859_2021072909473127987849.zip?Expires=****&dbList=tb1",
+                                "type": "string"
+                              },
+                              "IntranetDownloadLink": {
+                                "description_en": "The internal URL from which you can download the backup set",
+                                "description_zh": "内网下载链接地址",
+                                "example": "https://cn-hangzhou-internal.bak.rds.aliyuncs.com/custins53664665/hins18676859_2021072909473127987849.zip?Expires=****&dbList=tb1",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "BackupDownloadURL": {
+                      "description_en": "The URL that is used to download the backup set over the Internet. If the backup set cannot be downloaded, null is returned.\n\nFor example, if BackupMethod of an ApsaraDB RDS for SQL Server instance is set to Snapshot, a null string is returned",
+                      "description_zh": "公网下载地址，若当前不可下载，则返回空值。\n\n例如：备份方式为快照备份的SQL Server实例会返回空值。\n\n云盘实例不返回该参数",
+                      "example": "http://rdsbak-hz-v3.oss-cn-hangzhou.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "BackupEndTime": {
+                      "description_en": "The end time of the backup task. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time is displayed in UTC",
+                      "description_zh": "本次备份结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
+                      "example": "2019-02-13T12:20:00Z",
+                      "type": "string"
+                    },
+                    "BackupId": {
+                      "description_en": "The ID of the backup set",
+                      "description_zh": "备份集ID",
+                      "example": "321020562",
+                      "type": "string"
+                    },
+                    "BackupInitiator": {
+                      "description_en": "The initiator of the backup task. Valid values:\n\nSystem\nUser",
+                      "description_zh": "备份任务的发起者。返回值：\nSystem：系统自动发起。\nUser：用户手动发起",
+                      "example": "System",
+                      "type": "string"
+                    },
+                    "BackupIntranetDownloadURL": {
+                      "description_en": "The URL that is used to download the backup set over an internal network. If the backup set cannot be downloaded, null is returned.\n\nFor example, if BackupMethod of an ApsaraDB RDS for SQL Server instance is set to Snapshot, a null string is returned",
+                      "description_zh": "内网下载地址，若当前不可下载，则返回空值。\n\n例如：备份方式为快照备份的SQL Server实例会返回空值。\n\n云盘实例不返回该参数",
+                      "example": "http://rdsbak-hz-v3.oss-cn-hangzhou-internal.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "BackupMethod": {
+                      "description_en": "The method that is used to generate the backup set. Valid values:\n\nLogical: logical backup\nPhysical: physical backup\nSnapshot: snapshot backup",
+                      "description_zh": "备份方式，返回值：\nLogical：逻辑备份\nPhysical：物理备份\nSnapshot：快照备份",
+                      "example": "Physical",
+                      "type": "string"
+                    },
+                    "BackupMode": {
+                      "description_en": "The backup mode of the backup set. Valid values:\n\nAutomated\nManual",
+                      "description_zh": "备份模式，返回值：\nAutomated：系统自动备份\nManual：手动备份",
+                      "example": "Automated",
+                      "type": "string"
+                    },
+                    "BackupSize": {
+                      "description_en": "The size of the data backup file. Unit: bytes",
+                      "description_zh": "备份文件大小，单位：Byte",
+                      "example": "2167808",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BackupStartTime": {
+                      "description_en": "The start time of the backup. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time is displayed in UTC",
+                      "description_zh": "本次备份开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
+                      "example": "2019-02-03T12:20:00Z",
+                      "type": "string"
+                    },
+                    "BackupStatus": {
+                      "description_en": "The state of the backup set",
+                      "description_zh": "备份集状态",
+                      "example": "Success",
+                      "type": "string"
+                    },
+                    "BackupType": {
+                      "description_en": "The backup type of the backup set. Valid values:\n\nFullBackup\nIncrementalBackup",
+                      "description_zh": "备份类型，返回值：\nFullBackup：全量备份\nIncrementalBackup：增量备份",
+                      "example": "FullBackup",
+                      "type": "string"
+                    },
+                    "Checksum": {
+                      "description_en": "The checksum. The value of this parameter is calculated by using the CRC64 algorithm",
+                      "description_zh": "校验和，采用CRC64算法",
+                      "example": "1835830439****",
+                      "type": "string"
+                    },
+                    "ConsistentTime": {
+                      "description_en": "The point in time at which the data in the backup set is consistent. The return value of this parameter is a timestamp.\n\nIf the instance runs MySQL 5.6, a timestamp is returned. Otherwise, the value 0 is returned",
+                      "description_zh": "备份集的一致性时间点。返回值为时间戳。\n仅MySQL 5.6返回本参数，其他版本返回0",
+                      "example": "1576506856",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CopyOnlyBackup": {
+                      "description_en": "The backup mode of the backup set. Valid values:\n\n0: the standard mode. This mode supports full backups and incremental backups.\n1: the copy-only mode. This mode supports only full backups.\n\nThis parameter is returned only when the instance runs SQL Server",
+                      "description_zh": "SQL Server实例备份模式，分为常规备份模式（支持全量和增量恢复）和仅复制模式（仅支持全量恢复），返回值：\n0：常规备份模式\n1：仅复制模式",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "DBInstanceId": {
+                      "description_en": "The instance ID",
+                      "description_zh": "实例ID",
+                      "example": "rm-uf6wjk5****",
+                      "type": "string"
+                    },
+                    "Encryption": {
+                      "description_en": "The encryption information about the backup set",
+                      "description_zh": "备份集的加密信息",
+                      "example": "{}",
+                      "type": "string"
+                    },
+                    "Engine": {
+                      "description_en": "The type of the database engine. Valid values:\n\nMySQL\nSQLServer\nPostgreSQL\nMariaDB",
+                      "description_zh": "数据库类型。返回值：\nMySQL\nSQLServer\nPostgreSQL\nMariaDB",
+                      "example": "MySQL",
+                      "type": "string"
+                    },
+                    "EngineVersion": {
+                      "description_en": "The version of the database engine",
+                      "description_zh": "数据库版本",
+                      "example": "8.0",
+                      "type": "string"
+                    },
+                    "ExpectExpireTime": {
+                      "description_en": "The expiration time of the backup set, in the format <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC time).  \n\nThis value is returned only for single-database backups of SQL Server instances when backup retention days is configured.  ",
+                      "description_zh": "备份集过期时间，格式为<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC 时间）。\n\n仅SQL Server单库备份设置备份集保留天数后返回该值",
+                      "example": "2025-06-17T12:10:23Z",
+                      "type": "string"
+                    },
+                    "HostInstanceID": {
+                      "description_en": "The ID of the instance that generates the backup set. This parameter is used to indicate whether the instance that generates the backup set is a primary instance or a secondary instance",
+                      "description_zh": "产生备份集的实例编号，用于区分该备份集产生于主实例或备实例",
+                      "example": "5882781",
+                      "type": "string"
+                    },
+                    "IsAvail": {
+                      "description_en": "Indicates whether the backup set is available. Valid values:\n\n0: The backup set is unavailable.\n1: The backup set is available",
+                      "description_zh": "备份集是否可用，返回值：\n0：不可用\n1：可用",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "MetaStatus": {
+                      "description_en": "The status of the backup set that is used to restore individual databases or tables. Valid values:\n\nOK: The data backup file is normal.\nLARGE: The data backup file contains an abnormally large number of tables. It cannot be used to restore individual databases or tables.\nEMPTY: The data backup file is generated from a failed backup task.\n\nIf an empty string is returned, the data backup file cannot be used to restore individual databases or tables",
+                      "description_zh": "库表恢复的备份集状态，返回值：\nOK：正常。\nLARGE：表数量过多，不能用于库表恢复。\nEMPTY：备份失败的备份集。\n\n空串表示未开通库表恢复的备份集",
+                      "example": "OK",
+                      "type": "string"
+                    },
+                    "StorageClass": {
+                      "description_en": "The storage class of the backup set. Valid values:\n\n0: regular storage\n1: archive storage",
+                      "description_zh": "备份集的存储介质，返回值：\n0：常规存储\n1：归档存储",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "StoreStatus": {
+                      "description_en": "Indicates whether the backup set can be deleted. Valid values:\n\nEnabled: The backup set can be deleted.\nDisabled: The backup set cannot be deleted",
+                      "description_zh": "该数据备份是否可删除，返回值：\nEnabled：可删除\nDisabled：不可删除",
+                      "example": "Disabled",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number of the returned page",
+            "description_zh": "页码",
+            "example": "1",
+            "type": "string"
+          },
+          "PageRecordCount": {
+            "description_en": "The number of backup sets on the current page",
+            "description_zh": "本页备份集个数",
+            "example": "30",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "1A6D328C-84B8-40DC-BF49-6C73984D7494",
+            "type": "string"
+          },
+          "TotalEcsSnapshotSize": {
+            "description_en": "The size of the snapshot chain of the instance. Unit: bytes",
+            "description_zh": "实例的快照链大小，单位：字节（Byte）",
+            "example": "0",
+            "format": "int64",
+            "type": "integer"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "总记录数",
+            "example": "100",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

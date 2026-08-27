@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "ccc-test",
       "help_en": "The instance ID",
       "help_zh": "实例ID",
@@ -33,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "0109810****",
       "help_en": "The caller number, which must be an active outbound number under the instance",
       "help_zh": "主叫号码，需要是实例下可用的外呼号码",
@@ -46,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "1312353****",
       "help_en": "The callee number",
       "help_zh": "被叫号码",
@@ -63,6 +66,8 @@
       "help_en": "The timeout period, in seconds. If the call is not answered within the specified time, it is automatically disconnected",
       "help_zh": "超时时间，呼叫在经过该参数指定的时间仍然未接通的情况下，则主动挂断，单位秒",
       "location": "query",
+      "maximum": "3600",
+      "minimum": "0",
       "name": "timeout_seconds",
       "options": [
         "--timeout-seconds"
@@ -72,6 +77,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "9774c36c-12fe-4e37-adce-89bc77ce****",
       "help_en": "The IVR contact flow ID. After the callee answers, the call is automatically transferred into this IVR flow",
       "help_zh": "IVR联系流ID，被叫接通后，通话将自动转入此IVR流程",
@@ -139,5 +145,334 @@
   ],
   "pathPattern": "",
   "product_code": "CCC",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The response code",
+            "description_zh": "响应码",
+            "example": "OK",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "Data",
+            "description_zh": "数据",
+            "properties": {
+              "CallContext": {
+                "description_en": "Call context environment",
+                "description_zh": "话务上下文环境",
+                "properties": {
+                  "CallType": {
+                    "description_en": "Call type",
+                    "description_zh": "通话类型",
+                    "enumValueTitles": {
+                      "BACK2BACK": "双呼",
+                      "BARGE": "强插",
+                      "COACH": "辅导",
+                      "CONFERENCE": "会议",
+                      "CONSULTANT": "咨询",
+                      "INBOUND": "呼入",
+                      "INTERCEPT": "强拆",
+                      "INTERNAL": "内部通话",
+                      "MONITOR": "监听",
+                      "OUTBOUND": "呼出",
+                      "PREDICTIVE": "预测式外呼"
+                    },
+                    "example": "OUTBOUND",
+                    "type": "string"
+                  },
+                  "ChannelContexts": {
+                    "description_en": "List of call channels",
+                    "description_zh": "话务通道列表",
+                    "items": {
+                      "description_en": "Call channel",
+                      "description_zh": "话务通道",
+                      "properties": {
+                        "CallType": {
+                          "description_en": "The call type of the channel",
+                          "description_zh": "话务通道的通话类型",
+                          "enumValueTitles": {
+                            "BACK2BACK": "双呼",
+                            "BARGE": "强插",
+                            "COACH": "辅导",
+                            "CONFERENCE": "会议",
+                            "CONSULTANT": "咨询",
+                            "INBOUND": "呼入",
+                            "INTERCEPT": "强拆",
+                            "INTERNAL": "内部通话",
+                            "MONITOR": "监听",
+                            "OUTBOUND": "呼出",
+                            "PREDICTIVE": "预测式外呼"
+                          },
+                          "example": "OUTBOUND",
+                          "type": "string"
+                        },
+                        "ChannelFlags": {
+                          "description_en": "Flags of the voice channel",
+                          "description_zh": "话务通道标志",
+                          "enumValueTitles": {
+                            "COACHED": "被辅导",
+                            "COACHING": "辅导中",
+                            "HOLD": "保持",
+                            "MONITORED": "被监听",
+                            "MONITORING": "监听中",
+                            "MUTED": "静音"
+                          },
+                          "example": "[]",
+                          "type": "string"
+                        },
+                        "ChannelId": {
+                          "description_en": "The channel ID",
+                          "description_zh": "话务通道ID",
+                          "example": "ch:user:131888****->8001****:1609225718294:job-6570007401392****",
+                          "type": "string"
+                        },
+                        "ChannelState": {
+                          "description_en": "The status of the voice channel",
+                          "description_zh": "话务通道的状态",
+                          "enumValueTitles": {
+                            "ANSWERED": "已接通",
+                            "CREATED": "已创建",
+                            "EARLY_MEDIA": "早媒体阶段",
+                            "NONE": "初始状态",
+                            "RELEASED": "已挂断",
+                            "RETIRED": "已失效",
+                            "RINGING": "振铃中"
+                          },
+                          "example": "NONE",
+                          "type": "string"
+                        },
+                        "Destination": {
+                          "description_en": "Callee of the call channel",
+                          "description_zh": "话务通道的被叫方",
+                          "example": "8001****",
+                          "type": "string"
+                        },
+                        "JobId": {
+                          "description_en": "The call ID",
+                          "description_zh": "通话ID",
+                          "example": "job-6570007401392****",
+                          "type": "string"
+                        },
+                        "Originator": {
+                          "description_en": "The originator of the call channel",
+                          "description_zh": "话务通道的主叫方",
+                          "example": "1318888****",
+                          "type": "string"
+                        },
+                        "ReleaseInitiator": {
+                          "description_en": "The party that initiated the disconnection of the voice channel, indicating who first hung up the call",
+                          "description_zh": "话务通道的挂断方，表示该话务通道是谁首先发起的挂断",
+                          "example": "无",
+                          "type": "string"
+                        },
+                        "ReleaseReason": {
+                          "description_en": "The release reason for the voice channel, indicating why the current voice channel was disconnected. The value comes from the response codes defined in the SIP protocol. Customers should refer to the SIP protocol to analyze the disconnection reason",
+                          "description_zh": "话务通道的挂断原因，表示当前话务通道为什么会被挂断，取值来自SIP协议中定义的响应码，请客户参考SIP协议分析挂断原因",
+                          "example": "无",
+                          "type": "string"
+                        },
+                        "Timestamp": {
+                          "description_en": "The UNIX timestamp indicating the most recent status change of the channel, in milliseconds",
+                          "description_zh": "话务通道最近一次状态变化的时间戳，格式是Unix时间戳，单位毫秒",
+                          "example": "1609225718295",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "UserExtension": {
+                          "description_en": "The extension number of the agent associated with the channel",
+                          "description_zh": "话务通道关联的坐席的分机号",
+                          "example": "8001****",
+                          "type": "string"
+                        },
+                        "UserId": {
+                          "description_en": "The agent ID associated with the call channel. This field is empty if the channel belongs to a Customer",
+                          "description_zh": "话务通道关联的坐席ID，如果是客户的话务通道，该字段为空",
+                          "example": "agent@ccc-test",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "InstanceId": {
+                    "description_en": "Instance ID",
+                    "description_zh": "实例ID",
+                    "example": "ccc-test",
+                    "type": "string"
+                  },
+                  "JobId": {
+                    "description_en": "Call ID",
+                    "description_zh": "通话ID",
+                    "example": "job-6570007401392****",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "UserContext": {
+                "description_en": "Agent context environment",
+                "description_zh": "坐席上下文环境",
+                "properties": {
+                  "BreakCode": {
+                    "description_en": "Break code, which can be either system-defined or customer-defined. System-defined break codes include: Warm-up (temporary break state after an agent is published and before becoming idle), RingingTimeout (break caused by agent ringing timeout), and RejectCall (break caused by agent call rejection). There are no restrictions on customer-defined break codes; customers can define them as needed for their business",
+                    "description_zh": "小休状态码，分为系统定义的和客户定义的两种，系统定义的小休吗包括：Warm-up （坐席上线后置闲前的临时小休状态）、RingingTimeout（坐席振铃超时导致的小休）、RejectCall（坐席拒接导致的小休）。客户自定义状态码没有限制，客户可以根据业务需要自行定义",
+                    "enumValueTitles": {
+                      "RejectCall": "坐席拒接导致的小休",
+                      "RingingTimeout": "坐席振铃超时导致的小休",
+                      "Warm-up": "坐席上线后置闲前的临时小休状态"
+                    },
+                    "example": "Warm-up",
+                    "type": "string"
+                  },
+                  "DeviceId": {
+                    "description_en": "Device ID, which is the identity ID of a browser-based Web Real-Time Communication (WebRTC) softphone or a physical phone device. Only one type of device can be registered at a time",
+                    "description_zh": "设备ID，浏览器WebRTC软电话或实体话机设备的标识ID，同一时间只允许一种设备注册",
+                    "example": "ACC-YUNBS-1.0.10-****",
+                    "type": "string"
+                  },
+                  "DeviceState": {
+                    "description_en": "Device status",
+                    "description_zh": "设备状态",
+                    "enumValueTitles": {
+                      "OFFLINE": "离线",
+                      "ONLINE": "在线",
+                      "UNREGISTERED": "未注册"
+                    },
+                    "example": "ONLINE",
+                    "type": "string"
+                  },
+                  "Extension": {
+                    "description_en": "Agent extension number",
+                    "description_zh": "坐席分机号",
+                    "example": "8001****",
+                    "type": "string"
+                  },
+                  "Heartbeat": {
+                    "description_en": "The time when the last heartbeat from the agent was received, in UNIX timestamp format, in milliseconds",
+                    "description_zh": "上次收到坐席心跳的时间，格式为Unix时间戳，单位毫秒",
+                    "example": "1609136956378",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "InstanceId": {
+                    "description_en": "Instance ID",
+                    "description_zh": "实例ID",
+                    "example": "ccc-test",
+                    "type": "string"
+                  },
+                  "JobId": {
+                    "description_en": "Call ID",
+                    "description_zh": "通话ID",
+                    "example": "job-6570007401392****",
+                    "type": "string"
+                  },
+                  "Mobile": {
+                    "description_en": "The agent's personal phone number",
+                    "description_zh": "坐席的个人电话号码",
+                    "example": "1324730****",
+                    "type": "string"
+                  },
+                  "OutboundScenario": {
+                    "description_en": "Indicates whether the agent is in outbound-only mode",
+                    "description_zh": "坐席是否处于仅外呼模式",
+                    "example": "false",
+                    "type": "boolean"
+                  },
+                  "Reserved": {
+                    "description_en": "The timestamp in milliseconds of the most recent time the agent was reserved. Being reserved means an incoming call will soon be assigned to this agent. The format is a UNIX timestamp in milliseconds",
+                    "description_zh": "坐席最近一次被预定的时间，被预定意味着马上将有来电分配给该坐席，格式为Unix时间戳，单位毫秒",
+                    "example": "1609136956378",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "SignedSkillGroupIdList": {
+                    "description_en": "List of skill group IDs that the agent has signed into",
+                    "description_zh": "坐席签入的技能组ID列表",
+                    "items": {
+                      "description_en": "Skill group ID",
+                      "description_zh": "技能组ID",
+                      "example": "skillgroup1@ccc-test",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "UserId": {
+                    "description_en": "Agent ID",
+                    "description_zh": "坐席ID",
+                    "example": "agent@ccc-test",
+                    "type": "string"
+                  },
+                  "UserState": {
+                    "description_en": "Agent status",
+                    "description_zh": "座席状态",
+                    "enumValueTitles": {
+                      "BREAK": "小休",
+                      "DIALING": "拨号中",
+                      "OFFLINE": "离线",
+                      "READY": "空闲",
+                      "RINGING": "振铃中",
+                      "TALKING": "通话中",
+                      "WORKING": "话后处理中"
+                    },
+                    "example": "READY",
+                    "type": "string"
+                  },
+                  "WorkMode": {
+                    "description_en": "Work mode",
+                    "description_zh": "工作模式",
+                    "enumValueTitles": {
+                      "OFFICE_PHONE": "办公电话模式",
+                      "OFF_SITE": "场外模式",
+                      "ON_SITE": "场内模式"
+                    },
+                    "example": "ON_SITE",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "HttpStatusCode": {
+            "description_en": "HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "Response message",
+            "description_zh": "响应信息",
+            "example": "无",
+            "type": "string"
+          },
+          "Params": {
+            "description_en": "List of response parameters",
+            "description_zh": "响应参数列表",
+            "items": {
+              "description_en": "Response parameter",
+              "description_zh": "响应参数",
+              "example": "无",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求ID",
+            "example": "26A34338-5CD9-4C95-A7A6-5BDCE76C6B94",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

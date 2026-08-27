@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "df2d03865266bd9842306db586d3****",
       "help_en": "The ID of the zone. This is the unique identifier of the zone",
       "help_zh": "Zone ID，Zone的唯一识别码",
@@ -47,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "www",
       "help_en": "The host record. A host record is the prefix of a domain name. Common host records include www, @, * (for wildcard DNS), and mail (for mailboxes).\n\nFor example, to resolve @.example.com, set the host record to \"@\", not an empty string",
       "help_zh": "主机记录。主机记录就是域名前缀，常见用法有www、@、*（泛解析）、mail（常用于邮箱）。\n\n例如要解析@.exmaple.com，主机记录要填写\"@”，而不是空",
@@ -60,6 +62,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "A",
       "help_en": "The type of the DNS record. The following types are supported:\n\nA: Maps a domain name to an IPv4 address in dotted decimal notation.\n\nAAAA: Maps a domain name to an IPv6 address.\n\nCNAME: Maps a domain name to another domain name.\n\nTXT: A text record. The text can be up to 255 characters in length. TXT records are often used for Sender Policy Framework (SPF) records to prevent spam.\n\nMX: Maps a domain name to the domain name of a mail server.\n\nPTR: Maps an IP address to a domain name.\n\nSRV: Specifies the server for a specific service. The format is: Priority Weight Port Target. Separate each value with a space.\n\nBefore adding a PTR record, configure a reverse lookup zone. For more information, see https://help.aliyun.com/document_detail/2592976.html",
       "help_zh": "解析记录类型，目前支持如下：\nA：将域名指向一个IPV4（点分十进制格式的IPv4地址）。\nAAAA：将域名指向一个IPV6（IPv6地址）。\nCNAME：将域名指向另一个域名（域名地址）。\nTXT：文本长度限制255，通常做SPF记录（反垃圾邮件）。\nMX：将域名指向邮件服务器地址（邮件服务器的域名）。\nPTR：将IP地址指向一个域名。\nSRV：记录提供特定的服务的服务器（格式为 优先级 权重 端口 目标地址，每项中间需以空格分隔）。\n添加PTR记录前需要先配置反解Zone，具体操作请参考https://help.aliyun.com/document_detail/2592976.html",
@@ -103,6 +106,8 @@
       "help_en": "The time to live (TTL). The unit is seconds (s). Valid values are 5, 30, 60, 3600 (1 hour), 43200 (12 hours), and 86400 (1 day). The default value is 60",
       "help_zh": "本地缓存时间。目前取值仅支持5、30、60、3600（1小时）、43200（12小时）、86400（一天），单位秒（s），默认60",
       "location": "query",
+      "maximum": "86400",
+      "minimum": "5",
       "name": "ttl",
       "options": [
         "--ttl"
@@ -116,6 +121,8 @@
       "help_en": "The priority of the MX record. A smaller value indicates a higher priority. Valid values: [1, 99]",
       "help_zh": "MX记录的优先级。取值越小，优先级越高，取值范围：[1,99]",
       "location": "query",
+      "maximum": "99",
+      "minimum": "1",
       "name": "priority",
       "options": [
         "--priority"
@@ -125,6 +132,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "114.55.XX.XX\n",
       "help_en": "The record value. Enter a value based on the DNS record type",
       "help_zh": "记录值。根据不同解析记录类型，填写相应的记录值",
@@ -179,5 +187,33 @@
   ],
   "pathPattern": "",
   "product_code": "pvtz",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "RecordId": {
+            "description_en": "The ID of the DNS record",
+            "description_zh": "解析记录ID",
+            "example": "429570****",
+            "format": "int64",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The unique ID of the request",
+            "description_zh": "唯一请求识别码",
+            "example": "0B7AD377-7E86-44A8-B9A8-53E8666E72FE",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

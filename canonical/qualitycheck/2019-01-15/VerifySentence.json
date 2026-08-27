@@ -19,6 +19,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "\"{\"taskId\":\"EA701F66-8CA2-4A79-8E3C-A6F2F****\",\"fileName\":\"人工校验测试-订购茶叶.wav\",\"dialogueId\":1,\"roleCorrect\":false,\"sourceRole\":0,\"textCorrect\":false,\"sourceText\":\"我要订购大量的信阳毛尖。\",\"oldIncorrectWords\":3,\"targetText\":\"我要订购大大的南阳毛巾。\",\"targetRole\":1}\"",
       "help_en": "Full JSON string. For details, see the following table",
       "help_zh": "完整JSON字符串信息，具体内容参见以下详细信息",
@@ -46,5 +47,154 @@
   ],
   "pathPattern": "",
   "product_code": "Qualitycheck",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "headers": {},
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "Result code. 200 indicates success. Any other value indicates failure. Use this field to identify the cause of failure",
+            "description_zh": "结果代码，200表示成功，若为别的值则表示失败，调用方可根据此字段判断失败原因",
+            "example": "200",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Delta": {
+                "description_en": "Differences between the transcribed and verified text if the transcription is incorrect. Empty otherwise",
+                "description_zh": "若转写不正确，返回不同之处；否则为空",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Source": {
+                      "description_en": "Correct dialogue after manual verification",
+                      "description_zh": " 人工校验后正确的对话内容",
+                      "properties": {
+                        "Line": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Line": {
+                              "description_en": "Characters",
+                              "description_zh": "具体的字",
+                              "items": {
+                                "description_en": "Character",
+                                "description_zh": " 具体的字",
+                                "example": "你",
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Position": {
+                          "description_en": "Character position",
+                          "description_zh": " 字所处的位置。 ",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Target": {
+                      "description_en": "Transcribed dialogue",
+                      "description_zh": "转写对话内容",
+                      "properties": {
+                        "Line": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Line": {
+                              "description_en": "Characters",
+                              "description_zh": "具体的字",
+                              "items": {
+                                "description_en": "Character",
+                                "description_zh": "具体的字",
+                                "example": "您",
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Position": {
+                          "description_en": "Character position",
+                          "description_zh": " 字所处的位置。 ",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Type": {
+                      "description_en": "Type of error. Valid values: CHANGE (incorrect character), INSERT (extra character), DELETE (missing character)",
+                      "description_zh": "错误的不同类型，可能值：CHANGE错误，INSERT多字，DELETE少字",
+                      "example": "CHANGE",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "IncorrectWords": {
+            "description_en": "Number of incorrect characters in this sentence",
+            "description_zh": "本句错误字数",
+            "example": "2",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "Error details if the request failed. Returns successful if the request succeeded",
+            "description_zh": "出错时表示出错详情，成功时为successful",
+            "example": "successful",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求ID",
+            "example": "106C6CA0-282D-4AF7-85F0-D2D24F4CE647",
+            "type": "string"
+          },
+          "SourceRole": {
+            "description_en": "Correct role after manual verification. Valid values: 0 (agent), 1 (customer)",
+            "description_zh": "人工校验后的正确角色，可能值：0客服；1客户",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request succeeded. Set to true for success. Set to false or null for failure",
+            "description_zh": "请求是否成功，调用方可根据此字段来判断请求是否成功：true表示成功；false/null表示失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TargetRole": {
+            "description_en": "Transcribed role. Valid values: 0 (agent), 1 (customer)",
+            "description_zh": "转写角色，可能值：0客服；1客户",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

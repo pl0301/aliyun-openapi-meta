@@ -2,6 +2,250 @@
   "camel_example": "aliyun aiworkspace GET /api/v1/datasets/d-rbvg5wz0000c9ks92 --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "aiworkspace get-dataset",
   "cmd_name": "get-dataset",
+  "components": {
+    "schemas": {
+      "DatasetShareRelationship": {
+        "description_en": "The configuration for sharing a dataset",
+        "description_zh": "数据集分享配置",
+        "properties": {
+          "AllowedMountAccessLevels": {
+            "description_en": "The allowed permissions for the shared dataset. When a user accesses the shared dataset, their permissions are limited to this list. The default value is \\`\\[\"RO\"]\\`.\n\nRO: Read-only permission. The recipient can only read the dataset.\n\nRW: Read and write permission. The recipient can read and modify the dataset",
+            "description_zh": "分享时指定允许的权限范围，使用被分享的数据集时权限将会被限制在此列表范围内。缺省为[\"RO\"]。\nRO: 只读权限，被分享方只能读取数据集内容。\nRW: 读写权限，被分享方可以读取和修改数据集内容",
+            "items": {
+              "description_en": "The dataset permission",
+              "description_zh": "数据集权限",
+              "enumValueTitles": {
+                "RO": "RO",
+                "RW": "RW"
+              },
+              "example": "RO",
+              "type": "string"
+            },
+            "required": false,
+            "title": "分享时指定允许的权限范围，使用被分享的数据集时权限需在此列表范围内\n● RO: 只读权限，被分享方只能读取数据集内容\n● RW: 读写权限，被分享方可以读取和修改数据集内容",
+            "type": "array"
+          },
+          "ExpiresAt": {
+            "description_en": "The expiration time. The time is in ISO 8601 format.\n\nIf you do not specify this parameter, the sharing relationship never expires",
+            "description_zh": "过期时间，ISO 8601格式。\n\n如不填写则表示永不过期",
+            "example": "2026-08-27T12:23:58Z",
+            "title": "过期时间，ISO 8601格式",
+            "type": "string"
+          },
+          "Extra": {
+            "description_en": "Additional configurations for the sharing relationship. This parameter is a JSON string.\n\nAllowExportModel: Specifies whether to allow the export of trained models.\n\nAllowAccessDLCWebTerminal: Specifies whether to allow users to log on to the container in a DLC task.\n\nAllowAccessDLCFullLog: Specifies whether to allow access to the full task logs",
+            "description_zh": "分享补充配置。json string格式。\nAllowExportModel：是否允许训练后的模型导出\nAllowAccessDLCWebTerminal：打开/关闭DLC任务中的登录容器的权限\nAllowAccessDLCFullLog：打开/关闭全量展示任务日志的权限",
+            "example": "{\"AllowExportModel\":false,\"AllowAccessDLCWebTerminal\":false,\"AllowAccessDLCFullLog\":false}",
+            "type": "string"
+          },
+          "IsSecureMode": {
+            "description_en": "Specifies whether to enable security protection for the shared dataset",
+            "description_zh": "是否需要对分享的数据集开启安全防护",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "required": false,
+            "title": "是否需要安全防护",
+            "type": "boolean"
+          },
+          "SharedAt": {
+            "description_en": "The time when the dataset was shared. The time is in ISO 8601 format",
+            "description_zh": "分享时间，ISO 8601格式",
+            "example": "2025-08-27T12:23:58Z",
+            "title": "分享时间，ISO 8601格式",
+            "type": "string"
+          },
+          "SourceTenantId": {
+            "description_en": "The ID of the tenant that owns the source dataset. The user who shares the dataset must be a workspace administrator or the root account",
+            "description_zh": "源数据集租户ID。分享者需为该工作空间管理员或者主账号身份",
+            "example": "148***************115",
+            "title": "源数据集租户ID",
+            "type": "string"
+          },
+          "SourceWorkspaceId": {
+            "description_en": "The ID of the workspace that contains the source dataset",
+            "description_zh": "源数据集工作空间ID",
+            "example": "33**19",
+            "title": "源数据集工作空间ID",
+            "type": "string"
+          },
+          "Status": {
+            "description_en": "The status of the sharing relationship.\n\nACTIVE: The sharing relationship is active. Complete dataset information is displayed only in this state.\n\nEXPIRED: The sharing relationship has expired.\n\nREVOKED: The sharing relationship was revoked by the sharer.\n\nINVALID: The sharing relationship is invalid. This can happen if the source dataset is deleted",
+            "description_zh": "分享状态：\nACTIVE：分享关系正常可用，仅该状态下会展示完整的数据集信息\nEXPIRED: 分享超过预设的有效期\nREVOKED: 分享被主动取消(分享者手动撤销分享)\nINVALID：分享因系统原因自动失效(如源数据集被删除)",
+            "enumValueTitles": {
+              "ACTIVE": "ACTIVE",
+              "EXPIRED": "EXPIRED",
+              "INVALID": "INVALID",
+              "REVOKED": "REVOKED"
+            },
+            "example": "ACTIVE",
+            "title": "分享状态：\n● active：分享关系正常可用，仅该状态下会展示完整的数据集信息\n● expired: 分享超过预设的有效期\n● revoked: 分享被主动取消(分享者手动撤销分享)\n● invalid：分享因系统原因自动失效(如源数据集被删除)",
+            "type": "string"
+          },
+          "TenantId": {
+            "description_en": "The ID of the target tenant. This must be a root account ID.\n\nThis parameter is required when you set a sharing relationship",
+            "description_zh": "目标租户ID，必须为主账号ID。\n设置分享关系时必填",
+            "example": "153***************249",
+            "required": false,
+            "title": "目标租户ID",
+            "type": "string"
+          },
+          "WorkspaceId": {
+            "description_en": "The ID of the target workspace. This ID must be different from the source workspace ID.\n\nThis parameter is required when you set a sharing relationship",
+            "description_zh": "目标工作空间ID。需与源数据集工作空间ID不同。\n\n设置分享关系时必填",
+            "example": "42**2",
+            "required": false,
+            "title": "目标工作空间ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DatasetVersion": {
+        "description_en": "Contains the configuration and metadata of a dataset version",
+        "description_zh": "Dataset Version struct",
+        "properties": {
+          "DataCount": {
+            "description_en": "The total number of data items in the version",
+            "description_zh": "DataCount",
+            "example": "10000",
+            "format": "int64",
+            "title": "DataCount",
+            "type": "integer"
+          },
+          "DataSize": {
+            "description_en": "The total size of the data in the version, in bytes",
+            "description_zh": "DataSize",
+            "example": "10000",
+            "format": "int64",
+            "title": "DataSize",
+            "type": "integer"
+          },
+          "DataSourceType": {
+            "description_en": "The data source type. For example, the value `OSS` indicates Object Storage Service",
+            "description_zh": "DataSourceType",
+            "example": "OSS",
+            "title": "DataSourceType",
+            "type": "string"
+          },
+          "Description": {
+            "description_en": "A custom description for the dataset version",
+            "description_zh": "Description",
+            "example": "base model v1",
+            "title": "Description",
+            "type": "string"
+          },
+          "GmtCreateTime": {
+            "description_en": "The creation time of the dataset version, in UTC",
+            "description_zh": "create time",
+            "example": "2021-01-21T17:12:35.232Z",
+            "title": "create time",
+            "type": "string"
+          },
+          "GmtModifiedTime": {
+            "description_en": "The time the dataset version was last modified, in UTC",
+            "description_zh": "modify time",
+            "example": "2021-01-21T17:12:35.232Z",
+            "title": "modify time",
+            "type": "string"
+          },
+          "ImportInfo": {
+            "description_en": "Information about the import source, in JSON format",
+            "description_zh": "ImportInfo",
+            "example": "{\n    \"region\": \"cn-wulanchabu\",\n    \"fileSystemId\": \"bmcpfs-xxxxxxxxxxx\",\n    \"path\": \"/mnt\",\n    \"mountTarget\": \"cpfs-xxxxxxxxxxxx-vpc-gacs9f.cn-wulanchabu.cpfs.aliyuncs.com\",\n    \"isVpcMount\": true\n}",
+            "title": "ImportInfo",
+            "type": "string"
+          },
+          "Labels": {
+            "description_en": "A list of labels applied to the dataset version",
+            "description_zh": "Labels",
+            "items": {
+              "$ref": "#/components/schemas/Label",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "MountAccess": {
+            "description_en": "The access permission for the mounted dataset. For example, `RO` means read-only",
+            "description_zh": "MountAccess",
+            "example": "RO",
+            "title": "MountAccess",
+            "type": "string"
+          },
+          "Options": {
+            "description_en": "Additional configurations for the dataset version, in JSON format",
+            "description_zh": "Options",
+            "example": "{\n  \"mountPath\": \"/mnt/data/\"\n}",
+            "title": "Options",
+            "type": "string"
+          },
+          "Property": {
+            "description_en": "The data format of the dataset",
+            "description_zh": "property",
+            "example": "FILE",
+            "title": "property",
+            "type": "string"
+          },
+          "SourceId": {
+            "description_en": "The ID of the source from which the version was created",
+            "description_zh": "SourceId",
+            "example": "d-65mrsr5fub4u74lej3",
+            "title": "SourceId",
+            "type": "string"
+          },
+          "SourceType": {
+            "description_en": "The method used to create the dataset version",
+            "description_zh": "SourceType",
+            "example": "USER",
+            "title": "SourceType",
+            "type": "string"
+          },
+          "Uri": {
+            "description_en": "The URI of the data source",
+            "description_zh": "Uri",
+            "example": "OSS://xxx",
+            "title": "Uri",
+            "type": "string"
+          },
+          "VersionName": {
+            "description_en": "The name of the dataset version",
+            "description_zh": "version name",
+            "example": "v1",
+            "title": "version name",
+            "type": "string"
+          }
+        },
+        "title": "Dataset Version struct",
+        "type": "object"
+      },
+      "Label": {
+        "description_en": "The label structure",
+        "description_zh": "标签结构",
+        "properties": {
+          "Key": {
+            "description_en": "The label key. The value can be up to 128 bytes in length and cannot contain equal signs (=) and commas (,)",
+            "description_zh": "标签的key。最长128 字节，不支持等于号（=）与半角逗号（,）",
+            "example": "env",
+            "title": "标签的key",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "The label value. The value can be up to 128 bytes in length and cannot contain equal signs (=) and commas (,)",
+            "description_zh": "标签的value。最长128 字节，不支持等于号（=）与半角逗号（,）",
+            "example": "test",
+            "title": "标签的value",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves a dataset",
   "description_zh": "获取数据集",
@@ -36,5 +280,264 @@
   ],
   "pathPattern": "/api/v1/datasets/[DatasetId]",
   "product_code": "AIWorkSpace",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The data returned",
+        "description_zh": "返回结果",
+        "properties": {
+          "Accessibility": {
+            "description_en": "The visibility of the dataset in the workspace. Valid values:\n\n`PRIVATE`: The dataset is visible only to its owner and workspace administrators.\n\n`PUBLIC`: The dataset is visible to all members in the workspace.\n\n`ROLE_PUBLIC`: The dataset is visible to specific workspace roles. For the list of roles, see the `AccessibleRoleIdList` parameter. The dataset owner and workspace administrators can always view the dataset",
+            "description_zh": "工作空间可见度。可能值：\nPRIVATE：表示工作空间内仅数据集所有者以及管理员可见。\nPUBLIC：工作空间全体成员可见。\nROLE_PUBLIC: 指定工作空间角色可见，角色列表参考：AccessibleRoleIdList。该条件下数据集所有者及管理员始终具备可见性",
+            "enumValueTitles": {
+              "PRIVATE": "PRIVATE",
+              "PUBLIC": "PUBLIC"
+            },
+            "example": "PRIVATE",
+            "type": "string"
+          },
+          "AccessibleRoleIdList": {
+            "description_en": "A list of workspace role IDs that can view the dataset. This parameter takes effect only when `Accessibility` is set to `ROLE_PUBLIC`. A role ID that starts with `PAI` is a basic role ID. A role ID that starts with `role-` is a custom role ID",
+            "description_zh": "在Accessibility为ROLE_PUBLIC时生效。该数据集可见的工作空间角色名列表，PAI开头的为基础角色ID，role-开头的为自定义角色ID",
+            "items": {
+              "description_en": "A workspace role ID",
+              "description_zh": "工作空间角色ID",
+              "example": "PAI.AlgoOperator",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "DataSourceType": {
+            "description_en": "The data source type. Valid values:\n\n`OSS`: Object Storage Service (OSS).\n\n`NAS`: Apsara File Storage NAS",
+            "description_zh": "数据源类型。可能值：\nOSS：阿里云对象存储（OSS）。\nNAS：阿里云文件存储（NAS）",
+            "enumValueTitles": {
+              "NAS": "NAS",
+              "OSS": "OSS"
+            },
+            "example": "NAS",
+            "type": "string"
+          },
+          "DataType": {
+            "description_en": "The data type of the dataset. Valid values:\n\n`COMMON`: General data\n\n`PIC`: images\n\n`TEXT`: text\n\n`VIDEO`: videos\n\n`AUDIO`: audio",
+            "description_zh": "数据集的数据类型，可能值：\n\nCOMMON：普通。\nPIC：图片。\nTEXT：文本。\nVIDEO：视频。\nAUDIO：音频",
+            "enumValueTitles": {
+              "AUDIO": "AUDIO",
+              "COMMON": "COMMON",
+              "PIC": "PIC",
+              "TEXT": "TEXT",
+              "VIDEO": "VIDEO"
+            },
+            "example": "COMMON",
+            "type": "string"
+          },
+          "DatasetId": {
+            "description_en": "The dataset ID",
+            "description_zh": "数据集ID",
+            "example": "d-rbvg5wz****c9ks92",
+            "type": "string"
+          },
+          "Description": {
+            "description_en": "The description of the dataset",
+            "description_zh": "描述",
+            "example": "用于标注的数据。",
+            "type": "string"
+          },
+          "Edition": {
+            "description_en": "The edition of the dataset. Valid values:\n\n`BASIC`: The basic edition, which does not support file metadata management.\n\n`ADVANCED`: The advanced edition, which is supported only for OSS datasets and allows you to manage metadata for up to 1 million files per version",
+            "description_zh": "数据集类型。枚举值：\n\nBASIC：基础型。不支持数据集文件元数据管理。\n\n \n\nADVANCED：高级型。仅OSS类型支持，每个版本支持最多100万个文件元数据管理",
+            "example": "BASIC",
+            "type": "string"
+          },
+          "GmtCreateTime": {
+            "description_en": "The time when the dataset was created",
+            "description_zh": "创建时间",
+            "example": "2021-01-30T12:51:33.028Z",
+            "type": "string"
+          },
+          "GmtModifiedTime": {
+            "description_en": "The time when the dataset was last updated",
+            "description_zh": "更新时间",
+            "example": "2021-01-30T12:51:33.028Z",
+            "type": "string"
+          },
+          "ImportInfo": {
+            "description_en": "The storage import configuration of the dataset. Storage services such as OSS, NAS, and CPFS are supported.\n\n<details>\n\n<summary>\n\nOSS\n\n</summary>\n\n{\\\n\"region\": \"${region}\",// The region ID.\\\n\"bucket\": \"${bucket}\",// The bucket name.\\\n\"path\": \"${path}\" // The path to the file or folder.\\\n}\n\n</details>\n\n<details>\n\n<summary>\n\nNAS\n\n</summary>\n\n{\\\n\"region\": \"${region}\",// The region ID.\\\n\"fileSystemId\": \"${file_system_id}\", // The file system ID.\\\n\"path\": \"${path}\", // The path in the file system.\\\n\"mountTarget\": \"${mount_target}\" // The file system mount target.\\\n}\n\n</details>\n\n<details>\n\n<summary>\n\nCPFS\n\n</summary>\n\n{\\\n\"region\": \"${region}\",// The region ID.\\\n\"fileSystemId\": \"${file_system_id}\", // The file system ID.\\\n\"protocolServiceId\":\"${protocol_service_id}\", // The protocol service ID.\\\n\"exportId\": \"${export_id}\", // The export directory ID.\\\n\"path\": \"${path}\", // The path in the file system.\\\n}\n\n</details>\n\n<details>\n\n<summary>\n\nCPFS for Intelligent Computing\n\n</summary>\n\n{\\\n\"region\": \"${region}\",// The region ID.\\\n\"fileSystemId\": \"${file_system_id}\", // The file system ID.\\\n\"path\": \"${path}\", // The path in the file system.\\\n\"mountTarget\": \"${mount_target}\" // The file system mount target. This parameter is specific to CPFS for Intelligent Computing.\\\n\"isVpcMount\": boolean, // Specifies whether the mount target is a VPC mount target. Specific to CPFS for Intelligent Computing.\\\n}\n\n</details>",
+            "description_zh": "数据集的存储导入配置信息，支持OSS/NAS/CPFS等。\n\n<details>\n<summary>OSS</summary>\n{<BR>\n\"region\": \"${region}\",//地域ID<BR>\n\"bucket\": \"${bucket}\",//bucket名称<BR>\n\"path\": \"${path}\" //文件路径<BR>\n}<BR>\n</details>\n\n<details>\n<summary>NAS</summary>\n{<BR>\n\"region\": \"${region}\",//地域ID<BR>\n\"fileSystemId\": \"${file_system_id}\", //文件系统ID<BR>\n\"path\": \"${path}\", //文件系统路径<BR>\n\"mountTarget\": \"${mount_target}\" //文件系统挂载点<BR>\n}<BR>\n</details>\n\n<details>\n<summary>CPFS</summary>\n{<BR>\n\"region\": \"${region}\",//地域ID<BR>\n\"fileSystemId\": \"${file_system_id}\", //文件系统ID<BR>\n\"protocolServiceId\":\"${protocol_service_id}\", //文件系统协议服务<BR>\n\"exportId\": \"${export_id}\", //文件系统导出目录<BR>\n\"path\": \"${path}\", //文件系统路径<BR>\n}<BR>\n</details>\n\n<details>\n<summary>智算CPFS</summary>\n{<BR>\n\"region\": \"${region}\",//地域ID<BR>\n\"fileSystemId\": \"${file_system_id}\", //文件系统ID<BR>\n\"path\": \"${path}\", //文件系统路径<BR>\n\"mountTarget\": \"${mount_target}\" //文件系统挂载点，智算版特有<BR>\n\"isVpcMount\": boolean, //是否为vpc挂载点, 智算版特有<BR>\n}<BR>\n</details>",
+            "example": "{\n    \"region\": \"cn-wulanchabu\",\n    \"fileSystemId\": \"bmcpfs-xxxxxxxxxxx\",\n    \"path\": \"/mnt\",\n    \"mountTarget\": \"cpfs-xxxxxxxxxxxx-vpc-gacs9f.cn-wulanchabu.cpfs.aliyuncs.com\",\n    \"isVpcMount\": true\n}",
+            "type": "string"
+          },
+          "IsShared": {
+            "description_en": "Indicates whether the dataset is a shared dataset",
+            "description_zh": "是否为共享数据集",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "type": "boolean"
+          },
+          "Labels": {
+            "description_en": "The labels attached to the dataset",
+            "description_zh": "标签列表",
+            "items": {
+              "$ref": "#/components/schemas/Label",
+              "description_en": "A key-value label",
+              "description_zh": "为数据集添加的标签",
+              "example": "{\"Key\": \"env\", \"Value\": \"test\"}"
+            },
+            "type": "array"
+          },
+          "LatestVersion": {
+            "$ref": "#/components/schemas/DatasetVersion",
+            "description_en": "The latest version of the dataset",
+            "description_zh": "数据集的最新版本"
+          },
+          "MountAccess": {
+            "description_en": "The mount permissions for the dataset. Valid values:\n\n`RO`: read-only mount\n\n`RW`: read and write mount",
+            "description_zh": "该数据集被挂载时的权限。\nRO：只读挂载\nRW：读写挂载",
+            "example": "RW",
+            "type": "string"
+          },
+          "MountAccessReadWriteRoleIdList": {
+            "description_en": "A list of workspace role IDs granted read/write permissions for the dataset. A role ID that starts with `PAI` is a basic role ID. A role ID that starts with `role-` is a custom role ID. If the list contains `*`, all roles have read and write permissions",
+            "description_zh": "具有该数据集读写权限的工作空间角色名列表，PAI开头的为基础角色ID，role-开头的为自定义角色ID。如果列表中包含了\"*\"，则表示对所有角色都有读写权限",
+            "items": {
+              "description_en": "A workspace role ID",
+              "description_zh": "工作空间角色ID",
+              "example": "PAI.AlgoOperator",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "Name": {
+            "description_en": "The dataset name",
+            "description_zh": "数据集名称",
+            "example": "myName",
+            "type": "string"
+          },
+          "Options": {
+            "description_en": "Extended properties for the initial dataset version (v1), in JSON string format. For example, when using the dataset in a DLC job, you can set the `mountPath` field to specify the default mount path",
+            "description_zh": "初始版本v1的扩展字段，JsonString类型。\n当DLC使用数据集时，可通过配置mountPath字段指定数据集默认挂载路径",
+            "example": "{\n  \"mountPath\": \"/mnt/data/\"\n}",
+            "type": "string"
+          },
+          "OwnerId": {
+            "description_en": "The owner ID",
+            "description_zh": "主账户ID",
+            "example": "1631044****3440",
+            "type": "string"
+          },
+          "Property": {
+            "description_en": "The property of the initial dataset version (v1). Valid values:\n\n`FILE`: The dataset is a file.\n\n`DIRECTORY`: The dataset is a folder",
+            "description_zh": "数据集初始版本v1的属性。可能值：\nFILE：文件。\nDIRECTORY：文件夹",
+            "enumValueTitles": {
+              "DIRECTORY": "DIRECTORY",
+              "FILE": "FILE"
+            },
+            "example": "DIRECTORY",
+            "type": "string"
+          },
+          "Provider": {
+            "description_en": "The provider of the dataset. If the value is `pai`, the dataset is a PAI public dataset",
+            "description_zh": "数据集提供方。返回值为\"pai\"时表示该数据集为PAI平台的公共数据集",
+            "example": "pai",
+            "type": "string"
+          },
+          "ProviderType": {
+            "description_en": "The type of the data source provider. Valid values:\n\n`ECS` (default)\n\n`Lingjun`",
+            "description_zh": "数据集的数据源来源类型。取值如下：\nEcs （默认）\nLingjun",
+            "example": "Ecs",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "5A14FA81-DD4E-******-6343FE44B941",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "SharedFrom": {
+            "$ref": "#/components/schemas/DatasetShareRelationship",
+            "description_en": "The source from which the dataset was shared. This parameter is returned only if `IsShared` is `true`",
+            "description_zh": "描述该分享数据集的来源关系。仅IsShared为true时有效"
+          },
+          "SharingConfig": {
+            "description_en": "The sharing configuration for the dataset",
+            "description_zh": "当前数据集的分享配置信息",
+            "properties": {
+              "SharedTo": {
+                "description_en": "A list of relationships indicating to whom the dataset is shared",
+                "description_zh": "多条分享配置关系",
+                "items": {
+                  "$ref": "#/components/schemas/DatasetShareRelationship",
+                  "description_en": "A sharing relationship for the dataset",
+                  "description_zh": "该数据集被分享的分享配置关系"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "SourceDatasetId": {
+            "description_en": "The ID of the source dataset for the iTAG annotation set",
+            "description_zh": "iTag标注集的来源数据集ID",
+            "example": "d-rcdg3wxxxxxhc5jk87\n",
+            "type": "string"
+          },
+          "SourceDatasetVersion": {
+            "description_en": "The version of the source dataset for the annotation set",
+            "description_zh": "标注数据集的来源数据集版本",
+            "example": "v2",
+            "type": "string"
+          },
+          "SourceId": {
+            "description_en": "The ID of the data source for the initial version (v1). The meaning of this parameter varies based on the `SourceType` value.\n\nIf `SourceType` is `USER`, you can specify a custom value for `SourceId`.\n\nIf `SourceType` is `ITAG`, the dataset is generated from an iTAG annotation task, and `SourceId` is the task ID.\n\nIf `SourceType` is `PAI_PUBLIC_DATASET`, the dataset is created from a PAI public dataset. In this case, `SourceId` is empty",
+            "description_zh": "初始版本v1的数据来源ID，可能值：\n当SourceType为USER时，SourceId支持自定义。\n当SourceType为ITAG时，即iTAG模块标注结果生成的数据集时，SourceId为ITAG的任务ID。\n当SourceType为PAI_PUBLIC_DATASET时，即使用PAI公共数据集创建的数据集时，SourceId默认为空",
+            "example": "jdnhf***fnrimv",
+            "type": "string"
+          },
+          "SourceType": {
+            "description_en": "The source type of the initial dataset version (v1)",
+            "description_zh": "数据来源初始版本v1的类型",
+            "enumValueTitles": {
+              "ITAG": "ITAG",
+              "PAI_PUBLIC_DATASET": "PAI_PUBLIC_DATASET",
+              "USER": "USER"
+            },
+            "example": "USER",
+            "type": "string"
+          },
+          "TagTemplateType": {
+            "description_en": "The annotation template of the iTAG annotation set",
+            "description_zh": "iTag标注数据集的标注模板",
+            "example": "TextClassification",
+            "type": "string"
+          },
+          "Uri": {
+            "description_en": "The URI of the initial dataset version (v1). The supported formats are as follows:\n\nFor an OSS data source: `oss://bucket.endpoint/object`.\n\nFor a NAS data source, the format varies by NAS type:\n\n  CPFS 1.0 and CPFS 2.0 are distinguished by the format of the file system ID ():",
+            "description_zh": "初始版本v1的Uri，样例格式：\n数据源类型为OSS：`oss://bucket.endpoint/object`。\n数据源类型为NAS：\n通用型NAS格式为：`nas://<nasfisid>.region/subpath/to/dir/`；\nCPFS1.0：`nas://<cpfs-fsid>.region/subpath/to/dir/`；\nCPFS2.0：`nas://<cpfs-fsid>.region/<protocolserviceid>/`；\nCPFS1.0和CPFS2.0根据fsid的格式来区分：\nCPFS1.0 格式为cpfs-<8位ascii字符>；\nCPFS2.0 格式为cpfs-<16为ascii字符>",
+            "example": "nas://09f****f2.cn-hangzhou/",
+            "type": "string"
+          },
+          "UserId": {
+            "description_en": "The user ID of the dataset owner",
+            "description_zh": "数据集所属用户ID",
+            "example": "2485765****023475",
+            "type": "string"
+          },
+          "WorkspaceId": {
+            "description_en": "The ID of the workspace where the dataset is located",
+            "description_zh": "数据集所在工作空间ID",
+            "example": "478**",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

@@ -2,6 +2,89 @@
   "camel_example": "aliyun aiworkspace PUT /api/v1/workspaces/83000/roles/role-dhg0000000 --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"RoleName\":\"dev-test\",\"ModulePermissions\":\"example-string\"}",
   "cmd_full_name": "aiworkspace update-workspace-role",
   "cmd_name": "update-workspace-role",
+  "components": {
+    "schemas": {
+      "ModulePermissions": {
+        "description_en": "A list of module permission configurations",
+        "description_zh": "模块权限配置列表",
+        "items": {
+          "description_en": "The permission object",
+          "description_zh": "权限结构体",
+          "properties": {
+            "ModuleName": {
+              "description_en": "The module name. Valid values are:\n\nPaiDesigner: PAI-Designer\n\nPaiflow: workflow\n\nDSW: PAI-DSW\n\nDLC: PAI-DLC\n\nDataset: dataset\n\nModel: model\n\nImage: image\n\nCodeSource: code source\n\nPaiWorkspace@@Workspace: Basic workspace information\n\nPaiWorkspace@@MemberRole: workspace member management\n\nPaiWorkspace@@Resource: workspace computing resource management\n\nPaiWorkspace@@Config: workspace configuration center\n\nArtLab: ArtLab",
+              "description_zh": "模块名。可取值：\nPaiDesigner：可视化建模（Designer）\nPaiflow：工作流\nDSW：交互式建模（DSW）\nDLC：分布式训练（DLC）\nDataset：数据集\nModel：模型\nImage：镜像\nCodeSource：代码配置\nPaiWorkspace@@Workspace：工作空间基本信息\nPaiWorkspace@@MemberRole：工作空间成员管理\nPaiWorkspace@@Resource：工作空间计算资源管理\nPaiWorkspace@@Config：工作空间配置中心\nArtLab：ArtLab",
+              "example": "PaiDesigner",
+              "title": "ModuleName",
+              "type": "string"
+            },
+            "PermissionType": {
+              "description_en": "The permission type. Valid values are:\n\nReadOnly: read-only access.\n\nReadWrite: Allows users to edit and run.\n\nFullAccess: full control.\n\nNoPrivilege: no permissions.\n\nCustomPermissions: custom permissions",
+              "description_zh": "权限类型。取值如下：\nReadOnly：只读\nReadWrite：可编辑/运行\nFullAccess：完全控制\nNoPrivilege：无权限\nCustomPermissions: 自定义权限",
+              "example": "ReadOnly",
+              "title": "PermissionType",
+              "type": "string"
+            },
+            "Permissions": {
+              "description_en": "The permissions. This parameter is required and applies only when `PermissionType` is set to `CustomPermissions`",
+              "description_zh": "权限列表。仅PermissionType为CustomPermissions时才有效，且必填",
+              "items": {
+                "description_en": "A permission object",
+                "description_zh": "权限对象",
+                "properties": {
+                  "PermissionCodes": {
+                    "description_en": "A list of permissions",
+                    "description_zh": "权限点列表",
+                    "items": {
+                      "description_en": "The permission code. Each permission must be unique within the region. For more information about permissions, see [Appendix: Roles and permissions]（https://help.aliyun.com/document_detail/2840449.html）",
+                      "description_zh": "权限点的名字，同地域内唯一。权限点介绍，请参见[附录：角色及权限列表]（https://help.aliyun.com/document_detail/2840449.html）",
+                      "example": "PaiDLC:GetTensorboard",
+                      "type": "string"
+                    },
+                    "title": "PermissionCodes",
+                    "type": "array"
+                  },
+                  "PermissionRules": {
+                    "description_en": "A list of permission rules",
+                    "description_zh": "权限规则列表",
+                    "items": {
+                      "description_en": "A permission rule",
+                      "description_zh": "权限规则",
+                      "properties": {
+                        "Accessibility": {
+                          "description_en": "The access type. Valid values are:\n\nPUBLIC: All members in the current workspace can perform this action.\n\nPRIVATE: Only the creator can perform this action.\n\nANY: Both the creator and non-creators can perform this action",
+                          "description_zh": "访问类型，可能值：\nPUBLIC：当前工作空间所有成员都可以操作。\nPRIVATE：只有创建者可以操作。\nANY：创建者和非创建者都可以操作",
+                          "example": "PRIVATE",
+                          "title": "Accessibility",
+                          "type": "string"
+                        },
+                        "EntityAccessType": {
+                          "description_en": "The entity access type. This parameter is ignored if `Accessibility` is set to `PUBLIC`. If `Accessibility` is set to `PRIVATE`, the value of this parameter determines the permissions. Valid values are:\n\nCREATOR: Only the creator can perform this action.\n\nANY: Both the creator and non-creators can perform this action",
+                          "description_zh": "存取类型。 当 Accessibility 为 PUBLIC，所有用户都能操作，此值无效； 当 Accessibility 为 PRIVATE 时，根据 EntityAccessType 的值决定权限，EntityAccessType 支持如下值：\nCREATOR：只有创建者可以操作。\nANY：创建者和非创建者都可以操作",
+                          "example": "CREATOR",
+                          "title": "EntityAccessType",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "title": "PermissionRules",
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "title": "Permissions",
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
+        "title": "A short description of struct",
+        "type": "array"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates a role in a workspace",
   "description_zh": "更新工作空间角色",
@@ -182,6 +265,33 @@
   "pathPattern": "/api/v1/workspaces/[WorkspaceId]/roles/[RoleId]",
   "product_code": "AIWorkSpace",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "返回结构体",
+        "properties": {
+          "InstanceJobId": {
+            "description_en": "The task ID",
+            "description_zh": "请求对应的任务id",
+            "example": "UpdateWorkspaceCustomRole-role-***abc*******",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "A519F77D-28A0-52F5-AB82-5********8\n",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

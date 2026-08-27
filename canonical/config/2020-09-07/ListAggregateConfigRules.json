@@ -20,6 +20,12 @@
   },
   "parameters": [
     {
+      "enum": [
+        "ACTIVE",
+        "DELETING",
+        "EVALUATING",
+        "INACTIVE"
+      ],
       "example": "ACTIVE",
       "help_en": "The state of the rule. Valid values:\n\nACTIVE: The rule is enabled.\n\nDELETING: The rule is being deleted.\n\nEVALUATING: The rule is being evaluated.\n\nINACTIVE: The rule is disabled",
       "help_zh": "规则运行状态。取值：\nACTIVE：应用中。\nDELETING：删除中。\nEVALUATING：评估中。\nINACTIVE：已停用",
@@ -33,6 +39,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "COMPLIANT",
+        "NON_COMPLIANT",
+        "NOT_APPLICABLE",
+        "INSUFFICIENT_DATA",
+        "IGNORED"
+      ],
       "example": "COMPLIANT",
       "help_en": "The compliance evaluation result. Valid values:\n\nCOMPLIANT: The resource is compliant.\n\nNON_COMPLIANT: The resource is non-compliant.\n\nNOT_APPLICABLE: The rule does not apply to the resource.\n\nINSUFFICIENT_DATA: No data is available",
       "help_zh": "规则合规评估结果。取值：\nCOMPLIANT：合规。\nNON_COMPLIANT：不合规。\nNOT_APPLICABLE：不适用。\nINSUFFICIENT_DATA：无数据",
@@ -85,6 +98,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "ca-f632626622af0079****",
       "help_en": "The ID of the account group.\n\nFor more information about how to obtain the ID of an account group, see https://help.aliyun.com/document_detail/255797.html",
       "help_zh": "账号组ID。\n\n关于如何获取账号组ID，请参见https://help.aliyun.com/document_detail/255797.html",
@@ -102,6 +116,8 @@
       "help_en": "The number of entries to return on each page.\n\nValid values: 1 to 100. Default value: 10",
       "help_zh": "分页时每页显示的数据行数。\n\n取值范围：1~100。起始值：1。默认值：10",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -115,6 +131,7 @@
       "help_en": "The page number.\n\nPages start from page 1. Default value: 1",
       "help_zh": "页码。\n\n起始值：1。默认值：1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -170,6 +187,7 @@
       "help_en": "The keyword for a fuzzy query.\n\nThe keyword can be a rule ID, rule name, rule description, or rule template identifier",
       "help_zh": "查询关键字。\n\n支持对规则ID、规则名称、规则描述和规则模板标识等进行模糊查询",
       "location": "query",
+      "max_length": "1000",
       "name": "keyword",
       "options": [
         "--keyword"
@@ -207,5 +225,230 @@
   ],
   "pathPattern": "",
   "product_code": "Config",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "无",
+        "properties": {
+          "ConfigRules": {
+            "description_en": "The rules",
+            "description_zh": "规则列表",
+            "properties": {
+              "ConfigRuleList": {
+                "description_en": "The details of the rules",
+                "description_zh": "规则列表详细信息",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "无",
+                  "properties": {
+                    "AccountId": {
+                      "description_en": "The ID of the management account to which the rule belongs",
+                      "description_zh": "规则归属的管理账号ID",
+                      "example": "100931896542****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "AutomationType": {
+                      "description_en": "The remediation type. The value is fixed to OOS, which indicates Operation Orchestration Service",
+                      "description_zh": "修正类型。仅支持OOS（运维编排）",
+                      "example": "OOS",
+                      "type": "string"
+                    },
+                    "Compliance": {
+                      "description_en": "The compliance evaluation result",
+                      "description_zh": "规则合规评估结果",
+                      "properties": {
+                        "ComplianceType": {
+                          "description_en": "The summary of the compliance evaluation result. Valid values:\n\nCOMPLIANT: The resource is compliant.\n\nNON_COMPLIANT: The resource is non-compliant.\n\nNOT_APPLICABLE: The rule does not apply to the resource.\n\nINSUFFICIENT_DATA: No data is available",
+                          "description_zh": "规则合规评估的摘要结果。取值：\nCOMPLIANT：合规。\nNON_COMPLIANT：不合规。\nNOT_APPLICABLE：不适用。\nINSUFFICIENT_DATA：无数据",
+                          "example": "COMPLIANT",
+                          "type": "string"
+                        },
+                        "Count": {
+                          "description_en": "The number of resources that are evaluated based on the summary of the compliance evaluation",
+                          "description_zh": "规则评估摘要结果对应的评估资源数",
+                          "example": "2",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ConfigRuleArn": {
+                      "description_en": "The ARN of the rule",
+                      "description_zh": "规则ARN",
+                      "example": "acs:config::100931896542****:rule/cr-fdc8626622af00f9****",
+                      "type": "string"
+                    },
+                    "ConfigRuleId": {
+                      "description_en": "The ID of the rule",
+                      "description_zh": "规则ID",
+                      "example": "cr-fdc8626622af00f9****",
+                      "type": "string"
+                    },
+                    "ConfigRuleName": {
+                      "description_en": "The name of the rule",
+                      "description_zh": "规则名称",
+                      "example": "The name of the rule.",
+                      "type": "string"
+                    },
+                    "ConfigRuleState": {
+                      "description_en": "The state of the rule. Valid values:\n\nACTIVE: The rule is enabled.\n\nDELETING: The rule is being deleted.\n\nEVALUATING: The rule is being evaluated.\n\nINACTIVE: The rule is disabled",
+                      "description_zh": "规则运行状态。取值：\nACTIVE：应用中。\nDELETING：删除中。\nEVALUATING：评估中。\nINACTIVE：已停用",
+                      "example": "ACTIVE",
+                      "type": "string"
+                    },
+                    "CreateBy": {
+                      "description_en": "The information about the creator of the rule",
+                      "description_zh": "创建规则的信息",
+                      "properties": {
+                        "AggregatorId": {
+                          "description_en": "The ID of the account group",
+                          "description_zh": "账号组D",
+                          "example": "ca-f632626622af0079****",
+                          "type": "string"
+                        },
+                        "AggregatorName": {
+                          "description_en": "The name of the account group",
+                          "description_zh": "账号组名称",
+                          "example": "Test_Group",
+                          "type": "string"
+                        },
+                        "CompliancePackId": {
+                          "description_en": "The ID of the compliance package",
+                          "description_zh": "合规包ID",
+                          "example": "cp-fdc8626622af00f9****",
+                          "type": "string"
+                        },
+                        "CompliancePackName": {
+                          "description_en": "The name of the compliance package",
+                          "description_zh": "合规包名称",
+                          "example": "The name of the compliance package.\n",
+                          "type": "string"
+                        },
+                        "CreatorId": {
+                          "description_en": "The ID of the management account that created the rule",
+                          "description_zh": "创建规则的管理账号ID",
+                          "example": "100931896542****",
+                          "type": "string"
+                        },
+                        "CreatorName": {
+                          "description_en": "The name of the management account that created the rule",
+                          "description_zh": "创建规则的管理账号名称",
+                          "example": "Alice",
+                          "type": "string"
+                        },
+                        "CreatorType": {
+                          "description_en": "The type of the creator. The value is fixed to AGGREGATOR",
+                          "description_zh": "创建规则的类型。仅支持AGGREGATOR（账号组）",
+                          "example": "AGGREGATOR",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "CreateDate": {
+                      "description_en": "The time when the rule was created. The time is displayed in UTC+8",
+                      "description_zh": "规则创建时间(UTC+8)",
+                      "example": "2025-09-19T15:51:00",
+                      "required": false,
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The description of the rule",
+                      "description_zh": "规则描述",
+                      "example": "The description of the rule.",
+                      "type": "string"
+                    },
+                    "ResourceTypesScope": {
+                      "description_en": "The types of the resources that are evaluated by the rule. Multiple resource types are separated by commas (,)",
+                      "description_zh": "规则评估的资源类型，多个资源类型半角逗号（,）分隔",
+                      "example": "ACS::EIP::EipAddress",
+                      "type": "string"
+                    },
+                    "RiskLevel": {
+                      "description_en": "The risk level of the rule. Valid values:\n\n1: high\n\n2: medium\n\n3: low",
+                      "description_zh": "规则风险等级。取值：\n1：高风险。\n2：中风险。\n3：低风险",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "SourceIdentifier": {
+                      "description_en": "The identifier of the rule.\n\nIf the rule is a managed rule, the value of this parameter is the identifier of the rule template.\n\nIf the rule is a custom rule, the value of this parameter is the ARN of the function",
+                      "description_zh": "规则标识符。\n\n如果是规则模板，该参数为规则模板标识。\n\n如果是自定义规则，该参数为函数ARN",
+                      "example": "eip-bandwidth-limit",
+                      "type": "string"
+                    },
+                    "SourceOwner": {
+                      "description_en": "The owner of the rule. Valid values:\n\nCUSTOM_FC: a custom rule.\n\nALIYUN: a managed rule",
+                      "description_zh": "规则来源的归属。取值：\n\nCUSTOM_FC：自定义规则。\n\nALIYUN：规则模板",
+                      "example": "ALIYUN",
+                      "type": "string"
+                    },
+                    "Tags": {
+                      "description_en": "The tags of the rule",
+                      "description_zh": "规则的标签",
+                      "items": {
+                        "description_en": "The tags of the rule",
+                        "description_zh": "规则的标签",
+                        "properties": {
+                          "Key": {
+                            "description_en": "The key of the tag",
+                            "description_zh": "规则的标签键",
+                            "example": "env",
+                            "type": "string"
+                          },
+                          "Value": {
+                            "description_en": "The value of the tag",
+                            "description_zh": "规则的标签值",
+                            "example": "prod",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "PageNumber": {
+                "description_en": "The page number",
+                "description_zh": "页码",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "The number of entries returned on each page",
+                "description_zh": "分页时每页显示的数据行数",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "The total number of rules",
+                "description_zh": "规则总数",
+                "example": "1",
+                "format": "int64",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "22EF8287-2C9A-4F1F-80A6-CEFA7612689D",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

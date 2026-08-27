@@ -88,6 +88,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "TOTAL",
+        "TIME",
+        "RESERVED"
+      ],
       "example": "TIME",
       "help_en": "The field to use for sorting the quotas.\n\nThis parameter is applicable only to instance type quotas of ECS. If you do not set this parameter, the query results are not sorted",
       "help_zh": "配额支持的排序方式。\n\n该参数仅针对云服务器ECS规格配额（ecs-spec），如果不设置，则为空",
@@ -101,6 +106,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Ascending",
+        "Descending"
+      ],
       "example": "Ascending",
       "help_en": "The order to sort the results.\n\nThis parameter is applicable only to instance type quotas of ECS. If you do not set this parameter, the query results are not sorted",
       "help_zh": "配额支持的排序方式。\n\n该参数仅针对云服务器ECS规格配额（ecs-spec），如果不设置，则为空",
@@ -156,6 +165,11 @@
       "type": "array"
     },
     {
+      "enum": [
+        "CommonQuota",
+        "FlowControl",
+        "WhiteListLabel"
+      ],
       "example": "FlowControl",
       "help_en": "The quota category.\n\nDefault value: CommonQuota",
       "help_zh": "配额种类。\n\n默认值：CommonQuota",
@@ -184,5 +198,321 @@
   ],
   "pathPattern": "",
   "product_code": "quotas",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned result",
+        "description_zh": "返回结果",
+        "properties": {
+          "MaxResults": {
+            "description_en": "The maximum number of records returned for the query",
+            "description_zh": "本次查询返回的最大记录条数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "NextToken": {
+            "description_en": "The token that is used to initiate the next query.\n\nIf this parameter is empty, no subsequent query is to be initiated.\n\nIf a value is returned, the value is the token that is used for the next query",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。\n\n如果 NextToken 为空表示没有下一次查询。\n如果 NextToken 有返回值，该取值表示下一次查询开始的令牌",
+            "example": "AAAAAd****",
+            "type": "string"
+          },
+          "Quotas": {
+            "description_en": "The details of the quotas",
+            "description_zh": "配额详情",
+            "items": {
+              "description_en": "The details of the quota",
+              "description_zh": "配额详情",
+              "properties": {
+                "Adjustable": {
+                  "description_en": "Indicates whether the quota is adjustable",
+                  "description_zh": "配额是否可调整",
+                  "enumValueTitles": {
+                    "false": "配额不可调整",
+                    "true": "配额可调整"
+                  },
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "ApplicableRange": {
+                  "description_en": "The range of the quota value that you can request for the quota. This can be used as a reference for quota increase requests",
+                  "description_zh": "当前配额项可申请的配额值区间，用于配额申请时进行参考",
+                  "items": {
+                    "description_en": "The range of the quota value that you can request.\n\nThis range does not include the existing quota of the user. You can use this as a reference when you request a quota increase. For example, `[1010,10000]`",
+                    "description_zh": "当前配额项可申请的配额值区间。\n\n排除当前用户已有区间，用于申请配额时进行参考，例如：`[1010,10000]`",
+                    "example": "[1010,10000]",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "ApplicableType": {
+                  "description_en": "The type of the quota adjustment",
+                  "description_zh": "配额调整类型",
+                  "enumValueTitles": {
+                    "continuous": "连续",
+                    "discontinuous": "间断"
+                  },
+                  "example": "discontinuous",
+                  "type": "string"
+                },
+                "ApplyReasonTips": {
+                  "description_en": "An example of the reason for a quota increase request",
+                  "description_zh": "申请配额调整理由示例",
+                  "example": "The business xxx is expected to grow by 50%.",
+                  "type": "string"
+                },
+                "Consumable": {
+                  "description_en": "Indicates whether the used quota is displayed",
+                  "description_zh": "是否显示“已使用”的配额",
+                  "enumValueTitles": {
+                    "false": "不显示“已使用”的配额",
+                    "true": "显示“已使用”的配额"
+                  },
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "Dimensions": {
+                  "description_en": "The quota dimensions. Format: `{\"regionId\":\"Region\"}`",
+                  "description_zh": "配额维度。格式：`{\"regionId\":\"地域\"}`",
+                  "example": "{\"regionId\":\"cn-hangzhou\"}",
+                  "type": "object"
+                },
+                "EffectiveTime": {
+                  "description_en": "The UTC time when the quota takes effect",
+                  "description_zh": "配额生效的UTC时间",
+                  "example": "2022-09-28T06:07:00Z",
+                  "type": "string"
+                },
+                "ExpireTime": {
+                  "description_en": "The UTC time when the quota expires",
+                  "description_zh": "配额失效的UTC时间",
+                  "example": "2022-09-29T06:07:00Z",
+                  "type": "string"
+                },
+                "GlobalQuota": {
+                  "description_en": "Indicates whether the quota is a global quota",
+                  "description_zh": "是否为全局配额",
+                  "enumValueTitles": {
+                    "false": "该配额项为每个Region独立",
+                    "true": "该配额项为所有Region共用"
+                  },
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "Period": {
+                  "description_en": "The calculation cycle of the quota",
+                  "description_zh": "配额计算周期",
+                  "properties": {
+                    "PeriodUnit": {
+                      "description_en": "The unit of the calculation cycle",
+                      "description_zh": "配额计算周期的单位",
+                      "enumValueTitles": {
+                        "day": "天",
+                        "hour": "小时",
+                        "minute": "分钟",
+                        "second": "秒",
+                        "week": "周"
+                      },
+                      "example": "day",
+                      "type": "string"
+                    },
+                    "PeriodValue": {
+                      "description_en": "The value of the calculation cycle",
+                      "description_zh": "配额计算周期的取值",
+                      "example": "{}",
+                      "format": "int32",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "ProductCode": {
+                  "description_en": "The abbreviation of the cloud product",
+                  "description_zh": "云产品名称缩写",
+                  "example": "ecs",
+                  "type": "string"
+                },
+                "QuotaActionCode": {
+                  "description_en": "The quota ID",
+                  "description_zh": "配额ID",
+                  "example": "q_security-groups",
+                  "type": "string"
+                },
+                "QuotaArn": {
+                  "description_en": "The Alibaba Cloud Resource Name (ARN) of the quota",
+                  "description_zh": "配额ARN",
+                  "example": "acs:quotas:cn-hangzhou:120886317861****:quota/ecs/q_security-groups",
+                  "type": "string"
+                },
+                "QuotaCategory": {
+                  "description_en": "The quota category",
+                  "description_zh": "配额类型",
+                  "enumValueTitles": {
+                    "CommonQuota": "通用配额",
+                    "FlowControl": "API速率配额",
+                    "WhiteListLabel": "权益配额"
+                  },
+                  "example": "CommonQuota",
+                  "type": "string"
+                },
+                "QuotaDescription": {
+                  "description_en": "The description of the quota",
+                  "description_zh": "配额描述",
+                  "example": "The maximum number of security groups that can be owned by the current account.",
+                  "type": "string"
+                },
+                "QuotaItems": {
+                  "description_en": "The details of the quota",
+                  "description_zh": "配额详情",
+                  "items": {
+                    "description_en": "The details of the quota",
+                    "description_zh": "配额详情",
+                    "properties": {
+                      "Quota": {
+                        "description_en": "The quota value",
+                        "description_zh": "配额值",
+                        "example": "1009",
+                        "type": "string"
+                      },
+                      "QuotaUnit": {
+                        "description_en": "The unit of the quota",
+                        "description_zh": "配额单位",
+                        "example": "Count",
+                        "type": "string"
+                      },
+                      "Type": {
+                        "description_en": "The quota type",
+                        "description_zh": "配额类别",
+                        "enumValueTitles": {
+                          "BaseQuota": "保障配额",
+                          "ReservedQuota": "预留配额"
+                        },
+                        "example": "BaseQuota",
+                        "type": "string"
+                      },
+                      "Usage": {
+                        "description_en": "The quota usage",
+                        "description_zh": "配额用量",
+                        "example": "1009",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "QuotaName": {
+                  "description_en": "The name of the quota",
+                  "description_zh": "配额名称",
+                  "example": "ecs.g5.2xlarge",
+                  "type": "string"
+                },
+                "QuotaType": {
+                  "description_en": "The quota type",
+                  "description_zh": "配额类型",
+                  "enumValueTitles": {
+                    "normal": "普通",
+                    "privilege": "特权"
+                  },
+                  "example": "privilege",
+                  "type": "string"
+                },
+                "QuotaUnit": {
+                  "description_en": "The unit of the quota",
+                  "description_zh": "配额单位",
+                  "example": "AMOUNT",
+                  "type": "string"
+                },
+                "SupportedRange": {
+                  "description_en": "The range of the quota value that is supported by the quota. This can be used as a reference when you configure a quota template",
+                  "description_zh": "当前配额项支持的配额值区间，用于配置配额模板时进行参考",
+                  "items": {
+                    "description_en": "The range of the quota value that is supported by the quota. This can be used as a reference when you configure a quota template.\n\nIf ApplicableType is continuous, and the value is [1009,10000], it indicates that all values from 1009 to 10000 are supported.\n\nIf ApplicableType is discontinuous, and the value is [10,20,50,100], it indicates that only the values 10, 20, 50, and 100 are supported",
+                    "description_zh": "当前配额项支持的配额值区间，用于配置配额模板时进行参考。\n\n当ApplicableType为continuous时，如果取值为[1009,10000]，则表示取值为1009~10000中的所有数。\n\n当ApplicableType为discontinuous时，如果取值为[10,20,50,100]，则表示取值仅为10、20、50和100",
+                    "example": "[1009,10000]",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "TotalQuota": {
+                  "description_en": "The quota value",
+                  "description_zh": "配额值",
+                  "example": "200",
+                  "format": "float",
+                  "type": "number"
+                },
+                "TotalUsage": {
+                  "description_en": "The quota usage",
+                  "description_zh": "配额用量",
+                  "example": "1009",
+                  "format": "float",
+                  "type": "number"
+                },
+                "UnadjustableDetail": {
+                  "description_en": "The reason why the quota is not adjustable",
+                  "description_zh": "配额不可调整原因",
+                  "enumValueTitles": {
+                    "applicationProcess": "配额申请处理中",
+                    "limitReached": "已达配额上限",
+                    "nonactivated": "未开通服务"
+                  },
+                  "example": "applicationProcess",
+                  "type": "string"
+                },
+                "UsageMetric": {
+                  "description_en": "The monitoring information of the quota usage in CloudMonitor.\n\nAn empty value indicates that no monitoring data is available for the quota in CloudMonitor",
+                  "description_zh": "配额用量在云监控（CloudMonitor）中的监控信息。\n\n空表示云监控中无此配额监控数据",
+                  "properties": {
+                    "MetricDimensions": {
+                      "additionalProperties": {
+                        "description_en": "The value of the dimension for CloudMonitor",
+                        "description_zh": "CloudMonitor监控维度值",
+                        "example": "ecs",
+                        "type": "string"
+                      },
+                      "description_en": "The dimensions for CloudMonitor.\n\nFormat: a collection of key-value pairs. For example:\n`{\"productCode\":\"***\",\"metricKey\":\"***\",\"regionId\":\"***\",\"label\":\"***\"}`",
+                      "description_zh": "CloudMonitor监控维度。\n\n格式：`key:value`键值对形式的集合，例如：\n`{\"productCode\":\"***\",\"metricKey\":\"***\",\"regionId\":\"***\",\"label\":\"***\"}`",
+                      "type": "object"
+                    },
+                    "MetricName": {
+                      "description_en": "The name of the CloudMonitor metric",
+                      "description_zh": "CloudMonitor监控项名称",
+                      "example": "Usage",
+                      "type": "string"
+                    },
+                    "MetricNamespace": {
+                      "description_en": "The namespace of the metric for CloudMonitor",
+                      "description_zh": "CloudMonitor监控数据命名空间",
+                      "example": "acs_quotas_flowcontrol",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "D0131FD5-5397-44FE-BF5A-4B7165B813CC",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of records returned for the request",
+            "description_zh": "本次请求返回的全部记录条数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

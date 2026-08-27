@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "rm-uf6wjk5****",
       "help_en": "The instance ID. You can call https://help.aliyun.com/document_detail/610396.html to query the instance ID",
       "help_zh": "实例ID，可调用https://help.aliyun.com/document_detail/610396.html获取",
@@ -51,6 +52,7 @@
       "help_en": "The https://help.aliyun.com/document_detail/26312.html. Unit: GB. You can call https://help.aliyun.com/document_detail/610393.html to query the available storage capacity range for the target instance type.\n\nYou must specify at least one of this parameter and DBInstanceClass.\nYou can call https://help.aliyun.com/document_detail/610394.html to query the current storage capacity of the instance",
       "help_zh": "https://help.aliyun.com/document_detail/26312.html，单位GB，可调用https://help.aliyun.com/document_detail/610393.html接口查询目标实例规格中可用的存储空间范围。\n\n本参数和DBInstanceClass参数两者至少传入一项。\n调用https://help.aliyun.com/document_detail/610394.html可以查看实例当前的存储空间大小",
       "location": "query",
+      "minimum": "5",
       "name": "db_instance_storage",
       "options": [
         "--db-instance-storage"
@@ -73,6 +75,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ScheduleTime"
+      ],
       "example": "MaintainTime",
       "help_en": "The effective period for the new configurations. Valid values:\nChanging some configurations may affect the instance. Read the https://help.aliyun.com/document_detail/96061.html carefully before you configure this parameter. We recommend that you perform this operation during off-peak hours.\nImmediate (default): The new configurations take effect immediately.\nMaintainTime: The new configurations take effect during the https://help.aliyun.com/document_detail/610402.html.\nScheduleTime: The new configurations take effect at a specified time. The specified time must be at least 12 hours later than the current time. The actual switchover time follows the rule: EffectiveTime = ScheduleTime + SwitchTime. You can allocate a specific time for the switchover",
       "help_zh": "新配置生效时间，取值：\n变更部分配置可能对实例产生影响，请仔细阅读https://help.aliyun.com/document_detail/96061.html，再配置该参数，建议在业务低峰期进行。\nImmediate（默认值）：立即生效。\nMaintainTime：在https://help.aliyun.com/document_detail/610402.html生效。\nScheduleTime：指定时间切换。该时间需为当前时间12小时之后的一个时刻，且实际切换时间遵循EffectiveTime=ScheduleTime+SwitchTime",
@@ -125,6 +130,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Up",
+        "Down",
+        "Auto",
+        "TempUpgrade",
+        "Serverless"
+      ],
       "example": "Up",
       "help_en": "The specification change type. Valid values:\n\nUp (default): upgrade for subscription instances, and upgrade or downgrade for pay-as-you-go instances.\nDown: downgrade for subscription instances.\nTempUpgrade: elastic upgrade for subscription SQL Server instances. This value is required for elastic upgrades.\nServerless: configure this value when you adjust the elastic settings of a serverless instance.\n\nIf you only change the DBInstanceStorageType parameter, such as changing from standard SSD to ESSD, leave this parameter empty",
       "help_zh": "实例变配类型，取值：\n\nUp（默认值）：包年包月实例的升级和按量付费实例的升级/降级。\nDown：包年包月实例的降级。\nTempUpgrade：包年包月SQL Server实例的弹性变配，弹性变配必填。\nServerless：Serverless实例调整弹性设置时配置。\n\n如果仅变更DBInstanceStorageType参数，例如将SSD云盘变更为ESSD云盘，则此参数留空",
@@ -409,6 +421,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "optimized",
+        "none"
+      ],
       "example": "optimized",
       "help_en": "Specifies whether to enable the MySQL https://help.aliyun.com/document_detail/2858761.html. Valid values:\n\noptimized: enabled.\nnone: disabled",
       "help_zh": "MySQLhttps://help.aliyun.com/document_detail/2858761.html开关，取值：\n\noptimized：开启\nnone：关闭",
@@ -450,237 +466,34 @@
   "pathPattern": "",
   "product_code": "Rds",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "name": "AllocateStrategy",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to perform a https://help.aliyun.com/document_detail/127458.html for a SQL Server instance. Valid values:\ntrue: upgrade.\nfalse (default): do not upgrade.\n\nWhen you perform a major version upgrade, you must also pass other required parameters, including DBInstanceId, EngineVersion, DBInstanceClass, Category, ZoneId, and VSwitchId.\nIf you want to upgrade to the High-availability Edition or Cluster Edition, you must also specify the ZoneIdSlave1 parameter",
-      "help_zh": "SQL Server实例https://help.aliyun.com/document_detail/127458.html，取值：\ntrue：升级\nfalse（默认）：不升级\n\n大版本升级时，还需传入其他必传参数，包含DBInstanceId、EngineVersion、DBInstanceClass、Category、ZoneId、VSwitchId。\n且如需升级到高可用系列或者集群系列实例，则还需传入ZoneIdSlave1参数",
-      "name": "AllowMajorVersionUpgrade",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to use coupons to offset fees. Valid values:\n\ntrue (default): use coupons.\nfalse: do not use coupons",
-      "help_zh": "是否使用代金券抵扣费用，取值：\n\ntrue（默认值）：使用\nfalse：不使用",
-      "name": "AutoUseCoupon",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to enable the https://help.aliyun.com/document_detail/2340501.html (cloud disk). Valid values:\n\ntrue: enabled.\nfalse: disabled",
-      "help_zh": "https://help.aliyun.com/document_detail/2340501.html开关，取值：\n\ntrue：开启。\nfalse：关闭",
-      "name": "BurstingEnabled",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The https://help.aliyun.com/document_detail/53509.html. Valid values:\nThis parameter is required when EngineVersion is set to a SQL Server version number.\n<details>\n<summary>Regular ApsaraDB RDS instances</summary>\n\nBasic: Basic Edition\nHighAvailability: High-availability Edition\nAlwaysOn: SQL Server Cluster Edition\nCluster: MySQL Cluster Edition\n<props=\"china\">Finance: Enterprise Edition</props>\n\n</details>\n\n<details>\n<summary>Serverless ApsaraDB RDS instances (not supported for MariaDB)</summary>\n\nserverless_basic: Serverless Basic Edition (applicable only to MySQL and PostgreSQL)\nserverless_standard: Serverless High-availability Edition (applicable only to MySQL and PostgreSQL)\nserverless_ha: Serverless High-availability Edition (applicable only to SQL Server)\n\n</details>",
-      "help_zh": "https://help.aliyun.com/document_detail/53509.html，取值：\nEngineVersion为SQL Server版本号时，此项必填。\n<details>\n<summary>RDS常规实例</summary>\n\nBasic：基础系列\nHighAvailability：高可用系列\nAlwaysOn：SQL Server集群系列\nCluster：MySQL集群系列。\n<props=\"china\">Finance：金融版</props>\n\n</details>\n\n<details>\n<summary>RDS Serverless实例（MariaDB不支持）</summary>\n\nserverless_basic：Serverless基础系列（仅适用MySQL和PostgreSQL）\nserverless_standard：Serverless高可用系列（仅适用MySQL和PostgreSQL）\nserverless_ha：Serverless高可用系列（仅适用SQL Server）\n\n</details>",
-      "name": "Category",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to enable the https://help.aliyun.com/document_detail/2701832.html for premium performance disk (cloud disk). Valid values:\n\ntrue: enabled.\n\nfalse: disabled",
-      "help_zh": "高性能云盘https://help.aliyun.com/document_detail/2701832.html，取值：\n\ntrue：开启\n\nfalse：关闭",
-      "name": "ColdDataEnabled",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to enable the MySQL https://help.aliyun.com/document_detail/2861985.html. Valid values:\n\non: enabled.\noff: disabled",
-      "help_zh": "MySQLhttps://help.aliyun.com/document_detail/2861985.html，取值：\n\non：开启\noff：关闭",
-      "name": "CompressionMode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The https://help.aliyun.com/document_detail/26312.html. You can call https://help.aliyun.com/document_detail/610393.html to query the instance types to which the instance can be changed.\n\nYou must specify at least one of this parameter and DBInstanceStorage.\nYou can call https://help.aliyun.com/document_detail/610394.html to query the current instance type",
-      "help_zh": "https://help.aliyun.com/document_detail/26312.html，可调用https://help.aliyun.com/document_detail/610393.html查询实例可变更规格。\n\n本参数和DBInstanceStorage参数两者至少传入一项。\n调用https://help.aliyun.com/document_detail/610394.html可以查看实例当前使用的规格",
-      "name": "DBInstanceClass",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The instance ID. You can call https://help.aliyun.com/document_detail/610396.html to query the instance ID",
-      "help_zh": "实例ID，可调用https://help.aliyun.com/document_detail/610396.html获取",
-      "name": "DBInstanceId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The https://help.aliyun.com/document_detail/26312.html. Unit: GB. You can call https://help.aliyun.com/document_detail/610393.html to query the available storage capacity range for the target instance type.\n\nYou must specify at least one of this parameter and DBInstanceClass.\nYou can call https://help.aliyun.com/document_detail/610394.html to query the current storage capacity of the instance",
-      "help_zh": "https://help.aliyun.com/document_detail/26312.html，单位GB，可调用https://help.aliyun.com/document_detail/610393.html接口查询目标实例规格中可用的存储空间范围。\n\n本参数和DBInstanceClass参数两者至少传入一项。\n调用https://help.aliyun.com/document_detail/610394.html可以查看实例当前的存储空间大小",
-      "name": "DBInstanceStorage",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The instance storage type. Valid values:\nlocal_ssd: local SSD\ncloud_ssd: standard SSD (not recommended because this storage type is no longer available for sale in some regions)\ncloud_essd: PL1 ESSD cloud disk\ncloud_essd2: PL2 ESSD cloud disk\ncloud_essd3: PL3 ESSD cloud disk\ngeneral_essd: premium performance disk\n\nNote the following items when you change the storage type:\n<props=\"china\">* If you change the instance storage type from ESSD cloud disk to premium performance disk, other parameters (such as instance type and storage capacity) must remain the same as the current values and cannot be modified.</props>\n\n<props=\"china\">* For MySQL or MariaDB instances with standard SSD storage, you can pass `cloud_essd` to https://help.aliyun.com/document_detail/314678.html. To upgrade, you must specify both DBInstanceClass and DBInstanceStorage with the same values as the current instance.</props>\n\n<props=\"china\">* For PostgreSQL instances, you can upgrade from standard SSD to https://help.aliyun.com/document_detail/96750.html, but downgrading from ESSD cloud disk to standard SSD is not supported.</props>\n\n<props=\"intl\">For PostgreSQL instances, you can upgrade from standard SSD to https://help.aliyun.com/document_detail/96750.html, but downgrading from ESSD cloud disk to standard SSD is not supported.</props>",
-      "help_zh": "实例存储类型，取值：\nlocal_ssd：高性能本地盘\ncloud_ssd：SSD云盘（不推荐，部分地域已经停止售卖）\ncloud_essd：ESSD PL1云盘\ncloud_essd2：ESSD PL2云盘\ncloud_essd3：ESSD PL3云盘\ngeneral_essd：高性能云盘\n\n如需变更存储类型，请注意：\n<props=\"china\">* 如果将实例存储类型由ESSD变更为高性能云盘，则其他参数（实例规格、存储空间大小等）需与实例原参数值保持一致，不允许修改。</props>\n\n<props=\"china\">* 对于MySQL或MariaDB实例，存储类型为SSD云盘时，您可以传入`cloud_essd`将实例的存储类型https://help.aliyun.com/document_detail/314678.html。如需升级，则**DBInstanceClass**和**DBInstanceStorage**都需要传入，且需要与实例现有的值相同。</props>\n\n<props=\"china\">* 对于PostgreSQL实例可以将SSD云盘升级为https://help.aliyun.com/document_detail/96750.html，但**不支持将ESSD云盘降级为SSD云盘**。</props>\n\n<props=\"intl\">对于PostgreSQL实例可以将SSD云盘升级为https://help.aliyun.com/document_detail/96750.html，但**不支持将ESSD云盘降级为SSD云盘**。</props>",
-      "name": "DBInstanceStorageType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The dedicated cluster ID",
-      "help_zh": "专属集群ID",
-      "name": "DedicatedHostGroupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The specification change type. Valid values:\n\nUp (default): upgrade for subscription instances, and upgrade or downgrade for pay-as-you-go instances.\nDown: downgrade for subscription instances.\nTempUpgrade: elastic upgrade for subscription SQL Server instances. This value is required for elastic upgrades.\nServerless: configure this value when you adjust the elastic settings of a serverless instance.\n\nIf you only change the DBInstanceStorageType parameter, such as changing from standard SSD to ESSD, leave this parameter empty",
-      "help_zh": "实例变配类型，取值：\n\nUp（默认值）：包年包月实例的升级和按量付费实例的升级/降级。\nDown：包年包月实例的降级。\nTempUpgrade：包年包月SQL Server实例的弹性变配，弹性变配必填。\nServerless：Serverless实例调整弹性设置时配置。\n\n如果仅变更DBInstanceStorageType参数，例如将SSD云盘变更为ESSD云盘，则此参数留空",
-      "name": "Direction",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The effective period for the new configurations. Valid values:\nChanging some configurations may affect the instance. Read the https://help.aliyun.com/document_detail/96061.html carefully before you configure this parameter. We recommend that you perform this operation during off-peak hours.\nImmediate (default): The new configurations take effect immediately.\nMaintainTime: The new configurations take effect during the https://help.aliyun.com/document_detail/610402.html.\nScheduleTime: The new configurations take effect at a specified time. The specified time must be at least 12 hours later than the current time. The actual switchover time follows the rule: EffectiveTime = ScheduleTime + SwitchTime. You can allocate a specific time for the switchover",
-      "help_zh": "新配置生效时间，取值：\n变更部分配置可能对实例产生影响，请仔细阅读https://help.aliyun.com/document_detail/96061.html，再配置该参数，建议在业务低峰期进行。\nImmediate（默认值）：立即生效。\nMaintainTime：在https://help.aliyun.com/document_detail/610402.html生效。\nScheduleTime：指定时间切换。该时间需为当前时间12小时之后的一个时刻，且实际切换时间遵循EffectiveTime=ScheduleTime+SwitchTime",
-      "name": "EffectiveTime",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The database engine version. Valid values:\n<details>\n<summary>Regular ApsaraDB RDS instances</summary>\n\nMySQL: 5.5, 5.6, 5.7, 8.0\nSQL Server: 2008r2, 08r2_ent_ha, 2012, 2012_ent_ha, 2012_std_ha, 2012_web, 2014_std_ha, 2016_ent_ha, 2016_std_ha, 2016_web, 2017_std_ha, 2017_ent, 2019_std_ha, 2019_ent, 2022_web, 2022_std_ha, 2022_ent, 2025_std, 2025_ent\nPostgreSQL: 10.0, 11.0, 12.0, 13.0, 14.0, 15.0\nMariaDB: 10.3\n\n</details>\n\n<details>\n<summary>Serverless ApsaraDB RDS instances (not supported for MariaDB)</summary>\n\nMySQL: 5.7, 8.0\nSQL Server: 2016_std_sl, 2017_std_sl, 2019_std_sl\nPostgreSQL: 14.0, 15.0, 16.0\n\n</details>",
-      "help_zh": "数据库版本号，取值：\n<details>\n<summary>RDS常规实例</summary>\n\nMySQL：5.5、5.6、5.7、8.0\nSQL Server：2008r2、08r2_ent_ha、2012、2012_ent_ha、2012_std_ha、2012_web、2014_std_ha、2016_ent_ha、2016_std_ha、2016_web、2017_std_ha、2017_ent、2019_std_ha、2019_ent、2022_web、2022_std_ha、2022_ent、2025_std、2025_ent\nPostgreSQL：10.0、11.0、12.0、13.0、14.0、15.0\nMariaDB：10.3\n\n</details>\n\n<details>\n<summary>RDS Serverless实例（MariaDB不支持）</summary>\n\nMySQL：5.7、8.0\nSQL Server：2016_std_sl、2017_std_sl、2019_std_sl\nPostgreSQL：14.0、15.0、16.0\n\n</details>",
-      "name": "EngineVersion",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to enable the https://help.aliyun.com/document_detail/2527067.html for premium performance disk (cloud disk). Valid values:\n\n1: enabled.\n0: disabled",
-      "help_zh": "高性能云盘https://help.aliyun.com/document_detail/2527067.html，取值：\n\n1：开启\n0：不开启",
-      "name": "IoAccelerationEnabled",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to enable the MySQL https://help.aliyun.com/document_detail/2858761.html. Valid values:\n\noptimized: enabled.\nnone: disabled",
-      "help_zh": "MySQLhttps://help.aliyun.com/document_detail/2858761.html开关，取值：\n\noptimized：开启\nnone：关闭",
-      "name": "OptimizedWrites",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The current billing method of the instance. Valid values:\nPostpaid: pay-as-you-go.\nPrepaid: subscription.\nServerless (not supported for MariaDB instances): serverless.\n\nTo change to the Serverless type, you must configure the following parameters: automatic start and stop (AutoPause), scaling range (MaxCapacity and MinCapacity), and elastic policy (SwitchForce). For more information, see https://help.aliyun.com/document_detail/411291.html, https://help.aliyun.com/document_detail/604344.html, and https://help.aliyun.com/document_detail/607742.html",
-      "help_zh": "实例当前的付费类型，取值：\nPostpaid：后付费（按量付费）。\nPrepaid：预付费（包年包月）。\nServerless（不支持MariaDB实例）：Serverless付费类型。\n\n如需变更为Serverless类型，必须在后续参数中配置自动启停（AutoPause）、扩缩容范围（MaxCapacity、MinCapacity）和弹性策略（SwitchForce）。更多信息，请参见https://help.aliyun.com/document_detail/411291.html、https://help.aliyun.com/document_detail/604344.html、https://help.aliyun.com/document_detail/607742.html",
-      "name": "PayType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The coupon code",
-      "help_zh": "优惠券code",
-      "name": "PromotionCode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The https://help.aliyun.com/document_detail/276980.html when you perform an Upgrade/Downgrade from a MySQL high availability (HA) instance with Premium Local SSDs to a cloud disk instance",
-      "help_zh": "MySQL高可用高性能本地盘实例变配为云盘实例时，https://help.aliyun.com/document_detail/276980.html",
-      "name": "ReadOnlyDBInstanceClass",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The resource group ID",
-      "help_zh": "资源组ID",
-      "name": "ResourceGroupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The serverless instance configuration",
-      "help_zh": "变配Serverless实例",
-      "name": "ServerlessConfiguration",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "A deprecated parameter. You do not need to configure this parameter",
-      "help_zh": "弃用参数，无需配置",
-      "name": "SourceBiz",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The time at which the specification change is performed. We recommend that you perform specification changes during off-peak hours.\n\nFormat: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC).\n\nThe specified time must be later than the current time (the time when the call is initiated). Otherwise, the specification change task fails. After the task fails, you must wait for the order to be automatically canceled before you can initiate the call again.\nIf you only increase the storage capacity or change the ESSD storage type, the specification change is performed immediately after the request is submitted because it does not affect your workloads. You do not need to configure this parameter",
-      "help_zh": "指定执行变配的时间，建议在业务低峰期执行变配。\n\n格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）。\n\n指定的变配时间必须晚于当前时间（即发起调用的时间），否则变配任务将失败。任务失败后，您需要等待订单自动作废后才能重新发起调用。\n如果仅增加存储空间或进行ESSD存储类型的变更，由于对业务无影响，变配操作将在提交后立即执行，无需配置此参数",
-      "name": "SwitchTime",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The https://help.aliyun.com/document_detail/126002.html of the PostgreSQL instance. If the specification change fails because the current minor engine version is not supported, specify this parameter to upgrade the minor engine version during the specification change.\n\nFormat: `rds_postgres_<major version>00_<minor version>`. Example for version 12 with minor version 20200830: `rds_postgres_1200_20200830`",
-      "help_zh": "PostgreSQL实例https://help.aliyun.com/document_detail/126002.html。当变更实例规格并且报错内核小版本不支持时，需要传入内核小版本号，**用于在变更实例规格时升级内核小版本**。\n\n格式：`rds_postgres_<大版本号>00_<小版本号>`。例如12版本的20200830：`rds_postgres_1200_20200830`",
-      "name": "TargetMinorVersion",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The duration of the SQL Server https://help.aliyun.com/document_detail/95665.html. Unit: days",
-      "help_zh": "SQL Serverhttps://help.aliyun.com/document_detail/95665.html时间。单位：天",
-      "name": "UsedTime",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The vSwitch ID. The zone of the vSwitch must correspond to the zone ID specified in ZoneId.\n\nThe network type InstanceNetworkType must be VPC.\nIf you specify ZoneSlaveId1 (secondary zone ID), specify two vSwitch IDs separated by a comma (,).\nThis parameter is required only when you upgrade the major engine version of a SQL Server instance (AllowMajorVersionUpgrade) and need to specify the vSwitch, or when you switch the vSwitch",
-      "help_zh": "虚拟交换机ID。虚拟交换机所在的可用区必须和ZoneId中传入的可用区ID相对应。\n\n网络类型InstanceNetworkType需为VPC。\n若您填写了ZoneSlaveId1（备可用区ID），此处需填写两个交换机ID，并使用半角逗号（,）隔开。\n仅SQL Server实例选择升级大版本时（AllowMajorVersionUpgrade）需要指定交换机，或者切换交换机时需要设置该参数",
-      "name": "VSwitchId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The zone ID",
-      "help_zh": "可用区ID",
-      "name": "ZoneId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The zone ID of the secondary node. If this value is the same as ZoneId, the instance uses single-zone deployment. If this value is different from ZoneId, the instance uses multi-zone deployment.\nThis parameter is required only when you upgrade the major engine version of a SQL Server instance (AllowMajorVersionUpgrade) and need to specify the secondary zone, or when you switch the secondary zone",
-      "help_zh": "备节点可用区ID。如果和ZoneId相同，则为单可用区部署；如果和ZoneId不同，则为多可用区部署。\n仅SQL Server实例选择升级大版本时（AllowMajorVersionUpgrade）需要指定备可用区，或者切换备可用区时需要设置该参数",
-      "name": "ZoneIdSlave1",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回参数详情",
+        "properties": {
+          "DBInstanceId": {
+            "description_en": "The instance ID",
+            "description_zh": "实例ID",
+            "example": "rm-uf6wjk5****",
+            "type": "string"
+          },
+          "OrderId": {
+            "description_en": "The order ID",
+            "description_zh": "订单ID",
+            "example": "20793850608****",
+            "format": "int64",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "3C5CFDEE-F774-4DED-89A2-1D76EC63C575",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

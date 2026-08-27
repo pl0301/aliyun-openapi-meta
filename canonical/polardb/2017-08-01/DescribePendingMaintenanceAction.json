@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "all",
       "help_en": "The region ID of the pending event. You can call the https://help.aliyun.com/document_detail/98041.html operation to query the regions and zones that are supported by PolarDB.\n\nYou can set this parameter to all to view all pending events within your account.\n\nIf you set `Region` to all, you must set `TaskType` to all",
       "help_zh": "待处理事件所在地域的地域ID，您可以调用https://help.aliyun.com/document_detail/98041.html接口查看PolarDB支持的地域和可用区。\n\n您可以输入all查看您账户下所有的待处理事件。\n当`Region`设置为all时，`TaskType`也必须设置为all",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "all",
       "help_en": "The task type of pending events. Valid values:\n\nDatabaseSoftwareUpgrading: database software upgrades\n\nDatabaseHardwareMaintenance: hardware maintenance and upgrades\n\nDatabaseStorageUpgrading: database storage upgrades\n\nDatabaseProxyUpgrading: minor version upgrades of the proxy\n\nall: returns pending events of all preceding types.\n\nIf the `Region` parameter is set to all, the `TaskType` parameter must be set to all",
       "help_zh": "待处理事件的任务类型，取值范围如下：\nDatabaseSoftwareUpgrading：数据库软件升级\nDatabaseHardwareMaintenance：硬件维护与升级\nDatabaseStorageUpgrading：数据库存储升级\nDatabaseProxyUpgrading：代理小版本升级\nall：表示查询上述所有类型的待处理事件详情\n\n当`Region`设置为all时，`TaskType`也必须设置为all",
@@ -64,6 +66,8 @@
       "help_en": "The number of entries per page. Valid values: 30, 50, and 100.\n\nDefault value: 30",
       "help_zh": "每页记录数，取值为30、50或100。\n\n默认值为30",
       "location": "query",
+      "maximum": "100",
+      "minimum": "10",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -77,6 +81,8 @@
       "help_en": "The number of the page to return. Specify the parameter to a positive integer that does not exceed the maximum value of the INTEGER data type. Default value: 1",
       "help_zh": "页码，取值为大于0且不超过Integer数据类型的最大值，默认值为1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -101,5 +107,141 @@
   ],
   "pathPattern": "",
   "product_code": "polardb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Items": {
+            "description_en": "Details about tasks",
+            "description_zh": "任务列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "CreatedTime": {
+                  "description_en": "The time when the task was created. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "创建任务的时间点，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2020-06-09T22:00:42Z",
+                  "type": "string"
+                },
+                "DBClusterId": {
+                  "description_en": "The ID of the cluster",
+                  "description_zh": "集群ID",
+                  "example": "pc-************",
+                  "type": "string"
+                },
+                "DBType": {
+                  "description_en": "The type of the database engine. Valid values:\n\nMySQL\n\nPostgreSQL\n\nOracle",
+                  "description_zh": "数据库引擎类型，取值范围如下： \n\nMySQL\nPostgreSQL\nOracle",
+                  "example": "MySQL",
+                  "type": "string"
+                },
+                "DBVersion": {
+                  "description_en": "The version of the database engine.\n\nValid values for the MySQL database engine:\n\n5.6\n\n5.7\n\n8.0\n\nValid values for the PostgreSQL database engine:\n\n11\n\n14\n\nValid value for the Oracle database engine: 11",
+                  "description_zh": "数据库引擎版本号。\nMySQL版本号取值范围如下： \n    * 5.6\n    * 5.7\n    * 8.0\nPostgreSQL版本号取值范围如下： \n    * 11\n    * 14\nOracle版本号取值范围如下： \n    * 11\n    * 14",
+                  "example": "8.0",
+                  "type": "string"
+                },
+                "Deadline": {
+                  "description_en": "The deadline before which the task can be executed. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "任务执行时间可调整范围的最晚期限，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2020-06-11T15:59:59Z",
+                  "type": "string"
+                },
+                "Id": {
+                  "description_en": "The ID of the task",
+                  "description_zh": "目标任务ID",
+                  "example": "111111",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "ModifiedTime": {
+                  "description_en": "The time when the parameter was modified. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "修改时间，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2020-06-09T22:00:42Z",
+                  "type": "string"
+                },
+                "PrepareInterval": {
+                  "description_en": "The preparation time that is required before the pending event is switched. The time follows the `HH:mm:ss` format",
+                  "description_zh": "待处理事件切换之前所需的准备时间，格式为`HH:mm:ss`",
+                  "example": "04:00:00",
+                  "type": "string"
+                },
+                "Region": {
+                  "description_en": "The region ID of the pending event",
+                  "description_zh": "任务所在地域的地域ID",
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "ResultInfo": {
+                  "description_en": "The execution result of the task. Valid values:\n\nmanualCancel: The task is manually canceled.\n\nparamCheckNotPass: The task fails to pass the parameter check.\n\nThis parameter is returned only when the value of the `Status` parameter is 6 or 7. The value 6 indicates that the task is completed but fails to be executed. The value 7 indicates that the task is canceled",
+                  "description_zh": "任务执行结果，取值范围如下：\nmanualCancel：手动取消任务\nparamCheckNotPass：参数检查未通过\n\n仅当`Status`（任务状态）取值为6（任务结束但执行失败）或7（任务已取消）时，返回该参数",
+                  "example": "manualCancel",
+                  "type": "string"
+                },
+                "StartTime": {
+                  "description_en": "The time when the task was executed in the background. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "后台执行该任务的时间点，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2020-06-09T18:00:00Z",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The status of the pending task.\n\nIf you set the `IsHistory` parameter to 0, the status of the pending task is returned. Valid values:\n\n2: The start time of the task is to be specified.\n\n3: The task is pending.\n\n4: The task is running. In this case, you cannot modify the execution time.\n\nIf you set the `IsHistory` parameter to 1, the details of the historical tasks are returned. Valid values:\n\n5: The task is completed and executed.\n\n6: The task is completed but fails to be executed.\n\n7: The task is canceled",
+                  "description_zh": "任务状态。\n若您设置`IsHistory`为0，则返回待处理任务状态的详情，取值范围如下：\n\n    * 2：等待用户设置任务开始时间\n    * 3：等待处理\n    * 4：任务正在处理中（不支持在该状态下修改任务执行时间）\n\n若您设置`IsHistory`为1，则返回历史任务状态的详情，取值范围如下：\n     * 5：任务结束且执行成功\n     * 6：任务结束但执行失败\n     * 7：任务已取消",
+                  "example": "3",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "SwitchTime": {
+                  "description_en": "The time when the pending event was switched. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "待处理事件预计的切换时间，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2020-06-09T22:00:00Z",
+                  "type": "string"
+                },
+                "TaskType": {
+                  "description_en": "The type of the pending event",
+                  "description_zh": "待处理事件的任务类型",
+                  "example": "DatabaseSoftwareUpgrading",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page",
+            "description_zh": "每页记录数",
+            "example": "30",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "2F029645-FED9-4FE8-A6D3-488954******",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of returned entries",
+            "description_zh": "总记录数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

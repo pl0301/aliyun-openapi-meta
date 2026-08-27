@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "pgm-bp1c808s731l****",
       "help_en": "The instance ID. You can call the DescribeDBInstances operation to query this ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
@@ -38,6 +39,8 @@
       "help_en": "The number of entries to return on each page.\n\nValid values:\n\n30 (default)\n\n50\n\n100",
       "help_zh": "表示大版本升级前，检查报告每页显示的记录数。\n\n取值范围：\n30（默认值）\n50\n100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "30",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -51,6 +54,8 @@
       "help_en": "The page number.\n\nThe value must be an integer that is greater than 0. Default value: 1",
       "help_zh": "表示显示升级前检查报告的页码。\n\n取值范围：大于0且不超过Integer的最大值。默认值：1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -88,5 +93,124 @@
   ],
   "pathPattern": "",
   "product_code": "Rds",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The data returned",
+        "description_zh": "返回的参数详情",
+        "properties": {
+          "Items": {
+            "description_en": "The properties of the major version upgrade precheck report",
+            "description_zh": "大版本升级检查报告属性列表",
+            "items": {
+              "description_en": "The details of the major version upgrade precheck report",
+              "description_zh": "大版本升级检查报告详情",
+              "properties": {
+                "CheckTime": {
+                  "description_en": "The time when the precheck was performed.\n\nThe time follows the UNIX time format. The time is displayed in UTC. Unit: milliseconds",
+                  "description_zh": "检查时间。\n\n以Unix时间戳表示。单位：毫秒",
+                  "example": "1635143903000",
+                  "type": "string"
+                },
+                "Detail": {
+                  "description_en": "The content of the major version upgrade precheck report",
+                  "description_zh": "大版本升级检查报告内容",
+                  "example": "[user_check_report]User check success\\n[pg_upgrade_internal.log]Performing...",
+                  "type": "string"
+                },
+                "EffectiveTime": {
+                  "description_en": "The expiration time of the precheck report.\n\nThe time follows the UNIX time format. The time is displayed in UTC. Unit: milliseconds",
+                  "description_zh": "检查报告到期时间。\n\n以Unix时间戳表示。单位：毫秒",
+                  "example": "1635748703000",
+                  "type": "string"
+                },
+                "RecommendDiskSize": {
+                  "description_en": "The recommended minimum storage capacity that is required for the major engine version upgrade. Unit: GB.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                  "description_zh": "升级时，推荐的最小磁盘容量。单位：GB。\n\n仅RDS PostgreSQL实例会返回该参数",
+                  "example": "100",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "RecommendLeastMemSize": {
+                  "description_en": "The recommended minimum memory that is required for the major engine version upgrade. Unit: GB.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                  "description_zh": "升级时，推荐的最小内存。单位：GB。\n\n仅RDS PostgreSQL实例会返回该参数",
+                  "example": "8",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "RecommendMemSize": {
+                  "description_en": "The recommended memory for the major engine version upgrade. Unit: GB.\n\nIf the memory of the instance is greater than or equal to the recommended memory, the upgrade proceeds at maximum speed to minimize the read-only time of the instance.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                  "description_zh": "升级时，推荐内存。单位：GB。\n\n当实例的内存大于或等于推荐内存，将以最快的速度进行升级，以尽量减少实例的只读时间。\n\n仅RDS PostgreSQL实例会返回该参数",
+                  "example": "32",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "Result": {
+                  "description_en": "The result of the major version upgrade precheck.\n\nValid values:\n\nSuccess: The precheck is successful.\n\nFail: The precheck fails.\n\nWarning: The precheck is successful but a warning is reported. You can view the precheck report to determine whether to upgrade the major engine version.\n\nIf the value of this parameter is Fail, you must check the value of the Detail parameter, fix the reported issues, and then try again. For more information about common issues and solutions, see [Understand the major version upgrade check report for an RDS for PostgreSQL instance]（https://help.aliyun.com/document_detail/218391.html）",
+                  "description_zh": "大版本升级检查的检查结果。\n\n取值范围：\nSuccess：成功\nFail：失败\nwarning：警告，需要查看报告，确定是否继续升级\n\n当检查结果为Fail时，请排查Detail的参数取值，处理报错后再试，常见报错及处理方法，请参见[解读RDS PostgreSQL大版本升级检查报告]（https://help.aliyun.com/document_detail/218391.html）",
+                  "example": "Success",
+                  "type": "string"
+                },
+                "SourceMajorVersion": {
+                  "description_en": "The original major engine version of the instance",
+                  "description_zh": "当前实例版本",
+                  "example": "11.0",
+                  "type": "string"
+                },
+                "TargetMajorVersion": {
+                  "description_en": "The major engine version of the instance to which you want to upgrade",
+                  "description_zh": "目标实例版本",
+                  "example": "12.0",
+                  "type": "string"
+                },
+                "TaskId": {
+                  "description_en": "The ID of the major version upgrade precheck task",
+                  "description_zh": "大版本升级前检查任务ID",
+                  "example": "416980000",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "UpgradeMode": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageRecordCount": {
+            "description_en": "The number of entries per page",
+            "description_zh": "每页显示记录数",
+            "example": "30",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "D1586777-41B5-5F9E-81E8-93DFDD379024",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of precheck reports",
+            "description_zh": "升级检查报告记录数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

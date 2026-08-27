@@ -48,6 +48,17 @@
       "type": "string"
     },
     {
+      "enum": [
+        "tair",
+        "dbs",
+        "polardb-ai",
+        "polarx",
+        "yaochi",
+        "polarx-light",
+        "lindorm",
+        "mongodb",
+        "polardb"
+      ],
       "example": "yaochi",
       "help_en": "The cloud service source that specifies which cloud service the question belongs to. This parameter is optional. Default value: yaochi",
       "help_zh": "非必填，云产品来源，指定问答所属的云产品，未填写默认为yaochi",
@@ -89,44 +100,151 @@
   "pathPattern": "/agent",
   "product_code": "DAS",
   "protocol": "HTTPS|SSE",
-  "v1_parameters": [
-    {
-      "help_en": "The additional information in JSON string format. This parameter is optional",
-      "help_zh": "非必填，附加信息，json字符串",
-      "name": "ExtraInfo",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "ImageKeys",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The natural language description of the question",
-      "help_zh": "问答自然语言描述",
-      "name": "Query",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The session ID in UUID string format. This parameter is optional. If you do not specify this parameter, a new session is created. To maintain context across a conversation, use the same session ID",
-      "help_zh": "可选，会话Id，格式为UUID字符串。\n未传入会创建新的会话，上下文对话需保持同一个会话Id",
-      "name": "SessionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The cloud service source that specifies which cloud service the question belongs to. This parameter is optional. Default value: yaochi",
-      "help_zh": "非必填，云产品来源，指定问答所属的云产品，未填写默认为yaochi",
-      "name": "Source",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Content": {
+            "description_en": "The response content",
+            "description_zh": "回答内容",
+            "example": "xxx",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "FunctionCall": {
+            "description_en": "The tool calling invoke list",
+            "description_zh": "工具调用列表",
+            "items": {
+              "description_en": "The list of strings",
+              "description_zh": "字符串列表",
+              "properties": {
+                "Arguments": {
+                  "description_en": "The parameters of the called tool",
+                  "description_zh": "调用工具参数",
+                  "example": "{\"arg\": \"xxx\"}",
+                  "type": "string"
+                },
+                "Id": {
+                  "description_en": "The tool ID",
+                  "description_zh": "工具ID",
+                  "example": "12345",
+                  "type": "string"
+                },
+                "Name": {
+                  "description_en": "The name of the called tool",
+                  "description_zh": "调用工具名称",
+                  "example": "sqlReview",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The tool calling invoke status",
+                  "description_zh": "工具调用状态",
+                  "example": "RUNNING",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "ParentId": {
+            "description_en": "The ParentId field. This field exists only when the message is output by a sub-agent, and the value is the sub-agent ID",
+            "description_zh": "仅当消息为子Agent输出时，存在ParentId字段，且值为子AgentID",
+            "example": "12345",
+            "type": "string"
+          },
+          "Product": {
+            "description_en": "The cloud service type",
+            "description_zh": "云产品类型",
+            "example": "polardb",
+            "type": "string"
+          },
+          "QueryId": {
+            "description_en": "The query ID. This value is the same as the QueryId request parameter",
+            "description_zh": "QueryId， 同请求参数中的 QueryId",
+            "example": "123e4567-e89b-12d3-a456-xxxxxxxxxxxx",
+            "type": "string"
+          },
+          "ReasoningContent": {
+            "description_en": "The reasoning content of the model",
+            "description_zh": "模型思维内容",
+            "example": "xxx",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "7172BECE-588A-5961-8126-C216E16B****",
+            "type": "string"
+          },
+          "SessionId": {
+            "description_en": "The session ID. This value is the same as the SessionId request parameter",
+            "description_zh": "SessionId， 同请求参数中的 SessionId",
+            "example": "123e4567-e89b-12d3-a456-xxxxxxxxxxxx",
+            "type": "string"
+          },
+          "SubAgentCall": {
+            "description_en": "The list of sub-agent call information",
+            "description_zh": "子Agent调用信息列表",
+            "items": {
+              "description_en": "The list of strings",
+              "description_zh": "字符串列表",
+              "properties": {
+                "Status": {
+                  "description_en": "The sub-agent status",
+                  "description_zh": "子Agent状态",
+                  "example": "running",
+                  "type": "string"
+                },
+                "SubAgentId": {
+                  "description_en": "The sub-agent ID",
+                  "description_zh": "子AgentID",
+                  "example": "12345",
+                  "type": "string"
+                },
+                "SubAgentName": {
+                  "description_en": "The sub-agent name",
+                  "description_zh": "子Agent名称",
+                  "example": "XX Agent",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "UiFunctionCall": {
+            "description_en": "The card tool calling invoke list",
+            "description_zh": "卡片工具调用列表",
+            "items": {
+              "description_en": "The list of strings",
+              "description_zh": "字符串列表",
+              "properties": {
+                "ArgsText": {
+                  "description_en": "The parameters of the card tool",
+                  "description_zh": "卡片工具参数",
+                  "example": "{\"arg\": \"xxx\"}",
+                  "type": "string"
+                },
+                "ToolName": {
+                  "description_en": "The name of the card tool",
+                  "description_zh": "卡片工具名称",
+                  "example": "card",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

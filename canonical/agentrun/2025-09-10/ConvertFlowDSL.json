@@ -2,6 +2,471 @@
   "camel_example": "",
   "cmd_full_name": "agentrun convert-flow-dsl",
   "cmd_name": "convert-flow-dsl",
+  "components": {
+    "schemas": {
+      "ConvertFlowDSLData": {
+        "description_en": "",
+        "description_zh": "工作流DSL转换的业务数据，包含转换后的Flow配置、兼容性分析和插件信息",
+        "properties": {
+          "conversionPlan": {
+            "description_en": "",
+            "description_zh": "DSL兼容性分析和转换计划",
+            "properties": {
+              "issues": {
+                "description_en": "",
+                "description_zh": "节点兼容性问题详情",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "description": {
+                      "description_en": "",
+                      "description_zh": "问题描述",
+                      "example": "Tool node requires Toolset installation",
+                      "required": true,
+                      "title": "描述",
+                      "type": "string"
+                    },
+                    "details": {
+                      "additionalProperties": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "type": "any"
+                      },
+                      "description_en": "",
+                      "description_zh": "问题的详细信息（JSON对象）",
+                      "title": "详细信息",
+                      "type": "object"
+                    },
+                    "issueType": {
+                      "description_en": "",
+                      "description_zh": "问题类型：needs_config, needs_conversion, unsupported",
+                      "example": "needs_config",
+                      "required": true,
+                      "title": "问题类型",
+                      "type": "string"
+                    },
+                    "level": {
+                      "description_en": "",
+                      "description_zh": "问题严重程度：info, warning, error",
+                      "example": "warning",
+                      "required": true,
+                      "title": "问题级别",
+                      "type": "string"
+                    },
+                    "nodeId": {
+                      "description_en": "",
+                      "description_zh": "Dify DSL中的节点标识符",
+                      "example": "1760514991682",
+                      "required": true,
+                      "title": "节点ID",
+                      "type": "string"
+                    },
+                    "nodeTitle": {
+                      "description_en": "",
+                      "description_zh": "节点显示名称",
+                      "example": "Google Search",
+                      "title": "节点标题",
+                      "type": "string"
+                    },
+                    "nodeType": {
+                      "description_en": "",
+                      "description_zh": "节点类型",
+                      "example": "tool",
+                      "required": true,
+                      "title": "节点类型",
+                      "type": "string"
+                    },
+                    "suggestion": {
+                      "description_en": "",
+                      "description_zh": "解决建议",
+                      "example": "Install Toolset 'google' before using this flow",
+                      "title": "建议",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "问题列表",
+                "type": "array"
+              },
+              "summary": {
+                "description_en": "",
+                "description_zh": "节点兼容性统计摘要",
+                "properties": {
+                  "compatibleNodes": {
+                    "description_en": "",
+                    "description_zh": "完全兼容的节点数",
+                    "example": "7",
+                    "format": "int32",
+                    "required": true,
+                    "title": "兼容节点数",
+                    "type": "integer"
+                  },
+                  "nodesNeedConfig": {
+                    "description_en": "",
+                    "description_zh": "需要手动配置的节点数",
+                    "example": "2",
+                    "format": "int32",
+                    "required": true,
+                    "title": "需要配置的节点数",
+                    "type": "integer"
+                  },
+                  "nodesNeedConversion": {
+                    "description_en": "",
+                    "description_zh": "需要特殊转换处理的节点数",
+                    "example": "0",
+                    "format": "int32",
+                    "required": true,
+                    "title": "需要转换的节点数",
+                    "type": "integer"
+                  },
+                  "totalNodes": {
+                    "description_en": "",
+                    "description_zh": "Dify DSL中的总节点数",
+                    "example": "10",
+                    "format": "int32",
+                    "required": true,
+                    "title": "总节点数",
+                    "type": "integer"
+                  },
+                  "unsupportedNodes": {
+                    "description_en": "",
+                    "description_zh": "不支持的节点数",
+                    "example": "1",
+                    "format": "int32",
+                    "required": true,
+                    "title": "不支持的节点数",
+                    "type": "integer"
+                  }
+                },
+                "required": true,
+                "title": "转换摘要",
+                "type": "object"
+              }
+            },
+            "title": "转换计划",
+            "type": "object"
+          },
+          "flow": {
+            "description_en": "",
+            "description_zh": "转换后的AgentRun Flow配置信息",
+            "properties": {
+              "definition": {
+                "description_en": "",
+                "description_zh": "工作流的FnF State Machine定义（YAML格式）",
+                "required": true,
+                "title": "定义",
+                "type": "string"
+              },
+              "description": {
+                "description_en": "",
+                "description_zh": "工作流的描述信息",
+                "example": "Converted from external workflow",
+                "title": "描述",
+                "type": "string"
+              },
+              "environmentConfiguration": {
+                "$ref": "#/components/schemas/EnvironmentConfiguration",
+                "description_en": "",
+                "description_zh": "工作流的环境变量配置",
+                "title": "环境配置"
+              },
+              "flowName": {
+                "description_en": "",
+                "description_zh": "转换后的工作流名称",
+                "example": "dify-flow",
+                "required": true,
+                "title": "工作流名称",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "转换后的工作流",
+            "type": "object"
+          },
+          "pluginErrors": {
+            "description_en": "",
+            "description_zh": "插件识别或转换过程中的错误信息",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "nodeId": {
+                  "description_en": "",
+                  "description_zh": "相关节点的标识符",
+                  "example": "1760514996015",
+                  "title": "节点ID",
+                  "type": "string"
+                },
+                "providerName": {
+                  "description_en": "",
+                  "description_zh": "插件提供商名称",
+                  "example": "langgenius",
+                  "required": true,
+                  "title": "提供商名称",
+                  "type": "string"
+                },
+                "reason": {
+                  "description_en": "",
+                  "description_zh": "错误原因描述",
+                  "example": "Plugin not found in marketplace",
+                  "required": true,
+                  "title": "原因",
+                  "type": "string"
+                },
+                "toolName": {
+                  "description_en": "",
+                  "description_zh": "工具名称",
+                  "example": "google_search",
+                  "title": "工具名称",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "插件错误",
+            "type": "array"
+          },
+          "toolsetInstallations": {
+            "description_en": "",
+            "description_zh": "需要安装的Toolset配置列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "description": {
+                  "description_en": "",
+                  "description_zh": "Toolset描述",
+                  "example": "Google Search Plugin",
+                  "title": "描述",
+                  "type": "string"
+                },
+                "name": {
+                  "description_en": "",
+                  "description_zh": "Toolset名称",
+                  "example": "google",
+                  "required": true,
+                  "title": "名称",
+                  "type": "string"
+                },
+                "spec": {
+                  "additionalProperties": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "type": "any"
+                  },
+                  "description_en": "",
+                  "description_zh": "Toolset规格配置（JSON对象）",
+                  "required": true,
+                  "title": "规格",
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "title": "Toolset安装配置",
+            "type": "array"
+          }
+        },
+        "title": "Flow DSL转换数据",
+        "type": "object"
+      },
+      "ConvertFlowDSLInput": {
+        "description_en": "",
+        "description_zh": "工作流DSL转换所需的输入参数，支持多种DSL格式（如Dify、n8n等），包含DSL来源和转换选项",
+        "properties": {
+          "dslSource": {
+            "description_en": "",
+            "description_zh": "工作流DSL的来源配置，支持inline和base64两种格式",
+            "properties": {
+              "content": {
+                "description_en": "",
+                "description_zh": "DSL内容，可以是原始JSON字符串，或根据encoding字段指定的编码格式",
+                "example": "{\"app\":{\"name\":\"My Flow\"}}",
+                "required": true,
+                "title": "内容",
+                "type": "string"
+              },
+              "encoding": {
+                "description_en": "",
+                "description_zh": "DSL内容的编码方式。不填表示内容为原始字符串；base64表示内容经过Base64编码；base64+gzip表示内容经过gzip压缩后再Base64编码",
+                "example": "base64",
+                "title": "内容编码",
+                "type": "string"
+              },
+              "provider": {
+                "description_en": "",
+                "description_zh": "源DSL的提供商类型，如：dify、n8n、zapier等",
+                "example": "dify",
+                "required": true,
+                "title": "DSL提供商",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "DSL来源",
+            "type": "object"
+          },
+          "options": {
+            "description_en": "",
+            "description_zh": "DSL转换的可选配置参数",
+            "properties": {
+              "compatibilityCheck": {
+                "description_en": "",
+                "description_zh": "是否执行兼容性检查，默认为true",
+                "example": "true",
+                "title": "兼容性检查",
+                "type": "boolean"
+              },
+              "credentialName": {
+                "description_en": "",
+                "description_zh": "调用方指定的 AgentRun 凭证资源名称。转换后会替换模型相关节点访问凭证",
+                "title": "访问凭证名称",
+                "type": "string"
+              },
+              "flowName": {
+                "description_en": "",
+                "description_zh": "自定义流程名称",
+                "title": "自定义流程名称",
+                "type": "string"
+              },
+              "vpcEndpointName": {
+                "description_en": "",
+                "description_zh": "全局VPC端点名称，对所有节点统一生效。如果指定了vpcEndpoints映射，则映射中的节点优先使用映射值",
+                "title": "vpc端点名称",
+                "type": "string"
+              },
+              "vpcEndpoints": {
+                "additionalProperties": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "description_en": "",
+                "description_zh": "按节点名称指定VPC端点，key为节点名称(stateName)，value为该节点使用的VPC端点名称。优先级高于vpcEndpointName",
+                "example": "{\"LLM节点\":\"vpc-endpoint-1\",\"Agent节点\":\"vpc-endpoint-2\"}",
+                "title": "vpc端点映射",
+                "type": "object"
+              }
+            },
+            "title": "转换选项",
+            "type": "object"
+          }
+        },
+        "title": "Flow DSL转换输入",
+        "type": "object"
+      },
+      "ConvertFlowDSLResult": {
+        "description_en": "The unified result format for workflow DSL conversion operations",
+        "description_zh": "工作流DSL转换操作的统一结果格式",
+        "properties": {
+          "code": {
+            "description_en": "SUCCESS indicates success. In case of failure, the corresponding error type is returned, such as ERR_BAD_REQUEST, ERR_VALIDATION_FAILED, or ERR_INTERNAL_SERVER_ERROR",
+            "description_zh": "SUCCESS 为成功，失败情况返回对应错误类型，比如 ERR_BAD_REQUEST ERR_VALIDATION_FAILED ERR_INTERNAL_SERVER_ERROR",
+            "example": "SUCCESS",
+            "title": "结果码",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ConvertFlowDSLData",
+            "description_en": "The detailed result data of the workflow DSL conversion",
+            "description_zh": "工作流DSL转换的详细结果数据",
+            "title": "转换数据"
+          },
+          "requestId": {
+            "description_en": "The unique request identifier used for issue tracking",
+            "description_zh": "唯一的请求标识符，用于问题追踪",
+            "example": "F8A0F5F3-0C3E-4C82-9D4F-5E4B6A7C8D9E",
+            "title": "请求ID",
+            "type": "string"
+          }
+        },
+        "title": "Flow DSL转换结果",
+        "type": "object"
+      },
+      "EnvironmentConfiguration": {
+        "description_en": "",
+        "description_zh": "工作流的环境配置，包含一组命名环境变量",
+        "properties": {
+          "variables": {
+            "description_en": "",
+            "description_zh": "环境变量条目列表，每个条目包含 name、value 和可选 description",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentVariable",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "required": true,
+            "title": "变量列表",
+            "type": "array"
+          }
+        },
+        "title": "环境配置",
+        "type": "object"
+      },
+      "EnvironmentVariable": {
+        "description_en": "The workflow environment variable entry",
+        "description_zh": "工作流环境变量条目",
+        "properties": {
+          "description": {
+            "description_en": "The description of the environment variable",
+            "description_zh": "环境变量的描述信息",
+            "example": "A configuration key",
+            "title": "描述",
+            "type": "string"
+          },
+          "name": {
+            "description_en": "The name of the environment variable",
+            "description_zh": "环境变量的名称",
+            "example": "MY_KEY",
+            "required": true,
+            "title": "变量名",
+            "type": "string"
+          },
+          "value": {
+            "description_en": "The value of the environment variable",
+            "description_zh": "环境变量的值",
+            "example": "my-value",
+            "required": true,
+            "title": "变量值",
+            "type": "string"
+          }
+        },
+        "title": "环境变量",
+        "type": "object"
+      },
+      "ErrorResult": {
+        "description_en": "The error response structure",
+        "description_zh": "错误响应结构体",
+        "properties": {
+          "code": {
+            "description_en": "The error code. SUCCESS indicates the request was successful. Otherwise, a specific error code is returned, such as ERR_BAD_REQUEST, ERR_VALIDATION_FAILED, or ERR_INTERNAL_SERVER_ERROR",
+            "description_zh": "SUCCESS 为成功，失败情况返回对应错误类型，比如 ERR_BAD_REQUEST ERR_VALIDATION_FAILED ERR_INTERNAL_SERVER_ERROR",
+            "example": "SUCCESS",
+            "title": "结果码",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "A human-readable description of the error",
+            "description_zh": "错误信息描述",
+            "example": "Conflict Transaction, process failed",
+            "title": "Error Message",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The unique request identifier, used for troubleshooting",
+            "description_zh": "唯一的请求标识符，用于问题追踪",
+            "example": "55D4BE40-2811-5CFB-8482-E0E98D575B1E",
+            "title": "Request ID",
+            "type": "string"
+          }
+        },
+        "title": "Error Response",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Converts a Flow DSL",
   "description_zh": "转换Flow DSL",
@@ -156,6 +621,25 @@
   "pathPattern": "/2025-09-10/flows/action/convertDsl",
   "product_code": "AgentRun",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "examples": [],
+      "schema": {
+        "$ref": "#/components/schemas/ConvertFlowDSLResult",
+        "description_en": "The result of the Flow DSL conversion",
+        "description_zh": "返回Flow DSL转换结果",
+        "title_en": "",
+        "title_zh": "返回Flow DSL转换结果"
+      }
+    },
+    "500": {
+      "schema": {
+        "$ref": "#/components/schemas/ErrorResult",
+        "description_en": "",
+        "description_zh": ""
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body for the conversion",

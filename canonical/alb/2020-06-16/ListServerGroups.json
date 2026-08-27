@@ -83,6 +83,8 @@
       "help_en": "The number of entries to return on each page. Valid values: 1 to 100. Default value: 20",
       "help_zh": "分批次查询时每次显示的条目数。取值范围：1~100，默认值为20",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -163,5 +165,456 @@
   ],
   "pathPattern": "",
   "product_code": "Alb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The data structure that is returned",
+        "description_zh": " 返回数据结构体",
+        "properties": {
+          "MaxResults": {
+            "description_en": "The number of entries returned per page",
+            "description_zh": "分批次查询时每次显示的条目数",
+            "example": "50",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "本次查询返回记录数量",
+            "type": "integer"
+          },
+          "NextToken": {
+            "description_en": "The token used to retrieve the next page of results. Valid values:\n\nIf NextToken is empty, no more results are available.\n\nIf a value is returned, use it to retrieve the next page of results",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。取值：\n如果NextToken为空表示没有下一次查询。\n如果NextToken有返回值，该取值表示下一次查询开始的令牌",
+            "example": "caeba0bbb2be03f8****",
+            "title_en": "",
+            "title_zh": "分页查询标识",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CEF72CEB-54B6-4AE8-B225-F876******",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "ServerGroups": {
+            "description_en": "The list of server groups",
+            "description_zh": "后端服务器组列表",
+            "items": {
+              "description_en": "The list of server groups",
+              "description_zh": "后端服务器组列表",
+              "properties": {
+                "ConfigManagedEnabled": {
+                  "description_en": "Specifies whether to enable configuration management. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                  "description_zh": "是否开启配置管理。取值：\ntrue：开启。\nfalse：关闭",
+                  "example": "false",
+                  "title_en": "",
+                  "title_zh": "是否开启配置管理",
+                  "type": "boolean"
+                },
+                "ConnectionDrainConfig": {
+                  "description_en": "The connection draining configuration.\n\nIf you enable connection draining, the load balancer allows existing connections to be processed within a specified period of time after a backend server is removed or fails a health check.\n\nA basic instance does not support connection draining. Only standard instances and WAF-enabled instances support this feature.\n\nConnection draining is supported by instance and IP-based server groups, but not by Function Compute-based server groups",
+                  "description_zh": "连接优雅中断相关配置。\n\n开启连接优雅中断，在移除后端服务器或者健康检查失败后，负载均衡使现有连接在一定时间内正常传输。\n\n基础版实例不支持开启连接优雅中断，仅标准版、WAF增强版实例支持。\n服务器类型、IP类型服务器组支持连接优雅中断，函数计算类型不支持",
+                  "properties": {
+                    "ConnectionDrainEnabled": {
+                      "description_en": "Specifies whether to enable connection draining. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                      "description_zh": "是否开启连接优雅中断。\n\ntrue：开启\nfalse：关闭",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "ConnectionDrainTimeout": {
+                      "description_en": "The timeout period for connection draining",
+                      "description_zh": "连接优雅中断超时时间",
+                      "example": "300",
+                      "format": "int32",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "CreateTime": {
+                  "description_en": "The time when the server group was created",
+                  "description_zh": "资源创建时间",
+                  "example": "2022-07-02T02:49:05Z",
+                  "type": "string"
+                },
+                "CrossZoneEnabled": {
+                  "description_en": "Specifies whether to enable cross-zone load balancing for the server group. Valid values:\n\ntrue: Enabled. (Default)\n\nfalse: Disabled",
+                  "description_zh": "服务器组是否开启跨AZ负载均衡。取值：\n\ntrue：开启（默认值）\n\nfalse：关闭",
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "HealthCheckConfig": {
+                  "description_en": "The health check configuration",
+                  "description_zh": "健康检查配置",
+                  "properties": {
+                    "HealthCheckCodes": {
+                      "description_en": "The list of status codes that indicate a successful health check",
+                      "description_zh": "健康检查正常的状态码列表",
+                      "items": {
+                        "description_en": "The status code that indicates a successful health check.\n\nIf HealthCheckProtocol is set to HTTP or HTTPS, valid values for HealthCheckCodes are http_2xx, http_3xx, http_4xx, and http_5xx. Separate multiple values with commas (,).\n\nIf HealthCheckProtocol is set to gRPC, the valid status code range for HealthCheckCodes is 0 to 99. You can specify up to 20 value ranges. Separate multiple ranges with commas (,).\n\nThis parameter is valid only when HealthCheckProtocol is set to HTTP, HTTPS, or gRPC",
+                        "description_zh": "健康检查正常的状态码。\n\n当HealthCheckProtocol取值为HTTP或HTTPS时，HealthCheckCodes可以选择http_2xx、 http_3xx、http_4xx和http_5xx。多个状态码用半角逗号（,）分隔。\n\n当HealthCheckProtocol取值为gRPC时，HealthCheckCodes状态码范围：0~99。支持范围输入，最多支持20个范围值，多个范围值使用半角逗号（,）隔开。\n\nHealthCheckProtocol为HTTP或HTTPS或gRPC时，该参数生效",
+                        "example": "http_2xx",
+                        "type": "string"
+                      },
+                      "title_en": "",
+                      "title_zh": "状态码",
+                      "type": "array"
+                    },
+                    "HealthCheckConnectPort": {
+                      "description_en": "The port on the backend server used for health checks. Valid values: 0 to 65535.\n\nIf the value is 0, the backend server port is used for health checks",
+                      "description_zh": "健康检查的后端服务器的端口。取值范围：0~65535。\n\n返回为0时代表使用后端服务器的端口进行健康检查",
+                      "example": "80",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "端口",
+                      "type": "integer"
+                    },
+                    "HealthCheckEnabled": {
+                      "description_en": "Indicates whether health checks are enabled. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                      "description_zh": "是否启用健康检查，取值：\ntrue：启用。\nfalse：不启用",
+                      "example": "true",
+                      "title_en": "",
+                      "title_zh": "是否启用健康检查",
+                      "type": "boolean"
+                    },
+                    "HealthCheckHost": {
+                      "description_en": "The domain name that is used for health checks.\n\nThe private IP address of the backend server (Default): The private IP address of the backend server is used for health checks.\n\nA custom domain name: Specify a domain name that meets the following requirements:\n\nThe domain name must be 1 to 80 characters in length.\n\nIt can contain lowercase letters, digits, hyphens (-), and periods (.).\n\nIt must contain at least one period (.). The period (.) cannot be the first or last character.\n\nThe rightmost domain label can contain only letters and cannot contain digits or hyphens (-).\n\nThe hyphen (-) cannot be the first or last character.\n\nThis parameter is valid only when `HealthCheckProtocol` is set to `HTTP`, `HTTPS`, or `gRPC`",
+                      "description_zh": "健康检查域名。\n\n使用后端服务器的内网IP（默认）：使用后端服务器的内网IP地址作为健康检查的域名。\n\n指定特定域名：输入一个域名。\n\n长度限制为1~80个字符。\n\n可包含小写字母、数字、短划线（-）和半角句号（.）。\n\n至少包含一个半角句号（.），半角句号（.）不能出现在开头或结尾。\n\n最右侧的域标签，只能包含字母，不能包含数字或短划线（-）。\n\n短划线（-）不能出现在开头或结尾。\n\n\n只有HealthCheckProtocol设置为HTTP、HTTPS或gRPC时，该参数生效",
+                      "example": "www.example.com",
+                      "title_en": "",
+                      "title_zh": "域名",
+                      "type": "string"
+                    },
+                    "HealthCheckHttpVersion": {
+                      "description_en": "The HTTP version that is used for health checks.\n\nValid values: HTTP1.0 or HTTP1.1.\n\nThis parameter is valid only when HealthCheckProtocol is set to HTTP or HTTPS",
+                      "description_zh": "健康检查HTTP协议版本。\n\n取值：HTTP1.0或HTTP1.1。\n\n只有HealthCheckProtocol设置为HTTP或HTTPS时，该参数生效",
+                      "example": "HTTP1.1",
+                      "title_en": "",
+                      "title_zh": "版本",
+                      "type": "string"
+                    },
+                    "HealthCheckInterval": {
+                      "description_en": "The interval at which health checks are performed, in seconds. Valid values: 1 to 50",
+                      "description_zh": "健康检查的时间间隔。单位：秒。取值范围：1~50",
+                      "example": "5",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "间隔时间",
+                      "type": "integer"
+                    },
+                    "HealthCheckMethod": {
+                      "description_en": "The health check method. Valid values:\n\nGET: If the response body exceeds 8 KB, it is truncated. This does not affect the health check result.\n\nPOST: gRPC health checks use the POST method by default.\n\nHEAD: HTTP and HTTPS health checks use the HEAD method by default.\n\nThis parameter is valid only when HealthCheckProtocol is set to HTTP, HTTPS, or gRPC",
+                      "description_zh": "健康检查方法。取值：\n\nGET：如果响应报文长度超过8K，会被截断，但不会影响健康检查结果的判定。\n\nPOST：gRPC监听健康检查默认采用POST方法。\n\nHEAD：HTTP和HTTPS监听健康检查默认采用HEAD方法。\n\n\n只有HealthCheckProtocol设置为HTTP或HTTPS或gRPC时，该参数生效",
+                      "example": "HEAD",
+                      "title_en": "",
+                      "title_zh": "方法",
+                      "type": "string"
+                    },
+                    "HealthCheckPath": {
+                      "description_en": "The path that is used for health checks.\n\nThis parameter is valid only when HealthCheckProtocol is set to HTTP or HTTPS",
+                      "description_zh": "健康检查的转发规则路径。\n\n只有HealthCheckProtocol设置为HTTP或HTTPS时，该参数生效",
+                      "example": "/test/index.html",
+                      "title_en": "",
+                      "title_zh": "uri",
+                      "type": "string"
+                    },
+                    "HealthCheckProtocol": {
+                      "description_en": "The protocol that is used for health checks. Valid values:\n\nHTTP: The load balancer sends HEAD or GET requests to check the health of the backend server.\n\nHTTPS: The load balancer sends HEAD or GET requests to check the health of the backend server. HTTPS provides higher security than HTTP because data is encrypted.\n\nTCP: The load balancer sends SYN packets to check whether the port of the backend server is reachable.\n\ngRPC: The load balancer sends POST or GET requests to check the health of the backend server",
+                      "description_zh": "健康检查协议。取值：\n\nHTTP：通过发送HEAD或GET请求模拟浏览器的访问行为来检查服务器应用是否健康。\n\nHTTPS：通过发送HEAD或GET请求模拟浏览器的访问行为来检查服务器应用是否健康。（数据加密，相比HTTP更安全。）\n\nTCP：通过发送SYN握手报文来检测服务器端口是否存活。\n\ngRPC：通过发送POST或GET请求来检查服务器应用是否健康",
+                      "example": "HTTP",
+                      "title_en": "",
+                      "title_zh": "协议",
+                      "type": "string"
+                    },
+                    "HealthCheckTimeout": {
+                      "description_en": "The timeout for a health check response, in seconds. If a backend server does not respond within this timeout, the health check fails",
+                      "description_zh": "接收来自运行状况检查的响应需要等待的时间。如果后端服务器在指定的时间内没有正确响应，则判定为健康检查失败。单位：秒",
+                      "example": "3",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "超时时间",
+                      "type": "integer"
+                    },
+                    "HealthyThreshold": {
+                      "description_en": "The number of consecutive successful health checks required for a backend server to change its status from unhealthy to healthy",
+                      "description_zh": "健康检查连续成功多少次后，将后端服务器的健康检查状态由失败判定为成功",
+                      "example": "4",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "健康阈值",
+                      "type": "integer"
+                    },
+                    "UnhealthyThreshold": {
+                      "description_en": "The number of consecutive failed health checks required for a backend server to change its status from healthy to unhealthy",
+                      "description_zh": "健康检查连续失败多少次后，将后端服务器的健康检查状态由成功判定为失败",
+                      "example": "4",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "不健康阈值",
+                      "type": "integer"
+                    }
+                  },
+                  "title_en": "",
+                  "title_zh": "健康检查配置",
+                  "type": "object"
+                },
+                "IpVersionAffinityMode": {
+                  "example": "Affinity",
+                  "title_en": "",
+                  "title_zh": "服务器组IP版本亲和模式",
+                  "type": "string"
+                },
+                "Ipv6Enabled": {
+                  "description_en": "Specifies whether IPv6 is enabled. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                  "description_zh": "是否支持IPv6。取值：\ntrue：支持。\nfalse：不支持",
+                  "example": "false",
+                  "title_en": "",
+                  "title_zh": "是否支持Ipv6",
+                  "type": "boolean"
+                },
+                "Protocol": {
+                  "description_en": "The backend protocol. Valid values:\n\nHTTP: can be associated with HTTPS, HTTP, and QUIC listeners.\n\nHTTPS: can be associated with HTTPS listeners.\n\nGRPC: can be associated with HTTPS and QUIC listeners",
+                  "description_zh": "后端协议类型。取值：\n\nHTTP：支持关联HTTPS、HTTP和QUIC监听。\nHTTPS：支持关联HTTPS监听。\n\nGRPC：关联HTTPS和QUIC监听",
+                  "example": "HTTP",
+                  "title_en": "",
+                  "title_zh": "服务器组协议",
+                  "type": "string"
+                },
+                "RelatedLoadBalancerIds": {
+                  "description_en": "The IDs of the associated load balancer instances",
+                  "description_zh": "关联的实例id",
+                  "items": {
+                    "description_en": "The ID of the associated load balancer instance",
+                    "description_zh": "关联的负载均衡实例id",
+                    "example": "alb-n5qw04uq8savfe****",
+                    "type": "string"
+                  },
+                  "title_en": "",
+                  "title_zh": "关联的实例id",
+                  "type": "array"
+                },
+                "ResourceGroupId": {
+                  "description_en": "The resource group ID",
+                  "description_zh": "资源组ID",
+                  "example": "rg-atstuj3rtop****",
+                  "title_en": "",
+                  "title_zh": "资源组id",
+                  "type": "string"
+                },
+                "Scheduler": {
+                  "description_en": "The scheduling algorithm. Valid values:\n\nWrr: weighted round robin. Backend servers with higher weights receive more requests.\n\nWlc: weighted least connections. The load balancer considers both the weight and the number of active connections for each backend server. If weights are the same, the backend server with the fewest active connections is selected.\n\nSch: consistent hashing. Requests with the same hash key are routed to the same backend server. By default, the hash key is the source IP address. If `UchConfig` is configured, the hash key is a URL parameter",
+                  "description_zh": "调度算法。取值：\n\nWrr：加权轮询，权重值越高的后端服务器，被轮询到的概率也越高。\nWlc：加权最小连接数，除了根据每台后端服务器设定的权重值来进行轮询，同时还考虑后端服务器的实际负载（即连接数）。当权重值相同时，当前连接数越小的后端服务器被轮询到的概率也越高。\nSch：一致性哈希，相同哈希因子计算结果的请求将会调度到相同的后端服务器。不配置UchConfig参数时，默认哈希因子为源IP，相同源IP地址的请求会分发到同一台后端服务器；配置了UchConfig参数时，哈希因子为URL参数，相同URL参数的请求会分发到同一台后端服务器",
+                  "example": "Wrr",
+                  "title_en": "",
+                  "title_zh": "调度策略",
+                  "type": "string"
+                },
+                "ServerCount": {
+                  "description_en": "The number of backend servers in the server group",
+                  "description_zh": "服务器组内服务器数量",
+                  "example": "1",
+                  "format": "int32",
+                  "title_en": "",
+                  "title_zh": "服务器组内服务器数量",
+                  "type": "integer"
+                },
+                "ServerGroupId": {
+                  "description_en": "The server group ID",
+                  "description_zh": "服务器组ID",
+                  "example": "sgp-cige6j****",
+                  "title_en": "",
+                  "title_zh": "服务器组Id",
+                  "type": "string"
+                },
+                "ServerGroupName": {
+                  "description_en": "The server group name",
+                  "description_zh": "服务器组名称",
+                  "example": "Group3",
+                  "title_en": "",
+                  "title_zh": "服务器组名称",
+                  "type": "string"
+                },
+                "ServerGroupStatus": {
+                  "description_en": "The status of the server group. Valid values:\n\nCreating: The server group is being created.\n\nAvailable: The server group is available.\n\nConfiguring: The server group is being updated",
+                  "description_zh": "服务器组状态。取值：\nCreating：创建中。\n\nAvailable：可用。\n\nConfiguring：变配中",
+                  "example": "Available",
+                  "title_en": "",
+                  "title_zh": "服务器组状态",
+                  "type": "string"
+                },
+                "ServerGroupType": {
+                  "description_en": "The type of the server group. Valid values:\n\nInstance: an instance-type server group to which you can add ECS instances, elastic network interfaces (ENIs), and ECI instances.\n\nIP: an IP-based server group.\n\nFunction Compute: a Function Compute-based server group",
+                  "description_zh": "服务器组类型。取值：\n\nInstance：服务器类型，包括Ecs、Eni、Eci实例。\n\nIp：IP类型。\n\nFc：函数计算类型",
+                  "example": "Instance",
+                  "title_en": "",
+                  "title_zh": "服务器组类型",
+                  "type": "string"
+                },
+                "ServiceName": {
+                  "description_en": "The service name",
+                  "description_zh": "服务名称",
+                  "example": "test",
+                  "title_en": "",
+                  "title_zh": "服务器名称",
+                  "type": "string"
+                },
+                "SlowStartConfig": {
+                  "description_en": "The slow start configuration.\n\nAfter you enable slow start, the load balancer warms up newly added backend servers for a specified period of time. The number of requests that are routed to these servers increases linearly during the warm-up period.\n\nA basic instance does not support slow start. Only standard instances and WAF-enabled instances support this feature.\n\nInstance and IP-based server groups support slow start. Function Compute-based server groups do not.\n\nYou can enable slow start only when the scheduling algorithm is weighted round robin",
+                  "description_zh": "慢启动相关配置。\n\n开启慢启动后，将会在设定的时间段内对新添加到后端服务器组的后端服务器进行预热，转发到该服务器的请求数量线性增加。\n\n基础版实例不支持开启慢启动，仅标准版、WAF增强版实例支持。\n服务器类型、IP类型服务器组支持配置慢启动，函数计算类型不支持。\n慢启动仅在后端调度算法是加权轮询算法时可开启",
+                  "properties": {
+                    "SlowStartDuration": {
+                      "description_en": "The slow start duration, in seconds",
+                      "description_zh": "慢启动持续时间",
+                      "example": "30",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "SlowStartEnabled": {
+                      "description_en": "Specifies whether to enable slow start. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                      "description_zh": "是否开启慢启动。\n\ntrue：开启\nfalse：关闭",
+                      "example": "false",
+                      "type": "boolean"
+                    }
+                  },
+                  "title_en": "",
+                  "title_zh": "慢启动配置",
+                  "type": "object"
+                },
+                "StickySessionConfig": {
+                  "description_en": "The sticky session configuration",
+                  "description_zh": "会话保持配置结构体",
+                  "properties": {
+                    "Cookie": {
+                      "description_en": "The cookie that is configured on the backend server",
+                      "description_zh": "服务器上配置的Cookie",
+                      "example": "B490B5EBF6F3CD402E515D22BCDA****",
+                      "title_en": "",
+                      "title_zh": "Cookie",
+                      "type": "string"
+                    },
+                    "CookieTimeout": {
+                      "description_en": "The timeout period of the cookie, in seconds. Valid values: 1 to 86400.\n\nThis parameter takes effect when StickySessionEnabled is set to true and StickySessionType is set to Insert",
+                      "description_zh": "Cookie超时时间。单位：秒。取值范围：1~86400。\n\n当StickySessionEnabled为true且StickySessionType为Insert时，该参数生效",
+                      "example": "1000",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "Cookie超时时间",
+                      "type": "integer"
+                    },
+                    "StickySessionEnabled": {
+                      "description_en": "Specifies whether to enable sticky sessions. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                      "description_zh": "是否启用会话保持。取值：\n\ntrue：开启。\nfalse：关闭",
+                      "example": "false",
+                      "title_en": "",
+                      "title_zh": "是否开启会话保持",
+                      "type": "boolean"
+                    },
+                    "StickySessionType": {
+                      "description_en": "The method that is used to manage cookies. Valid values:\n\nInsert: Inserts a cookie.\n  When a client makes its first request, the load balancer inserts a `SERVERID` cookie into the response. Subsequent requests from the client will include this cookie, and the load balancer will route these requests to the same backend server.\n\nServer: Rewrites a cookie.\n  If the load balancer detects a user-defined cookie, it overwrites the original cookie in the response. Subsequent requests from the client will include the new cookie, and the load balancer will route these requests to the same backend server",
+                      "description_zh": "Cookie的处理方式。取值：\n\nInsert：植入Cookie。\n客户端第一次访问时，负载均衡会在返回请求中植入Cookie（即在HTTP或HTTPS响应报文中插入SERVERID），下次客户端携带此Cookie访问，负载均衡服务会将请求定向转发给之前记录到的后端服务器上。\nServer：重写Cookie。\n负载均衡发现用户自定义了Cookie，将会对原来的Cookie进行重写，下次客户端携带新的Cookie访问，负载均衡服务会将请求定向转发给之前记录到的后端服务器",
+                      "example": "Insert",
+                      "title_en": "",
+                      "title_zh": "会话保持类型",
+                      "type": "string"
+                    }
+                  },
+                  "title_en": "",
+                  "title_zh": "会话保持配置",
+                  "type": "object"
+                },
+                "Tags": {
+                  "description_en": "The list of tags that are associated with the server group",
+                  "description_zh": "服务器组绑定的标签列表",
+                  "items": {
+                    "description_en": "The list of tags that are associated with the server group",
+                    "description_zh": "服务器组绑定的标签列表",
+                    "properties": {
+                      "Key": {
+                        "description_en": "The tag key",
+                        "description_zh": "标签键",
+                        "example": "Test",
+                        "title_en": "",
+                        "title_zh": "标签键",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The tag value",
+                        "description_zh": "标签值",
+                        "example": "Test",
+                        "title_en": "",
+                        "title_zh": "标签值",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title_en": "",
+                  "title_zh": "标签列表",
+                  "type": "array"
+                },
+                "UchConfig": {
+                  "description_en": "The configuration of URL-based consistent hashing",
+                  "description_zh": "url一致性hash参数配置",
+                  "properties": {
+                    "Type": {
+                      "description_en": "The type of the parameter. The value must be `QueryString`",
+                      "description_zh": "参数类型。只能填QueryString",
+                      "example": "QueryString",
+                      "title_en": "",
+                      "title_zh": "参数类型",
+                      "type": "string"
+                    },
+                    "Value": {
+                      "description_en": "The value of the consistent hashing parameter",
+                      "description_zh": "一致性hash参数值",
+                      "example": "abc",
+                      "title_en": "",
+                      "title_zh": "一致性hash参数值",
+                      "type": "string"
+                    }
+                  },
+                  "title_en": "",
+                  "title_zh": "url一致性hash参数配置",
+                  "type": "object"
+                },
+                "UpstreamKeepaliveEnabled": {
+                  "description_en": "Specifies whether to enable backend keep-alive connections. Valid values:\n\ntrue: Enabled.\n\nfalse: Disabled",
+                  "description_zh": "是否开启后端长链接。取值：\ntrue：开启。\nfalse：关闭",
+                  "example": "false",
+                  "title_en": "",
+                  "title_zh": "是否开启后端长链接",
+                  "type": "boolean"
+                },
+                "VpcId": {
+                  "description_en": "The ID of the VPC",
+                  "description_zh": "VPC实例ID",
+                  "example": "vpc-bp15zckdt37pq72zv****",
+                  "title_en": "",
+                  "title_zh": "服务器组所在VpcId",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title_en": "",
+            "title_zh": "服务器组",
+            "type": "array"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries",
+            "description_zh": "列表条目数",
+            "example": "1000",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "总记录数",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

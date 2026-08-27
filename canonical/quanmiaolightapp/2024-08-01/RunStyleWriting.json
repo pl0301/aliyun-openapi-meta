@@ -59,6 +59,7 @@
       "help_en": "The theme for the generated content. Providing a custom theme helps fine-tune the output",
       "help_zh": "用户输入的写作主题，可以对主题进行自定义调整效果",
       "location": "formData",
+      "max_length": "2000",
       "name": "writing_theme",
       "options": [
         "--writing-theme"
@@ -72,6 +73,7 @@
       "help_en": "The style feature identifier. When specified, the API generates content based on this feature",
       "help_zh": "文体特征标识符。如果指定了此参数，接口会按照指定的文体特征进行写作",
       "location": "formData",
+      "max_length": "2000",
       "name": "style_feature",
       "options": [
         "--style-feature"
@@ -125,56 +127,158 @@
   "pathPattern": "/[workspaceId]/quanmiao/lightapp/runStyleWriting",
   "product_code": "QuanMiaoLightApp",
   "protocol": "HTTPS|SSE",
-  "v1_body_parameters": [
-    {
-      "help_en": "A collection of articles to use as learning samples",
-      "help_zh": "需要作为学习样本的文章集合",
-      "name": "learningSamples",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies the processing stage.\n\n\"full\": Generates both a style feature analysis and the final content.\n\n\"analysisStage\": Generates only the style feature analysis.\n\n\"creationStage\": Generates only the final content",
-      "help_zh": "代表处理阶段\n     * \"full\": 生成特点分析和创作内容\n     * \"analysisStage\": 仅生成特点分析\n     * \"creationStage\": 仅生成创作内容",
-      "name": "processStage",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "A collection of reference materials for the large model's content generation",
-      "help_zh": "大模型生成功能的内容素材模型集合",
-      "name": "referenceMaterials",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The style feature identifier. When specified, the API generates content based on this feature",
-      "help_zh": "文体特征标识符。如果指定了此参数，接口会按照指定的文体特征进行写作",
-      "name": "styleFeature",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to automatically search the internet for additional reference materials",
-      "help_zh": "是否自动检索互联网补充素材",
-      "name": "useSearch",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The theme for the generated content. Providing a custom theme helps fine-tune the output",
-      "help_zh": "用户输入的写作主题，可以对主题进行自定义调整效果",
-      "name": "writingTheme",
-      "position": "body",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Response schema",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "end": {
+            "description_en": "Indicates whether the output is complete. A value of `true` marks the end of the response stream",
+            "description_zh": "输出是否完成，true表示完成",
+            "example": "true",
+            "type": "boolean"
+          },
+          "header": {
+            "description_en": "The header of the streaming output, containing common response metadata",
+            "description_zh": "流式输出 header头，包含返回通用信息",
+            "example": "{\"event\":\"task-progress-start-generating\",\"sessionId\":\"3cd10828-0e42-471c-8f1a-931cde20b035\",\"taskId\":\"d3be9981-ca2d-4e17-bf31-1c0a628e9f99\",\"traceId\":\"66bef4a7f5d61ff3c43f3b710574e175\"}",
+            "properties": {
+              "errorCode": {
+                "description_en": "A unique code that identifies the error",
+                "description_zh": "异常错误码",
+                "example": "403",
+                "title_en": "",
+                "title_zh": "异常错误码",
+                "type": "string"
+              },
+              "errorMessage": {
+                "description_en": "A human-readable message that describes the error",
+                "description_zh": "异常错误信息",
+                "example": "Pop sign mismatch, please check log.",
+                "title_en": "",
+                "title_zh": "异常错误信息",
+                "type": "string"
+              },
+              "event": {
+                "description_en": "The event type",
+                "description_zh": "事件类型",
+                "example": "task-progress-start-generating",
+                "title_en": "",
+                "title_zh": "事件类型",
+                "type": "string"
+              },
+              "eventInfo": {
+                "description_en": "The event description",
+                "description_zh": "事件描述",
+                "example": "模型生成事件",
+                "title_en": "",
+                "title_zh": "事件描述",
+                "type": "string"
+              },
+              "requestId": {
+                "description_en": "The unique ID for the request, useful for troubleshooting",
+                "description_zh": "请求ID",
+                "example": "0EB27AE3-CA53-5FAE-83C6-EE66CA4DF5DF",
+                "title_en": "",
+                "title_zh": "请求ID",
+                "type": "string"
+              },
+              "sessionId": {
+                "description_en": "The session ID for this conversation",
+                "description_zh": "一次会话ID",
+                "example": "3cd10828-0e42-471c-8f1a-931cde20b035",
+                "title_en": "",
+                "title_zh": "一次会话ID",
+                "type": "string"
+              },
+              "taskId": {
+                "description_en": "The task ID for this generation job",
+                "description_zh": "一次生成任务ID",
+                "example": "d3be9981-ca2d-4e17-bf31-1c0a628e9f99",
+                "title_en": "",
+                "title_zh": "一次生成任务ID",
+                "type": "string"
+              },
+              "traceId": {
+                "description_en": "The trace ID for distributed tracing",
+                "description_zh": "链路traceid ",
+                "example": "2150451a17191950923411783e2927",
+                "title_en": "",
+                "title_zh": "链路traceid ",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "payload": {
+            "description_en": "The response payload. Its schema depends on the `event` type",
+            "description_zh": "返回结果的payload,json结构，不同event结构不同",
+            "example": "{\n    \"output\": {\n        \"text\": \"这是测试输出\"\n    },\n    \"usage\": {\n        \"inputTokens\": 1816,\n        \"outputTokens\": 96,\n        \"totalTokens\": 1912\n    }\n}",
+            "properties": {
+              "output": {
+                "description_en": "Contains the generated content",
+                "description_zh": "输出内容对象",
+                "example": "{\n        \"text\": \"这是测试输出\"\n }",
+                "properties": {
+                  "text": {
+                    "description_en": "The generated text content",
+                    "description_zh": "输出内容",
+                    "example": "这是测试输出",
+                    "title_en": "",
+                    "title_zh": "输出内容",
+                    "type": "string"
+                  }
+                },
+                "title_en": "",
+                "title_zh": "输出内容对象",
+                "type": "object"
+              },
+              "usage": {
+                "description_en": "Token usage statistics for the model call",
+                "description_zh": "大模型token用量信息",
+                "example": "{\n        \"inputTokens\": 1816,\n        \"outputTokens\": 96,\n        \"totalTokens\": 1912\n    }",
+                "properties": {
+                  "inputTokens": {
+                    "description_en": "The number of tokens in the prompt",
+                    "description_zh": "输入Token数量",
+                    "example": "100",
+                    "format": "int64",
+                    "title_en": "",
+                    "title_zh": "输入Token数量",
+                    "type": "integer"
+                  },
+                  "outputTokens": {
+                    "description_en": "The number of tokens in the generated output",
+                    "description_zh": "输出Token数量",
+                    "example": "100",
+                    "format": "int64",
+                    "title_en": "",
+                    "title_zh": "输出Token数量",
+                    "type": "integer"
+                  },
+                  "totalTokens": {
+                    "description_en": "The total number of tokens used in the request (input + output)",
+                    "description_zh": "总oken数量",
+                    "example": "200",
+                    "format": "int64",
+                    "title_en": "",
+                    "title_zh": "总oken数量",
+                    "type": "integer"
+                  }
+                },
+                "title_en": "",
+                "title_zh": "大模型token用量信息",
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

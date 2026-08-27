@@ -2,6 +2,38 @@
   "camel_example": "aliyun paielasticdatasetaccelerator POST /api/v1/slots --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"LifeCycle\":\"example-string\",\"Endpoints\":[{\"Type\":\"VPC\",\"VpcId\":\"vpc-j6co2fcdsl1q0gnuc3ym3\",\"VswitchId\":\"vsw-j6cmr00qjyrft6jo2mg7g\",\"Name\":\"endpoint-1\"}],\"Description\":\"XGBoost_dataset_acceleration_slot\",\"StorageType\":\"OSS\",\"InstanceId\":\"inst-my1tk3jggooi5uwks5\",\"Capacity\":\"30.0G\",\"IoType\":\"readonly\",\"EndpointIds\":\"end-my1tk3jggooi5uwks5,end-n69468yvjz8d12as7d,end-tga4omjrepklkg1onn\",\"StorageUri\":\"oss://pai-vision-data-hz2.oss-cn-hangzhou-internal.aliyuncs.com/data/VOCdevkit/VOC2007/ImageSets/Main/val.txt\",\"Tags\":[{\"Value\":\"v0.1.0\",\"Key\":\"dataset_version\"}],\"Name\":\"slot_1\"}",
   "cmd_full_name": "paielasticdatasetaccelerator create-slot",
   "cmd_name": "create-slot",
+  "components": {
+    "schemas": {
+      "SlotLifeCycle": {
+        "description_en": "Dataset acceleration slot lifecycle.  ",
+        "description_zh": "数据集加速槽生命周期",
+        "properties": {
+          "Config": {
+            "description_en": "Configuration of the dataset acceleration slot lifecycle. The structure of the configuration varies depending on the type. For more complex configuration requirements, it can be parsed as a JSON string.  ",
+            "description_zh": "数据集加速槽生命周期配置，根据类型不同，配置结构也不同。 如果有更加复杂的配置需求，可以解析为Json String",
+            "example": "{}",
+            "title": "数据集加速槽生命周期配置，根据类型不同，配置结构也不同。 如果有更加复杂的配置需求，可以解析为Json String。",
+            "type": "string"
+          },
+          "Type": {
+            "description_en": "The type of dataset acceleration slot lifecycle.\n\nKeepAlive: Keeps running and will not be released.\nRelativeTime: Released after running for a specified duration, in seconds.\nAbsoluteTime: Automatically released at the specified point in time.\nMaximumIdleTime: A relative time interval; if the difference between the last operation time and the current time exceeds this interval, the instance is released, in seconds.  ",
+            "description_zh": "数据集加速槽生命周期类型。 \n\nKeepAlive：保持运行，不会被释放 。\nRelativeTime：运行一段时间后释放，单位为秒 。\nAbsoluteTime：运行到该时间点时，将会自动释放 。\nMaximumIdleTime：相对时间间隔，最后一次操作时间和当前时间差超过该间隔，即释放实例，单位为秒",
+            "enum": [
+              "KeepAlive",
+              "RelativeTime",
+              "AbsoluteTime",
+              "MaximumIdleTime"
+            ],
+            "example": "KeepAlive",
+            "title": "数据集加速槽生命周期类型。 KeepAlive：保持运行，不会被释放 RelativeTime：运行一段时间后释放，单位为秒 AbsoluteTime：运行到该时间点时，将会自动释放 MaximumIdleTime：相对时间间隔，最后一次操作时间和当前时间差超过该间隔，即释放实例，单位为秒",
+            "type": "string"
+          }
+        },
+        "title": "数据集加速槽生命周期",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates and registers a slot",
   "description_zh": "创建并注册一个数据集加速槽",
@@ -54,6 +86,7 @@
       "help_en": "The name of the slot. The name can be up to 64 characters in length",
       "help_zh": "数据集加速槽名称。长度限制为64个字符",
       "location": "body",
+      "max_length": "64",
       "name": "name",
       "options": [
         "--name"
@@ -68,6 +101,7 @@
       "help_en": "The description of the slot. The description can be up to 1024 characters in length",
       "help_zh": "数据集加速槽的描述与解释。长度限制为1024个字符",
       "location": "body",
+      "max_length": "1024",
       "name": "description",
       "options": [
         "--description"
@@ -84,6 +118,7 @@
             "example": "dataset_version",
             "help_en": "The key of the tag. The key can be up to 64 characters in length",
             "help_zh": "标签的键值。长度限制为64个字符",
+            "max_length": "64",
             "name": "key",
             "options": [
               "--key"
@@ -96,6 +131,7 @@
             "example": "v0.1.0",
             "help_en": "The value of the tag. The value can be up to 64 characters in length",
             "help_zh": "标签的值。长度限制为 64 字符",
+            "max_length": "64",
             "name": "value",
             "options": [
               "--value"
@@ -120,6 +156,11 @@
       "type": "array"
     },
     {
+      "enum": [
+        "OSS",
+        "NAS",
+        "CPFS"
+      ],
       "example": "OSS",
       "help_en": "The storage type of the slot. Valid values:\nOSS: OSS file storage.\nNAS: NAS file storage",
       "help_zh": "数据集加速槽的数据存储类型，取值如下：\nOSS：OSS文件存储。\nNAS：NAS文件存储",
@@ -164,6 +205,12 @@
     {
       "fields": [
         {
+          "enum": [
+            "KeepAlive",
+            "RelativeTime",
+            "AbsoluteTime",
+            "MaximumIdleTime"
+          ],
           "example": "KeepAlive",
           "help_en": "The type of dataset acceleration slot lifecycle.\n\nKeepAlive: Keeps running and will not be released.\nRelativeTime: Released after running for a specified duration, in seconds.\nAbsoluteTime: Automatically released at the specified point in time.\nMaximumIdleTime: A relative time interval; if the difference between the last operation time and the current time exceeds this interval, the instance is released, in seconds.  ",
           "help_zh": "数据集加速槽生命周期类型。 \n\nKeepAlive：保持运行，不会被释放 。\nRelativeTime：运行一段时间后释放，单位为秒 。\nAbsoluteTime：运行到该时间点时，将会自动释放 。\nMaximumIdleTime：相对时间间隔，最后一次操作时间和当前时间差超过该间隔，即释放实例，单位为秒",
@@ -230,6 +277,9 @@
             "type": "string"
           },
           {
+            "enum": [
+              "VPC"
+            ],
             "example": "VPC",
             "help_en": "The network type of the mount point. The required parameters vary based on the network type.\nVPC: The endpoint machine is in a VPC network",
             "help_zh": "挂载点的网络类型，根据网络类型不同，下列中需要传入的参数也有所不同。\nVPC：端点机器处于VPC网络",
@@ -298,6 +348,94 @@
   "pathPattern": "/api/v1/slots",
   "product_code": "PAIElasticDatasetAccelerator",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回结果",
+        "properties": {
+          "EndpointIds": {
+            "description_en": "The mount point IDs",
+            "description_zh": "数据集挂载点ID",
+            "example": "end-5zk866779me51jgu3w,end-5zk866779me51jgu3w",
+            "title_en": "",
+            "title_zh": "数据集挂载点Id。",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "A731A84D-55C9-44F7-99BB-E1CF0CF19197",
+            "title_en": "",
+            "title_zh": "请求Id。",
+            "type": "string"
+          },
+          "SlotId": {
+            "description_en": "The slot ID",
+            "description_zh": "数据集加速槽ID",
+            "example": "slot-5zk866779me51jgu3w",
+            "title_en": "",
+            "title_zh": "数据集加速槽Id。",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    },
+    "400": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The semantic error code",
+            "description_zh": "语义化错误码",
+            "example": "ValidationError",
+            "title_en": "",
+            "title_zh": "语义化错误码。",
+            "type": "string"
+          },
+          "Detail": {
+            "description_en": "The error details",
+            "description_zh": "错误详细信息",
+            "example": "-",
+            "properties": {
+              "ErrorCode": {
+                "description_en": "The numeric error code",
+                "description_zh": "数字化错误码",
+                "example": "5218847334401572965",
+                "title_en": "",
+                "title_zh": "数字化错误码。",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "错误详细信息。",
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The error message",
+            "description_zh": "错误消息描述",
+            "example": "Dataset Not Found: 1234",
+            "title_en": "",
+            "title_zh": "错误消息描述。",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求Id",
+            "example": "9C5AEC16-CBD1-5E68-A92C-75D1D346E57F",
+            "title_en": "",
+            "title_zh": "请求Id。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "tags": [
     "Slot"
   ],

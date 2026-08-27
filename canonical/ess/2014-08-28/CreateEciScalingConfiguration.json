@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "asg-bp14wlu85wrpchm0****",
       "help_en": "The ID of the scaling group to which the scaling configuration belongs",
       "help_zh": "伸缩配置所属的伸缩组的ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "scalingconfig****",
       "help_en": "The name of the scaling configuration. The name must be 2 to 64 characters in length and can contain letters, digits, underscores (_), hyphens (-), and periods (.). The name must start with a digit, letter, or Chinese character.\n\nThe scaling configuration name must be unique within a scaling group in a region. If you do not specify this parameter, the scaling configuration ID is used by default",
       "help_zh": "伸缩配置的名称。长度为2~64个英文或中文字符组成，以数字、大小写字母或中文开头，可包含数字、下划线（_）、短划线（-）或半角句号（.）。\n\n在同一地域下同一伸缩组内伸缩配置名称唯一。如果您没有指定该参数，则默认使用伸缩配置的ID",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "sg-uf66jeqopgqa9hdn****",
       "help_en": "ECI实例所属的安全组ID。同一个安全组内的ECI实例之间可以互相访问。\n\n如果没有指定安全组，系统将自动使用您选择的地域下的默认安全组，您需要确保该安全组的入方向规则中包含容器需要暴露的协议和端口。如果您在该地域下没有默认安全组，系统将自动创建一个默认安全组，并将您声明的容器协议和端口添加到该安全组的入方向规则中",
       "help_zh": "ECI实例所属的安全组ID。同一个安全组内的ECI实例之间可以互相访问。\n\n如果没有指定安全组，系统将自动使用您选择的地域下的默认安全组，您需要确保该安全组的入方向规则中包含容器需要暴露的协议和端口。如果您在该地域下没有默认安全组，系统将自动创建一个默认安全组，并将您声明的容器协议和端口添加到该安全组的入方向规则中",
@@ -60,6 +63,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "nginx-test[0,3]",
       "help_en": "The name of the ECI instance, which is also the container group name.\n\nTo set sequential names, use the format `name_prefix(AUTO_INCREMENT)[begin_number,bits]name_suffix`.\n\nname_prefix: the prefix of the hostname.\n\n(AUTO_INCREMENT): a fixed value that indicates the sequential naming method.\n\nbegin_number: the start value of the sequential number. Valid values: `[0,999999]`.\n\nbits: the number of digits of the sequential number. Valid values: `[1,6]`. If the number of digits of begin_number is greater than the value of bits, bits defaults to 6.\nSet bits to at least 3. Otherwise, the sequential number may reach the upper limit. If the upper limit is reached and scale-out is still required, the scaling activity reports an error and stops the scale-out. In this case, you must reconfigure the hostname naming rule.\n\nname_suffix (optional): the suffix of the hostname.\n\n`[begin_number,bits]` cannot contain spaces. The system increments the sequential number by default. However, if an ECI instance fails to start during scale-out, the scaling group removes the instance and creates a new one. As a result, the hostnames of ECI instances in the scaling group may not be consecutive.\n\nExample: If you set this parameter to `nginx-test-(AUTO_INCREMENT)[0,3]`, the container group names are nginx-test-000, nginx-test-001, and nginx-test-002.\n\nThe rules for setting sequential ECI instance names are the same as those for setting sequential ECS instance names. For more information, see https://help.aliyun.com/document_detail/203831.html",
       "help_zh": "ECI实例名称，即容器组名称。\n\n如果要设置有序名称，格式为`name_prefix(AUTO_INCREMENT)[begin_number,bits]name_suffix`。\n\nname_prefix：指定主机名称的前缀。\n\n(AUTO_INCREMENT)：固定值，用来标识此排序方式。\n\nbegin_number：有序数值的起始值，取值范围：`[0,999999]`。\n\nbits：有序数值所占的位数，取值范围：`[1,6]`，当指定的begin_number位数大于bits的取值时，bits默认为6。\nbits建议最少为3，否则容易达到有序数值的上限。在达到上限后，若还有扩容需求，伸缩活动会报错，并停止扩容。此时，您需要重新设置生成主机名称的规则。\n\nname_suffix（可选）：指定主机名称的后缀。\n\n`[begin_number,bits]`中不能有空格，且系统默认依次递增，但是如果存在扩容的ECI实例无法启动，会被伸缩组移除后再扩容一台新的ECI实例，所以伸缩组内ECI实例的主机名称可能断续递增。\n\n示例： 当设置为`nginx-test-(AUTO_INCREMENT)[0,3]`时，容器组名称为nginx-test-000、nginx-test-001、nginx-test-002。\n\n设置ECI有序实例名称的规则与设置ECS伸缩组有序实例规格相同，具体规则介绍，请参见https://help.aliyun.com/document_detail/203831.html",
@@ -259,6 +263,8 @@
       "help_en": "The bandwidth of the EIP. Default value: 5. Unit: Mbit/s",
       "help_zh": "弹性公网IP的带宽。默认为5 M",
       "location": "query",
+      "maximum": "1000000",
+      "minimum": "0",
       "name": "eip_bandwidth",
       "options": [
         "--eip-bandwidth"
@@ -285,6 +291,8 @@
       "help_en": "The maximum inbound bandwidth. Unit: bytes",
       "help_zh": "入方向带宽限制。单位：Byte",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "0",
       "name": "ingress_bandwidth",
       "options": [
         "--ingress-bandwidth"
@@ -298,6 +306,8 @@
       "help_en": "The maximum outbound bandwidth. Unit: bytes",
       "help_zh": "出方向带宽限制。单位：Byte",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "0",
       "name": "egress_bandwidth",
       "options": [
         "--egress-bandwidth"
@@ -311,6 +321,8 @@
       "help_en": "The number of physical CPU cores. Only specific instance types support custom settings. For more information, see https://help.aliyun.com/document_detail/197781.html",
       "help_zh": "CPU物理核心数。仅部分规格支持自定义设置。更多信息，请参见https://help.aliyun.com/document_detail/197781.html",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "0",
       "name": "cpu_options_core",
       "options": [
         "--cpu-options-core"
@@ -337,6 +349,8 @@
       "help_en": "The size of the ephemeral storage. ESSD PL1 cloud disks are used by default. Unit: GiB",
       "help_zh": "临时存储空间大小，默认使用ESSD PL1类型的云盘。单位：GiB",
       "location": "query",
+      "maximum": "5000",
+      "minimum": "0",
       "name": "ephemeral_storage",
       "options": [
         "--ephemeral-storage"
@@ -2106,5 +2120,26 @@
   ],
   "pathPattern": "",
   "product_code": "Ess",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID，唯一标识",
+            "example": "89945DD3-9072-47D0-A318-353284CF****",
+            "type": "string"
+          },
+          "ScalingConfigurationId": {
+            "description_en": "The ID of the scaling configuration",
+            "description_zh": "伸缩配置ID",
+            "example": "asc-uf6fonnghi50u374****",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

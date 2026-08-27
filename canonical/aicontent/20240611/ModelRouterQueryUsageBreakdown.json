@@ -2,6 +2,175 @@
   "camel_example": "",
   "cmd_full_name": "aicontent model-router-query-usage-breakdown",
   "cmd_name": "model-router-query-usage-breakdown",
+  "components": {
+    "schemas": {
+      "MetricKVPairDTO": {
+        "description_en": "Metric  ",
+        "description_zh": "指标",
+        "properties": {
+          "key": {
+            "description_en": "Metric Name.  \n\nChat  \n`total_calls`: Number Of Calls, integer, Count  \n`input_tokens`: Total input tokens, integer  \n`output_tokens`: Total output tokens, integer  \n`reasoning_tokens`: Reasoning tokens, integer  \n`cached_tokens`: Cached input tokens (hit), integer  \n\nVision  \n`total_calls`: Number Of Calls, integer, Count  \n`image_count`: Number of generated images, integer  \n`video_duration`: Generated video duration, rounded to 3 decimal places, seconds  \n\nEmbedding  \n`total_calls`: Number Of Calls, integer, Count  \n`embedding_output_tokens`: Embedding output tokens, integer  \n`billing_tokens`: Total billing tokens, integer  \n`image_tokens`: Image tokens (multimodal embedding), integer  \n\nOmni-modal (ChatFullmodal / ChatMultimodal)  \n`total_calls`: Number Of Calls, integer, Count  \n`input_text_tokens`: Input text tokens, integer  \n`input_audio_tokens`: Input audio tokens, integer  \n`input_image_tokens`: Input image tokens, integer  \n`input_video_tokens`: Input video tokens, integer  \n`output_text_tokens`: Output text tokens, integer  \n`output_audio_tokens`: Output audio tokens, integer  \n\nSpeech (TTS / ASR)  \n`total_calls`: Number Of Calls, integer, Count  \n`characters`: Characters converted to speech, integer  \n`asr_duration`: Speech recognition duration, rounded to 3 decimal places, seconds  ",
+            "description_zh": "指标名称。\n\nChat\n`total_calls`：调用次数，整数，次\n`input_tokens`：输入 Token 总量，整数\n`output_tokens`：输出 Token 总量，整数\n`reasoning_tokens`：推理过程 Token，整数\n`cached_tokens`：命中缓存的输入 Token，整数\n\n视觉\n`total_calls`：调用次数，整数，次\n`image_count`：生成图片张数，整数\n`video_duration`：生成视频时长，保留 3 位小数，秒\n\n向量\n`total_calls`：调用次数，整数，次\n`embedding_output_tokens`：向量化输出 Token，整数\n`billing_tokens`：总计费 Token 数，整数\n`image_tokens`：图片 Token（多模态 Embedding），整数\n\n全模态（ChatFullmodal / ChatMultimodal）\n`total_calls`：调用次数，整数，次\n`input_text_tokens`：输入文本 Token，整数\n`input_audio_tokens`：输入音频 Token，整数\n`input_image_tokens`：输入图片 Token，整数\n`input_video_tokens`：输入视频 Token，整数\n`output_text_tokens`：输出文本 Token，整数\n`output_audio_tokens`：输出音频 Token，整数\n\n语音（TTS / ASR）\n`total_calls`：调用次数，整数，次\n`characters`：转语音字符数，整数\n`asr_duration`：语音识别时长，保留 3 位小数，秒",
+            "example": "total_calls",
+            "title": "指标名称",
+            "type": "string"
+          },
+          "value": {
+            "description_en": "Metric value  ",
+            "description_zh": "指标数值",
+            "example": "100",
+            "format": "float",
+            "title": "指标数值",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "UsageBreakdownRespDTO": {
+        "description_en": "The data structure for the usage breakdown",
+        "description_zh": "用量明细结构",
+        "properties": {
+          "granularity": {
+            "description_en": "Aggregation granularity: hourly or daily  ",
+            "description_zh": "聚合粒度：hourly 或 daily",
+            "example": "hourly",
+            "title": "聚合粒度：hourly 或 daily",
+            "type": "string"
+          },
+          "page": {
+            "description_en": "Current page number  ",
+            "description_zh": "当前页码",
+            "example": "1",
+            "format": "int32",
+            "title": "当前页码",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description_en": "Number of entries per page  ",
+            "description_zh": "每页条数",
+            "example": "20",
+            "format": "int32",
+            "title": "每页条数",
+            "type": "integer"
+          },
+          "rows": {
+            "description_en": "List of detailed data entries  ",
+            "description_zh": "明细数据列表",
+            "example": "[]",
+            "items": {
+              "$ref": "#/components/schemas/UsageBreakdownRowDTO",
+              "description_en": "Single entry of usage details  ",
+              "description_zh": "用量明细单条数据"
+            },
+            "title": "明细数据列表",
+            "type": "array"
+          },
+          "total": {
+            "description_en": "Total number of entries  ",
+            "description_zh": "总条数",
+            "example": "100",
+            "format": "int64",
+            "title": "总条数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UsageBreakdownRowDTO": {
+        "description_en": "The data structure of a single usage record",
+        "description_zh": "用量单条数据结构",
+        "properties": {
+          "apiKeyId": {
+            "example": "0",
+            "format": "int64",
+            "title": "API Key ID，0 表示历史数据未细分到 ApiKey",
+            "type": "integer"
+          },
+          "apiKeyName": {
+            "example": "默认密钥",
+            "title": "API Key 名称，对应 api_key_id",
+            "type": "string"
+          },
+          "clientId": {
+            "description_en": "Department ID; 0 indicates no associated department  ",
+            "description_zh": "部门ID，0表示无归属部门",
+            "example": "0",
+            "format": "int64",
+            "title": "部门ID，0表示无归属部门",
+            "type": "integer"
+          },
+          "clientName": {
+            "description_en": "Department name  ",
+            "description_zh": "部门名称",
+            "example": "研发部",
+            "title": "部门名称",
+            "type": "string"
+          },
+          "memberUserId": {
+            "example": "30001",
+            "format": "int64",
+            "title": "成员行：成员ID；部门行为 0",
+            "type": "integer"
+          },
+          "memberUserName": {
+            "example": "张三",
+            "title": "成员行：成员名；部门行为空",
+            "type": "string"
+          },
+          "metrics": {
+            "description_en": "Array of usage metrics, containing only entries with non-zero values  ",
+            "description_zh": "用量指标数组，仅包含值不为0的条目",
+            "example": "[{\"key\": \"total_calls\", \"value\": 100}]",
+            "items": {
+              "$ref": "#/components/schemas/MetricKVPairDTO",
+              "description_en": "Metric  ",
+              "description_zh": "指标"
+            },
+            "title": "用量指标数组，仅包含值不为0的条目",
+            "type": "array"
+          },
+          "modelCode": {
+            "description_en": "Model identifier  ",
+            "description_zh": "模型标识符",
+            "example": "qwen-plus",
+            "title": "模型标识符",
+            "type": "string"
+          },
+          "modelId": {
+            "description_en": "Model ID  ",
+            "description_zh": "模型ID",
+            "example": "1",
+            "format": "int64",
+            "title": "模型ID",
+            "type": "integer"
+          },
+          "modelName": {
+            "description_en": "Model name  ",
+            "description_zh": "模型名称",
+            "example": "通义千问-Plus",
+            "title": "模型名称",
+            "type": "string"
+          },
+          "modelType": {
+            "description_en": "Statistics scope  ",
+            "description_zh": "统计口径",
+            "example": "llm",
+            "title": "统计口径",
+            "type": "string"
+          },
+          "summaryTime": {
+            "description_en": "Statistics time point, Unix timestamp (seconds)  ",
+            "description_zh": "统计时间点，Unix时间戳（秒）",
+            "example": "1700000000",
+            "format": "int64",
+            "title": "统计时间点，Unix时间戳（秒）",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries usage details in batches for usage management",
   "description_zh": "用量管理/批量查询用量明细",
@@ -153,5 +322,85 @@
   ],
   "pathPattern": "/api/v1/modelRouter/open/usage/breakdown",
   "product_code": "AiContent",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "OpenApiSingleResponse<UsageBreakdownRespDTO>",
+        "description_zh": "OpenApiSingleResponse<UsageBreakdownRespDTO>",
+        "example": "{\n    \"success\": true,\n    \"data\": {\"granularity\": \"hourly\", \"total\": 100, \"page\": 1, \"page_size\": 20, \"rows\": []},\n    \"requestId\": \"592A27EF-26D3-1434-98C1-97AD63337852\"\n}",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UsageBreakdownRespDTO",
+            "description_en": "The data object",
+            "description_zh": "数据对象",
+            "example": "{}",
+            "title_en": "",
+            "title_zh": "数据对象"
+          },
+          "errCode": {
+            "description_en": "The error message code",
+            "description_zh": "错误信息编码",
+            "example": "UNKNOWN_ERROR",
+            "title_en": "",
+            "title_zh": "错误信息编码",
+            "type": "string"
+          },
+          "errMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "未知错误",
+            "title_en": "",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "http状态码",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "http状态码",
+            "type": "integer"
+          },
+          "maxResults": {
+            "description_en": "The maximum number of results to return",
+            "description_zh": "最大返回数量",
+            "example": "20",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "最大返回数量",
+            "type": "integer"
+          },
+          "nextToken": {
+            "description_en": "The pagination token",
+            "description_zh": "翻页标识",
+            "example": "xxxx-xxx-xxxxx",
+            "title_en": "",
+            "title_zh": "翻页标识",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求编号",
+            "example": "xxxx-xxxx-xxxx-xxxxxxxx",
+            "title_en": "",
+            "title_zh": "请求编号",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "OpenApiSingleResponse<UsageBreakdownRespDTO>",
+        "type": "object"
+      }
+    }
+  }
 }

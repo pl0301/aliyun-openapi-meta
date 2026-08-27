@@ -22,10 +22,17 @@
   },
   "parameters": [
     {
+      "doc_required": true,
+      "enum": [
+        "PROD",
+        "DEV"
+      ],
       "example": "1234",
       "help_en": "The DataWorks workspace ID. You can log on to the DataWorks console and go to the Workspace page to query the ID",
       "help_zh": "DataWorks工作空间的ID。您可以登录DataWorks管控台，进入工作空间配置页面获取工作空间ID",
       "location": "formData",
+      "maximum": "9223372036854775807",
+      "minimum": "1",
       "name": "project_id",
       "options": [
         "--project-id"
@@ -35,6 +42,11 @@
       "type": "int"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "PROD",
+        "DEV"
+      ],
       "example": "PROD",
       "help_en": "The runtime environment. Valid values: PROD and DEV",
       "help_zh": "运行的环境，包括PROD（生产环境）和DEV（开发环境）",
@@ -48,10 +60,19 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "NORMAL",
+        "MANUAL",
+        "PAUSE",
+        "SKIP"
+      ],
       "example": "2020-01-01",
       "help_en": "The date on which the numbers of instances in different states are obtained. Specify the date in the yyyy-MM-dd format",
       "help_zh": "获取不同实例状态数量的业务日期。格式为yyyy-MM-dd",
       "location": "formData",
+      "max_length": "10",
+      "min_length": "10",
       "name": "biz_date",
       "options": [
         "--biz-date"
@@ -61,6 +82,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NORMAL",
+        "MANUAL",
+        "PAUSE",
+        "SKIP"
+      ],
       "example": "NORMAL",
       "help_en": "The scheduling type of the node. Valid values:\n\nNORMAL: auto triggered node\nMANUAL: manually triggered node\nPAUSE: paused node\nSKIP: dry-run node",
       "help_zh": "调度的类型，取值如下：\nNORMAL：周期调度\nMANUAL：手动调度\nPAUSE：暂停调度\nSKIP：空跑",
@@ -74,6 +101,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "DAILY",
+        "MANUAL",
+        "SMOKE_TEST",
+        "SUPPLY_DATA",
+        "BUSINESS_PROCESS_DAG"
+      ],
       "example": "MANUAL",
       "help_en": "The type of the directed acyclic graph (DAG). Valid values:\n\nMANUAL: DAG for a manually triggered workflow\nSMOKE_TEST: DAG for a smoke testing workflow\nSUPPLY_DATA: DAG for a data backfill instance\nBUSINESS_PROCESS_DAG: DAG for a one-time workflow\n\n<!---->\n\nDAILY\nMANUAL\nSMOKE_TEST\nSUPPLY_DATA\nBUSINESS_PROCESS_DAG",
       "help_zh": "Dag Type的类型：\nMANUAL：手动任务工作流\nSMOKE_TEST：冒烟测试工作流\nSUPPLY_DATA：补数据\nBUSINESS_PROCESS_DAG：一次性业务流程工作流",
@@ -87,6 +121,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "MINUTE",
+        "HOUR",
+        "DAY",
+        "WEEK",
+        "MONTH"
+      ],
       "example": "DAY",
       "help_en": "The scheduling cycle. Valid values:\n\nMINUTE\nHOUR\nDAY\nWEEK\nMONTH",
       "help_zh": "调度周期。\nMINUTE：分钟。\nHOUR：小时。\nDAY：天。\nWEEK：周。\nMONTH：月",
@@ -102,5 +143,78 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回实体",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID，用于定位日志，排查问题",
+            "example": "0000-ABCD-EFG****",
+            "type": "string"
+          },
+          "StatusCount": {
+            "description_en": "The numbers of instances in different states",
+            "description_zh": "实例状态的数量统计",
+            "properties": {
+              "FailureCount": {
+                "description_en": "The number of instances that failed to run",
+                "description_zh": "运行失败的实例数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "NotRunCount": {
+                "description_en": "The number of instances that are not run",
+                "description_zh": "未运行的实例数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "RunningCount": {
+                "description_en": "The number of instances that are running",
+                "description_zh": "运行中的实例数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "SuccessCount": {
+                "description_en": "The number of instances that are successfully run",
+                "description_zh": "运行成功的实例数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "The total number of instances returned",
+                "description_zh": "实例的总数",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "WaitResCount": {
+                "description_en": "The number of instances that are waiting for resources",
+                "description_zh": "等待资源的实例数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "WaitTimeCount": {
+                "description_en": "The number of instances that are waiting to run",
+                "description_zh": "等待运行的实例数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

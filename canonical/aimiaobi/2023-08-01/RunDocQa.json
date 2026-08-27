@@ -37,6 +37,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "fromIndexLib",
+        "fromWeb",
+        "fromRefContent",
+        "fromDoc"
+      ],
       "example": "fromWeb",
       "help_en": "Search source  ",
       "help_zh": "搜索源",
@@ -179,95 +185,250 @@
   "pathPattern": "/miaodu/stream/runDocQA",
   "product_code": "AiMiaoBi",
   "protocol": "HTTPS|SSE",
-  "v1_body_parameters": [
-    {
-      "help_en": "Array of folder IDs for filtering. This parameter takes effect only when SearchSource is set to fromIndexLib",
-      "help_zh": "过滤目录Id数组，只在SearchSource为fromIndexLib时有效",
-      "name": "CategoryIds",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Array of historical context content",
-      "help_zh": "历史上下文内容数组",
-      "name": "ConversationContexts",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "Content",
-          "position": "formData",
-          "required": false,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response  ",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Header": {
+            "description_en": "response header  ",
+            "description_zh": "响应头",
+            "properties": {
+              "ErrorCode": {
+                "description_en": "error code  ",
+                "description_zh": "错误码",
+                "example": "success",
+                "type": "string"
+              },
+              "ErrorMessage": {
+                "description_en": "error message  ",
+                "description_zh": "错误信息",
+                "example": "success",
+                "type": "string"
+              },
+              "Event": {
+                "description_en": "management event  ",
+                "description_zh": "事件",
+                "example": "task-started",
+                "type": "string"
+              },
+              "EventInfo": {
+                "description_en": "Description of the management event  ",
+                "description_zh": "事件描述",
+                "example": "模型生成事件",
+                "type": "string"
+              },
+              "SessionId": {
+                "description_en": "Session ID  ",
+                "description_zh": "会话ID",
+                "example": "f5517ee8-dbec-4dc8-bd0a-af084b5e3db1",
+                "type": "string"
+              },
+              "TaskId": {
+                "description_en": "Job ID  ",
+                "description_zh": "任务id",
+                "example": "3f7045e099474ba28ceca1b4eb6d6e21",
+                "type": "string"
+              },
+              "TraceId": {
+                "description_en": "End-to-end trace ID  ",
+                "description_zh": "全链路ID",
+                "example": "46e5c2b5-0877-4f09-bd91-ab0cf314e48b",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Payload": {
+            "description_en": "response body  ",
+            "description_zh": "响应体",
+            "properties": {
+              "Output": {
+                "description_en": "Outputs",
+                "description_zh": "输出",
+                "properties": {
+                  "Content": {
+                    "description_en": "Content of the response",
+                    "description_zh": "回答内容",
+                    "example": "回答内容",
+                    "type": "string"
+                  },
+                  "InterveneContent": {
+                    "description_en": "Response content after intervention  ",
+                    "description_zh": "干预后的回答内容",
+                    "example": "干预后的回答内容",
+                    "type": "string"
+                  },
+                  "IsReject": {
+                    "description_en": "Indicates whether the request is rejected  ",
+                    "description_zh": "是否拒识",
+                    "example": "false",
+                    "type": "boolean"
+                  },
+                  "MediaUrlList": {
+                    "description_en": "List of multimodal resource information",
+                    "description_zh": "多模态资源信息列表",
+                    "items": {
+                      "description_en": "Multimodal resource object",
+                      "description_zh": "多模态资源对象",
+                      "properties": {
+                        "ClipInfos": {
+                          "description_en": "Array of related video time information",
+                          "description_zh": "相关视频时间信息数组",
+                          "items": {
+                            "description_en": "Related video time information",
+                            "description_zh": "相关视频时间信息",
+                            "properties": {
+                              "From": {
+                                "description_en": "Start time of the video segment",
+                                "description_zh": "视频片段开始时间",
+                                "example": "0",
+                                "format": "double",
+                                "type": "number"
+                              },
+                              "To": {
+                                "description_en": "End time of the video segment",
+                                "description_zh": "视频片段结束时间",
+                                "example": "30",
+                                "format": "double",
+                                "type": "number"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "FileUrl": {
+                          "description_en": "File URL",
+                          "description_zh": "文件url",
+                          "example": "https://gw.alicdn.com/imgextra/i3/2775676850/O1CN01kdeffE20TM0E7wvpq_!!2775676850.jpg_q60.jpg",
+                          "type": "string"
+                        },
+                        "MediaType": {
+                          "description_en": "Media asset type",
+                          "description_zh": "媒资媒体类型",
+                          "example": "video",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "Recommends": {
+                    "description_en": "Array of recommended content  ",
+                    "description_zh": "推荐内容数组",
+                    "items": {
+                      "description_en": "Recommended content  ",
+                      "description_zh": "推荐内容",
+                      "properties": {
+                        "Title": {
+                          "description_en": "Title of the recommended content  ",
+                          "description_zh": "推荐内容标题",
+                          "example": "标题内容",
+                          "type": "string"
+                        },
+                        "Url": {
+                          "description_en": "URL of the recommended content  ",
+                          "description_zh": "推荐内容url",
+                          "example": "推荐内容url",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "References": {
+                    "description_en": "Array of sources for the response content",
+                    "description_zh": "回答内容来源数组",
+                    "items": {
+                      "description_en": "Source of the response content",
+                      "description_zh": "回答内容来源",
+                      "properties": {
+                        "PubTime": {
+                          "description_en": "Published At",
+                          "description_zh": "发布时间",
+                          "example": "2024-10-08 18:00",
+                          "type": "string"
+                        },
+                        "Source": {
+                          "description_en": "Source  ",
+                          "description_zh": "来源",
+                          "example": "新浪新闻",
+                          "type": "string"
+                        },
+                        "SourceDocId": {
+                          "description_en": "Source docId",
+                          "description_zh": "来源docId",
+                          "example": "123456",
+                          "type": "string"
+                        },
+                        "Title": {
+                          "description_en": "Title of the associated content",
+                          "description_zh": "关联内容标题",
+                          "example": "标题内容",
+                          "type": "string"
+                        },
+                        "Url": {
+                          "description_en": "Article URL  ",
+                          "description_zh": "文章URL",
+                          "example": "http://xxxxx",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Usage": {
+                "description_en": "token usage  ",
+                "description_zh": "token用量",
+                "properties": {
+                  "InputTokens": {
+                    "description_en": "Quantity of input tokens",
+                    "description_zh": "输入Token数量",
+                    "example": "100",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "OutputTokens": {
+                    "description_en": "Number of tokens used in the output",
+                    "description_zh": "输出使用的Token数量",
+                    "example": "100",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "TotalTokens": {
+                    "description_en": "Total number of tokens",
+                    "description_zh": "总token数量",
+                    "example": "200",
+                    "format": "int64",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "Request ID  ",
+            "description_zh": "请求Id",
+            "example": "1813ceee-7fe5-41b4-87e5-982a4d18cca5",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
         },
-        {
-          "name": "Role",
-          "position": "formData",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "string"
-    },
-    {
-      "help_en": "Array of multiple document IDs",
-      "help_zh": "多个文档Id数组",
-      "name": "DocIds",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Custom model name defined by the User",
-      "help_zh": "用户自定义模型名称",
-      "name": "ModelName",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Question",
-      "help_zh": "问题",
-      "name": "Query",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Associated content actively provided by the questioner",
-      "help_zh": "提问者主动提供的关联内容",
-      "name": "ReferenceContent",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Search source",
-      "help_zh": "搜索源",
-      "name": "SearchSource",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Conversation ID",
-      "help_zh": "对话ID",
-      "name": "SessionId",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Alibaba Cloud Model Studio workspace ID. For details on how to obtain it, see https://help.aliyun.com/document_detail/2587495.html",
-      "help_zh": "阿里云百炼业务空间 ID。获取方式请参见https://help.aliyun.com/document_detail/2782167.html",
-      "name": "WorkspaceId",
-      "position": "body",
-      "required": true,
-      "type": "string"
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

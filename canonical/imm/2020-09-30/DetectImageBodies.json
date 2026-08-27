@@ -2,6 +2,163 @@
   "camel_example": "aliyun imm DetectImageBodies --region cn-hangzhou --Sensitivity '0.6' --ProjectName 'test-project' --CredentialConfig 'example-string' --SourceURI 'oss://test-bucket/test-object.jpg'",
   "cmd_full_name": "imm detect-image-bodies",
   "cmd_name": "detect-image-bodies",
+  "components": {
+    "schemas": {
+      "Body": {
+        "description_en": "The information about the human body",
+        "description_zh": "人体信息对象",
+        "properties": {
+          "Boundary": {
+            "$ref": "#/components/schemas/Boundary",
+            "description_en": "The boundary of the human body",
+            "description_zh": "人体边界对象",
+            "title": "Boundary"
+          },
+          "Confidence": {
+            "description_en": "The confidence level of the result. A higher value indicates greater confidence. Specifically, a value exceeding 0.8 signifies a high degree of confidence in the result",
+            "description_zh": "人体置信度，置信度越高越可信，大于 0.8 比较可信",
+            "example": "0.82",
+            "format": "float",
+            "title": "Confidence",
+            "type": "number"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "Boundary": {
+        "description_en": "The boundary information",
+        "description_zh": "边界信息",
+        "properties": {
+          "Height": {
+            "description_en": "The height. Unit: pixel",
+            "description_zh": "高度，单位为像素（px）",
+            "example": "300",
+            "format": "int64",
+            "title": "Height",
+            "type": "integer"
+          },
+          "Left": {
+            "description_en": "The distance from the X-coordinate of the vertex to the left edge",
+            "description_zh": "顶点X坐标距离左端距离，单位为像素（px）",
+            "example": "10",
+            "format": "int64",
+            "title": "Left",
+            "type": "integer"
+          },
+          "Polygon": {
+            "description_en": "The polygon formed by a number of points. This parameter takes effect only when the boundary describes a polygon rather than a rectangle.\n\nThis parameter is mutually exclusive to the following parameters that form a rectangle: Width, Height, Left, and Top. A boundary describes only a rectangle or a polygon",
+            "description_zh": "使用若干个点围成的闭合多边形范围，当Boundary描述的是多边形框而非矩形框时有效。\n\n<notice>该字段与Width / Height / Left / Top 四个参数组成的矩形范围参数只会出现一种。即当前 Boundary 描述只可能是一个矩形框或多边形框的一种，具体种类和当前框内容的形态本身一致。></notice>",
+            "items": {
+              "$ref": "#/components/schemas/PointInt64",
+              "description_en": "The coordinates of points that form the polygon",
+              "description_zh": "使用若干个点围成的闭合多边形范围信息"
+            },
+            "title": "多边形的坐标列表",
+            "type": "array"
+          },
+          "Top": {
+            "description_en": "The distance from the Y-coordinate of the vertex to the top",
+            "description_zh": "顶点Y坐标距离顶端距离，单位为像素（px）",
+            "example": "30",
+            "format": "int64",
+            "title": "Top",
+            "type": "integer"
+          },
+          "Width": {
+            "description_en": "The width. Unit: pixel",
+            "description_zh": "宽度，单位为像素（px）",
+            "example": "200",
+            "format": "int64",
+            "title": "Width",
+            "type": "integer"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CredentialConfig": {
+        "description_en": "The authorization chain settings. In most cases, this parameter is left empty.\n\nIf Account A is used to call an API operation of Intelligent Media Management (IMM) to process Object Storage Service (OSS) data in Account B, you must set the ServiceRole parameter to a role in Account A, and set the Chain parameter to a role in Account B",
+        "description_zh": "链式授权配置对象，一般留空即可。\n假设当前使用A账号调用IMM接口处理B账号中的OSS数据。\nServiceRole参数应配置A账号中的角色，Chain参数应设置B账号准备好的角色，通过上述配置完成后，就可以使用A账号调用IMM接口处理B账号中的OSS数据",
+        "properties": {
+          "Chain": {
+            "description_en": "The authorization chains. All roles in the array must have the `sts:AssumeRole` permission. You need to only grant other permissions, such as read and write permissions on OSS, to the last role in the array. You can grant permissions in the RAM console",
+            "description_zh": "需要传递授权的链列表，数组中的所有角色都需要赋予访问 `sts:AssumeRole` 权限。\n只有数组中的最后一个角色需要额外配置需要真正访问的其他权限，比如OSS的读写权限，可以通过RAM控制台进行授权操作",
+            "items": {
+              "description_en": "The authorization chain",
+              "description_zh": "授权链对象",
+              "properties": {
+                "AssumeRoleFor": {
+                  "description_en": "The ID of the account that you use to grant permissions",
+                  "description_zh": "提供授权的账号ID",
+                  "example": "10232100246xxxxx",
+                  "title": "授权对象",
+                  "type": "string"
+                },
+                "Role": {
+                  "description_en": "The RAM role that can be assumed",
+                  "description_zh": "允许扮演的RAM角色",
+                  "example": "AliyunOSSRole",
+                  "title": "授权角色",
+                  "type": "string"
+                },
+                "RoleType": {
+                  "description_en": "The role type. Valid values:\n\nuser: Alibaba Cloud account.\nservice: Alibaba Cloud service",
+                  "description_zh": "角色类型，可选值如下。\nuser：阿里云账号。\nservice：阿里云服务",
+                  "example": "user",
+                  "title": "授权方类型",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "授权链",
+            "type": "array"
+          },
+          "Policy": {
+            "description_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+            "description_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+            "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+            "title": "权限策略",
+            "type": "string"
+          },
+          "ServiceRole": {
+            "description_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+            "description_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+            "example": "AliyunSTSAssumeForIMMServiceRole",
+            "title": "服务角色",
+            "type": "string"
+          }
+        },
+        "title": "链式授权配置",
+        "type": "object"
+      },
+      "PointInt64": {
+        "description_en": "The coordinates of the vertex",
+        "description_zh": "点坐标信息",
+        "properties": {
+          "X": {
+            "description_en": "The distance from the X-coordinate of the vertex to the left edge. Unit: pixel",
+            "description_zh": "顶点X坐标距离左端距离，单位为像素（px）",
+            "example": "10",
+            "format": "int64",
+            "title": "横坐标X",
+            "type": "integer"
+          },
+          "Y": {
+            "description_en": "The distance from the Y-coordinate of the vertex to the top. Unit: pixel",
+            "description_zh": "顶点Y坐标距离顶端距离，单位为像素（px）",
+            "example": "10",
+            "format": "int64",
+            "title": "纵坐标Y",
+            "type": "integer"
+          }
+        },
+        "title": "点坐标",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Detects human body information, such as the confidence level and body bounding box, in an image",
   "description_zh": "检测图片中的人体信息，包含置信度，人体边框等信息",
@@ -153,5 +310,39 @@
   ],
   "pathPattern": "",
   "product_code": "imm",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "图片检测结果",
+        "properties": {
+          "Bodies": {
+            "description_en": "The human bodies",
+            "description_zh": "人体信息列表",
+            "items": {
+              "$ref": "#/components/schemas/Body",
+              "description_en": "The human body details",
+              "description_zh": "人体详细信息"
+            },
+            "title_en": "",
+            "title_zh": "图片裁剪结果",
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "501339F9-4B70-0CE2-AB8C-866C********",
+            "title_en": "",
+            "title_zh": "请求唯一ID",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "图片裁剪结果",
+        "type": "object"
+      }
+    },
+    "500": {}
+  }
 }

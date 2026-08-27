@@ -1,6 +1,282 @@
 {
   "cmd_full_name": "cms update-subscription",
   "cmd_name": "update-subscription",
+  "components": {
+    "schemas": {
+      "FilterSetting": {
+        "description_en": "The filter configuration",
+        "description_zh": "过滤配置",
+        "properties": {
+          "conditions": {
+            "description_en": "The subscription conditions",
+            "description_zh": "订阅条件",
+            "items": {
+              "description_en": "A single condition",
+              "description_zh": "单个条件",
+              "properties": {
+                "field": {
+                  "description_en": "The field",
+                  "description_zh": "字段",
+                  "example": "severity",
+                  "title": "字段",
+                  "type": "string"
+                },
+                "op": {
+                  "description_en": "The comparison operator",
+                  "description_zh": "比较符",
+                  "example": "EQ",
+                  "title": "比较符",
+                  "type": "string"
+                },
+                "value": {
+                  "description_en": "The value",
+                  "description_zh": "值",
+                  "example": "CRITICAL",
+                  "title": "值",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "maxItems": 10,
+            "title": "订阅条件",
+            "type": "array"
+          },
+          "expression": {
+            "description_en": "The expression",
+            "description_zh": "表达式",
+            "example": "1 and 2 or 3",
+            "title": "表达式",
+            "type": "string"
+          },
+          "relation": {
+            "description_en": "The relationship between conditions",
+            "description_zh": "条件间关系",
+            "example": "AND",
+            "title": "条件间关系",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NotifyRouteForSubscription": {
+        "description_en": "Defines the notification routing rules for a subscription",
+        "description_zh": "",
+        "properties": {
+          "channels": {
+            "description_en": "An array of objects, each defining a notification channel",
+            "description_zh": "",
+            "items": {
+              "description_en": "The configuration for a notification channel",
+              "description_zh": "",
+              "properties": {
+                "channelType": {
+                  "description_en": "The channel type. For example, `Email`, `SMS`, or `Webhook`",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "enabledSubChannels": {
+                  "description_en": "A list of enabled sub-channels. Applicable to channels that support finer-grained topics or categories",
+                  "description_zh": "",
+                  "items": {
+                    "description_en": "A single enabled sub-channel",
+                    "description_zh": "",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "receivers": {
+                  "description_en": "A list of notification receivers. The receiver format depends on the `channelType`",
+                  "description_zh": "",
+                  "items": {
+                    "description_en": "A single receiver. For example, an email address or a phone number",
+                    "description_zh": "",
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "effectTimeRange": {
+            "description_en": "The active period for the notification rule",
+            "description_zh": "",
+            "properties": {
+              "dayInWeek": {
+                "description_en": "The active days of the week, specified as an array of integers",
+                "description_zh": "",
+                "items": {
+                  "description_en": "A day of the week. Valid values are from 1 (Monday) to 7 (Sunday)",
+                  "description_zh": "",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              "endTimeInMinute": {
+                "description_en": "The end of the active period, in minutes from 00:00. The value ranges from 0 to 1439",
+                "description_zh": "",
+                "format": "int32",
+                "type": "integer"
+              },
+              "startTimeInMinute": {
+                "description_en": "The start of the active period, in minutes from 00:00. The value ranges from 0 to 1439",
+                "description_zh": "",
+                "format": "int32",
+                "type": "integer"
+              },
+              "timeZone": {
+                "description_en": "The time zone for the effect time range, specified in the IANA Time Zone Database format. For example, `UTC` or `Asia/Shanghai`",
+                "description_zh": "",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "SubscriptionForModify": {
+        "description_en": "The entity for viewing",
+        "description_zh": "用于查看的实体",
+        "properties": {
+          "agentConfig": {
+            "description_en": "",
+            "description_zh": "",
+            "properties": {
+              "agentUuid": {
+                "description_en": "",
+                "description_zh": "",
+                "type": "string"
+              },
+              "routes": {
+                "description_en": "",
+                "description_zh": "",
+                "items": {
+                  "$ref": "#/components/schemas/NotifyRouteForSubscription",
+                  "description_en": "",
+                  "description_zh": ""
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "description": {
+            "description_en": "The description",
+            "description_zh": "描述",
+            "example": "workspace test",
+            "title": "描述",
+            "type": "string"
+          },
+          "filterSetting": {
+            "$ref": "#/components/schemas/FilterSetting",
+            "description_en": "The filter settings",
+            "description_zh": "筛选设置"
+          },
+          "notifyStrategyId": {
+            "description_en": "The UUID of the notification policy",
+            "description_zh": "通知策略UUID",
+            "example": "123123",
+            "title": "通知策略UUID",
+            "type": "string"
+          },
+          "pushingSetting": {
+            "description_en": "The push settings",
+            "description_zh": "推送设置",
+            "properties": {
+              "alertActionIds": {
+                "description_en": "The list of action plan IDs for alert pushing",
+                "description_zh": "报警推送行动计划ID列表",
+                "items": {
+                  "description_en": "The action integration ID",
+                  "description_zh": "行动集成ID",
+                  "example": "123123123",
+                  "type": "string"
+                },
+                "title": "报警推送行动计划ID列表",
+                "type": "array"
+              },
+              "responsePlanId": {
+                "description_en": "The action plan ID",
+                "description_zh": "行动计划ID",
+                "example": "123123123",
+                "title": "行动计划ID",
+                "type": "string"
+              },
+              "restoreActionIds": {
+                "description_en": "The list of action integration plan IDs for recovery pushing",
+                "description_zh": "行动集成计划ID列表",
+                "items": {
+                  "description_en": "The action integration plan ID",
+                  "description_zh": "行动集成计划ID",
+                  "example": "123123123",
+                  "type": "string"
+                },
+                "title": "恢复推送行动计划ID列表",
+                "type": "array"
+              },
+              "templateUuid": {
+                "description_en": "The UUID of the template",
+                "description_zh": "模板UUID",
+                "example": "123123123",
+                "title": "模板UUID",
+                "type": "string"
+              }
+            },
+            "title": "推送设置",
+            "type": "object"
+          },
+          "subscribeLegacyEvent": {
+            "description_en": "Specifies whether to subscribe to legacy product events (CMS 1.0, ARMS, or SLS events where workspace is null). Valid values:\ntrue: Subscribe.\nfalse or null: Do not subscribe",
+            "description_zh": "是否订阅老产品事件（workspace=null 的 cms 1.0 / ARMS / SLS 事件）：true=订阅，false 或 null=不订阅",
+            "title": "是否订阅老产品事件",
+            "type": "boolean"
+          },
+          "subscriptionName": {
+            "description_en": "The name",
+            "description_zh": "名称",
+            "example": "测试订阅",
+            "required": true,
+            "title": "名称",
+            "type": "string"
+          },
+          "workspaceFilterSetting": {
+            "$ref": "#/components/schemas/WorkspaceFilterSetting",
+            "description_en": "",
+            "description_zh": ""
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "WorkspaceFilterSetting": {
+        "description_en": "The workspace filter settings object",
+        "description_zh": "工作空间过滤设置对象",
+        "properties": {
+          "tagSelector": {
+            "$ref": "#/components/schemas/FilterSetting",
+            "description_en": "The tag filter",
+            "description_zh": "标签筛选器"
+          },
+          "workspaceUuids": {
+            "description_en": "A list of workspace UUIDs",
+            "description_zh": "工作空间 UUID 列表",
+            "items": {
+              "description_en": "The workspace UUID",
+              "description_zh": "工作空间 UUID",
+              "example": "\"ws-abc123\"",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates a subscription",
   "description_zh": "更新订阅",
@@ -540,5 +816,32 @@
   ],
   "pathPattern": "/subscriptions/[subscriptionId]",
   "product_code": "Cms",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body structure",
+        "description_zh": "响应内容结构",
+        "properties": {
+          "requestId": {
+            "description_en": "The unique request ID",
+            "description_zh": "请求的唯一标识 ID",
+            "example": "0CEC5375-C554-562B-A65F-******",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "subscriptionId": {
+            "description_en": "The subscription ID",
+            "description_zh": "订阅ID",
+            "example": "123123123123",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

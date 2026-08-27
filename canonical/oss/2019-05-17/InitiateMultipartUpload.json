@@ -2,6 +2,41 @@
   "camel_example": "aliyun ossutil api initiate-multipart-upload --bucket examplebucket --key multipart.data --region cn-hangzhou --encoding-type 'example-string' --storage-class example-string --tagging a:1 --server-side-data-encryption SM4 --cache--control private --content--disposition attachment_filename=oss_download.jpg --forbid-overwrite true --content--encoding utf-8 --server-side-encryption AES256 --expires Fri,_28_Feb_2012_05:38:42_GMT --server-side-encryption-key-id 9468da86-3509-4f8d-a61e-6eab1eac0000",
   "cmd_full_name": "oss initiate-multipart-upload",
   "cmd_name": "initiate-multipart-upload",
+  "components": {
+    "schemas": {
+      "EncodeType": {
+        "description_en": "Specifies the encoding type used in the response. If the encoding-type parameter is specified in the request, the Key values in the response are encoded",
+        "description_zh": "指明返回结果中编码使用的类型。如果请求的参数中指定了encoding-type，那返回的结果会对Key进行编码",
+        "enum": [
+          "url"
+        ],
+        "example": "url",
+        "title": "specifies the encoding method to use",
+        "type": "string"
+      },
+      "StorageClass": {
+        "default": "Standard",
+        "description_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nDeepColdArchive: Deep Cold Archive",
+        "description_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\nDeepColdArchive：深度冷归档存储",
+        "enum": [
+          "Standard",
+          "IA",
+          "Archive",
+          "ColdArchive",
+          "DeepColdArchive"
+        ],
+        "enumValueTitles": {
+          "Archive": "Archive",
+          "ColdArchive": "ColdArchive",
+          "IA": "IA",
+          "Standard": "Standard"
+        },
+        "example": "Standard",
+        "title": "The storage class of a bucket.",
+        "type": "string"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Notifies OSS to initialize a multipart upload event",
   "description_zh": "通知OSS初始化一个Multipart Upload事件",
@@ -47,6 +82,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "url"
+      ],
       "example": "url",
       "help_en": "Specifies the encoding type for the returned key. URL encoding is supported. Keys use UTF-8 characters, but XML 1.0 does not support parsing certain control characters, such as characters with ASCII values from 0 to 10. For keys that contain control characters not supported by the XML 1.0 standard, you can specify encoding-type to encode the returned key.\nDefault value: null\nValid values: url",
       "help_zh": "指定对返回的Key进行编码，目前支持URL编码。Key使用UTF-8字符，但XML 1.0标准不支持解析一些控制字符，例如ASCII值从0到10的字符。对于Key中包含XML\n                              1.0标准不支持的控制字符，可以通过指定encoding-type对返回的Key进行编码。\n默认值：无\n可选值：url",
@@ -73,6 +111,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Standard",
+        "IA",
+        "Archive",
+        "ColdArchive",
+        "DeepColdArchive"
+      ],
       "example": "Standard",
       "help_en": "Specifies the storage class of the object.\nFor a bucket of any storage class, if you specify this value when uploading an object, the object is stored as the specified storage class. For example, if you upload an object to an Infrequent Access (IA) bucket and set x-oss-storage-class to Standard, the object is stored as Standard.\nValid values:\n\nStandard\nIA: Infrequent Access\nArchive\nColdArchive: Cold Archive\n\nFor more information about storage classes, see **https://help.aliyun.com/document_detail/51374.html**",
       "help_zh": "指定Object的存储类型。\n对于任意存储类型Bucket，如果上传Object时指定该值，则此次上传的Object将存储为指定的类型。例如在IA类型的Bucket中上传Object时，如果指定x-oss-storage-class为Standard，则该Object直接存储为Standard类型。\n取值：\n\nStandard：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\n\n关于存储类型的更多信息，请参见**https://help.aliyun.com/document_detail/51374.html**",
@@ -193,6 +238,49 @@
   "pathPattern": "/[key]?uploads",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body that contains the result of the Initiate Multipart Upload request",
+        "description_zh": "保存Initiate Multipart Upload请求结果的响应体",
+        "properties": {
+          "InitiateMultipartUploadResult": {
+            "description_en": "The container that stores the result of the Initiate Multipart Upload request",
+            "description_zh": "保存Initiate Multipart Upload请求结果的容器",
+            "properties": {
+              "Bucket": {
+                "description_en": "The name of the bucket in which to initialize a multipart upload event",
+                "description_zh": "初始化一个Multipart Upload事件的Bucket名称",
+                "example": "example-bucket",
+                "type": "string"
+              },
+              "EncodingType": {
+                "description_en": "The encoding type used in the response. If the encoding-type parameter is specified in the request, the key in the response is encoded",
+                "description_zh": "指明返回结果中编码使用的类型。如果请求的参数中指定了encoding-type，那返回的结果会对Key进行编码",
+                "example": "url",
+                "type": "string"
+              },
+              "Key": {
+                "description_en": "The name of the object for which to initialize a multipart upload event",
+                "description_zh": "初始化一个Multipart Upload事件的Object名称",
+                "example": "test.txt",
+                "type": "string"
+              },
+              "UploadId": {
+                "description_en": "The ID that uniquely identifies this multipart upload event. This ID is used in subsequent calls to the UploadPart and CompleteMultipartUpload operations",
+                "description_zh": "唯一标识此次Multipart Upload事件的ID，用于后续调用UploadPart和CompleteMultipartUpload接口",
+                "example": "0004B9894A22E5B1888A1E29F823****",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "5XX": {}
+  },
   "v1_parameters": [
     {
       "help_en": "Specifies the web page caching behavior when the object is downloaded. For more information, see RFC 2616 (https://www.ietf.org/rfc/rfc2616.txt).\nDefault value: null",

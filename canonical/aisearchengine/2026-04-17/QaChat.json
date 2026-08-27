@@ -75,6 +75,11 @@
           "element": {
             "fields": [
               {
+                "enum": [
+                  "file",
+                  "data",
+                  "text"
+                ],
                 "example": "text",
                 "help_en": "Content block type. Only supports `\"text\"` / `\"file\"` / `\"data\"`",
                 "help_zh": "内容块类型固定值，仅支持`\"text\"` / `\"file\"` / `\"data\"`",
@@ -181,6 +186,112 @@
   "pathPattern": "/api/v1/platform/app/chat",
   "product_code": "AiSearchEngine",
   "protocol": "HTTPS|SSE",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "data": {
+            "description_en": "Protocol data",
+            "description_zh": "协议数据",
+            "properties": {
+              "data": {
+                "description_en": "Structured response data",
+                "description_zh": "负责结构回复数据",
+                "example": "{\n \"items\": [\n {\n \"title\": \"电脑产品评测\",\n \"videoUrl\": \"https://video.example.com/review.mp4\",\n \"coverUrl\": \"https://images.example\",\n \"tags\": [\n \"数码产品\",\n \"评测\",\n \"电脑\",\n \"生产力\"\n ]\n }\n ]\n}",
+                "title_en": "",
+                "title_zh": "负责结构回复数据",
+                "type": "string"
+              },
+              "delta": {
+                "description_en": "Incremental text output",
+                "description_zh": "增量文本输出",
+                "example": "如果你想更快看到上身效果，这 3 条短视频会更直观。\\n\\n**第一条：完整通勤 look**\\n\\n3 套通勤到周末无缝切换的浅色运动鞋穿搭。",
+                "title_en": "",
+                "title_zh": "增量文本输出",
+                "type": "string"
+              },
+              "errorCode": {
+                "description_en": "See error code list",
+                "description_zh": "见错误码列表",
+                "example": "400",
+                "title_en": "",
+                "title_zh": "错误码说明：\n\n1. 400 - 参数错误 (INVALID_PARAM)\n   - appId is required：appId 为空\n   - message role must be user：消息角色不是 user\n\n2. 403 - 无权限 (FORBIDDEN)\n   - no permission to access this app：请求账号与应用归属不一致\n\n3. 404 - 应用不存在 (APP_NOT_FOUND)\n   - appId is invalid：appId 对应的应用配置不存在\n\n4. 500 - 系统错误 (SYSTEM_ERROR)\n   - system error：意图识别等内部处理异常\n   - <业务异常信息>：Invoker 层抛出的业务异常，错误码和消息由异常本身携带",
+                "type": "string"
+              },
+              "errorText": {
+                "description_en": "See error code list",
+                "description_zh": "见错误码列表",
+                "example": "参数错误",
+                "title_en": "",
+                "title_zh": "错误码说明：\n\n1. 400 - 参数错误 (INVALID_PARAM)\n   - appId is required：appId 为空\n   - message role must be user：消息角色不是 user\n\n2. 403 - 无权限 (FORBIDDEN)\n   - no permission to access this app：请求账号与应用归属不一致\n\n3. 404 - 应用不存在 (APP_NOT_FOUND)\n   - appId is invalid：appId 对应的应用配置不存在\n\n4. 500 - 系统错误 (SYSTEM_ERROR)\n   - system error：意图识别等内部处理异常\n   - <业务异常信息>：Invoker 层抛出的业务异常，错误码和消息由异常本身携带",
+                "type": "string"
+              },
+              "finishReason": {
+                "description_en": "Completion reason. When the value is stop, it indicates the output has ended. When an error occurs, the value indicates the error reason",
+                "description_zh": "完成原因，当取值为stop时表示输出结束；错误时，输出为错误原因",
+                "example": "stop",
+                "title_en": "",
+                "title_zh": "完成原因，当取值为stop时表示输出结束；错误时，输出为错误原因。",
+                "type": "string"
+              },
+              "id": {
+                "description_en": "Unique identifier. For multi-segment text, different segments use different IDs while content within the same segment uses the same ID",
+                "description_zh": "唯一标识，如多段文本，使用不同的id，文本内一致",
+                "example": "2a127bc9-9474-405d-916d-8bc4475fa459",
+                "title_en": "",
+                "title_zh": "唯一标识，如多段文本，使用不同的id，文本内一致",
+                "type": "string"
+              },
+              "requestId": {
+                "description_en": "Request ID",
+                "description_zh": "请求id",
+                "example": "2a127bc9-9474-405d-916d-8bc4475fa459\n",
+                "type": "string"
+              },
+              "retryable": {
+                "description_en": "Whether the error is retryable. Default: true",
+                "description_zh": "错误是否可重试，默认true",
+                "example": "true",
+                "title_en": "",
+                "title_zh": "错误是否可重试，默认true",
+                "type": "boolean"
+              },
+              "type": {
+                "description_en": "Same as event",
+                "description_zh": "同event",
+                "example": "v",
+                "title_en": "",
+                "title_zh": "同event",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "协议数据",
+            "type": "object"
+          },
+          "event": {
+            "description_en": "Event type descriptions:\n\nLifecycle\nstart / finish\nMark the beginning and end of a message\n\nText content\ntext-start / text-delta / text-end\nMarkdown text streaming output\n\nInline media\ndata-image-info / data-video-info\nMedia cards in image-text mixed layout / video-text mixed layout\n\nSource references\ndata-reference\nUnified source list (web / document / image / video)\n\nInline citations\ndata-document-ref\nPerplexity-style inline document citations\n\nTemplate video\ndata-template-video\nVideo cards output by AV templated agent\n\nTemplate analysis\ndata-video-info / data-template-info / data-template-video-content\nAnalysis result data from AV templated agent\nTable-type templates such as \"Speech Transcription\", \"Video Outline\", and \"Video-to-Script\" are delivered all at once via data-template-video-content\n\nStreaming JSON\njson-start / json-delta / json-end\nIncremental delta-only JSON streaming protocol\nUsed for structured JSON template output analysis results such as \"Action Expression\"",
+            "description_zh": "事件类型说明：\n\n生命周期\nstart / finish\n标记消息的开始和结束\n\n文本内容\ntext-start / text-delta / text-end\nMarkdown 文本流式输出\n\n内联媒体\ndata-image-info / data-video-info\n图文混排/视频文字混排中的媒体卡片\n\n信源引用\ndata-reference\n统一信源列表（web / document / image / video）\n\n行内引用\ndata-document-ref\nPerplexity 风格行内文档引用\n\n模板视频\ndata-template-video\nAV 模板化 agent 输出的视频卡片\n\n模板分析\ndata-video-info / data-template-info / data-template-video-content\nAV 模板化 agent 的分析结果数据\n\"语音转录\"\"视频纲要\"\"视频转脚本\"等表格型模板通过 data-template-video-content 一次性下发\n\n流式 JSON\njson-start / json-delta / json-end\n增量 delta-only JSON 流式协议\n用于\"动作表达\"等结构化 JSON 模板输出分析结果",
+            "example": "start",
+            "title_en": "",
+            "title_zh": "事件类型说明：\n\n1. 生命周期\n   - start / finish\n   - 标记消息的开始和结束\n\n2. 文本内容\n   - text-start / text-delta / text-end\n   - Markdown 文本流式输出\n\n3. 内联媒体\n   - data-image-info / data-video-info\n   - 图文混排/视频文字混排中的媒体卡片\n\n4. 信源引用\n   - data-reference\n   - 统一信源列表（web / document / image / video）\n\n5. 行内引用\n   - data-document-ref\n   - Perplexity 风格行内文档引用\n\n6. 模板视频\n   - data-template-video\n   - AV 模板化 agent 输出的视频卡片\n\n7. 模板分析\n   - data-video-info / data-template-info / data-template-video-content\n   - AV 模板化 agent 的分析结果数据\n   - \"语音转录\"\"视频纲要\"\"视频转脚本\"等表格型模板通过 data-template-video-content 一次性下发\n\n8. 流式 JSON\n   - json-start / json-delta / json-end\n   - 增量 delta-only JSON 流式协议\n   - 用于\"动作表达\"等结构化 JSON 模板输出分析结果",
+            "type": "string"
+          },
+          "id": {
+            "description_en": "Request ID, same as requestId",
+            "description_zh": "请求id，同requestId",
+            "example": "2a127bc9-9474-405d-916d-8bc4475fa459",
+            "title_en": "",
+            "title_zh": "请求id，同requestId",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "Request body",

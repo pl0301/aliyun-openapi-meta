@@ -2,6 +2,32 @@
   "camel_example": "aliyun cs GET /api/v1/metadata/versions --region cn-hangzhou --KubernetesVersion '1.32.1-aliyun.1' --Mode supported --QueryUpgradableVersion false --Region 'cn-beijing' --runtime containerd --ClusterType Kubernetes --Profile Default --header \"Content-Type=application/json\"",
   "cmd_full_name": "cs describe-kubernetes-version-metadata",
   "cmd_name": "describe-kubernetes-version-metadata",
+  "components": {
+    "schemas": {
+      "runtime": {
+        "description_en": "The container engine",
+        "description_zh": "容器运行时",
+        "properties": {
+          "name": {
+            "description_en": "The name of a container runtime. The following types of runtime are supported by Container Service for Kubernetes (ACK).\n\n`containerd`: supports all Kubernetes versions. We recommend that you set the parameter to this value.\n`Sandboxed-Container.runv`: Sandboxed container provides enhanced isolation and supports Kubernetes 1.24 and earlier.\n`docker`: supports Kubernetes 1.22 and earlier.\n\nDefault value: `containerd`",
+            "description_zh": "指定容器运行时。可取值：\n\n`containerd`：推荐使用。支持1.20及以上版本。\n`Sandboxed-Container.runv`：安全沙箱容器，提供更高的隔离性。支持1.16及以上版本。\n`docker`：支持1.22版本及以下集群。\n\n默认值：`containerd`",
+            "example": "containerd",
+            "title": "容器运行时名称",
+            "type": "string"
+          },
+          "version": {
+            "description_en": "The version of the container runtime. By default, the latest version is used.\n\nFor more information about the changes to Sandboxed-Container, see [Sandboxed-Container release notes]（https://help.aliyun.com/document_detail/160312.html）",
+            "description_zh": "容器运行时版本，默认为最新版。\n\n变更详情，请参见[运行时发布记录]（https://help.aliyun.com/document_detail/207829.html）",
+            "example": "1.6.20",
+            "title": "容器运行时版本",
+            "type": "string"
+          }
+        },
+        "title": "容器运行时配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "You can call the DescribeKubernetesVersionMetadata operation to query detailed information about Kubernetes versions, including version information, release dates and expiration dates, compatible operating systems, and container runtimes",
   "description_zh": "您可以调用DescribeKubernetesVersionMetadata接口查询Kubernetes版本的详细信息，包括Kubernetes版本信息、版本的发布日期和过期时间、兼容的操作系统，使用的运行时等",
@@ -114,5 +140,176 @@
   ],
   "pathPattern": "/api/v1/metadata/versions",
   "product_code": "CS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The list of cluster version details",
+        "description_zh": "集群版本详情列表",
+        "items": {
+          "description_en": "The version details",
+          "description_zh": "版本详情",
+          "properties": {
+            "capabilities": {
+              "description_en": "The feature capabilities of the Kubernetes version",
+              "description_zh": "Kubernetes版本功能特性",
+              "example": "{\n      \"AnyAZ\": true,\n      \"ChargeType\": \"PostPaid\"\n}",
+              "title_en": "",
+              "title_zh": "Kubernetes版本特性。\t",
+              "type": "object"
+            },
+            "creatable": {
+              "description_en": "Indicates whether the Kubernetes version can be used to create clusters",
+              "description_zh": "Kubernetes版本是否可创建",
+              "example": "true",
+              "title_en": "",
+              "title_zh": "该版本是否可创建。",
+              "type": "boolean"
+            },
+            "expiration_date": {
+              "description_en": "The expiration date of the Kubernetes version",
+              "description_zh": "Kubernetes版本过期时间",
+              "example": "2026-01-30T00:00:00Z",
+              "title_en": "",
+              "title_zh": "Kubernetes版本过期时间。\t",
+              "type": "string"
+            },
+            "images": {
+              "description_en": "The list of system images",
+              "description_zh": "系统镜像列表",
+              "items": {
+                "description_en": "The image details",
+                "description_zh": "镜像详情",
+                "properties": {
+                  "architecture": {
+                    "description_en": "The image architecture",
+                    "description_zh": "镜像架构",
+                    "example": "x86_64",
+                    "title_en": "",
+                    "title_zh": "镜像架构",
+                    "type": "string"
+                  },
+                  "image_category": {
+                    "description_en": "The image category. Partial valid values:\n\n`system`: public image.\n`self`: custom image.\n`others`: shared image from other users.\n`marketplace`: Alibaba Cloud Marketplace image",
+                    "description_zh": "镜像分类，部分取值：\n\n`system`：公共镜像。\n`self`：您的自定义镜像。\n`others`：其他用户的公开镜像。\n`marketplace`：镜像市场镜像",
+                    "example": "system",
+                    "title_en": "",
+                    "title_zh": "镜像分类",
+                    "type": "string"
+                  },
+                  "image_id": {
+                    "description_en": "The image ID",
+                    "description_zh": "镜像ID",
+                    "example": "aliyun_3_x64_20G_alibase_20241218.vhd",
+                    "title_en": "",
+                    "title_zh": "镜像ID。\t",
+                    "type": "string"
+                  },
+                  "image_name": {
+                    "description_en": "The image name",
+                    "description_zh": "镜像名称",
+                    "example": "Alibaba Cloud Linux 3.2104",
+                    "title_en": "",
+                    "title_zh": "镜像名称。\t",
+                    "type": "string"
+                  },
+                  "image_type": {
+                    "description_en": "The type of the operating system distribution. We recommend that you use this field to specify the node operating system. Valid values:\n\n`CentOS`\n`AliyunLinux`\n`AliyunLinux Qboot`\n`AliyunLinuxUEFI`\n`AliyunLinux3`\n`Windows`\n`WindowsCore`\n`AliyunLinux3Arm64`\n`ContainerOS`",
+                    "description_zh": "操作系统发行版类型，推荐使用该字段指定节点操作系统。取值：\n\n`CentOS`\n`AliyunLinux`\n`AliyunLinux Qboot`\n`AliyunLinuxUEFI`\n`AliyunLinux3`\n`Windows`\n`WindowsCore`\n`AliyunLinux3Arm64`\n`ContainerOS`",
+                    "example": "AliyunLinux3",
+                    "title_en": "",
+                    "title_zh": "镜像类型。\t",
+                    "type": "string"
+                  },
+                  "os_type": {
+                    "description_en": "The operating system type. Examples:\n\n`Windows`\n`Linux`",
+                    "description_zh": "操作系统类型，例如：\n\n`Windows`\n`Linux`",
+                    "example": "Linux",
+                    "title_en": "",
+                    "title_zh": "操作系统发行版本号。",
+                    "type": "string"
+                  },
+                  "os_version": {
+                    "description_en": "The image version",
+                    "description_zh": "镜像版本",
+                    "example": "3.2104",
+                    "title_en": "",
+                    "title_zh": "镜像版本。",
+                    "type": "string"
+                  },
+                  "platform": {
+                    "description_en": "The operating system platform. Valid values:\n`AliyunLinux`\n`CentOS`\n`Windows`\n`WindowsCore`",
+                    "description_zh": "操作系统平台。取值：\n`AliyunLinux`\n`CentOS`\n`Windows`\n`WindowsCore`",
+                    "example": "AliyunLinux",
+                    "title_en": "",
+                    "title_zh": "操作系统发行版。取值范围： CentOS,AliyunLinux,Windows,WindowsCore。",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "title_en": "",
+              "title_zh": "ECS系统镜像列表。\t",
+              "type": "array"
+            },
+            "meta_data": {
+              "description_en": "The metadata of the Kubernetes version",
+              "description_zh": "Kubernetes版本元数据信息",
+              "example": "{\n      \"KubernetesVersion\": \"1.31.1-aliyun.1\",\n      \"SubClass\": \"default\",\n      \"ServiceCIDR\": \"\"\n}",
+              "title_en": "",
+              "title_zh": "Kubernetes版本元数据信息。\t",
+              "type": "object"
+            },
+            "release_date": {
+              "description_en": "The release date of the Kubernetes version",
+              "description_zh": "Kubernetes版本发布时间",
+              "example": "2025-01-30T00:00:00Z",
+              "title_en": "",
+              "title_zh": "Kubernetes版本发布时间。",
+              "type": "string"
+            },
+            "runtimes": {
+              "description_en": "The container runtime configurations",
+              "description_zh": "容器运行时配置",
+              "items": {
+                "$ref": "#/components/schemas/runtime",
+                "description_en": "The container runtime configuration",
+                "description_zh": "容器运行时配置"
+              },
+              "title_en": "",
+              "title_zh": "容器运行时详情。\t",
+              "type": "array"
+            },
+            "upgradable_versions": {
+              "description_en": "The list of upgradable versions",
+              "description_zh": "可升级的版本列表",
+              "items": {
+                "description_en": "An upgradable version",
+                "description_zh": "可升级的版本",
+                "example": "1.32.1-aliyun.1",
+                "title_en": "",
+                "title_zh": "可升级的版本。",
+                "type": "string"
+              },
+              "title_en": "",
+              "title_zh": "可升级的版本列表。",
+              "type": "array"
+            },
+            "version": {
+              "description_en": "The Kubernetes version released by ACK. For more information about versions, see [Kubernetes version release overview]（https://help.aliyun.com/document_detail/185269.html）",
+              "description_zh": "ACK发布的Kubernetes版本。更多版本信息，请参见[Kubernetes版本发布概览]（https://help.aliyun.com/document_detail/185269.html）",
+              "example": "1.31.1-aliyun.1",
+              "title_en": "",
+              "title_zh": "Kubernetes版本。\t",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "title_en": "",
+        "title_zh": "返回数据体。\t",
+        "type": "array"
+      }
+    }
+  }
 }

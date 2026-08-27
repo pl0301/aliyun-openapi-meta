@@ -51,6 +51,8 @@
       "help_en": "The page number",
       "help_zh": "页码",
       "location": "query",
+      "maximum": "42949672",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -86,6 +88,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Complete",
+        "Refreshing",
+        "Failed"
+      ],
       "example": "Complete",
       "help_en": "The task status. Valid values:\n\nComplete: completed.\nRefreshing: in progress.\nFailed: failed",
       "help_zh": "任务状态。取值：\n\nComplete：完成。\nRefreshing：刷新中。\nFailed：刷新失败",
@@ -103,6 +110,8 @@
       "help_en": "The number of entries per page. Default value: 20. Maximum value: 50",
       "help_zh": "分页大小，每页显示的条目数。默认值：20。最大值：50",
       "location": "query",
+      "maximum": "50",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -140,5 +149,99 @@
   ],
   "pathPattern": "",
   "product_code": "vod",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The page size",
+            "description_zh": "整页大小",
+            "example": "10",
+            "format": "int64",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "174F6032-AA26-470D-****-36F0EB205BEE",
+            "type": "string"
+          },
+          "Tasks": {
+            "itemNode": true,
+            "properties": {
+              "Task": {
+                "description_en": "The list of tasks composed of TaskItem objects",
+                "description_zh": "TaskItem组成的Task任务列表",
+                "items": {
+                  "properties": {
+                    "CreationTime": {
+                      "description_en": "The time when the task object was created. The time is in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format (UTC)",
+                      "description_zh": "任务对象创建时间。格式为：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2014-11-27T08:23:22Z",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The error description returned when a purge or prefetch task fails. There are currently three types:\nInternal Error: an internal error occurred.\nOrigin Timeout: the origin server response timed out.\nOrigin Return StatusCode 5XX: the origin server returned a 5XX status code",
+                      "description_zh": "刷新预热失败返回的错误描述。目前有三种：\nInternal Error：内部错误。\nOrigin Timeout：源站响应超时。\nOrigin Return StatusCode 5XX：源站返回5XX状态码",
+                      "example": "Internal Error",
+                      "type": "string"
+                    },
+                    "ObjectPath": {
+                      "description_en": "The object path of the purge task",
+                      "description_zh": "刷新对象路径",
+                      "example": "http://example.com/****.txt",
+                      "type": "string"
+                    },
+                    "ObjectType": {
+                      "description_en": "The task type. Valid values:\nfile (default): file purge.\ndirectory: directory purge.\npreload: file prefetch",
+                      "description_zh": "任务类型。取值：\nfile默认：文件刷新。\ndirectory：目录刷新。\npreload：文件预热",
+                      "example": "file",
+                      "type": "string"
+                    },
+                    "Process": {
+                      "description_en": "The progress percentage",
+                      "description_zh": "进度百分比",
+                      "example": "100%",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status. Valid values:\nComplete: completed.\nRefreshing: in progress.\nFailed: failed.\nPending: pending",
+                      "description_zh": "状态。取值：\nComplete：完成。\nRefreshing：刷新中。\nFailed：刷新失败。\nPending：等待刷新",
+                      "example": "Complete",
+                      "type": "string"
+                    },
+                    "TaskId": {
+                      "description_en": "The task ID",
+                      "description_zh": "任务ID",
+                      "example": "704225667",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries",
+            "description_zh": "总条数",
+            "example": "2",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

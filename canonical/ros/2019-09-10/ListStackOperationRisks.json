@@ -23,6 +23,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID of the stack. You can call the https://help.aliyun.com/document_detail/131035.html operation to query the most recent region list",
       "help_zh": "资源栈所属的地域ID。\n您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
@@ -49,6 +50,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "DeleteStack",
       "help_en": "The type of the operation of which you want to detect risks. Valid values:\n\nDeleteStack: detects high risks that may arise in resources when you delete a stack.\n\nCreateStack: detects the missing permissions when you fail to create a stack",
       "help_zh": "需要检测的操作类型。\n取值：\n\nDeleteStack：检测删除资源栈操作涉及的高风险资源。\n\nCreateStack：创建资源栈操作可能出现的创建失败的风险，仅支持检测调用者可能缺失的权限",
@@ -172,5 +174,93 @@
   ],
   "pathPattern": "",
   "product_code": "ROS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "MissingPolicyActions": {
+            "description_en": "The operations on which the permissions are not granted to the Alibaba Cloud account of the caller",
+            "description_zh": "调用者所属账号缺少的资源操作列表",
+            "items": {
+              "description_en": "The operation on which the permissions are not granted to the Alibaba Cloud account of the caller",
+              "description_zh": "调用者所属账号缺少的资源操作列表",
+              "example": "[\"ecs:DescribeInstance\", \"ros:CreateStack\"]",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "72108E7A-E874-4A5E-B22C-A61E94AD12CD",
+            "type": "string"
+          },
+          "RiskResources": {
+            "description_en": "The resources that are at risk",
+            "description_zh": "风险信息",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "Code": {
+                  "description_en": "The error code that is returned when the risk detection fails.\n\nThis parameter is not returned if the risk detection is successful",
+                  "description_zh": "对资源进行风险检测失败时的错误码。\n\n当风险检测正常时，不返回该参数",
+                  "example": "NoPermission",
+                  "type": "string"
+                },
+                "LogicalResourceId": {
+                  "description_en": "The logical ID of the resource. The logical ID is the resource name that is defined in the template",
+                  "description_zh": "资源逻辑ID，即模板定义的资源名称",
+                  "example": "MySG",
+                  "type": "string"
+                },
+                "Message": {
+                  "description_en": "The error message that is returned when the risk detection fails.\n\nThis parameter is not returned if the risk detection is successful",
+                  "description_zh": "对资源进行风险检测失败时的错误信息。\n\n当风险检测正常时，不返回该参数",
+                  "example": "You are not authorized to complete this action.",
+                  "type": "string"
+                },
+                "PhysicalResourceId": {
+                  "description_en": "The physical ID of the resource. The physical ID is the actual ID of the resource",
+                  "description_zh": "资源物理ID，即实际的资源ID",
+                  "example": "sg-bp1dpioafqphedg9****",
+                  "type": "string"
+                },
+                "Reason": {
+                  "description_en": "The cause of the risk",
+                  "description_zh": "风险原因",
+                  "example": "There are some ECS instances (i-bp18el96s4wq635e****) depending on the security group.",
+                  "type": "string"
+                },
+                "RequestId": {
+                  "description_en": "The ID of the request when the risk detection fails.\n\nThis parameter is not returned if the risk detection is successful",
+                  "description_zh": "对资源进行风险检测失败时的请求ID。\n\n当风险检测正常时，不返回该参数",
+                  "example": "DF4296CF-F45F-4845-A72B-BE617601DB25",
+                  "type": "string"
+                },
+                "ResourceType": {
+                  "description_en": "The type of the resource",
+                  "description_zh": "资源类型",
+                  "example": "ALIYUN::ECS::SecurityGroup",
+                  "type": "string"
+                },
+                "RiskType": {
+                  "description_en": "The type of the risk. Valid values:\n\nReferenced: The resource is referenced by other resources.\n\nMaybeReferenced: The resource may be referenced by other resources.\n\nAdditionalRiskCheckRequired: An additional risk detection is required for a nested stack.\n\nOperationIgnored: The operation does not take effect for the resource",
+                  "description_zh": "风险类型。取值：\nReferenced：当前资源被其他资源引用。\nMaybeReferenced：当前资源可能被其他资源引用。\nDeletionProtection：当前资源开启了删除保护。\nAdditionalRiskCheckRequired：嵌套资源栈需要额外进行风险检测。\nOperationIgnored：当前操作对当前资源不生效",
+                  "example": "Referenced",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

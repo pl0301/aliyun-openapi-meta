@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "2021-11-18 11:00:00",
       "help_en": "The beginning of the time range to query.\n\nThe start time supports fuzzy match. Specify the time in the YYYY-MM-DD hh:mm:ss format",
       "help_zh": "开始操作的时间。\n开始时间可模糊输入，时间格式为YYYY-MM-DD hh:mm:ss",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2021-11-18 18:00:00",
       "help_en": "The end of the time range to query.\n\nThe end time supports fuzzy match. Specify the time in the YYYY-MM-DD hh:mm:ss format. We recommend that you use the StartTime and EndTime parameters to specify a time range that does not exceed one day. This way, the returned entries can be displayed by page to increase query efficiency",
       "help_zh": "结束操作的时间。\n结束时间可模糊输入，时间格式为YYYY-MM-DD hh:mm:ss，建议您输入的开始时间和结束时间间隔不要超过一天，方便分页拉取，提升效率",
@@ -73,10 +75,13 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "20",
       "help_en": "The number of entries to return on each page. Maximum value: 100",
       "help_zh": "每页数据量。最大值不超过100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -86,10 +91,12 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "The number of the page to return",
       "help_zh": "开始页码",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -103,6 +110,8 @@
       "help_en": "The ID of the tenant. You can call the https://help.aliyun.com/document_detail/198073.html operation to query the tenant ID",
       "help_zh": "租户ID，可通过调用接口https://help.aliyun.com/document_detail/198073.html获取该参数的值",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "1",
       "name": "tid",
       "options": [
         "--tid"
@@ -114,5 +123,111 @@
   ],
   "pathPattern": "",
   "product_code": "dms-enterprise",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "ErrorCode": {
+            "description_en": "The error code returned",
+            "description_zh": "错误码",
+            "example": "InvalidPageSize",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message returned",
+            "description_zh": "错误信息",
+            "example": "Specified parameter PageSize is not valid.",
+            "type": "string"
+          },
+          "InstanceLoginAuditLogList": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "InstanceLoginAuditLog": {
+                "description_en": "The logon records of the instance",
+                "description_zh": "实例登录审计信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "实例登录审计信息列表",
+                  "properties": {
+                    "DbUser": {
+                      "description_en": "The database account that is used to log on to the instance",
+                      "description_zh": "使用数据库的账号名称",
+                      "example": "test_User",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "The ID of the instance",
+                      "description_zh": "实例ID",
+                      "example": "177****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "InstanceName": {
+                      "description_en": "The name of the instance",
+                      "description_zh": "实例名称",
+                      "example": "rm-bp144d5ky4l4rli0417****.mysql.rds.aliyuncs.com:3306【rm-bp144d5ky4l4r****】",
+                      "type": "string"
+                    },
+                    "OpTime": {
+                      "description_en": "The time when the user performed an operation on the instance",
+                      "description_zh": "操作时间",
+                      "example": "2021-11-18 11:13:26",
+                      "type": "string"
+                    },
+                    "RequestIp": {
+                      "description_en": "The source IP address of the request",
+                      "description_zh": "请求来源IP",
+                      "example": "117.36.XX.XX,100.104.XX.XX",
+                      "type": "string"
+                    },
+                    "UserId": {
+                      "description_en": "The ID of the user",
+                      "description_zh": "操作人ID",
+                      "example": "12****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "UserName": {
+                      "description_en": "The alias of the user",
+                      "description_zh": "操作人昵称",
+                      "example": "test_UserName",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "074CE7C9-4F9C-5B62-89BC-7B4914A3****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue: The request was successful.\nfalse: The request failed",
+            "description_zh": "请求是否成功，返回值如下：\ntrue：请求成功\nfalse：请求失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The number of entries returned",
+            "description_zh": "操作总记录数",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

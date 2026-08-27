@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "pc-****************",
       "help_en": "The cluster ID.\n\nCall the https://help.aliyun.com/document_detail/98094.html operation to query the details of all clusters under your account, including the cluster ID",
       "help_zh": "集群ID。\n您可以通过https://help.aliyun.com/document_detail/98094.html接口查看账号下所有集群的详细信息（如集群ID）",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "PolarDBAIModelCall",
       "help_en": "The name of the metric",
       "help_zh": "监控指标名称",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2025-09-17T02:18:00Z",
       "help_en": "The beginning of the time range to query. Specify the time in the `YYYY-MM-DDThh:mmZ` format. The time must be in UTC",
       "help_zh": "查询开始时间。格式为 `YYYY-MM-DDThh:mmZ`（UTC时间）",
@@ -60,6 +63,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2025-09-23T01:01:00Z",
       "help_en": "The end of the time range to query. The end time must be later than the start time. Specify the time in the `YYYY-MM-DDThh:mmZ` format. The time must be in UTC",
       "help_zh": "查询结束时间，查询结束时间需晚于开始时间，格式为`YYYY-MM-DDThh:mmZ`（UTC时间）",
@@ -73,6 +77,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "60",
+        "3600",
+        "Hour",
+        "Minute"
+      ],
       "example": "60",
       "help_en": "The time granularity of the data to retrieve. Valid values: 60 (minutes) and 3600 (hours).\n\nIf you set Interval to 60, you can query data from the last month. The maximum time range for a single query is 7 days.\nIf you set Interval to 3600, you can query data from the last month. The maximum time range for a single query is 7 days",
       "help_zh": "强制指定获取指定时间粒度的数据，支持60（分钟）、3600（小时）。\nInterval=60：最长可查询最近一个月的数据，单次查询的时间跨度最长为7天。\nInterval=3600：最长可查询最近一个月的数据，单次查询的时间跨度最长为7天",
@@ -88,5 +98,121 @@
   ],
   "pathPattern": "",
   "product_code": "polardb",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response schema",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "ApiKey": {
+            "description_en": "The API key for the model service",
+            "description_zh": "模型服务某个api key",
+            "example": "xxx",
+            "type": "string"
+          },
+          "DBClusterId": {
+            "description_en": "The ID of the database cluster",
+            "description_zh": "数据库集群ID",
+            "example": "pc-a************",
+            "type": "string"
+          },
+          "DBType": {
+            "description_en": "The type of the database engine. Only polardb_ai is supported",
+            "description_zh": "数据库引擎类型，当前仅支持polardb_ai类型",
+            "example": "polardb_ai",
+            "type": "string"
+          },
+          "DBVersion": {
+            "description_en": "The version number of the database AI engine.\n\nExample: 3.0",
+            "description_zh": "数据库ai引擎版本号。\n\n\n  -3.0",
+            "example": "3.0",
+            "type": "string"
+          },
+          "EndTime": {
+            "description_en": "The end of the time range that was queried. The time is in the `YYYY-MM-DDThh:mmZ` format and is in UTC",
+            "description_zh": "查询结束时间，查询结束时间需晚于开始时间，格式为`YYYY-MM-DDThh:mmZ`（UTC时间）",
+            "example": "2022-11-16T16:00Z",
+            "type": "string"
+          },
+          "Interval": {
+            "description_en": "The time granularity of the performance data. Valid values:\n\n60\n3600",
+            "description_zh": "性能数据粒度。取值范围如下：\n\n60\n3600",
+            "example": "60",
+            "type": "string"
+          },
+          "PerformanceKeys": {
+            "description_en": "The details of the instance performance parameters",
+            "description_zh": "实例性能参数详情",
+            "items": {
+              "description_en": "A list of cluster performance data",
+              "description_zh": "集群性能数据列表",
+              "properties": {
+                "DBNodeId": {
+                  "description_en": "The ID of the cluster node",
+                  "description_zh": "数据库集群节点ID",
+                  "example": "pi-*************",
+                  "type": "string"
+                },
+                "Measurement": {
+                  "description_en": "The performance metric",
+                  "description_zh": "性能指标",
+                  "example": "PolarDBAIModelCall",
+                  "type": "string"
+                },
+                "MetricName": {
+                  "description_en": "The name of the specific performance metric",
+                  "description_zh": "具体的性能指标度量名称",
+                  "example": "model_input_amount",
+                  "type": "string"
+                },
+                "Points": {
+                  "description_en": "The array of performance data",
+                  "description_zh": "性能数据数组",
+                  "items": {
+                    "description_en": "A performance data point",
+                    "description_zh": "性能数据数组",
+                    "properties": {
+                      "Timestamp": {
+                        "description_en": "The UNIX timestamp that indicates when the metric was collected. Unit: milliseconds",
+                        "description_zh": "监控指标的具体时间点，格式为时间戳，单位为毫秒",
+                        "example": "1724206183",
+                        "format": "int64",
+                        "type": "integer"
+                      },
+                      "Value": {
+                        "description_en": "The value of the metric",
+                        "description_zh": "监控指标数据值",
+                        "example": "42.38",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "D0CEC6AC-7760-409A-A0D5-E6CD86******",
+            "type": "string"
+          },
+          "StartTime": {
+            "description_en": "The beginning of the time range that was queried. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is in UTC",
+            "description_zh": "查询开始时间。格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+            "example": "2022-11-15T16:00Z",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

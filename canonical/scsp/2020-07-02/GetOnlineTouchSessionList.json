@@ -34,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "help_en": "Instance ID  ",
       "help_zh": "实例ID",
       "location": "formData",
@@ -62,6 +63,7 @@
       "type": "array"
     },
     {
+      "doc_required": true,
       "help_en": "Start Time [filter range based on session connection time]. Format: UNIX timestamp (milliseconds)",
       "help_zh": "开始时间【会话接通时间筛选范围】，格式：时间戳(毫秒)",
       "location": "formData",
@@ -74,6 +76,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "help_en": "End time [filter range for session connection time], in UNIX timestamp (milliseconds)  ",
       "help_zh": "结束时间【会话接通时间筛选范围】，格式：时间戳(毫秒)",
       "location": "formData",
@@ -86,6 +89,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "help_en": "Current page  ",
       "help_zh": "当前页",
       "location": "formData",
@@ -113,61 +117,143 @@
   "pathPattern": "",
   "product_code": "scsp",
   "protocol": "HTTP|HTTPS",
-  "v1_body_parameters": [
-    {
-      "name": "ClientToken",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Current page",
-      "help_zh": "当前页",
-      "name": "CurrentPage",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "End time [filter range for session connection time], in UNIX timestamp (milliseconds)",
-      "help_zh": "结束时间【会话接通时间筛选范围】，格式：时间戳(毫秒)",
-      "name": "EndDate",
-      "position": "body",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "Skill group ID",
-      "help_zh": "技能组id",
-      "name": "GroupIds",
-      "param_style": "repeatList",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "Instance ID",
-      "help_zh": "实例ID",
-      "name": "InstanceId",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Page size. Default value: 10. Maximum value: 30",
-      "help_zh": "页数，默认10，最大值30",
-      "name": "PageSize",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Start Time [filter range based on session connection time]. Format: UNIX timestamp (milliseconds)",
-      "help_zh": "开始时间【会话接通时间筛选范围】，格式：时间戳(毫秒)",
-      "name": "StartDate",
-      "position": "body",
-      "required": true,
-      "type": "int"
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "Code": {
+            "title_en": "Error code",
+            "title_zh": "错误码",
+            "type": "string"
+          },
+          "Data": {
+            "items": {
+              "properties": {
+                "ChannelId": {
+                  "title_en": "Channel encoding for this contact, same as sid",
+                  "title_zh": "当次进线编码，同sid",
+                  "type": "string"
+                },
+                "FirstTime": {
+                  "format": "int64",
+                  "title_en": "Session connection time, UNIX timestamp",
+                  "title_zh": "会话接通时间，时间戳",
+                  "type": "integer"
+                },
+                "GroupId": {
+                  "title_en": "Skill group ID",
+                  "title_zh": "技能组ID",
+                  "type": "string"
+                },
+                "GroupName": {
+                  "title_en": "Skill group Name",
+                  "title_zh": "技能组名称",
+                  "type": "string"
+                },
+                "MessageInfo": {
+                  "items": {
+                    "properties": {
+                      "Content": {
+                        "title_en": "Content of the message",
+                        "title_zh": "消息内容",
+                        "type": "string"
+                      },
+                      "GmtCreated": {
+                        "title_en": "Actual time when the message was sent. Format: UNIX timestamp",
+                        "title_zh": "消息发送实际，格式：时间戳",
+                        "type": "string"
+                      },
+                      "MessageId": {
+                        "format": "int64",
+                        "title_en": "Message serial number",
+                        "title_zh": "消息序列号",
+                        "type": "integer"
+                      },
+                      "SenderId": {
+                        "title_en": "ID of the message sender",
+                        "title_zh": "消息发送人ID",
+                        "type": "string"
+                      },
+                      "SenderName": {
+                        "title_en": "Name of the message sender",
+                        "title_zh": "消息发送人名称",
+                        "type": "string"
+                      },
+                      "SenderType": {
+                        "title_en": "Message sender type. Enumeration values: 1 for Membership, 2 for customer service",
+                        "title_zh": "消息发送人，枚举值：1会员，2客服",
+                        "type": "string"
+                      },
+                      "Status": {
+                        "title_en": "Status of the message log. 0 indicates default, and 50 indicates revoked.",
+                        "title_zh": "消息日志的状态，0默认，50撤回",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title_en": "List of detailed conversation records",
+                  "title_zh": "对话详情记录列表",
+                  "type": "array"
+                },
+                "SessionId": {
+                  "title_en": "Session ID, Unique encoding of the MessageInfo instance object; has a one-to-many relationship with TouchId",
+                  "title_zh": "会话ID，消息记录对象MessageInfo实例的唯一编码，与接触编码TouchId为1对多关系",
+                  "type": "string"
+                },
+                "TouchId": {
+                  "title_en": "Touch ID; when a user contacts and is transferred to different agents multiple times, multiple touch IDs are generated",
+                  "title_zh": "接触编码，用户进线后，多次转交到不同人工，会生成多个接触编码",
+                  "type": "string"
+                },
+                "UserForeignId": {
+                  "title_en": "External Membership ID",
+                  "title_zh": "外部会员ID",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "HttpStatusCode": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "title_en": "error message",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "PageNo": {
+            "format": "int32",
+            "title_en": "Current page number",
+            "title_zh": "当前页",
+            "type": "integer"
+          },
+          "PageSize": {
+            "format": "int32",
+            "title_en": "Page size",
+            "title_zh": "页数",
+            "type": "integer"
+          },
+          "RequestId": {
+            "type": "string"
+          },
+          "Success": {
+            "type": "boolean"
+          },
+          "TotalResults": {
+            "format": "int32",
+            "title_en": "Total number of records",
+            "title_zh": "总记录数",
+            "type": "integer"
+          }
+        },
+        "title_en": "PageResult<OnlineSessionInfo>",
+        "title_zh": "PageResult<OnlineSessionInfo>",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

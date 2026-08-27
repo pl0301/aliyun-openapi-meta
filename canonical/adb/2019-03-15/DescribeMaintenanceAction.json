@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. Valid values:\n\nThe ID of the region where the O\\&M event occurs. Example: `cn-hangzhou`. You can call the https://help.aliyun.com/document_detail/143074.html operation to query the most recent region list.\nYou can also set Region to `all` to query the O\\&M events in all regions. If you set `Region` to `all`, you must set `TaskType` to `all`",
       "help_zh": "地域。取值如下：\n运维事件所在地域的地域ID，如`cn-hangzhou`。您可以调用https://help.aliyun.com/document_detail/143074.html接口查看AnalyticDB MySQL版支持的地域和可用区信息，包括地域ID。\n您也可以输入`all`查看当前账号下所有地域下的所有运维事件，当`Region`设置为`all`时，`TaskType`也必须设置为`all`",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "rds_apsaradb_upgrade",
       "help_en": "The type of the O\\&M event. Valid values:\n\nrds_apsaradb_upgrade: database software upgrades.\nall: all the O\\&M events in all regions within the current account. If you set `Region` to `all`, you must set `TaskType` to `all`",
       "help_zh": "运维事件的类型，取值如下：\nrds_apsaradb_upgrade：数据库软件升级。\nall：查看当前账号下所有地域下的所有运维事件，当`Region`设置为`all`时，`TaskType`也必须设置为`all`",
@@ -101,5 +103,140 @@
   ],
   "pathPattern": "",
   "product_code": "adb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "详情",
+        "properties": {
+          "Items": {
+            "description_en": "The queried O\\&M events",
+            "description_zh": "事件列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "详情",
+              "properties": {
+                "CreatedTime": {
+                  "description_en": "The time when the O\\&M event was created. The time follows the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "运维事件的创建时间，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2021-06-30T02:44:27Z",
+                  "type": "string"
+                },
+                "DBClusterId": {
+                  "description_en": "The ID of the cluster that is involved in the O\\&M event",
+                  "description_zh": "运维事件所涉及集群的集群ID",
+                  "example": "am-****************",
+                  "type": "string"
+                },
+                "DBType": {
+                  "description_en": "The database engine",
+                  "description_zh": "数据库的引擎类型",
+                  "example": "analyticdb",
+                  "type": "string"
+                },
+                "DBVersion": {
+                  "description_en": "The version of the database engine",
+                  "description_zh": "数据库引擎版本号",
+                  "example": "3.0",
+                  "type": "string"
+                },
+                "Deadline": {
+                  "description_en": "The deadline before which the event can be executed. The time follows the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "运维事件执行时间可调整范围的最晚时间，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2021-07-04T15:59:59Z",
+                  "type": "string"
+                },
+                "Id": {
+                  "description_en": "The ID of the O\\&M event",
+                  "description_zh": "运维事件的ID",
+                  "example": "11111",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "ModifiedTime": {
+                  "description_en": "The point in time at which the switchover time of the O\\&M event was modified. The time follows the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "修改运维事件切换时间的时间点，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2021-07-03T06:33:00Z",
+                  "type": "string"
+                },
+                "PrepareInterval": {
+                  "description_en": "The preparation time that is required before the pending O\\&M event can be switched. The time is in the `HH:mm:ss` format",
+                  "description_zh": "运维事件切换之前所需的准备时间，格式为`HH:mm:ss`",
+                  "example": "02:00:00",
+                  "type": "string"
+                },
+                "Region": {
+                  "description_en": "The ID of the region where the O\\&M event occurs",
+                  "description_zh": "运维事件所在地域的地域ID",
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "ResultInfo": {
+                  "description_en": "The execution result of the O\\&M event.\n\nThis parameter is returned only when the value of `Status` is FAILED or CANCEL",
+                  "description_zh": "运维事件的执行结果。\n仅当`Status`（状态）取值为FAILED（运维事件结束但执行失败）或CANCEL（事件已取消）时，返回该参数",
+                  "example": "autoCancel",
+                  "type": "string"
+                },
+                "StartTime": {
+                  "description_en": "The time when the task was executed in the backend. The time follows the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "后台执行该运维事件的时间点，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2021-07-03T04:00:00Z",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The state of the event.\n\nIf you set `IsHistory` to 0, the state of the pending O\\&M event is returned. Valid values:\n\n    *   WAITING_MODIFY: The start time of the O\\&M event is waiting to be set.\n    *   WAITING: The O\\&M event is waiting to be processed.\n    *   PROCESSING: The O\\&M event is being processed. The switchover time of an event in this state cannot be changed.\n\nIf you set `IsHistory` to 1, the state of the historical O\\&M event is returned. Valid values:\n\n    *   SUCCESS: The event ended and the execution succeeded.\n    *   FAILED: The event ended but the execution failed.\n    *   CANCEL: The event was canceled",
+                  "description_zh": "事件状态。\n若您设置`IsHistory`为0，则返回待处理运维事件状态的详情，取值范围如下：\n    - WAITING_MODIFY：等待用户设置运维事件开始时间。\n    - WAITING：运维事件正在等待处理。\n    - PROCESSING：运维事件正在处理中（不支持修改处于该状态下事件的切换时间）。\n若您设置`IsHistory`为1，则返回历史运维事件状态的详情，取值范围如下：\n     - SUCCESS：事件结束且执行成功。\n     - FAILED：事件结束但执行失败。\n     - CANCEL：事件已取消",
+                  "example": "SUCCESS",
+                  "type": "string"
+                },
+                "SwitchTime": {
+                  "description_en": "The time when the pending O\\&M event is switched. The time follows the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time is displayed in UTC",
+                  "description_zh": "运维事件预计的切换时间，格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2021-07-03T06:00:00Z",
+                  "type": "string"
+                },
+                "TaskType": {
+                  "description_en": "The type of the O\\&M event",
+                  "description_zh": "运维事件的类型",
+                  "example": "rds_apsaradb_upgrade",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page",
+            "description_zh": "每页记录数",
+            "example": "30",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "E774C8A9-8819-4A09-9E91-07C078******",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "总记录数",
+            "example": "2",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

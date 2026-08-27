@@ -35,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "Page number, ranging from 1 to 100",
       "help_zh": "分页序号，范围1-100",
@@ -48,6 +49,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "10",
       "help_en": "Page size, ranging from 1 to 100",
       "help_zh": "分页大小，范围1-100",
@@ -61,6 +63,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "ccc-test",
       "help_en": "Instance ID",
       "help_zh": "实例ID",
@@ -87,6 +90,15 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Ready",
+        "Talking",
+        "ACW",
+        "Break",
+        "Ringing",
+        "Offline",
+        "Dialing"
+      ],
       "example": "[\"ACW\", \"Dialing\"]",
       "help_en": "Filters by a list of statuses. This parameter is optional and defaults to empty, which matches all statuses",
       "help_zh": "按状态列表过滤，非必填，默认为空，表示匹配所有状态",
@@ -113,6 +125,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ON_SITE",
+        "OFF_SITE",
+        "OFFICE_PHONE"
+      ],
       "example": "[\"OFFICE_PHONE\",\"ON_SITE\"]",
       "help_en": "Filter by work mode list. This parameter is optional and defaults to empty, which means all work modes are matched",
       "help_zh": "按工作模式列表过滤，非必填，默认为空，表示匹配所有工作模式",
@@ -152,6 +169,15 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Outbound",
+        "Back2Back",
+        "PrivacyDial",
+        "Internal",
+        "Predictive",
+        "Inbound",
+        "Conference"
+      ],
       "example": "[\"Inbound\", \"Outbound\"]",
       "help_en": "Filters by a list of call types. The value is a string in JSON array format, where each array element is a call type. This parameter is optional and defaults to empty, which matches all call types",
       "help_zh": "按通话类型列表过滤，格式为JSON数组的字符串，数组元素为通话类型，非必填，默认为空，表示匹配所有的通话类型",
@@ -180,5 +206,221 @@
   ],
   "pathPattern": "",
   "product_code": "CCC",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "Response code",
+            "description_zh": "响应码",
+            "example": "OK",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "Data",
+            "description_zh": "数据",
+            "properties": {
+              "List": {
+                "description_en": "List of real-time agent status data",
+                "description_zh": "实时坐席状态数据列表",
+                "items": {
+                  "description_en": "Real-time agent status data",
+                  "description_zh": "实时坐席状态数据",
+                  "properties": {
+                    "AgentId": {
+                      "description_en": "Agent ID",
+                      "description_zh": "坐席ID",
+                      "example": "agent1@ccc-test",
+                      "type": "string"
+                    },
+                    "AgentName": {
+                      "description_en": "Agent name",
+                      "description_zh": "坐席姓名",
+                      "example": "坐席小王",
+                      "type": "string"
+                    },
+                    "BreakCode": {
+                      "description_en": "Break code.\n\nEnumeration values:\n\nRingingTimeout: Break caused by agent ringing timeout.\n\nRejectCall: Break caused by agent call rejection.\n\nWarm-up: Temporary break state after the agent is published and before becoming idle",
+                      "description_zh": "小休码。\n\n枚举值：\n\nRingingTimeout：坐席振铃超时导致的小休。\n\nRejectCall：坐席拒接导致的小休。\n\nWarm-up：坐席上线后置闲前的临时小休状态",
+                      "example": "Warm-up",
+                      "type": "string"
+                    },
+                    "CallType": {
+                      "description_en": "Call type",
+                      "description_zh": "通话类型",
+                      "enumValueTitles": {
+                        "Back2Back": "双呼",
+                        "Conference": "会议",
+                        "Inbound": "呼入",
+                        "Internal": "内部呼叫",
+                        "Outbound": "呼出",
+                        "Predictive": "预测式外呼",
+                        "PrivacyDial": "加密通话"
+                      },
+                      "example": "Outbound",
+                      "type": "string"
+                    },
+                    "CounterParty": {
+                      "description_en": "Used in specific three-party scenarios, primarily for listener, coaching, and consultation. In three-party scenarios, it represents the third party—for example, the agent being monitored or coached in a listener or coaching scenario, or the agent or external number to which a call is transferred in a consultation scenario",
+                      "description_zh": "用于一些特定的三方场景，主要是监听，辅导，咨询，在三方场景时表示第三方，比如在监听或辅导场景，用于表示被监听或被辅导的坐席，在咨询场景下，表示被转接的坐席或外呼号码",
+                      "example": "agent@ccc-test",
+                      "type": "string"
+                    },
+                    "Duration": {
+                      "description_en": "Duration of the current status, in seconds",
+                      "description_zh": "当前状态的持续时长，单位秒",
+                      "example": "16",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Extension": {
+                      "description_en": "The agent's extension number",
+                      "description_zh": "坐席分机号",
+                      "example": "80317391",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "Instance ID",
+                      "description_zh": "实例ID",
+                      "example": "ccc-test",
+                      "type": "string"
+                    },
+                    "Mobile": {
+                      "description_en": "The agent's personal phone number",
+                      "description_zh": "坐席的个人电话号码",
+                      "example": "1382114****",
+                      "type": "string"
+                    },
+                    "OutboundScenario": {
+                      "description_en": "Whether the agent is in outbound-only mode",
+                      "description_zh": "坐席是否处于仅外呼模式",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "SkillGroupIdList": {
+                      "description_en": "List of skill group IDs that the agent has signed into",
+                      "description_zh": "坐席签入的技能组ID列表",
+                      "items": {
+                        "description_en": "Skill group ID",
+                        "description_zh": "技能组ID",
+                        "example": "skillgroup1@ccc-test",
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "SkillGroupNameList": {
+                      "description_en": "List of skill group names that the agent has signed into",
+                      "description_zh": "坐席签入的技能组名称列表",
+                      "items": {
+                        "description_en": "Skill group name",
+                        "description_zh": "技能组名称",
+                        "example": "测试技能组",
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "State": {
+                      "description_en": "Agent status",
+                      "description_zh": "坐席状态",
+                      "enumValueTitles": {
+                        "ACW": "话后处理",
+                        "Break": "小休",
+                        "Dialing": "拨号",
+                        "Offline": "下线",
+                        "Ready": "空闲",
+                        "Ringing": "振铃",
+                        "Talking": "通话"
+                      },
+                      "example": "ACW",
+                      "type": "string"
+                    },
+                    "StateCode": {
+                      "description_en": "Sub-status. In some scenarios, the agent's status cannot be fully represented by the State field alone, so a sub-status is required for clarification. For example, when an agent is being monitored, State=Talking and StateCode=Monitoring",
+                      "description_zh": "子状态，部分场景下，仅用State字段无法完整表示坐席状态，因此需要子状态辅助，比如监听状态下，State=Talking，StateCode=Monitoring",
+                      "enumValueTitles": {
+                        "Coached": "被辅导",
+                        "Coaching": "辅导中",
+                        "Conference": "会议",
+                        "Consulted": "被咨询",
+                        "Consulting": "咨询中",
+                        "Monitored": "被监听",
+                        "Monitoring": "监听中"
+                      },
+                      "example": "Monitored",
+                      "type": "string"
+                    },
+                    "StateTime": {
+                      "description_en": "Time when the status started",
+                      "description_zh": "状态开始的时间",
+                      "example": "1696670640774",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "WorkMode": {
+                      "description_en": "Work mode",
+                      "description_zh": "工作模式",
+                      "enumValueTitles": {
+                        "OFFICE_PHONE": "办公电话模式",
+                        "OFF_SITE": "场外模式",
+                        "ON_SITE": "场内模式"
+                      },
+                      "example": "ON_SITE",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "PageNumber": {
+                "description_en": "Page number, ranging from 1 to 100",
+                "description_zh": "分页序号，范围1-100",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "Page size, ranging from 1 to 100",
+                "description_zh": "分页大小，范围1-100",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "Total count",
+                "description_zh": "总数",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "HttpStatusCode": {
+            "description_en": "HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "Response message",
+            "description_zh": "响应信息",
+            "example": "无",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求ID",
+            "example": "EEEE671A-3E24-4A04-81E6-6C4F5B39DF75",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

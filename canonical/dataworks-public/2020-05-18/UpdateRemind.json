@@ -22,6 +22,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "1234",
       "help_en": "The ID of the custom rule",
       "help_zh": "自定义规则的ID",
@@ -48,6 +49,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NODE",
+        "BASELINE",
+        "PROJECT",
+        "BIZPROCESS"
+      ],
       "example": "08:00",
       "help_en": "The end time of the do-not-disturb period. Alerts are not sent before this time. Format: hh:mm. Valid values of hh: [0,23]. Valid values of mm: [0,59]",
       "help_zh": "免打扰的截止时间，即在设置的时间之前不会发送报警。格式为hh:mm。hh的取值范围为[0,23] ，mm的取值范围为[0,59]",
@@ -61,6 +68,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NODE",
+        "BASELINE",
+        "PROJECT",
+        "BIZPROCESS"
+      ],
       "example": "NODE",
       "help_en": "The type of the monitored object. Valid values:\nNODE\nBASELINE\nPROJECT (workspace)\nBIZPROCESS (business process)",
       "help_zh": "监控对象的类型。取值如下：\nNODE（节点）\nBASELINE（基线）\nPROJECT（工作空间）\nBIZPROCESS（业务流程）",
@@ -113,6 +126,14 @@
       "type": "int"
     },
     {
+      "enum": [
+        "FINISHED",
+        "UNFINISHED",
+        "ERROR",
+        "CYCLE_UNFINISHED",
+        "TIMEOUT",
+        "EXHAUSTED_ERROR"
+      ],
       "example": "1,2,3",
       "help_en": "The business process IDs when the monitored object is a business process. A rule can monitor up to 5 business processes. Separate multiple business process IDs with commas (,).\nThis parameter takes effect only when RemindUnit is set to BIZPROCESS",
       "help_zh": "监控对象为业务流程时的业务流程ID。一个规则最多监控5个业务流程，多个业务流程ID之间使用英文逗号（,）分隔。\n当RemindUnit参数取值为BIZPROCESS（业务流程）时，当前参数生效",
@@ -126,6 +147,14 @@
       "type": "string"
     },
     {
+      "enum": [
+        "FINISHED",
+        "UNFINISHED",
+        "ERROR",
+        "CYCLE_UNFINISHED",
+        "TIMEOUT",
+        "EXHAUSTED_ERROR"
+      ],
       "example": "FINISHED",
       "help_en": "The condition that triggers the alert rule. Valid values:\nFINISHED: The system monitors the instance from the start time and sends an alert when the node runs successfully.\nUNFINISHED: The system monitors the instance from the start time and sends an alert if the node has not finished running by the specified target time.\nERROR: The system monitors the instance from the start time and sends an alert when the node encounters an error.\nCYCLE_UNFINISHED: The system sends an alert if the instance has not finished running within the specified cycle. This is typically used to monitor instances that run on an hourly cycle.\nTIMEOUT: The system monitors the instance from the start time and sends an alert if the node has not finished running after the specified duration. This is typically used to monitor the running duration of instances.\n\nFor more information about alert trigger conditions, see https://help.aliyun.com/document_detail/138172.html",
       "help_zh": "触发报警规则的条件。取值如下：\nFINISHED（完成）：表示从实例运行的起始时间点开始监控，在任务运行成功时系统发送报警。\nUNFINISHED（未完成）：表示从实例运行的起始时间点开始监控，到指定的目标时间点任务仍未结束运行，则系统发送报警。\nERROR（出错）：表示从实例运行的起始时间点开始监控，当任务运行出错时，系统发送报警。\nCYCLE_UNFINISHED（周期未完成）：表示在指定的周期内，实例仍未结束运行，则系统发送报警。通常用于监控以小时为周期单位的实例任务。\nTIMEOUT（运行超时）：表示从实例运行的起始时间点开始监控，到指定的运行时长后，该任务仍未结束运行，则系统发送报警。通常用于监控实例任务的运行时间。\n\n更多触发报警规则的内容，详情请参见https://help.aliyun.com/document_detail/138172.html",
@@ -143,6 +172,8 @@
       "help_en": "The maximum number of alerts. Valid values: [1,10]. Default value: 3",
       "help_zh": "最大报警次数。取值范围为[1,10]，默认值为3",
       "location": "formData",
+      "maximum": "10",
+      "minimum": "1",
       "name": "max_alert_times",
       "options": [
         "--max-alert-times"
@@ -156,6 +187,8 @@
       "help_en": "The alert interval, in seconds. Minimum value: 1200. Default value: 1800",
       "help_zh": "报警间隔，单位为秒。最小值为1200，默认值为1800",
       "location": "formData",
+      "maximum": "1800",
+      "minimum": "1200",
       "name": "alert_interval",
       "options": [
         "--alert-interval"
@@ -165,6 +198,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "OTHER",
+        "OWNER"
+      ],
       "example": "{\"hour\":23,\"minu\":59}",
       "help_en": "The configuration details for different trigger conditions:\nWhen RemindType (trigger condition) is set to FINISHED, the configuration is left empty.\nWhen RemindType (trigger condition) is set to UNFINISHED, the configuration format is {\"hour\":23,\"minu\":59}. Valid values of hour: [0,47]. Valid values of minu: [0,59].\nWhen RemindType (trigger condition) is set to ERROR, the configuration is left empty.\nWhen RemindType (trigger condition) is set to CYCLE_UNFINISHED (cycle unfinished), the configuration format is {\"1\":\"05:50\",\"2\":\"06:50\",\"3\":\"07:50\",\"4\":\"08:50\",\"5\":\"09:50\",\"6\":\"10:50\",\"7\":\"11:50\",\"8\":\"12:50\",\"9\":\"13:50\",\"10\":\"14:50\",\"11\":\"15:50\",\"12\":\"16:50\",\"13\":\"17:50\",\"14\":\"18:50\",\"15\":\"19:50\",\"16\":\"20:50\",\"17\":\"21:50\",\"18\":\"22:50\",\"19\":\"23:50\",\"20\":\"24:50\",\"21\":\"25:50\"}.\nThe key in the JSON string is the cycle number. Valid values: [1,288]. The value is the unfinished time for the corresponding cycle in the format hh:mm. Valid values of hh: [0,47]. Valid values of mm: [0,59].\nWhen RemindType (trigger condition) is set to TIMEOUT, the configuration format is 1800, in seconds. This means an alert is triggered if the instance has been running for more than 30 minutes",
       "help_zh": "不同触发条件的参数配置详情，具体如下：\n当RemindType（触发条件）取值为FINISHED（完成）时，当前参数配置为空。\n当RemindType（触发条件）取值为UNFINISHED（未完成）时，当前参数的配置格式示例为{\"hour\":23,\"minu\":59}。hour的取值范围为[0,47]，minu的取值范围为[0,59]。\n当RemindType（触发条件）取值为ERROR（出错）时，当前参数配置为空。\n当RemindType（触发条件）取值为CYCLE_UNFINISHED（周期未完成）时，当前参数的配置格式示例为{\"1\":\"05:50\",\"2\":\"06:50\",\"3\":\"07:50\",\"4\":\"08:50\",\"5\":\"09:50\",\"6\":\"10:50\",\"7\":\"11:50\",\"8\":\"12:50\",\"9\":\"13:50\",\"10\":\"14:50\",\"11\":\"15:50\",\"12\":\"16:50\",\"13\":\"17:50\",\"14\":\"18:50\",\"15\":\"19:50\",\"16\":\"20:50\",\"17\":\"21:50\",\"18\":\"22:50\",\"19\":\"23:50\",\"20\":\"24:50\",\"21\":\"25:50\"}。\nJSON字符串的key为周期号，取值范围为[1,288]；value为该周期对应的未完成时间，格式为hh:mm。hh的取值范围为[0,47]，mm的取值范围为[0,59]。\n当RemindType（触发条件）取值为TIMEOUT（运行超时）时，当前参数的配置格式示例为1800，单位为秒。即从实例开始运行起，运行超过30分钟触发报警",
@@ -178,6 +215,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "OTHER",
+        "OWNER"
+      ],
       "example": "OWNER",
       "help_en": "The recipient of the alert. Valid values:\nOWNER: the node owner.\nOTHER: a specified user",
       "help_zh": "报警的接收对象，包括OWNER（任务责任人）和OTHER（指定的用户）",
@@ -258,5 +299,53 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Data": {
+            "description_en": "The result of updating the custom monitoring rule",
+            "description_zh": "更新自定义监控规则的返回结果",
+            "example": "true",
+            "type": "boolean"
+          },
+          "ErrorCode": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "1031203110005",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "The specified parameters are invalid.",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The unique ID of the request. You can use this ID to troubleshoot issues",
+            "description_zh": "本次调用的唯一ID。出现错误后，您可以根据该ID排查问题",
+            "example": "0000-ABCD-EFG****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the call was successful. Valid values:\ntrue: Successful.\nfalse: Failed",
+            "description_zh": "调用是否成功。取值如下：\ntrue（成功）\nfalse（失败）",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

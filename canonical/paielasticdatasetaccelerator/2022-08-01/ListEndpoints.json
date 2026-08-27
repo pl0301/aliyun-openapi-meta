@@ -2,6 +2,95 @@
   "camel_example": "aliyun paielasticdatasetaccelerator GET /api/v1/endpoints --region cn-hangzhou --Order Desc --Type VPC --PageSize 10 --EndpointIds 'end-my1tk3jggooi5u0000,end-n69468yvjz8d120000,end-tga4omjrepklkg0000' --PageNumber 1 --SortBy GmtCreateTime --SlotIds 'slot-my1tk3jggooi5u0000' --InstanceIds 'inst-ivrq92qhbyrg4jctih' --Name acc_instance_slot_mount_1 --header \"Content-Type=application/json\"",
   "cmd_full_name": "paielasticdatasetaccelerator list-endpoints",
   "cmd_name": "list-endpoints",
+  "components": {
+    "schemas": {
+      "EndpointStatus": {
+        "description_en": "The status of the dataset acceleration slot mount target.  ",
+        "description_zh": "数据集加速槽挂载点的状态",
+        "properties": {
+          "Code": {
+            "description_en": "The status code or error code corresponding to the status of the dataset acceleration slot mount target.  ",
+            "description_zh": "数据集加速槽挂载点所处状态对应的状态码或错误码",
+            "example": "200",
+            "title": "数据集加速槽挂载点所处状态对应的状态码/错误码。",
+            "type": "string"
+          },
+          "Detail": {
+            "$ref": "#/components/schemas/EndpointStatusDetail",
+            "description_en": "Detailed information about the dataset acceleration endpoint.  ",
+            "description_zh": "数据集加速端点的详细信息",
+            "title": "数据集加速端点状态的详细信息。"
+          },
+          "Message": {
+            "description_en": "The message or error message associated with the status of the dataset acceleration slot mount target.  ",
+            "description_zh": "数据集加速槽挂载点所处状态附带的信息或错误信息",
+            "example": "Init Succeed",
+            "title": "数据集加速槽挂载点所处状态附带的信息/错误信息。",
+            "type": "string"
+          },
+          "Phase": {
+            "description_en": "The status of the dataset acceleration slot mount target. Valid values:  \n\nCreated: Creation completed.  \nResourceAllocating: Resource request in progress.  \nResourceAllocated: Resource request completed.  \nReady: Ready.  \nStopping: Stopping.  \nFailed: Failed.  \nStopped: Stopped.  ",
+            "description_zh": "数据集加速槽挂载点的状态。 取值如下：\n\nCreated：已创建。\nResourceAllocating：资源申请中。\nResourceAllocated：资源申请完成。\nReady：已就绪。\nStopping：停止中。 \nFailed：已失败。 \nStopped：已停止",
+            "enum": [
+              "Created",
+              "ResourceAllocating",
+              "ResourceAllocated",
+              "Ready",
+              "Stopping",
+              "Failed",
+              "Stopped"
+            ],
+            "example": "Ready",
+            "title": "数据集加速槽挂载点所处状态。 Created：已创建 ResourceAllocating：资源申请中 ResourceAllocated：资源申请完成 Ready：已就绪 Stopping：停止中 Failed：已失败 Stopped：已停止",
+            "type": "string"
+          }
+        },
+        "title": "数据集加速槽挂载点的状态。",
+        "type": "object"
+      },
+      "EndpointStatusDetail": {
+        "description_en": "Detailed status information of the dataset acceleration slot mount target.  ",
+        "description_zh": "数据集加速槽挂载点的状态详细信息",
+        "properties": {
+          "IpPortMapping": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/IpPort",
+              "description_en": "IP and port information.  ",
+              "description_zh": "IP和端口信息"
+            },
+            "description_en": "The IP-port mapping of the services provided by the dataset acceleration slot mount target (Endpoint).  \nThe key is the UUID of the dataset acceleration slot providing the service.  \nThe value is the IP-port information.  ",
+            "description_zh": "数据集加速槽挂载点 (Endpoint) 提供的服务的IP-Port映射。\nKey为提供服务的数据集加速槽的Uuid。\nValue为IP-Port信息",
+            "example": "{ \t\"slot-j6co2fcd\": {   \t\"Ip\": \"10.0.0.2\", \t\t\"Port\": 7001 \t}, \t\"slot-asdgys4d\": {   \t\"Ip\": \"10.0.0.3\", \t\t\"Port\": 7002 \t} }",
+            "title": "数据集加速槽挂载点 (Endpoint) 提供的所有服务的IP-Port映射。 Key为提供服务的数据集加速槽的Uuid；Value为IP-Port信息。",
+            "type": "object"
+          }
+        },
+        "title": "数据集加速端点状态的详细信息。",
+        "type": "object"
+      },
+      "IpPort": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Ip": {
+            "description_en": "",
+            "description_zh": "IP地址",
+            "example": "10.0.0.5",
+            "title": "IP地址。",
+            "type": "string"
+          },
+          "Port": {
+            "description_en": "",
+            "description_zh": "端口号",
+            "example": "3306",
+            "title": "端口号。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Lists the mount targets for dataset acceleration slots",
   "description_zh": "获取数据集加速槽挂载点的信息列表",
@@ -60,6 +149,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "VPC"
+      ],
       "example": "VPC",
       "help_en": "The network type of the mount target. The required parameters vary based on the network type.\n\nVPC: The mount target is in a VPC.\n\nINNER: The mount target is in the PAI internal network and is used for access by other PAI products",
       "help_zh": "挂载点的网络类型，根据网络类型不同，下列中需要传入的参数也有所不同。\n\nVPC：挂载点处于VPC网络。\nINNER：挂载点处于PAI内部网络中，用于PAI其他产品进行访问",
@@ -86,6 +178,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Desc",
+        "Asc"
+      ],
       "example": "Desc",
       "help_en": "The sort order. Valid values:\n\nDesc: Sorts the results in descending order.\n\nAsc: Sorts the results in ascending order",
       "help_zh": "排列顺序，取值如下：\nDesc： 降序排列。\nAsc： 升序排列",
@@ -103,6 +199,7 @@
       "help_en": "The page number. The value starts from 1. Default value: 1",
       "help_zh": "加速端点列表的页码。起始值为1，默认为1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -116,6 +213,7 @@
       "help_en": "The number of entries to return on each page. Default value: 10",
       "help_zh": "分页查询时设置的每页显示的加速端点数量，默认为10",
       "location": "query",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -141,6 +239,191 @@
   "pathPattern": "/api/v1/endpoints",
   "product_code": "PAIElasticDatasetAccelerator",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response",
+        "description_zh": "返回结果",
+        "properties": {
+          "Endpoints": {
+            "description_en": "A list of dataset acceleration endpoints",
+            "description_zh": "数据集加速端点列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "GmtCreateTime": {
+                  "description_en": "The time when the endpoint was created. The time is in the ISO 8601 format",
+                  "description_zh": "数据集加速端点创建的时间。格式使用 ISO8601（RFC3339）",
+                  "example": "2014-10-02T15:01:23Z",
+                  "title_en": "",
+                  "title_zh": "数据集加速端点创建的时间。格式使用 ISO8601(RFC3339)。",
+                  "type": "string"
+                },
+                "GmtModifiedTime": {
+                  "description_en": "The time when the endpoint was last updated. The time is in the ISO 8601 format",
+                  "description_zh": "数据集加速端点最后更新的时间。格式使用 ISO8601（RFC3339）",
+                  "example": "2014-10-02T15:01:23Z",
+                  "title_en": "",
+                  "title_zh": "数据集加速端点最后更新的时间。格式使用 ISO8601(RFC3339)。",
+                  "type": "string"
+                },
+                "InstanceId": {
+                  "description_en": "The ID of the acceleration instance",
+                  "description_zh": "所属加速实例的ID",
+                  "example": "inst-ivrq92qhbyrg4jctih",
+                  "title_en": "",
+                  "title_zh": "所属加速实例的ID。",
+                  "type": "string"
+                },
+                "Name": {
+                  "description_en": "The name of the mount target",
+                  "description_zh": "挂载点的名称",
+                  "example": "endpoint-1",
+                  "title_en": "",
+                  "title_zh": "挂载点的名称。",
+                  "type": "string"
+                },
+                "OwnerId": {
+                  "description_en": "The UID of the resource owner. This is the ID of the Alibaba Cloud account",
+                  "description_zh": "数据集加速端点的资源拥有者的Uid，在阿里云内为阿里云账号ID",
+                  "example": "155770209819****",
+                  "title_en": "",
+                  "title_zh": "数据集加速端点的资源拥有者的Uid，在阿里云内为主账号Id 。",
+                  "type": "string"
+                },
+                "Status": {
+                  "$ref": "#/components/schemas/EndpointStatus",
+                  "description_en": "The status of the mount target",
+                  "description_zh": "数据集加速槽挂载点的状态",
+                  "title_en": "",
+                  "title_zh": "数据集加速槽挂载点的状态。"
+                },
+                "Type": {
+                  "description_en": "The network type of the mount target. Valid values:\n\nVPC: The mount target is in a VPC.\n\nINNER: The mount target is in the PAI internal network and is used for access by other PAI products",
+                  "description_zh": "挂载点的网络类型，可能值：\nVPC：挂载点处于VPC网络。\nINNER：挂载点处于PAI内部网络中，用于PAI其他产品进行访问",
+                  "enum": [
+                    "VPC"
+                  ],
+                  "example": "VPC",
+                  "title_en": "",
+                  "title_zh": "挂载点的网络类型，根据网络类型不同，下列中需要传入的参数也有所不同。\nVPC：端点机器处于VPC网络",
+                  "type": "string"
+                },
+                "UserId": {
+                  "description_en": "The user ID (UID) of the creator of the endpoint. This is the ID of the Resource Access Management (RAM) user. If the endpoint was created by an Alibaba Cloud account, this is the ID of the Alibaba Cloud account",
+                  "description_zh": "数据集加速端点的创建者的Uid，在阿里云内为RAM用户ID（阿里云账号创建则直接为阿里云账号ID）",
+                  "example": "27606534679741****",
+                  "title_en": "",
+                  "title_zh": "数据集加速端点的创建者的Uid，在阿里云内为子账号Id （主账号创建则直接为主账号Id）。",
+                  "type": "string"
+                },
+                "Uuid": {
+                  "description_en": "The unique ID of the mount target",
+                  "description_zh": "挂载点的唯一标识符",
+                  "example": "end-ivrq92qhbyrg4j****",
+                  "title_en": "",
+                  "title_zh": "挂载点的唯一标识符。",
+                  "type": "string"
+                },
+                "VpcId": {
+                  "description_en": "The ID of the Virtual Private Cloud (VPC) where the mount target is deployed",
+                  "description_zh": "挂载点使用的专有网络 VPC ID",
+                  "example": "vpc-j6co2fcdsl1q0gnuc****",
+                  "title_en": "",
+                  "title_zh": "挂载点使用的专有网络 VPC Id。",
+                  "type": "string"
+                },
+                "VswitchId": {
+                  "description_en": "The ID of the vSwitch used by the mount target",
+                  "description_zh": "挂载点使用的交换机vSwitch ID",
+                  "example": "vsw-j6cmr00qjyrft6jo2****",
+                  "title_en": "",
+                  "title_zh": "挂载点使用的交换机 Vswitch Id。",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title_en": "",
+            "title_zh": "数据集加速端点列表。",
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "A731A84D-55C9-44F7-99BB-E1CF0CF1****",
+            "title_en": "",
+            "title_zh": "请求Id。",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries",
+            "description_zh": "列表内元素数量总和",
+            "example": "100",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "列表内元素数量总和。",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    },
+    "400": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "Semantic error code",
+            "description_zh": "语义化错误码",
+            "example": "ValidationError",
+            "title_en": "",
+            "title_zh": "语义化错误码。",
+            "type": "string"
+          },
+          "Detail": {
+            "description_en": "Detailed error information",
+            "description_zh": "错误详细信息",
+            "example": "-",
+            "properties": {
+              "ErrorCode": {
+                "description_en": "Numeric error code",
+                "description_zh": "数字化错误码",
+                "example": "5218847334401572965",
+                "title_en": "",
+                "title_zh": "数字化错误码。",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "错误详细信息。",
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "Error message description",
+            "description_zh": "错误消息描述",
+            "example": "Dataset Not Found: 1234",
+            "title_en": "",
+            "title_zh": "错误消息描述。",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求Id",
+            "example": "9C5AEC16-CBD1-5E68-A92C-75D1D346E57F",
+            "title_en": "",
+            "title_zh": "请求Id。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "tags": [
     "Endpoint"
   ]

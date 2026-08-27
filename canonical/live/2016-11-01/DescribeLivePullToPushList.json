@@ -34,6 +34,18 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ap-northeast-1",
+        "ap-southeast-1",
+        "ap-southeast-5",
+        "eu-central-1",
+        "me-central-1",
+        "cn-beijing",
+        "cn-shanghai",
+        "cn-shenzhen",
+        "cn-qingdao",
+        "preregion"
+      ],
       "example": "cn-shanghai",
       "help_en": "Specifies the live center for query. Valid values:\nap-southeast-1 (Singapore)\nap-southeast-5 (Indonesia)\ncn-beijing (Beijing)\ncn-shanghai (Shanghai)",
       "help_zh": "指定直播中心查询。取值：\nap-southeast-1（新加坡）\nap-southeast-5（印度尼西亚）\ncn-beijing（北京）\ncn-shanghai（上海）",
@@ -103,6 +115,8 @@
       "help_en": "Number of records displayed per page.\nDefault value: 10. Value range: [1, 100]",
       "help_zh": "每页可展示的记录数。\n默认值为 10，取值范围[1,100]",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -114,5 +128,206 @@
   ],
   "pathPattern": "",
   "product_code": "live",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "PageNumber": {
+            "description_en": "Page number",
+            "description_zh": "分页页数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "Number of query records per page",
+            "description_zh": "每页的查询记录数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求id",
+            "example": "a05e6b15-15af-405b-a4a2-0152245*****",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "TaskList": {
+            "description_en": "Task information list",
+            "description_zh": "任务信息列表",
+            "items": {
+              "description_en": "Task information list",
+              "description_zh": "任务信息列表",
+              "properties": {
+                "CurrentFileIndex": {
+                  "description_en": "Currently effective playlist sequence offset",
+                  "description_zh": "当前生效的节目单序列偏移",
+                  "example": "0",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "CurrentOffset": {
+                  "description_en": "Currently effective video playback offset",
+                  "description_zh": "当前生效的视频播放偏移",
+                  "example": "0",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "TaskExitReason": {
+                  "description_en": "Task exit reason:\n\nTriggerByUser: Actively ended by user.\nOverEndTime: Exceeded the preset end time.\n\nOnly returned when the task is in exited state",
+                  "description_zh": "任务退出原因：\n\nTriggerByUser：用户主动结束。\nOverEndTime：超过预设结束时间。\n\n仅已退出状态下返回",
+                  "example": "TriggerByUser",
+                  "type": "string"
+                },
+                "TaskExitTime": {
+                  "description_en": "Task exit time, Unix timestamp in seconds.\nOnly returned when the task is in exited state",
+                  "description_zh": "任务退出时间，Unix 秒级时间戳。\n仅已退出状态下返回",
+                  "example": "1726354625",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "TaskId": {
+                  "description_en": "Task ID",
+                  "description_zh": "任务ID",
+                  "example": "fb0d4ac7-c7e3-4978-9743-0bf2f6e8****",
+                  "type": "string"
+                },
+                "TaskInfo": {
+                  "description_en": "Task information",
+                  "description_zh": "任务信息",
+                  "properties": {
+                    "CallbackURL": {
+                      "description_en": "HTTP callback URL",
+                      "description_zh": "HTTP回调地址",
+                      "example": "hahaha.com",
+                      "type": "string"
+                    },
+                    "DstUrl": {
+                      "description_en": "Destination push stream URL",
+                      "description_zh": "推流目标地址",
+                      "example": "rtmp://qd.push.lgg.alivecdn.com/testhsc/streamhsc?live_rtmp_*******",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "Task end time. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC time)",
+                      "description_zh": "任务结束时间。格式为：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2024-12-30T14:30:00Z",
+                      "type": "string"
+                    },
+                    "FileIndex": {
+                      "description_en": "File index, starts playback from the nth file",
+                      "description_zh": "文件索引，从第n个文件开始播放起",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Offset": {
+                      "description_en": "Start offset, the starting offset value of the video file. Unit: seconds. Value: greater than 0.\nIndicates the position to start reading from, relative to the first frame.\nOnly valid for VOD resources or video files",
+                      "description_zh": "启动偏移，视频文件起始偏移值。单位：秒。取值：大于0。\n表示从相对于首帧的偏差时间作为开始读取的位置。\n仅对点播资源或视频文件有效",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RepeatNumber": {
+                      "description_en": "Number of times to repeat playback after completion. Valid values:\n0 (default): No repeat playback.\n-1: Loop indefinitely.\nOther positive integers: Number of times to repeat playback after completion.\n\nThis parameter only applies to VOD or third-party video streams",
+                      "description_zh": "播放完后重复继续播放的次数。取值：\n0（默认值）：不重复播放。\n-1：一直循环重复。\n其他正整数：播放完后重复继续播放的次数。\n\n此参数仅针对点播或第三方视频流",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RetryCount": {
+                      "description_en": "Number of retries",
+                      "description_zh": "重试次数",
+                      "example": "3",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RetryInterval": {
+                      "description_en": "Retry interval, in seconds",
+                      "description_zh": "重试间隔，单位秒",
+                      "example": "60",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "SourceProtocol": {
+                      "description_en": "Source stream protocol name",
+                      "description_zh": "源流协议名",
+                      "example": "flv",
+                      "type": "string"
+                    },
+                    "SourceType": {
+                      "description_en": "Source stream type. Valid values:\n\nlive: Live stream.\nvod: Alibaba Cloud Video on Demand resource.\nurl: Third-party video file resource",
+                      "description_zh": "源流类型，枚举值：\n\nlive，直播流。\nvod，阿里云视频点播资源。\nurl，第三方视频文件资源",
+                      "example": "vod",
+                      "type": "string"
+                    },
+                    "SourceUrls": {
+                      "description_en": "Source stream URL addresses",
+                      "description_zh": "源流URL地址",
+                      "items": {
+                        "description_en": "Source stream URL address",
+                        "description_zh": "源流URL地址",
+                        "example": "rtmp://118.178.***.*5:****/wwtestlive1/pulltest.jiugong.aliyunlive.com_livelight2?vhost=pulltest.jiugong.aliyun*******",
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "StartTime": {
+                      "description_en": "Task start time. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC time)",
+                      "description_zh": "任务开始时间。格式为：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2024-12-04T09:16:00Z",
+                      "type": "string"
+                    },
+                    "TaskId": {
+                      "description_en": "Task ID",
+                      "description_zh": "任务ID",
+                      "example": "fb0d4ac7-c7e3-4978-9743-0bf2f6e8****",
+                      "type": "string"
+                    },
+                    "TaskName": {
+                      "description_en": "Task name",
+                      "description_zh": "任务名称",
+                      "example": "taskname",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "TaskInvalidReason": {
+                  "description_en": "Reason for task stopping:\n\nPullStreamFailed: Source stream pulling exception, retrying.\nPushStreamFailed: Destination stream pushing exception, retrying.\nUnknownError: Unknown exception.\n\nOnly returned when the task is in stopped state",
+                  "description_zh": "任务停止运行原因：\n\nPullStreamFailed：源流拉流异常，重试中。\nPushStreamFailed：目标流推流异常，重试中。\nUnknownError：未知异常。\n\n仅停止运行状态下返回",
+                  "example": "PullStreamFailed",
+                  "type": "string"
+                },
+                "TaskStatus": {
+                  "description_en": "Current task status:\n0: Not started (start time has not been reached).\n1: Running normally (stream pulling and pushing are normal).\n2: Running abnormally.\n3: Stopped (stream pulling or pushing is abnormal, or the task was actively stopped by calling the API).\n-1: Exited",
+                  "description_zh": "任务当前状态：\n0：未启动（未到开始时间）。\n1：正常运行（拉流和转推正常）。\n2：异常运行。\n3：已停止（拉流或转推异常，也有可能是主动调用接口停止）.\n-1：已退出",
+                  "example": "0",
+                  "format": "int32",
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "Total": {
+            "description_en": "Total number of query results",
+            "description_zh": "查询结果总数",
+            "example": "3",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

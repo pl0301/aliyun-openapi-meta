@@ -1,6 +1,427 @@
 {
   "cmd_full_name": "cms update-notify-strategy",
   "cmd_name": "update-notify-strategy",
+  "components": {
+    "schemas": {
+      "FilterSetting": {
+        "description_en": "The filter configuration",
+        "description_zh": "过滤配置",
+        "properties": {
+          "conditions": {
+            "description_en": "The subscription conditions",
+            "description_zh": "订阅条件",
+            "items": {
+              "description_en": "A single condition",
+              "description_zh": "单个条件",
+              "properties": {
+                "field": {
+                  "description_en": "The field",
+                  "description_zh": "字段",
+                  "example": "severity",
+                  "title": "字段",
+                  "type": "string"
+                },
+                "op": {
+                  "description_en": "The comparison operator",
+                  "description_zh": "比较符",
+                  "example": "EQ",
+                  "title": "比较符",
+                  "type": "string"
+                },
+                "value": {
+                  "description_en": "The value",
+                  "description_zh": "值",
+                  "example": "CRITICAL",
+                  "title": "值",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "maxItems": 10,
+            "title": "订阅条件",
+            "type": "array"
+          },
+          "expression": {
+            "description_en": "The expression",
+            "description_zh": "表达式",
+            "example": "1 and 2 or 3",
+            "title": "表达式",
+            "type": "string"
+          },
+          "relation": {
+            "description_en": "The relationship between conditions",
+            "description_zh": "条件间关系",
+            "example": "AND",
+            "title": "条件间关系",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NotifyStrategyForModify": {
+        "description_en": "The entity",
+        "description_zh": "用于查看的实体",
+        "properties": {
+          "autoRecoverSeconds": {
+            "description_en": "The auto-recovery time in seconds",
+            "description_zh": "自动恢复时间",
+            "example": "300",
+            "format": "int32",
+            "type": "integer"
+          },
+          "customTemplateEntries": {
+            "description_en": "The notification channel template",
+            "description_zh": "通知渠道模板",
+            "items": {
+              "description_en": "The template details",
+              "description_zh": "模板详情",
+              "properties": {
+                "targetType": {
+                  "description_en": "The notification type",
+                  "description_zh": "通知类型",
+                  "example": "SMS",
+                  "required": true,
+                  "title": "通知类型",
+                  "type": "string"
+                },
+                "templateUuid": {
+                  "description_en": "The template UUID",
+                  "description_zh": "模板UUID",
+                  "example": "123123-12-31-231-23-12-3123",
+                  "required": true,
+                  "title": "模板UUID",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "通知渠道模板",
+            "type": "array"
+          },
+          "description": {
+            "description_en": "The description",
+            "description_zh": "描述",
+            "example": "test",
+            "title": "描述",
+            "type": "string"
+          },
+          "enableIncidentManagement": {
+            "description_en": "Specifies whether to enable incident management",
+            "description_zh": "是否启用事件管理",
+            "example": "true",
+            "type": "boolean"
+          },
+          "escalationId": {
+            "description_en": "The list of escalation policy IDs",
+            "description_zh": "升级策略 ID 列表",
+            "items": {
+              "description_en": "The escalation policy ID",
+              "description_zh": "升级策略 ID",
+              "example": "[\"escalation-123\", \"escalation-456\"]",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "filterSetting": {
+            "$ref": "#/components/schemas/FilterSetting",
+            "description_en": "The filter settings",
+            "description_zh": "过滤设置"
+          },
+          "groupingSetting": {
+            "description_en": "The grouping settings",
+            "description_zh": "合并设置",
+            "properties": {
+              "groupingKeys": {
+                "description_en": "The keys used for merging",
+                "description_zh": "合并keys",
+                "items": {
+                  "description_en": "The grouping field",
+                  "description_zh": "合并字段",
+                  "example": "severity",
+                  "type": "string"
+                },
+                "title": "合并keys",
+                "type": "array"
+              },
+              "periodMin": {
+                "description_en": "The check period in minutes",
+                "description_zh": "检查周期分钟数",
+                "example": "5",
+                "format": "int32",
+                "title": "检查周期分钟数",
+                "type": "integer"
+              },
+              "silenceSec": {
+                "description_en": "The silence period in seconds",
+                "description_zh": "沉默秒数",
+                "example": "300",
+                "format": "int32",
+                "title": "沉默秒数",
+                "type": "integer"
+              },
+              "times": {
+                "description_en": "The number of triggers",
+                "description_zh": "触发次数",
+                "example": "1",
+                "format": "int32",
+                "title": "触发次数",
+                "type": "integer"
+              }
+            },
+            "required": true,
+            "title": "合并设置",
+            "type": "object"
+          },
+          "ignoreRestoredNotification": {
+            "description_en": "Specifies whether to send a notification upon recovery",
+            "description_zh": "恢复是否通知",
+            "example": "false",
+            "title": "恢复是否通知",
+            "type": "boolean"
+          },
+          "notifyStrategyName": {
+            "description_en": "The name",
+            "description_zh": "名称",
+            "example": "策略名称",
+            "required": true,
+            "title": "名称",
+            "type": "string"
+          },
+          "pushingSetting": {
+            "description_en": "The push settings",
+            "description_zh": "推送设置",
+            "properties": {
+              "alertActionIds": {
+                "description_en": "The list of alert action IDs",
+                "description_zh": "告警动作 ID 列表",
+                "items": {
+                  "description_en": "The alert action ID",
+                  "description_zh": "告警动作 ID",
+                  "example": "[\"action-123\", \"action-456\"]",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "restoreActionIds": {
+                "description_en": "The list of restore action IDs",
+                "description_zh": "恢复动作 ID 列表",
+                "items": {
+                  "description_en": "The restore action ID",
+                  "description_zh": "恢复动作 ID",
+                  "example": "[\"restore-789\"]",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "templateUuid": {
+                "description_en": "The message template UUID",
+                "description_zh": "消息模板 UUID",
+                "example": "模板 UUID",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "repeatNotifySetting": {
+            "description_en": "The settings for repeated notifications",
+            "description_zh": "循环通知设置",
+            "properties": {
+              "endIncidentState": {
+                "description_en": "The incident state that stops the repeated notifications",
+                "description_zh": "结束事件状态",
+                "example": "\"Resolved\"",
+                "type": "string"
+              },
+              "repeatInterval": {
+                "description_en": "The interval for repeated notifications",
+                "description_zh": "重复通知的时间间隔",
+                "example": "5",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "routes": {
+            "description_en": "The routing settings for the notification channel",
+            "description_zh": "通知渠道路由设置",
+            "items": {
+              "description_en": "The routing settings for the notification channel",
+              "description_zh": "通知渠道路由设置",
+              "properties": {
+                "channels": {
+                  "description_en": "The notification channel",
+                  "description_zh": "通知渠道",
+                  "items": {
+                    "description_en": "The notification channel",
+                    "description_zh": "通知渠道",
+                    "properties": {
+                      "channelType": {
+                        "description_en": "The channel type",
+                        "description_zh": "渠道类型",
+                        "enum": [
+                          "DING",
+                          "WEIXIN",
+                          "FEISHU",
+                          "SLACK",
+                          "TEAMS",
+                          "CONTACT",
+                          "GROUP",
+                          "DUTY",
+                          "DING_COOL_APP"
+                        ],
+                        "example": "CONTACT",
+                        "required": true,
+                        "title": "渠道类型",
+                        "type": "string"
+                      },
+                      "enabledSubChannels": {
+                        "description_en": "The enabled notification types",
+                        "description_zh": "启用通知类型",
+                        "items": {
+                          "description_en": "The notification channel",
+                          "description_zh": "通知渠道",
+                          "example": "SMS",
+                          "type": "string"
+                        },
+                        "title": "启用通知类型",
+                        "type": "array"
+                      },
+                      "receivers": {
+                        "description_en": "The channel receivers",
+                        "description_zh": "渠道接收方",
+                        "items": {
+                          "description_en": "The specified recipient",
+                          "description_zh": "指定接受人",
+                          "example": "contactId",
+                          "type": "string"
+                        },
+                        "required": true,
+                        "title": "渠道接收方",
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title": "通知渠道",
+                  "type": "array"
+                },
+                "digitalEmployeeName": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "effectTimeRange": {
+                  "description_en": "The effective time range",
+                  "description_zh": "有效时间范围",
+                  "properties": {
+                    "dayInWeek": {
+                      "description_en": "The days of the week when the policy is active. Monday to Sunday",
+                      "description_zh": "生效天(周一到周日)",
+                      "items": {
+                        "description_en": "A value from 1 to 7. 1 indicates Monday and 7 indicates Sunday",
+                        "description_zh": "1-7 表示周一到周日",
+                        "example": "1",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "title": "生效天(周一到周日)",
+                      "type": "array"
+                    },
+                    "endTimeInMinute": {
+                      "description_en": "The end time in minutes",
+                      "description_zh": "结束时间(分钟数)",
+                      "example": "30",
+                      "format": "int32",
+                      "maximum": "1439",
+                      "minimum": "0",
+                      "title": "结束时间(分钟数)",
+                      "type": "integer"
+                    },
+                    "startTimeInMinute": {
+                      "description_en": "The start time in minutes",
+                      "description_zh": "开始时间(分钟数)",
+                      "example": "60",
+                      "format": "int32",
+                      "maximum": "1438",
+                      "minimum": "0",
+                      "title": "开始时间(分钟数)",
+                      "type": "integer"
+                    },
+                    "timeZone": {
+                      "description_en": "The time zone",
+                      "description_zh": "时区",
+                      "example": "+08:00",
+                      "title": "时区",
+                      "type": "string"
+                    }
+                  },
+                  "title": "字段",
+                  "type": "object"
+                },
+                "enableRca": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "boolean"
+                },
+                "filterSetting": {
+                  "$ref": "#/components/schemas/FilterSetting",
+                  "description_en": "The routing conditions",
+                  "description_zh": "路由条件"
+                },
+                "severities": {
+                  "description_en": "The list of severity levels",
+                  "description_zh": "严重级别列表",
+                  "items": {
+                    "description_en": "The severity level. Valid values: CRITICAL, WARNING, and INFO",
+                    "description_zh": "严重级别，CRITICAL WARNING INFO",
+                    "example": "INFO",
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "required": true,
+            "title": "通知渠道路由设置",
+            "type": "array"
+          },
+          "workspaceFilterSetting": {
+            "$ref": "#/components/schemas/WorkspaceFilterSetting",
+            "description_en": "The workspace filter settings",
+            "description_zh": "工作空间过滤设置"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "WorkspaceFilterSetting": {
+        "description_en": "The workspace filter settings object",
+        "description_zh": "工作空间过滤设置对象",
+        "properties": {
+          "tagSelector": {
+            "$ref": "#/components/schemas/FilterSetting",
+            "description_en": "The tag filter",
+            "description_zh": "标签筛选器"
+          },
+          "workspaceUuids": {
+            "description_en": "A list of workspace UUIDs",
+            "description_zh": "工作空间 UUID 列表",
+            "items": {
+              "description_en": "The workspace UUID",
+              "description_zh": "工作空间 UUID",
+              "example": "\"ws-abc123\"",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates a notification policy",
   "description_zh": "更新通知策略",
@@ -159,6 +580,17 @@
             "element": {
               "fields": [
                 {
+                  "enum": [
+                    "DING",
+                    "WEIXIN",
+                    "FEISHU",
+                    "SLACK",
+                    "TEAMS",
+                    "CONTACT",
+                    "GROUP",
+                    "DUTY",
+                    "DING_COOL_APP"
+                  ],
                   "example": "CONTACT",
                   "help_en": "The channel type",
                   "help_zh": "渠道类型",
@@ -231,6 +663,8 @@
                 "example": "30",
                 "help_en": "The end time in minutes",
                 "help_zh": "结束时间(分钟数)",
+                "maximum": "1439",
+                "minimum": "0",
                 "name": "end_time_in_minute",
                 "options": [
                   "--end-time-in-minute"
@@ -243,6 +677,8 @@
                 "example": "60",
                 "help_en": "The start time in minutes",
                 "help_zh": "开始时间(分钟数)",
+                "maximum": "1438",
+                "minimum": "0",
                 "name": "start_time_in_minute",
                 "options": [
                   "--start-time-in-minute"
@@ -810,5 +1246,34 @@
   ],
   "pathPattern": "/notifyStrategies/[notifyStrategyId]",
   "product_code": "Cms",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body structure",
+        "description_zh": "响应内容结构",
+        "properties": {
+          "notifyStrategyId": {
+            "description_en": "The UUID of the notification policy",
+            "description_zh": "通知策略UUID",
+            "example": "12312-31-23-123-1-23123",
+            "title_en": "",
+            "title_zh": "通知策略ID",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The unique ID of the request, which is used for troubleshooting",
+            "description_zh": "请求的唯一 ID，用于排查问题",
+            "example": "8FDE2569-626B-5176-9844-28877A*****",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

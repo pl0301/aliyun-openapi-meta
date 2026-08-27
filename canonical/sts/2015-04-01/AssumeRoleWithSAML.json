@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "acs:ram::123456789012****:saml-provider/company1",
       "help_en": "The Alibaba Cloud Resource Name (ARN) of the SAML IdP that is created in RAM.\n\nFormat: `acs:ram::<account_id>:saml-provider/<saml_provider_name>`.\n\nYou can view the ARN of the IdP in the RAM console or by calling an API operation:\n\nRAM console: For more information, see https://help.aliyun.com/document_detail/116795.html.\n\nAPI: For more information, see https://help.aliyun.com/document_detail/186833.html or https://help.aliyun.com/document_detail/186851.html",
       "help_zh": "RAM中创建的SAML身份提供商的ARN。\n\n格式：`acs:ram::<account_id>:saml-provider/<saml_provider_id>`。\n\n您可以通过RAM控制台或API查看身份提供商的ARN。具体如下：\n\nRAM控制台：请参见https://help.aliyun.com/document_detail/116795.html。\nAPI：请参见https://help.aliyun.com/document_detail/186833.html或https://help.aliyun.com/document_detail/186851.html",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "acs:ram::123456789012****:role/adminrole",
       "help_en": "The ARN of the RAM role to assume.\n\nThe trusted entity of the RAM role is a SAML IdP. For more information, see https://help.aliyun.com/document_detail/116805.html or https://help.aliyun.com/document_detail/28710.html.\n\nFormat: `acs:ram::<account_id>:role/<role_name>`.\n\nYou can view the ARN of the role in the RAM console or by calling an API operation:\n\nRAM console: For more information, see https://help.aliyun.com/document_detail/39744.html.\n\nAPI: For more information, see https://help.aliyun.com/document_detail/28713.html or https://help.aliyun.com/document_detail/28711.html",
       "help_zh": "要扮演的RAM角色的ARN。\n\n该角色是可信实体为SAML身份提供商的RAM角色。更多信息，请参见https://help.aliyun.com/document_detail/116805.html或https://help.aliyun.com/document_detail/28710.html。\n\n格式：`acs:ram::<account_id>:role/<role_name>`。\n\n您可以通过RAM控制台或API查看角色ARN。具体如下：\n\nRAM控制台：请参见https://help.aliyun.com/document_detail/39744.html。\nAPI：请参见https://help.aliyun.com/document_detail/28713.html或https://help.aliyun.com/document_detail/28711.html",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "base64_encoded_saml_assertion",
       "help_en": "The Base64-encoded SAML assertion.\n\nThe value must be 4 to 100,000 characters in length.\n\nObtain the complete SAML response from the IdP. Do not use only the SAML assertion field",
       "help_zh": "Base64编码后的SAML断言。\n\n长度为4~100000个字符。\n\n需要从IdP获取完整的SAML响应，不能是单独的SAML断言字段",
@@ -88,5 +91,109 @@
   ],
   "pathPattern": "",
   "product_code": "Sts",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回参数",
+        "properties": {
+          "AssumedRoleUser": {
+            "description_en": "The temporary identity of the assumed role",
+            "description_zh": "角色扮演临时身份",
+            "properties": {
+              "Arn": {
+                "description_en": "The ARN of the temporary identity",
+                "description_zh": "临时身份的ARN",
+                "example": "acs:sts::123456789012****:assumed-role/AdminRole/alice",
+                "type": "string"
+              },
+              "AssumedRoleId": {
+                "description_en": "The ID of the temporary identity",
+                "description_zh": "临时身份的ID",
+                "example": "34458433936495****:alice",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Credentials": {
+            "description_en": "The access credential",
+            "description_zh": "访问凭证",
+            "properties": {
+              "AccessKeyId": {
+                "description_en": "The AccessKey ID",
+                "description_zh": "访问密钥ID",
+                "example": "STS.L4aBSCSJVMuKg5U1****",
+                "type": "string"
+              },
+              "AccessKeySecret": {
+                "description_en": "The AccessKey secret",
+                "description_zh": "访问密钥",
+                "example": "wyLTSmsyPGP1ohvvw8xYgB29dlGI8KMiH2pK****",
+                "type": "string"
+              },
+              "Expiration": {
+                "description_en": "The expiration time of the token. The time is in UTC",
+                "description_zh": "Token到期失效时间（UTC时间）",
+                "example": "2015-04-09T11:52:19Z",
+                "type": "string"
+              },
+              "SecurityToken": {
+                "description_en": "The security token.\n\nThe security token has a variable length. Do not impose a maximum length limit on the security token",
+                "description_zh": "安全令牌。\n安全令牌的长度不固定，我们强烈建议您不要对安全令牌的最大长度做任何限制",
+                "example": "********",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "6894B13B-6D71-4EF5-88FA-F32781734A7F",
+            "type": "string"
+          },
+          "SAMLAssertionInfo": {
+            "description_en": "The information about the SAML assertion",
+            "description_zh": "SAML断言中的部分信息",
+            "properties": {
+              "Issuer": {
+                "description_en": "The value of the `Issuer` field in the SAML assertion",
+                "description_zh": "SAML断言中`Issuer`字段的值",
+                "example": "http://example.com/adfs/services/trust",
+                "type": "string"
+              },
+              "Recipient": {
+                "description_en": "The value of the `Recipient` attribute in the `Subject - SubjectConfirmation - SubjectConfirmationData` field of the SAML assertion",
+                "description_zh": "SAML断言中`Subject - SubjectConfirmation - SubjectConfirmationData`字段中`Recipient`属性的值",
+                "example": "https://signin.aliyun.com/saml-role/SSO",
+                "type": "string"
+              },
+              "Subject": {
+                "description_en": "The value of the `Subject - NameID` field in the SAML assertion",
+                "description_zh": "SAML断言中`Subject - NameID`字段的值",
+                "example": "alice@example.com",
+                "type": "string"
+              },
+              "SubjectType": {
+                "description_en": "The format of the NameID element in the SAML assertion. If the prefix is `urn:oasis:names:tc:SAML:2.0:nameid-format:`, the prefix is removed. Examples: `persistent` and `transient`",
+                "description_zh": "SAML断言中`NameID`的格式。当前缀为`urn:oasis:names:tc:SAML:2.0:nameid-format:`时，前缀会被移除。例如：`persistent/transient`",
+                "example": "persistent",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "SourceIdentity": {
+            "description_en": "The source identity.\n\nWhen you assume a role, you can specify a source identity for the role user. The source identity is used as the initial identity of the session. The value of the source identity persists throughout chained role-assuming sessions and cannot be changed. This ensures the traceability and security of operations.\n\nThis parameter is not returned if you do not set a source identity",
+            "description_zh": "源身份信息。\n\n在扮演角色时，可以指定扮演者的源身份（SourceIdentity）作为会话的初始身份标识。 该源身份的值在持续扮演角色的链式会话中将一直存在，中途不可更改，可确保操作的可追溯性和安全性。\n\n如果没有设置源身份信息，则该字段不会返回",
+            "example": "Alice",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

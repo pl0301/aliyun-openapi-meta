@@ -21,6 +21,12 @@
   },
   "parameters": [
     {
+      "enum": [
+        "CREATED",
+        "RUNNING",
+        "COMPLETE",
+        "FAILED"
+      ],
       "example": "RUNNING",
       "help_en": "Specifies the status of tasks to query. If this parameter is omitted, the API returns tasks in all states. Valid values: `CREATED`, `RUNNING`, `COMPLETE`, `FAILED`, `EXPIRED`, and `CANCELED`",
       "help_zh": "CREATED: 创建, RUNNING: 正在执行, COMPLETE: 任务成功完成, FAILED: 任务执行失败, EXPIRED: 任务已过期, CANCELED: 任务已被取消",
@@ -51,6 +57,8 @@
       "help_en": "The maximum number of entries to return per page. The valid range is 10 to 500. If this parameter is omitted or its value is less than 10, a default value of 10 is used. Values greater than 500 are treated as 500",
       "help_zh": "返回的最大数。取值范围：10~500。默认值：当不设置值或者设置的值小于10，默认值为10。当设置的值大于500时，默认值为500",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -76,36 +84,168 @@
   "pathPattern": "/api/v1/tasks",
   "product_code": "BDRC",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The maximum number of entries to return per page. The valid range is 10 to 500. If this parameter is omitted or its value is less than 10, a default value of 10 is used. Values greater than 500 are treated as 500",
-      "help_zh": "返回的最大数。取值范围：10~500。默认值：当不设置值或者设置的值小于10，默认值为10。当设置的值大于500时，默认值为500",
-      "name": "MaxResults",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "A pagination token. To retrieve the next page of results, set this parameter to the `NextToken` value from the response of the previous API call. For more information, see the API description above",
-      "help_zh": "查询凭证（Token），取值为上一次API调用返回的NextToken参数值。有关本接口查看返回数据的设置方式，请参见上文接口说明",
-      "name": "NextToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies the status of tasks to query. If this parameter is omitted, the API returns tasks in all states. Valid values: `CREATED`, `RUNNING`, `COMPLETE`, `FAILED`, `EXPIRED`, and `CANCELED`",
-      "help_zh": "CREATED: 创建, RUNNING: 正在执行, COMPLETE: 任务成功完成, FAILED: 任务执行失败, EXPIRED: 任务已过期, CANCELED: 任务已被取消",
-      "name": "TaskStatus",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "TaskType",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "BaseResponse\\<ListResult>",
+        "description_zh": "BaseResponse<ListResult<Task>>",
+        "properties": {
+          "Data": {
+            "description_en": "The returned data",
+            "description_zh": "返回数据",
+            "properties": {
+              "Content": {
+                "description_en": "The list of tasks",
+                "description_zh": "本次请求所返回的记录集合",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CompleteTime": {
+                      "description_en": "The task's completion time, represented as a Unix timestamp in seconds",
+                      "description_zh": "任务完成时间。Unix时间戳格式，单位：秒",
+                      "example": "1724983927",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ErrorMessage": {
+                      "description_en": "The error message returned if the task fails",
+                      "description_zh": "调用失败时，返回的错误信息",
+                      "example": "device not online",
+                      "type": "string"
+                    },
+                    "ExecutionId": {
+                      "description_en": "The execution ID. This parameter is currently unused and returns an empty string",
+                      "description_zh": "执行ID，暂未使用，返回空",
+                      "example": "empty",
+                      "type": "string"
+                    },
+                    "ExpireTime": {
+                      "description_en": "The task's expiration time, represented as a Unix timestamp in seconds",
+                      "description_zh": "过期时间，格式为Unix时间戳，单位：秒",
+                      "example": "1724983927",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Progress": {
+                      "description_en": "The progress of the task, ranging from 0 to 10,000",
+                      "description_zh": "进度（0 - 10000）",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RequestId": {
+                      "description_en": "The request ID",
+                      "description_zh": "请求ID",
+                      "example": "AE43C4CB-8074-5EBD-9806-8CA6D12800B1",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The task's start time, represented as a Unix timestamp in seconds",
+                      "description_zh": "开始时间，格式为Unix时间戳，单位：秒",
+                      "example": "1724983927",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TaskDescription": {
+                      "description_en": "The task description",
+                      "description_zh": "任务描述",
+                      "example": " empty",
+                      "type": "string"
+                    },
+                    "TaskDetail": {
+                      "description_en": "The task details",
+                      "description_zh": "任务详情",
+                      "example": "{\"resourceTypes\":[\"ACS::ECS::Instance\",\"ACS::OSS::Bucket\",\"ACS::OTS::Instance\",\"ACS::NAS::FileSystem\"]}",
+                      "type": "string"
+                    },
+                    "TaskId": {
+                      "description_en": "The task ID",
+                      "description_zh": "任务ID",
+                      "example": "t-0000e4w0u1v592zdf6s7",
+                      "type": "string"
+                    },
+                    "TaskName": {
+                      "description_en": "The task name",
+                      "description_zh": "任务名称",
+                      "example": " empty",
+                      "type": "string"
+                    },
+                    "TaskPriority": {
+                      "description_en": "The task priority. Valid values: `HIGH` (high-priority, for user-initiated tasks) and `LOW` (low-priority, for background tasks)",
+                      "description_zh": "HIGH: 高优先级，一般为用户前台触发的任务, LOW: 低优先级，一般为后台任务",
+                      "example": "HIGH",
+                      "title_en": "",
+                      "title_zh": "HIGH: 高优先级，一般为用户前台触发的任务, LOW: 低优先级，一般为后台任务",
+                      "type": "string"
+                    },
+                    "TaskResult": {
+                      "example": "{\"resourceCounts\":[{\"resourceType\":\"ACS::OSS::Bucket\",\"count\":2},{\"resourceType\":\"ACS::NAS::FileSystem\",\"count\":3}]}",
+                      "type": "string"
+                    },
+                    "TaskStatus": {
+                      "description_en": "The task status. Valid values: `CREATED`, `RUNNING`, `COMPLETE`, `FAILED`, `EXPIRED`, and `CANCELED`",
+                      "description_zh": "CREATED: 创建, RUNNING: 正在执行, COMPLETE: 任务成功完成, FAILED: 任务执行失败, EXPIRED: 任务已过期, CANCELED: 任务已被取消",
+                      "example": "RUNNING",
+                      "title_en": "",
+                      "title_zh": "CREATED: 创建, RUNNING: 正在执行, COMPLETE: 任务成功完成, FAILED: 任务执行失败, EXPIRED: 任务已过期, CANCELED: 任务已被取消",
+                      "type": "string"
+                    },
+                    "TaskType": {
+                      "description_en": "The task type. Valid values: `TEST`, `UPDATE_RESOURCES`, and `CHECK_RULES`",
+                      "description_zh": "TEST: 测试任务, UPDATE_RESOURCES: 更新资源和状态, CHECK_RULES",
+                      "example": "UPDATE_RESOURCES",
+                      "title_en": "",
+                      "title_zh": "TEST: 测试任务, UPDATE_RESOURCES: 更新资源和状态, CHECK_RULES",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "MaxResults": {
+                "description_en": "The maximum number of entries returned per page",
+                "description_zh": "本次请求所返回的最大记录条数",
+                "example": "10",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "本次请求所返回的最大记录条数",
+                "type": "integer"
+              },
+              "NextToken": {
+                "description_en": "The pagination token used to retrieve the next page of results. If this parameter is empty, no more results are available",
+                "description_zh": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
+                "example": "f4b8c2504545a3b41af5e75147d17d12e3818a0b9b2ff9a2",
+                "title_en": "",
+                "title_zh": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
+                "type": "string"
+              },
+              "TotalCount": {
+                "description_en": "The total number of entries matching the request criteria. This parameter is optional and is not returned by default",
+                "description_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "example": "100",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The unique ID of the request",
+            "description_zh": "请求的唯一标识",
+            "example": "AE43C4CB-8074-5EBD-9806-8CA6D12800B1",
+            "title_en": "",
+            "title_zh": "请求的唯一标识",
+            "type": "string"
+          }
+        },
+        "title_en": "BaseResponse<ListResult<Task>>",
+        "title_zh": "BaseResponse<ListResult<Task>>",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

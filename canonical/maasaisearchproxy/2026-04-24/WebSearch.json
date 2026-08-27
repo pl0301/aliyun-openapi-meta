@@ -121,6 +121,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "global",
+        "mainland_china"
+      ],
       "example": "mainland_china",
       "help_en": "The search source scope. Valid values: mainland_china (the Chinese mainland) and global (worldwide). Default value: mainland_china.\n\nNote: If you select global, your data may be transferred outside the Chinese mainland. Assess the associated risks on your own. By proceeding, you acknowledge that you have completed the assessment and assume all risks and responsibilities related to cross-border data transfer",
       "help_zh": "搜索信源范围。当前支持 mainland_china（中国大陆）、 global（全球）。默认值为 mainland_china。\n\n注意：如您选择global（全球），您的数据可能出境，请您自行评估相关风险。如继续操作视为您已完成评估且相关数据出境的风险和责任由您自行承担",
@@ -135,6 +139,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "pro",
+        "lite"
+      ],
       "example": "pro",
       "help_en": "The search mode. Valid values: pro and lite. Default value: pro.\n\nNote: In lite mode, the region, excludeDomain, and includeDomain parameters are not supported",
       "help_zh": "搜索模式。当前支持 pro、lite 两种搜索模式。默认值为 pro。\n\n注意：lite 模式下，不支持传入 region、excludeDomain、includeDomain 参数",
@@ -152,6 +160,129 @@
   "pathPattern": "/api/web-search",
   "product_code": "MaasAISearchProxy",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Result<WebSearchRsp>",
+        "description_zh": "Result<WebSearchRsp>",
+        "properties": {
+          "code": {
+            "description_en": "The business status code. A value of `200` indicates a successful request. Other values indicate exceptions. For more information, see the error codes section",
+            "description_zh": "业务状态码。`200` 表示请求成功，其他值表示异常，详见文档「错误码」部分",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "code",
+            "type": "integer"
+          },
+          "data": {
+            "description_en": "The search result data. This field is present only when `code` is `200`",
+            "description_zh": "搜索结果数据，仅在 `code` 为 `200` 时存在",
+            "properties": {
+              "result": {
+                "description_en": "The list of search results",
+                "description_zh": "搜索结果列表",
+                "items": {
+                  "description_en": "The Result object",
+                  "description_zh": "Result 对象",
+                  "properties": {
+                    "date": {
+                      "description_en": "The publication date of the web page in ISO 8601 format",
+                      "description_zh": "网页发布时间，格式为 ISO 8601",
+                      "example": "2026-05-06T00:25:35Z",
+                      "title_en": "",
+                      "title_zh": "网页时间",
+                      "type": "string"
+                    },
+                    "snippet": {
+                      "description_en": "The snippet of the web page",
+                      "description_zh": "网页摘要片段",
+                      "example": "Everything You Need in One Powerful AI Cloud Platform For AI Builders shaping the future and Enterprises scaling AI securely.\nRedefining AI economics with unmatched speed, intelligence and affordability.",
+                      "title_en": "",
+                      "title_zh": "摘要",
+                      "type": "string"
+                    },
+                    "source": {
+                      "description_en": "The source information of the web page, including the favicon, domain, and name fields",
+                      "description_zh": "网页来源信息，包含 favicon、domain、name 字段",
+                      "properties": {
+                        "domain": {
+                          "description_en": "The domain name of the website",
+                          "description_zh": "网站的域名",
+                          "example": "www.aliyun.com",
+                          "title_en": "",
+                          "title_zh": "来源域名",
+                          "type": "string"
+                        },
+                        "favicon": {
+                          "description_en": "The favicon URL of the website",
+                          "description_zh": "网站的图标链接",
+                          "example": "https://domain.com/sample_favicon.webp",
+                          "title_en": "",
+                          "title_zh": "来源favicon",
+                          "type": "string"
+                        },
+                        "name": {
+                          "description_en": "The name of the website. This is typically the same as the domain name or the Chinese name of the website",
+                          "description_zh": "网站的名称，通常与域名一致 或 为网站的中文名称",
+                          "example": "www.aliyun.com",
+                          "title_en": "",
+                          "title_zh": "来源名称",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "来源",
+                      "type": "object"
+                    },
+                    "title": {
+                      "description_en": "The web page title",
+                      "description_zh": "网页标题",
+                      "example": "Alibaba Cloud: AI and Cloud Computing Services",
+                      "title_en": "",
+                      "title_zh": "标题",
+                      "type": "string"
+                    },
+                    "url": {
+                      "description_en": "The original URL of the web page",
+                      "description_zh": "网页原始链接",
+                      "example": "https://www.alibabacloud.com/",
+                      "title_en": "",
+                      "title_zh": "url链接",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "total": {
+                "description_en": "The total number of results matched by this search",
+                "description_zh": "本次搜索命中的结果总条数",
+                "example": "10",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "总结果数",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "message": {
+            "description_en": "The status description. The value is `\"successful\"` when the request succeeds, or a specific error message when the request fails",
+            "description_zh": "状态描述。成功时为 `\"successful\"`，失败时为具体的错误信息",
+            "example": "successful",
+            "title_en": "",
+            "title_zh": "消息",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Result<WebSearchRsp>",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body parameters",

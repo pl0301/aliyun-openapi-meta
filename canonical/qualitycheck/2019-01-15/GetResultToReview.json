@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "{\"taskId\":\"任务ID\",“ fileId”:\"文件ID\"}",
       "help_en": "Full JSON string. See the detailed description below",
       "help_zh": "完整JSON字符串信息，具体内容参见以下详细信息",
@@ -48,5 +49,889 @@
   ],
   "pathPattern": "",
   "product_code": "Qualitycheck",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "Result code. 200 means success. Any other value means failure. Use this field to identify the cause",
+            "description_zh": "结果代码，200表示成功，若为别的值则表示失败，调用方可根据此字段判断失败原因",
+            "example": "200",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "Detailed response data",
+            "description_zh": "详细返回数据",
+            "properties": {
+              "AudioScheme": {
+                "description_en": "Protocol used in the audio URL. Possible values: http, https",
+                "description_zh": "音频URL的协议，可能值：http、https",
+                "example": "https",
+                "type": "string"
+              },
+              "AudioURL": {
+                "description_en": "Audio URL without the protocol prefix (http\\:// or https\\://). Combine with AudioScheme to form the full URL",
+                "description_zh": "音频URL，不含http://、https://，与AudioSchedme组成完整的URL",
+                "example": "sca-ccc-test.oss-cn-beijing.aliyuncs.com/xxxxx",
+                "type": "string"
+              },
+              "Comments": {
+                "description_en": "Review comments",
+                "description_zh": "复核意见",
+                "example": "xxx",
+                "type": "string"
+              },
+              "Dialogues": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Dialogue": {
+                    "description_en": "Dialogue data",
+                    "description_zh": "对话数据",
+                    "items": {
+                      "description_en": "Dialogue data",
+                      "description_zh": "对话数据",
+                      "properties": {
+                        "Begin": {
+                          "description_en": "Start time offset in milliseconds from the beginning of the dialogue. For example, if the total recording length is 2 minutes 10 seconds, and the customer starts speaking at 1 minute 12 seconds and stops at 1 minute 20 seconds, then Begin is 72000 and End is 80000",
+                          "description_zh": "这句话的开始时间相对对话整体开始时间的偏移量，毫秒级，例如录音总时长为2分10秒，客户的谋一句话是在1分12秒时开始讲的，1分20秒时讲完，则begin的值为72000，end的值为80000",
+                          "example": "72000",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "BeginTime": {
+                          "description_en": "Absolute start time of this utterance.\n<notice>Format is TZ. We recommend using BeginTimeMs instead.></notice>",
+                          "description_zh": "这句话开始讲话时的绝对时间。\n<notice>格式为TZ，推荐使用BeginTimeMs</notice>",
+                          "example": "2019-10-01T11:12Z",
+                          "type": "string"
+                        },
+                        "BeginTimeMs": {
+                          "description_en": "Absolute start time of this utterance, in milliseconds since the Unix epoch",
+                          "description_zh": "这句话开始讲话时的绝对时间。格式为毫秒时间戳",
+                          "example": "1569899521000",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "EmotionValue": {
+                          "description_en": "Emotion intensity value. Calculated as volume in decibels divided by 10. Range: [1, 10]. Higher values indicate stronger emotion",
+                          "description_zh": "情绪能量值，取值为音量分贝值/10。取值范围：[1,10]。值越高情绪越强烈",
+                          "example": "7",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "End": {
+                          "description_en": "End time offset in milliseconds from the beginning of the dialogue. For example, if the total recording length is 2 minutes 10 seconds, and the customer starts speaking at 1 minute 12 seconds and stops at 1 minute 20 seconds, then Begin is 72000 and End is 80000",
+                          "description_zh": "这句话的开始时间相对对话整体开始时间的偏移量，毫秒级，例如录音总时长为2分10秒，客户的谋一句话是在1分12秒时开始讲的，1分20秒时讲完，则begin的值为72000，end的值为80000",
+                          "example": "80000",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "HourMinSec": {
+                          "description_en": "Start time of this utterance in hh:mm:ss format",
+                          "description_zh": "这句话的时分秒格式的开始时间，格式：hh:mm:ss",
+                          "example": "00:08",
+                          "type": "string"
+                        },
+                        "Identity": {
+                          "description_en": "Role identifier. In offline voice scenarios, roles are only agent or customer. In offline text inspection scenarios, this is the identity passed when uploading data",
+                          "description_zh": "角色标识，离线语音场景下角色只有客服/客户，离线文本质检场景下，显示的是上传数据时传入的identity",
+                          "example": "客服",
+                          "type": "string"
+                        },
+                        "Role": {
+                          "description_en": "Role of this utterance. Possible values: agent, customer",
+                          "description_zh": "该句话的角色，可能值：客服；客户",
+                          "example": "客服",
+                          "type": "string"
+                        },
+                        "SilenceDuration": {
+                          "description_en": "Silence duration in seconds between two consecutive utterances by the same role",
+                          "description_zh": "相同角色的两个相邻句子之间的静音时长，单位为秒",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "SpeechRate": {
+                          "description_en": "Average speech rate for this utterance, in characters per minute",
+                          "description_zh": "本句的平均语速，单位：字数/分钟",
+                          "example": "200",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Words": {
+                          "description_en": "Dialogue text",
+                          "description_zh": "对话内容",
+                          "example": "你好有什么可以帮您",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "FileId": {
+                "description_en": "File ID",
+                "description_zh": "文件ID",
+                "example": "e790e6c919d84b82b64ee*****",
+                "type": "string"
+              },
+              "FileMergeName": {
+                "description_en": "File name",
+                "description_zh": "文件名称",
+                "example": "xxx.wav",
+                "type": "string"
+              },
+              "HitRuleReviewInfoList": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "HitRuleReviewInfo": {
+                    "description_en": "Details of detected rule hits",
+                    "description_zh": "命中检测项信息",
+                    "items": {
+                      "description_en": "Details of hit rules",
+                      "description_zh": "命中规则信息",
+                      "properties": {
+                        "AutoReview": {
+                          "description_en": "Whether auto-review is enabled. Possible values: 1 (disabled), 3 (enabled)",
+                          "description_zh": "是否自动审核，可能值：1：不自动审核，3：自动审核",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "ComplainHistories": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "ComplainHistories": {
+                              "description_en": "Appeal history",
+                              "description_zh": "申诉历史信息",
+                              "items": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "properties": {
+                                  "Comments": {
+                                    "description_en": "Reason for appeal or reason for appeal resolution",
+                                    "description_zh": "申诉理由/申诉处理理由",
+                                    "example": "请听一下录音，重新判定。",
+                                    "type": "string"
+                                  },
+                                  "OperationTime": {
+                                    "description_en": "Processing time",
+                                    "description_zh": "处理时间",
+                                    "example": "2020-10-16T11:13Z",
+                                    "type": "string"
+                                  },
+                                  "OperationType": {
+                                    "description_en": "Status. 3: under appeal. 4: appeal rejected. 5: appeal approved",
+                                    "description_zh": "状态：3（申诉中）；4（申诉驳回）；5（申诉通过）",
+                                    "example": "5",
+                                    "format": "int32",
+                                    "type": "integer"
+                                  },
+                                  "Operator": {
+                                    "description_en": "Account ID of the person who submitted or processed the appeal",
+                                    "description_zh": "申诉发起人/处理人的账号ID",
+                                    "example": "123456",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "OperatorName": {
+                                    "description_en": "Username of the person who submitted or processed the appeal",
+                                    "description_zh": "申诉发起人/处理人的用户名",
+                                    "example": "张三",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Complainable": {
+                          "description_en": "Whether the agent can submit an appeal for this scoring item. No further appeals allowed after final review",
+                          "description_zh": "当前评分项坐席是否可以提交申诉（终审后不可再次申诉）",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "ConditionHitInfoList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "ConditionHitInfo": {
+                              "description_en": "Details of matched conditions",
+                              "description_zh": "命中的条件信息",
+                              "items": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "properties": {
+                                  "Cid": {
+                                    "description_en": "",
+                                    "description_zh": "",
+                                    "itemNode": true,
+                                    "properties": {
+                                      "Cid": {
+                                        "description_en": "List of matched condition IDs",
+                                        "description_zh": "命中的条件ID列表",
+                                        "items": {
+                                          "description_en": "Condition ID",
+                                          "description_zh": "条件ID",
+                                          "example": "2000",
+                                          "type": "string"
+                                        },
+                                        "type": "array"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "KeyWords": {
+                                    "description_en": "",
+                                    "description_zh": "",
+                                    "itemNode": true,
+                                    "properties": {
+                                      "KeyWord": {
+                                        "description_en": "Matched key information. Highlighted in the review UI. Examples include keywords matched by keyword-check operators, or category names matched by agent-model-check operators",
+                                        "description_zh": "命中的关键信息，在复核页面上高亮展示的信息，例如关键词检查算子命中的关键词、客服模型检查算子命中的具体类别信息等",
+                                        "items": {
+                                          "description_en": "",
+                                          "description_zh": "",
+                                          "properties": {
+                                            "Cid": {
+                                              "description_en": "Condition ID",
+                                              "description_zh": "条件ID",
+                                              "example": "2000",
+                                              "type": "string"
+                                            },
+                                            "CustomizeCode": {
+                                              "description_en": "Internal field. Ignore",
+                                              "description_zh": "内部字段，请忽略",
+                                              "example": "xxx",
+                                              "type": "string"
+                                            },
+                                            "From": {
+                                              "description_en": "Character index where highlighting starts. Indexes start at 0. Maximum value is the total number of characters in the utterance minus 1. The character at the From index is included in the highlight",
+                                              "description_zh": "需要高亮展示的关键字从第几个字符开始，取值范围从0开始，最大值为当句话字符总数减1。高亮的字包含from",
+                                              "example": "1",
+                                              "format": "int32",
+                                              "type": "integer"
+                                            },
+                                            "IsMatch": {
+                                              "description_en": "",
+                                              "description_zh": "",
+                                              "type": "boolean"
+                                            },
+                                            "Pid": {
+                                              "description_en": "Index of this utterance in the full list of utterances. This is the index of the utterance in the dialogue array passed in the request. Indexes start at 0",
+                                              "description_zh": "当前句子在所有句子中的下标值，即当前句子是请求参数中dialogue数组中的第几个，从0开始",
+                                              "example": "2",
+                                              "format": "int32",
+                                              "type": "integer"
+                                            },
+                                            "Tid": {
+                                              "description_en": "Voice ID",
+                                              "description_zh": "语音ID",
+                                              "example": "6fa76916-3ce6-45d8-ac64-01b7f31c7295",
+                                              "type": "string"
+                                            },
+                                            "To": {
+                                              "description_en": "The end position of the highlighted keyword, expressed as a zero-based, exclusive index. The maximum value is one less than the total number of characters in the sentence. For example, in the sentence \"This is a sample\", if from is 0 and to is 4, the highlighted keyword is \"This\"",
+                                              "description_zh": "需要高亮展示的关键字到第几个字符结束，最大值为当句话字符总数减1。高亮的字不包含to，例如一句话为“不可能给你退货的”，from=0，to=3，那么需要高亮的关键字就是“不可能”三个字",
+                                              "example": "3",
+                                              "format": "int32",
+                                              "type": "integer"
+                                            },
+                                            "Val": {
+                                              "description_en": "Key information matched by the operator. See Details of Val values below",
+                                              "description_zh": "算子命中的关键信息，详见下方返回参数说明中的关键信息Val详解",
+                                              "example": "你好",
+                                              "type": "string"
+                                            }
+                                          },
+                                          "type": "object"
+                                        },
+                                        "type": "array"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Phrase": {
+                                    "description_en": "Details of the utterance that triggered this check item",
+                                    "description_zh": "当前命中检测项的句子详情",
+                                    "properties": {
+                                      "Begin": {
+                                        "description_en": "Start time offset in milliseconds from the beginning of the dialogue. For example, if the total recording length is 2 minutes 10 seconds, and the customer starts speaking at 1 minute 12 seconds and stops at 1 minute 20 seconds, then Begin is 72000 and End is 80000",
+                                        "description_zh": "这句话的开始时间相对对话整体开始时间的偏移量，毫秒级，例如录音总时长为2分10秒，客户的谋一句话是在1分12秒时开始讲的，1分20秒时讲完，则begin的值为72000，end的值为80000",
+                                        "example": "72000",
+                                        "format": "int64",
+                                        "type": "integer"
+                                      },
+                                      "EmotionValue": {
+                                        "description_en": "Emotion intensity value. Calculated as volume in decibels divided by 10. Range: [1, 10]. Higher values indicate stronger emotion",
+                                        "description_zh": "情绪能量值，取值为音量分贝值/10。取值范围：[1,10]。值越高情绪越强烈",
+                                        "example": "7",
+                                        "format": "int32",
+                                        "type": "integer"
+                                      },
+                                      "End": {
+                                        "description_en": "End time offset in milliseconds from the beginning of the dialogue. For example, if the total recording length is 2 minutes 10 seconds, and the customer starts speaking at 1 minute 12 seconds and stops at 1 minute 20 seconds, then Begin is 72000 and End is 80000",
+                                        "description_zh": "这句话的开始时间相对对话整体开始时间的偏移量，毫秒级，例如录音总时长为2分10秒，客户的谋一句话是在1分12秒时开始讲的，1分20秒时讲完，则begin的值为72000，end的值为80000",
+                                        "example": "80000",
+                                        "format": "int64",
+                                        "type": "integer"
+                                      },
+                                      "Identity": {
+                                        "description_en": "Role identifier. In offline voice scenarios, roles are only agent or customer. In offline text inspection scenarios, this is the identity passed when uploading data",
+                                        "description_zh": "角色标识，离线语音场景下角色只有客服/客户，离线文本质检场景下，显示的是上传数据时传入的identity",
+                                        "example": "客服",
+                                        "type": "string"
+                                      },
+                                      "Pid": {
+                                        "description_en": "Index of this utterance in the full list of utterances. This is the index of the utterance in the dialogue array passed in the request. Indexes start at 0",
+                                        "description_zh": "当前句子在所有句子中的下标值，即当前句子是请求参数中dialogue数组中的第几个，从0开始",
+                                        "example": "3",
+                                        "format": "int32",
+                                        "type": "integer"
+                                      },
+                                      "Role": {
+                                        "description_en": "Role of this utterance. Possible values: agent, customer",
+                                        "description_zh": "本句的角色，取值：客服、客户",
+                                        "example": "客服",
+                                        "type": "string"
+                                      },
+                                      "Words": {
+                                        "description_en": "Dialogue text",
+                                        "description_zh": "对话内容",
+                                        "example": "你好，请问有什么可以帮您",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "MachineHitResult": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "ReviewHitResult": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "ReviewInfo": {
+                          "description_en": "Review information",
+                          "description_zh": "复核信息",
+                          "properties": {
+                            "Comment": {
+                              "type": "string"
+                            },
+                            "HitId": {
+                              "description_en": "Hit ID",
+                              "description_zh": "命中ID",
+                              "example": "013c68142fec4f0899fa6ee0exxx",
+                              "type": "string"
+                            },
+                            "ReviewResult": {
+                              "description_en": "Review result. 0: incorrect. 1: correct",
+                              "description_zh": "复核结果，0：错误；1：正确",
+                              "example": "1",
+                              "format": "int32",
+                              "type": "integer"
+                            },
+                            "ReviewTime": {
+                              "description_en": "Review time, in yyyy-mm-dd hh:mm:ss format",
+                              "description_zh": "复核时间，yyyy-mm-ddhh:mm:ss",
+                              "example": "2019-10-12 17:06:00",
+                              "type": "string"
+                            },
+                            "Reviewer": {
+                              "description_en": "Reviewer ID",
+                              "description_zh": "复核员ID",
+                              "example": "123",
+                              "type": "string"
+                            },
+                            "Rid": {
+                              "description_en": "Check item ID",
+                              "description_zh": "检测项ID",
+                              "example": "451",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "SentenceReviewResults": {
+                              "itemNode": true,
+                              "properties": {
+                                "SentenceReviewResults": {
+                                  "items": {
+                                    "properties": {
+                                      "Changed": {
+                                        "title_en": "",
+                                        "title_zh": "是否改变",
+                                        "type": "boolean"
+                                      },
+                                      "Cid": {
+                                        "example": "1",
+                                        "format": "int64",
+                                        "title_en": "",
+                                        "title_zh": "条件id\n",
+                                        "type": "integer"
+                                      },
+                                      "Comment": {
+                                        "example": "无意见",
+                                        "title_en": "",
+                                        "title_zh": "复核意见",
+                                        "type": "string"
+                                      },
+                                      "HitStatus": {
+                                        "example": "1",
+                                        "format": "int32",
+                                        "title_en": "",
+                                        "title_zh": "是否命中",
+                                        "type": "integer"
+                                      },
+                                      "OriginTaskId": {
+                                        "example": "122-122-22-333",
+                                        "title_en": "",
+                                        "title_zh": "任务id",
+                                        "type": "string"
+                                      },
+                                      "OriginVid": {
+                                        "example": "1001",
+                                        "title_en": "",
+                                        "title_zh": "sessionid",
+                                        "type": "string"
+                                      },
+                                      "Pid": {
+                                        "example": "1",
+                                        "title_en": "",
+                                        "title_zh": "句子id\n",
+                                        "type": "string"
+                                      },
+                                      "ReviewDimensionType": {
+                                        "example": "2",
+                                        "title_en": "",
+                                        "title_zh": "复核类型",
+                                        "type": "string"
+                                      },
+                                      "Rid": {
+                                        "example": "1",
+                                        "format": "int64",
+                                        "title_en": "",
+                                        "title_zh": "规则id",
+                                        "type": "integer"
+                                      },
+                                      "Sid": {
+                                        "example": "1",
+                                        "format": "int64",
+                                        "title_en": "",
+                                        "title_zh": "关联ix",
+                                        "type": "integer"
+                                      }
+                                    },
+                                    "title_en": "",
+                                    "title_zh": "句子复核结果",
+                                    "type": "object"
+                                  },
+                                  "title_en": "",
+                                  "title_zh": "句子复核结果",
+                                  "type": "array"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Rid": {
+                          "description_en": "Check item ID",
+                          "description_zh": "检测项ID",
+                          "example": "451",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "RuleName": {
+                          "description_en": "Name of the check item",
+                          "description_zh": "检测项名称",
+                          "example": "你好",
+                          "type": "string"
+                        },
+                        "ScoreId": {
+                          "description_en": "Legacy field. Ignore",
+                          "description_zh": "历史遗留字段，请忽略",
+                          "example": "xxx",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "ScoreNum": {
+                          "description_en": "Score value",
+                          "description_zh": "评分的分值",
+                          "example": "-10",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "ScoreSubId": {
+                          "description_en": "Legacy field. Ignore",
+                          "description_zh": "历史遗留字段，请忽略",
+                          "example": "xxx",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "ScoreSubName": {
+                          "description_en": "Legacy field. Ignore",
+                          "description_zh": "历史遗留字段，请忽略",
+                          "example": "xxx",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "ManualScoreInfoList": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ManualScoreInfo": {
+                    "description_en": "Manually added check items",
+                    "description_zh": "人工添加的检测项",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "ComplainHistories": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "ComplainHistories": {
+                              "description_en": "Appeal history",
+                              "description_zh": "申诉历史信息",
+                              "items": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "properties": {
+                                  "Comments": {
+                                    "description_en": "Reason for appeal or reason for appeal resolution",
+                                    "description_zh": "申诉理由/申诉处理理由",
+                                    "example": "请听一下录音，重新判定。",
+                                    "type": "string"
+                                  },
+                                  "OperationTime": {
+                                    "description_en": "Processing time",
+                                    "description_zh": "处理时间",
+                                    "example": "2020-10-16T11:13Z",
+                                    "type": "string"
+                                  },
+                                  "OperationType": {
+                                    "description_en": "Status. 3: under appeal. 4: appeal rejected. 5: appeal approved",
+                                    "description_zh": "状态：3（申诉中）；4（申诉驳回）；5（申诉通过）",
+                                    "example": "5",
+                                    "format": "int32",
+                                    "type": "integer"
+                                  },
+                                  "Operator": {
+                                    "description_en": "Account ID of the person who submitted or processed the appeal",
+                                    "description_zh": "申诉发起人/处理人的账号ID",
+                                    "example": "123456",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "OperatorName": {
+                                    "description_en": "Username of the person who submitted or processed the appeal",
+                                    "description_zh": "申诉发起人/处理人的用户名",
+                                    "example": "张三",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Complainable": {
+                          "description_en": "Whether the agent can submit an appeal for this scoring item. No further appeals allowed after final review",
+                          "description_zh": "当前评分项坐席是否可以提交申诉（终审后不可再次申诉）",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "ScoreId": {
+                          "description_en": "Legacy field. Ignore",
+                          "description_zh": "历史遗留字段，请忽略",
+                          "example": "xxx",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "ScoreNum": {
+                          "description_en": "Score value",
+                          "description_zh": "分数",
+                          "example": "-10",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "ScoreSubId": {
+                          "description_en": "Legacy field. Ignore",
+                          "description_zh": "历史遗留字段，请忽略",
+                          "example": "xxx",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "ScoreSubName": {
+                          "description_en": "Legacy field. Ignore",
+                          "description_zh": "历史遗留字段，请忽略",
+                          "example": "投诉",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "ReviewHistoryList": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ReviewHistory": {
+                    "description_en": "Review history",
+                    "description_zh": "复核历史",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Comments": {
+                          "description_en": "Comment",
+                          "description_zh": "评论",
+                          "example": "请写明学校名称，谢谢",
+                          "type": "string"
+                        },
+                        "ComplainResult": {
+                          "description_en": "Appeal resolution result. 1: all appeals approved. 0: at least one appeal rejected",
+                          "description_zh": "申诉处理结果，1：全部申诉都通过；0：至少有一个不通过",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "OldScore": {
+                          "description_en": "Score before review",
+                          "description_zh": "复核前的得分",
+                          "example": "90",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Operator": {
+                          "description_en": "Operator ID",
+                          "description_zh": "操作人id",
+                          "example": "78404",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "OperatorName": {
+                          "description_en": "Reviewer username",
+                          "description_zh": "复核员用户名",
+                          "example": "张三",
+                          "type": "string"
+                        },
+                        "ReviewManagerType": {
+                          "description_en": "Detailed review type",
+                          "description_zh": "复核类型详情",
+                          "example": "[一个类别][二类别:第一类目,第一类目->下一集]",
+                          "type": "string"
+                        },
+                        "ReviewResult": {
+                          "description_en": "Review result. 1: all check items are correct. 0: at least one check item is incorrect",
+                          "description_zh": "复核结果，1：全部检测项都正确；0：有至少一个检测项错误",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "ReviewRightRule": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "ReviewRightRule": {
+                              "description_en": "Rules correctly matched after review",
+                              "description_zh": "复核后正确命中规则",
+                              "items": {
+                                "description_en": "Rules correctly matched after review",
+                                "description_zh": "复核后正确命中规则",
+                                "properties": {
+                                  "rid": {
+                                    "description_en": "Rule ID",
+                                    "description_zh": "规则id",
+                                    "example": "12恶",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "ruleName": {
+                                    "description_en": "Rule name",
+                                    "description_zh": "规则名字",
+                                    "example": "问候语规则",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Score": {
+                          "description_en": "Score after review",
+                          "description_zh": "复核后的得分",
+                          "example": "95",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Time": {
+                          "description_en": "Timestamp for display",
+                          "description_zh": "用于显示时间戳",
+                          "example": "1722396376000\n",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "TimeStr": {
+                          "description_en": "Review time, in yyyy-mm-dd hh:mm:ss format",
+                          "description_zh": "复核时间，yyyy-mm-ddhh:mm:ss",
+                          "example": "2019-10-28 15:21:00",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "Review type. 0: automatic review. 1: manual review",
+                          "description_zh": "复核类型，0：自动复核；1：手工复核",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "ReviewTypeIdList": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ReviewTypeIdList": {
+                    "description_en": "List of review type IDs",
+                    "description_zh": "复核类型id列表",
+                    "items": {
+                      "description_en": "List of review type IDs",
+                      "description_zh": "复核类型id列表",
+                      "properties": {
+                        "ReviewKeyIdList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "ReviewKeyIdList": {
+                              "description_en": "List of review tag IDs",
+                              "description_zh": "复核标签id列表",
+                              "items": {
+                                "description_en": "List of review tag IDs",
+                                "description_zh": "复核标签id列表",
+                                "example": "[4, 5]",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "ReviewTypeId": {
+                          "description_en": "Main review category ID",
+                          "description_zh": "复核大类id",
+                          "example": "1",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Status": {
+                "description_en": "Current task status. 0: incomplete. 1: complete. Use this field to check completion. Any other value indicates an error",
+                "description_zh": "任务当前状态；0：未完成；1：已完成；调用方可根据此字段判断任务是否完成；非0、1表示出错",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalScore": {
+                "description_en": "Quality inspection score",
+                "description_zh": "质检得分",
+                "example": "99",
+                "format": "int32",
+                "type": "integer"
+              },
+              "Vid": {
+                "description_en": "File ID",
+                "description_zh": "文件ID",
+                "example": "6fa76916-3ce6-45d8-ac64-01b7f31***",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "Error details if the call fails. Returns successful on success",
+            "description_zh": "出错时表示出错详情，成功时为successful",
+            "example": "successful",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求ID",
+            "example": "82C91484-B2D5-4D2A-A21F-A6D73F4***",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request succeeded. true means success. false or null means failure",
+            "description_zh": "请求是否成功，调用方可根据此字段来判断请求是否成功：true表示成功；false/null表示失败",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

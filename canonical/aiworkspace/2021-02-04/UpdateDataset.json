@@ -2,6 +2,109 @@
   "camel_example": "aliyun aiworkspace PUT /api/v1/datasets/d-rbvg5wz0000c9ks92 --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"Options\":\"{\\\"mountPath\\\":\\\"/mnt/data/\\\"}\",\"Description\":\"This_is_a_description_of_the_dataset.\",\"Accessibility\":\"PRIVATE\",\"SharingConfig\":{\"SharedTo\":[\"example-string\"]},\"MountAccessReadWriteRoleIdList\":[\"PAI.AlgoOperator\"],\"Edition\":\"ADVANCED\",\"AccessibleRoleIdList\":[\"PAI.AlgoOperator\"],\"Name\":\"myName\"}",
   "cmd_full_name": "aiworkspace update-dataset",
   "cmd_name": "update-dataset",
+  "components": {
+    "schemas": {
+      "DatasetShareRelationship": {
+        "description_en": "The configuration for sharing a dataset",
+        "description_zh": "数据集分享配置",
+        "properties": {
+          "AllowedMountAccessLevels": {
+            "description_en": "The allowed permissions for the shared dataset. When a user accesses the shared dataset, their permissions are limited to this list. The default value is \\`\\[\"RO\"]\\`.\n\nRO: Read-only permission. The recipient can only read the dataset.\n\nRW: Read and write permission. The recipient can read and modify the dataset",
+            "description_zh": "分享时指定允许的权限范围，使用被分享的数据集时权限将会被限制在此列表范围内。缺省为[\"RO\"]。\nRO: 只读权限，被分享方只能读取数据集内容。\nRW: 读写权限，被分享方可以读取和修改数据集内容",
+            "items": {
+              "description_en": "The dataset permission",
+              "description_zh": "数据集权限",
+              "enumValueTitles": {
+                "RO": "RO",
+                "RW": "RW"
+              },
+              "example": "RO",
+              "type": "string"
+            },
+            "required": false,
+            "title": "分享时指定允许的权限范围，使用被分享的数据集时权限需在此列表范围内\n● RO: 只读权限，被分享方只能读取数据集内容\n● RW: 读写权限，被分享方可以读取和修改数据集内容",
+            "type": "array"
+          },
+          "ExpiresAt": {
+            "description_en": "The expiration time. The time is in ISO 8601 format.\n\nIf you do not specify this parameter, the sharing relationship never expires",
+            "description_zh": "过期时间，ISO 8601格式。\n\n如不填写则表示永不过期",
+            "example": "2026-08-27T12:23:58Z",
+            "title": "过期时间，ISO 8601格式",
+            "type": "string"
+          },
+          "Extra": {
+            "description_en": "Additional configurations for the sharing relationship. This parameter is a JSON string.\n\nAllowExportModel: Specifies whether to allow the export of trained models.\n\nAllowAccessDLCWebTerminal: Specifies whether to allow users to log on to the container in a DLC task.\n\nAllowAccessDLCFullLog: Specifies whether to allow access to the full task logs",
+            "description_zh": "分享补充配置。json string格式。\nAllowExportModel：是否允许训练后的模型导出\nAllowAccessDLCWebTerminal：打开/关闭DLC任务中的登录容器的权限\nAllowAccessDLCFullLog：打开/关闭全量展示任务日志的权限",
+            "example": "{\"AllowExportModel\":false,\"AllowAccessDLCWebTerminal\":false,\"AllowAccessDLCFullLog\":false}",
+            "type": "string"
+          },
+          "IsSecureMode": {
+            "description_en": "Specifies whether to enable security protection for the shared dataset",
+            "description_zh": "是否需要对分享的数据集开启安全防护",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "required": false,
+            "title": "是否需要安全防护",
+            "type": "boolean"
+          },
+          "SharedAt": {
+            "description_en": "The time when the dataset was shared. The time is in ISO 8601 format",
+            "description_zh": "分享时间，ISO 8601格式",
+            "example": "2025-08-27T12:23:58Z",
+            "title": "分享时间，ISO 8601格式",
+            "type": "string"
+          },
+          "SourceTenantId": {
+            "description_en": "The ID of the tenant that owns the source dataset. The user who shares the dataset must be a workspace administrator or the root account",
+            "description_zh": "源数据集租户ID。分享者需为该工作空间管理员或者主账号身份",
+            "example": "148***************115",
+            "title": "源数据集租户ID",
+            "type": "string"
+          },
+          "SourceWorkspaceId": {
+            "description_en": "The ID of the workspace that contains the source dataset",
+            "description_zh": "源数据集工作空间ID",
+            "example": "33**19",
+            "title": "源数据集工作空间ID",
+            "type": "string"
+          },
+          "Status": {
+            "description_en": "The status of the sharing relationship.\n\nACTIVE: The sharing relationship is active. Complete dataset information is displayed only in this state.\n\nEXPIRED: The sharing relationship has expired.\n\nREVOKED: The sharing relationship was revoked by the sharer.\n\nINVALID: The sharing relationship is invalid. This can happen if the source dataset is deleted",
+            "description_zh": "分享状态：\nACTIVE：分享关系正常可用，仅该状态下会展示完整的数据集信息\nEXPIRED: 分享超过预设的有效期\nREVOKED: 分享被主动取消(分享者手动撤销分享)\nINVALID：分享因系统原因自动失效(如源数据集被删除)",
+            "enumValueTitles": {
+              "ACTIVE": "ACTIVE",
+              "EXPIRED": "EXPIRED",
+              "INVALID": "INVALID",
+              "REVOKED": "REVOKED"
+            },
+            "example": "ACTIVE",
+            "title": "分享状态：\n● active：分享关系正常可用，仅该状态下会展示完整的数据集信息\n● expired: 分享超过预设的有效期\n● revoked: 分享被主动取消(分享者手动撤销分享)\n● invalid：分享因系统原因自动失效(如源数据集被删除)",
+            "type": "string"
+          },
+          "TenantId": {
+            "description_en": "The ID of the target tenant. This must be a root account ID.\n\nThis parameter is required when you set a sharing relationship",
+            "description_zh": "目标租户ID，必须为主账号ID。\n设置分享关系时必填",
+            "example": "153***************249",
+            "required": false,
+            "title": "目标租户ID",
+            "type": "string"
+          },
+          "WorkspaceId": {
+            "description_en": "The ID of the target workspace. This ID must be different from the source workspace ID.\n\nThis parameter is required when you set a sharing relationship",
+            "description_zh": "目标工作空间ID。需与源数据集工作空间ID不同。\n\n设置分享关系时必填",
+            "example": "42**2",
+            "required": false,
+            "title": "目标工作空间ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates the properties of a dataset, such as its name and description",
   "description_zh": "更新数据集，支持更新名称，描述等",
@@ -123,6 +226,12 @@
           "element": {
             "fields": [
               {
+                "enum": [
+                  "REVOKED",
+                  "ACTIVE",
+                  "EXPIRED",
+                  "INVALID"
+                ],
                 "example": "ACTIVE",
                 "help_en": "The status of the sharing relationship.\n\nACTIVE: The sharing relationship is active. Complete dataset information is displayed only in this state.\n\nEXPIRED: The sharing relationship has expired.\n\nREVOKED: The sharing relationship was revoked by the sharer.\n\nINVALID: The sharing relationship is invalid. This can happen if the source dataset is deleted",
                 "help_zh": "分享状态：\nACTIVE：分享关系正常可用，仅该状态下会展示完整的数据集信息\nEXPIRED: 分享超过预设的有效期\nREVOKED: 分享被主动取消(分享者手动撤销分享)\nINVALID：分享因系统原因自动失效(如源数据集被删除)",
@@ -183,6 +292,10 @@
                 "type": "string"
               },
               {
+                "enum": [
+                  "true",
+                  "false"
+                ],
                 "example": "true",
                 "help_en": "Specifies whether to enable security protection for the shared dataset",
                 "help_zh": "是否需要对分享的数据集开启安全防护",
@@ -304,6 +417,27 @@
   "pathPattern": "/api/v1/datasets/[DatasetId]",
   "product_code": "AIWorkSpace",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "返回体",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "5A14FA81-DD4E-******-6343FE44B941",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

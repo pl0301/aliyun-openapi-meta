@@ -2,6 +2,97 @@
   "camel_example": "",
   "cmd_full_name": "pds csi-get-file-info",
   "cmd_name": "csi-get-file-info",
+  "components": {
+    "schemas": {
+      "InvestigationInfo": {
+        "description_en": "A short description of struct",
+        "description_zh": "A short description of struct",
+        "properties": {
+          "status": {
+            "description_en": "The status of the review.\n\nValid values:\n\n0: The review is not performed.\n1: The review is not supported.\n2: The review fails.\n3: The review is in progress.\n4: The review is complete.\n5: Penalty methods are applied",
+            "description_zh": "审核状态",
+            "enumValueTitles": {
+              "0": "未审核",
+              "1": "不支持审核",
+              "2": "审核失败",
+              "3": "审核中",
+              "4": "审核成功",
+              "5": "被处罚接口调用"
+            },
+            "example": "4",
+            "format": "int64",
+            "title": "审核状态",
+            "type": "integer",
+            "visibility": "Public"
+          },
+          "suggestion": {
+            "description_en": "The recommended operation provided by the review.\n\nValid values:\n\npass: The review is passed..\nblock: The review is not passed. It is recommended to limit the use of the image",
+            "description_zh": "审核建议执行的操作",
+            "enumValueTitles": {
+              "block": "结果违规，建议进行限制",
+              "pass": "结果正常"
+            },
+            "example": "block",
+            "title": "审核建议执行的操作",
+            "type": "string",
+            "visibility": "Public"
+          },
+          "video_detail": {
+            "description_en": "Video review information",
+            "description_zh": "视频审核信息",
+            "properties": {
+              "block_frames": {
+                "description_en": "Violation frame information",
+                "description_zh": "违规帧信息",
+                "items": {
+                  "extendType": "true",
+                  "properties": {
+                    "label": {
+                      "description_en": "Category of review results",
+                      "description_zh": "检测结果分类",
+                      "example": "porn",
+                      "title": "检测结果分类",
+                      "type": "string",
+                      "visibility": "Public"
+                    },
+                    "offset": {
+                      "description_en": "Time (in seconds)",
+                      "description_zh": "截帧距离片头的时间（秒）",
+                      "example": "3",
+                      "format": "int64",
+                      "title": "截帧距离片头的时间（秒）",
+                      "type": "integer",
+                      "visibility": "Public"
+                    },
+                    "rate": {
+                      "description_en": "The confidence level. Valid values: 0 to 100",
+                      "description_zh": "置信度。取值范围0～100",
+                      "example": "99.1",
+                      "format": "double",
+                      "title": "置信度",
+                      "type": "number",
+                      "visibility": "Public"
+                    }
+                  },
+                  "type": "object",
+                  "visibility": "Public"
+                },
+                "title": "违规帧信息",
+                "type": "array",
+                "visibility": "Public"
+              }
+            },
+            "title": "视频审核信息",
+            "type": "object",
+            "visibility": "Public"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object",
+        "visibility": "Public"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the content security details of a file",
   "description_zh": "获取文件的内容安全详情",
@@ -58,6 +149,8 @@
       "help_en": "The validity period of the download URL in seconds, with a valid range of 10 to 14,400. By default, a download URL is not returned. Set this parameter to include one in the response",
       "help_zh": "可选填下载链接过期时间，单位为秒，取值范围为：[10,14400] 秒。\n填写此字段时提供下载链接，默认不提供下载链接",
       "location": "body",
+      "maximum": "14400",
+      "minimum": "10",
       "name": "url_expire_sec",
       "options": [
         "--url-expire-sec"
@@ -71,6 +164,28 @@
   "pathPattern": "/v2/csi/get_file_info",
   "product_code": "pds",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "investigation_info": {
+            "$ref": "#/components/schemas/InvestigationInfo",
+            "description_en": "The content security details of the file",
+            "description_zh": "审核信息"
+          },
+          "url": {
+            "description_en": "The download URL for the file",
+            "description_zh": "文件下载链接",
+            "example": "https://data.aliyunpds.com/hz22%2F5d5b986facbec311ef844c25954f96821497b383%2F5d5b986f955410dd991646bb87c6b4e899eff525?Expires=xxx&OSSAccessKeyId=xxx&Signature=xxx",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "tags": [
     "api"
   ],

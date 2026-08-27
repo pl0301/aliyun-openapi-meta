@@ -74,6 +74,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "MIGRATION",
+        "SYNC"
+      ],
       "example": "MIGRATION",
       "help_en": "The type of the job, which can be `MIGRATION` (indicating a data migration task) or `SYNC` (indicating a data synchronization task)",
       "help_zh": "任务的类型，包括 `MIGRATION`（表示数据迁移任务）和 `SYNC`（表示数据同步任务）",
@@ -145,6 +149,10 @@
     {
       "fields": [
         {
+          "enum": [
+            "SPECIFIC",
+            "WILDCARD"
+          ],
           "example": "SPCEIFIC",
           "help_en": "The transfer object mapping mode, which includes `SPECIFIC` (indicating specific objects) and `WILDCARD` (indicating pattern matching)",
           "help_zh": "传输对象映射模式，包括 `SPECIFIC`（表示指定对象）和 `WILDCARD`（表示匹配规则）",
@@ -366,6 +374,11 @@
                     {
                       "fields": [
                         {
+                          "enum": [
+                            "KEY",
+                            "RANGE",
+                            "NONE"
+                          ],
                           "example": "RANGE",
                           "help_en": "Partition type",
                           "help_zh": "分区类型",
@@ -393,6 +406,8 @@
                           "example": "3",
                           "help_en": "The partition size, with a value range of [1, 1024]",
                           "help_zh": "分区范围，取值范围为  [1,1024]",
+                          "maximum": "1024",
+                          "minimum": "1",
                           "name": "partition_size",
                           "options": [
                             "--partition-size"
@@ -1657,6 +1672,11 @@
     {
       "fields": [
         {
+          "enum": [
+            "ALL",
+            "WITHOUT_UNIQUE_ROW_ID",
+            "WITH_UNIQUE_ROW_ID"
+          ],
           "example": "ALL",
           "help_en": "Supported table types include ALL (all tables), WITH_UNIQUE_ROW_ID (tables with a unique row identity), and WITHOUT_UNIQUE_ROW_ID (tables without a unique row identity). The default value is ALL.  ",
           "help_zh": "支持的表类型。包括 ALL（所有表）、WITH_UNIQUE_ROW_ID（有唯一行标识的表）和 WITHOUT_UNIQUE_ROW_ID（无唯一行标识的表），默认值为 ALL",
@@ -1905,6 +1925,12 @@
     {
       "fields": [
         {
+          "enum": [
+            "IGNORE_BYTE_IF_BYTE_USED",
+            "FORCE_CHAR_IF_BYTE_USED",
+            "EXPAND_LEN_IF_BYTE_USED",
+            "DO_NOTHING_IF_BYTE_USED"
+          ],
           "example": "DO_NOTHING_IF_BYTE_USED",
           "help_en": "The byte/char conversion strategy. Enumeration values include `IGNORE_BYTE_IF_BYTE_USED`, `FORCE_CHAR_IF_BYTE_USED`, `EXPAND_LEN_IF_BYTE_USED`, and `DO_NOTHING_IF_BYTE_USED` (default value)",
           "help_zh": "byte/char 转换方案，枚举值包括 `IGNORE_BYTE_IF_BYTE_USED`、`FORCE_CHAR_IF_BYTE_USED`、`EXPAND_LEN_IF_BYTE_USED` 和 `DO_NOTHING_IF_BYTE_USED`（默认值）",
@@ -1994,6 +2020,11 @@
           "type": "bool"
         },
         {
+          "enum": [
+            "STEADY",
+            "NORMAL",
+            "FAST"
+          ],
           "example": "NORMAL",
           "help_en": "The concurrent speed for full migration, including STEADY, NORMAL, and FAST.  \n<notice>If a full migration step exists, FullTransferSpeedMode must be specified; you can specify NORMAL.</notice>",
           "help_zh": "全量迁移并发速度，包括 STEADY、NORMAL 和 FAST。\n<notice>如果有全量迁移步骤，则 FullTransferSpeedMode 必传，可以传 NORMAL。></notice>",
@@ -2006,6 +2037,11 @@
           "type": "string"
         },
         {
+          "enum": [
+            "STEADY",
+            "NORMAL",
+            "FAST"
+          ],
           "example": "NORMAL",
           "help_en": "The concurrent speed for full validation, including STEADY, NORMAL, and FAST.  \n<notice>If a full validation step exists, FullVerifySpeedMode must be specified; you can specify NORMAL.</notice>",
           "help_zh": "全量校验并发速度，包括 STEADY、NORMAL 和 FAST。\n<notice>如果有全量校验步骤，则 FullVerifySpeedMode 必传，可以传 NORMAL。></notice>",
@@ -2066,6 +2102,10 @@
           "type": "int"
         },
         {
+          "enum": [
+            "ALL",
+            "NEWEST"
+          ],
           "example": "NEWEST",
           "help_en": "The validation mode for HBase objects, including NEWEST and ALL",
           "help_zh": "HBase 对象的校验模式，包括 NEWEST 和 ALL",
@@ -2078,6 +2118,10 @@
           "type": "string"
         },
         {
+          "enum": [
+            "ALL",
+            "NEWEST"
+          ],
           "example": "NEWEST",
           "help_en": "The migration pattern for HBase objects, which includes NEWEST and ALL",
           "help_zh": "HBase 对象的迁移模式，包括 NEWEST 和 ALL",
@@ -2208,6 +2252,8 @@
           "example": "64",
           "help_en": "The number of threads used for incremental synchronization. The default value is 64",
           "help_zh": "增量同步的线程数，默认值为 64",
+          "maximum": "1024",
+          "minimum": "1",
           "name": "incr_sync_concurrency",
           "options": [
             "--incr-sync-concurrency"
@@ -2335,6 +2381,8 @@
           "example": "64",
           "help_en": "The number of threads used for reverse incremental synchronization. The default value is 64",
           "help_zh": "反向增量同步线程数，默认值为 64",
+          "maximum": "1024",
+          "minimum": "1",
           "name": "incr_sync_concurrency",
           "options": [
             "--incr-sync-concurrency"
@@ -2410,173 +2458,209 @@
   "pathPattern": "",
   "product_code": "OceanBasePro",
   "protocol": "HTTP|HTTPS",
-  "v1_body_parameters": [
-    {
-      "help_en": "Common transfer configuration",
-      "help_zh": "通用的传输配置",
-      "name": "CommonTransferConfig",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to enable full data transfer",
-      "help_zh": "是否开启全量传输",
-      "name": "EnableFullTransfer",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to enable full verification",
-      "help_zh": "是否开启全量校验",
-      "name": "EnableFullVerify",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to enable incremental synchronization",
-      "help_zh": "是否开启增量同步",
-      "name": "EnableIncrTransfer",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Whether reverse incremental synchronization is enabled",
-      "help_zh": "是否开启反向增量",
-      "name": "EnableReverseIncrTransfer",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to allow structure transfer",
-      "help_zh": "是否允许结构传输",
-      "name": "EnableStructTransfer",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Configuration for full data transfer",
-      "help_zh": "全量传输的配置",
-      "name": "FullTransferConfig",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the data migration or data synchronization task. You can obtain the ID of the task to be configured by invoking the ListProjects API",
-      "help_zh": "数据迁移或数据同步任务的 ID。您需要调用 ListProjects 接口获取待配置任务的 ID",
-      "name": "Id",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Configuration for incremental synchronization",
-      "help_zh": "增量同步的配置",
-      "name": "IncrTransferConfig",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "A collection of label IDs. Up to 5 labels are supported",
-      "help_zh": "标签 ID 的集合，最多支持 5 个",
-      "name": "LabelIds",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The name of the data migration or data synchronization task",
-      "help_zh": "数据迁移或数据同步任务的名称",
-      "name": "Name",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The OssKey obtained by calling GetUploadOssUrl",
-      "help_zh": "通过 GetUploadOssUrl 获取的 Osskey",
-      "name": "OssKey",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Reverse incremental transfer configuration",
-      "help_zh": "反向增量传输配置",
-      "name": "ReverseIncrTransferConfig",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The DataSource ID of the target endpoint. You can obtain the ID by invoking the `ListDataSource` API. The format is e_****",
-      "help_zh": "目标端数据源的 ID。您需要调用 `ListDataSource` 接口获取 ID，格式为 e_****",
-      "name": "SinkEndpointId",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the source data source. You can obtain the ID by invoking the `ListDataSource` API. The format is e_****",
-      "help_zh": "源端数据源的 ID。您需要调用 `ListDataSource` 接口获取 ID，格式为 e_****",
-      "name": "SourceEndpointId",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Configuration for structure transfer",
-      "help_zh": "结构传输的配置",
-      "name": "StructTransferConfig",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Mapping information of transfer objects",
-      "help_zh": "传输对象的映射信息",
-      "name": "TransferMapping",
-      "param_style": "json",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The type of the job, which can be `MIGRATION` (indicating a data migration task) or `SYNC` (indicating a data synchronization task)",
-      "help_zh": "任务的类型，包括 `MIGRATION`（表示数据迁移任务）和 `SYNC`（表示数据同步任务）",
-      "name": "Type",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Indicates whether to use OSS for Creation",
-      "help_zh": "是否使用 OSS 方式创建",
-      "name": "UseOss",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The instance ID of the transmission instance. You must invoke the ListProjects API to obtain the ID of the task to be configured",
-      "help_zh": "传输实例的 ID。您需要调用 ListProjects 接口获取待配置任务的 ID",
-      "name": "WorkerGradeId",
-      "position": "body",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Return Result.  ",
+        "description_zh": "返回结果",
+        "properties": {
+          "Advice": {
+            "description_en": "Advice (deprecated)",
+            "description_zh": "建议（旧）",
+            "example": "Contact the administrator.",
+            "title_en": "",
+            "title_zh": "建议",
+            "type": "string"
+          },
+          "Code": {
+            "description_en": "Error code (deprecated)",
+            "description_zh": "错误码（旧）",
+            "example": "INNER_ERROR",
+            "title_en": "code",
+            "title_zh": "code",
+            "type": "string"
+          },
+          "Cost": {
+            "description_en": "Request latency, in seconds",
+            "description_zh": "请求耗时，单位为秒",
+            "example": "27",
+            "title_en": "",
+            "title_zh": "耗时",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The ID of the data migration or data synchronization task",
+            "description_zh": "数据迁移或数据同步任务的 ID",
+            "example": "np_****",
+            "title_en": "",
+            "title_zh": "数据",
+            "type": "string"
+          },
+          "ErrorDetail": {
+            "description_en": "Error Details.  ",
+            "description_zh": "错误详情",
+            "properties": {
+              "Code": {
+                "description_en": "Error code (new).  ",
+                "description_zh": "错误码（新）",
+                "example": "CM-RESOAT1111",
+                "type": "string"
+              },
+              "ExtraContext": {
+                "additionalProperties": {
+                  "description_en": "Used for padding placeholders in the Message.  ",
+                  "description_zh": "用于填充 Message 中的占位符",
+                  "example": "null",
+                  "type": "any"
+                },
+                "description_en": "Used for padding placeholders in the Message.  ",
+                "description_zh": "用于填充 Message 中的占位符",
+                "type": "object"
+              },
+              "Level": {
+                "description_en": "Includes FATAL, ERROR, WARNING, and CRITICAL.  ",
+                "description_zh": "包括 FATAL、ERROR、WARNING 和 CRITICAL",
+                "example": "ERROR",
+                "title_en": "FATAL, ERROR, WARNING, CRITICAL",
+                "title_zh": "FATAL, ERROR, WARNING, CRITICAL",
+                "type": "string"
+              },
+              "Message": {
+                "description_en": "Error description (new).  ",
+                "description_zh": "错误描述（新）",
+                "example": "A system error occurred.",
+                "type": "string"
+              },
+              "MessageMcmsContext": {
+                "additionalProperties": {
+                  "description_en": "Used to fill placeholders in MessageMcmsKey.  ",
+                  "description_zh": "用于填充 MessageMcmsKey 中的占位符",
+                  "example": "null",
+                  "type": "string"
+                },
+                "description_en": "Used to fill placeholders in MessageMcmsKey.  ",
+                "description_zh": "用于填充 MessageMcmsKey 中的占位符",
+                "type": "object"
+              },
+              "MessageMcmsKey": {
+                "description_en": "The key of the error message.  ",
+                "description_zh": "错误信息的 Key",
+                "example": "null",
+                "type": "string"
+              },
+              "Proposal": {
+                "description_en": "Suggestion (new).  ",
+                "description_zh": "建议（新）",
+                "example": "Contact the administrator. ",
+                "type": "string"
+              },
+              "ProposalMcmsContext": {
+                "additionalProperties": {
+                  "description_en": "The context of the suggestion content.  ",
+                  "description_zh": "建议内容的上下文",
+                  "example": "null",
+                  "type": "string"
+                },
+                "description_en": "The context of the suggestion content.  ",
+                "description_zh": "建议内容的上下文",
+                "type": "object"
+              },
+              "ProposalMcmsKey": {
+                "description_en": "Key of the suggestion content.  ",
+                "description_zh": "建议内容的 Key",
+                "example": "null",
+                "type": "string"
+              },
+              "Reason": {
+                "description_en": "Error reason.  ",
+                "description_zh": "错误原因",
+                "example": "null",
+                "type": "string"
+              },
+              "ReasonMcmsContext": {
+                "additionalProperties": {
+                  "description_en": "Context of the error reason.  ",
+                  "description_zh": "错误原因的上下文",
+                  "example": "null",
+                  "type": "string"
+                },
+                "description_en": "Context of the error reason.  ",
+                "description_zh": "错误原因的上下文",
+                "type": "object"
+              },
+              "ReasonMcmsKey": {
+                "description_en": "The key of the error reason.  ",
+                "description_zh": "错误原因的 Key",
+                "example": "null",
+                "type": "string"
+              },
+              "UpstreamErrorDetail": {
+                "description_en": "Upstream error details, used for handling HTTP requests.  ",
+                "description_zh": "上游错误详情，用于处理 HTTP 请求",
+                "example": "null",
+                "type": "any"
+              }
+            },
+            "title_en": "",
+            "title_zh": "错误详情",
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "Error description (old)  ",
+            "description_zh": "错误描述（旧）",
+            "example": "A system error occurred.",
+            "title_en": "",
+            "title_zh": "描述",
+            "type": "string"
+          },
+          "PageNumber": {
+            "description_en": "Page number. This parameter takes effect during paged queries",
+            "description_zh": "页序号，分页查询时生效",
+            "example": "1",
+            "format": "int32",
+            "title_en": "pageNumber",
+            "title_zh": "pageNumber",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "Page size. This parameter takes effect during paged queries",
+            "description_zh": "页大小，分页查询时生效",
+            "example": "10",
+            "format": "int32",
+            "title_en": "pageSize",
+            "title_zh": "pageSize",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求 ID",
+            "example": "XCVSADG****DSGDS",
+            "title_en": "requestId",
+            "title_zh": "requestId",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the invocation succeeded",
+            "description_zh": "是否调用成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否调用成功",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "Total count, effective during paged query.  ",
+            "description_zh": "总数，分页查询时生效",
+            "example": "100",
+            "format": "int64",
+            "title_en": "TotalCount",
+            "title_zh": "TotalCount",
+            "type": "integer"
+          }
+        },
+        "title_en": "OmsApiReturnResult<T>",
+        "title_zh": "OmsApiReturnResult<T>",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

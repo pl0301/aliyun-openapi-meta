@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "asg-j6c1o397427hyjdc****",
       "help_en": "The ID of the scaling group",
       "help_zh": "伸缩组的ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "QuantityChangeInCapacity",
       "help_en": "The adjustment method of the scaling activity. Valid values:\n\nQuantityChangeInCapacity: adds or removes a specified number of ECS instances.\nPercentChangeInCapacity: adds or removes a specified percentage of ECS instances.\nTotalCapacity: adjusts the number of ECS instances in the current scaling group to a specified value",
       "help_zh": "伸缩活动调整方式，取值范围：\n\nQuantityChangeInCapacity：增加或减少指定数量的ECS实例。\nPercentChangeInCapacity：增加或减少指定比例的ECS实例。\nTotalCapacity：将当前伸缩组的ECS实例数量调整到指定数量",
@@ -47,10 +49,13 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "100",
       "help_en": "The adjustment value of the scaling activity. The number of ECS instances adjusted in a single scaling activity cannot exceed 1000. Otherwise, the adjustment fails. Valid values for different adjustment methods:\nQuantityChangeInCapacity: -1000 to 1000.\nPercentChangeInCapacity: -100 to 10000.\nTotalCapacity: 0 to 2000",
       "help_zh": "伸缩活动调整值。任何情况下，单次调整的ECS实例台数都不能超过1000，否则会导致调整失败。不同调整方式对应的取值范围：\nQuantityChangeInCapacity：-1000~1000。\nPercentChangeInCapacity：-100~10000。\nTotalCapacity：0~2000",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "-2147483648",
       "name": "adjustment_value",
       "options": [
         "--adjustment-value"
@@ -349,5 +354,84 @@
   ],
   "pathPattern": "",
   "product_code": "Ess",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters for triggering elastic scaling based on a specified adjustment rule",
+        "description_zh": "基于指定调整规则触发弹性扩缩容返回参数",
+        "properties": {
+          "ActivityType": {
+            "description_en": "The type of the scaling activity.\n\nIf `ActivityType` is set to `CapacityChange`, the scaling activity corresponding to the returned `ScalingActivityId` only modifies the expected number of instances in the scaling group without immediately performing scaling.\n\nApplicable scope: scaling groups with the expected number of instances configured",
+            "description_zh": "伸缩活动的类型。\n\n当`ActivityType`为`CapacityChange`时，表示返回值`ScalingActivityId`对应伸缩活动仅修改伸缩组期望实例数，没有立刻执行扩缩。\n\n适用范围：期望实例数类型的伸缩组",
+            "example": "CapacityChange",
+            "type": "string"
+          },
+          "PlanResult": {
+            "description_en": "The elastic planning results returned when ExecutionMode is set to PlanOnly",
+            "description_zh": "当ExecutionMode为PlanOnly时，返回的弹性规划的结果",
+            "properties": {
+              "ResourceAllocations": {
+                "description_en": "The resource allocation information in the elastic planning results",
+                "description_zh": "弹性规划结果中的资源分配信息",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Amount": {
+                      "description_en": "The number of instances",
+                      "description_zh": "实例数量",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "InstanceChargeType": {
+                      "description_en": "The billing method. Valid values:\n\nPrepaid: subscription.\nPostpaid: pay-as-you-go",
+                      "description_zh": "付费类型，返回值如下：\n\nPrepaid：包年包月。\nPostpaid：按量付费",
+                      "example": "Postpaid",
+                      "type": "string"
+                    },
+                    "InstanceType": {
+                      "description_en": "The instance type",
+                      "description_zh": "实例规格",
+                      "example": "ecs.u1-c1m8.large",
+                      "type": "string"
+                    },
+                    "SpotStrategy": {
+                      "description_en": "The preemption policy of the instance. Valid values:\n\nNoSpot: a pay-as-you-go instance.\nSpotWithPriceLimit: a spot instance with a maximum price limit.\nSpotAsPriceGo: a spot instance priced at the market price at the time of purchase",
+                      "description_zh": "实例的抢占策略。取值范围：\n\nNoSpot：正常按量付费实例。\nSpotWithPriceLimit：设置上限价格的抢占式实例。\nSpotAsPriceGo：系统自动出价，跟随当前市场实际价格的抢占式实例",
+                      "example": "NoSpot",
+                      "type": "string"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID",
+                      "description_zh": "可用区ID",
+                      "example": "cn-beijing-g",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
+            "type": "string"
+          },
+          "ScalingActivityId": {
+            "description_en": "The ID of the scaling activity",
+            "description_zh": "伸缩活动的ID",
+            "example": "asa-bp175o6f6ego3r2j****",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

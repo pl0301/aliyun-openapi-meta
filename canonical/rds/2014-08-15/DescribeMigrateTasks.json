@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "rm-uf6wjk5****",
       "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2017-10-20T01:00Z",
       "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2017-10-25T01:00Z",
       "help_en": "The end of the time range to query. The end time must be later than the start time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询结束时间，必须大于开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
@@ -64,6 +67,8 @@
       "help_en": "The number of entries to return on each page. Valid values: 30 to 100. Default value: 30",
       "help_zh": "每页记录数，取值：30~100。默认值：30",
       "location": "query",
+      "maximum": "100",
+      "minimum": "30",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -77,6 +82,8 @@
       "help_en": "The page number. Valid values: any non-zero positive integer.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -101,5 +108,117 @@
   ],
   "pathPattern": "",
   "product_code": "Rds",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回参数详情",
+        "properties": {
+          "DBInstanceId": {
+            "description_en": "The instance ID",
+            "description_zh": "实例ID",
+            "example": "rm-uf6wjk5****",
+            "type": "string"
+          },
+          "Items": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "MigrateTask": {
+                "description_en": "The details of the migration task",
+                "description_zh": "备份数据上云任务信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "备份数据上云任务信息详情",
+                  "properties": {
+                    "BackupMode": {
+                      "description_en": "The migration task type. Valid values:\n\nFULL: The migration task migrates full backup files that can be used to restore the full data of the instance.\nUPDF: The migration task migrates incremental or log backup files that can be used to restore the incremental data of the instance",
+                      "description_zh": "备份数据上云任务类型，取值：\nFULL：表示通过全量备份文件去执行还原操作。\nUPDF：表示通过增量文件或者日志文件去还原增量部分的数据",
+                      "example": "FULL",
+                      "type": "string"
+                    },
+                    "CreateTime": {
+                      "description_en": "The time when the migration task was created. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC",
+                      "description_zh": "备份数据上云任务创建时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2017-05-30T12:11:04Z",
+                      "type": "string"
+                    },
+                    "DBName": {
+                      "description_en": "The database name",
+                      "description_zh": "数据库名称",
+                      "example": "testDB",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The description of the migration task",
+                      "description_zh": "备份数据上云任务的描述信息",
+                      "example": "Api description",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The time when the migration task was completed. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC",
+                      "description_zh": "备份数据上云任务结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2017-05-30T13:11:04Z",
+                      "type": "string"
+                    },
+                    "IsDBReplaced": {
+                      "description_en": "Indicates whether the imported data overwrites the existing data",
+                      "description_zh": "是否是覆盖性导入",
+                      "example": "True",
+                      "type": "string"
+                    },
+                    "MigrateTaskId": {
+                      "description_en": "The migration task ID",
+                      "description_zh": "备份数据上云任务的ID",
+                      "example": "564522545",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status of the migration task. Valid values:\n\nNoStart: The task is not started.\nRunning:The task is in progress.\nSuccess: The task is successful.\nFailed: The task failed.\nWaiting: The task is waiting for an incremental backup file to be imported",
+                      "description_zh": "备份数据上云任务的状态，取值：\nNoStart：未开始\nRunning：运行中\nSuccess：成功\nFailed：失败\nWaiting：等待（等待增量备份文件导入）",
+                      "example": "Success",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number of the returned page",
+            "description_zh": "获取第几页的数据",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageRecordCount": {
+            "description_en": "The number of entries returned per page",
+            "description_zh": "每页记录数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "4E356DDF-6B83-45DB-99D5-4B1E8A0D286B",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "满足条件的总的记录数",
+            "example": "30",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

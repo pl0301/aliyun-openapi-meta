@@ -38,6 +38,8 @@
       "help_en": "The number of results for each query.\n\nValid values: 10 to 100. Default value: 20",
       "help_zh": "每次查询结果的个数。\n\n取值范围：10~100。默认值：20",
       "location": "query",
+      "maximum": "100",
+      "minimum": "10",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -47,6 +49,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "cpfs-099394bd928c****",
       "help_en": "The ID of the file system.\n\nThe IDs of CPFS file systems must start with `cpfs-`. Example: cpfs-125487\\\\.\nThe IDs of CPFS for Lingjun file systems must start with `bmcpfs-`. Example: bmcpfs-0015\\\\.\nThe IDs of CPFS SE file systems must start with `cpfsse-`. Example: cpfsse-022c71b134\\\\",
       "help_zh": "文件系统ID。\n\nCPFS：必须以`cpfs-`开头，例如cpfs-125487\\\\。\n\nCPFS智算版：必须以`bmcpfs-`开头，例如bmcpfs-0015\\\\。\nCPFS  SE：必须以`cpfsse-`开头，例如cpfsse-022c71b134\\\\",
@@ -64,6 +67,8 @@
       "help_en": "A client-generated, case-sensitive token that you can use to ensure the idempotency of the request. The token must be unique for each request.\n\nIt must be an ASCII string with a maximum length of 64 characters. For more information, see https://help.aliyun.com/document_detail/25693.html.\n\nIf you do not specify this parameter, the system automatically uses the request ID as the client token. The request ID may be different for each request",
       "help_zh": "保证请求幂等性，从您的客户端生成一个参数值，确保不同请求间该参数值唯一。\n\nClientToken只支持ASCII字符，且不能超过64个字符。更多信息，请参见https://help.aliyun.com/document_detail/25693.html。\n\n若用户未指定，则系统自动使用API请求的RequestId作为ClientToken标识。每次API请求的RequestId可能不一样",
       "location": "query",
+      "max_length": "64",
+      "min_length": "1",
       "name": "client_token",
       "options": [
         "--client-token"
@@ -101,5 +106,116 @@
   ],
   "pathPattern": "",
   "product_code": "NAS",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "NextToken": {
+            "description_en": "A pagination token. It can be used in the next request to retrieve a new page of results",
+            "description_zh": "当请求的返回结果被截断时，您可以使用NextToken再次发起请求，获取从当前截断位置之后的内容",
+            "example": "M18xMA==",
+            "type": "string"
+          },
+          "ProtocolMountTarget": {
+            "description_en": "Information of the export directory for the protocol service",
+            "description_zh": "协议服务导出目录信息",
+            "properties": {
+              "AccessGroupName": {
+                "description_en": "The name of the permission group.\n\nDefault permission group: DEFAULT\\_VPC\\_GROUP\\_NAME",
+                "description_zh": "权限组名称。\n\n默认权限组：DEFAULT_VPC_GROUP_NAME",
+                "example": "DEFAULT_VPC_GROUP_NAME",
+                "type": "string"
+              },
+              "CreateTime": {
+                "description_en": "The time when the export directory was created. Return format: yyyy-MM-dd HH:mm:ss",
+                "description_zh": "创建时间。\n返回格式：yyyy-MM-dd HH:mm:ss",
+                "example": "2025-12-22 17:49:25",
+                "type": "string"
+              },
+              "Description": {
+                "description_en": "The description of the export directory",
+                "description_zh": "协议服务导出的描述",
+                "example": "此协议服务导出的描述。",
+                "type": "string"
+              },
+              "ExportId": {
+                "description_en": "The ID of the export directory",
+                "description_zh": "导出目录ID",
+                "example": "exp-19abf5beab8d****",
+                "type": "string"
+              },
+              "FsetId": {
+                "description_en": "The fileset ID",
+                "description_zh": "Fileset ID",
+                "example": "fset-299b4ca04de8****",
+                "type": "string"
+              },
+              "Path": {
+                "description_en": "The path of the CPFS directory that was queried.\n\nFormat:\n\nMust be 1 to 1,024 characters in length.\nMust be encoded in UTF-8.\nMust start and end with a forward slash (/). The root directory is `/`",
+                "description_zh": "查询到的CPFS目录的路径。\n\n格式：\n长度为1~1024个字符。\n使用UTF-8编码。\n必须以正斜线（/）开头和结尾，根目录为`/`",
+                "example": "/",
+                "type": "string"
+              },
+              "ProtocolMountTargetDomain": {
+                "description_en": "The domain name of the export directory for the protocol service",
+                "description_zh": "协议服务导出目录的域名",
+                "example": "cpfs-0229cb80bcc0****-x******.cn-*****.cpfs.aliyuncs.com",
+                "type": "string"
+              },
+              "ProtocolType": {
+                "description_en": "The protocol type of the file system.\n\nValid values:\n\nNFS: Network File System (NFS)\nSMB: Server Message Block (SMB)\ncpfs: The protocol type supported by the CPFS file system",
+                "description_zh": "文件系统协议类型。\n\n包括：\n\nNFS：NFS文件协议\nSMB：SMB文件协议\ncpfs：CPFS文件系统支持的协议类型",
+                "example": "NFS",
+                "type": "string"
+              },
+              "Status": {
+                "description_en": "The status of the export directory. Valid values:\n\nCREATING: The export directory is being created.\nAVAILABLE : The export directory is available.\nMODIFYING: The export directory is being modified.\nDELETING: The export directory is being deleted.\nSTOPPING: The export directory is being stopped",
+                "description_zh": "协议服务导出目录的状态。包括：\nCREATING：创建中。\nAVAILABLE ：可用。\nMODIFYING：修改中。\nDELETING：删除中。\nSTOPPING：停止中",
+                "example": "AVAILABLE",
+                "type": "string"
+              },
+              "VSwitchId": {
+                "description_en": "The vSwitch ID of the export directory",
+                "description_zh": "协议服务导出的交换机ID",
+                "example": "vsw-8vb2qjnxs6hiobzve****",
+                "type": "string"
+              },
+              "VSwitchIds": {
+                "description_en": "The vSwitch ID list of the export directory",
+                "description_zh": "协议服务导出的交换机 ID 列表",
+                "items": {
+                  "description_en": "The vSwitch ID of the export directory",
+                  "description_zh": "协议服务导出的交换机ID",
+                  "example": "vsw-bp1q3ro8erikjjrb2****",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "VpcId": {
+                "description_en": "The VPC ID of the export directory",
+                "description_zh": "协议服务导出的专有网络ID",
+                "example": "vpc-bp1h5mxoqfuo3xurf****",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "6299428C-3861-435D-AE54-9B330A00****",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

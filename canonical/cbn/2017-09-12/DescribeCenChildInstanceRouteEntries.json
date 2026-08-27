@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cen-7qthudw0ll6jmc****",
       "help_en": "The ID of the CEN instance",
       "help_zh": "云企业网实例ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "vpc-bp18sth14qii3pnvo****",
       "help_en": "The ID of the network instance",
       "help_zh": "网络实例ID",
@@ -47,6 +49,14 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "VPC",
+        "VBR",
+        "CCN",
+        "VPN",
+        "ECR"
+      ],
       "example": "VPC",
       "help_en": "The type of the network instance. Valid values:\n\nVPC: virtual private cloud (VPC)\nVBR: virtual border router (VBR)\nCCN: Cloud Connect Network (CCN) instance\nECR: Express Connect Router (ECR)",
       "help_zh": "网络实例的类型。取值：\n\nVPC：专有网络实例。\n\nVBR：边界路由器实例。\n\nCCN：云连接网实例。\n\nVPN：VPN网关实例。\n\nECR：专线网关实例",
@@ -99,6 +109,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The ID of the region where the network instance is deployed.\n\nYou can call the https://help.aliyun.com/document_detail/132080.html operation to query the most recent region list",
       "help_zh": "网络实例所在的地域ID。\n\n您可以通过调用https://help.aliyun.com/document_detail/132080.html接口获取地域ID",
@@ -128,70 +139,236 @@
   "pathPattern": "",
   "product_code": "Cbn",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The ID of the CEN instance",
-      "help_zh": "云企业网实例ID",
-      "name": "CenId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the network instance",
-      "help_zh": "网络实例ID",
-      "name": "ChildInstanceId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the region where the network instance is deployed.\n\nYou can call the https://help.aliyun.com/document_detail/132080.html operation to query the most recent region list",
-      "help_zh": "网络实例所在的地域ID。\n\n您可以通过调用https://help.aliyun.com/document_detail/132080.html接口获取地域ID",
-      "name": "ChildInstanceRegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the route table of the network instance. If you do not specify a route table ID, the system queries the routes in the system route tables of the VPCs by default",
-      "help_zh": "网络实例的路由表ID。\n在您查询VPC实例路由表下的路由条目信息时，如果您不指定路由表ID，系统默认查询VPC实例系统路由表下的路由条目信息",
-      "name": "ChildInstanceRouteTableId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The type of the network instance. Valid values:\n\nVPC: virtual private cloud (VPC)\nVBR: virtual border router (VBR)\nCCN: Cloud Connect Network (CCN) instance\nECR: Express Connect Router (ECR)",
-      "help_zh": "网络实例的类型。取值：\n\nVPC：专有网络实例。\n\nVBR：边界路由器实例。\n\nCCN：云连接网实例。\n\nVPN：VPN网关实例。\n\nECR：专线网关实例",
-      "name": "ChildInstanceType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The number of the page to return. Default value: 1",
-      "help_zh": "查询页码。默认值为1",
-      "name": "PageNumber",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of entries per page. Valid values: 1 to 500. Default value: 10",
-      "help_zh": "分页查询时每页显示的条目数。默认值为10，取值范围：1~500",
-      "name": "PageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The status of the route. Valid values:\n\nActive: available\nCandidate: standby\nRejected: rejected\nProhibited: prohibited\nAll (default): all routes",
-      "help_zh": "路由条目的状态。取值：\n\nActive：可用。\n\nCandidate：备份。\n\nRejected：拒绝。\n\nProhibited：禁止。\n\nAll（默认值）：表示查询网络实例下所有状态的路由条目信息",
-      "name": "Status",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "CenRouteEntries": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "CenRouteEntry": {
+                "description_en": "The information about the route",
+                "description_zh": "路由条目信息",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AsPaths": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AsPath": {
+                          "description_en": "The AS paths of the routes",
+                          "description_zh": "路由条目的AS Path属性值列表",
+                          "items": {
+                            "description_en": "The route AS path value",
+                            "description_zh": "路由条目的AS Path属性值",
+                            "example": "65501",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "CenRouteMapRecords": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "CenRouteMapRecord": {
+                          "description_en": "The routing policy that the routes match",
+                          "description_zh": "路由条目匹配到的路由策略信息",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "RegionId": {
+                                "description_en": "The region ID of the routing policy",
+                                "description_zh": "路由策略应用的地域ID",
+                                "example": "cn-hangzhou",
+                                "type": "string"
+                              },
+                              "RouteMapId": {
+                                "description_en": "The routing policy ID",
+                                "description_zh": "路由策略ID",
+                                "example": "cenrmap-w4yf7toozfol3q****",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Communities": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Community": {
+                          "description_en": "The community attributes of the route entries",
+                          "description_zh": "路由条目的Community属性值列表",
+                          "items": {
+                            "description_en": "The route community value",
+                            "description_zh": "路由条目的Community属性值",
+                            "example": "65501:1",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Conflicts": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Conflict": {
+                          "description_en": "A list of overlapping routes",
+                          "description_zh": "产生冲突的路由条目信息",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "DestinationCidrBlock": {
+                                "description_en": "The destination CIDR block of the overlapping route",
+                                "description_zh": "产生冲突的路由条目的目标网段",
+                                "example": "192.168.1.0/24",
+                                "type": "string"
+                              },
+                              "InstanceId": {
+                                "description_en": "The ID of the peer network instance on which the overlapping routes are found",
+                                "description_zh": "产生路由条目冲突的对端的网络实例ID",
+                                "example": "ccn-0q3b7oviikmm9h****",
+                                "type": "string"
+                              },
+                              "InstanceType": {
+                                "description_en": "The type of the peer network instance on which the overlapping routes are found. Valid values:\n\nVPC: VPC\nVBR: VBR\nCCN: CCN instance\nECR: ECR",
+                                "description_zh": "产生路由条目冲突的对端的网络实例类型。取值：\n\nVPC：专有网络。\nVBR：边界路由器。\nCCN：云连接网。\nECR：专线网关",
+                                "example": "CCN",
+                                "type": "string"
+                              },
+                              "RegionId": {
+                                "description_en": "The region ID of the peer network instance on which the overlapping routes are found",
+                                "description_zh": "产生路由条目冲突的对端的网络实例所属地域ID",
+                                "example": "ccn-cn-shanghai",
+                                "type": "string"
+                              },
+                              "Status": {
+                                "description_en": "The cause of the route error. Valid values:\n\nconflict: The routes have the same destination CIDR block.\noverflow: The number of routes in the route table configured on another network instance has reached the upper limit",
+                                "description_zh": "路由条目产生冲突的原因。取值：\n\nconflict：路由条目的目标网段相同造成的冲突。  \n         \noverflow：其他网络实例路由表的路由条目数量超出限制造成的冲突。  ",
+                                "example": "conflict",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DestinationCidrBlock": {
+                      "description_en": "The destination CIDR block of the route",
+                      "description_zh": "路由条目的目标网段",
+                      "example": "10.0.0.0/24",
+                      "type": "string"
+                    },
+                    "NextHopInstanceId": {
+                      "description_en": "The ID of the instance specified as the next hop in the route",
+                      "description_zh": "路由条目下一跳关联的实例ID",
+                      "example": "vbr-bp13gtbhdp0pfqg6s****",
+                      "type": "string"
+                    },
+                    "NextHopRegionId": {
+                      "description_en": "The region ID of the instance specified as the next hop in the route",
+                      "description_zh": "路由条目下一跳关联的实例所属的地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "NextHopType": {
+                      "description_en": "The type of the instance specified as the next hop in the route. Valid values:\n\nInstance: an ECS instance\nHaVip: an HAVIP\nRouterInterface: a router interface\nNetworkInterface: an ENI\nVpnGateway: a VPN gateway\nIPv6Gateway: an IPv6 gateway\nIpv4Gateway: an IPv4 gateway\nNatGateway: a NAT gateway\nAttachment: a network instance connection\nservice: a cloud service\nVBR: a VBR\nCCN: a CCN instance\nVPC: a VPC\nlocal: a system route (no next hop is specified)\nTR: a transit router\nBlackHole: a blackhole route (no next hop is specified)\nEcRouterInterface: a router interface for Express Connect\nHealthCheck: a health check\nAS: an access gateway for CCN\nclassic: a classic network-type instance\nGatewayEndpoint: a gateway endpoint\nCPE: a data center connected to a VBR",
+                      "description_zh": "路由条目下一跳类型。取值：\n\nInstance：ECS实例。\nHaVip：高可用虚拟IP。\nRouterInterface：路由器接口。\nNetworkInterface：弹性网卡。\nVpnGateway：VPN网关。\nIPv6Gateway：IPv6网关。\nIpv4Gateway：IPv4网关。\nNatGateway：NAT网关。\nAttachment：网络实例连接。\nservice：云服务。\nVBR：边界路由器。\nCCN：云连接网。\nVPC：专有网络。\nlocal：表示当前路由条目为网络实例的系统路由，没有下一跳。\nTR：转发路由器。\nBlackHole：表示当前路由条目为黑洞路由，没有下一跳。\nEcRouterInterface：高速通道路由器接口。\nHealthCheck：健康检查。\nAS：云连接网接入网关。\nclassicLink：经典网络实例。\nGatewayEndpoint：网关终端节点。\nCPE：边界路由器连接的本地数据中心",
+                      "example": "VBR",
+                      "type": "string"
+                    },
+                    "OperationalMode": {
+                      "description_en": "Indicates whether the route is allowed to be advertised to or withdrawn from the CEN instance. Valid values:\n\ntrue\nfalse",
+                      "description_zh": "是否允许发布或撤销该路由到云企业网。取值：\ntrue：允许发布或撤销。\n\nfalse：不允许发布或撤销",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "PublishStatus": {
+                      "description_en": "Indicates whether the route is advertised to the CEN instance. Valid values:\n\nPublished\nNonPublished",
+                      "description_zh": "路由条目在云企业网中的发布状态。取值：\n\nPublished：已发布。\n\nNonPublished：未发布",
+                      "example": "Published",
+                      "type": "string"
+                    },
+                    "RouteTableId": {
+                      "description_en": "The route table ID",
+                      "description_zh": "路由表ID",
+                      "example": "vtb-bp1r9pvl4xen8s9ju****",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The route status. Valid values:\n\nActive: available routes\nCandidate: standby routes\nRejected: rejected routes\nProhibited: prohibited routes",
+                      "description_zh": "路由条目的状态。取值：\n\nActive：可用。\n\nCandidate：备份。\n\nRejected：拒绝。\n\nProhibited：禁止",
+                      "example": "Active",
+                      "type": "string"
+                    },
+                    "Type": {
+                      "description_en": "The route type. Valid values:\n\nCEN: route that is advertised through CEN\nSystem: system route\nCustom: custom route",
+                      "description_zh": "路由条目的类型。取值：\n\nCEN：表示通过云企业网传递的路由。\nSystem：表示系统路由。\nCustom：表示自定义路由",
+                      "example": "CEN",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number of the returned page",
+            "description_zh": "查询页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries returned per page",
+            "description_zh": "分页查询时每页显示的条目数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "17A57456-EF48-419D-9AE6-9B03D9996018",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "总条目数",
+            "example": "4",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

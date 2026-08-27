@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "pc-****************",
       "help_en": "The ID of the cluster",
       "help_zh": "集群ID",
@@ -86,6 +87,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2020-05-01T00:00Z",
       "help_en": "The beginning of the time range to query. Specify the time in the `yyyy-MM-ddTHH:mmZ` format. The time must be in UTC",
       "help_zh": "查询开始时间，格式为`YYYY-MM-DDThh:mmZ`（UTC时间）",
@@ -99,6 +101,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2020-05-14T00:00Z",
       "help_en": "The end of the time range to query. Specify the time in the `YYYY-MM-DDThh:mmZ` format. The time must be in UTC. The end time must be later than the start time",
       "help_zh": "查询结束时间，查询结束时间需晚于开始时间，格式为`YYYY-MM-DDThh:mmZ`（UTC时间）",
@@ -116,6 +119,8 @@
       "help_en": "The number of entries per page. Valid values:\n\n30\n50\n100\n\nDefault value: 30",
       "help_zh": "每页记录数，取值范围如下： \n30\n50\n100\n\n默认值为30",
       "location": "query",
+      "maximum": "100",
+      "minimum": "30",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -129,6 +134,8 @@
       "help_en": "The page number. The value must be a positive integer that does not exceed the maximum value of the INTEGER data type. Default value: 1",
       "help_zh": "页码，取值范围为大于0但不超过Integer最大值的整数，默认值为1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -140,5 +147,132 @@
   ],
   "pathPattern": "",
   "product_code": "polardb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "Items": {
+            "itemNode": true,
+            "properties": {
+              "Backup": {
+                "description_en": "Details about the backup sets",
+                "description_zh": "备份集详情",
+                "items": {
+                  "properties": {
+                    "BackupEndTime": {
+                      "description_en": "The end time of the backup task. The time is displayed in UTC",
+                      "description_zh": "本次备份结束时间（UTC时间）",
+                      "example": "2020-05-12T03:25:55Z",
+                      "type": "string"
+                    },
+                    "BackupId": {
+                      "description_en": "The ID of the backup set",
+                      "description_zh": "备份ID",
+                      "example": "111111111",
+                      "type": "string"
+                    },
+                    "BackupMethod": {
+                      "description_en": "The backup method. Only snapshot backups are supported. The value is set to Snapshot",
+                      "description_zh": "数据备份方法，仅支持快照备份，取值固定为Snapshot ",
+                      "example": "Snapshot",
+                      "type": "string"
+                    },
+                    "BackupMode": {
+                      "description_en": "The backup mode. Valid values:\n\nAutomated\nManual",
+                      "description_zh": "备份模式，取值范围如下： \nAutomated：系统自动备份\nManual：手动备份",
+                      "example": "Manual",
+                      "type": "string"
+                    },
+                    "BackupSetSize": {
+                      "description_en": "The size of the backup set. Unit: bytes.\n\nAfter you delete the target snapshot backups, the storage space consumed by the backups is released. The released storage space is smaller than the size of the backup file, because the snapshots share certain data blocks",
+                      "description_zh": "备份文件大小，单位为Byte。\n\n因为快照之间存在共享数据块，因此删除目标快照备份后释放的空间会远小于该备份文件的大小",
+                      "example": "7251056",
+                      "type": "string"
+                    },
+                    "BackupStartTime": {
+                      "description_en": "The start time of the backup task. The time is displayed in UTC",
+                      "description_zh": "本次备份开始时间（UTC时间）",
+                      "example": "2020-05-12T03:25:44Z",
+                      "type": "string"
+                    },
+                    "BackupStatus": {
+                      "description_en": "The status of the backup set. Valid values:\n\nSuccess\nFailed",
+                      "description_zh": "备份状态，取值范围如下：\nSuccess：备份完成\nFailed：备份失败",
+                      "example": "Success",
+                      "type": "string"
+                    },
+                    "BackupType": {
+                      "description_en": "The type of the backup. Only full backups are supported. The value is set to FullBackup",
+                      "description_zh": "备份类型，仅支持全量备份，取值固定为FullBackup",
+                      "example": "FullBackup",
+                      "type": "string"
+                    },
+                    "BackupsLevel": {
+                      "description_en": "The level of the backup set. Valid values:\n\nLevel-1: level-1 backup set\nLevel-2: level-2 backup set",
+                      "description_zh": "备份集级别，取值范围如下：\nLevel-1：一级备份\nLevel-2：二级备份",
+                      "example": "Level-2",
+                      "type": "string"
+                    },
+                    "ConsistentTime": {
+                      "description_en": "The snapshot checkpoint time. The value is a Unix timestamp",
+                      "description_zh": "一致性快照的时间点，格式为Unix时间戳，单位为秒",
+                      "example": "1589253947",
+                      "type": "string"
+                    },
+                    "DBClusterId": {
+                      "description_en": "The ID of the cluster",
+                      "description_zh": "集群ID",
+                      "example": "pc-**************",
+                      "type": "string"
+                    },
+                    "IsAvail": {
+                      "description_en": "Indicates whether the backup set is available. Valid values:\n\n0: The data backup set is unavailable.\n1: The data backup set is available",
+                      "description_zh": "备份集是否可用，取值范围如下：\n0：不可用\n1：可用",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "StoreStatus": {
+                      "description_en": "Indicates whether the backup set can be deleted. Valid values:\n\nEnabled: The backup set can be deleted.\nDisabled: The backup set cannot be deleted",
+                      "description_zh": "是否允许删除备份集，取值范围如下：\nEnabled：允许删除\nDisabled：不允许删除",
+                      "example": "Disabled",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "type": "string"
+          },
+          "PageRecordCount": {
+            "description_en": "The number of entries per page",
+            "description_zh": "本页记录数",
+            "example": "15",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "717B2382-BB14-4DCB-BBC2-32DBE0******",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of returned entries",
+            "description_zh": "总记录数",
+            "example": "50",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

@@ -2,6 +2,456 @@
   "camel_example": "aliyun openitag POST /openapi/api/v1/tenants/GA000W134/tasks --region cn-hangzhou --header \"Content-Type=application/json\" --body \"example-string\"",
   "cmd_full_name": "openitag create-task",
   "cmd_name": "create-task",
+  "components": {
+    "schemas": {
+      "CreateTaskDetail": {
+        "description_en": "Create a job struct",
+        "description_zh": "创建任务结构体",
+        "properties": {
+          "Admins": {
+            "description_en": "Administrators; defaults to the Creator",
+            "description_zh": "管理员，默认创建人",
+            "properties": {
+              "Users": {
+                "description_en": "List of administrators",
+                "description_zh": "管理员列表",
+                "items": {
+                  "$ref": "#/components/schemas/SimpleUser",
+                  "description_en": "After configuring according to the SimpleUser structure, add the user as an administrator",
+                  "description_zh": "参考SimpleUser的结构配置后，添加为管理员的功能"
+                },
+                "title": "管理员",
+                "type": "array"
+              }
+            },
+            "title": "管理员；默认创建人",
+            "type": "object"
+          },
+          "AllowAppendData": {
+            "description_en": "Indicates whether appending new data is supported. Valid values:\ntrue: Supported\nfalse: Not supported",
+            "description_zh": "是否支持新增，取值如下：\ntrue：支持\nfalse：不支持",
+            "example": "true",
+            "title": "是否支持新增",
+            "type": "boolean"
+          },
+          "AssignConfig": {
+            "$ref": "#/components/schemas/TaskAssginConfig",
+            "description_en": "Job assignment mechanism",
+            "description_zh": "任务分配机制",
+            "required": true,
+            "title": "任务分配机制"
+          },
+          "DatasetProxyRelations": {
+            "description_en": "List of dataset configurations",
+            "description_zh": "数据集配置列表",
+            "items": {
+              "$ref": "#/components/schemas/DatasetProxyConfig",
+              "description_en": "Configure datasets by referring to the DatasetProxyConfig configuration",
+              "description_zh": "参考DatasetProxyConfig的配置，配置数据集"
+            },
+            "required": true,
+            "title": "数据集配置",
+            "type": "array"
+          },
+          "Exif": {
+            "description_en": "Additional configuration. JSON format",
+            "description_zh": "额外配置。JSON格式",
+            "example": " {  \"TaskCaptionType\": \"DOC_LINK\"}",
+            "required": false,
+            "title": "额外配置",
+            "type": "object"
+          },
+          "Tags": {
+            "description_en": "List of job labels.  ",
+            "description_zh": "任务标签列表",
+            "items": {
+              "description_en": "Label.  ",
+              "description_zh": "标签",
+              "example": "text",
+              "type": "string"
+            },
+            "title": "任务标签",
+            "type": "array"
+          },
+          "TaskName": {
+            "description_en": "Job name",
+            "description_zh": "任务名称",
+            "example": "测试任务202208101424",
+            "required": true,
+            "title": "任务名称",
+            "type": "string"
+          },
+          "TaskTemplateConfig": {
+            "$ref": "#/components/schemas/TaskTemplateConfig",
+            "description_en": "Template Configuration",
+            "description_zh": "模板配置"
+          },
+          "TaskWorkflow": {
+            "description_en": "List of pipelines",
+            "description_zh": "工作流列表",
+            "items": {
+              "description_en": "Configuration items for streaming nodes",
+              "description_zh": "任务流节点配置项",
+              "enumValueTitles": {},
+              "properties": {
+                "NodeName": {
+                  "description_en": "Node name. Valid values:\nMARK: Annotate.\nCHECK: Check.\nSAMPLING: Validate",
+                  "description_zh": "结点名称，取值如下：\nMARK：标注。\nCHECK：检查。\nSAMPLING：验收",
+                  "enum": [
+                    "MARK",
+                    "CHECK",
+                    "SAMPLING"
+                  ],
+                  "enumValueTitles": {},
+                  "example": "MARK",
+                  "title": "结点名称",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "required": true,
+            "title": "工作流",
+            "type": "array"
+          },
+          "TemplateId": {
+            "description_en": "Template ID. For more information, see [ListTemplates]（https://help.aliyun.com/document_detail/454654.html）",
+            "description_zh": "模板ID。详情请参见[ListTemplates]（https://help.aliyun.com/document_detail/454654.html）",
+            "example": "152936***8342353920",
+            "required": true,
+            "title": "模版ID",
+            "type": "string"
+          },
+          "UUID": {
+            "description_en": "Unique identifier (UUID), controlled by the business side",
+            "description_zh": "唯一标识ID，业务方控制",
+            "example": "16623***80757311",
+            "required": true,
+            "title": "唯一标识ID；业务方控制",
+            "type": "string"
+          },
+          "VoteConfigs": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CreateTaskDetailVoteInfo",
+              "description_en": "Configure voting information by referring to the CreateTaskDetailVoteInfo configuration, including the number of voters and the minimum number of votes required",
+              "description_zh": "参考CreateTaskDetailVoteInfo的配置，配置投票信息。包括投票人数和最小投票数量"
+            },
+            "description_en": "Vote configuration",
+            "description_zh": "投票配置",
+            "title": "投票配置",
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CreateTaskDetailVoteInfo": {
+        "description_en": "The voting information for task creation details",
+        "description_zh": "创建任务详情投票信息",
+        "properties": {
+          "MinVote": {
+            "description_en": "The minimum number of votes",
+            "description_zh": "最小投票数量",
+            "example": "3",
+            "format": "int64",
+            "title": "最小投票数量",
+            "type": "integer"
+          },
+          "VoteNum": {
+            "description_en": "The number of voters",
+            "description_zh": "投票人数",
+            "example": "3",
+            "format": "int64",
+            "title": "投票人数",
+            "type": "integer"
+          }
+        },
+        "title": "投票信息",
+        "type": "object"
+      },
+      "DatasetProxyConfig": {
+        "description_en": "Dataset configuration",
+        "description_zh": "数据集配置",
+        "properties": {
+          "DatasetType": {
+            "default": "LABEL",
+            "description_en": "Dataset type. Only LABEL is supported",
+            "description_zh": "数据集类型，仅支持LABEL",
+            "example": "LABEL",
+            "title": "数据集类型",
+            "type": "string"
+          },
+          "Source": {
+            "default": "PAI",
+            "description_en": "Dataset source. Only PAI is supported",
+            "description_zh": "数据集来源，仅支持PAI",
+            "enum": [
+              "PAI"
+            ],
+            "example": "PAI",
+            "title": "数据集来源",
+            "type": "string"
+          },
+          "SourceDatasetId": {
+            "description_en": "Source dataset ID. For information about how to obtain a dataset ID, see [ListDatasets]（https://help.aliyun.com/document_detail/457222.html）",
+            "description_zh": "来源数据集ID。如何获取数据集ID，请参见[ListDatasets]（https://help.aliyun.com/document_detail/457222.html）",
+            "example": "214***12514",
+            "required": true,
+            "title": "来源数据集ID",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "QuestionOption": {
+        "description_en": "Option description.  ",
+        "description_zh": "选项描述",
+        "properties": {
+          "Children": {
+            "description_en": "List of child options.  ",
+            "description_zh": "下级选项列表",
+            "items": {
+              "$ref": "#/components/schemas/QuestionOption",
+              "description_en": "Configure according to the QuestionOption parameter list.  ",
+              "description_zh": "参考QuestionOption参数列表进行配置"
+            },
+            "title": "下级选项",
+            "type": "array"
+          },
+          "Color": {
+            "description_en": "Color.  ",
+            "description_zh": "颜色",
+            "example": "#239125",
+            "title": "颜色",
+            "type": "string"
+          },
+          "Key": {
+            "description_en": "Tag Name.  ",
+            "description_zh": "标签名称",
+            "example": "12",
+            "required": true,
+            "title": "标签名称",
+            "type": "string"
+          },
+          "Label": {
+            "description_en": "Label display name.  ",
+            "description_zh": "标签展示名",
+            "example": "dog",
+            "required": true,
+            "title": "标签展示名",
+            "type": "string"
+          },
+          "Remark": {
+            "description_en": "Remark.  ",
+            "description_zh": "备注",
+            "example": "第一道题目",
+            "title": "备注",
+            "type": "string"
+          },
+          "Shortcut": {
+            "description_en": "Keyboard shortcut.  ",
+            "description_zh": "快捷键",
+            "example": "1",
+            "title": "快捷键",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "SimpleUser": {
+        "description_en": "Tenant user information  ",
+        "description_zh": "租户用户信息",
+        "properties": {
+          "AccountNo": {
+            "description_en": "Account ID  ",
+            "description_zh": "账户ID",
+            "example": "166***9980757310",
+            "title": "账户ID",
+            "type": "string"
+          },
+          "AccountType": {
+            "description_en": "Account Type  ",
+            "description_zh": "账户类型",
+            "example": "ALIYUN",
+            "title": "账户类型",
+            "type": "string"
+          },
+          "Role": {
+            "description_en": "Role  ",
+            "description_zh": "角色",
+            "example": "ADMIN",
+            "title": "角色",
+            "type": "string"
+          },
+          "UserId": {
+            "description_en": "User ID  ",
+            "description_zh": "用户ID",
+            "example": "166***9980757311",
+            "format": "int64",
+            "title": "用户ID",
+            "type": "integer"
+          },
+          "UserName": {
+            "description_en": "Username  ",
+            "description_zh": "用户名",
+            "example": "txdemo@test.aliyunid.com",
+            "title": "用户名",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "TaskAssginConfig": {
+        "description_en": "Create an allocation struct",
+        "description_zh": "创建分配结构体",
+        "properties": {
+          "AssignCount": {
+            "description_en": "Allocation quantity",
+            "description_zh": "分配数量",
+            "example": "2",
+            "format": "int64",
+            "title": "分配数量",
+            "type": "integer"
+          },
+          "AssignField": {
+            "description_en": "Assign by field",
+            "description_zh": "按照字段进行分配",
+            "example": "label_field",
+            "title": "按照字段进行分配",
+            "type": "string"
+          },
+          "AssignSubTaskCount": {
+            "description_en": "If average allocation is selected, specify the number of job packages",
+            "description_zh": "如果选择平均分配；任务包数量",
+            "example": "0",
+            "title": "如果选择平均分配；任务包数量",
+            "type": "string"
+          },
+          "AssignType": {
+            "default": "FIXED_SIZE",
+            "description_en": "The allocation rule for job packages. Valid values:\nFIXED_SIZE: Assign by fixed size.\nAVG_SIZE: Assign by average quantity.\nFIELD_BASE: Assign by imported field",
+            "description_zh": "任务包的分配规则，取值如下：\nFIXED_SIZE：按固定大小分配。\nAVG_SIZE：按平均数量进行分配。\nFIELD_BASE：按导入字段进行分配",
+            "enum": [
+              "FIXED_SIZE",
+              "AVG_SIZE",
+              "FIELD_BASE"
+            ],
+            "example": "FIXED_SIZE",
+            "title": "分配类型",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "TaskTemplateConfig": {
+        "description_en": "Additional configuration for job templates.  ",
+        "description_zh": "任务模板补充配置",
+        "properties": {
+          "Exif": {
+            "additionalProperties": {
+              "description_en": "Additional information for template configuration.  ",
+              "description_zh": "模板配置额外信息",
+              "example": "false",
+              "type": "string"
+            },
+            "description_en": "Additional information for template configuration.  ",
+            "description_zh": "模板配置额外信息",
+            "title": "拓展字段",
+            "type": "object"
+          },
+          "ResourceKey": {
+            "description_en": "Display field corresponding to the View.  ",
+            "description_zh": "View对应的展示字段",
+            "example": "url",
+            "title": "View对应的展示字段",
+            "type": "string"
+          },
+          "SelectQuestions": {
+            "description_en": "List of questions in the template.  ",
+            "description_zh": "模板部分题目列表",
+            "items": {
+              "description_en": "Question.  ",
+              "description_zh": "题目",
+              "example": "[\"question1\",\"question2\"]",
+              "type": "string"
+            },
+            "title": "如果只需要模版部分题目；题目名称",
+            "type": "array"
+          },
+          "TemplateOptionMap": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TaskTemplateOptionConfig",
+              "description_en": "Job template options configuration.  ",
+              "description_zh": "任务模板选项配置",
+              "example": "{\"1\":[{\"label\":\"Option-A\",\"key\":\"Option-A\"},{\"label\":\"Option-A\",\"key\":\"Option-A\"}]}"
+            },
+            "description_en": "Template options configuration.  ",
+            "description_zh": "模板选项配置",
+            "title": "通用模版选项配置",
+            "type": "object"
+          },
+          "TemplateRelationId": {
+            "description_en": "Template ID on which this depends.  ",
+            "description_zh": "依赖的模板ID",
+            "example": "154***2391839854592",
+            "title": "依赖的模版ID",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "TaskTemplateOptionConfig": {
+        "description_en": "Configuration of a common template (COMMON) question.  ",
+        "description_zh": "通用模版（COMMON）题目配置",
+        "properties": {
+          "DefaultResult": {
+            "description_en": "The default value must be adapted according to the question type. For a Radio or text box question, directly enter the tag value. For a Multiple Choice question, configure it as [\"{tag 1}\", \"{tag 2}\"].  ",
+            "description_zh": "默认值需要根据题目进行适配，若是单选或文本框则直接填写标签值；若是多选，则配置为[\"{标签 1}\", \"{标签 2}\"]",
+            "example": "猫咪",
+            "title": "DefaultResult",
+            "type": "string"
+          },
+          "Options": {
+            "description_en": "Select the list of question options.  ",
+            "description_zh": "选择题目选项列表",
+            "items": {
+              "$ref": "#/components/schemas/QuestionOption",
+              "description_en": "Question option.  ",
+              "description_zh": "题目选项"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "PreOptions": {
+            "description_en": "List of preset options for text-type questions.  ",
+            "description_zh": "文本类题目预制选项列表",
+            "items": {
+              "description_en": "Text option.  ",
+              "description_zh": "文本选项",
+              "example": "options",
+              "type": "string"
+            },
+            "title": "PreOptions",
+            "type": "array"
+          },
+          "Rule": {
+            "description_en": "Validation rule item; valid only for fill-in-the-blank text-type questions.  ",
+            "description_zh": "校验规则项；针对文本类填空题目有效",
+            "example": "\\w+",
+            "title": "Rule",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Create an annotation job for the current tenant",
   "description_zh": "为当前租户新增标注任务",
@@ -573,6 +1023,11 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "MARK",
+              "CHECK",
+              "SAMPLING"
+            ],
             "example": "MARK",
             "help_en": "Node name. Valid values:\nMARK: Annotate.\nCHECK: Check.\nSAMPLING: Validate",
             "help_zh": "结点名称，取值如下：\nMARK：标注。\nCHECK：检查。\nSAMPLING：验收",
@@ -601,6 +1056,11 @@
     {
       "fields": [
         {
+          "enum": [
+            "FIXED_SIZE",
+            "AVG_SIZE",
+            "FIELD_BASE"
+          ],
           "example": "FIXED_SIZE",
           "help_en": "The allocation rule for job packages. Valid values:\nFIXED_SIZE: Assign by fixed size.\nAVG_SIZE: Assign by average quantity.\nFIELD_BASE: Assign by imported field",
           "help_zh": "任务包的分配规则，取值如下：\nFIXED_SIZE：按固定大小分配。\nAVG_SIZE：按平均数量进行分配。\nFIELD_BASE：按导入字段进行分配",
@@ -720,6 +1180,9 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "PAI"
+            ],
             "example": "PAI",
             "help_en": "Dataset source. Only PAI is supported",
             "help_zh": "数据集来源，仅支持PAI",
@@ -773,6 +1236,69 @@
   "pathPattern": "/openapi/api/v1/tenants/[TenantId]/tasks",
   "product_code": "OpenITag",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Project",
+        "description_zh": "项目",
+        "properties": {
+          "Code": {
+            "description_en": "Total amount of data under the conditions of this request. This parameter is optional and does not need to be returned by default",
+            "description_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+            "example": "0",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "TotalCount本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+            "type": "integer"
+          },
+          "Details": {
+            "description_en": "Details",
+            "description_zh": "详情",
+            "example": "null",
+            "type": "string"
+          },
+          "ErrorCode": {
+            "description_en": "Error code",
+            "description_zh": "错误码",
+            "example": "\"\"",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "Response message of the request",
+            "description_zh": "请求的返回信息",
+            "example": "success",
+            "required": true,
+            "title_en": "",
+            "title_zh": "表示当前调用返回读取到的位置，空代表数据已经读取完毕",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求id",
+            "example": "90ABA848-AD74-1F6E-84BC-4182A7F1F29E",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the operation succeeded",
+            "description_zh": "是否成功",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TaskId": {
+            "description_en": "Job ID",
+            "description_zh": "任务id",
+            "example": "154***2518306500608",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "Job details",

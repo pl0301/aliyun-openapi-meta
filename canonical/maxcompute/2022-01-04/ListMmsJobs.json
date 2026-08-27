@@ -99,6 +99,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "INIT",
+        "DONE",
+        "DOING",
+        "FAILED"
+      ],
       "example": "DOING",
       "help_en": "The status of the migration job",
       "help_zh": "迁移计划状态",
@@ -164,6 +170,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "asc",
+        "desc"
+      ],
       "example": "desc",
       "help_en": "Sorting by status",
       "help_zh": "按照状态排序",
@@ -179,5 +189,303 @@
   ],
   "pathPattern": "/api/v1/mms/datasources/[sourceId]/jobs",
   "product_code": "MaxCompute",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned data",
+        "description_zh": "返回数据",
+        "properties": {
+          "data": {
+            "description_en": "The details of the returned data",
+            "description_zh": "返回数据详细信息",
+            "properties": {
+              "objectList": {
+                "description_en": "The list of migration jobs",
+                "description_zh": "迁移作业列表",
+                "items": {
+                  "description_en": "The migration job object",
+                  "description_zh": "迁移作业对象",
+                  "properties": {
+                    "config": {
+                      "description_en": "The configuration of the migration job",
+                      "description_zh": "迁移作业的配置",
+                      "properties": {
+                        "columnMapping": {
+                          "additionalProperties": {
+                            "description_en": "The mapping from a source column name to a destination column name",
+                            "description_zh": "{源列名：目标列名}",
+                            "example": "{\"c-1\": \"c_1\"}",
+                            "type": "string"
+                          },
+                          "description_en": "The mapping from source column names to destination column names",
+                          "description_zh": "{源列名：目标列名}",
+                          "type": "object"
+                        },
+                        "enableVerification": {
+                          "description_en": "Enable verification. The current method runs SELECT COUNT on both the source and destination and compares the row counts",
+                          "description_zh": "开启校验，目前校验方式是在源和目标端执行select count，对比行数",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "increment": {
+                          "description_en": "Enable incremental migration. Only new or modified partitions are migrated. Modified partitions are re-migrated",
+                          "description_zh": "增量迁移：只迁移新分区或有变动的分区，注意有变动的分区会被重迁",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "others": {
+                          "description_en": "Other configuration settings",
+                          "description_zh": "其他配置信息",
+                          "example": "{\"spark.executor.mem\": \"2g\"}",
+                          "type": "object"
+                        },
+                        "partitionFilters": {
+                          "additionalProperties": {
+                            "description_en": "The partition filter expression. Example: p1 >= '2022-03-04' and (p2 = 10 or p3 > 20) and p4 in ('abc', 'cde'). Notes:\n\np1, p2, and p3 are partition names.\n\nPartition values are strings or numbers. Strings are enclosed in double or single quotes.\n\nOnly string values are allowed for partition columns other than INT and BIGINT types.\n\nComparison operators include the following: >, >=, =, <, <=, and <>.\n\nThe IN operator is supported.\n\nLogical operators include AND and OR.\n\nUse parentheses to group conditions",
+                            "description_zh": "分区过滤表达式。例如：p1 >= '2022-03-04' and (p2 = 10 or p3 > 20) and p4 in ('abc', 'cde')，介绍如下：\n\np1、p2和p3均为分区名。\n\n分区值仅包含字符串和数字，字符串被双引号或单引号包裹。\n\n除INT和BIGINT类型的分区列值外，其他类型的分区值都只能取字符串值。\n\n比较操作符包括：>、>=、= 、<、<=、<>。\n\n分区过滤表达式支持IN操作符。\n\n逻辑操作符包括：AND和OR。\n\n支持使用括号",
+                            "example": "{\n\"student\": \"p1 >= '2022-03-04' and (p2 = 10 or p3 > 20) and p4 in ('abc', 'cde')\" \n}",
+                            "type": "string"
+                          },
+                          "description_en": "The partition filter expression. Specify the partition filter expression for each table",
+                          "description_zh": "分区过滤表达式。 配置指定\"表\"对应的\"分区过滤表达式\"",
+                          "type": "object"
+                        },
+                        "partitions": {
+                          "description_en": "When type is set to Partitions, specify the partition IDs of the tables to migrate",
+                          "description_zh": "当 type=Partitions时, 通过该参数指定要迁移表的分区ID列表",
+                          "items": {
+                            "description_en": "The partition ID of a table to migrate",
+                            "description_zh": "要迁移表的分区 ID",
+                            "example": "[123, 132]",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "type": "array"
+                        },
+                        "schemaOnly": {
+                          "description_en": "Deprecated",
+                          "description_zh": "Depcreated",
+                          "example": "false",
+                          "type": "boolean"
+                        },
+                        "tableBlackList": {
+                          "description_en": "When type is set to Database, specify the tables to exclude from migration",
+                          "description_zh": "当 type=Database时， 通过tableBlackList指定排除哪些表不迁移",
+                          "items": {
+                            "description_en": "When type is set to Database, the table to exclude from migration",
+                            "description_zh": "当 type=Database 时， 要排查的表",
+                            "example": "[\"student\", \"scores\"]",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "tableMapping": {
+                          "additionalProperties": {
+                            "description_en": "The mapping from a source table name to a destination table name",
+                            "description_zh": "源表名->目标名 映射",
+                            "example": "{'a': 'a1'}",
+                            "type": "string"
+                          },
+                          "description_en": "The mapping from source table names to destination table names",
+                          "description_zh": "源表名->目标名 映射",
+                          "type": "object"
+                        },
+                        "tableWhiteList": {
+                          "description_en": "When type is set to Database, specify the tables to migrate. If you do not specify tableWhiteList, all tables in the specified database are migrated",
+                          "description_zh": "当 type=Database 时， 指定的要迁移的表列表。如果没有指定tableWhiteList，则迁移对应Database下的所有表",
+                          "items": {
+                            "description_en": "When type is set to Database, the table to migrate",
+                            "description_zh": "当 type=Database 时， 指定的要迁移的表",
+                            "example": "[\"student\", \"scores\"]",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "tables": {
+                          "description_en": "When type is set to Tables, specify the names of the tables to migrate",
+                          "description_zh": "当type=Tables时, 通过该参数指定要迁移的表的名称列表",
+                          "items": {
+                            "description_en": "The name of a table to migrate",
+                            "description_zh": "要迁移的表的名称",
+                            "example": "[\"student\", \"scores\"]",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "taskType": {
+                          "description_en": "Deprecated. Valid values: MOCK, HIVE (hive udtf task), HIVE_DATAX (hive datax task), COPY_TASK (ODPS Copy Task), ODPS_INSERT_OVERWRITE (ODPS simple insert overwrite task), MC2MC_VERIFY, OSS, HIVE_OSS, HIVE_SPARK, and BIGQUERY",
+                          "description_zh": "Depcreated； 可以指定的值有\nMOCK, HIVE: hive udtf task, HIVE_DATAX: hive datax task, COPY_TASK: odps Copy Task, ODPS_INSERT_OVERWRITE: odps simple insert overwrite task, MC2MC_VERIFY, OSS, HIVE_OSS, HIVE_SPARK, BIGQUERY",
+                          "example": "BIGQUERY",
+                          "title_en": "",
+                          "title_zh": "MOCK, HIVE: hive udtf task, HIVE_DATAX: hive datax task, COPY_TASK: odps Copy Task, ODPS_INSERT_OVERWRITE: odps simple insert overwrite task, MC2MC_VERIFY, OSS, HIVE_OSS, HIVE_SPARK, BIGQUERY",
+                          "type": "string"
+                        },
+                        "tunnelQuota": {
+                          "description_en": "Deprecated",
+                          "description_zh": "Depcreated",
+                          "example": "Depcreated",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "createTime": {
+                      "description_en": "Indicates whether the migration job is stopped",
+                      "description_zh": "迁移作业是否被停止",
+                      "example": "2024-12-17 15:44:17\n",
+                      "type": "string"
+                    },
+                    "dbId": {
+                      "description_en": "The source database ID",
+                      "description_zh": "源库ID",
+                      "example": "196",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "dstDbName": {
+                      "description_en": "The destination MaxCompute project",
+                      "description_zh": "目标MaxCompute项目",
+                      "example": "mms_test",
+                      "type": "string"
+                    },
+                    "dstSchemaName": {
+                      "description_en": "The destination MaxCompute schema",
+                      "description_zh": "目标MaxCompute Schema",
+                      "example": "test_table_1",
+                      "type": "string"
+                    },
+                    "eta": {
+                      "description_en": "The estimated completion time of the migration. A smaller eta value increases the priority of the migration job",
+                      "description_zh": "期望的迁移完成时间. 注意：eta值越小，迁移任务的优先级会越高",
+                      "example": "2025-05-06",
+                      "type": "string"
+                    },
+                    "id": {
+                      "description_en": "The migration job ID",
+                      "description_zh": "迁移作业ID",
+                      "example": "18",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "name": {
+                      "description_en": "The name of the migration job",
+                      "description_zh": "迁移作业名字",
+                      "example": "migrate_db_1",
+                      "type": "string"
+                    },
+                    "sourceId": {
+                      "description_en": "The data source ID",
+                      "description_zh": "数据源ID",
+                      "example": "2000015",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "sourceName": {
+                      "description_en": "The name of the data source",
+                      "description_zh": "数据源名",
+                      "example": "demo",
+                      "type": "string"
+                    },
+                    "srcDbName": {
+                      "description_en": "The name of the source database",
+                      "description_zh": "源库名",
+                      "example": "test_db_1",
+                      "type": "string"
+                    },
+                    "srcSchemaName": {
+                      "description_en": "The source schema name. This is the schema in a Layer 3 namespace",
+                      "description_zh": "源schema name-三层命名空间中的schema",
+                      "example": "test_table_1",
+                      "type": "string"
+                    },
+                    "status": {
+                      "description_en": "The status of the migration job",
+                      "description_zh": "迁移作业状态",
+                      "enumValueTitles": {
+                        "DOING": "运行中",
+                        "DONE": "完成",
+                        "FAILED": "运行失败",
+                        "INIT": "未开始运行"
+                      },
+                      "example": "DONE",
+                      "title_en": "INIT, DOING, FAILED, DONE",
+                      "title_zh": "INIT, DOING, FAILED, DONE",
+                      "type": "string"
+                    },
+                    "stopped": {
+                      "description_en": "Indicates whether the migration job is stopped",
+                      "description_zh": "迁移作业是否被停止",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "taskDone": {
+                      "description_en": "The number of completed migration tasks",
+                      "description_zh": "迁移任务完成数",
+                      "example": "10",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "taskNum": {
+                      "description_en": "The number of migration tasks in the job",
+                      "description_zh": "包含的迁移任务数量",
+                      "example": "10",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "type": {
+                      "description_en": "The migration scope. Valid values: Database, Tables, and Partitions",
+                      "description_zh": "迁移范围：Database, Tables, Partitions",
+                      "enumValueTitles": {
+                        "Database": "单库",
+                        "Partitions": "多个分区",
+                        "Tables": "多个表"
+                      },
+                      "example": "Tables",
+                      "title_en": "Database, Tables, Partitions",
+                      "title_zh": "Database, Tables, Partitions",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "pageNum": {
+                "description_en": "The page number",
+                "description_zh": "页码",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "pageSize": {
+                "description_en": "The number of entries returned on each page",
+                "description_zh": "分页大小",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "total": {
+                "description_en": "The total number of records",
+                "description_zh": "总记录数",
+                "example": "100",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1112E7C7-C65F-57A2-A7C7-3B178AA257B6",
+            "type": "string"
+          }
+        },
+        "title_en": "ApiRes<PagedListDTO<JobModel>>",
+        "title_zh": "ApiRes<PagedListDTO<JobModel>>",
+        "type": "object"
+      }
+    }
+  }
 }

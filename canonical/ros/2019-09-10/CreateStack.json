@@ -88,6 +88,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "MyStack",
       "help_en": "The stack name. Maximum length: 255 characters. Must start with a letter and can contain letters, digits, hyphens (-), and underscores (_)",
       "help_zh": "资源栈名称。  \n长度不超过255个字符，必须以英文字母开头，可包含数字、英文字母、短划线（-）和下划线（_）",
@@ -101,6 +102,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID of the stack. Call https://help.aliyun.com/document_detail/131035.html to query available regions",
       "help_zh": "资源栈所属的地域ID。您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
@@ -377,214 +379,27 @@
   "pathPattern": "",
   "product_code": "ROS",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "Ensures request idempotency. Must be client-generated and globally unique. Maximum length: 64 characters. Can contain letters, digits,&#x20;hyphens (-), an&#x64;&#x20;underscores (_).\n\nhttps://help.aliyun.com/document_detail/134212.html",
-      "help_zh": "保证请求的幂等性。该值由客户端生成，并且必须是全局唯一的。长度不超过64个字符，可包含英文字母、数字、短划线（-）和下划线（_）。 \n\n更多信息，请参见https://help.aliyun.com/document_detail/134212.html",
-      "name": "ClientToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The post-creation behavior for the stack. Valid values:\n\nKeepStackOnCreationComplete (default): retains the stack and resources after creation. Counts toward the stack quota.\n\nAbandonStackOnCreationComplete: deletes the stack but retains resources after creation. Does not count toward the stack quota. The stack is retained if creation fails.\n\nAbandonStackOnCreationRollbackComplete: deletes the stack after a creation rollback. Does not count toward the stack quota. The stack is retained in other rollback scenarios.\n\nManuallyPay: requires manual payment for subscription resources during stack creation. Supported resource types: `ALIYUN::ECS::InstanceGroup`, `ALIYUN::RDS::DBInstance`, `ALIYUN::SLB::LoadBalancer`, `ALIYUN::VPC::EIP`, and `ALIYUN::VPC::VpnGateway`.\n\nRetryOnNoStock: automatically retries resource creation on insufficient inventory. Supported resource type: `ALIYUN::RDS::DBInstance`.\n\nYou can specify only one of the following parameters: CreateOption or CreateOptions",
-      "help_zh": "创建选项，用于控制创建资源栈的行为。取值：\n\nKeepStackOnCreationComplete（默认值）：创建资源栈成功后保留资源栈及资源栈中的资源，占用ROS允许创建的资源栈数量限额。\n\nAbandonStackOnCreationComplete：创建资源栈成功后删除资源栈，但保留所有资源，不占用ROS允许创建的资源栈数量限额。如果创建资源栈失败，资源栈会保留。  \n\nAbandonStackOnCreationRollbackComplete：创建资源栈回滚成功后删除资源栈，不占用ROS允许创建的资源栈数量限额。其他情况则保留资源栈。\n\nManuallyPay：在创建资源栈过程中手动支付包年包月的资源。目前支持手动支付的资源类型包括`ALIYUN::ECS::InstanceGroup`、`ALIYUN::RDS::DBInstance`、`ALIYUN::SLB::LoadBalancer`、`ALIYUN::VPC::EIP`、`ALIYUN::VPC::VpnGateway`。\n\nRetryOnNoStock：创建资源因为无库存原因失败时，会自动进行重试。目前支持重试的资源类型包括`ALIYUN::RDS::DBInstance`。\n\n仅能指定CreateOption和CreateOptions其中一个参数",
-      "name": "CreateOption",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The creation options for the stack",
-      "help_zh": "创建选项列表",
-      "name": "CreateOptions",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "Specifies whether to enable deletion protection on the stack. Valid values:\n\nEnabled: enables deletion protection.\n\nDisabled (default): allows stack deletion via the ROS console or the DeleteStack API.\n\nThe deletion protection of a nested stack is the same as that of its root stack",
-      "help_zh": "是否开启资源栈删除保护。取值：\nEnabled：开启资源栈删除保护。\nDisabled（默认）：关闭资源栈删除保护。此时支持通过控制台或API（DeleteStack）释放资源栈。\n\n嵌套资源栈删除保护与根资源栈一致",
-      "name": "DeletionProtection",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to disable rollback when stack creation fails.\n\nValid values:\n\ntrue: disables rollback.\n\nfalse (default): enables rollback",
-      "help_zh": "当创建资源栈失败时，是否禁用回滚。\n\n取值：\n\ntrue：禁用回滚，即在创建资源栈失败时不进行回滚。\nfalse（默认值）：不禁用回滚，即在创建资源栈失败时进行回滚",
-      "name": "DisableRollback",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The callback URL for stack events. Valid values:\n\nHTTP POST URL. Maximum length: 1,024 bytes.\n\nEventBridge receives stack status change notifications. View events in the EventBridge console (https://eventbridge.console.aliyun.com).\n\nSupported regions: China (Hangzhou), China (Shanghai), China (Beijing), China (Hong Kong), and China (Zhangjiakou).\n\nMaximum value of N: 5. ROS sends notifications on stack status changes, except for IN_PROGRESS events. With rollback enabled, CREATE_ROLLBACK and ROLLBACK events replace CREATE_FAILED and UPDATE_FAILED notifications. Notifications always include Outputs. Example notification:\n\n```\n{\n   \"Outputs\": [\n       {\n           \"Description\": \"No description given\",\n           \"OutputKey\": \"InstanceId\",\n           \"OutputValue\": \"i-xxx\"\n       }\n   ],\n   \"StackId\": \"80bd6b6c-e888-4573-ae3b-93d29113****\",\n   \"StackName\": \"test-notification-url\",\n   \"Status\": \"CREATE_COMPLETE\"\n}\n```",
-      "help_zh": "接收资源栈事件的回调地址。取值：\n\nHTTP POST URL      \n每个URL最大长度为1024个字节。  \n\neventbridge  \n资源栈状态变更会通知到事件总线（EventBridge）服务。您可以在事件总线控制台 (https://eventbridge.console.aliyun.com)查看事件信息。  \n当前支持华东1（杭州）、华东2（上海）、华北2（北京）、中国（香港）、华北3（张家口）五个地域。    \n\n  \nN最大值为5。资源栈的状态发生变化时，会进行通知。当资源栈启用回滚时，CREATE_FAILED（创建失败）和UPDATE_FAILED（更新失败）不会通知，而CREATE_ROLLBACK（创建失败回滚）和ROLLBACK（更新失败回滚）会进行通知。IN_PROGRESS状态不会通知。  \n无论资源栈是否定义了Outputs都会进行通知。通知内容示例如下：  \n ```\n{\n    \"Outputs\": [\n        {\n            \"Description\": \"No description given\",\n            \"OutputKey\": \"InstanceId\",\n            \"OutputValue\": \"i-xxx\"\n        }\n    ],\n    \"StackId\": \"80bd6b6c-e888-4573-ae3b-93d29113****\",\n    \"StackName\": \"test-notification-url\",\n    \"Status\": \"CREATE_COMPLETE\"\n}\n```",
-      "name": "NotificationURLs",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The maximum number of concurrent operations on resources.\n\nDefault: empty. Accepts integers greater than or equal to 0.\n\nIf greater than 0, the specified value is used. If 0 or empty, no limit applies to ROS stacks; Terraform stacks use the Terraform default (typically 10).\n\nThe specified value persists with the stack and affects subsequent operations such as updates",
-      "help_zh": "资源最大并发数。\n\n默认为空，用户可以输入大于等于零的整数。\n\n若设置为大于零的整数，则使用该整数；若设置为零或者不设置，对于ROS类型资源栈不限制，Terraform类型资源栈使用Terraform默认值（通常为10）。 \n若设置了该值，将与资源栈进行关联，影响资源栈的后续操作，比如更新资源栈",
-      "name": "Parallelism",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The parameters that are defined in the template",
-      "help_zh": "模板中已定义的参数",
-      "name": "Parameters",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "ParameterKey",
-          "position": "query",
-          "required": true,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "B288A0BE-D927-4888-B0F7-B35EF84B6E6F",
+            "type": "string"
+          },
+          "StackId": {
+            "description_en": "The stack ID",
+            "description_zh": "资源栈ID",
+            "example": "4a6c9851-3b0f-4f5f-b4ca-a14bf691****",
+            "type": "string"
+          }
         },
-        {
-          "name": "ParameterValue",
-          "position": "query",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "type": "array"
-    },
-    {
-      "help_en": "The RAM role name. ROS assumes this role for all stack API calls, even when the user has direct permissions, ensuring least-privilege access. https://help.aliyun.com/document_detail/2568025.html.\n\nIf not specified, ROS uses the role associated with the stack, or a temporary credential from your account if no role exists.\n\nMaximum length: 64 characters",
-      "help_zh": "RAM角色名称。ROS会扮演该角色创建资源栈，使用角色的凭证代表用户进行接口调用。  \nROS始终将此角色用于资源栈上将进行的操作。只要用户有权在资源栈上进行操作，即使用户无权使用角色，ROS也会使用此角色，确保角色授予最少的权限。关于如何使用RAM角色，请参见https://help.aliyun.com/document_detail/2568025.html。\n\n如果用户未指定该值，ROS将使用以前与资源栈关联的角色。如果没有可用角色，ROS将使用从您的用户凭证中生成的临时凭证。\n\nRAM角色名称最大长度为64个字符",
-      "name": "RamRoleName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The region ID of the stack. Call https://help.aliyun.com/document_detail/131035.html to query available regions",
-      "help_zh": "资源栈所属的地域ID。您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
-      "name": "RegionId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the resource group. If not specified, the stack is added to the default resource group.\n\nhttps://help.aliyun.com/document_detail/94475.html",
-      "help_zh": "资源组ID。如果不指定该参数，资源栈将加入默认资源组。  \n\n关于资源组的更多信息，请参见https://help.aliyun.com/document_detail/94475.html",
-      "name": "ResourceGroupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The stack name. Maximum length: 255 characters. Must start with a letter and can contain letters, digits, hyphens (-), and underscores (_)",
-      "help_zh": "资源栈名称。  \n长度不超过255个字符，必须以英文字母开头，可包含数字、英文字母、短划线（-）和下划线（_）",
-      "name": "StackName",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The stack policy body. Length: 1 to 16,384 bytes.\n\nYou can specify only one of the following parameters: StackPolicyBody or StackPolicyURL",
-      "help_zh": "包含资源栈策略主体的结构，长度为1~16,384个字节。\n\n您仅能指定StackPolicyBody或StackPolicyURL其中一个参数",
-      "name": "StackPolicyBody",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The URL of the stack policy file. Supports HTTP, HTTPS, and OSS URLs (for example, oss\\://ros/stack-policy/demo or oss\\://ros/stack-policy/demo?RegionId=cn-hangzhou). Maximum file size: 16,384 bytes. If no OSS region is specified, the RegionId value is used.\n\nYou can specify only one of the following parameters: StackPolicyBody or StackPolicyURL.\n\nMaximum URL length: 1,350 bytes",
-      "help_zh": "包含资源栈策略的文件的位置。URL必须指向位于Web服务器（HTTP或HTTPS）或阿里云OSS存储空间（例如：oss://ros/stack-policy/demo、oss://ros/stack-policy/demo?RegionId=cn-hangzhou）中的策略，策略文件最大长度为16,384个字节。如未指定OSS地域，默认与接口参数RegionId相同。 \n\n您仅能指定StackPolicyBody或StackPolicyURL其中一个参数。\n\nURL最大长度为1350个字节",
-      "name": "StackPolicyURL",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The tags of the stack",
-      "help_zh": "资源栈的标签",
-      "name": "Tags",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "Key",
-          "position": "query",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "name": "Value",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "array"
-    },
-    {
-      "help_en": "The template body. Length: 1 to 524,288 bytes. Use HTTP POST with Body parameters for large content to avoid URL length limits.\n\nYou must specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, or TemplateScratchId",
-      "help_zh": "模板主体的结构。长度为1~524,288个字节。如果长度较长，则建议通过HTTP POST+Body Param的方式，将参数放在请求体中进行传递，避免因URL过长而导致请求失败。 \n您必须且仅能指定TemplateBody、TemplateURL、TemplateId或TemplateScratchId其中一个参数",
-      "name": "TemplateBody",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The template ID. This parameter applies to shared and private templates.\n\nYou must specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, or TemplateScratchId",
-      "help_zh": "模板ID。支持共享模板和私有模板。\n\n您必须且仅能指定TemplateBody、TemplateURL、TemplateId或TemplateScratchId其中一个参数",
-      "name": "TemplateId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the resource scenario.\n\nCall https://help.aliyun.com/document_detail/363050.html to query resource scenario IDs.\n\nYou must specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, or TemplateScratchId",
-      "help_zh": "资源场景ID。\n\n关于如何获取资源场景ID，请参见https://help.aliyun.com/document_detail/363050.html。\n\n您必须且仅能指定TemplateBody、TemplateURL、TemplateId或TemplateScratchId其中一个参数",
-      "name": "TemplateScratchId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The region ID of the resource scenario. Default value: the value of RegionId.\n\nCall https://help.aliyun.com/document_detail/131035.html to query available regions",
-      "help_zh": "资源场景所属的地域ID，默认与RegionId取值相同。\n\n您可以调用https://help.aliyun.com/document_detail/131035.html查看最新的阿里云地域列表",
-      "name": "TemplateScratchRegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The URL of the template file. Supports HTTP, HTTPS, and OSS URLs (for example, oss\\://ros/stack-policy/demo or oss\\://ros/stack-policy/demo?RegionId=cn-hangzhou). Maximum template size: 524,288 bytes. If no OSS region is specified, the RegionId value is used.\n\nYou must specify only one of the following parameters: TemplateBody, TemplateURL, TemplateId, or TemplateScratchId",
-      "help_zh": "包含模板主体的文件的位置。URL必须指向位于Web服务器（HTTP或HTTPS）或阿里云OSS存储空间（例如：oss://ros/stack-policy/demo、oss://ros/stack-policy/demo?RegionId=cn-hangzhou）中的模板，模板的最大长度为524,288个字节。如未指定OSS地域，默认与RegionId取值相同。 \n\n您必须且仅能指定TemplateBody、TemplateURL、TemplateId或TemplateScratchId其中一个参数",
-      "name": "TemplateURL",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The version of the template. This parameter takes effect only when you specify TemplateId",
-      "help_zh": "模板版本。仅在指定TemplateId时生效",
-      "name": "TemplateVersion",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The stack creation timeout. Unit: minutes.\n\nDefault value: 60.\n\nValid values: 10 to 1440",
-      "help_zh": "创建资源栈的超时时间。\n\n默认值：60。\n\n单位：分钟。\n\n取值范围：10~1440",
-      "name": "TimeoutInMinutes",
-      "position": "query",
-      "required": false,
-      "type": "int"
+        "type": "object"
+      }
     }
-  ]
+  }
 }

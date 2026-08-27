@@ -21,10 +21,17 @@
   },
   "parameters": [
     {
+      "doc_required": true,
+      "enum": [
+        "3600",
+        "86400"
+      ],
       "example": "3600",
       "help_en": "The time interval between data slices. Unit: seconds. Minimum value: 3600.\n\nValid values:\n\n3600: 1 hour\n86400: 1 day",
       "help_zh": "数据片的时间间隔，单位为秒，最小值为3600",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "0",
       "name": "interval_in_sec",
       "options": [
         "--interval-in-sec"
@@ -34,10 +41,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1699200000000",
       "help_en": "The start of the time range to query. Unit: milliseconds",
       "help_zh": "起始时间的时间戳，精确到毫秒",
       "location": "query",
+      "maximum": "9223372036854775806",
+      "minimum": "0",
       "name": "start_time",
       "options": [
         "--start-time"
@@ -47,10 +57,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1699286400000",
       "help_en": "The end of the time range to query. Unit: milliseconds",
       "help_zh": "结束时间的时间戳，精确到毫秒",
       "location": "query",
+      "maximum": "9223372036854775806",
+      "minimum": "0",
       "name": "end_time",
       "options": [
         "--end-time"
@@ -60,6 +73,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "dataType"
+      ],
       "example": "dataType",
       "help_en": "The dimension by which data is sorted.\n\nValid value:\n\ndataType\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->",
       "help_zh": "排序依据，可设为任一dimesion",
@@ -73,6 +89,10 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "USAGEFEE.STAT"
+      ],
       "example": "USAGEFEE.STAT\n",
       "help_en": "The name of the metric. Valid value: USAGEFEE.STAT",
       "help_zh": "指标名称，取值：USAGEFEE.STAT",
@@ -126,6 +146,10 @@
             "type": "string"
           },
           {
+            "enum": [
+              "in",
+              "eq"
+            ],
             "example": "eq",
             "help_en": "The operator. Valid values: eq and in",
             "help_zh": "操作符，目前仅支持等于或者in",
@@ -185,6 +209,10 @@
       "type": "array"
     },
     {
+      "enum": [
+        "timeSeriesQuery",
+        "instantQuery"
+      ],
       "example": "instantQuery",
       "help_en": "The data type. Valid values:\n\ninstantQuery: non-time series\ntimeSeriesQuery: time series",
       "help_zh": "查询的数据返回类型：\ninstantQuery 非时序\ntimeSeriesQuery 时序",
@@ -200,5 +228,72 @@
   ],
   "pathPattern": "",
   "product_code": "ARMS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The response status. Valid values: 2XX: The request is successful. 3XX: A redirection message is returned. 4XX: The request is invalid. 5XX: A server error occurs",
+            "description_zh": "接口状态，取值说明如下：2XX：成功。3XX：重定向。4XX：请求错误。5XX：服务器错误",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Data": {
+            "description_en": "The returned struct",
+            "description_zh": "返回结构体",
+            "properties": {
+              "Complete": {
+                "description_en": "Indicates whether a multi-region query is complete. Valid values:\n\ntrue\nfalse",
+                "description_zh": "涉及到多区域查询是，整体是否执行完成：\n\ntrue：是。\n\nfalse：否",
+                "example": "true",
+                "type": "boolean"
+              },
+              "Items": {
+                "description_en": "The returned struct",
+                "description_zh": "返回数据的数据结构体列表",
+                "items": {
+                  "description_en": "The queried data",
+                  "description_zh": "数据项",
+                  "example": "{\n\t\"date\": \"1697108400\",\n\t\"dataType\": \"metrics\",\n\t\"byte_sum\": 9497922\n}",
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "The error message returned if the request failed",
+            "description_zh": "调用失败时返回的信息",
+            "example": "success",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "99A663CB-8D7B-4B0D-A006-03C8EE38E7BB",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue\nfalse",
+            "description_zh": "查询是否成功：\n\ntrue：成功。\nfalse：失败",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

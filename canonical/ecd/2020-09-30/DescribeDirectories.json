@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call https://help.aliyun.com/document_detail/196646.html to query the regions supported by Elastic Desktop Service",
       "help_zh": "地域ID。可以调用https://help.aliyun.com/document_detail/196646.html获取无影云电脑支持的地域列表",
@@ -34,6 +35,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "SIMPLE",
+        "AD_CONNECTOR"
+      ],
       "example": "SIMPLE",
       "help_en": "The directory type",
       "help_zh": "目录类型",
@@ -64,6 +69,8 @@
       "help_en": "The number of entries per page in a paged query. For more information about paging, see the NextToken parameter",
       "help_zh": "分页查询时每页行数。\n\n最大值：100。\n\n默认值：10",
       "location": "query",
+      "maximum": "500",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -103,6 +110,17 @@
       "type": "array"
     },
     {
+      "enum": [
+        "REGISTERING",
+        "DEREGISTERING",
+        "REGISTERED",
+        "NEEDCONFIGTRUST",
+        "CONFIGTRUSTFAILED",
+        "DEREGISTERED",
+        "ERROR",
+        "CONFIGTRUSTING",
+        "NEEDCONFIGUSER"
+      ],
       "example": "REGISTERED",
       "help_en": "The directory status",
       "help_zh": "目录状态",
@@ -118,5 +136,353 @@
   ],
   "pathPattern": "",
   "product_code": "ecd",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response information",
+        "description_zh": "返回信息集合",
+        "properties": {
+          "AdHostname": {
+            "description_en": "The hostname of the domain controller. The hostname must comply with Windows hostname naming conventions. This parameter is returned only when the directory type is AD office network",
+            "description_zh": "域控主机名。必须符合Windows主机命名规范。仅当目录类型为AD办公网络时返回该参数",
+            "example": "cnshsv21hmc****",
+            "type": "string"
+          },
+          "Directories": {
+            "description_en": "The list of directory information",
+            "description_zh": "目录信息列表",
+            "items": {
+              "description_en": "The directory information",
+              "description_zh": "目录信息",
+              "properties": {
+                "ADConnectors": {
+                  "description_en": "The information about AD connectors",
+                  "description_zh": "AD连接器的信息",
+                  "items": {
+                    "description_en": "The information about AD connectors",
+                    "description_zh": "AD连接器的信息",
+                    "properties": {
+                      "ADConnectorAddress": {
+                        "description_en": "The endpoint",
+                        "description_zh": "连接地址",
+                        "example": "172.17.XX.XX",
+                        "type": "string"
+                      },
+                      "ConnectorStatus": {
+                        "description_en": "The connection status",
+                        "description_zh": "连接状态",
+                        "enumValueTitles": {
+                          "CONNECTING": "连接中。需要用户在自有AD上配置域信任",
+                          "CONNECT_ERROR": "连接错误",
+                          "CREATING": "创建中",
+                          "EXPIRED": "欠费过期",
+                          "RUNNING": "运行中"
+                        },
+                        "example": "RUNNING",
+                        "type": "string"
+                      },
+                      "NetworkInterfaceId": {
+                        "description_en": "The ID of the network interface controller (NIC) attached to the AD connector",
+                        "description_zh": "AD连接器挂载的网卡ID",
+                        "example": "eni-bp1i4wx78lgosrj6****",
+                        "type": "string"
+                      },
+                      "Specification": {
+                        "description_en": "The AD connector specification",
+                        "description_zh": "AD Connector规格",
+                        "enumValueTitles": {
+                          "1": "通用型",
+                          "2": "高级型"
+                        },
+                        "example": "1",
+                        "type": "string"
+                      },
+                      "TrustKey": {
+                        "description_en": "The trust password of the AD domain controller",
+                        "description_zh": "AD域控信任密码",
+                        "example": "yfpoAD****",
+                        "type": "string"
+                      },
+                      "VSwitchId": {
+                        "description_en": "The vSwitch ID of the AD connector",
+                        "description_zh": "AD连接器所在的交换机ID",
+                        "example": "vsw-bp19ocz3erfx15uon****",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "AdHostname": {
+                  "description_en": "The hostname of the domain controller",
+                  "description_zh": "域控主机名",
+                  "example": "dc001",
+                  "type": "string"
+                },
+                "BackupDCHostname": {
+                  "description_en": "The hostname of the backup domain controller",
+                  "description_zh": "备用域控主机名",
+                  "example": "dc002",
+                  "type": "string"
+                },
+                "BackupDns": {
+                  "description_en": "The DNS address of the backup domain controller",
+                  "description_zh": "备用域控DNS地址",
+                  "example": "192.168.2.100",
+                  "type": "string"
+                },
+                "CreationTime": {
+                  "description_en": "The time when the directory was created. The time is in the ISO 8601 standard (UTC)",
+                  "description_zh": "目录创建时间。时间格式为 ISO 8601 标准（UTC 时间）",
+                  "example": "2020-11-02T01:44Z",
+                  "type": "string"
+                },
+                "CustomSecurityGroupId": {
+                  "description_en": "The security group ID. This parameter is returned only when the directory type is AD office network",
+                  "description_zh": "安全组ID。仅当目录类型为AD办公网络时返回该参数",
+                  "example": "sg-bp1ce64o4g9mdf5u****",
+                  "type": "string"
+                },
+                "DesktopAccessType": {
+                  "description_en": "The method allowed for connecting to cloud computers",
+                  "description_zh": "连接云电脑时允许使用的方式",
+                  "enumValueTitles": {
+                    "Any": "公网和VPC均可",
+                    "Internet": "公网连接",
+                    "VPC": "VPC连接"
+                  },
+                  "example": "Internet",
+                  "type": "string"
+                },
+                "DesktopVpcEndpoint": {
+                  "description_en": "The endpoint used to connect to cloud computers over VPC",
+                  "description_zh": "VPC连接云电脑时所使用的终端节点",
+                  "example": "http://ep-bp1s2vmbj55r5rzc****.epsrv-bp1pcfhpwvlpny01****.cn-hangzhou.privatelink.aliyuncs.com",
+                  "type": "string"
+                },
+                "DirectoryId": {
+                  "description_en": "The directory ID",
+                  "description_zh": "目录ID",
+                  "example": "cn-hangzhou+dir-gx2x1dhsmu52rd****",
+                  "type": "string"
+                },
+                "DirectoryType": {
+                  "description_en": "The directory type",
+                  "description_zh": "目录类型",
+                  "enumValueTitles": {
+                    "AD_CONNECTOR": "AD类型的目录",
+                    "RAM": "RAM类型的目录"
+                  },
+                  "example": "RAM",
+                  "type": "string"
+                },
+                "DnsAddress": {
+                  "description_en": "The DNS addresses of the directory",
+                  "description_zh": "目录的DNS地址",
+                  "items": {
+                    "description_en": "The DNS addresses of the directory",
+                    "description_zh": "目录的DNS地址",
+                    "example": "172.24.XX.XX",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "DnsUserName": {
+                  "description_en": "The DNS username",
+                  "description_zh": "DNS用户名",
+                  "example": "testDnsUserName",
+                  "type": "string"
+                },
+                "DomainName": {
+                  "description_en": "The domain name",
+                  "description_zh": "域名称",
+                  "example": "example.com",
+                  "type": "string"
+                },
+                "DomainPassword": {
+                  "description_en": "The password of the domain administrator. This parameter is returned only when the directory type is AD office network",
+                  "description_zh": "域管理员的用户密码。仅当目录类型为AD办公网络时返回该参数",
+                  "example": "testPassword",
+                  "type": "string"
+                },
+                "DomainUserName": {
+                  "description_en": "The username of the domain administrator",
+                  "description_zh": "域管理员的用户名",
+                  "example": "sAMAccountName",
+                  "type": "string"
+                },
+                "EnableAdminAccess": {
+                  "description_en": "Indicates whether local administrator permissions are granted to cloud computer users",
+                  "description_zh": "是否为使用云电脑的用户赋予本地管理员权限",
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "EnableCrossDesktopAccess": {
+                  "description_en": "Indicates whether the cross-cloud-computer access feature is enabled within the directory. After this feature is enabled, cloud computers within the same directory can access each other over the network",
+                  "description_zh": "是否开通目录内云电脑互通功能。开启后，同一个目录内的云电脑之间可以实现相互访问彼此的网络",
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "EnableInternetAccess": {
+                  "description_en": "Indicates whether Internet access is enabled",
+                  "description_zh": "是否可上网。    \n\n该参数暂未开放使用",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "FileSystemIds": {
+                  "description_en": "The NAS file system IDs",
+                  "description_zh": "NAS文件系统ID",
+                  "items": {
+                    "description_en": "The NAS file system IDs",
+                    "description_zh": "NAS文件系统ID",
+                    "example": "05b534****",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "Logs": {
+                  "description_en": "The list of registration log information. This parameter is returned only when the directory type is AD office network",
+                  "description_zh": "注册日志信息列表。仅当目录类型为AD办公网络时返回该参数",
+                  "items": {
+                    "description_en": "The registration log information",
+                    "description_zh": "注册日志信息",
+                    "properties": {
+                      "Level": {
+                        "description_en": "The log level",
+                        "description_zh": "日志级别",
+                        "enumValueTitles": {
+                          "ERROR": "错误",
+                          "INFO": "信息",
+                          "WARN": "警告"
+                        },
+                        "example": "INFO",
+                        "type": "string"
+                      },
+                      "Message": {
+                        "description_en": "The detailed log information",
+                        "description_zh": "日志详细信息",
+                        "example": "code:success | message:Create Connector complete.",
+                        "type": "string"
+                      },
+                      "Step": {
+                        "description_en": "The step corresponding to the log",
+                        "description_zh": "日志对应的步骤",
+                        "example": "DescribeDirectories",
+                        "type": "string"
+                      },
+                      "TimeStamp": {
+                        "description_en": "The time when the log was printed. The time is in the ISO 8601 standard (UTC)",
+                        "description_zh": "日志打印时间。时间格式为 ISO 8601 标准（UTC 时间）",
+                        "example": "2021-01-22T06:45Z",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "MfaEnabled": {
+                  "description_en": "Indicates whether multi-factor authentication (MFA) is enabled",
+                  "description_zh": "是否开启多因素认证MFA",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "Name": {
+                  "description_en": "The directory name",
+                  "description_zh": "目录名称",
+                  "example": "testDirectoryName",
+                  "type": "string"
+                },
+                "NeedVerifyLoginRisk": {
+                  "description_en": "Indicates whether secondary authentication is required for logon. This parameter applies only to convenience directories. If secondary authentication is enabled, the system checks whether the logon account has security risks when a convenience user logs on to the client. If a risk is detected, the system sends a verification code to the email address associated with the account. The convenience user can log on to the client only after the verification code is verified",
+                  "description_zh": "登录是否需要二次验证。仅适用于便捷目录。    \n如果开启了登录二次验证，则便捷用户登录客户端时，系统将检测登录账号是否有安全风险。如果有风险，系统将发送验证码到该账号关联的邮箱，便捷用户使用验证码验证通过后才能登录客户端",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "OuName": {
+                  "description_en": "The organizational unit (OU) selected when cloud computers join the domain",
+                  "description_zh": "指定云电脑加域时选择的组织单元",
+                  "example": "example.com/Domain Controllers",
+                  "type": "string"
+                },
+                "SsoEnabled": {
+                  "description_en": "Indicates whether SSO authentication is enabled",
+                  "description_zh": "是否开启SSO认证",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "Status": {
+                  "description_en": "The status of the AD directory",
+                  "description_zh": "AD类型的目录状态",
+                  "enumValueTitles": {
+                    "REGISTERED": "已注册",
+                    "REGISTERING": "注册中"
+                  },
+                  "example": "REGISTERING",
+                  "type": "string"
+                },
+                "SubDnsAddress": {
+                  "description_en": "The DNS addresses of the AD subdomain",
+                  "description_zh": "AD子域的DNS地址",
+                  "items": {
+                    "description_en": "The DNS addresses of the AD subdomain",
+                    "description_zh": "AD子域的DNS地址",
+                    "example": "172.24.XX.XX",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "SubDomainName": {
+                  "description_en": "The fully qualified domain name (FQDN) of the existing AD subdomain, which includes both the hostname and domain name",
+                  "description_zh": "企业已有AD子域的全限定域名（FQDN），即同时带有主机名和域名",
+                  "example": "child.example.com",
+                  "type": "string"
+                },
+                "TrustPassword": {
+                  "description_en": "The AD trust password. This parameter is returned only when the directory type is AD office network",
+                  "description_zh": "AD信任密码。仅当目录类型为AD办公网络时返回该参数",
+                  "example": "82Tg****",
+                  "type": "string"
+                },
+                "VSwitchIds": {
+                  "description_en": "The vSwitch IDs specified when the directory was created",
+                  "description_zh": "目录创建时设置的交换机ID",
+                  "items": {
+                    "description_en": "The vSwitch IDs specified when the directory was created",
+                    "description_zh": "目录创建时设置的交换机ID",
+                    "example": "vsw-bp19ocz3erfx15uon****",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "VpcId": {
+                  "description_en": "The ID of the VPC to which the vSwitch belongs. This parameter is returned only when the directory type is AD office network",
+                  "description_zh": "交换机所属的VPC ID。仅当目录类型为AD办公网络时返回该参数",
+                  "example": "vpc-uf6tz5k67puge5jn8****",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "NextToken": {
+            "description_en": "The pagination token that is used in the next request to retrieve a new page of results. If NextToken is empty, no next page exists",
+            "description_zh": "下一个查询开始的Token，NextToken为空表示没有下一个",
+            "example": "caeba0bbb2be03f84eb48b699f0a4883",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "F369A091-002F-49C8-AD55-02A776297C7B",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

@@ -2,6 +2,119 @@
   "camel_example": "aliyun ossutil api list-buckets --region cn-hangzhou --tagging 'test-key_:_test-value' --tag-value 'test-value' --max-keys 100 --prefix my --marker mybucket10 --tag-key 'test-key' --resource-group-id example-string",
   "cmd_full_name": "oss list-buckets",
   "cmd_name": "list-buckets",
+  "components": {
+    "schemas": {
+      "Bucket": {
+        "description_en": "The container that stores bucket information",
+        "description_zh": "保存Bucket信息的容器",
+        "example": "examplebucket",
+        "properties": {
+          "CreationDate": {
+            "description_en": "The time when the bucket was created. The value is in the `yyyy-mm-ddThh:mm:ss.timezone` format",
+            "description_zh": "Bucket创建时间。格式为`yyyy-mm-ddThh:mm:ss.timezone`",
+            "example": "2014-05-15T11:18:32.000Z",
+            "format": "iso8601",
+            "title": "Bucket的创建时间，格式为UTC时间",
+            "type": "string"
+          },
+          "ExtranetEndpoint": {
+            "description_en": "The public endpoint used to access the bucket",
+            "description_zh": "Bucket访问的外网域名",
+            "example": "oss-cn-hangzhou.aliyuncs.com",
+            "title": "Bucket的外网域名",
+            "type": "string"
+          },
+          "IntranetEndpoint": {
+            "description_en": "The internal endpoint used by ECS instances in the same region to access the bucket",
+            "description_zh": "同地域ECS访问Bucket的内网域名",
+            "example": "oss-cn-hangzhou-internal.aliyuncs.com",
+            "title": "Bucket的内网域名",
+            "type": "string"
+          },
+          "Location": {
+            "description_en": "The data center in which the bucket is located",
+            "description_zh": "Bucket所在的数据中心",
+            "example": "oss-cn-hangzhou",
+            "title": "Bucket所在的数据中心",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the bucket",
+            "description_zh": "Bucket名称",
+            "example": "mybucket01",
+            "title": "Bucket的名称",
+            "type": "string"
+          },
+          "Region": {
+            "description_en": "The region in which the bucket is located",
+            "description_zh": "Bucket所在地域",
+            "example": "cn-hangzhou",
+            "title": "Bucket所在地域",
+            "type": "string"
+          },
+          "StorageClass": {
+            "$ref": "#/components/schemas/StorageClass",
+            "description_en": "The storage class of the bucket. Valid values: Standard, IA, Archive, and ColdArchive",
+            "description_zh": "Bucket存储类型，支持Standard、IA、Archive和ColdArchive四种存储类型",
+            "example": "Standard",
+            "title": "Bucket的存储类型"
+          }
+        },
+        "title": "Bucket信息",
+        "type": "object"
+      },
+      "Owner": {
+        "description_en": "The container that stores the information about the bucket owner",
+        "description_zh": "保存Bucket拥有者信息的容器",
+        "properties": {
+          "DisplayName": {
+            "description_en": "The name of the bucket owner. Currently, this value is the same as the ID",
+            "description_zh": "Bucket拥有者的名称 （目前和ID一致）",
+            "example": "ut_test_bucket",
+            "title": "The display name of the owner",
+            "type": "string"
+          },
+          "ID": {
+            "description_en": "The user ID of the bucket owner",
+            "description_zh": "Bucket拥有者的用户ID",
+            "example": "ut_test_bucket",
+            "title": "The ID of the owner",
+            "type": "string"
+          }
+        },
+        "title": "Container for the owner's display name and ID",
+        "type": "object"
+      },
+      "ResourceGroupId": {
+        "description_en": "The resource group ID.\n\nIf this header is included in the request and a resource group ID is specified, OSS returns all buckets that belong to the specified resource group. If the resource group ID is set to rg-default-id, OSS returns all buckets that belong to the default resource group.\nIf this header is included in the request but no resource group ID is specified, OSS returns all buckets that belong to the default resource group.\nIf this header is not included in the request, OSS returns all buckets owned by the requester. You can obtain the resource group ID from the Resource Management console or by calling the ListResourceGroups operation.\n\nYou can obtain the resource group ID from the Resource Management console or by calling the ListResourceGroups operation. For more information, see [View basic information of a resource group]（https://help.aliyun.com/document_detail/151181.html） and [ListResourceGroups]（https://help.aliyun.com/document_detail/158855.html）",
+        "description_zh": "指定资源组ID。\n\n如果在请求中携带该请求头并指定资源组ID，则OSS会返回属于该资源组的所有Bucket。当指定的资源组ID为rg-default-id时，OSS会返回属于默认资源组的所有Bucket。\n如果在请求中携带了该请求头但未指定资源组ID，则OSS会返回属于默认资源组的所有Bucket。\n如果在请求中未携带该请求头，则OSS会返回请求者拥有的所有Bucket。您可以通过资源管理的控制台或ListResourceGroups接口获取资源组ID。\n\n您可以通过资源管理的控制台或ListResourceGroups接口获取资源组ID。具体操作，请分别参见[查看资源组基本信息]（https://help.aliyun.com/document_detail/151181.html）和[ListResourceGroups]（https://help.aliyun.com/document_detail/158855.html）",
+        "example": "rg-aekz****",
+        "title": "Bucket所属的资源组ID",
+        "type": "string"
+      },
+      "StorageClass": {
+        "default": "Standard",
+        "description_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nDeepColdArchive: Deep Cold Archive",
+        "description_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\nDeepColdArchive：深度冷归档存储",
+        "enum": [
+          "Standard",
+          "IA",
+          "Archive",
+          "ColdArchive",
+          "DeepColdArchive"
+        ],
+        "enumValueTitles": {
+          "Archive": "Archive",
+          "ColdArchive": "ColdArchive",
+          "IA": "IA",
+          "Standard": "Standard"
+        },
+        "example": "Standard",
+        "title": "The storage class of a bucket.",
+        "type": "string"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Lists all buckets owned by the requester",
   "description_zh": "列举请求者拥有的所有存储空间（Bucket）",
@@ -115,6 +228,104 @@
   "pathPattern": "/",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body of the ListBuckets (GetService) operation",
+        "description_zh": "ListBuckets（GetService）接口的响应体",
+        "properties": {
+          "ListAllMyBucketsResult": {
+            "description_en": "The container that stores the results of the ListBuckets (GetService) request",
+            "description_zh": "保存ListBuckets（GetService）请求结果的容器",
+            "properties": {
+              "Buckets": {
+                "description_en": "The container that stores the bucket information list",
+                "description_zh": "保存Bucket信息列表的容器",
+                "properties": {
+                  "Bucket": {
+                    "description_en": "The list that stores information about multiple buckets",
+                    "description_zh": "保存多个Bucket信息的列表",
+                    "items": {
+                      "$ref": "#/components/schemas/Bucket",
+                      "description_en": "The container that stores bucket information",
+                      "description_zh": "保存Bucket信息的容器",
+                      "title_en": "",
+                      "title_zh": "保存 Bucket 信息的容器。"
+                    },
+                    "title_en": "",
+                    "title_zh": "保存多个 Bucket 信息的列表。",
+                    "type": "array"
+                  }
+                },
+                "title_en": "",
+                "title_zh": "保存 Bucket 信息列表的容器。",
+                "type": "object"
+              },
+              "IsTruncated": {
+                "description_en": "Indicates whether all results have been returned. Valid values:\ntrue: Not all results were returned in this request.\nfalse: All results were returned in this request",
+                "description_zh": "是否所有的结果都已经返回。取值范围如下：\ntrue：表示本次没有返回全部结果。\nfalse：表示本次已经返回了全部结果",
+                "enumValueTitles": {
+                  "false": "本次已经返回全部结果",
+                  "true": "本次没有返回全部结果"
+                },
+                "example": "true",
+                "title_en": "",
+                "title_zh": "是否所有的结果都已经返回。取值范围如下：\n\ntrue：表示本次没有返回全部结果。\nfalse：表示本次已经返回了全部结果。",
+                "type": "boolean"
+              },
+              "Marker": {
+                "description_en": "The marker for this ListBuckets (GetService) request",
+                "description_zh": "本次ListBuckets（GetSerivce）的起点",
+                "example": "abc",
+                "title_en": "",
+                "title_zh": "本次 ListBuckets（GetSerivce）的起点。",
+                "type": "string"
+              },
+              "MaxKeys": {
+                "description_en": "The maximum number of results returned in the response",
+                "description_zh": "响应请求内返回结果的最大数",
+                "example": "20",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "响应请求内返回结果的最大数。",
+                "type": "integer"
+              },
+              "NextMarker": {
+                "description_en": "The value used to assign to the marker parameter for continued queries. This value can be used as the marker in the next ListBuckets (GetService) request to return the remaining results",
+                "description_zh": "用于继续查询时给marker赋值。表示下一次ListBuckets（GetService）可以以此为marker，将未返回的结果返回",
+                "example": "def",
+                "title_en": "",
+                "title_zh": "用于继续查询时给 marker 赋值。表示下一次 ListBuckets（GetService）可以以此为 marker，将未返回的结果返回。",
+                "type": "string"
+              },
+              "Owner": {
+                "$ref": "#/components/schemas/Owner",
+                "description_en": "The container that stores the bucket owner information",
+                "description_zh": "保存Bucket拥有者信息的容器",
+                "title_en": "",
+                "title_zh": "保存 Bucket 拥有者信息的容器。"
+              },
+              "Prefix": {
+                "description_en": "The prefix of the query results",
+                "description_zh": "本次查询结果的前缀",
+                "example": "logs/",
+                "title_en": "",
+                "title_zh": "本次查询结果的前缀。",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "保存存储空间列表的容器。",
+            "type": "object"
+          }
+        },
+        "title_en": "",
+        "title_zh": "接口响应体。",
+        "type": "object"
+      }
+    },
+    "5xx": {}
+  },
   "v1_parameters": [
     {
       "help_en": "Specifies that results are returned in alphabetical order starting from the first entry after the marker value. If this parameter is not specified, results are returned from the beginning.\nDefault value: null",

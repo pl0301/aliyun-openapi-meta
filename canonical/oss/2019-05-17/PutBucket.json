@@ -2,6 +2,83 @@
   "camel_example": "aliyun ossutil api put-bucket --bucket examplebucket --region cn-hangzhou --acl example-string --resource-group-id example-string --bucket-tagging k1=v1_k2=v2",
   "cmd_full_name": "oss put-bucket",
   "cmd_name": "put-bucket",
+  "components": {
+    "schemas": {
+      "BucketACL": {
+        "default": "private",
+        "description_en": "The access permissions of the bucket. Valid values:\npublic-read-write: public-read-write\npublic-read: public-read\nprivate (default): private\n\nFor more information about bucket ACLs, see [Settings for bucket access permissions]（https://help.aliyun.com/document_detail/31843.html）",
+        "description_zh": "Bucket的访问权限ACL。取值范围如下：\npublic-read-write：公共读写\npublic-read：公共读\nprivate（默认）：私有\n\n关于Bucket访问权限ACL的更多信息，请参见[设置存储空间访问权限ACL]（https://help.aliyun.com/document_detail/31843.html）",
+        "enum": [
+          "private",
+          "public-read",
+          "public-read-write"
+        ],
+        "example": "private",
+        "title": "The access control list (ACL) for a bucket.",
+        "type": "string"
+      },
+      "CreateBucketConfiguration": {
+        "description_en": "The storage class and data redundancy configuration of a bucket",
+        "description_zh": "Bucket存储类型和数据容灾类型的配置信息",
+        "properties": {
+          "DataRedundancyType": {
+            "$ref": "#/components/schemas/DataRedundancyType",
+            "description_en": "The data redundancy type of the bucket.\n\nLRS (default)\n<br>Locally redundant storage (LRS) stores your data redundantly across different storage devices within the same zone. LRS ensures that your data remains accessible and undamaged even if two storage devices fail simultaneously.\n\nZRS\n<br>Zone-redundant storage (ZRS) uses a multi-zone mechanism to store your data redundantly across three zones in the same region. Even if an entire zone becomes unavailable due to failures such as power outages or fires, your data remains accessible.\nBuckets of the Archive storage class do not support zone-redundant storage.</props>",
+            "description_zh": "指定Bucket的数据容灾类型。\n\nLRS（默认值）\n<br>本地冗余LRS，将您的数据冗余存储在同一个可用区的不同存储设备上，可支持两个存储设备并发损坏时，仍维持数据不丢失，可正常访问。\n\nZRS\n<br>同城冗余ZRS采用多可用区（AZ）机制，将您的数据冗余存储在同一地域（Region）的3个可用区。可支持单个可用区（机房）整体故障时（例如断电、火灾等），仍然能够保障数据的正常访问。\n归档类型的Bucket不支持设置同城冗余。</props>",
+            "enumValueTitles": {}
+          },
+          "StorageClass": {
+            "$ref": "#/components/schemas/StorageClass",
+            "description_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard\nIA: Infrequent Access\nArchive: Archive\nColdArchive: Cold Archive",
+            "description_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储",
+            "enumValueTitles": {}
+          }
+        },
+        "title": "The configuration of a bucket.",
+        "type": "object"
+      },
+      "DataRedundancyType": {
+        "default": "LRS",
+        "description_en": "The data redundancy type of the bucket. Valid values:\n\nLRS (default): locally redundant storage. Your data is redundantly stored on different storage devices within the same zone. Data remains accessible even if two storage devices fail simultaneously.\nZRS: zone-redundant storage. Your data is redundantly stored across three zones within the same region using a multi-zone mechanism. Data remains accessible even if an entire zone (data center) becomes unavailable due to events such as power outages or fires.\nArchive buckets do not support zone-redundant storage",
+        "description_zh": "Bucket的数据容灾类型。取值范围如下：\n\nLRS（默认） ：本地冗余LRS，将您的数据冗余存储在同一个可用区的不同存储设备上，可支持两个存储设备并发损坏时，仍维持数据不丢失，可正常访问。\nZRS：同城冗余ZRS，采用多可用区（AZ）机制，将您的数据冗余存储在同一地域（Region）的3个可用区。可支持单个可用区（机房）整体故障时（例如断电、火灾等），仍然能够保障数据的正常访问。\n归档类型的Bucket不支持设置同城冗余",
+        "enum": [
+          "LRS",
+          "ZRS"
+        ],
+        "example": "LRS",
+        "title": "The type of disaster recovery for a bucket.",
+        "type": "string"
+      },
+      "ResourceGroupId": {
+        "description_en": "The resource group ID.\n\nIf this header is included in the request and a resource group ID is specified, OSS returns all buckets that belong to the specified resource group. If the resource group ID is set to rg-default-id, OSS returns all buckets that belong to the default resource group.\nIf this header is included in the request but no resource group ID is specified, OSS returns all buckets that belong to the default resource group.\nIf this header is not included in the request, OSS returns all buckets owned by the requester. You can obtain the resource group ID from the Resource Management console or by calling the ListResourceGroups operation.\n\nYou can obtain the resource group ID from the Resource Management console or by calling the ListResourceGroups operation. For more information, see [View basic information of a resource group]（https://help.aliyun.com/document_detail/151181.html） and [ListResourceGroups]（https://help.aliyun.com/document_detail/158855.html）",
+        "description_zh": "指定资源组ID。\n\n如果在请求中携带该请求头并指定资源组ID，则OSS会返回属于该资源组的所有Bucket。当指定的资源组ID为rg-default-id时，OSS会返回属于默认资源组的所有Bucket。\n如果在请求中携带了该请求头但未指定资源组ID，则OSS会返回属于默认资源组的所有Bucket。\n如果在请求中未携带该请求头，则OSS会返回请求者拥有的所有Bucket。您可以通过资源管理的控制台或ListResourceGroups接口获取资源组ID。\n\n您可以通过资源管理的控制台或ListResourceGroups接口获取资源组ID。具体操作，请分别参见[查看资源组基本信息]（https://help.aliyun.com/document_detail/151181.html）和[ListResourceGroups]（https://help.aliyun.com/document_detail/158855.html）",
+        "example": "rg-aekz****",
+        "title": "Bucket所属的资源组ID",
+        "type": "string"
+      },
+      "StorageClass": {
+        "default": "Standard",
+        "description_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nDeepColdArchive: Deep Cold Archive",
+        "description_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\nDeepColdArchive：深度冷归档存储",
+        "enum": [
+          "Standard",
+          "IA",
+          "Archive",
+          "ColdArchive",
+          "DeepColdArchive"
+        ],
+        "enumValueTitles": {
+          "Archive": "Archive",
+          "ColdArchive": "ColdArchive",
+          "IA": "IA",
+          "Standard": "Standard"
+        },
+        "example": "Standard",
+        "title": "The storage class of a bucket.",
+        "type": "string"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a bucket",
   "description_zh": "创建一个存储空间（Bucket）",
@@ -39,6 +116,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "private",
+        "public-read",
+        "public-read-write"
+      ],
       "example": "private",
       "help_en": "Specifies the access permissions of the bucket. Valid values:\n\npublic-read-write: public-read-write\n\npublic-read: public-read\n\nprivate: private (default)\n\nFor more information about bucket ACLs, see https://help.aliyun.com/document_detail/31843.html",
       "help_zh": "指定Bucket的访问权限ACL。包含如下三种访问权限：\n\npublic-read-write：公共读写\n\npublic-read：公共读\n\nprivate：私有（默认值）\n\n关于Bucket访问权限ACL的更多信息，请参见https://help.aliyun.com/document_detail/31843.html",
@@ -80,6 +162,13 @@
     {
       "fields": [
         {
+          "enum": [
+            "Standard",
+            "IA",
+            "Archive",
+            "ColdArchive",
+            "DeepColdArchive"
+          ],
           "example": "Standard",
           "help_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nDeepColdArchive: Deep Cold Archive",
           "help_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\nDeepColdArchive：深度冷归档存储",
@@ -92,6 +181,10 @@
           "type": "string"
         },
         {
+          "enum": [
+            "LRS",
+            "ZRS"
+          ],
           "example": "LRS",
           "help_en": "The data redundancy type of the bucket. Valid values:\n\nLRS (default): locally redundant storage. Your data is redundantly stored on different storage devices within the same zone. Data remains accessible even if two storage devices fail simultaneously.\nZRS: zone-redundant storage. Your data is redundantly stored across three zones within the same region using a multi-zone mechanism. Data remains accessible even if an entire zone (data center) becomes unavailable due to events such as power outages or fires.\nArchive buckets do not support zone-redundant storage",
           "help_zh": "Bucket的数据容灾类型。取值范围如下：\n\nLRS（默认） ：本地冗余LRS，将您的数据冗余存储在同一个可用区的不同存储设备上，可支持两个存储设备并发损坏时，仍维持数据不丢失，可正常访问。\nZRS：同城冗余ZRS，采用多可用区（AZ）机制，将您的数据冗余存储在同一地域（Region）的3个可用区。可支持单个可用区（机房）整体故障时（例如断电、火灾等），仍然能够保障数据的正常访问。\n归档类型的Bucket不支持设置同城冗余",
@@ -120,6 +213,10 @@
   "pathPattern": "/",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {},
+    "5XX": {}
+  },
   "v1_body_parameters": [
     {
       "help_en": "The container that stores the bucket creation information",

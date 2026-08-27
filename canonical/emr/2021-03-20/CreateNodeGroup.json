@@ -2,6 +2,709 @@
   "camel_example": "aliyun emr CreateNodeGroup --region cn-hangzhou --ClusterId 'C-E525E04F39140000' --RegionId 'cn-hangzhou' --NodeGroup 'example-string' --method POST --force",
   "cmd_full_name": "emr create-node-group",
   "cmd_name": "create-node-group",
+  "components": {
+    "schemas": {
+      "AutoScalingPolicy": {
+        "properties": {
+          "Constraints": {
+            "properties": {
+              "MaxCapacity": {
+                "format": "int32",
+                "title": "最大值",
+                "type": "integer"
+              },
+              "MinCapacity": {
+                "format": "int32",
+                "title": "最小值",
+                "type": "integer"
+              }
+            },
+            "title": "最大最小值约束",
+            "type": "object"
+          },
+          "ScalingRules": {
+            "items": {
+              "$ref": "#/components/schemas/ScalingRule",
+              "required": false
+            },
+            "required": false,
+            "title": "弹性伸缩规则列表",
+            "type": "array"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CostOptimizedConfig": {
+        "description_en": "The configurations of the cost optimization policy",
+        "description_zh": "成本优化模式配置",
+        "properties": {
+          "OnDemandBaseCapacity": {
+            "description_en": "The minimum number of pay-as-you-go instances that are required for the node group. Valid values: 0 to 1000. If the number of pay-as-you-go instances is less than the value of this parameter, pay-as-you-go instances are preferentially created",
+            "description_zh": "按量实例个数的最小值。节点组所需要按量实例个数的最小值，取值范围：0~1000。当按量实例个数少于该值时，将优先创建按量实例",
+            "example": "80",
+            "format": "int32",
+            "required": true,
+            "title": "按量实例个数的最小值。",
+            "type": "integer"
+          },
+          "OnDemandPercentageAboveBaseCapacity": {
+            "description_en": "The percentage of pay-as-you-go instances among the instances that exceed the number specified by the OnDemandBaseCapacity parameter for the node group. Valid values: 0 to 100",
+            "description_zh": "节点组满足最小按量实例OnDemandBaseCapacity要求后，超出的实例中按量实例应占的比例，取值范围：0～100",
+            "example": "80",
+            "format": "int32",
+            "required": true,
+            "title": "超出的实例中按量实例应占的比例。",
+            "type": "integer"
+          },
+          "SpotInstancePools": {
+            "description_en": "The number of instance types that are specified. Preemptible instances of multiple instance types that are provided at the lowest price are evenly created in the scaling group. Valid values: 0 to 10",
+            "description_zh": "指定可用实例规格的个数，伸缩组将按成本最低的多个规格均衡创建抢占式实例。取值范围：0~10",
+            "example": "2",
+            "format": "int32",
+            "required": true,
+            "title": "可用实例规格的个数。",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "DataDisk": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Category": {
+            "description_en": "The disk type. Valid values:\n\n`cloud_efficiency`: Ultra Disk.\n\n`cloud_ssd`: Standard SSD.\n\n`cloud_essd`: ESSD.\n\n`cloud`: Basic Disk",
+            "description_zh": "磁盘类型。取值范围：\ncloud_efficiency：高效云盘。\ncloud_ssd：SSD云盘。\ncloud_essd：ESSD云盘。\ncloud：普通云盘",
+            "example": "cloud_essd",
+            "required": true,
+            "title": "磁盘类型。",
+            "type": "string"
+          },
+          "Count": {
+            "description_en": "The number of data disks",
+            "description_zh": "磁盘数量",
+            "example": "5",
+            "format": "int32",
+            "title": "每个节点磁盘数量。",
+            "type": "integer"
+          },
+          "PerformanceLevel": {
+            "description_en": "The performance level of an ESSD. This parameter applies only when the `Category` parameter is set to `cloud_essd`. Valid values:\n\nPL0: A maximum of 10,000 random read/write IOPS per disk.\n\nPL1: A maximum of 50,000 random read/write IOPS per disk.\n\nPL2: A maximum of 100,000 random read/write IOPS per disk.\n\nPL3: A maximum of 1,000,000 random read/write IOPS per disk.\n\nDefault value: PL1",
+            "description_zh": "创建ESSD云盘作为数据盘使用时，设置云盘的性能等级。取值范围：\nPL0：单盘最高随机读写IOPS 1万。\nPL1：单盘最高随机读写IOPS 5万。\nPL2：单盘最高随机读写IOPS 10万。\nPL3：单盘最高随机读写IOPS 100万。\n\n默认值：PL1",
+            "example": "PL1",
+            "title": "ESSD云盘性能级别。",
+            "type": "string"
+          },
+          "Size": {
+            "description_en": "The size of each data disk, in GB",
+            "description_zh": "单位GB",
+            "example": "80",
+            "format": "int32",
+            "required": true,
+            "title": "磁盘大小。",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "MetricsTrigger": {
+        "description_en": "The information about the auto scaling rule triggered by metric",
+        "description_zh": "指标触发",
+        "properties": {
+          "ConditionLogicOperator": {
+            "description_en": "The logical relationship between multiple metrics. Valid values:\n\nAnd\nOr (default)",
+            "description_zh": "多指标逻辑关系。取值范围：\nAnd：与。\nOr（默认值）：或",
+            "example": "Or",
+            "title": "多指标逻辑关系。",
+            "type": "string"
+          },
+          "Conditions": {
+            "description_en": "The trigger conditions for the metric",
+            "description_zh": "指标触发条件列表",
+            "items": {
+              "$ref": "#/components/schemas/TriggerCondition",
+              "description_en": "The trigger threshold. This parameter is required",
+              "description_zh": "触发阈值。必填参数"
+            },
+            "title": "指标触发条件列表。",
+            "type": "array"
+          },
+          "CoolDownInterval": {
+            "description_en": "The cooldown interval. Unit: seconds. Valid values: 0 to 10800",
+            "description_zh": "冷却时间。 单位为秒。取值范围：0~10800",
+            "example": "300",
+            "format": "int32",
+            "title": "冷却时间。",
+            "type": "integer"
+          },
+          "EvaluationCount": {
+            "description_en": "The number of times that the statistics are collected. This parameter is required. Valid values: 1 to 5",
+            "description_zh": "统计次数。必填参数，取值范围：1~5",
+            "example": "2",
+            "format": "int32",
+            "required": true,
+            "title": "统计次数。",
+            "type": "integer"
+          },
+          "TimeConstraints": {
+            "description_en": "The limits on time",
+            "description_zh": "时间限制",
+            "items": {
+              "$ref": "#/components/schemas/TimeConstraint",
+              "description_en": "The limit on time",
+              "description_zh": "时间限制"
+            },
+            "title": "时间限制。",
+            "type": "array"
+          },
+          "TimeWindow": {
+            "description_en": "The time window for statistics. This parameter is required. Unit: seconds. Valid values: 30 to 1800",
+            "description_zh": "统计窗口。必填参数，单位为秒。取值范围30~1800",
+            "example": "30",
+            "format": "int32",
+            "required": true,
+            "title": "统计窗口。",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "NodeGroupConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AdditionalSecurityGroupIds": {
+            "description_en": "The IDs of the additional security groups. In addition to the security group of the cluster, you can specify additional security groups for the node group. You can specify up to two security group IDs",
+            "description_zh": "附加安全组。除集群设置的安全组外，为节点组单独设置的附加安全组。数组元数个数N的取值范围：0~2",
+            "example": "[\"sg-hp3abbae8lb6lmb1****\"]",
+            "items": {
+              "description_en": "The security group ID",
+              "description_zh": "安全组ID",
+              "example": "sg-hp3abbae8lb6lmb1****",
+              "type": "string"
+            },
+            "maxItems": 5,
+            "title": "附加安全组。",
+            "type": "array"
+          },
+          "AutoScalingPolicy": {
+            "$ref": "#/components/schemas/AutoScalingPolicy",
+            "description_zh": "弹性伸缩规则",
+            "title": "弹性伸缩规则"
+          },
+          "CompensateWithOnDemand": {
+            "description_en": "Specifies whether to automatically create pay-as-you-go instances to meet the required capacity when the number of preemptible instances is insufficient. This parameter is effective only when `nodeResizeStrategy` is set to `COST_OPTIMIZED`",
+            "description_zh": "当 nodeResizeStrategy 取值为 COST_OPTIMIZED 时，如果因价格、库存等原因无法创建足够的抢占式实例，是否允许自动尝试创建按量实例满足",
+            "example": "true",
+            "title": "当 nodeResizeStrategy 取值为 COST_OPTIMIZED 时，如果因价格、库存等原因无法创建足够的抢占式实例，是否允许自动尝试创建按量实例满足",
+            "type": "boolean"
+          },
+          "ComponentTags": {
+            "description_en": "A list of custom component tags",
+            "description_zh": "自定义组件列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "title": "自定义组件列表",
+            "type": "array"
+          },
+          "CostOptimizedConfig": {
+            "$ref": "#/components/schemas/CostOptimizedConfig",
+            "description_en": "The cost optimization settings",
+            "description_zh": "成本优化模式配置",
+            "title": "成本优化模式配置。"
+          },
+          "DataDisks": {
+            "description_en": "The data disks. Currently, the array can contain only one data disk",
+            "description_zh": "数据盘。当前数据盘只支持一种磁盘类型，即数组元数个数N的取值范围：1~1",
+            "items": {
+              "$ref": "#/components/schemas/DataDisk",
+              "description_en": "The data disk",
+              "description_zh": "数据盘"
+            },
+            "maxItems": 1,
+            "title": "数据盘。",
+            "type": "array"
+          },
+          "DeploymentSetStrategy": {
+            "description_en": "The deployment set strategy. Valid values:\n\n`NONE`: No deployment sets are used.\n\n`CLUSTER`: The cluster-level deployment set is used.\n\n`NODE_GROUP`: The node group-level deployment set is used.\n\nDefault value: `NONE`",
+            "description_zh": "部署集策略。取值范围：\nNONE：不适用部署集。\nCLUSTER：使用集群级别部署集。\nNODE_GROUP：使用节点组级别部署集。\n\n默认值：NONE",
+            "example": "NONE",
+            "title": "部署集策略。",
+            "type": "string"
+          },
+          "GracefulShutdown": {
+            "description_en": "Specifies whether to enable graceful shutdown for the components in the node group. Valid values:\n\n`true`: Enables graceful shutdown.\n\n`false`: Disables graceful shutdown.\n\nDefault value: `false`",
+            "description_zh": "节点组上部署的组件是否开启优雅下线。取值范围：\ntrue：开启优雅下线。\nfalse：不开启优雅下线。\n\n默认值：false",
+            "example": "false",
+            "title": "是否开启优雅下线。",
+            "type": "boolean"
+          },
+          "InstanceTypes": {
+            "description_en": "The instance types. You can specify 1 to 100 instance types",
+            "description_zh": "节点实例类型列表。数组元数个数N的取值范围：1~100",
+            "example": "[\"ecs.g6.xlarge\"]",
+            "items": {
+              "description_en": "The instance type",
+              "description_zh": "节点实例类型",
+              "example": "ecs.g7.2xlarge",
+              "type": "string"
+            },
+            "maxItems": 100,
+            "title": "节点实例类型列表。",
+            "type": "array"
+          },
+          "NodeCount": {
+            "description_en": "The number of nodes in the node group. Valid values: 1 to 1,000",
+            "description_zh": "节点数量。取值范围：1~1000",
+            "example": "3",
+            "format": "int32",
+            "title": "节点数量。",
+            "type": "integer"
+          },
+          "NodeGroupName": {
+            "description_en": "The name of the node group. The name can be up to 128 characters in length and must be unique within the cluster",
+            "description_zh": "节点组名称。最大长度128个字符。集群内要求节点组名称唯一",
+            "example": "core-1",
+            "title": "节点组名称。",
+            "type": "string"
+          },
+          "NodeGroupType": {
+            "description_en": "The type of the node group. Valid values:\n\n`MASTER`: a master node group.\n\n`CORE`: a core node group.\n\n`TASK`: a task node group",
+            "description_zh": "节点组类型。取值范围：\nMASTER：管理类型节点组。\nCORE：存储类型节点组。\nTASK：计算类型节点组",
+            "example": "CORE",
+            "required": true,
+            "title": "节点组类型。",
+            "type": "string"
+          },
+          "NodeResizeStrategy": {
+            "description_en": "The node scale-out strategy. Valid values:\n\n`COST_OPTIMIZED`: The cost-optimized strategy.\n\n`PRIORITY`: The priority-based strategy.\n\nDefault value: `PRIORITY`",
+            "description_zh": "节点扩容策略。取值范围：\nCOST_OPTIMIZED：成本优化策略。\nPRIORITY：优先级策略。\n\n默认值：PRIORITY",
+            "example": "PRIORITY",
+            "title": "节点扩容策略。",
+            "type": "string"
+          },
+          "PaymentType": {
+            "description_en": "The billing method of the node group. If you do not specify this parameter, the billing method of the cluster is used. Valid values:\n\n`PayAsYouGo`: pay-as-you-go.\n\n`Subscription`: subscription.\n\nDefault value: `PayAsYouGo`",
+            "description_zh": "节点组付费类型。不传入时默认和集群付费类型一致。取值范围：\nPayAsYouGo：后付费，按量付费。\nSubscription：预付费，包年包月。\n\n默认值：PayAsYouGo",
+            "example": "PayAsYouGo",
+            "title": "节点组付费类型。",
+            "type": "string"
+          },
+          "PrivatePoolOptions": {
+            "$ref": "#/components/schemas/PrivatePoolOptions",
+            "description_en": "The private pool options. This parameter is effective only when you create pay-as-you-go instances",
+            "description_zh": "创建实例时使用的资源池策略，该参数只在创建按量付费实例时生效",
+            "title": "创建实例时使用的资源池策略，该参数只在创建按量付费实例时生效。"
+          },
+          "SpotBidPrices": {
+            "description_en": "The bid prices for the preemptible instances. This parameter is effective only when `SpotStrategy` is set to `SpotWithPriceLimit`. You can specify up to 100 bid prices",
+            "description_zh": "抢占式Spot实例出价价格。参数SpotStrategy取值为SpotWithPriceLimit时生效。数组元数个数N的取值范围：0~100",
+            "items": {
+              "$ref": "#/components/schemas/SpotBidPrice",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "maxItems": 100,
+            "title": "抢占式Spot实例出价价格。",
+            "type": "array"
+          },
+          "SpotInstanceRemedy": {
+            "description_en": "If enabled, the auto scaling group attempts to create a new instance to replace a spot instance that is about to be reclaimed. This process is triggered when the auto scaling group receives a system message about the impending reclamation. Valid values:\n\n`true`: The auto scaling group attempts to replace a spot instance that is about to be reclaimed.\n\n`false`: The auto scaling group does not attempt to replace a spot instance that is about to be reclaimed.\n\nDefault value: `false`",
+            "description_zh": "开启后，当收到抢占式实例将被回收的系统消息时，伸缩组将尝试创建新的实例，替换掉将被回收的抢占式实例。取值范围：\ntrue：开启补齐抢占式实例。\nfalse：不开启补齐抢占式实例。\n\n默认值：false",
+            "example": "true",
+            "title": "是否开启补齐抢占式实例。",
+            "type": "boolean"
+          },
+          "SpotStrategy": {
+            "description_en": "The preemption strategy for preemptible instances. Valid values:\n\n`NoSpot`: pay-as-you-go instances.\n\n`SpotWithPriceLimit`: preemptible instances with a user-defined maximum hourly price.\n\n`SpotAsPriceGo`: preemptible instances that are automatically bid at the pay-as-you-go price.\n\nDefault value: `NoSpot`",
+            "description_zh": "抢占式Spot实例策略。取值范围：\nNoSpot：正常按量付费实例。\nSpotWithPriceLimit：设置最高出价的抢占式实例。\nSpotAsPriceGo：系统自动出价，最高按量付费价格的抢占式实例。\n\n默认值：NoSpot",
+            "example": "NoSpot",
+            "title": "抢占式Spot实例策略。",
+            "type": "string"
+          },
+          "SubscriptionConfig": {
+            "$ref": "#/components/schemas/SubscriptionConfig",
+            "description_en": "The subscription settings of the node group. If you do not specify this parameter, the subscription settings of the cluster are used",
+            "description_zh": "节点组预付费配置。不传入时默认和集群预付费配置一致",
+            "title": "节点组预付费配置。"
+          },
+          "SystemDisk": {
+            "$ref": "#/components/schemas/SystemDisk",
+            "description_en": "The system disk",
+            "description_zh": "系统盘",
+            "title": "系统盘。"
+          },
+          "VSwitchIds": {
+            "description_en": "The vSwitch IDs. You can specify 1 to 20 vSwitch IDs",
+            "description_zh": "虚拟机交换机ID列表。数组元数个数N的取值范围：1~20",
+            "example": "[\"vsw-hp35g7ya5ymw68mmg****\"]",
+            "items": {
+              "description_en": "The vSwitch ID",
+              "description_zh": "虚拟机交换机ID",
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "虚拟机交换机ID列表。",
+            "type": "array"
+          },
+          "WithPublicIp": {
+            "description_en": "Specifies whether to assign a public IP address to the instances. Valid values:\n\n`true`: Assigns a public IP address.\n\n`false`: Does not assign a public IP address.\n\nDefault value: `false`",
+            "description_zh": "是否开公网IP。取值范围：\ntrue：开公网。\nfalse：不开公网。\n\n默认值：false",
+            "example": "false",
+            "title": "是否开公网IP。",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PrivatePoolOptions": {
+        "description_en": "The information about the private pool",
+        "description_zh": "PrivatePoolOptions",
+        "properties": {
+          "MatchCriteria": {
+            "description_en": "The type of private pool that you want to use to start ECS instances. A private pool is generated when an elasticity assurance or a capacity reservation takes effect. You can select a private pool for starting ECS instances. Valid values: Open, Target, and None. If you set the parameter to Open, the system selects an open private pool to start instances. If no matching open private pools exist, the resources in the public pool are used. In this case, you do not need to specify the ID of the private pool. If you set the parameter to Target, the resources in the specified private pool are used to start ECS instances. If the specified private pool does not exist, ECS instances cannot be started. You must specify the ID of the private pool when you set the parameter to Target. If you set the parameter to None, the resources in private pools are not used to start instances. Default value: None",
+            "description_zh": "实例启动的私有池容量选项。弹性保障服务或容量预定服务在生效后会生成私有池容量，供实例启动时选择。取值范围：  \nOpen：开放模式。将自动匹配开放类型的私有池容量。如果没有符合条件的私有池容量，则使用公共池资源启动。该模式下无需设置PrivatePoolIds参数。\nTarget：指定模式。使用指定的私有池容量启动实例，如果该私有池容量不可用，则实例会启动失败。该模式下必须指定私有池 ID，即PrivatePoolIds参数为必填项。 \nNone：不使用模式。实例启动将不使用私有池容量。 默认值：None",
+            "example": "Open",
+            "title": "实例启动的私有池容量选项。弹性保障服务或容量预定服务在生效后会生成私有池容量，供实例启动时选择。取值范围：  Open：开放模式。将自动匹配开放类型的私有池容量。如果没有符合条件的私有池容量，则使用公共池资源启动。该模式下无需设置PrivatePoolOptions.Id参数。 Target：指定模式。使用指定的私有池容量启动实例，如果该私有池容量不可用，则实例会启动失败。该模式下必须指定私有池 ID，即PrivatePoolOptions.Id参数为必填项。 None：不使用模式。实例启动将不使用私有池容量。 默认值：None。",
+            "type": "string"
+          },
+          "PrivatePoolIds": {
+            "description_en": "The IDs of the private pools",
+            "description_zh": "私有池 ID列表",
+            "example": "eap-bp67acfmxazb4****",
+            "items": {
+              "description_en": "The ID of private pool. The ID of a private pool is the same as the ID of the elasticity assurance or capacity reservation that is associated with the private pool",
+              "description_zh": "私有池 ID。即弹性保障服务 ID 或容量预定服务 ID",
+              "example": "crp-xxxx",
+              "type": "string"
+            },
+            "title": "私有池 ID。即弹性保障服务 ID 或容量预定服务 ID。",
+            "type": "array"
+          }
+        },
+        "title": "私有池设置",
+        "type": "object"
+      },
+      "ScalingRule": {
+        "description_en": "The configurations of the scaling rule",
+        "description_zh": "伸缩规则配置",
+        "properties": {
+          "ActivityType": {
+            "description_en": "The type of the scaling activity. This parameter is required. Valid values:\n\nSCALE_OUT: scale-out.\n\nSCALE_IN: scale-in",
+            "description_zh": "伸缩活动类型。必填参数。取值范围：\nSCALE_OUT：扩容。\nSCALE_IN：缩容",
+            "example": "SCALE_IN",
+            "required": true,
+            "title": "伸缩活动类型。",
+            "type": "string"
+          },
+          "AdjustmentValue": {
+            "description_en": "The adjustment value. This parameter is required and must be a positive integer. It specifies the number of instances to add for a scale-out activity or remove for a scale-in activity",
+            "description_zh": "调整值。必填参数，需要为正数，代表需要扩容或者缩容的实例数量",
+            "example": "100",
+            "format": "int32",
+            "required": true,
+            "title": "调整值。",
+            "type": "integer"
+          },
+          "MetricsTrigger": {
+            "$ref": "#/components/schemas/MetricsTrigger",
+            "description_en": "The configurations for load-based scaling",
+            "description_zh": "按照负载伸缩描述。\n<p>",
+            "title": "按照负载伸缩描述。"
+          },
+          "MinAdjustmentValue": {
+            "description_en": "The minimum number of instances to add during a scale-out activity",
+            "description_zh": "扩容最小交付数量",
+            "example": "1",
+            "format": "int32",
+            "title": "弹性伸缩扩容最小交付数量。",
+            "type": "integer"
+          },
+          "RuleName": {
+            "description_en": "The name of the rule. This parameter is required and cannot be an empty string",
+            "description_zh": "规则名称。必填参数，不允许为空字符串",
+            "example": "scalingByYarnMemory",
+            "required": true,
+            "title": "规则名称。",
+            "type": "string"
+          },
+          "TimeTrigger": {
+            "$ref": "#/components/schemas/TimeTrigger",
+            "description_en": "The configurations for time-based scaling",
+            "description_zh": "按照时间伸缩描述。\n<p>",
+            "title": "按照时间伸缩描述。"
+          },
+          "TriggerType": {
+            "description_en": "The type of the scaling rule. This parameter is required. Valid values:\n\nTIME_TRIGGER: time-based scaling.\n\nMETRICS_TRIGGER: load-based scaling",
+            "description_zh": "伸缩规则类型。必填参数。取值范围：\nTIME_TRIGGER：按时间伸缩。\nMETRICS_TRIGGER：按负载伸缩",
+            "example": "TIME_TRIGGER",
+            "required": true,
+            "title": "伸缩规则类型。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SpotBidPrice": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "BidPrice": {
+            "description_en": "The maximum hourly bid price for the instance, with up to three decimal places. This parameter applies only when `SpotStrategy` is set to `SpotWithPriceLimit`",
+            "description_zh": "实例的每小时最高出价。支持最大3位小数，参数SpotStrategy=SpotWithPriceLimit时，该参数生效",
+            "example": "1000.0",
+            "format": "double",
+            "title": "实例的每小时最高出价。",
+            "type": "number"
+          },
+          "InstanceType": {
+            "description_en": "The ECS instance type",
+            "description_zh": "ECS实例类型",
+            "example": "ecs.g7.2xlarge",
+            "title": "实例类型。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SubscriptionConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AutoRenew": {
+            "description_en": "Specifies whether auto-renewal is enabled. Valid values:\n\ntrue: Auto-renewal is enabled.\n\nfalse: Auto-renewal is disabled (default)",
+            "description_zh": "自动续费。取值范围：\ntrue：开启启动续费。\nfalse：不开启自动续费。\n默认值：false",
+            "example": "true",
+            "title": "自动续费。",
+            "type": "boolean"
+          },
+          "AutoRenewDuration": {
+            "description_en": "The auto-renewal duration. This parameter takes effect only when AutoRenew is set to true. When AutoRenewDurationUnit is Month, valid values are: 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 24, 36, 48, and 60",
+            "description_zh": "自动续费时长。当AutoRenew取值为true时生效。当AutoRenewDurationUnit取值为Month时，取值：1、2、3、4、5、6、7、8、9、12、24、36、48、60",
+            "example": "12",
+            "format": "int32",
+            "title": "自动续费时长。",
+            "type": "integer"
+          },
+          "AutoRenewDurationUnit": {
+            "description_en": "The auto-renewal duration unit. Valid value:\n\nMonth",
+            "description_zh": "自动续费时长单位，取值范围：\nMonth：月",
+            "example": "Month",
+            "title": "自动续费时长单位。AutoRenew取值为true时生效,取值范围：",
+            "type": "string"
+          },
+          "PaymentDuration": {
+            "description_en": "The payment duration. When PaymentDurationUnit is Month, valid values are: 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 24, 36, 48, and 60",
+            "description_zh": "付费时长。PaymentDurationUnit取值为Month时，取值：1、2、3、4、5、6、7、8、9、12、24、36、48、60",
+            "example": "12",
+            "format": "int32",
+            "required": true,
+            "title": "付费时长。",
+            "type": "integer"
+          },
+          "PaymentDurationUnit": {
+            "description_en": "The payment duration unit. Valid value:\n\nMonth",
+            "description_zh": "付费时长单位。取值范围：\nMonth：月",
+            "example": "Month",
+            "required": true,
+            "title": "付费时长单位。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SystemDisk": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Category": {
+            "description_en": "The type of the system disk. Valid values:\n\n`cloud_efficiency`: Ultra Disk.\n\n`cloud_ssd`: SSD Cloud Disk.\n\n`cloud_essd`: ESSD.\n\n`cloud`: Basic Disk",
+            "description_zh": "磁盘类型。取值范围：\ncloud_efficiency：高效云盘。\ncloud_ssd：SSD云盘。\ncloud_essd：ESSD云盘。\ncloud：普通云盘",
+            "example": "cloud_essd",
+            "required": true,
+            "title": "磁盘类型。",
+            "type": "string"
+          },
+          "Count": {
+            "description_en": "Specifies the number of system disks on each node. Default value: 1",
+            "description_zh": "每个节点系统盘数量，默认值为1",
+            "example": "1",
+            "format": "int32",
+            "title": "每个节点磁盘数量。",
+            "type": "integer"
+          },
+          "PerformanceLevel": {
+            "description_en": "The performance level of the ESSD. This parameter is valid only when `Category` is set to `cloud_essd`. Valid values:\n\n`PL0`: Up to 10,000 random read/write IOPS per disk.\n\n`PL1` (default): Up to 50,000 random read/write IOPS per disk.\n\n`PL2`: Up to 100,000 random read/write IOPS per disk.\n\n`PL3`: Up to 1,000,000 random read/write IOPS per disk",
+            "description_zh": "创建ESSD云盘作为系统盘使用时，设置云盘的性能等级。取值范围：\nPL0：单盘最高随机读写IOPS 1万。\nPL1（默认）：单盘最高随机读写IOPS 5万。\nPL2：单盘最高随机读写IOPS 10万。\nPL3：单盘最高随机读写IOPS 100万。\n\n默认值：PL1",
+            "example": "PL1",
+            "title": "ESSD云盘性能级别。",
+            "type": "string"
+          },
+          "Size": {
+            "description_en": "The size of the system disk, in GB",
+            "description_zh": "单位GB",
+            "example": "60",
+            "format": "int32",
+            "required": true,
+            "title": "磁盘大小。",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "Tag": {
+        "description_en": "The tag",
+        "description_zh": "标签",
+        "properties": {
+          "Key": {
+            "description_en": "The key of the tag. This parameter is required and cannot be an empty string. The key can be up to 128 characters in length. It cannot start with `aliyun` or `acs:` and cannot contain `http://` or `https://`",
+            "description_zh": "标签键。必填参数，不允许为空字符串。最多支持128个字符，不能以```aliyun```和```acs:```开头，不能包含```http://```或 ```https://```",
+            "example": "department",
+            "required": true,
+            "title": "标签键。",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "The value of the tag This parameter is optional and can be an empty string. The value can be up to 128 characters in length. It cannot start with `acs:` and cannot contain `http://` or `https://`",
+            "description_zh": "标签值。非必填，可以为空字符串。最多支持128个字符，不能以```acs:```开头，不能包含```http://```或者```https://```",
+            "example": "IT",
+            "title": "标签值。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimeConstraint": {
+        "description_en": "The time limit",
+        "description_zh": "时间限制",
+        "properties": {
+          "EndTime": {
+            "description_en": "The end time. Valid values: 00:00 to 23:59",
+            "description_zh": "结束时间。取值范围：00:00至23:59",
+            "example": "23:59",
+            "title": "结束时间。",
+            "type": "string"
+          },
+          "StartTime": {
+            "description_en": "The start time. Valid values: 00:00 to 23:59",
+            "description_zh": "开始时间。取值范围：00:00至23:59",
+            "example": "06:00",
+            "title": "开始时间。",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimeTrigger": {
+        "description_en": "The time-based trigger condition",
+        "description_zh": "时间触发条件",
+        "properties": {
+          "EndTime": {
+            "description_en": "The end timestamp. Unit: milliseconds",
+            "description_zh": "结束时间戳。单位为毫秒",
+            "example": "1639714800000",
+            "format": "int64",
+            "title": "结束时间戳。",
+            "type": "integer"
+          },
+          "LaunchExpirationTime": {
+            "description_en": "The period of time during which the system retries after a scheduled task fails to be triggered. Unit: seconds. Valid values: 0 to 3600",
+            "description_zh": "定时任务触发操作失败后，在此时间内重试。单位为秒，取值范围：0~3600",
+            "example": "600",
+            "format": "int32",
+            "title": "定时任务触发操作失败后，在此时间内重试。单位为秒，取值范围：0~3600。",
+            "type": "integer"
+          },
+          "LaunchTime": {
+            "description_en": "The time when the scaling rule is executed. This parameter is required. The value is a string in the HH:MM format",
+            "description_zh": "伸缩规则执行时间。必填参数。HH:MM格式字符串",
+            "example": "17:30",
+            "required": true,
+            "title": "启动时间。",
+            "type": "string"
+          },
+          "RecurrenceType": {
+            "description_en": "The execution type of the time-based rule. Valid values:\nDAILY: repeats daily.\nWEEKLY: repeats weekly.\nMONTHLY: repeats monthly",
+            "description_zh": "指定时间规则的执行类型。取值范围：\nDAILY：按天重复。\nWEEKLY：按周重复。\nMONTHLY：按月重复",
+            "example": "WEEKLY",
+            "title": "指定时间规则的执行类型。",
+            "type": "string"
+          },
+          "RecurrenceValue": {
+            "description_en": "The recurrence value of the scheduled task. The specific value depends on the RecurrenceType setting.\nIf RecurrenceType is set to DAILY, you can specify only one value. Valid values: 1 to 31.\nIf RecurrenceType is set to WEEKLY, you can specify multiple values separated by commas (,). MON, TUE, WED, THU, FRI, SAT, and SUN represent Monday through Sunday. For example, MON,FRI,SUN represents Monday, Friday, and Sunday.\nIf RecurrenceType is set to MONTHLY, the format is A-B or A,B. Valid values of A and B: 1 to 31. If you use the A-B format, B must be greater than A",
+            "description_zh": "重复执行定时任务的数值。具体取值取决于RecurrenceType设置。\nRecurrenceType取DAILY时，只能填一个数值，取值范围：1~31。\nRecurrenceType取WEEKLY时，可以填入多个值，填多个值时使用英文逗号（,）分隔。周一到周天分别用MON,TUE,WED,THU,FRI,SAT,SUN代替。例如，MON,FRI,SUN代表周一、周五、周天。\nRecurrenceType取MONTHLY时，格式为A-B或者A,B。A和B的取值范围都为1~31，如果使用A-B时B必须大于A",
+            "example": "MON,FRI,SUN",
+            "title": "重复执行定时任务的数值。",
+            "type": "string"
+          },
+          "StartTime": {
+            "description_en": "The start timestamp. This parameter is required. Unit: milliseconds",
+            "description_zh": "开始时间戳。必填参数。单位为毫秒",
+            "example": "1639714800000",
+            "format": "int64",
+            "title": "开始时间戳。",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TriggerCondition": {
+        "description_en": "The trigger condition",
+        "description_zh": "触发条件",
+        "properties": {
+          "ComparisonOperator": {
+            "description_en": "The comparison operator. This parameter is required. Valid values:\nEQ: equal to.\nNE: not equal to.\nGT: greater than.\nLT: less than.\nGE: greater than or equal to.\nLE: less than or equal to",
+            "description_zh": "比较符。必填参数。取值范围：\nEQ：等于。\nNE：不等于。\nGT：大于。\nLT：小于。\nGE：大于等于。\nLE：小于等于",
+            "example": "LT",
+            "required": true,
+            "title": "比较符。",
+            "type": "string"
+          },
+          "MetricName": {
+            "description_en": "The metric name. This parameter is required and cannot be an empty character string. You can view metric names in [Add elastic scaling rules]（https://help.aliyun.com/document_detail/445658.html）",
+            "description_zh": "指标名称。必填参数，不允许为空字符串。您可以在[添加弹性伸缩规则]（https://help.aliyun.com/document_detail/445658.html）中查看指标名称",
+            "example": "yarn_resourcemanager_queue_PendingVCores",
+            "required": true,
+            "title": "指标名称。",
+            "type": "string"
+          },
+          "Statistics": {
+            "description_en": "The statistic name. This parameter is required. Valid values:\nMAX: maximum value.\nMIN: minimum value.\nAVG: average value",
+            "description_zh": "统计量名称。必填参数。取值范围：\nMAX：最大值。\nMIN：最小值。\nAVG：平均值",
+            "example": "AVG",
+            "required": true,
+            "title": "统计量名称。",
+            "type": "string"
+          },
+          "Tags": {
+            "description_en": "The list of metric partition tags.\n\nFor metrics with queue\n\nDefault value:\n\nTag key: queue_name. Value: root.\n\nWhen you use metrics with a queue, you can set the queue_name tag to specify the queue. Ensure that you enter the full queue hierarchy name.\n\nExample\n\nMetric name: yarn_resourcemanager_queue_AvailableVCoresPercentage\n\nTag:\n`queue_name: root.default.a`\n\nFor metrics with partition\n\nDefault value:\nTag key: none. Value: none.\nFor metrics with a partition, you must set the partition_name tag and explicitly specify the partition name.\n\nExample\n\nMetric name: yarn_cluster_availMemoryMBByPartition\n\nTag: `partition_name: DEFAULT_PARTITION`",
+            "description_zh": "指标分区标签列表\n\n对于带 queue 的指标\n\n默认值：\n\n标签键（key）：queue_name。值（value）：root。\n\n当您使用带有队列的指标时，您可以设置 queue_name 标签，指定所属的队列。确保输入完整的队列层级名称。\n\n示例\n\n指标名：yarn_resourcemanager_queue_AvailableVCoresPercentage\n\n标签：\n`queue_name: root.default.a`\n\n对于带 partition 的指标\n\n默认值：\n标签键（key）：无。值（value）：无。\n对于带有分区的指标，必须设置 partition_name 标签且明确指定分区名称。\n\n示例\n\n指标名：yarn_cluster_availMemoryMBByPartition\n\n标签：`partition_name: DEFAULT_PARTITION`",
+            "items": {
+              "$ref": "#/components/schemas/Tag",
+              "description_en": "The tag",
+              "description_zh": "标签"
+            },
+            "title": "指标Tag。",
+            "type": "array"
+          },
+          "Threshold": {
+            "description_en": "The trigger threshold. This parameter is required",
+            "description_zh": "触发阈值。必填参数",
+            "example": "12.5",
+            "format": "double",
+            "required": true,
+            "title": "阈值。",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a node group",
   "description_zh": "创建节点组",
@@ -997,6 +1700,33 @@
   "pathPattern": "",
   "product_code": "Emr",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned data",
+        "description_zh": "返回数据",
+        "properties": {
+          "NodeGroupId": {
+            "description_en": "The node group ID",
+            "description_zh": "机器组ID",
+            "example": "G-21E39B11837E****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "9E3A7161-EB7B-172B-8D18-FFB06BA3****",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "返回数据",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The cluster ID",

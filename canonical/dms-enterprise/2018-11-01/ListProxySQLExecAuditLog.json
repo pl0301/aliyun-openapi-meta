@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "1636876446000",
       "help_en": "The beginning of the time range to query. The value of this parameter must be a timestamp that follows the UNIX time format",
       "help_zh": "开始操作的时间戳，格式为标准的UNIX_TIMESTAMP时间戳形式，您可以根据您的操作时间进行转化",
@@ -34,6 +35,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1636962846000",
       "help_en": "The end of the time range to query. The value of this parameter must be a timestamp that follows the UNIX time format",
       "help_zh": "结束操作的时间戳，格式为标准的UNIX_TIMESTAMP时间戳形式，您可以根据您的操作时间进行转化",
@@ -86,6 +88,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "FAIL",
+        "SUCCESS",
+        "CANCEL"
+      ],
       "example": "SUCCESS",
       "help_en": "The execution status of the SQL statement. Valid values:\n\nFAIL: The execution of the SQL statement fails.\nCANCEL: The execution of the SQL statement is canceled.\nSUCCESS: The SQL statement is executed",
       "help_zh": "执行状态，取值说明如下：\nFAIL：执行失败\nCANCEL：取消执行\nSUCCESS：执行成功",
@@ -99,10 +106,13 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "100",
       "help_en": "The number of entries to return on each page. Maximum values: 100",
       "help_zh": "每页数据量，最大值不超过100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -112,10 +122,12 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "The number of the page to return",
       "help_zh": "开始页码",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -129,6 +141,8 @@
       "help_en": "The ID of the tenant. You can call the https://help.aliyun.com/document_detail/198073.html operation to query the tenant ID",
       "help_zh": "租户ID，可通过调用接口https://help.aliyun.com/document_detail/198073.html获取该参数的值",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "1",
       "name": "tid",
       "options": [
         "--tid"
@@ -140,5 +154,143 @@
   ],
   "pathPattern": "",
   "product_code": "dms-enterprise",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "ErrorCode": {
+            "description_en": "The error code returned",
+            "description_zh": "错误码",
+            "example": "InvalidStartTime",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message returned",
+            "description_zh": "错误信息",
+            "example": "Specified parameter StartTime is not valid.",
+            "type": "string"
+          },
+          "ProxySQLExecAuditLogList": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "ProxySQLExecAuditLog": {
+                "description_en": "The audit information about the database instance that is provided by the secure access proxy feature",
+                "description_zh": "安全代理审计信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "安全代理审计信息列表",
+                  "properties": {
+                    "AffectRows": {
+                      "description_en": "Indicates the total number of rows returned after the SQL statement was executed. If an SELECT SQL statement is executed, the return value of this parameter indicates the total number of the queried data rows",
+                      "description_zh": "表示执行SQL语句后返回的总行数。比如，SQL语句为查询语句，此参数返回的是查询数据的总行数",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ElapsedTime": {
+                      "description_en": "The amount of time that is consumed to execute the SQL statement. Unit: milliseconds",
+                      "description_zh": "操作耗时，单位为毫秒",
+                      "example": "1324",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ExecState": {
+                      "description_en": "The execution status of the SQL statement. Valid values:\n\nFAIL: The execution of the SQL statement fails.\nCANCEL: The execution of the SQL statement is canceled.\nSUCCESS: The SQL statement is executed",
+                      "description_zh": "执行状态，返回值说明如下：\nFAIL：执行失败\nCANCEL：取消执行\nSUCCESS：执行成功",
+                      "example": "SUCCESS",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "The ID of the database instance",
+                      "description_zh": "实例ID",
+                      "example": "4***",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "InstanceName": {
+                      "description_en": "The name of the database instance",
+                      "description_zh": "实例名称",
+                      "example": "pc-uf662nrg017c6****.mysql.polardb.rds.aliyuncs.com:3306【test】",
+                      "type": "string"
+                    },
+                    "OpTime": {
+                      "description_en": "The time at which the user executes the SQL statement on the database instance. The value of this parameter must be a timestamp that follows the UNIX time format",
+                      "description_zh": "操作时间戳，格式为标准的UNIX_TIMESTAMP时间戳形式",
+                      "example": "1636876446000",
+                      "type": "string"
+                    },
+                    "Remark": {
+                      "description_en": "The description",
+                      "description_zh": "备注信息",
+                      "example": "success",
+                      "type": "string"
+                    },
+                    "SQL": {
+                      "description_en": "The SQL statement that was executed",
+                      "description_zh": "已执行的SQL语句",
+                      "example": "select 1;",
+                      "type": "string"
+                    },
+                    "SQLType": {
+                      "description_en": "The type of the SQL statement. Valid values:\n\nSELECT\nINSERT\nDELETE\nCREATE_TABLE\n\nYou can choose Operation Audit > Secure Access Proxy in the top navigation bar of the DMS console to view more types of SQL statements",
+                      "description_zh": "SQL类型，常见SQL类型返回值说明如下：\n\nSELECT：查询\nINSERT：插入\nDELETE：删除\nCREATE_TABLE：创建表\n\n您可以在控制台页面上方操作审计->安全访问代理中查看更多SQL类型返回值",
+                      "example": "SELECT",
+                      "type": "string"
+                    },
+                    "SchemaName": {
+                      "description_en": "The name of the database",
+                      "description_zh": "数据库名称",
+                      "example": "test_db",
+                      "type": "string"
+                    },
+                    "UserId": {
+                      "description_en": "The ID of the user",
+                      "description_zh": "操作人ID",
+                      "example": "4****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "UserName": {
+                      "description_en": "The nickname of the user",
+                      "description_zh": "操作人昵称",
+                      "example": "testNickName",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "50ECB006-2C35-5FCA-91B9-01987A0B****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue: The request was successful.\nfalse: The request failed",
+            "description_zh": "请求是否成功，返回值如下：\ntrue：请求成功\nfalse：请求失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The number of entries returned",
+            "description_zh": "操作总记录数",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

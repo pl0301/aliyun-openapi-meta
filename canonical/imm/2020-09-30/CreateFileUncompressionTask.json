@@ -2,6 +2,129 @@
   "camel_example": "aliyun imm CreateFileUncompressionTask --region cn-hangzhou --ProjectName 'test-project' --CredentialConfig 'example-string' --UserData 'test-data' --SelectedFiles '[\"test-dir/test.jpg\"]' --SourceURI 'oss://test-bucket/test-object.zip' --Notification 'example-string' --TargetURI 'oss://test-bucket/test-dir/' --Password 123456",
   "cmd_full_name": "imm create-file-uncompression-task",
   "cmd_name": "create-file-uncompression-task",
+  "components": {
+    "schemas": {
+      "CredentialConfig": {
+        "description_en": "The authorization chain settings. In most cases, this parameter is left empty.\n\nIf Account A is used to call an API operation of Intelligent Media Management (IMM) to process Object Storage Service (OSS) data in Account B, you must set the ServiceRole parameter to a role in Account A, and set the Chain parameter to a role in Account B",
+        "description_zh": "链式授权配置对象，一般留空即可。\n假设当前使用A账号调用IMM接口处理B账号中的OSS数据。\nServiceRole参数应配置A账号中的角色，Chain参数应设置B账号准备好的角色，通过上述配置完成后，就可以使用A账号调用IMM接口处理B账号中的OSS数据",
+        "properties": {
+          "Chain": {
+            "description_en": "The authorization chains. All roles in the array must have the `sts:AssumeRole` permission. You need to only grant other permissions, such as read and write permissions on OSS, to the last role in the array. You can grant permissions in the RAM console",
+            "description_zh": "需要传递授权的链列表，数组中的所有角色都需要赋予访问 `sts:AssumeRole` 权限。\n只有数组中的最后一个角色需要额外配置需要真正访问的其他权限，比如OSS的读写权限，可以通过RAM控制台进行授权操作",
+            "items": {
+              "description_en": "The authorization chain",
+              "description_zh": "授权链对象",
+              "properties": {
+                "AssumeRoleFor": {
+                  "description_en": "The ID of the account that you use to grant permissions",
+                  "description_zh": "提供授权的账号ID",
+                  "example": "10232100246xxxxx",
+                  "title": "授权对象",
+                  "type": "string"
+                },
+                "Role": {
+                  "description_en": "The RAM role that can be assumed",
+                  "description_zh": "允许扮演的RAM角色",
+                  "example": "AliyunOSSRole",
+                  "title": "授权角色",
+                  "type": "string"
+                },
+                "RoleType": {
+                  "description_en": "The role type. Valid values:\n\nuser: Alibaba Cloud account.\nservice: Alibaba Cloud service",
+                  "description_zh": "角色类型，可选值如下。\nuser：阿里云账号。\nservice：阿里云服务",
+                  "example": "user",
+                  "title": "授权方类型",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "授权链",
+            "type": "array"
+          },
+          "Policy": {
+            "description_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+            "description_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+            "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+            "title": "权限策略",
+            "type": "string"
+          },
+          "ServiceRole": {
+            "description_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+            "description_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+            "example": "AliyunSTSAssumeForIMMServiceRole",
+            "title": "服务角色",
+            "type": "string"
+          }
+        },
+        "title": "链式授权配置",
+        "type": "object"
+      },
+      "MNS": {
+        "description_en": "Message notification parameters for ApsaraMQ for MNS",
+        "description_zh": "轻量消息队列（原 MNS）消息通知参数",
+        "properties": {
+          "TopicName": {
+            "description_en": "Specifies the name of the ApsaraMQ for MNS topic, which can be found in the topic list for the current region in the left-side navigation pane of the ApsaraMQ for MNS console (https://mns.console.aliyun.com/). This parameter is required for ApsaraMQ for MNS message notification",
+            "description_zh": "轻量消息队列SMQ（原 MNS）主题名称。可登录轻量消息队列SMQ（原MNS）控制台 (https://mns.console.aliyun.com/),在左侧导航栏中点击当前地域下主题列表中获取。如果需使用轻量消息队列（原 MNS）做消息通知，该参数必填",
+            "example": "topic1",
+            "title": "TopicName",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "Notification": {
+        "description_en": "The notification object. It supports multiple message middleware. For more information about the message format, see [Asynchronous notification message format]（https://help.aliyun.com/document_detail/2743997.html）. Choose one of the following methods to receive messages:\n\nActivate and integrate with the [EventBridge]（https://help.aliyun.com/document_detail/161886.html） service in the same region as Intelligent Media Management (IMM) to receive task notifications promptly. For more information, see [IMM events]（https://help.aliyun.com/document_detail/205730.html）.\n\nActivate the [MNS]（https://help.aliyun.com/document_detail/27412.html） service in the same region as IMM and configure a subscription.\n\nActivate the [RocketMQ]（https://help.aliyun.com/document_detail/29530.html） service in the same region as IMM, and create a RocketMQ 4.0 instance, Topic, and Group.\n\n\n<notice>\n\n  The Notification object does not support custom webhook addresses.\n\n</notice>",
+        "description_zh": "消息通知对象，支持多种消息中间件，消息格式详情请见[异步通知消息格式]（https://help.aliyun.com/document_detail/2743997.html），请选择其中一种方式接收消息，使用方式如下所示：\n在与智能媒体管理相同的地域下开通并接入[事件总线EventBridge]（https://help.aliyun.com/document_detail/161886.html）服务，及时获取任务信息通知。更多信息，请参见[智能媒体管理IMM事件]（https://help.aliyun.com/document_detail/205730.html）。\n在与智能媒体管理相同的地域下开通[MNS]（https://help.aliyun.com/document_detail/27412.html）服务，并配置订阅关系。\n在与智能媒体管理相同的地域下开通[RocketMQ]（https://help.aliyun.com/document_detail/29530.html）服务，并创建RocketMQ 4.0实例、Topic、Group。\n<notice>Notification不支持自定义回调地址。></notice>",
+        "properties": {
+          "ExtendedMessageURI": {
+            "description_en": "Use an Object Storage Service (OSS) file to receive task notifications. If you provide the URI of this file, detailed task execution information is written to the file in a JSON structure. Normally, you receive notifications through [EventBridge]（https://help.aliyun.com/document_detail/161886.html）, [MNS]（https://help.aliyun.com/document_detail/27412.html）, or [RocketMQ]（https://help.aliyun.com/document_detail/29530.html）. However, some tasks generate large amounts of information, such as archive previews or decompression tasks. For these tasks, provide this file to get the complete execution results.\n\nThe OSS URI format is oss\\://${Bucket}/${Object}. `${Bucket}` is the name of an OSS bucket in the same region as the current project. `${Object}` is the full path of the file, including the file name extension.\n\n<notice>\n\nThis file is not a notification method. It only serves as a medium to receive detailed task execution information. Task status is sent through standard message notifications. This file contains only the detailed execution information.\n\n</notice>",
+            "description_zh": "使用OSS文件接受任务消息通知。提供该文件地址后，任务执行的具体信息会以JSON结构写入到该文件中。一般情况下，您只需要通过[事件总线EventBridge]（https://help.aliyun.com/document_detail/161886.html）服务、[MNS]（https://help.aliyun.com/document_detail/27412.html）服务或[RocketMQ]（https://help.aliyun.com/document_detail/29530.html）服务接受消息通知，但部分任务执行的信息会比较大（例如压缩包文件预览、解压任务），您可以通过提供该文件获取具体的任务执行结果。\n\nOSS地址规则为oss://${Bucket}/${Object}，其中`${Bucket}`为和当前项目处于同一地域(Region)的OSS Bucket名称，`${Object}`为包含文件扩展名的文件完整路径。\n\n\n<notice>该文件并不作为消息通知的方式，仅作为接受任务执行具体信息的载体。任务的状态信息会通过消息通知的方式发送，该文件仅包含任务执行的具体信息。 \n</notice>",
+            "example": "oss://test-bucket/test-object.json",
+            "title": "ExtendedMessageURI",
+            "type": "string"
+          },
+          "MNS": {
+            "$ref": "#/components/schemas/MNS",
+            "description_en": "The MNS notification parameter object",
+            "description_zh": "MNS通知参数对象",
+            "title": "MNS"
+          },
+          "RocketMQ": {
+            "$ref": "#/components/schemas/RocketMQ",
+            "description_en": "The RocketMQ notification parameter object",
+            "description_zh": "RocketMQ通知参数对象",
+            "title": "RocketMQ"
+          }
+        },
+        "type": "object"
+      },
+      "RocketMQ": {
+        "description_en": "RocketMQ message notification parameters",
+        "description_zh": "RocketMQ消息通知参数",
+        "properties": {
+          "InstanceId": {
+            "description_en": "The RocketMQ instance ID. Required for RocketMQ message notifications",
+            "description_zh": "RocketMQ实例Id。如果需使用RocketMQ做消息通知，该参数必填",
+            "example": "MQ_INST_11111111111_BYcNy2Nc",
+            "title": "InstanceId",
+            "type": "string"
+          },
+          "TopicName": {
+            "description_en": "The name of the RocketMQ topic. Required for RocketMQ message notifications",
+            "description_zh": "RocketMQ Topic名称。如果需使用RocketMQ做消息通知，该参数必填",
+            "example": "topic1",
+            "title": "TopicName",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "A file decompression task lets you decompress specific files or an entire compressed package to a specified location. Supported formats include Zip, RAR, and 7z",
   "description_zh": "创建解压缩任务可以将您压缩包内的指定文件解压缩到特定位置，也可以将压缩包完整解压，目前支持的压缩格式包括Zip、RAR和7z",
@@ -284,5 +407,38 @@
   ],
   "pathPattern": "",
   "product_code": "imm",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Response struct",
+        "description_zh": "响应结构体",
+        "properties": {
+          "EventId": {
+            "description_en": "The event ID",
+            "description_zh": "事件ID",
+            "example": "0ED-1Bz8z71k5TtsUejT4UJ16Es*****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "EC564A9A-BA5C-4499-A087-D9B9E76E*****",
+            "title_en": "",
+            "title_zh": "请求 ID",
+            "type": "string"
+          },
+          "TaskId": {
+            "description_en": "The task ID",
+            "description_zh": "任务ID",
+            "example": "FileUncompression-16ab5dd6-af02-480e-9ed7-a8d51b1*****",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "响应结构体",
+        "type": "object"
+      }
+    }
+  }
 }

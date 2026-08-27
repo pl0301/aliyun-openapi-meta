@@ -64,6 +64,8 @@
       "help_en": "The lock duration. The snapshot lock automatically expires after the lock duration ends. \n\nUnit: days. \n\nValid values: 1 to 36500",
       "help_zh": "锁定时长。锁定时长结束后快照锁定会自动过期。 \n\n单位：天。 \n\n取值范围：1~36500",
       "location": "query",
+      "maximum": "36500",
+      "minimum": "1",
       "name": "lock_duration",
       "options": [
         "--lock-duration"
@@ -77,6 +79,8 @@
       "help_en": "The cool-off period. In compliance mode, you can set a cool-off period or skip the cool-off period to directly lock the snapshot. \n\nDuring the cool-off period, users with the required RAM permissions can unlock the snapshot, extend or shorten the cool-off period, and extend or shorten the lock duration. The snapshot cannot be deleted during the cool-off period. \n\nAfter the cool-off period ends, you can only extend the lock duration. \n\nUnit: hours. \n\nValid values: 0 to 72. A value of 0 indicates that the cool-off period is skipped and the snapshot is directly locked. \n\nIf the snapshot has already entered the compliance mode lock period, set this parameter to 0 to extend the lock duration",
       "help_zh": "冷静期。合规模式下可以设置冷静期或者跳过冷静期直接锁定快照。 \n\n冷静期内，具备相应 RAM 权限的用户可以解锁快照、延长或缩短冷静期、延长或缩短锁定时长，冷静期内快照不允许删除。 \n\n冷静期结束后，仅支持延长锁定时长。 \n\n单位：小时。 \n\n取值范围：0~72。取值为 0 表示跳过冷静期直接锁定快照。 \n\n如果快照已进入合规模式锁定期，延长锁定时长该参数需要填 0",
       "location": "query",
+      "maximum": "72",
+      "minimum": "0",
       "name": "cool_off_period",
       "options": [
         "--cool-off-period"
@@ -114,5 +118,109 @@
   ],
   "pathPattern": "",
   "product_code": "Ecs",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "LockedSnapshotInfo": {
+            "description_en": "The locked snapshot information",
+            "description_zh": "锁定快照信息",
+            "properties": {
+              "CoolOffPeriod": {
+                "description_en": "The cool-off period in compliance mode. Unit: hours",
+                "description_zh": "合规模式冷静期。单位：小时",
+                "example": "3",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "合规模式冷静期。单位：小时。",
+                "type": "integer"
+              },
+              "CoolOffPeriodExpiredTime": {
+                "description_en": "The time when the cool-off period in compliance mode ends. The time follows the ISO 8601 (https://www.alibabacloud.com/help/en/ecs/developer-reference/iso-8601-time-format) standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC",
+                "description_zh": "合规模式冷静期结束时间。按照 ISO 8601 (https://help.aliyun.com/zh/ecs/developer-reference/iso-8601-time-format?spm=a2c4g.11186623.0.0.277c6c92kl7kXM) 标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
+                "example": "2025-10-15T13:00:00Z",
+                "title_en": "",
+                "title_zh": "合规模式冷静期结束时间。按照ISO 8601标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ。",
+                "type": "string"
+              },
+              "LockCreationTime": {
+                "description_en": "The time when the snapshot was locked. The time follows the ISO 8601 (https://www.alibabacloud.com/help/en/ecs/developer-reference/iso-8601-time-format) standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC",
+                "description_zh": "锁定时间。按照 ISO 8601 (https://help.aliyun.com/zh/ecs/developer-reference/iso-8601-time-format?spm=a2c4g.11186623.0.0.277c6c92kl7kXM) 标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
+                "example": "2025-10-15T10:00:00Z",
+                "title_en": "",
+                "title_zh": "锁定时间。按照ISO 8601标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ。",
+                "type": "string"
+              },
+              "LockDuration": {
+                "description_en": "The lock duration. The snapshot lock automatically expires after the lock duration ends. Unit: days",
+                "description_zh": "锁定时长。锁定时长结束后快照锁定会自动过期。单位：天",
+                "example": "1",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "锁定时长。锁定时长结束后快照锁定会自动过期。单位：天。",
+                "type": "integer"
+              },
+              "LockDurationStartTime": {
+                "description_en": "The time when the lock duration starts. The time follows the ISO 8601 (https://www.alibabacloud.com/help/en/ecs/developer-reference/iso-8601-time-format) standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC. \n\nIf you lock a snapshot that is in the progressing state, the lock duration starts only after the snapshot enters the accomplished state",
+                "description_zh": "锁定时长开始时间。按照 ISO 8601 (https://help.aliyun.com/zh/ecs/developer-reference/iso-8601-time-format?spm=a2c4g.11186623.0.0.277c6c92kl7kXM) 标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ。 \n\n如果锁定处于progressing状态的快照，锁定时长将在快照进入accomplished状态后才开始计算",
+                "example": "2025-10-15T10:00:00Z",
+                "title_en": "",
+                "title_zh": "锁定时长开始时间。按照ISO 8601标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ。 如果锁定处于progressing状态的快照，锁定时长将在快照进入accomplished状态后才开始计算。",
+                "type": "string"
+              },
+              "LockExpiredTime": {
+                "description_en": "The time when the lock expires. The time follows the ISO 8601 (https://www.alibabacloud.com/help/en/ecs/developer-reference/iso-8601-time-format) standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC",
+                "description_zh": "锁定过期时间。按照 ISO 8601 (https://help.aliyun.com/zh/ecs/developer-reference/iso-8601-time-format?spm=a2c4g.11186623.0.0.277c6c92kl7kXM) 标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
+                "example": "2025-10-16T10:00:00Z",
+                "title_en": "",
+                "title_zh": "锁定过期时间。按照ISO 8601标准表示，并使用 UTC + 0 时间，格式为 yyyy-MM-ddTHH:mm:ssZ。",
+                "type": "string"
+              },
+              "LockMode": {
+                "description_en": "The lock mode. Valid values: \ncompliance: The snapshot is locked in compliance mode. A snapshot locked in compliance mode cannot be unlocked by any user and can be deleted only after the lock duration expires. Users cannot shorten the lock duration, but users with the required RAM permissions can extend the lock duration at any time. When locking a snapshot in compliance mode, you can optionally specify a cool-off period",
+                "description_zh": "锁定模式。可能值： \ncompliance：以合规模式锁定快照。以合规模式锁定的快照无法被任何用户解锁，只有在锁定时长到期后才能被删除。用户不能缩短锁定时长，但具备相应 RAM 权限的用户可以随时延长锁定时长。以合规模式锁定快照时，可以选择性地指定冷静期",
+                "example": "compliance",
+                "title_en": "",
+                "title_zh": "锁定模式。取值范围： ● compliance：以合规模式锁定快照。以合规模式锁定的快照无法被任何用户解锁，只有在锁定时长到期后才能被删除。用户不能缩短锁定时长，但具备相应 RAM 权限的用户可以随时延长锁定时长。以合规模式锁定快照时，可以选择性地指定冷静期。",
+                "type": "string"
+              },
+              "LockStatus": {
+                "description_en": "The lock status. Valid values: \ncompliance-cooloff: The snapshot is locked in compliance mode but is still within the cool-off period. The snapshot cannot be deleted, but users with the required RAM permissions can unlock the snapshot, extend or shorten the cool-off period, and extend or shorten the lock duration. \ncompliance: The snapshot is locked in compliance mode and the cool-off period has ended. The snapshot cannot be unlocked or deleted, but users with the required RAM permissions can extend the lock duration. \nexpired: The snapshot was previously locked, but the lock duration has ended and the lock has expired. The snapshot is currently unlocked and can be deleted",
+                "description_zh": "锁定状态。可能值： \ncompliance-cooloff：快照以合规模式锁定，但仍处于冷静期内。快照无法被删除，但具备相应 RAM 权限的用户可以解锁快照、延长或缩短冷静期、延长或缩短锁定时长。 \ncompliance：快照以合规模式锁定，且冷静期已结束。快照无法被解锁或删除，但具备相应 RAM 权限的用户可以延长锁定时长。 \nexpired：快照曾被锁定，但锁定时长已结束，锁定已过期。快照当前未锁定，可以被删除",
+                "example": "compliance-cooloff",
+                "title_en": "",
+                "title_zh": "锁定状态。可能值： ● compliance-cooloff：快照以合规模式锁定，但仍处于冷静期内。快照无法被删除，但具备相应 RAM 权限的用户可以解锁快照、延长或缩短冷静期、延长或缩短锁定时长。 ● compliance：快照以合规模式锁定，且冷静期已结束。快照无法被解锁或删除，但具备相应 RAM 权限的用户可以延长锁定时长。 ● expired：快照曾被锁定，但锁定时长已结束，锁定已过期。快照当前未锁定，可以被删除。",
+                "type": "string"
+              },
+              "SnapshotId": {
+                "description_en": "The snapshot ID",
+                "description_zh": "快照 ID",
+                "example": "s-9dp2qojdpdfmgfmf****",
+                "title_en": "",
+                "title_zh": "快照 ID。",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "锁定快照信息。",
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求 ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
+            "title_en": "",
+            "title_zh": "请求 ID。",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

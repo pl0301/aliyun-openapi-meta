@@ -2,6 +2,358 @@
   "camel_example": "aliyun ossutil api put-bucket-inventory --bucket examplebucket --region cn-hangzhou --inventory-id report1",
   "cmd_full_name": "oss put-bucket-inventory",
   "cmd_name": "put-bucket-inventory",
+  "components": {
+    "schemas": {
+      "IncrementInventorySchedule": {
+        "description_en": "The container for incremental inventory list export cycle information",
+        "description_zh": "增量清单导出周期信息的容器",
+        "properties": {
+          "Frequency": {
+            "description_en": "The export cycle of the incremental inventory list file, in seconds. Currently fixed at 10 minutes",
+            "description_zh": "描述增量清单文件导出的周期，单位为秒，目前固定为10分钟",
+            "example": "600",
+            "format": "int64",
+            "title": "描述增量清单文件导出的周期，单位为秒，目前固定为10分钟。",
+            "type": "integer"
+          }
+        },
+        "title": "增量清单导出周期信息的容器",
+        "type": "object"
+      },
+      "IncrementalInventory": {
+        "description_en": "",
+        "description_zh": "增量清单的配置容器",
+        "properties": {
+          "IsEnabled": {
+            "description_en": "",
+            "description_zh": "增量清单是否启用",
+            "example": "true",
+            "title": "增量清单是否启用",
+            "type": "boolean"
+          },
+          "OptionalFields": {
+            "description_en": "",
+            "description_zh": "增量清单文件属性的配置容器",
+            "properties": {
+              "Field": {
+                "description_en": "",
+                "description_zh": "增量清单导出字段列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "example": "Etag",
+                  "type": "string"
+                },
+                "title": "增量清单导出字段列表",
+                "type": "array"
+              }
+            },
+            "title": "增量清单文件属性的配置容器",
+            "type": "object"
+          },
+          "Schedule": {
+            "$ref": "#/components/schemas/IncrementInventorySchedule",
+            "description_en": "",
+            "description_zh": "增量清单导出周期的容器",
+            "title": "增量清单导出周期的容器"
+          }
+        },
+        "title": "增量清单的配置容器",
+        "type": "object"
+      },
+      "InventoryConfiguration": {
+        "description_en": "The container that stores the inventory configuration",
+        "description_zh": "存储清单配置信息的容器",
+        "properties": {
+          "Destination": {
+            "$ref": "#/components/schemas/InventoryDestination",
+            "description_en": "The container that stores the inventory results",
+            "description_zh": "存放清单结果",
+            "title": "保存存放清单结果位置的容器。"
+          },
+          "Filter": {
+            "$ref": "#/components/schemas/InventoryFilter",
+            "description_en": "The prefix used to filter the inventory. After you specify a prefix, the inventory filters objects that match the prefix",
+            "description_zh": "清单筛选的前缀。指定前缀后，清单将筛选出符合前缀设置的对象",
+            "title": "存放清单筛选规则的容器。"
+          },
+          "Id": {
+            "description_en": "The custom inventory name. The inventory name must be unique within the current bucket",
+            "description_zh": "自定义清单名称，清单名称在当前Bucket下必须唯一",
+            "example": "report1",
+            "title": "自定义清单名称，要求如下：  清单名称在当前Bucket下必须全局唯一。  清单名称长度不能超过192个字符。",
+            "type": "string"
+          },
+          "IncludedObjectVersions": {
+            "description_en": "Specifies whether to include object version information in the inventory. Valid values:\n\nAll: exports all version information of objects.\n\nCurrent: exports the current version information of objects",
+            "description_zh": "是否在清单中包含Object版本信息。\n取值范围如下：\n\nAll：导出Object的所有版本信息。\n\nCurrent：导出Object的当前版本信息",
+            "enumValueTitles": {
+              "All": "All",
+              "Current": "Current"
+            },
+            "example": "All",
+            "title": "是否在清单中包含Object版本信息。  有效值：  All：导出Object的所有版本信息。  Current：导出Object的当前版本信息。",
+            "type": "string"
+          },
+          "IncrementalInventory": {
+            "$ref": "#/components/schemas/IncrementalInventory",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "IsEnabled": {
+            "description_en": "Specifies whether to enable the inventory feature. Valid values:\n\ntrue: enables the inventory feature.\nfalse: does not enable the inventory feature",
+            "description_zh": "是否启用清单功能。取值范围如下：\n\ntrue：启用清单功能。\nfalse：不启用清单功能",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "title": "清单功能是否启用的标识。  有效值：  true：启用清单功能。  false：不启用清单功能。",
+            "type": "boolean"
+          },
+          "OptionalFields": {
+            "description_en": "The list of configuration items included in the inventory results",
+            "description_zh": "清单结果中包含的配置项列表",
+            "properties": {
+              "Field": {
+                "description_en": "清单结果中包含的配置项。\n可选的配置项包括：\n\nSize：Object的大小。\nLastModifiedDate：Object的最后修改时间。\nETag：Object的ETag值，用于标识Object的内容。\nStorageClass：Object的存储类型。\nIsMultipartUploaded：是否为通过分片上传方式上传的Object。\nEncryptionStatus：Object是否加密",
+                "description_zh": "清单结果中包含的配置项。\n可选的配置项包括：\n\nSize：Object的大小。\nLastModifiedDate：Object的最后修改时间。\nETag：Object的ETag值，用于标识Object的内容。\nStorageClass：Object的存储类型。\nIsMultipartUploaded：是否为通过分片上传方式上传的Object。\nEncryptionStatus：Object是否加密",
+                "items": {
+                  "$ref": "#/components/schemas/InventoryOptionalField",
+                  "description_en": "清单结果中包含的配置项",
+                  "description_zh": "清单结果中包含的配置项"
+                },
+                "title": "清单结果中包含的配置项。",
+                "type": "array"
+              }
+            },
+            "title": "设置清单结果中包含的配置项。",
+            "type": "object"
+          },
+          "Schedule": {
+            "$ref": "#/components/schemas/InventorySchedule",
+            "description_en": "The container that stores the inventory export frequency information",
+            "description_zh": "存放清单导出周期信息的容器",
+            "title": "存放清单导出周期信息的容器。"
+          }
+        },
+        "title": "保存单条存储空间清单规则的容器。",
+        "type": "object"
+      },
+      "InventoryDestination": {
+        "description_en": "The information about the destination where inventory results are stored",
+        "description_zh": "存放清单结果的信息",
+        "properties": {
+          "OSSBucketDestination": {
+            "$ref": "#/components/schemas/InventoryOSSBucketDestination",
+            "description_en": "The information about the bucket where inventory results are exported and stored",
+            "description_zh": "清单结果导出后存放的Bucket信息",
+            "title": "清单结果导出后存放的Bucket信息。"
+          }
+        },
+        "title": "保存清单结果存放位置的容器。",
+        "type": "object"
+      },
+      "InventoryEncryption": {
+        "description_en": "The encryption method of the inventory list file",
+        "description_zh": "清单文件的加密方式",
+        "properties": {
+          "SSE-KMS": {
+            "$ref": "#/components/schemas/SSEKMS",
+            "description_en": "The container that stores the SSE-KMS encryption key",
+            "description_zh": "保存SSE-KMS加密密钥的容器",
+            "title": "保存SSE-KMS加密密钥的容器。"
+          },
+          "SSE-OSS": {
+            "$ref": "#/components/schemas/SSEOSS",
+            "description_en": "The container that stores the SSE-OSS encryption method",
+            "description_zh": "保存SSE-OSS加密方式的容器",
+            "title": "保存SSE-OSS加密方式的容器。"
+          }
+        },
+        "title": "存放清单文件的加密方式的容器。",
+        "type": "object"
+      },
+      "InventoryFilter": {
+        "description_en": "The prefix used for inventory filtering. After you specify a prefix, the inventory filters objects that match the prefix",
+        "description_zh": "清单筛选的前缀。指定前缀后，清单将筛选出符合前缀设置的对象",
+        "properties": {
+          "LastModifyBeginTimeStamp": {
+            "description_en": "The start timestamp for filtering objects by last modified time. Unit: seconds. Valid values: [1262275200, 253402271999]",
+            "description_zh": "筛选文件最后修改时间的起始时间戳，单位为秒。  取值范围：[1262275200, 253402271999]",
+            "example": "1637883649",
+            "format": "int64",
+            "title": "筛选文件最后修改时间的起始时间戳，单位为秒。  取值范围：[1262275200, 253402271999]",
+            "type": "integer"
+          },
+          "LastModifyEndTimeStamp": {
+            "description_en": "The end timestamp for filtering objects by last modified time. Unit: seconds. Valid values: [1262275200, 253402271999]",
+            "description_zh": "筛选文件最后修改时间的终止时间戳，单位为秒。  取值范围：[1262275200, 253402271999]",
+            "example": "1638347592",
+            "format": "int64",
+            "title": "筛选文件最后修改时间的终止时间戳，单位为秒。  取值范围：[1262275200, 253402271999]",
+            "type": "integer"
+          },
+          "LowerSizeBound": {
+            "description_en": "The minimum size of objects to filter. Unit: bytes. Valid values: greater than or equal to 0 bytes and less than or equal to 48.8 TB",
+            "description_zh": "筛选文件的最小大小，单位为B。  取值范围：大于等于0 B，小于等于48.8 TB",
+            "example": "1024",
+            "format": "int64",
+            "title": "筛选文件的最小大小，单位为B。  取值范围：大于等于0 B，小于等于48.8 TB。",
+            "type": "integer"
+          },
+          "Prefix": {
+            "description_en": "The matching prefix of the filter rule",
+            "description_zh": "筛选规则的匹配前缀",
+            "example": "Pics/",
+            "title": "筛选规则的匹配前缀。",
+            "type": "string"
+          },
+          "StorageClass": {
+            "description_en": "The storage class of objects to filter. You can specify multiple storage classes. Valid values:\nStandard: Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nAll (default): all storage classes",
+            "description_zh": "筛选文件的存储类型，支持指定多种存储类型。  可选值：  Standard：标准存储  IA：低频访问  Archive：归档存储  ColdArchive：冷归档存储  All（默认值）：所有存储类型",
+            "example": "All",
+            "title": "筛选文件的存储类型，支持指定多种存储类型。  可选值：  Standard：标准存储  IA：低频访问  Archive：归档存储  ColdArchive：冷归档存储  All（默认值）：所有存储类型",
+            "type": "string"
+          },
+          "UpperSizeBound": {
+            "description_en": "The maximum size of objects to filter. Unit: bytes. Valid values: greater than 0 bytes and less than or equal to 48.8 TB",
+            "description_zh": "筛选文件的最大大小，单位为B。  取值范围：大于0 B，小于等于48.8 TB",
+            "example": "1048576",
+            "format": "int64",
+            "title": "筛选文件的最大大小，单位为B。  取值范围：大于0 B，小于等于48.8 TB。",
+            "type": "integer"
+          }
+        },
+        "title": "清单筛选规则。制定后，清单会按照规则筛选出符合条件的对象。",
+        "type": "object"
+      },
+      "InventoryFormat": {
+        "description_en": "Valid values: CSV",
+        "description_zh": "取值范围为CSV",
+        "enum": [
+          "CSV"
+        ],
+        "example": "CSV",
+        "title": "清单文件的文件格式。 清单文件导出后的格式为使用GZIP压缩的CSV文件。  有效值：CSV",
+        "type": "string"
+      },
+      "InventoryFrequency": {
+        "description_en": "The export cycle of inventory lists.\n\nValid values:\nDaily: Exports inventory lists on a daily basis.\nWeekly: Exports inventory lists on a weekly basis",
+        "description_zh": "清单文件导出的周期。\n\n有效值：\nDaily：按天导出清单文件。\nWeekly：按周导出清单文件",
+        "enum": [
+          "Daily",
+          "Weekly"
+        ],
+        "enumValueTitles": {
+          "Daily": "Daily",
+          "Weekly": "Weekly"
+        },
+        "example": "Daily",
+        "title": "清单文件导出的周期。  有效值：  Daily：按天导出清单文件。  Weekly：按周导出清单文件。",
+        "type": "string"
+      },
+      "InventoryOSSBucketDestination": {
+        "description_en": "The bucket information for storing exported inventory results",
+        "description_zh": "清单结果导出后存放的Bucket信息",
+        "properties": {
+          "AccountId": {
+            "description_en": "The account ID granted by the bucket owner",
+            "description_zh": "Bucket所有者授予的账户ID",
+            "example": "100000000000000",
+            "title": "Bucket所有者授予的账户ID。",
+            "type": "string"
+          },
+          "Bucket": {
+            "description_en": "The bucket that stores the exported inventory list",
+            "description_zh": "存放导出的清单文件的Bucket",
+            "example": "acs:oss:::bucket_0001",
+            "title": "存放导出的清单文件的Bucket。",
+            "type": "string"
+          },
+          "Encryption": {
+            "$ref": "#/components/schemas/InventoryEncryption",
+            "description_en": "The encryption method of the inventory list",
+            "description_zh": "清单文件的加密方式",
+            "title": "清单文件的加密方式。有效值：  SSE-OSS：使用OSS完全托管密钥进行加解密。  SSE-KMS：使用KMS托管的默认CMK（Customer Master Key）或指定CMK进行加解密。"
+          },
+          "Format": {
+            "$ref": "#/components/schemas/InventoryFormat",
+            "description_en": "The file format of the inventory list. The exported inventory list is a CSV file compressed by using GZIP",
+            "description_zh": "清单文件的文件格式。 清单文件导出后的格式为使用GZIP压缩的CSV文件",
+            "title": "清单文件的文件格式。"
+          },
+          "Prefix": {
+            "description_en": "The storage path prefix of the inventory list",
+            "description_zh": "清单文件的存储路径前缀",
+            "example": "prefix1/",
+            "title": "清单文件的存储路径前缀。",
+            "type": "string"
+          },
+          "RoleArn": {
+            "description_en": "The name of the role that has permissions to read all objects from the source bucket and write objects to the destination bucket. Format: `acs:ram::uid:role/rolename`",
+            "description_zh": "具有读取源Bucket所有文件和向目标Bucket写入文件权限的角色名，格式为`acs:ram::uid:role/rolename`",
+            "example": "acs:ram::100000000000000:role/AliyunOSSRole",
+            "title": "具有读取源Bucket所有文件和向目标Bucket写入文件权限的角色名，格式为acs:ram::uid:role/rolename。",
+            "type": "string"
+          }
+        },
+        "title": "清单结果导出后存放的Bucket信息。",
+        "type": "object"
+      },
+      "InventoryOptionalField": {
+        "description_en": "The configuration items included in the inventory results.\n\nSize: the size of the object.\nLastModifiedDate: the last modified time of the object.\nETag: the ETag value of the object, which identifies the content of the object.\nStorageClass: the storage class of the object.\nIsMultipartUploaded: specifies whether the object is uploaded by using multipart upload.\nEncryptionStatus: specifies whether the object is encrypted",
+        "description_zh": "清单结果中包含的配置项。\n\nSize：Object的大小。\nLastModifiedDate：Object的最后修改时间。\nETag：Object的ETag值，用于标识Object的内容。\nStorageClass：Object的存储类型。\nIsMultipartUploaded：是否为通过分片上传方式上传的Object。\nEncryptionStatus：Object是否加密",
+        "enum": [
+          "Size",
+          "LastModifiedDate",
+          "ETag",
+          "StorageClass",
+          "IsMultipartUploaded",
+          "EncryptionStatus"
+        ],
+        "example": "Size",
+        "title": "清单结果中包含的配置项。  Size：Object的大小。  LastModifiedDate：Object的最后修改时间。  ETag：Object的ETag值，用于标识Object的内容。  StorageClass：Object的存储类型。  IsMultipartUploaded：是否为通过分片上传方式上传的Object。  EncryptionStatus：Object是否加密。  ObjectAcl：Object的读写权限。  TaggingCount：标签个数。  ObjectType：Object类型。  Crc64：Object的CRC64。",
+        "type": "string"
+      },
+      "InventorySchedule": {
+        "description_en": "Contains the frequency that inventory lists are exported",
+        "description_zh": "Contains the frequency that inventory lists are exported",
+        "properties": {
+          "Frequency": {
+            "$ref": "#/components/schemas/InventoryFrequency",
+            "description_en": "The frequency at which inventory lists are exported.\n\nValid values:\n\nDaily: Inventory lists are exported on a daily basis.\nWeekly: Inventory lists are exported on a weekly basis",
+            "description_zh": "清单文件导出的周期。\n\n有效值：\n\nDaily：按天导出清单文件。\n\nWeekly：按周导出清单文件",
+            "title": "清单文件导出的周期。"
+          }
+        },
+        "title": "存放清单导出周期信息的容器。",
+        "type": "object"
+      },
+      "SSEKMS": {
+        "description_en": "The container that stores SSE-KMS encryption keys",
+        "description_zh": "保存SSE-KMS加密密钥的容器",
+        "properties": {
+          "KeyId": {
+            "description_en": "The KMS key ID",
+            "description_zh": "KMS密钥ID",
+            "example": "9468da86-3509-4f8d-a61e-6eab1eac****",
+            "title": "KMS密钥ID。",
+            "type": "string"
+          }
+        },
+        "title": "保存SSE-KMS加密密钥的容器。",
+        "type": "object"
+      },
+      "SSEOSS": {
+        "description_en": "Uses an OSS fully managed key for encryption and decryption",
+        "description_zh": "使用OSS完全托管密钥进行加解密",
+        "example": "SSE-OSS",
+        "title": "使用OSS完全托管密钥进行加解密，则需要有该字段，并将值设置为空字符串。",
+        "type": "string"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Configures an inventory rule for a specified bucket",
   "description_zh": "为指定存储空间（Bucket）配置清单（Inventory）规则",
@@ -66,6 +418,10 @@
           "type": "string"
         },
         {
+          "enum": [
+            "true",
+            "false"
+          ],
           "example": "true",
           "help_en": "Specifies whether to enable the inventory feature. Valid values:\n\ntrue: enables the inventory feature.\nfalse: does not enable the inventory feature",
           "help_zh": "是否启用清单功能。取值范围如下：\n\ntrue：启用清单功能。\nfalse：不启用清单功能",
@@ -82,6 +438,9 @@
             {
               "fields": [
                 {
+                  "enum": [
+                    "CSV"
+                  ],
                   "example": "CSV",
                   "help_en": "Valid values: CSV",
                   "help_zh": "取值范围为CSV",
@@ -216,6 +575,10 @@
         {
           "fields": [
             {
+              "enum": [
+                "Daily",
+                "Weekly"
+              ],
               "example": "Daily",
               "help_en": "The export cycle of inventory lists.\n\nValid values:\nDaily: Exports inventory lists on a daily basis.\nWeekly: Exports inventory lists on a weekly basis",
               "help_zh": "清单文件导出的周期。\n\n有效值：\nDaily：按天导出清单文件。\nWeekly：按周导出清单文件",
@@ -324,6 +687,10 @@
           "type": "object"
         },
         {
+          "enum": [
+            "All",
+            "Current"
+          ],
           "example": "All",
           "help_en": "Specifies whether to include object version information in the inventory. Valid values:\n\nAll: exports all version information of objects.\n\nCurrent: exports the current version information of objects",
           "help_zh": "是否在清单中包含Object版本信息。\n取值范围如下：\n\nAll：导出Object的所有版本信息。\n\nCurrent：导出Object的当前版本信息",
@@ -456,6 +823,10 @@
   "pathPattern": "/?inventory",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {},
+    "4xx": {}
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body that contains the inventory configuration information",

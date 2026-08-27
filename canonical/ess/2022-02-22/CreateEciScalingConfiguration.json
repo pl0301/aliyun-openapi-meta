@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "asg-bp14wlu85wrpchm0****",
       "help_en": "The ID of the scaling group to which the scaling configuration belongs",
       "help_zh": "伸缩配置所属的伸缩组的ID",
@@ -33,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "scalingconfig****",
       "help_en": "The name of the scaling configuration. The name must be 2 to 64 characters in length and can contain letters, digits, underscores (_), hyphens (-), and periods (.). It must start with a letter or a digit.\n\nThe name of the scaling configuration must be unique in a scaling group within a region. If you do not specify this parameter, the value of ScalingConfigurationId is used",
       "help_zh": "伸缩配置的名称。长度为2~64个英文或中文字符组成，以数字、大小写字母或中文开头，可包含数字、下划线（_）、短划线（-）或半角句号（.）。\n\n在同一地域下同一伸缩组内伸缩配置名称唯一。如果您没有指定该参数，则默认使用伸缩配置的ID",
@@ -46,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "desc",
       "help_en": "This parameter is unavailable for use",
       "help_zh": "该参数未开放使用",
@@ -59,6 +62,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "sg-uf66jeqopgqa9hdn****",
       "help_en": "The ID of the security group to which elastic container instances belong. Elastic container instances that belong to the same security group can communicate with each other.\n\nIf you do not specify a security group, the system uses the default security group in the region that you selected. Make sure that the inbound rules of the security group contain the protocols and port numbers of the containers that you want to expose. If you do not have a default security group in the region, the system creates a default security group, and then adds the container protocols and port numbers that you specified to the inbound rules of the security group",
       "help_zh": "ECI实例所属的安全组ID。同一个安全组内的ECI实例之间可以互相访问。\n\n如果没有指定安全组，系统将自动使用您选择的地域下的默认安全组，您需要确保该安全组的入方向规则中包含容器需要暴露的协议和端口。如果您在该地域下没有默认安全组，系统将自动创建一个默认安全组，并将您声明的容器协议和端口添加到该安全组的入方向规则中",
@@ -72,6 +76,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "nginx-test-(AUTO_INCREMENT)[0,3]",
       "help_en": "The name series of elastic container instances.\n\nIf you want to use an ordered instance name, specify the value for this parameter in the following format: name_prefix[begin_number,bits]name_suffix",
       "help_zh": "ECI实例名称，即容器组名称。\n\n如果需要设置有序实例名称，格式为name_prefix(AUTO_INCREMENT)[begin_number,bits]name_suffix。\n\nname_prefix：指定主机名称的前缀。\n\n(AUTO_INCREMENT)：固定值，用来标识此排序方式。\n\nbegin_number：有序数值的起始值，取值范围：[0,999999]。\n\nbits：有序数值所占的位数，取值范围：[1,6]，当指定的begin_number位数大于bits的取值时，bits默认为6。\n<notice>bits建议最少为3，否则容易达到有序数值的上限。在达到上限后，若还有扩容需求，伸缩活动会报错，并停止扩容。此时，您需要重新设置生成主机名称的规则。</notice>\n\nname_suffix（可选）：指定主机名称的后缀。\n\n<notice>[begin_number,bits]中不能有空格，且系统默认依次递增，但是如果存在扩容的ECI实例无法启动，会被伸缩组移除后再扩容一台新的ECI实例，所以伸缩组内ECI实例的主机名称可能断续递增。</notice>\n\n示例： 当设置为nginx-test-(AUTO_INCREMENT)[0,3]时，容器组名称为nginx-test-000、nginx-test-001、nginx-test-002。\n\n设置ECI有序实例名称的规则与设置ECS伸缩组有序实例规格相同，具体规则介绍，请参见https://help.aliyun.com/document_detail/203831.html",
@@ -284,6 +289,8 @@
       "help_en": "The EIP bandwidth. Default value: 5. Unit: Mbit/s",
       "help_zh": "弹性公网IP的带宽。默认为5 M",
       "location": "query",
+      "maximum": "1000000",
+      "minimum": "0",
       "name": "eip_bandwidth",
       "options": [
         "--eip-bandwidth"
@@ -310,6 +317,8 @@
       "help_en": "The maximum inbound bandwidth. Unit: bit/s",
       "help_zh": "入方向带宽限制。单位：Byte",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "0",
       "name": "ingress_bandwidth",
       "options": [
         "--ingress-bandwidth"
@@ -323,6 +332,8 @@
       "help_en": "The maximum outbound bandwidth. Unit: bit/s",
       "help_zh": "出方向带宽限制。单位：Byte",
       "location": "query",
+      "maximum": "9223372036854775807",
+      "minimum": "0",
       "name": "egress_bandwidth",
       "options": [
         "--egress-bandwidth"
@@ -336,6 +347,8 @@
       "help_en": "The number of physical CPU cores. You can specify this parameter for specific instance types. For more information, see https://help.aliyun.com/document_detail/197781.html",
       "help_zh": "cpu物理核心数。仅部分实例规格支持自定义设置。更多信息，请参见https://help.aliyun.com/document_detail/197781.html",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "0",
       "name": "cpu_options_core",
       "options": [
         "--cpu-options-core"
@@ -362,6 +375,8 @@
       "help_en": "The size of the temporary storage space. By default, an Enterprise SSD (ESSD) of performance level 1 (PL1) is used. Unit: GiB",
       "help_zh": "临时存储空间大小，默认使用ESSD PL1类型的云盘。单位：GiB",
       "location": "query",
+      "maximum": "5000",
+      "minimum": "0",
       "name": "ephemeral_storage",
       "options": [
         "--ephemeral-storage"
@@ -480,6 +495,7 @@
       "type": "array"
     },
     {
+      "doc_required": true,
       "element": {
         "fields": [
           {
@@ -2219,5 +2235,28 @@
   ],
   "pathPattern": "",
   "product_code": "Ess",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "创建伸缩配置后的返回信息",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID，唯一标识",
+            "example": "89945DD3-9072-47D0-A318-353284CF****",
+            "type": "string"
+          },
+          "ScalingConfigurationId": {
+            "description_en": "The ID of the elastic container instance (container group)",
+            "description_zh": "实例ID，即容器组ID",
+            "example": "eci-uf6fonnghi50u374****",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

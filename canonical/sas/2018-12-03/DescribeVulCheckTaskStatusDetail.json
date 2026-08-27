@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "element": {
         "type": "string"
       },
@@ -37,6 +38,7 @@
       "type": "array"
     },
     {
+      "doc_required": true,
       "element": {
         "type": "string"
       },
@@ -53,6 +55,7 @@
       "type": "array"
     },
     {
+      "doc_required": true,
       "example": "5d55af3c-35f3-4d4d-8ccc-8c5443b0****",
       "help_en": "The UUID of the server",
       "help_zh": "要查询的服务器的UUID",
@@ -81,38 +84,76 @@
   "pathPattern": "",
   "product_code": "Sas",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "name": "ResourceDirectoryAccountId",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The task IDs",
-      "help_zh": "任务ID列表",
-      "name": "TaskIds",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The types of the vulnerabilities that are detected by the tasks",
-      "help_zh": "一键扫描对应的漏洞类型列表",
-      "name": "Types",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The UUID of the server",
-      "help_zh": "要查询的服务器的UUID",
-      "name": "Uuid",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The data returned",
+        "description_zh": "返回结果",
+        "properties": {
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "结果的请求id",
+            "example": "BE120DAB-F4E7-4C53-ADC3-A97578ABF384",
+            "type": "string"
+          },
+          "TaskStatuses": {
+            "description_en": "An array that consists of the status information about the vulnerability scan tasks on the server",
+            "description_zh": "机器的漏洞任务状态列表",
+            "items": {
+              "description_en": "The struct of the status information about the vulnerability scan task",
+              "description_zh": "漏洞主任务状态结构体",
+              "properties": {
+                "TaskId": {
+                  "description_en": "The ID of the main task",
+                  "description_zh": "主任务id",
+                  "example": "16190385",
+                  "type": "string"
+                },
+                "TaskStatusList": {
+                  "description_en": "An array that consists of status information about the vulnerability scan subtask",
+                  "description_zh": "漏洞检测任务状态列表",
+                  "items": {
+                    "description_en": "The struct of the status information about the vulnerability scan subtask",
+                    "description_zh": "漏洞子任务状态结构体",
+                    "properties": {
+                      "Code": {
+                        "description_en": "The error code returned",
+                        "description_zh": "失败code",
+                        "example": "push_command_failed",
+                        "type": "string"
+                      },
+                      "Status": {
+                        "description_en": "The status of the subtask. Valid values:\n\n0: unhandled\n1: collecting\n2: collected\n3: matching\n4: complete",
+                        "description_zh": "检查完成的状态。取值：\n\n0：未处理\n1：采集中\n2：采集完成\n3：匹配中\n4：已完成",
+                        "example": "4",
+                        "type": "string"
+                      },
+                      "Type": {
+                        "description_en": "The type of the vulnerability. Valid values:\n\ncve: Linux software vulnerability\nsys: Windows system vulnerability\ncms: Web-CMS vulnerability\nsca: vulnerability that is detected based on software component analysis",
+                        "description_zh": "漏洞类型。取值：\ncve：Linux软件漏洞\nsys：Windows系统漏洞\ncms：Web-CMS漏洞\nsca：sca漏洞",
+                        "example": "cve",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "TotalCount": {
+            "description_en": "The total number of vulnerability scan tasks on the server",
+            "description_zh": "机器对应的漏洞子任务总数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

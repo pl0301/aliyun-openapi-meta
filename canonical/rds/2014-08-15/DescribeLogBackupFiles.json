@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "rm-uf6wjk5****",
       "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2018-10-01T08:40Z",
       "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2018-10-31T08:40Z",
       "help_en": "The end of the time range to query. The end time must be later than the start time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询结束时间，必须晚于查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
@@ -64,6 +67,8 @@
       "help_en": "The number of entries to return on each page. Valid values: 30 to 1000. Default value: 30",
       "help_zh": "每页记录数，取值：30~1000。默认值：30",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "30",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -77,6 +82,8 @@
       "help_en": "The page number. Valid values: any non-zero positive integer.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -88,5 +95,107 @@
   ],
   "pathPattern": "",
   "product_code": "Rds",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回参数详情",
+        "properties": {
+          "Items": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "BinLogFile": {
+                "description_en": "The details of log files",
+                "description_zh": "日志文件列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "日志文件详情",
+                  "properties": {
+                    "DownloadLink": {
+                      "description_en": "The HTTP-based download URL of the log file. If the log file cannot be downloaded, an empty string is returned",
+                      "description_zh": "HTTP协议的下载链接。若当前不可下载，则为空串",
+                      "example": "http://rdsbak-hz-v3.oss-cn-hangzhou.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "FileSize": {
+                      "description_en": "The size of the log file. Unit: bytes",
+                      "description_zh": "日志文件大小。单位：Byte",
+                      "example": "788480",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "IntranetDownloadLink": {
+                      "description_en": "The URL that is used to download the log file over an internal network. If the log file cannot be downloaded, an empty string is returned. This URL is valid for one hour",
+                      "description_zh": "内网下载地址，若当前不可下载，则为空串。有效期1小时",
+                      "example": "http://rdsbak-hz-v3.oss-cn-hangzhou.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "LinkExpiredTime": {
+                      "description_en": "The expiration time of the URL. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC",
+                      "description_zh": "链接过期时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2019-03-01T15:04:13Z",
+                      "type": "string"
+                    },
+                    "LogBeginTime": {
+                      "description_en": "The start time of the log file. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time is displayed in UTC",
+                      "description_zh": "日志文件记录的开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
+                      "example": "2018-10-31T08:40Z",
+                      "type": "string"
+                    },
+                    "LogEndTime": {
+                      "description_en": "The end time of the log file. The time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time is displayed in UTC",
+                      "description_zh": "日志文件记录的结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
+                      "example": "2018-10-31T08:40Z",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number of the page returned",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageRecordCount": {
+            "description_en": "The number of log files on the current page",
+            "description_zh": "本页日志文件个数",
+            "example": "100",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "F8EC669C-FC85-43D7-AF06-C3641626B37E",
+            "type": "string"
+          },
+          "TotalFileSize": {
+            "description_en": "The total size of log files. Unit: bytes",
+            "description_zh": "所有日志文件大小之和，单位：Byte",
+            "example": "2300",
+            "format": "int64",
+            "type": "integer"
+          },
+          "TotalRecordCount": {
+            "description_en": "The total number of log files",
+            "description_zh": "日志文件总数",
+            "example": "17",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

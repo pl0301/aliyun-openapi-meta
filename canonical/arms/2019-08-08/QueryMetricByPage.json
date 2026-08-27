@@ -21,10 +21,13 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "100000",
       "help_en": "The time interval at which you want to query metric data. Unit: milliseconds. Minimum value: 60000",
       "help_zh": "数据片的时间间隔，单位为毫秒，最小值为60000",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "0",
       "name": "interval_in_sec",
       "options": [
         "--interval-in-sec"
@@ -34,10 +37,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1667287695000",
       "help_en": "The start of the time range to query. Unit: milliseconds",
       "help_zh": "起始时间的时间戳，精确到毫秒",
       "location": "query",
+      "maximum": "9223372036854775806",
+      "minimum": "0",
       "name": "start_time",
       "options": [
         "--start-time"
@@ -47,10 +53,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1667546895000",
       "help_en": "The end of the time range to query. Unit: milliseconds",
       "help_zh": "结束时间的时间戳，精确到毫秒",
       "location": "query",
+      "maximum": "9223372036854775806",
+      "minimum": "0",
       "name": "end_time",
       "options": [
         "--end-time"
@@ -73,6 +82,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "appstat.host",
       "help_en": "The metric that you want to query. You cannot specify a custom metric. For more information, see the \"Application monitoring metrics that can be queried\" section",
       "help_zh": "需要查询的指标，不可自定义输入，请参见下文补充说明",
@@ -103,6 +113,8 @@
       "help_en": "The page number. Default value: `1`",
       "help_zh": "查询结果的页码，默认为`1`",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "current_page",
       "options": [
         "--current-page"
@@ -116,6 +128,8 @@
       "help_en": "This parameter is no longer supported. The number of entries per page",
       "help_zh": "此参数已不支持使用。查询结果的每页项目数量",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -219,5 +233,85 @@
   ],
   "pathPattern": "",
   "product_code": "ARMS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The information about the array object",
+        "description_zh": "返回结构体",
+        "properties": {
+          "Code": {
+            "description_en": "The HTTP status code returned for the request. Valid values:\n\n2XX: The request was successful.\n3XX: A redirection message was returned.\n4XX: The request was invalid.\n5XX: A server error occurred",
+            "description_zh": "接口状态，取值说明如下：\n\n2XX：成功。\n3XX：重定向。\n4XX：请求错误。\n5XX：服务器错误",
+            "example": "200",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The information about the array object",
+            "description_zh": "返回结构体",
+            "properties": {
+              "Completed": {
+                "description_en": "Whether the paging query ends.\n\ntrue: end.\nfalse: Need to continue pagination (continue to query after CurrentPage+1)",
+                "description_zh": "分页查询是否结束。\n\ntrue：结束。\nfalse：需要继续分页（CurrentPage+1后继续查询）",
+                "example": "false",
+                "type": "boolean"
+              },
+              "Items": {
+                "description_en": "The data entries returned",
+                "description_zh": "返回数据",
+                "items": {
+                  "description_en": "The data entries returned",
+                  "description_zh": "返回数据的数据结构体列表",
+                  "example": "[]",
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "Page": {
+                "description_en": "The page number of the returned page",
+                "description_zh": "查询结果的页码",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "The number of entries returned per page",
+                "description_zh": "查询结果的每页项目数量",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "Total": {
+                "description_en": "The total number of entries returned",
+                "description_zh": "查询结果的总项目数量。\n\n此参数的返回值为估算值，仅用于分页结束判断，不代表实际的数据总量",
+                "example": "2",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The error message returned if the call fails",
+            "description_zh": "调用失败时返回的信息",
+            "example": "StartTime is mandatory for this action.",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "687F9CB7-4798-57BF-A6EE-E6CC76******",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the call was successful. Valid values:\n\n`true`: The call was successful.\n`false`: The call failed",
+            "description_zh": "查询是否成功：\n\n`true`：成功。\n`false`：失败",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

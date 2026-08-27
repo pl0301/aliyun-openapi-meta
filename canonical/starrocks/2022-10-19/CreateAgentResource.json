@@ -21,6 +21,10 @@
   },
   "parameters": [
     {
+      "enum": [
+        "postPaid",
+        "prePaid"
+      ],
       "example": "prePay",
       "help_en": "Payment type:\n\nSubscription (prePaid).\n\nPay-as-you-go (postPaid)",
       "help_zh": "付费类型：\n<ol>\n<li>包年包月（prePaid）。</li>\n<li>按量付费（postPaid）。</li>\n</ol>\n    \n    ",
@@ -38,6 +42,8 @@
       "help_en": "Duration. This parameter is valid only when payType is set to PrePaid",
       "help_zh": "购买时长。仅在 payType 为 PrePaid 时有意义",
       "location": "query",
+      "maximum": "12",
+      "minimum": "1",
       "name": "duration",
       "options": [
         "--duration"
@@ -47,6 +53,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "Month",
+        "Year"
+      ],
       "example": "Month",
       "help_en": "Unit of subscription duration:\n\nMonth\n\nYear\n\nThis parameter is valid only when payType is set to PrePaid",
       "help_zh": "购买时长单位：\n<ul>\n<li>    月（Month）</li>\n<li>      年（Year）</li>\n</ul>\n仅在 payType 为 PrePaid 时有意义",
@@ -73,6 +83,9 @@
       "type": "bool"
     },
     {
+      "enum": [
+        "standard"
+      ],
       "example": "standard",
       "help_en": "Compute group specification type",
       "help_zh": "计算组规格类型",
@@ -86,10 +99,18 @@
       "type": "string"
     },
     {
+      "enum": [
+        "2",
+        "4",
+        "8",
+        "16"
+      ],
       "example": "2",
       "help_en": "Number of CUs. A CU (Compute Unit) is the basic unit of service measurement. 1 CU = 1 CPU core + 4 GiB memory. For memory-enhanced instance family, 1 CU = 1 CPU core + 8 GiB memory",
       "help_zh": "CU数量。CU (Compute Unit) 是服务的基本计量单元，1 CU=1 核 CPU+4GiB 内存，仅在 SpecType 为内存增强型时 1 CU=1 核 CPU+8GiB 内存",
       "location": "query",
+      "maximum": "16",
+      "minimum": "2",
       "name": "cu",
       "options": [
         "--cu"
@@ -128,70 +149,66 @@
   "pathPattern": "/webapi/lifecycle/createAgentNodeGroup",
   "product_code": "starrocks",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "Enable auto-renewal. This parameter is valid only when payType is set to PrePaid. Auto-renewal is disabled by default",
-      "help_zh": "是否开启自动续费，仅在 payType 为 PrePaid 时有意义。默认不开启",
-      "name": "AutoRenew",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Number of CUs. A CU (Compute Unit) is the basic unit of service measurement. 1 CU = 1 CPU core + 4 GiB memory. For memory-enhanced instance family, 1 CU = 1 CPU core + 8 GiB memory",
-      "help_zh": "CU数量。CU (Compute Unit) 是服务的基本计量单元，1 CU=1 核 CPU+4GiB 内存，仅在 SpecType 为内存增强型时 1 CU=1 核 CPU+8GiB 内存",
-      "name": "Cu",
-      "position": "query",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "Duration. This parameter is valid only when payType is set to PrePaid",
-      "help_zh": "购买时长。仅在 payType 为 PrePaid 时有意义",
-      "name": "Duration",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Instance ID",
-      "help_zh": "实例 ID",
-      "name": "InstanceId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Payment type:\n\nSubscription (prePaid).\n\nPay-as-you-go (postPaid)",
-      "help_zh": "付费类型：\n<ol>\n<li>包年包月（prePaid）。</li>\n<li>按量付费（postPaid）。</li>\n</ol>",
-      "name": "PayType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Unit of subscription duration:\n\nMonth\n\nYear\n\nThis parameter is valid only when payType is set to PrePaid",
-      "help_zh": "购买时长单位：\n<ul>\n<li>    月（Month）</li>\n<li>      年（Year）</li>\n</ul>\n仅在 payType 为 PrePaid 时有意义",
-      "name": "PricingCycle",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Coupon ID",
-      "help_zh": "优惠券ID",
-      "name": "PromotionOptionNo",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Compute group specification type",
-      "help_zh": "计算组规格类型",
-      "name": "SpecType",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Data": {
+            "description_en": "Returned data",
+            "description_zh": "返回数据",
+            "properties": {
+              "NodeGroupId": {
+                "description_en": "Compute group ID",
+                "description_zh": "计算组 ID",
+                "example": "ng-5e2ba600fee3****",
+                "type": "string"
+              },
+              "OrderId": {
+                "description_en": "Order ID",
+                "description_zh": "订单ID",
+                "example": "241526000650XXX",
+                "format": "int64",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "ErrCode": {
+            "description_en": "Error code",
+            "description_zh": "错误码",
+            "example": "InvalidParams",
+            "type": "string"
+          },
+          "ErrMessage": {
+            "description_en": "Error message",
+            "description_zh": "错误信息",
+            "example": "Invalid params: [instance not exists].",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "HTTP request status code",
+            "description_zh": "HTTP请求状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求 ID",
+            "example": "B67D142D-D54E-184F-A306-22BDC01B2XXX",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "请求是否成功",
+            "example": "True",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

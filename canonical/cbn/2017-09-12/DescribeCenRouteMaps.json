@@ -47,6 +47,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "cen-wx12mmlt17ld82****",
       "help_en": "The ID of the Cloud Enterprise Network (CEN) instance",
       "help_zh": "云企业网实例ID",
@@ -115,62 +116,439 @@
   "pathPattern": "",
   "product_code": "Cbn",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The ID of the Cloud Enterprise Network (CEN) instance",
-      "help_zh": "云企业网实例ID",
-      "name": "CenId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the region where the routing policy is applied.\n\nYou can call the https://help.aliyun.com/document_detail/132080.html operation to query region IDs",
-      "help_zh": "路由策略应用的地域ID。\n\n您可以通过调用https://help.aliyun.com/document_detail/132080.html接口获取地域ID",
-      "name": "CenRegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The page number. Default value: 1",
-      "help_zh": "列表的页码。默认值：1",
-      "name": "PageNumber",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of entries to return on each page. Default value: 10",
-      "help_zh": "分页查询时每页显示的条目数。默认值：10",
-      "name": "PageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The ID of the routing policy",
-      "help_zh": "路由策略ID",
-      "name": "RouteMapId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the route table of the transit router that is associated with the routing policy",
-      "help_zh": "路由策略关联的转发路由器路由表ID",
-      "name": "TransitRouterRouteTableId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The direction in which the routing policy is applied. Valid values:\n\nRegionIn: Inbound. The routing policy is applied to routes that are advertised to the gateway of a region.\n\nFor example, routes are advertised from network instances in the current region to the gateway of the current region, or routes from other regions are advertised to the gateway of the current region.\n\nRegionOut: Outbound. The routing policy is applied to routes that are advertised from the gateway of a region.\n\nFor example, routes are advertised from the gateway of the current region to network instances in the current region, or to gateways in other regions",
-      "help_zh": "路由策略的应用方向。取值：\n\nRegionIn：入地域网关方向，表示路由传入云企业网地域网关的方向。\n\n 例如：路由从本地域的网络实例发布到本地域网关，或其他地域的路由发布到本地域网关。\n\nRegionOut：出地域网关方向，表示路由传出云企业网地域网关的方向。\n\n 例如：路由从本地域网关发布到本地域下的网络实例，或发布到其他地域的地域网关",
-      "name": "TransmitDirection",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response",
+        "description_zh": "返回结果",
+        "properties": {
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "列表的页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries returned per page",
+            "description_zh": "分页查询时每页显示的条目数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "24CE1987-D1D1-5324-9BAD-2750B60E6ABB",
+            "type": "string"
+          },
+          "RouteMaps": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "RouteMap": {
+                "description_en": "A list of routing policies",
+                "description_zh": "路由策略信息列表",
+                "items": {
+                  "description_en": "The information about the routing policy",
+                  "description_zh": "路由策略的信息",
+                  "properties": {
+                    "AsPathMatchMode": {
+                      "description_en": "The match mode for the AS-path.\n\nInclude: fuzzy match. The match is successful if the AS-path of the route overlaps with the AS-path in the match condition.\n\nComplete: exact match. The match is successful only if the AS-path of the route is the same as the AS-path in the match condition",
+                      "description_zh": "AS Path列表的匹配模式。\n\nInclude：模糊匹配，匹配条件中的AS Path与被匹配路由的AS Path有重叠即判定为匹配成功。 \n\nComplete：精确匹配，匹配条件中的AS Path必须与被匹配路由的AS Path一致，才判定为匹配成功。 ",
+                      "example": "Include",
+                      "type": "string"
+                    },
+                    "CenId": {
+                      "description_en": "The ID of the CEN instance",
+                      "description_zh": "云企业网实例ID",
+                      "example": "cen-wx12mmlt17ld82****",
+                      "type": "string"
+                    },
+                    "CenRegionId": {
+                      "description_en": "The ID of the region where the routing policy is applied",
+                      "description_zh": "路由策略应用的地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "CidrMatchMode": {
+                      "description_en": "The match mode for the prefix list. Valid values:\n\nInclude: fuzzy match. The match is successful if the route prefix in the match condition includes the route prefix of the route.\n\nFor example, a policy with the 10.10.0.0/16 route prefix matches the 10.10.1.0/24 route.\n\nComplete: exact match. The match is successful only if the route prefix in the match condition is the same as the route prefix of the route.\n\nFor example, a policy with the 10.10.0.0/16 route prefix matches only the 10.10.0.0/16 route",
+                      "description_zh": "前缀列表的匹配模式。取值：\n\nInclude：模糊匹配。匹配条件中的路由前缀包含被匹配路由的路由前缀即判定为匹配成功。\n\n 例如：定义10.10.0.0/16的策略可以模糊匹配到10.10.1.0/24的路由。\n\nComplete：精确匹配。匹配条件中的路由前缀必须与被匹配路由的路由前缀一致，才判定为匹配成功。 \n\n 例如：定义10.10.0.0/16的策略仅可以精确匹配到10.10.0.0/16的路由",
+                      "example": "Include",
+                      "type": "string"
+                    },
+                    "CommunityMatchMode": {
+                      "description_en": "The match mode for the community.\n\nInclude: fuzzy match. The match is successful if the community of the route overlaps with the community in the match condition.\n\nComplete: exact match. The match is successful only if the community of the route is the same as the community in the match condition",
+                      "description_zh": "Community的匹配模式。\n\nInclude：模糊匹配，匹配条件中的Community与被匹配路由的Community有重叠即判定为匹配成功。 \n\nComplete：精确匹配，匹配条件中的Community必须与被匹配路由的Community一致，才判定为匹配成功",
+                      "example": "Include",
+                      "type": "string"
+                    },
+                    "CommunityOperateMode": {
+                      "description_en": "The action to be performed on the community.\n\nAdditive: adds the community to the route.\n\nReplace: replaces the original community of the route.\n\nThis parameter specifies the action to be performed after a route meets the match conditions",
+                      "description_zh": "Community的执行模式。\n\nAdditive：添加，表示为路由添加Community。\n\nReplace：替换，表示替换路由原有的Community。\n\n本参数表示路由通过匹配条件后，要执行的操作",
+                      "example": "Additive",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The description of the routing policy",
+                      "description_zh": "路由策略的描述信息",
+                      "example": "desctest",
+                      "type": "string"
+                    },
+                    "DestinationChildInstanceTypes": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DestinationChildInstanceType": {
+                          "description_en": "A list of destination instance types to be matched.\n\nVPC: VPC.\n\nVBR: VBR.\n\nCCN: CCN.\n\nVPN: IPsec connection.\n\nThis parameter takes effect only when the routing policy is applied to the outbound direction of the regional gateway and the destination instance is in the current region",
+                          "description_zh": "路由需匹配的目的实例类型列表。\n\nVPC：专有网络实例。\n\nVBR：边界路由器实例。\n\nCCN：云连接网实例。\n\nVPN：IPsec连接。\n\n仅路由策略的应用方向为出地域网关方向，且目的实例类型为本地域下的实例类型时，目的实例类型列表才会生效",
+                          "items": {
+                            "description_en": "A list of destination instance types to be matched.\n\nVPC: VPC.\n\nVBR: VBR.\n\nCCN: CCN.\n\nVPN: IPsec connection.\n\nThis parameter takes effect only when the routing policy is applied to the outbound direction of the regional gateway and the destination instance is in the current region",
+                            "description_zh": "路由需匹配的目的实例类型列表。\n\nVPC：专有网络实例。\n\nVBR：边界路由器实例。\n\nCCN：云连接网实例。\n\nVPN：IPsec连接。\n\n仅路由策略的应用方向为出地域网关方向，且目的实例类型为本地域下的实例类型时，目的实例类型列表才会生效",
+                            "example": "VPC",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DestinationCidrBlocks": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DestinationCidrBlock": {
+                          "description_en": "A list of prefixes to be matched.\n\nBoth IPv4 and IPv6 prefixes are supported",
+                          "description_zh": "路由需匹配的前缀列表。\n\n支持IPv4、IPv6格式",
+                          "items": {
+                            "description_en": "A list of prefixes to be matched.\n\nBoth IPv4 and IPv6 prefixes are supported",
+                            "description_zh": "路由需匹配的前缀列表。\n\n支持IPv4、IPv6格式",
+                            "example": "10.10.10.0/24",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DestinationInstanceIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DestinationInstanceId": {
+                          "description_en": "A list of destination instance IDs to be matched.\n\nThis parameter takes effect only when the routing policy is applied to the outbound direction of the regional gateway and the destination instance is in the current region",
+                          "description_zh": "路由需匹配的目的实例ID列表。\n\n仅路由策略的应用方向为出地域网关方向，且目的实例ID为本地域下的实例ID时，目的实例ID列表才会生效",
+                          "items": {
+                            "description_en": "A list of destination instance IDs to be matched.\n\nThis parameter takes effect only when the routing policy is applied to the outbound direction of the regional gateway and the destination instance is in the current region",
+                            "description_zh": "路由需匹配的目的实例ID列表。\n\n仅路由策略的应用方向为出地域网关方向，且目的实例ID为本地域下的实例ID时，目的实例ID列表才会生效",
+                            "example": "vpc-afrfs434465fdf****",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DestinationInstanceIdsReverseMatch": {
+                      "description_en": "Indicates whether the destination instance IDs are excluded.\n\nfalse: The match is successful if the destination instance ID of the route is in the DestinationInstanceIds.N list.\n\ntrue: The match is successful if the destination instance ID of the route is not in the DestinationInstanceIds.N list",
+                      "description_zh": "是否使用了目的实例ID列表的排除匹配模式。\n\nfalse：否，即路由传递的目的实例ID在DestinationInstanceIds.N中时，匹配通过。\n\ntrue：是，即路由传递的目的实例ID不在DestinationInstanceIds.N中时，匹配通过",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "DestinationRegionIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DestinationRegionId": {
+                          "description_en": "A list of destination region IDs",
+                          "description_zh": "路由策略的目标地域ID列表",
+                          "items": {
+                            "description_en": "A list of destination region IDs",
+                            "description_zh": "路由策略的目标地域ID列表",
+                            "example": "cn-beijing",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DestinationRouteTableIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DestinationRouteTableId": {
+                          "description_en": "A list of destination route table IDs to be matched. You can enter up to 32 route table IDs.\n\nThis parameter takes effect only when the routing policy is applied to the outbound direction of the regional gateway and the destination route table belongs to a network instance in the current region",
+                          "description_zh": "路由需匹配的目的路由表ID列表。最多支持输入32个路由表ID。\n\n仅路由策略的应用方向为出地域网关方向，且目的路由表ID为本地域下网络实例的路由表ID时，目的路由表ID列表才会生效",
+                          "items": {
+                            "description_en": "A list of destination route table IDs to be matched. You can enter up to 32 route table IDs.\n\nThis parameter takes effect only when the routing policy is applied to the outbound direction of the regional gateway and the destination route table belongs to a network instance in the current region",
+                            "description_zh": "路由需匹配的目的路由表ID列表。最多支持输入32个路由表ID。\n\n仅路由策略的应用方向为出地域网关方向，且目的路由表ID为本地域下网络实例的路由表ID时，目的路由表ID列表才会生效",
+                            "example": "vtb-adefrgtr144vf****",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "MapResult": {
+                      "description_en": "The action that is performed after all match conditions are met.\n\nPermit: allows the matched route.\n\nDeny: denies the matched route",
+                      "description_zh": "所有匹配条件都通过后的策略行为。\n\nPermit：允许被匹配的路由通过。\n\nDeny：拒绝被匹配的路由通过",
+                      "example": "Deny",
+                      "type": "string"
+                    },
+                    "MatchAddressType": {
+                      "description_en": "The IP address family of the route.\n\nIPv4: matches only IPv4 routes.\n\nIPv6: matches only IPv6 routes.\n\nIf this parameter is not returned, both IPv4 and IPv6 routes are matched",
+                      "description_zh": "路由需匹配的IP地址类型。\n\nIPv4：表示只匹配IPv4路由。\nIPv6：表示只匹配IPv6路由。\n如果系统未返回该值，则表示同时匹配IPv4和IPv6的路由",
+                      "example": "IPv4",
+                      "type": "string"
+                    },
+                    "MatchAsns": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "MatchAsn": {
+                          "description_en": "A list of AS-paths to be matched",
+                          "description_zh": "路由需匹配的AS Path列表",
+                          "items": {
+                            "description_en": "A list of AS-paths to be matched",
+                            "description_zh": "路由需匹配的AS Path列表",
+                            "example": "65501",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "MatchCommunitySet": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "MatchCommunity": {
+                          "description_en": "The community to be matched",
+                          "description_zh": "路由需匹配的Community集合",
+                          "items": {
+                            "description_en": "The community to be matched",
+                            "description_zh": "路由需匹配的Community集合",
+                            "example": "65501:1",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "NextPriority": {
+                      "description_en": "The priority of the next routing policy that is associated with the current routing policy",
+                      "description_zh": "关联的下一条路由策略的优先级",
+                      "example": "33",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "OperateCommunitySet": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "OperateCommunity": {
+                          "description_en": "The community to be operated",
+                          "description_zh": "要执行的Community集合",
+                          "items": {
+                            "description_en": "The community to be operated",
+                            "description_zh": "要执行的Community集合",
+                            "example": "65501:1",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Preference": {
+                      "description_en": "The new priority of the route.\n\nA smaller value indicates a higher priority.\n\nThis parameter specifies the action to be performed after a route meets the match conditions",
+                      "description_zh": "要修改的路由的优先级。\n\n优先级数字越小表示优先级越高。\n\n本参数表示路由通过匹配条件后，要执行的操作",
+                      "example": "20",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "PrependAsPath": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AsPath": {
+                          "description_en": "The AS-path that is prepended when the regional gateway receives or advertises a route.\n\nThis parameter specifies the action to be performed after a route meets the match conditions",
+                          "description_zh": "地域网关接收或发布路由时附加的AS Path。\n\n本参数表示路由通过匹配条件后，要执行的操作",
+                          "items": {
+                            "description_en": "The AS-path that is prepended when the regional gateway receives or advertises a route.\n\nThis parameter specifies the action to be performed after a route meets the match conditions",
+                            "description_zh": "地域网关接收或发布路由时附加的AS Path。\n\n本参数表示路由通过匹配条件后，要执行的操作",
+                            "example": "65501",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Priority": {
+                      "description_en": "The priority of the routing policy. A smaller value indicates a higher priority",
+                      "description_zh": "路由策略的优先级。优先级数字越小，代表优先级越高",
+                      "example": "5000",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RouteMapId": {
+                      "description_en": "The ID of the routing policy",
+                      "description_zh": "路由策略ID",
+                      "example": "cenrmap-y40mxdvf7joc12****",
+                      "type": "string"
+                    },
+                    "RouteTypes": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "RouteType": {
+                          "description_en": "A list of route types to be matched.\n\nSystem: system routes that are automatically generated by the system.\n\nCustom: custom routes that are manually added.\n\nBGP: routes that are advertised through Border Gateway Protocol (BGP)",
+                          "description_zh": "路由需匹配的路由类型列表。\n\nSystem：系统路由，由系统自动生成的路由。\n\nCustom：自定义路由，由用户手动添加的路由。\n\nBGP：BGP路由，通过BGP路由协议传播的路由",
+                          "items": {
+                            "description_en": "A list of route types to be matched.\n\nSystem: system routes that are automatically generated by the system.\n\nCustom: custom routes that are manually added.\n\nBGP: routes that are advertised through BGP",
+                            "description_zh": "路由需匹配的路由类型列表。\n\nSystem：系统路由，由系统自动生成的路由。\n\nCustom：自定义路由，由用户手动添加的路由。\n\nBGP：BGP路由，通过BGP路由协议传播的路由",
+                            "example": "System",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SourceChildInstanceTypes": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "SourceChildInstanceType": {
+                          "description_en": "A list of source instance types to be matched.\n\nVPC: virtual private cloud (VPC).\n\nVBR: virtual border router (VBR).\n\nCCN: Cloud Connect Network (CCN).\n\nVPN: IPsec connection",
+                          "description_zh": "路由需匹配的源实例类型列表。\n\nVPC：专有网络实例。\n\nVBR：边界路由器实例。\n\nCCN：云连接网实例。\n\nVPN：IPsec连接",
+                          "items": {
+                            "description_en": "A list of source instance types to be matched.\n\nVPC: VPC.\n\nVBR: VBR.\n\nCCN: CCN.\n\nVPN: IPsec connection",
+                            "description_zh": "路由需匹配的源实例类型列表。\n\nVPC：专有网络实例。\n\nVBR：边界路由器实例。\n\nCCN：云连接网实例。\n\nVPN：IPsec连接",
+                            "example": "VPC",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SourceInstanceIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "SourceInstanceId": {
+                          "description_en": "A list of source instance IDs to be matched",
+                          "description_zh": "路由需匹配的源实例ID列表",
+                          "items": {
+                            "description_en": "A list of source instance IDs to be matched",
+                            "description_zh": "路由需匹配的源实例ID列表",
+                            "example": "vpc-adeg3544fdf34vf****",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SourceInstanceIdsReverseMatch": {
+                      "description_en": "Indicates whether the source instance IDs are excluded.\n\nfalse: The match is successful if the source instance ID of the route is in the SourceInstanceIds.N list.\n\ntrue: The match is successful if the source instance ID of the route is not in the SourceInstanceIds.N list",
+                      "description_zh": "是否使用了源实例ID列表的排除匹配模式。\n\nfalse：否，即路由传递的源实例ID在SourceInstanceIds.N中时，匹配通过。\n\ntrue：是，即路由传递的源实例ID不在SourceInstanceIds.N中时，匹配通过",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "SourceRegionIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "SourceRegionId": {
+                          "description_en": "A list of source region IDs to be matched",
+                          "description_zh": "路由需匹配的源地域ID列表",
+                          "items": {
+                            "description_en": "A list of source region IDs to be matched",
+                            "description_zh": "路由需匹配的源地域ID列表",
+                            "example": "cn-hangzhou",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SourceRouteTableIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "SourceRouteTableId": {
+                          "description_en": "A list of source route table IDs to be matched",
+                          "description_zh": "路由需匹配的源路由表ID列表",
+                          "items": {
+                            "description_en": "A list of source route table IDs to be matched",
+                            "description_zh": "路由需匹配的源路由表ID列表",
+                            "example": "vtb-adfr233vf34rvd4****",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Status": {
+                      "description_en": "The status of the routing policy.\n\nCreating: The routing policy is being created.\n\nActive: The routing policy is available.\n\nDeleting: The routing policy is being deleted",
+                      "description_zh": "路由策略的状态。\n\nCreating：创建中。\nActive：可用。\nDeleting：删除中",
+                      "example": "Active",
+                      "type": "string"
+                    },
+                    "TransitRouterRouteTableId": {
+                      "description_en": "The ID of the route table of the transit router that is associated with the routing policy",
+                      "description_zh": "路由策略关联的转发路由器路由表ID",
+                      "example": "vtb-gw8nx3515m1mbd1z1****",
+                      "type": "string"
+                    },
+                    "TransmitDirection": {
+                      "description_en": "The direction in which the routing policy is applied",
+                      "description_zh": "路由策略的应用方向",
+                      "example": "RegionOut",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "列表条目数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

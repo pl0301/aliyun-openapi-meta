@@ -792,5 +792,921 @@
   ],
   "pathPattern": "/[workspaceId]/quanmiao/lightapp/runVideoAnalysis",
   "product_code": "QuanMiaoLightApp",
-  "protocol": "HTTPS|SSE"
+  "protocol": "HTTPS|SSE",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Response data",
+        "description_zh": "响应数据",
+        "properties": {
+          "header": {
+            "description_en": "Streaming output header containing general response information",
+            "description_zh": "流式输出 header头，包含返回通用信息",
+            "properties": {
+              "errorCode": {
+                "description_en": "Error code",
+                "description_zh": "异常错误码",
+                "example": "InvalidParam",
+                "type": "string"
+              },
+              "errorMessage": {
+                "description_en": "Error message",
+                "description_zh": "异常错误信息",
+                "example": "Pop sign mismatch, please check log.",
+                "type": "string"
+              },
+              "event": {
+                "description_en": "Event type",
+                "description_zh": "事件类型",
+                "example": "task-progress-start-generating",
+                "type": "string"
+              },
+              "eventInfo": {
+                "description_en": "Event description",
+                "description_zh": "事件描述",
+                "example": "可空",
+                "type": "string"
+              },
+              "sessionId": {
+                "description_en": "Unique identifier for the generation session",
+                "description_zh": "一次生成唯一标识",
+                "example": "xxx",
+                "type": "string"
+              },
+              "taskId": {
+                "description_en": "Unique task identifier",
+                "description_zh": "生成唯一标识",
+                "example": "xxx",
+                "type": "string"
+              },
+              "traceId": {
+                "description_en": "Trace ID for request tracking",
+                "description_zh": "链路traceid ",
+                "example": "2150432017236011824686132ecdbc",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "payload": {
+            "description_en": "Generated result data",
+            "description_zh": "生成结果数据",
+            "properties": {
+              "output": {
+                "description_en": "Output content object",
+                "description_zh": "输出内容对象",
+                "properties": {
+                  "addDatasetDocumentsResult": {
+                    "description_en": "Auto-save execution result",
+                    "description_zh": "自动保存执行结果",
+                    "properties": {
+                      "docId": {
+                        "description_en": "Video docId",
+                        "description_zh": "视频docId",
+                        "example": "xxx",
+                        "title_en": "Video docId",
+                        "title_zh": "视频docId",
+                        "type": "string"
+                      },
+                      "docUuid": {
+                        "description_en": "Video docUuid",
+                        "description_zh": "视频的docUuid",
+                        "example": "uuid",
+                        "title_en": "Video docUuid",
+                        "title_zh": "视频的docUuid",
+                        "type": "string"
+                      },
+                      "errorMessage": {
+                        "description_en": "If auto-save fails, this field contains the error message",
+                        "description_zh": "如果自动保存失败，则输出错误信息",
+                        "example": "xxx",
+                        "title_en": "If automatic saving failed, output the error message",
+                        "title_zh": "如果自动保存失败，则输出错误信息",
+                        "type": "string"
+                      },
+                      "status": {
+                        "description_en": "Auto-save task status: 1 = success, 0 = failure",
+                        "description_zh": "自动保存任务状态：1 成功，0 失败",
+                        "example": "1",
+                        "format": "int64",
+                        "title_en": "Auto-save job status: 1 Succeeded, 0 failed  ",
+                        "title_zh": "自动保存任务状态：1 成功，0 失败",
+                        "type": "integer"
+                      },
+                      "title": {
+                        "description_en": "Video title",
+                        "description_zh": "视频名称",
+                        "example": "xxx",
+                        "title_en": "Video Name  ",
+                        "title_zh": "视频名称",
+                        "type": "string"
+                      }
+                    },
+                    "title_en": "Automatically save execution result",
+                    "title_zh": "自动保存执行结果",
+                    "type": "object"
+                  },
+                  "resultJsonFileUrl": {
+                    "description_en": "Result JSON file URL:\n\nDue to large response size, some data is provided via file download. Use this URL to download and parse the file:\n\nFields included (see RunVideoAnalysis API for structure):\n\nvideoShotSnapshotResult: Frame info per segment, including frame URLs\n\nvideoShotAnalysisResults: Detailed language analysis per segment\n\nOther fields are returned directly in the response.\n\nFile type: JSON\n\nFile content: Full response payload, including fields returned via streaming. Look for event: task-finished",
+                    "description_zh": "结果json文件地址：\n\n由于响应结果过大，部分数据获取改为文件方式，可以通过当前字段url下载文件，并解析使用：\n\n当前包含的字段：数据结构定义见RunVideoAnalysis接口\nvideoShotSnapshotResult：每个分片抽帧信息，包括每帧url\nvideoShotAnalysisResults：每个分片语言分析结果明细\n其他字段获取方式不变，文本方式返回。\n文件类型：json\n文件内容：全量报文，包含文本方式返回的\n返回event：task-finished",
+                    "example": "http://",
+                    "title_en": "URL of the full result file:  \n\nBecause the response result is too large, partial data retrieval is provided via a file. You can download the file using the URL in this field and parse it for use.  \n\nCurrently included fields:  \n- videoShotSnapshotResult (frame extraction information per shard); for data structure definition, see the RunVideoAnalysis API  \n\nOther fields remain unchanged and are returned in text format.  \nFile type: JSON  \nFile content: Full message, including the data returned in text format  \nReturned event: task-finished  \n",
+                    "title_zh": "全量结果文件地址：\n由于响应结果过大，部分数据获取改为文件方式，可以通过当前字段url下载文件，并解析使用。\n当前包含的字段：\n- videoShotSnapshotResult（分片抽帧信息），数据结构定义见RunVideoAnalysis接口\n其他字段获取方式不变，文本方式返回。\n文件类型：json\n文件内容：全量报文，包含文本方式返回的\n返回event：task-finished",
+                    "type": "string"
+                  },
+                  "videoAnalysisResult": {
+                    "description_en": "Video language (VL) generation result",
+                    "description_zh": "视频语言vl生成结果",
+                    "properties": {
+                      "generateFinished": {
+                        "description_en": "Indicates whether the current task has finished generating",
+                        "description_zh": "当前任务是否已生成结束",
+                        "example": "true",
+                        "type": "boolean"
+                      },
+                      "modelId": {
+                        "description_en": "Actual model identifier used",
+                        "description_zh": "实际使用的模型唯一标识",
+                        "example": "qwen-vl-max",
+                        "title_en": "UUID of the model actually used  ",
+                        "title_zh": "实际使用的模型唯一标识",
+                        "type": "string"
+                      },
+                      "text": {
+                        "description_en": "Generated content",
+                        "description_zh": "生成内容",
+                        "example": "根据xxx",
+                        "type": "string"
+                      },
+                      "usage": {
+                        "description_en": "Token count",
+                        "description_zh": "Token数量",
+                        "properties": {
+                          "imageTokens": {
+                            "description_en": "Number of tokens used for image recognition",
+                            "description_zh": "图片识别token数量",
+                            "example": "20",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "inputTokens": {
+                            "description_en": "Number of input tokens",
+                            "description_zh": "输入Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "outputTokens": {
+                            "description_en": "Number of output tokens",
+                            "description_zh": "输出Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "totalTokens": {
+                            "description_en": "Total number of tokens",
+                            "description_zh": "总Token数量",
+                            "example": "2",
+                            "format": "int64",
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "videoShotAnalysisResults": {
+                        "description_en": "Language analysis results for each video shot. Due to large size, retrieve from resultJsonFileUrl",
+                        "description_zh": "视频每个分镜对应语言分析结果：：因内容较大，请从resultJsonFileUrl文件中获取",
+                        "items": {
+                          "description_en": "Language analysis result for each video shot",
+                          "description_zh": "视频每个分镜对应语言分析结果",
+                          "properties": {
+                            "endTime": {
+                              "description_en": "End time in milliseconds (relative time)",
+                              "description_zh": "结束时间，相对时间，单位毫秒",
+                              "example": "10000",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "startTime": {
+                              "description_en": "Start time in milliseconds (relative time)",
+                              "description_zh": "开始时间，相对时间，单位毫秒",
+                              "example": "1000",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "text": {
+                              "description_en": "Generated content for the shot",
+                              "description_zh": "分镜对应生成内容",
+                              "example": "根据xxx",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "videoCalculatorResult": {
+                    "description_en": "Cost estimation result",
+                    "description_zh": "费用估算结果",
+                    "properties": {
+                      "items": {
+                        "description_en": "Billing item details",
+                        "description_zh": "计费项明细",
+                        "items": {
+                          "description_en": "Billing item details",
+                          "description_zh": "计费项明细",
+                          "properties": {
+                            "inputExpense": {
+                              "description_en": "Input token cost",
+                              "description_zh": "输入token价格",
+                              "example": "0.234",
+                              "format": "double",
+                              "title_en": "Input token price  ",
+                              "title_zh": "输入token价格",
+                              "type": "number"
+                            },
+                            "inputToken": {
+                              "description_en": "Input tokens",
+                              "description_zh": "输入token",
+                              "example": "123",
+                              "format": "int64",
+                              "title_en": "Input tokens  ",
+                              "title_zh": "输入token",
+                              "type": "integer"
+                            },
+                            "name": {
+                              "description_en": "Billing item name",
+                              "description_zh": "计费项名称",
+                              "example": "xxx",
+                              "title_en": "Billing item name",
+                              "title_zh": "计费项名称",
+                              "type": "string"
+                            },
+                            "outputExpense": {
+                              "description_en": "Output token cost",
+                              "description_zh": "输出token价格",
+                              "example": "0.124",
+                              "format": "double",
+                              "title_en": "Output token price",
+                              "title_zh": "输出token价格",
+                              "type": "number"
+                            },
+                            "outputToken": {
+                              "description_en": "Output tokens",
+                              "description_zh": "输出token",
+                              "example": "13",
+                              "format": "int64",
+                              "title_en": "Output tokens  ",
+                              "title_zh": "输出token",
+                              "type": "integer"
+                            },
+                            "time": {
+                              "description_en": "Billed duration",
+                              "description_zh": "计费时长",
+                              "example": "9",
+                              "format": "int64",
+                              "title_en": "Billing duration",
+                              "title_zh": "计费时长",
+                              "type": "integer"
+                            },
+                            "timeExpense": {
+                              "description_en": "Time-based cost",
+                              "description_zh": "时间计费",
+                              "example": "0.02",
+                              "format": "double",
+                              "title_en": "Time-based billing",
+                              "title_zh": "时间计费",
+                              "type": "number"
+                            },
+                            "totalExpense": {
+                              "description_en": "Total cost",
+                              "description_zh": "总计费",
+                              "example": "0.378",
+                              "format": "double",
+                              "title_en": "Total billing",
+                              "title_zh": "总计费",
+                              "type": "number"
+                            },
+                            "type": {
+                              "description_en": "Billing item type",
+                              "description_zh": "计费项类型",
+                              "example": "模型推理",
+                              "title_en": "Billing item type",
+                              "title_zh": "计费项类型",
+                              "type": "string"
+                            }
+                          },
+                          "title_en": "Billing Item Details  ",
+                          "title_zh": "计费项明细",
+                          "type": "object"
+                        },
+                        "title_en": "Billing item details",
+                        "title_zh": "计费项明细",
+                        "type": "array"
+                      }
+                    },
+                    "title_en": "Fee estimation result",
+                    "title_zh": "费用估算结果",
+                    "type": "object"
+                  },
+                  "videoCaptionResult": {
+                    "description_en": "Video caption result",
+                    "description_zh": "视频字幕结果",
+                    "properties": {
+                      "generateFinished": {
+                        "description_en": "Indicates whether the current task has finished generating",
+                        "description_zh": "当前任务是否已生成结束",
+                        "example": "true",
+                        "type": "boolean"
+                      },
+                      "videoCaptions": {
+                        "description_en": "List of video captions",
+                        "description_zh": "视频字幕列表",
+                        "items": {
+                          "description_en": "Video caption",
+                          "description_zh": "视频字幕",
+                          "properties": {
+                            "endTime": {
+                              "description_en": "End time in milliseconds (relative time)",
+                              "description_zh": "结束时间：相对时间，单位毫秒",
+                              "example": "20000",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "endTimeFormat": {
+                              "description_en": "Formatted end time, e.g., 00:01",
+                              "description_zh": "结束时间，格式化结果：00:01",
+                              "example": "00:01",
+                              "type": "string"
+                            },
+                            "speaker": {
+                              "description_en": "Character",
+                              "description_zh": "角色",
+                              "example": "张三",
+                              "title_en": "role  ",
+                              "title_zh": "角色",
+                              "type": "string"
+                            },
+                            "startTime": {
+                              "description_en": "Start time in milliseconds (relative time)",
+                              "description_zh": "开始时间，相对时间，单位毫秒",
+                              "example": "1000",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "startTimeFormat": {
+                              "description_en": "Formatted start time, e.g., 00:01",
+                              "description_zh": "开始时间，格式化结果：00:01",
+                              "example": "00:01",
+                              "type": "string"
+                            },
+                            "text": {
+                              "description_en": "Caption content",
+                              "description_zh": "字幕内容",
+                              "example": "xxx",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "videoGenerateResult": {
+                    "description_en": "Video summary result",
+                    "description_zh": "视频总结结果",
+                    "properties": {
+                      "generateFinished": {
+                        "description_en": "Indicates whether the current task has finished generating",
+                        "description_zh": "当前任务是否已生成结束",
+                        "example": "true",
+                        "type": "boolean"
+                      },
+                      "index": {
+                        "description_en": "Multi-task index, starting from 1",
+                        "description_zh": "多任务标号：1开始",
+                        "example": "1",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "modelId": {
+                        "description_en": "Actual model identifier used",
+                        "description_zh": "实际使用的模型唯一标识",
+                        "example": "qwen-max",
+                        "title_en": "UUID of the model actually used",
+                        "title_zh": "实际使用的模型唯一标识",
+                        "type": "string"
+                      },
+                      "modelReduce": {
+                        "description_en": "Indicates whether the model was downgraded. If the model is qwen-max or qwen-max-latest and exceeds the prompt input limit, the system attempts to downgrade to qwen-plus-latest to preserve information integrity",
+                        "description_zh": "模型是否被降级：如果模型是qwen-max或qwen-max-latest，且超过prompt输入上限时，会尝试降级到qwen-plus-latest模型，保证信息完整性",
+                        "example": "qwen-plus-latest",
+                        "title_en": "Whether model downgrade occurred: If the max model is used and the system determines that the prompt input exceeds the upper limit, it attempts to downgrade to qwen-plus-latest.  ",
+                        "title_zh": "是否发生模型降级：如果使用的是max模型，如果系统判断prompt输入超过上限，会尝试降级成qwen-plus-latest",
+                        "type": "boolean"
+                      },
+                      "reasonText": {
+                        "description_en": "Model reasoning process",
+                        "description_zh": "模型思考过程",
+                        "example": "xxx",
+                        "type": "string"
+                      },
+                      "text": {
+                        "description_en": "Video summary content",
+                        "description_zh": "视频总结内容",
+                        "example": "根据xxx",
+                        "type": "string"
+                      },
+                      "usage": {
+                        "description_en": "Token count",
+                        "description_zh": "Token数量",
+                        "properties": {
+                          "inputTokens": {
+                            "description_en": "Number of input tokens",
+                            "description_zh": "输入Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "outputTokens": {
+                            "description_en": "Number of output tokens",
+                            "description_zh": "输出Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "totalTokens": {
+                            "description_en": "Total number of tokens",
+                            "description_zh": "总Token数量",
+                            "example": "2",
+                            "format": "int64",
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "videoGenerateResults": {
+                    "description_en": "When multiple tasks are specified (textProcessTasks is provided), results appear here. Locate results by array index or the index field (starting from 1)",
+                    "description_zh": "当入参为多任务时（textProcessTasks有值），返回文本加工结果对应这个字段，可以通过数据所在数组位置（下标）或index（1开始）找到对应结果",
+                    "items": {
+                      "description_en": "Text analysis result",
+                      "description_zh": "文本分析结果",
+                      "properties": {
+                        "generateFinished": {
+                          "description_en": "Indicates whether the current task has finished generating",
+                          "description_zh": "当前任务是否已生成结束",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "index": {
+                          "description_en": "Index, starting from 1",
+                          "description_zh": "序号：1开始",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "modelId": {
+                          "description_en": "Model ID",
+                          "description_zh": "模型ID",
+                          "example": "qwen-max-latest",
+                          "type": "string"
+                        },
+                        "reasonText": {
+                          "description_en": "Model reasoning process",
+                          "description_zh": "模型思考过程",
+                          "example": "xxx",
+                          "type": "string"
+                        },
+                        "text": {
+                          "description_en": "Video summary content",
+                          "description_zh": "视频总结内容",
+                          "example": "xxx",
+                          "type": "string"
+                        },
+                        "usage": {
+                          "description_en": "Usage",
+                          "description_zh": "用量",
+                          "properties": {
+                            "inputTokens": {
+                              "description_en": "Number of input tokens",
+                              "description_zh": "输入Token数量",
+                              "example": "1",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "outputTokens": {
+                              "description_en": "Number of output tokens",
+                              "description_zh": "输出Token数量",
+                              "example": "1",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "totalTokens": {
+                              "description_en": "Total number of tokens",
+                              "description_zh": "总Token数量",
+                              "example": "2",
+                              "format": "int64",
+                              "type": "integer"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "videoMindMappingGenerateResult": {
+                    "description_en": "Video mind map result",
+                    "description_zh": "视频思维导图结果",
+                    "properties": {
+                      "generateFinished": {
+                        "description_en": "Indicates whether the current task has finished generating",
+                        "description_zh": "当前任务是否已生成结束",
+                        "example": "true",
+                        "type": "boolean"
+                      },
+                      "modelId": {
+                        "description_en": "Actual model identifier used",
+                        "description_zh": "实际使用的模型唯一标识",
+                        "example": "true",
+                        "title_en": "UUID of the actual model used",
+                        "title_zh": "实际使用的模型唯一标识",
+                        "type": "string"
+                      },
+                      "modelReduce": {
+                        "description_en": "Indicates whether the model was downgraded. If the model is qwen-max or qwen-max-latest and exceeds the prompt input limit, the system attempts to downgrade to qwen-plus-latest to preserve information integrity",
+                        "description_zh": "模型是否被降级：如果模型是qwen-max或qwen-max-latest，且超过prompt输入上限时，会尝试降级到qwen-plus-latest模型，保证信息完整性",
+                        "example": "true",
+                        "title_en": "Whether model downgrade occurred: If the max model is used and the system determines that the prompt input exceeds the upper limit, it attempts to downgrade to qwen-plus-latest.  ",
+                        "title_zh": "是否发生模型降级：如果使用的是max模型，如果系统判断prompt输入超过上限，会尝试降级成qwen-plus-latest",
+                        "type": "boolean"
+                      },
+                      "text": {
+                        "description_en": "Raw generated content",
+                        "description_zh": "生成原始内容",
+                        "example": "根据xxx",
+                        "type": "string"
+                      },
+                      "usage": {
+                        "description_en": "Token count",
+                        "description_zh": "Token数量",
+                        "properties": {
+                          "inputTokens": {
+                            "description_en": "Number of input tokens",
+                            "description_zh": "输入Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "outputTokens": {
+                            "description_en": "Number of output tokens",
+                            "description_zh": "输出Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "totalTokens": {
+                            "description_en": "Total number of tokens",
+                            "description_zh": "总Token数量",
+                            "example": "2",
+                            "format": "int64",
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "videoMindMappings": {
+                        "description_en": "Mind map",
+                        "description_zh": "思维导图",
+                        "items": {
+                          "description_en": "Mind map",
+                          "description_zh": "思维导图",
+                          "properties": {
+                            "childNodes": {
+                              "description_en": "Child nodes",
+                              "description_zh": "子节点",
+                              "items": {
+                                "description_en": "Child nodes",
+                                "description_zh": "子节点",
+                                "properties": {
+                                  "childNodes": {
+                                    "description_en": "Child nodes",
+                                    "description_zh": "子节点",
+                                    "items": {
+                                      "description_en": "Child nodes",
+                                      "description_zh": "子节点",
+                                      "properties": {
+                                        "name": {
+                                          "description_en": "Node description",
+                                          "description_zh": "节点描述",
+                                          "example": "三级",
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  },
+                                  "name": {
+                                    "description_en": "Node description",
+                                    "description_zh": "节点描述",
+                                    "example": "二级",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            },
+                            "name": {
+                              "description_en": "Node description",
+                              "description_zh": "节点描述",
+                              "example": "一级",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "videoRoleRecognitionResult": {
+                    "description_en": "Automatic recognition result",
+                    "description_zh": "自动识别结果",
+                    "properties": {
+                      "videoRoles": {
+                        "description_en": "List of characters",
+                        "description_zh": "角色列表",
+                        "items": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "properties": {
+                            "isAutoRecognition": {
+                              "description_en": "Indicates whether automatic recognition uses a separate video URL. If true, profile pictures cannot be matched to video frames by timestamp because they may come from a different video",
+                              "description_zh": "自动识别是否使用的是自动识别单独的视频地址（是：则人脸图片无法使用时间与视频帧用时间对应，因为可能是不同的视频）",
+                              "example": "true",
+                              "type": "boolean"
+                            },
+                            "ratio": {
+                              "description_en": "Appearance rate",
+                              "description_zh": "出场率",
+                              "example": "0.06",
+                              "format": "float",
+                              "title_en": "Appearance ratio",
+                              "title_zh": "出场率",
+                              "type": "number"
+                            },
+                            "roleInfo": {
+                              "description_en": "Character description",
+                              "description_zh": "人物信息描述",
+                              "example": "角色身份",
+                              "type": "string"
+                            },
+                            "roleName": {
+                              "description_en": "Character name",
+                              "description_zh": "角色名称",
+                              "example": "test-role",
+                              "type": "string"
+                            },
+                            "timeIntervals": {
+                              "description_en": "Appearance time segments",
+                              "description_zh": "出场时间段",
+                              "items": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "properties": {
+                                  "endTime": {
+                                    "description_en": "End time in milliseconds",
+                                    "description_zh": "结束时间，单位毫秒",
+                                    "example": "1735535279000",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "startTime": {
+                                    "description_en": "Start time in milliseconds",
+                                    "description_zh": "开始时间，单位毫秒",
+                                    "example": "0",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "timestamp": {
+                                    "description_en": "Character appearance time",
+                                    "description_zh": "角色出现时间",
+                                    "example": "23333333",
+                                    "format": "int64",
+                                    "title_en": "Time when the role appears  ",
+                                    "title_zh": "角色出现时间",
+                                    "type": "integer"
+                                  },
+                                  "url": {
+                                    "description_en": "Image URL",
+                                    "description_zh": "图片url",
+                                    "example": "https://img.alicdn.com/imgextra/i1/O1CN01qtgazV1oZ3djafcFz_!!6000000005238-0-tps-1540-1540.jpg",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "title_en": "Time segments when the character appears",
+                              "title_zh": "出场时间段",
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "title_en": "Role list  ",
+                        "title_zh": "角色列表",
+                        "type": "array"
+                      }
+                    },
+                    "title_en": "Auto detection result  ",
+                    "title_zh": "自动识别结果",
+                    "type": "object"
+                  },
+                  "videoShotSnapshotResult": {
+                    "description_en": "Shot frame sampling result. Due to large size, retrieve from resultJsonFileUrl",
+                    "description_zh": "切片抽帧结果：因内容较大，请从resultJsonFileUrl文件中获取",
+                    "properties": {
+                      "videoShots": {
+                        "description_en": "List of segments",
+                        "description_zh": "片段列表",
+                        "items": {
+                          "description_en": "Segment",
+                          "description_zh": "片段",
+                          "properties": {
+                            "endTime": {
+                              "description_en": "End time in milliseconds (relative time)",
+                              "description_zh": "结束时间：相对时间，单位ms",
+                              "example": "0",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "endTimeFormat": {
+                              "description_en": "Formatted end time, e.g., 00:01",
+                              "description_zh": "结束时间（格式化）：相对时间，比如00:01",
+                              "example": "00:02",
+                              "type": "string"
+                            },
+                            "startTime": {
+                              "description_en": "Start time in milliseconds (relative time)",
+                              "description_zh": "开始时间：相对时间，单位ms",
+                              "example": "0",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "startTimeFormat": {
+                              "description_en": "Formatted start time, e.g., 00:01",
+                              "description_zh": "开始时间（格式化）：相对时间，比如00:01",
+                              "example": "00:01",
+                              "type": "string"
+                            },
+                            "videoSnapshots": {
+                              "description_en": "List of frames",
+                              "description_zh": "帧列表",
+                              "items": {
+                                "description_en": "Frame",
+                                "description_zh": "帧",
+                                "properties": {
+                                  "url": {
+                                    "description_en": "Frame URL: Publicly accessible URL with expiration. Download before it expires",
+                                    "description_zh": "帧url：带有效期的可公网访问地址，如需要下载，请在有效期内下载",
+                                    "example": "http://xxx",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "videoTitleGenerateResult": {
+                    "description_en": "Video title result",
+                    "description_zh": "视频标题结果",
+                    "properties": {
+                      "generateFinished": {
+                        "description_en": "Indicates whether the current task has finished generating",
+                        "description_zh": "当前任务是否已生成结束",
+                        "example": "true",
+                        "type": "boolean"
+                      },
+                      "modelId": {
+                        "description_en": "Actual model identifier used",
+                        "description_zh": "实际使用的模型唯一标识",
+                        "example": "qwen-max",
+                        "title_en": "UUID of the model actually used",
+                        "title_zh": "实际使用的模型唯一标识",
+                        "type": "string"
+                      },
+                      "modelReduce": {
+                        "description_en": "Indicates whether the model was downgraded. If the model is qwen-max or qwen-max-latest and exceeds the prompt input limit, the system attempts to downgrade to qwen-plus-latest to preserve information integrity",
+                        "description_zh": "模型是否被降级：如果模型是qwen-max或qwen-max-latest，且超过prompt输入上限时，会尝试降级到qwen-plus-latest模型，保证信息完整性",
+                        "example": "true",
+                        "title_en": "modelReduce  ",
+                        "title_zh": "modelReduce",
+                        "type": "boolean"
+                      },
+                      "text": {
+                        "description_en": "Generated content",
+                        "description_zh": "生成内容",
+                        "example": "标题",
+                        "type": "string"
+                      },
+                      "usage": {
+                        "description_en": "Token count",
+                        "description_zh": "Token数量",
+                        "properties": {
+                          "inputTokens": {
+                            "description_en": "Number of input tokens",
+                            "description_zh": "输入Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "outputTokens": {
+                            "description_en": "Number of output tokens",
+                            "description_zh": "输出Token数量",
+                            "example": "1",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "totalTokens": {
+                            "description_en": "Total number of tokens",
+                            "description_zh": "总Token数量",
+                            "example": "2",
+                            "format": "int64",
+                            "type": "integer"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              },
+              "usage": {
+                "description_en": "Token count",
+                "description_zh": "Token数量",
+                "properties": {
+                  "inputTokens": {
+                    "description_en": "Number of input tokens",
+                    "description_zh": "输入Token数量",
+                    "example": "1",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "outputTokens": {
+                    "description_en": "Number of output tokens",
+                    "description_zh": "输出Token数量",
+                    "example": "1",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "totalTokens": {
+                    "description_en": "Total number of tokens",
+                    "description_zh": "总Token数量",
+                    "example": "2",
+                    "format": "int64",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "requestId": {
+            "description_en": "Unique request identifier",
+            "description_zh": "请求唯一标识",
+            "example": "117F5ABE-CF02-5502-9A3F-E56BC9081A64",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

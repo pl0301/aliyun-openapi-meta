@@ -34,6 +34,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "INSTANCE_MIGRATION"
+      ],
       "example": "INSTANCE_MIGRATION",
       "help_en": "The migration type:\n\nINSTANCE_MIGRATION: instance migration",
       "help_zh": "迁移类型：\nINSTANCE_MIGRATION(实例迁移)",
@@ -51,6 +54,8 @@
       "help_en": "The page number of the results to return",
       "help_zh": "分页页码，查询第几页的返回结果",
       "location": "query",
+      "maximum": "100000000",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -64,6 +69,8 @@
       "help_en": "The number of entries to return on each page",
       "help_zh": "分页大小，每页最多显示的返回结果数量",
       "location": "query",
+      "maximum": "10000",
+      "minimum": "10",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -88,5 +95,289 @@
   ],
   "pathPattern": "/migrations",
   "product_code": "RocketMQ",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Result\\<MyPage>",
+        "description_zh": "Result<MyPage<MigrationDTO>>",
+        "properties": {
+          "code": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "MissingInstanceId",
+            "title_en": "",
+            "title_zh": "错误码",
+            "type": "string"
+          },
+          "data": {
+            "description_en": "The returned data",
+            "description_zh": "返回结果",
+            "properties": {
+              "list": {
+                "description_en": "The data on the current page",
+                "description_zh": "分页数据",
+                "items": {
+                  "description_en": "The list of migration tasks",
+                  "description_zh": "迁移任务列表",
+                  "properties": {
+                    "createTime": {
+                      "description_en": "The time when the task was created",
+                      "description_zh": "创建时间",
+                      "example": "2022-08-01 00:00:00",
+                      "title_en": "",
+                      "title_zh": "创建时间",
+                      "type": "string"
+                    },
+                    "currentStage": {
+                      "description_en": "The current migration stage",
+                      "description_zh": "当前迁移阶段",
+                      "properties": {
+                        "stageData": {
+                          "description_en": "The stage data",
+                          "description_zh": "阶段数据",
+                          "example": "[]",
+                          "title_en": "",
+                          "title_zh": "阶段数据",
+                          "type": "any"
+                        },
+                        "stageStatus": {
+                          "description_en": "The stage status:\n\nINIT: Not started\n\nDOING: In progress\n\nDONE: Complete",
+                          "description_zh": "阶段状态：\nINIT(未开始)\nDOING(执行中)\nDONE(已完成)",
+                          "enumValueTitles": {
+                            "DOING": "执行中",
+                            "DONE": "已完成",
+                            "INIT": "未开始"
+                          },
+                          "example": "DOING",
+                          "title_en": "",
+                          "title_zh": "阶段状态,MigrationStageStatusEnum[INIT(未开始),DOING(执行中),DONE(已完成),code(编码),desc(描述)]",
+                          "type": "string"
+                        },
+                        "stageType": {
+                          "description_en": "The stage type.\n\nCONNECT_NETWORK: Network connection\n\nMIGRATE_METADATA: Metadata migration\n\nREPLACE_ENDPOINT: Endpoint replacement\n\nMIGRATE_MESSAGE: Message migration",
+                          "description_zh": "阶段类型\nCONNECT_NETWORK(网络打通)\nMIGRATE_METADATA(迁移元数据)\nREPLACE_ENDPOINT(更换接入点)\nMIGRATE_MESSAGE(消息迁移)",
+                          "enumValueTitles": {
+                            "CONNECT_NETWOR": "网络打通",
+                            "MIGRATE_MESSAGE": "消息迁移",
+                            "MIGRATE_METADATA": "迁移元数据",
+                            "REPLACE_ENDPOINT": "更换接入点"
+                          },
+                          "example": "MIGRATE_METADATA",
+                          "title_en": "",
+                          "title_zh": "阶段类型,MigrationStageTypeEnum[CONNECT_NETWORK(网络打通),MIGRATE_METADATA(迁移元数据),REPLACE_ENDPOINT(更换接入点),MIGRATE_MESSAGE(消息迁移),code(编码),desc(描述),type(类型)]",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "当前阶段,MigrationStageTypeEnum[CONNECT_NETWORK(网络打通),MIGRATE_METADATA(迁移元数据),REPLACE_ENDPOINT(更换接入点),MIGRATE_MESSAGE(消息迁移),code(编码),desc(描述),type(类型)]",
+                      "type": "object"
+                    },
+                    "migrationId": {
+                      "description_en": "The migration ID",
+                      "description_zh": "迁移ID",
+                      "example": "21",
+                      "format": "int64",
+                      "title_en": "",
+                      "title_zh": "迁移ID",
+                      "type": "integer"
+                    },
+                    "migrationName": {
+                      "description_en": "The migration name",
+                      "description_zh": "迁移名称",
+                      "example": "xxx",
+                      "title_en": "",
+                      "title_zh": "迁移名称",
+                      "type": "string"
+                    },
+                    "migrationSource": {
+                      "description_en": "The migration source",
+                      "description_zh": "迁移来源",
+                      "properties": {
+                        "sourceData": {
+                          "description_en": "The source data",
+                          "description_zh": "迁移来源数据",
+                          "example": "{\n\"clusterType\":\"INTERNET_NETWORK\",\n\"aclType\":\"NONE\",\n\"clusterName\":\"test\",\n\"namesrvAddrList\":\"47.110.248.xxx:9876\"],\n\"brokerObtainMethod\":\"AUTO_OBTAIN\"\n}",
+                          "title_en": "",
+                          "title_zh": "迁移来源数据",
+                          "type": "any"
+                        },
+                        "sourceType": {
+                          "description_en": "The migration source type:\n\nEXTERNAL_INSTANCE: External instance\n\nINTERNAL_INSTANCE: Alibaba Cloud V5.0 instance",
+                          "description_zh": "迁移来源类型：\nEXTERNAL_INSTANCE(外部实例)\nINTERNAL_INSTANCE(阿里云5.0实例)",
+                          "enumValueTitles": {
+                            "EXTERNAL_INSTANCE": "外部实例",
+                            "INTERNAL_INSTANCE": "阿里云5.0实例"
+                          },
+                          "example": "EXTERNAL_INSTANCE",
+                          "title_en": "",
+                          "title_zh": "迁移来源类型,MigrationSourceTypeEnum[EXTERNAL_INSTANCE(外部实例),UPLOADED_FILE(上传文件),code(编码),desc(描述),type(类型)]",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "迁移来源",
+                      "type": "object"
+                    },
+                    "migrationStatus": {
+                      "description_en": "The migration status:\n\nCREATED: Created\n\nMIGRATING: In progress\n\nCOMPLETED: Complete\n\nCANCELLED: Canceled",
+                      "description_zh": "迁移状态：\nCREATED(已创建)\nMIGRATING(迁移中)\nCOMPLETED(已完成)\nCANCELLED(已取消)",
+                      "enumValueTitles": {
+                        "CANCELLED": "已取消",
+                        "COMPLETED": "已完成",
+                        "CREATED": "已创建",
+                        "MIGRATING": "迁移中"
+                      },
+                      "example": "MIGRATING",
+                      "title_en": "",
+                      "title_zh": "迁移状态,MigrationStatusEnum[CREATED(已创建),MIGRATING(迁移中),COMPLETED(已完成),code(编码),desc(描述)]",
+                      "type": "string"
+                    },
+                    "migrationTarget": {
+                      "description_en": "The migration target",
+                      "description_zh": "迁移目标",
+                      "properties": {
+                        "targetData": {
+                          "description_en": "The target data",
+                          "description_zh": "迁移目标数据",
+                          "example": "{\n\"clusterType\":\"ROCKETMQ_V5\",\n\"instanceId\":\"rmq-cn-778429mp301\",\n\"regionId\":\"cn-hangzhou\"\n}",
+                          "title_en": "",
+                          "title_zh": "迁移目标数据",
+                          "type": "any"
+                        },
+                        "targetType": {
+                          "description_en": "The migration target type:\n\nINTERNAL_INSTANCE: Alibaba Cloud V5.0 instance",
+                          "description_zh": "迁移来源类型：\nINTERNAL_INSTANCE(阿里云5.0实例)",
+                          "enumValueTitles": {
+                            "INTERNAL_INSTANCE": "阿里云5.0实例"
+                          },
+                          "example": "INTERNAL_INSTANCE",
+                          "title_en": "",
+                          "title_zh": "迁移目标类型,MigrationTargetTypeEnum[INTERNAL_INSTANCE(内部实例),code(编码),desc(描述),type(类型)]",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "迁移目标",
+                      "type": "object"
+                    },
+                    "migrationType": {
+                      "description_en": "The migration type:\n\nINSTANCE_MIGRATION: instance migration",
+                      "description_zh": "迁移类型：\nINSTANCE_MIGRATION(实例迁移)",
+                      "example": "INSTANCE_MIGRATION",
+                      "title_en": "",
+                      "title_zh": "迁移类型,MigrationTypeEnum[RESOURCE_IMPORT(资源导入),INSTANCE_MIGRATION(实例迁移),code(编码),desc(描述)]",
+                      "type": "string"
+                    },
+                    "updateTime": {
+                      "description_en": "The time when the task was last updated",
+                      "description_zh": "修改时间",
+                      "example": "2022-08-01 20:05:50",
+                      "title_en": "",
+                      "title_zh": "修改时间",
+                      "type": "string"
+                    },
+                    "userId": {
+                      "description_en": "The user ID",
+                      "description_zh": "用户ID",
+                      "example": "111",
+                      "title_en": "",
+                      "title_zh": "用户ID",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title_en": "",
+                "title_zh": "分页数据",
+                "type": "array"
+              },
+              "pageNumber": {
+                "description_en": "The current page number",
+                "description_zh": "当前页码",
+                "example": "1",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "当前页码",
+                "type": "integer"
+              },
+              "pageSize": {
+                "description_en": "The number of entries per page",
+                "description_zh": "分页大小",
+                "example": "3",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "分页大小",
+                "type": "integer"
+              },
+              "totalCount": {
+                "description_en": "The total number of entries",
+                "description_zh": "总记录数",
+                "example": "1",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "总记录数",
+                "type": "integer"
+              }
+            },
+            "title_en": "",
+            "title_zh": "返回结果",
+            "type": "object"
+          },
+          "dynamicCode": {
+            "description_en": "The dynamic error code",
+            "description_zh": "动态错误码",
+            "example": "InstanceId",
+            "title_en": "",
+            "title_zh": "动态错误码",
+            "type": "string"
+          },
+          "dynamicMessage": {
+            "description_en": "The dynamic error message",
+            "description_zh": "动态错误信息",
+            "example": "instanceId",
+            "title_en": "",
+            "title_zh": "动态错误信息",
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "HTTP状态码",
+            "type": "integer"
+          },
+          "message": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "The instance cannot be found.",
+            "title_en": "",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "E5897B2E-C3AC-56DC-A482-F0E9E53F48D5",
+            "title_en": "",
+            "title_zh": "请求ID",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_en": "Result<MyPage<MigrationDTO>>",
+        "title_zh": "Result<MyPage<MigrationDTO>>",
+        "type": "object"
+      }
+    }
+  }
 }

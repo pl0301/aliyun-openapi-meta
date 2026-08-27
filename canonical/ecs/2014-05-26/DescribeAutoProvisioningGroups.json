@@ -38,6 +38,7 @@
       "help_en": "The page number of the paging query to return.\n\nMinimum value: 1.\n\nDefault value: 1",
       "help_zh": "分页查询时设置的列表页码。\n\n起始值：1。\n\n默认值：1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -51,6 +52,8 @@
       "help_en": "The number of entries per page in the paging query. Settings:\n\nMaximum value: 100.\n\nDefault value: 10",
       "help_zh": "分页查询时设置的每页行数。\n\n最大值：100。\n\n默认值：10",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -181,95 +184,383 @@
   "pathPattern": "",
   "product_code": "Ecs",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The IDs of auto-provisioning groups. You can specify up to 20 auto-provisioning group IDs",
-      "help_zh": "弹性供应组ID列表。可输入最多20个弹性供应组ID",
-      "name": "AutoProvisioningGroupId",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The name of the auto provisioning group",
-      "help_zh": "弹性供应组的名称",
-      "name": "AutoProvisioningGroupName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The list of statuses of auto-provisioning groups",
-      "help_zh": "弹性供应组的状态列表",
-      "name": "AutoProvisioningGroupStatus",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_zh": "弹性供应组的类型，支持request、maintain、candidate",
-      "name": "AutoProvisioningGroupTypes",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The page number of the paging query to return.\n\nMinimum value: 1.\n\nDefault value: 1",
-      "help_zh": "分页查询时设置的列表页码。\n\n起始值：1。\n\n默认值：1",
-      "name": "PageNumber",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of entries per page in the paging query. Settings:\n\nMaximum value: 100.\n\nDefault value: 10",
-      "help_zh": "分页查询时设置的每页行数。\n\n最大值：100。\n\n默认值：10",
-      "name": "PageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The ID of the region where the auto-provisioning group resides",
-      "help_zh": "弹性供应组所在地域的ID",
-      "name": "RegionId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the resource group to which the auto-provisioning group belongs",
-      "help_zh": "弹性供应组所属的资源组ID",
-      "name": "ResourceGroupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The tags attached to the auto-provisioning group",
-      "help_zh": "弹性供应组绑定的标签",
-      "name": "Tag",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "Key",
-          "position": "query",
-          "required": false,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AutoProvisioningGroups": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "AutoProvisioningGroup": {
+                "description_en": "The details of the auto-provisioning group",
+                "description_zh": "弹性供应组的详细信息",
+                "items": {
+                  "description_en": "The details of the auto-provisioning group",
+                  "description_zh": "弹性供应组的详细信息",
+                  "properties": {
+                    "AutoProvisioningGroupId": {
+                      "description_en": "The ID of the auto provisioning group",
+                      "description_zh": "弹性供应组ID",
+                      "example": "apg-sn54avj8htgvtyh8****",
+                      "type": "string"
+                    },
+                    "AutoProvisioningGroupName": {
+                      "description_en": "The name of the auto provisioning group",
+                      "description_zh": "弹性供应组的名称",
+                      "example": "EcsDocTest",
+                      "type": "string"
+                    },
+                    "AutoProvisioningGroupType": {
+                      "description_en": "The delivery type. Valid values:\n\nrequest: one-time. The auto provisioning group delivers instance clusters only at startup and does not retry after scheduling failures.\n\nmaintain: continuous provisioning. The auto provisioning group attempts to deliver instance clusters at startup and monitors real-time capacity. If the target capacity is not met, the group continues to create ECS instances",
+                      "description_zh": "交付类型。可能值：\n\nrequest：一次性。供应组仅在启动时交付实例集群，调度失败后不再重试。\n\nmaintain：持续供应。供应组在启动时尝试交付实例集群，并监控实时容量，未达到目标容量则尝试继续创建ECS实例",
+                      "example": "maintain",
+                      "type": "string"
+                    },
+                    "CandidateOptions": {
+                      "properties": {
+                        "TimeoutMinutes": {
+                          "example": "60",
+                          "format": "int32",
+                          "title_en": "",
+                          "title_zh": "供应组尝试扩容出目标容量的超时时间。单位：分钟。",
+                          "type": "integer"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "candidate类型相关配置。",
+                      "type": "object"
+                    },
+                    "CapacitySpecification": {
+                      "properties": {
+                        "PayAsYouGoCapacity": {
+                          "example": "2",
+                          "format": "float",
+                          "title_en": "",
+                          "title_zh": "弹性供应组内当前按量实例容量。",
+                          "type": "number"
+                        },
+                        "PrePaidCapacity": {
+                          "example": "0",
+                          "format": "float",
+                          "title_en": "",
+                          "title_zh": "弹性供应组内当前包年包月实例容量。",
+                          "type": "number"
+                        },
+                        "SpotCapacity": {
+                          "example": "3",
+                          "format": "float",
+                          "title_en": "",
+                          "title_zh": "弹性供应组内当前抢占式实例容量。",
+                          "type": "number"
+                        },
+                        "TotalCapacity": {
+                          "example": "5",
+                          "format": "float",
+                          "title_en": "",
+                          "title_zh": "弹性供应组内当前实例总容量。",
+                          "type": "number"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "弹性供应组当前容量分布。",
+                      "type": "object"
+                    },
+                    "CreationTime": {
+                      "description_en": "The creation time",
+                      "description_zh": "创建时间",
+                      "example": "2019-04-01T15:10:20Z",
+                      "type": "string"
+                    },
+                    "ExcessCapacityTerminationPolicy": {
+                      "description_en": "Specifies whether to release scaled-in instances when the real-time capacity of the auto provisioning group exceeds the target capacity and a scale-in event is triggered. Valid values:\n\ntermination: releases scaled-in instances.\nno-termination: only removes scaled-in instances from the auto provisioning group",
+                      "description_zh": "弹性供应组实时容量超过目标容量并触发缩容时，是否释放缩容的实例。可能值：\n\ntermination：释放缩容的实例。\nno-termination：只将缩容的实例移出弹性供应组",
+                      "example": "termination",
+                      "type": "string"
+                    },
+                    "LaunchTemplateConfigs": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "LaunchTemplateConfig": {
+                          "description_en": "The details of the extended launch template",
+                          "description_zh": "扩展启动模板的详细信息",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "InstanceType": {
+                                "description_en": "The instance type specified in the extended launch template",
+                                "description_zh": "扩展启动模板对应的实例规格",
+                                "example": "ecs.g5.large",
+                                "type": "string"
+                              },
+                              "MaxPrice": {
+                                "description_en": "The maximum price of the instance type specified in the extended launch template",
+                                "description_zh": "扩展启动模板对应实例规格的价格上限",
+                                "example": "3",
+                                "format": "float",
+                                "type": "number"
+                              },
+                              "Priority": {
+                                "description_en": "The priority of the instance type specified in the extended launch template. A value of 0 indicates the highest priority",
+                                "description_zh": "扩展启动模板对应的实例规格的优先级，取值为0时最高",
+                                "example": "1",
+                                "format": "float",
+                                "type": "number"
+                              },
+                              "VSwitchId": {
+                                "description_en": "The ID of the vSwitch specified in the extended launch template",
+                                "description_zh": "扩展启动模板对应的虚拟交换机的ID",
+                                "example": "vsw-sn5bsitu4lfzgc5o7****",
+                                "type": "string"
+                              },
+                              "WeightedCapacity": {
+                                "description_en": "The weight of the instance type specified in the extended launch template",
+                                "description_zh": "扩展启动模板对应的实例规格的权重",
+                                "example": "2",
+                                "format": "float",
+                                "type": "number"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "LaunchTemplateId": {
+                      "description_en": "The ID of the associated instance launch template",
+                      "description_zh": "关联的实例启动模板的ID",
+                      "example": "lt-bp1fgzds4bdogu03****",
+                      "type": "string"
+                    },
+                    "LaunchTemplateVersion": {
+                      "description_en": "The version of the associated instance launch template",
+                      "description_zh": "关联的实例启动模板的版本",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "MaxSpotPrice": {
+                      "description_en": "The maximum price of spot instances.\n\nWhen both MaxSpotPrice and LaunchTemplateConfig.N.MaxPrice are specified, the lower value takes precedence.\n\nLaunchTemplateConfig.N.MaxPrice is set when you create the auto provisioning group and cannot be modified",
+                      "description_zh": "抢占式实例的最高价格。\n\n同时设置了MaxSpotPrice和LaunchTemplateConfig.N.MaxPrice时，以最低值为准。\n\nLaunchTemplateConfig.N.MaxPrice在创建弹性供应组时设置，且不可修改",
+                      "example": "2",
+                      "format": "float",
+                      "type": "number"
+                    },
+                    "PayAsYouGoOptions": {
+                      "description_en": "The policy for pay-as-you-go instances",
+                      "description_zh": "按量付费实例相关的策略",
+                      "properties": {
+                        "AllocationStrategy": {
+                          "description_en": "The policy for creating pay-as-you-go instances. Valid values:\n\nlowest-price: cost optimization policy. The instance type with the lowest price is selected.\n\nprioritized: priority-based policy. Instances are created based on the priority specified by LaunchTemplateConfig.N.Priority.\n\nLaunchTemplateConfig.N.Priority is specified when you create an auto provisioning group and cannot be modified",
+                          "description_zh": "创建按量付费实例的策略。可能值：\n\nlowest-price：成本优化策略。选择价格最低的实例规格。\n\nprioritized：优先级策略。按照LaunchTemplateConfig.N.Priority设定的优先级创建实例。\n\nLaunchTemplateConfig.N.Priority在创建弹性供应组时设置，且不可修改",
+                          "example": "prioritized",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "RegionId": {
+                      "description_en": "The ID of the region",
+                      "description_zh": "所在地域的ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "ResourceGroupId": {
+                      "description_en": "The ID of the resource group to which the auto-provisioning group belongs",
+                      "description_zh": "弹性供应组所属的资源组ID",
+                      "example": "rg-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "SpotOptions": {
+                      "description_en": "The policies related to spot instances",
+                      "description_zh": "抢占式实例相关的策略",
+                      "properties": {
+                        "AllocationStrategy": {
+                          "description_en": "The policy for creating spot instances. Valid values:\n\nlowest-price: cost optimization policy. Spot instance type with the lowest price.\n\ndiversified: balanced zone distribution policy. Spot instance in the zones specified in the extended launch template and distributes them evenly across zones",
+                          "description_zh": "创建抢占式实例的策略。可能值：\n\nlowest-price：成本优化策略。选择价格最低的实例规格。\n\ndiversified：均衡可用区分布策略。在扩展启动模板指定的可用区内创建实例，均匀分布到各可用区",
+                          "example": "diversified",
+                          "type": "string"
+                        },
+                        "InstanceInterruptionBehavior": {
+                          "description_en": "The action to perform after excess spot instances are stopped. Valid values:\n\nstop: Keeps the instances in the stopped state.\nterminate: Releases the instances",
+                          "description_zh": "停止了超额的抢占式实例后的下一步动作。可能值：\n\nstop：保持停止状态。\nterminate：释放",
+                          "example": "stop",
+                          "type": "string"
+                        },
+                        "InstancePoolsToUseCount": {
+                          "description_en": "The number of instance types with the lowest prices that the auto provisioning group uses to create instances.\n\nThis parameter is set when you create the auto provisioning group and cannot be modified",
+                          "description_zh": "弹性供应组选择价格最低的实例规格创建实例的数量。\n\n该参数在创建弹性供应组时被设置，且不可修改",
+                          "example": "2",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "State": {
+                      "description_en": "The overall scheduling status of the auto provisioning group. Valid values:\n\nfulfilled: The scheduling task is completed.\npending-fulfillment: Instances are being created.\npending-termination: Instances are being removed.\nerror: An error occurred during scheduling and the instance cluster failed to be delivered",
+                      "description_zh": "弹性供应组整体调度的执行状态。可能值：\n\nfulfilled：已成功完成调度任务。\npending-fulfillment：创建实例中。\npending-termination：移除实例中。\nerror：调度时发生异常，未能交付实例集群",
+                      "example": "fulfilled",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status of the auto provisioning group. Valid values:\n\nsubmitted: The auto provisioning group is created but has not started to execute scheduling tasks.\nactive: The auto provisioning group has started to execute scheduling tasks.\ndeleted: The auto provisioning group is deleted.\ndelete-running: The auto provisioning group is being deleted.\nmodifying: The auto provisioning group is being modified",
+                      "description_zh": "弹性供应组的状态。可能值：\n\nsubmitted：完成创建，但弹性供应组尚未开始执行调度任务。\nactive：弹性供应组已开始执行调度任务。\ndeleted：弹性供应组已删除。\ndelete-running：弹性供应组删除中。\nmodifying：弹性供应组修改中",
+                      "example": "submitted",
+                      "type": "string"
+                    },
+                    "SuspendedProcesses": {
+                      "itemNode": true,
+                      "properties": {
+                        "SuspendedProcess": {
+                          "items": {
+                            "example": "ScaleOut",
+                            "title_en": "",
+                            "title_zh": "弹性供应组暂停的流程。\n可能值：\n1. ScaleIn：缩容流程。\n2. ScaleOut：扩容流程。",
+                            "type": "string"
+                          },
+                          "title_en": "",
+                          "title_zh": "弹性供应组暂停的流程。\n可能值：\n1. ScaleIn：缩容流程。\n2. ScaleOut：扩容流程。",
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The tags attached to the auto-provisioning group",
+                          "description_zh": "弹性供应组绑定的标签",
+                          "items": {
+                            "description_en": "The tags attached to the auto-provisioning group",
+                            "description_zh": "弹性供应组绑定的标签",
+                            "properties": {
+                              "TagKey": {
+                                "description_en": "The tag key of the auto-provisioning group.\n\nValid values of N: 1 to 20. The tag key cannot be an empty string. The tag key can be up to 128 characters in length and cannot start with aliyun or acs:. The tag key cannot contain http:// or https://",
+                                "description_zh": "弹性供应组的标签键。\n\nN 的取值范围：1~20。一旦传入该值，则不允许为空字符串。最多支持 128 个字符，不能以aliyun和acs:开头，不能包含http://或者https://",
+                                "example": "TestKey",
+                                "type": "string"
+                              },
+                              "TagValue": {
+                                "description_en": "The tag value of the auto-provisioning group.\n\nValid values of N: 1 to 20. The tag value can be an empty string. The tag value can be up to 128 characters in length and cannot contain http:// or https://",
+                                "description_zh": "弹性供应组的标签值。\n\nN 的取值范围：1~20。一旦传入该值，允许为空字符串。最多支持 128 个字符，不能包含http://或者https://",
+                                "example": "TestValue",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "TargetCapacitySpecification": {
+                      "description_en": "The target capacity settings of the auto provisioning group",
+                      "description_zh": "弹性供应组的目标容量设置",
+                      "properties": {
+                        "DefaultTargetCapacityType": {
+                          "description_en": "The billing method of the capacity difference when the sum of PayAsYouGoTargetCapacity and SpotTargetCapacity is less than TotalTargetCapacity. Valid values:\n\nPayAsYouGo: pay-as-you-go instance\nSpot: spot instance",
+                          "description_zh": "`PayAsYouGoTargetCapacity`和`SpotTargetCapacity`之和小于`TotalTargetCapacity`时，指定的差额容量的计费方式。可能值：\n\nPayAsYouGo：按量付费实例\nSpot：抢占式实例",
+                          "example": "Spot",
+                          "type": "string"
+                        },
+                        "PayAsYouGoTargetCapacity": {
+                          "description_en": "The target capacity of pay-as-you-go instances",
+                          "description_zh": "按量付费实例的目标容量",
+                          "example": "30",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "SpotTargetCapacity": {
+                          "description_en": "The target capacity of spot instances",
+                          "description_zh": "抢占式实例的目标容量",
+                          "example": "20",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "TotalTargetCapacity": {
+                          "description_en": "Target total capacity of the auto provisioning group, which consists of the following three parts:\n\nPayAsYouGoTargetCapacity\nSpotTargetCapacity\nDifference between TotalTargetCapacity and the sum of PayAsYouGoTargetCapacity and SpotTargetCapacity",
+                          "description_zh": "弹性供应组的目标总容量，由以下三个部分组成：\n\nPayAsYouGoTargetCapacity\nSpotTargetCapacity\nPayAsYouGoTargetCapacity和SpotTargetCapacity之外的差额容量",
+                          "example": "60",
+                          "format": "float",
+                          "type": "number"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "TerminateInstances": {
+                      "description_en": "Specifies whether to release instances in the auto provisioning group when the group is deleted. Valid values:\n\ntrue: releases instances in the group.\nfalse: retains instances in the group",
+                      "description_zh": "删除弹性供应组时，是否释放组内实例。可能值：\n\ntrue：释放组内实例。\nfalse：保留组内实例",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "TerminateInstancesWithExpiration": {
+                      "description_en": "Specifies whether to release instances in the auto provisioning group when the group expires. Valid values:\n\ntrue: Instances in the group are released.\nfalse: Instances are removed from the group",
+                      "description_zh": "弹性供应组到期时，是否释放组内实例。可能值：\n\ntrue：释放组内实例。\nfalse：只将组内实例移出弹性供应组",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ValidFrom": {
+                      "description_en": "The start time of the auto provisioning group. The value of this parameter and the value of `ValidUntil` determine the effective period of the auto provisioning group",
+                      "description_zh": "弹性供应组的启动时间，和`ValidUntil`结合确定有效时段",
+                      "example": "2019-04-01T15:10:20Z",
+                      "type": "string"
+                    },
+                    "ValidUntil": {
+                      "description_en": "The expiration time of the auto provisioning group. This parameter and `ValidFrom` determine the validity period",
+                      "description_zh": "弹性供应组的到期时间，和`ValidFrom`结合确定有效时段",
+                      "example": "2019-06-01T15:10:20Z",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page",
+            "description_zh": "每页行数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "745CEC9F-0DD7-4451-9FE7-8B752F39****",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of queried auto-provisioning groups",
+            "description_zh": "查询到的弹性供应组的个数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          }
         },
-        {
-          "name": "Value",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "array"
+        "type": "object"
+      }
     }
-  ]
+  }
 }

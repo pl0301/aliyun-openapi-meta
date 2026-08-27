@@ -2,6 +2,1012 @@
   "camel_example": "aliyun imm CreateMediaConvertTask --region cn-hangzhou --ProjectName 'test-project' --UserData '{\"ID\":\"testuid\",\"Name\":\"test-user\",\"Avatar\":\"http://test.com/testuid\"}' --CredentialConfig 'example-string' --AlignmentIndex 0 --Targets '[{\"Speed\":1.0,\"Subtitle\":\"example-string\",\"Container\":\"mp4\",\"AttachedPicture\":{\"Stream\":[0]},\"Video\":\"example-string\",\"Data\":{\"Stream\":[0]},\"Audio\":\"example-string\",\"Image\":\"example-string\",\"URI\":\"oss://test-bucket/test-target-object.mp4\",\"Segment\":{\"Format\":\"hls\",\"Duration\":30.0,\"StartNumber\":5},\"StripMetadata\":true}]' --Sources '[{\"DisableVideo\":false,\"Attached\":false,\"Subtitles\":[{\"Language\":\"eng\",\"TimeOffset\":10.5,\"URI\":\"oss://test-bucket/test-object\"}],\"StartTime\":0.0,\"Duration\":0.0,\"AlignMode\":\"false\",\"URI\":\"oss://test-bucket/test-object\",\"DisableAudio\":false}]' --Tags '{\"test\":\"val1\"}' --Notification 'example-string' --TargetGroups '[{\"Targets\":[{\"Speed\":1.0,\"Subtitle\":\"example-string\",\"Container\":\"mp4\",\"Video\":\"example-string\",\"Audio\":\"example-string\",\"URI\":\"oss://test-bucket/test-target-object.mp4\",\"Segment\":{\"Format\":\"hls\",\"Duration\":30.0,\"StartNumber\":5},\"StripMetadata\":true}],\"URI\":\"oss://test-bucket/test-object/master.m3u8\"}]'",
   "cmd_full_name": "imm create-media-convert-task",
   "cmd_name": "create-media-convert-task",
+  "components": {
+    "schemas": {
+      "CredentialConfig": {
+        "description_en": "The authorization chain settings. In most cases, this parameter is left empty.\n\nIf Account A is used to call an API operation of Intelligent Media Management (IMM) to process Object Storage Service (OSS) data in Account B, you must set the ServiceRole parameter to a role in Account A, and set the Chain parameter to a role in Account B",
+        "description_zh": "链式授权配置对象，一般留空即可。\n假设当前使用A账号调用IMM接口处理B账号中的OSS数据。\nServiceRole参数应配置A账号中的角色，Chain参数应设置B账号准备好的角色，通过上述配置完成后，就可以使用A账号调用IMM接口处理B账号中的OSS数据",
+        "properties": {
+          "Chain": {
+            "description_en": "The authorization chains. All roles in the array must have the `sts:AssumeRole` permission. You need to only grant other permissions, such as read and write permissions on OSS, to the last role in the array. You can grant permissions in the RAM console",
+            "description_zh": "需要传递授权的链列表，数组中的所有角色都需要赋予访问 `sts:AssumeRole` 权限。\n只有数组中的最后一个角色需要额外配置需要真正访问的其他权限，比如OSS的读写权限，可以通过RAM控制台进行授权操作",
+            "items": {
+              "description_en": "The authorization chain",
+              "description_zh": "授权链对象",
+              "properties": {
+                "AssumeRoleFor": {
+                  "description_en": "The ID of the account that you use to grant permissions",
+                  "description_zh": "提供授权的账号ID",
+                  "example": "10232100246xxxxx",
+                  "title": "授权对象",
+                  "type": "string"
+                },
+                "Role": {
+                  "description_en": "The RAM role that can be assumed",
+                  "description_zh": "允许扮演的RAM角色",
+                  "example": "AliyunOSSRole",
+                  "title": "授权角色",
+                  "type": "string"
+                },
+                "RoleType": {
+                  "description_en": "The role type. Valid values:\n\nuser: Alibaba Cloud account.\nservice: Alibaba Cloud service",
+                  "description_zh": "角色类型，可选值如下。\nuser：阿里云账号。\nservice：阿里云服务",
+                  "example": "user",
+                  "title": "授权方类型",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "授权链",
+            "type": "array"
+          },
+          "Policy": {
+            "description_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+            "description_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+            "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+            "title": "权限策略",
+            "type": "string"
+          },
+          "ServiceRole": {
+            "description_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+            "description_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+            "example": "AliyunSTSAssumeForIMMServiceRole",
+            "title": "服务角色",
+            "type": "string"
+          }
+        },
+        "title": "链式授权配置",
+        "type": "object"
+      },
+      "MNS": {
+        "description_en": "Message notification parameters for ApsaraMQ for MNS",
+        "description_zh": "轻量消息队列（原 MNS）消息通知参数",
+        "properties": {
+          "TopicName": {
+            "description_en": "Specifies the name of the ApsaraMQ for MNS topic, which can be found in the topic list for the current region in the left-side navigation pane of the ApsaraMQ for MNS console (https://mns.console.aliyun.com/). This parameter is required for ApsaraMQ for MNS message notification",
+            "description_zh": "轻量消息队列SMQ（原 MNS）主题名称。可登录轻量消息队列SMQ（原MNS）控制台 (https://mns.console.aliyun.com/),在左侧导航栏中点击当前地域下主题列表中获取。如果需使用轻量消息队列（原 MNS）做消息通知，该参数必填",
+            "example": "topic1",
+            "title": "TopicName",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "Notification": {
+        "description_en": "The notification object. It supports multiple message middleware. For more information about the message format, see [Asynchronous notification message format]（https://help.aliyun.com/document_detail/2743997.html）. Choose one of the following methods to receive messages:\n\nActivate and integrate with the [EventBridge]（https://help.aliyun.com/document_detail/161886.html） service in the same region as Intelligent Media Management (IMM) to receive task notifications promptly. For more information, see [IMM events]（https://help.aliyun.com/document_detail/205730.html）.\n\nActivate the [MNS]（https://help.aliyun.com/document_detail/27412.html） service in the same region as IMM and configure a subscription.\n\nActivate the [RocketMQ]（https://help.aliyun.com/document_detail/29530.html） service in the same region as IMM, and create a RocketMQ 4.0 instance, Topic, and Group.\n\n\n<notice>\n\n  The Notification object does not support custom webhook addresses.\n\n</notice>",
+        "description_zh": "消息通知对象，支持多种消息中间件，消息格式详情请见[异步通知消息格式]（https://help.aliyun.com/document_detail/2743997.html），请选择其中一种方式接收消息，使用方式如下所示：\n在与智能媒体管理相同的地域下开通并接入[事件总线EventBridge]（https://help.aliyun.com/document_detail/161886.html）服务，及时获取任务信息通知。更多信息，请参见[智能媒体管理IMM事件]（https://help.aliyun.com/document_detail/205730.html）。\n在与智能媒体管理相同的地域下开通[MNS]（https://help.aliyun.com/document_detail/27412.html）服务，并配置订阅关系。\n在与智能媒体管理相同的地域下开通[RocketMQ]（https://help.aliyun.com/document_detail/29530.html）服务，并创建RocketMQ 4.0实例、Topic、Group。\n<notice>Notification不支持自定义回调地址。></notice>",
+        "properties": {
+          "ExtendedMessageURI": {
+            "description_en": "Use an Object Storage Service (OSS) file to receive task notifications. If you provide the URI of this file, detailed task execution information is written to the file in a JSON structure. Normally, you receive notifications through [EventBridge]（https://help.aliyun.com/document_detail/161886.html）, [MNS]（https://help.aliyun.com/document_detail/27412.html）, or [RocketMQ]（https://help.aliyun.com/document_detail/29530.html）. However, some tasks generate large amounts of information, such as archive previews or decompression tasks. For these tasks, provide this file to get the complete execution results.\n\nThe OSS URI format is oss\\://${Bucket}/${Object}. `${Bucket}` is the name of an OSS bucket in the same region as the current project. `${Object}` is the full path of the file, including the file name extension.\n\n<notice>\n\nThis file is not a notification method. It only serves as a medium to receive detailed task execution information. Task status is sent through standard message notifications. This file contains only the detailed execution information.\n\n</notice>",
+            "description_zh": "使用OSS文件接受任务消息通知。提供该文件地址后，任务执行的具体信息会以JSON结构写入到该文件中。一般情况下，您只需要通过[事件总线EventBridge]（https://help.aliyun.com/document_detail/161886.html）服务、[MNS]（https://help.aliyun.com/document_detail/27412.html）服务或[RocketMQ]（https://help.aliyun.com/document_detail/29530.html）服务接受消息通知，但部分任务执行的信息会比较大（例如压缩包文件预览、解压任务），您可以通过提供该文件获取具体的任务执行结果。\n\nOSS地址规则为oss://${Bucket}/${Object}，其中`${Bucket}`为和当前项目处于同一地域(Region)的OSS Bucket名称，`${Object}`为包含文件扩展名的文件完整路径。\n\n\n<notice>该文件并不作为消息通知的方式，仅作为接受任务执行具体信息的载体。任务的状态信息会通过消息通知的方式发送，该文件仅包含任务执行的具体信息。 \n</notice>",
+            "example": "oss://test-bucket/test-object.json",
+            "title": "ExtendedMessageURI",
+            "type": "string"
+          },
+          "MNS": {
+            "$ref": "#/components/schemas/MNS",
+            "description_en": "The MNS notification parameter object",
+            "description_zh": "MNS通知参数对象",
+            "title": "MNS"
+          },
+          "RocketMQ": {
+            "$ref": "#/components/schemas/RocketMQ",
+            "description_en": "The RocketMQ notification parameter object",
+            "description_zh": "RocketMQ通知参数对象",
+            "title": "RocketMQ"
+          }
+        },
+        "type": "object"
+      },
+      "RocketMQ": {
+        "description_en": "RocketMQ message notification parameters",
+        "description_zh": "RocketMQ消息通知参数",
+        "properties": {
+          "InstanceId": {
+            "description_en": "The RocketMQ instance ID. Required for RocketMQ message notifications",
+            "description_zh": "RocketMQ实例Id。如果需使用RocketMQ做消息通知，该参数必填",
+            "example": "MQ_INST_11111111111_BYcNy2Nc",
+            "title": "InstanceId",
+            "type": "string"
+          },
+          "TopicName": {
+            "description_en": "The name of the RocketMQ topic. Required for RocketMQ message notifications",
+            "description_zh": "RocketMQ Topic名称。如果需使用RocketMQ做消息通知，该参数必填",
+            "example": "topic1",
+            "title": "TopicName",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "TargetAudio": {
+        "description_en": "The audio processing settings",
+        "description_zh": "音频处理参数配置",
+        "properties": {
+          "DisableAudio": {
+            "description_en": "Specifies whether to disable audio stream generation. Valid values:\n\ntrue: disables audio stream generation. No audio stream is included in the output file.\nfalse: does not disable audio stream generation. This is the default value",
+            "description_zh": "是否禁用音频处理，取值范围如下：\n\ntrue：禁用，输出文件中将不包含音频流。\nfalse（默认）：不禁用",
+            "example": "false",
+            "title": "DisableAudio",
+            "type": "boolean"
+          },
+          "FilterAudio": {
+            "description_en": "The audio processing settings. This parameter is invalid if TranscodeAudio is left empty or TranscodeAudio.Codec is set to copy.\n\nThis parameter is not available to the GenerateVideoPlaylist operation",
+            "description_zh": "音频处理参数，参数TranscodeAudio为空时或TranscodeAudio.Codec为copy时，本参数无效。\n\nAPI为GenerateVideoPlaylist时不支持设置此参数",
+            "properties": {
+              "Mixing": {
+                "description_en": "Specifies whether to mix all sound tracks into a single track. Valid values:\n\nfalse (default)\ntrue",
+                "description_zh": "是否将所有音轨混合为单轨。取值范围如下：\n\nfalse（默认）：否。\n\ntrue：是",
+                "example": "false",
+                "title": "Mixing",
+                "type": "boolean"
+              }
+            },
+            "title": "FilterAudio",
+            "type": "object"
+          },
+          "Stream": {
+            "description_en": "The index numbers of audio streams. If you do not specify this parameter, the first audio stream (the one with the smallest index number) is processed. If the array contains an element greater than 100, all audio streams are processed.\n\nFor example, you can set the parameter to `[0,1]` to process audio streams with index numbers 0 and 1, `[1]` to process only the audio stream with the index number 1, or `[101]` to process all audio streams.\n\nIf you specify an index number but no audio stream with the index number is found, the index number is ignored",
+            "description_zh": "需要处理的源文件音频流索引号列表。空值（默认）表示处理索引号最小的音频流（第一路音频流），索引号大于100表示处理所有音频流。\n\n示例：`[0,1]`处理索引号为0和1的音频流；`[1]`处理索引号为1的音频流；`[101]`处理所有音频流。\n\n只处理索引号存在的音频流，索引号对应的音频流不存在时将忽略该索引号",
+            "items": {
+              "description_en": "The index number of the audio stream",
+              "description_zh": "需要处理的音频流索引号",
+              "example": "0",
+              "format": "int64",
+              "type": "integer"
+            },
+            "title": "Stream",
+            "type": "array"
+          },
+          "TranscodeAudio": {
+            "description_en": "The audio transcoding settings. If you do not specify this parameter, no audio streams are included in the output file.\n\nWe recommend that you do not use this parameter to disable audio stream generation",
+            "description_zh": "音频转码参数，空值表示禁用音频处理，输出文件中将不包含音频流。\n\n不推荐通过将该参数设为空值来禁用音频处理",
+            "properties": {
+              "Bitrate": {
+                "description_en": "The bitrate of the audio stream. Unit: bit/s. This parameter and the Quality parameter are mutually exclusive. Valid values: 1000 to 10000000",
+                "description_zh": "音频码率，与参数Quality互斥，单位为比特每秒（bps）。取值范围：1000~10000000",
+                "example": "64000",
+                "format": "int32",
+                "title": "Bitrate",
+                "type": "integer"
+              },
+              "BitrateOption": {
+                "description_en": "The audio bitrate option. Valid values:\n\nfixed: always uses the target bitrate.\nadaptive: uses the source bitrate when the source bitrate is smaller than the target bitrate.\nfall: returns a failure when the source bitrate is smaller than the target bitrate.\n\nDefault values:\n\nfixed for the CreateMediaConvert operation.\nadaptive for the GenerateVideoPlaylist operation.\n\nThis parameter must be used in conjunction with the Bitrate parameter",
+                "description_zh": "音频码率选项。取值范围如下：\n\nfixed：始终使用设置的目标音频码率。\nadaptive：源音频码率小于设置的目标音频码率时使用源音频码率。\nfall：源音频码率小于设置的目标音频码率时返回失败。\n\n默认值：\nAPI为CreateMediaConvert时，默认值为fixed。\nAPI为GenerateVideoPlaylist时，默认值为adaptive。\n\n该参数需要与参数Bitrate一同设置",
+                "example": "fixed",
+                "title": "BitrateOption",
+                "type": "string"
+              },
+              "BitsPerSample": {
+                "description_en": "The audio bit depth. Valid values: 16 and 24.\n\nThis parameter takes effect only when Codec is set to flac",
+                "description_zh": "音频采样位深，取值为16或24。\n<notice>该参数仅在Codec为flac时有效。></notice>",
+                "example": "16",
+                "format": "int32",
+                "title": "BitsPerSample",
+                "type": "integer"
+              },
+              "Channel": {
+                "description_en": "The number of sound channels. By default, the audio stream has the same number of sound channels as the source audio. Valid values: [1,8].\n\nThe number of sound channels varies with audio formats: one or two for MP3, up to six for AC3 5.1, and one for AMR",
+                "description_zh": "声道数。默认保持源音频的声道数。取值范围：[1,8]。\n\n不同格式支持的声道数有所不同，mp3仅支持单、双声道；ac3最大支持6声道（5.1）；amr仅支持单声道",
+                "example": "2",
+                "format": "int32",
+                "title": "Channel",
+                "type": "integer"
+              },
+              "Codec": {
+                "description_en": "The codec. Valid values:\n\ncopy, mp3, vorbis, aac, flac, ac3, opus, and amr for the CreateMediaConvert operation. The default value is copy.\naac for the GenerateVideoPlaylist operation. The default value is aac.\n\nWhen you set the parameter to copy, the audio stream is directly copied into the output file and all other parameters in TranscodeAudio do not take effect. The copy value is commonly used in container format conversion scenarios. You cannot use this value in audio merging scenarios",
+                "description_zh": "音频编码方式。取值范围如下：\n\nAPI为CreateMediaConvert时：copy（默认），mp3，vorbis，aac，flac，ac3，opus，amr。\nAPI为GenerateVideoPlaylist时：aac（默认）。\n\n当该参数为copy时，表示将需要处理的音频流直接拷贝到输出文件，此时TranscodeAudio下的其余参数无效。copy不可用于音频拼接，通常应用于转封装场景",
+                "example": "aac",
+                "title": "Codec",
+                "type": "string"
+              },
+              "Quality": {
+                "description_en": "The audio quality. Valid values: 0 to 100. The greater the value, the higher the quality. This parameter and the Bitrate parameter are mutually exclusive",
+                "description_zh": "音频质量，与参数Bitrate互斥，取值范围：0～100（值越大质量越高）",
+                "example": "6",
+                "format": "int32",
+                "title": "Quality",
+                "type": "integer"
+              },
+              "SampleRate": {
+                "description_en": "The sampling rate option. Unit: Hz. By default, the source sampling rate is used. Valid values: 8000, 12025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 64000, 88200, and 96000.\n\nSupported sampling rates vary with formats: 48 kHz and lower for MP3, 8 kHz, 12 kHz, 16 kHz, 24 kHz, and 48 kHz for Opus, 32 kHz, 44.1 kHz, and 48 kHz for AC3, and 8 kHz and 16 kHz for AMR",
+                "description_zh": "音频采样率。单位为赫兹（Hz）。默认保持源音频的采样频率，取值范围：8000、12025、12000，16000、22050、24000，32000、44100、48000、64000、88200和96000。\n\n不同格式支持的采样率有所不同，mp3仅支持48kHz及以下；opus支持8kHz、12kHz、16kHz、24kHz与48kHz；ac3支持32kHz、44.1kHz与48kHz；amr仅支持8kHz与16kHz",
+                "example": "12050",
+                "format": "int32",
+                "title": "SampleRate",
+                "type": "integer"
+              },
+              "SampleRateOption": {
+                "description_en": "The sampling rate option. Valid values:\n\nfixed: always uses the target sampling rate.\nadaptive: uses the source sampling rate when the source sampling rate is smaller than the target sampling rate.\nfall: returns a failure when the source sampling rate is smaller than the target sampling rate.\n\nDefault values:\n\nfixed for the CreateMediaConvert operation.\nadaptive for the GenerateVideoPlaylist operation.\n\nThis parameter must be used in conjunction with the SampleRate parameter",
+                "description_zh": "音频采样率。取值范围如下：\n\nfixed：始终使用设置的目标音频采样率。\nadaptive：源音频采样率小于设置的目标音频采样率时使用源音频采样率。\nfall：源音频采样率小于设置的目标音频采样率时返回失败。\n\n默认值：\nAPI为CreateMediaConvert时，默认值为fixed。\nAPI为GenerateVideoPlaylist时，默认值为adaptive。\n\n该参数需要与参数SampleRate一同设置",
+                "example": "fixed",
+                "title": "SampleRateOption",
+                "type": "string"
+              }
+            },
+            "title": "TranscodeAudio",
+            "type": "object"
+          }
+        },
+        "title": "Audio Struct",
+        "type": "object"
+      },
+      "TargetImage": {
+        "alibabaCloud": "alibabaCloud:1.0.0",
+        "components": {
+          "schemas": {
+            "TargetImage": {
+              "description_zh": "MediaConvert Target Image",
+              "properties": {
+                "Animations": {
+                  "backendName": "Animations",
+                  "items": {
+                    "properties": {
+                      "Format": {
+                        "backendName": "Format",
+                        "required": true,
+                        "title": "Format",
+                        "type": "string"
+                      },
+                      "FrameRate": {
+                        "backendName": "FrameRate",
+                        "format": "double",
+                        "parseType": "struct",
+                        "title": "FrameRate",
+                        "type": "number"
+                      },
+                      "Height": {
+                        "backendName": "Height",
+                        "format": "double",
+                        "title": "Height",
+                        "type": "number"
+                      },
+                      "Interval": {
+                        "backendName": "Interval",
+                        "format": "double",
+                        "parseType": "struct",
+                        "required": false,
+                        "title": "Interval",
+                        "type": "number"
+                      },
+                      "Number": {
+                        "backendName": "Number",
+                        "format": "int32",
+                        "title": "Number",
+                        "type": "integer"
+                      },
+                      "ScaleType": {
+                        "backendName": "ScaleType",
+                        "title": "ScaleType",
+                        "type": "string"
+                      },
+                      "StartTime": {
+                        "backendName": "StartTime",
+                        "format": "double",
+                        "parseType": "struct",
+                        "title": "StartTime",
+                        "type": "number"
+                      },
+                      "URI": {
+                        "backendName": "URI",
+                        "required": true,
+                        "title": "URI",
+                        "type": "string"
+                      },
+                      "Width": {
+                        "backendName": "Width",
+                        "format": "double",
+                        "title": "Width",
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title": "Animations",
+                  "type": "array"
+                },
+                "Snapshots": {
+                  "backendName": "Snapshots",
+                  "items": {
+                    "properties": {
+                      "Format": {
+                        "backendName": "Format",
+                        "required": true,
+                        "title": "Format",
+                        "type": "string"
+                      },
+                      "Height": {
+                        "backendName": "Height",
+                        "format": "double",
+                        "title": "Height",
+                        "type": "number"
+                      },
+                      "Interval": {
+                        "backendName": "Interval",
+                        "format": "double",
+                        "parseType": "struct",
+                        "required": false,
+                        "title": "Interval",
+                        "type": "number"
+                      },
+                      "Mode": {
+                        "backendName": "Mode",
+                        "type": "string"
+                      },
+                      "Number": {
+                        "backendName": "Number",
+                        "format": "int32",
+                        "title": "Number",
+                        "type": "integer"
+                      },
+                      "ScaleType": {
+                        "backendName": "ScaleType",
+                        "title": "ScaleType",
+                        "type": "string"
+                      },
+                      "StartTime": {
+                        "backendName": "StartTime",
+                        "format": "double",
+                        "parseType": "struct",
+                        "title": "StartTime",
+                        "type": "number"
+                      },
+                      "Threshold": {
+                        "backendName": "Threshold",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "URI": {
+                        "backendName": "URI",
+                        "required": true,
+                        "title": "URI",
+                        "type": "string"
+                      },
+                      "Width": {
+                        "backendName": "Width",
+                        "format": "double",
+                        "title": "Width",
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title": "Snapshots",
+                  "type": "array"
+                },
+                "Sprites": {
+                  "backendName": "Sprites",
+                  "items": {
+                    "properties": {
+                      "Format": {
+                        "backendName": "Format",
+                        "required": true,
+                        "title": "Format",
+                        "type": "string"
+                      },
+                      "Interval": {
+                        "backendName": "Interval",
+                        "format": "double",
+                        "parseType": "struct",
+                        "required": false,
+                        "title": "Interval",
+                        "type": "number"
+                      },
+                      "Margin": {
+                        "backendName": "Margin",
+                        "format": "int32",
+                        "title": "Margin",
+                        "type": "integer"
+                      },
+                      "Mode": {
+                        "backendName": "mode",
+                        "type": "string"
+                      },
+                      "Number": {
+                        "backendName": "Number",
+                        "format": "int32",
+                        "title": "Number",
+                        "type": "integer"
+                      },
+                      "Pad": {
+                        "backendName": "Pad",
+                        "format": "int32",
+                        "title": "Pad",
+                        "type": "integer"
+                      },
+                      "ScaleHeight": {
+                        "backendName": "ScaleHeight",
+                        "format": "float",
+                        "title": "ScaleHeight",
+                        "type": "number"
+                      },
+                      "ScaleType": {
+                        "backendName": "ScaleType",
+                        "title": "ScaleType",
+                        "type": "string"
+                      },
+                      "ScaleWidth": {
+                        "backendName": "ScaleWidth",
+                        "format": "float",
+                        "title": "ScaleWidth",
+                        "type": "number"
+                      },
+                      "StartTime": {
+                        "backendName": "StartTime",
+                        "format": "double",
+                        "parseType": "struct",
+                        "title": "StartTime",
+                        "type": "number"
+                      },
+                      "Threshold": {
+                        "backendName": "Threshold",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "TileHeight": {
+                        "backendName": "TileHeight",
+                        "format": "int32",
+                        "title": "TileHeight",
+                        "type": "integer"
+                      },
+                      "TileWidth": {
+                        "backendName": "TileWidth",
+                        "format": "int32",
+                        "title": "TileWidth",
+                        "type": "integer"
+                      },
+                      "URI": {
+                        "backendName": "URI",
+                        "required": true,
+                        "title": "URI",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "title": "Sprites",
+                  "type": "array"
+                }
+              },
+              "title": "Image Struct",
+              "type": "object"
+            }
+          }
+        },
+        "info": {
+          "apiStyle": "rpc",
+          "namespace": "imm::2020-09-30",
+          "runtimeType": "pop"
+        }
+      },
+      "TargetSubtitle": {
+        "description_en": "The subtitle processing settings",
+        "description_zh": "字幕处理参数配置",
+        "properties": {
+          "DisableSubtitle": {
+            "description_en": "Specifies whether to disable subtitle generation. Valid values:\n\ntrue\nfalse (default)\n\nIf you call the GenerateVideoPlaylist operation and subtitles are required, you must set this parameter to false",
+            "description_zh": "是否禁用字幕处理，取值范围如下：\n\ntrue：禁用，输出文件中将不包含字幕。\nfalse（默认）：不禁用。\n\nAPI为GenerateVideoPlaylist时，如果生成字幕，该字段为必现且必须填为false",
+            "example": "false",
+            "title": "DisableSubtitle",
+            "type": "boolean"
+          },
+          "ExtractSubtitle": {
+            "description_en": "The subtitle extraction settings.\n\nThe GenerateVideoPlaylist operation does not support this parameter",
+            "description_zh": "字幕提取配置。\nAPI为GenerateVideoPlaylist时，不支持该字段配置",
+            "properties": {
+              "Format": {
+                "description_en": "The format of the extracted subtitle file. Valid values:\n\nass\nsrt\nwebvtt",
+                "description_zh": "字幕提取的输出格式。取值范围如下：\n\nass\nsrt\nwebvtt",
+                "example": "webvtt",
+                "title": "Format",
+                "type": "string"
+              },
+              "URI": {
+                "description_en": "The prefix of the OSS URI where the extracted subtitles are stored. The OSS URI is in the oss://bucket/object format, where bucket specifies the name of the OSS bucket that is in the same region as the current project and object specifies the full file path that includes the file name extension.\n\nExample: If the prefix is oss://examplebucket/outputSubtitle, an output subtitle file has a URI in the format of oss://examplebucket/outputSubitile_${index}.${ext}. In the URI format, ${ext} is the file name extension of the output subtitle file, and ${index} is the same 0-based index number as that of the corresponding source subtitle stream file",
+                "description_zh": "保存提取字幕的OSS地址前缀。\n地址规则为oss://bucket/object，其中bucket为和当前项目处于同一地域的OSS Bucket名称，object为包含文件扩展名的文件完整路径。\n示例：URI为oss://examplebucket/outputSubtitle，则将产生多个OSS地址为oss://examplebucket/outputSubitile_${index}.${ext}文件，其中${ext}为字幕文件的拓展名，${index}为生成的从0开始编号的与源视频字幕流对应的字幕文件序号",
+                "example": "oss://test-bucket/extractsubtitle",
+                "title": "URI",
+                "type": "string"
+              }
+            },
+            "title": "ExtractSubtitle",
+            "type": "object"
+          },
+          "Stream": {
+            "description_en": "The index numbers of subtitle streams that need to be processed. If you set this parameter to null (default) or a value greater than 100, all subtitle streams are processed.\n\nFor example, you can set the parameter to `[0,1]` to process subtitle streams with index numbers 0 and 1, `[1]` to process only the subtitle stream with the index number 1, and `[101]` to process all subtitle streams.\n\nIf you specify an index number but no subtitle stream with the index number is found, the index number is ignored",
+            "description_zh": "需要处理的源文件字幕流索引号列表。空值（默认）或者索引号大于100 表示处理所有字幕流。\n\n示例：`[0,1]`处理索引号为0和1的字幕流；`[1]`处理索引号为1的字幕流；`[101]`处理所有字幕流。\n\n只处理索引号存在的字幕流，索引号对应的字幕流不存在时将忽略该索引号",
+            "items": {
+              "description_en": "The index number of the subtitle stream that needs to be processed",
+              "description_zh": "需要转换的字幕流索引号",
+              "example": "0",
+              "format": "int32",
+              "type": "integer"
+            },
+            "title": "Stream",
+            "type": "array"
+          }
+        },
+        "title": "Subtitle Struct",
+        "type": "object"
+      },
+      "TargetVideo": {
+        "description_en": "The video processing parameter settings",
+        "description_zh": "视频处理参数配置",
+        "properties": {
+          "DisableVideo": {
+            "description_en": "Specifies whether to disable video stream generation. Valid values:\n\ntrue: Disabled. The output file does not contain a video stream.\nfalse (default): Not disabled",
+            "description_zh": "是否禁用视频流生成，取值范围如下：\n\ntrue：禁用，输出文件中将不包含视频流。\nfalse（默认）：不禁用",
+            "example": "false",
+            "title": "DisableVideo",
+            "type": "boolean"
+          },
+          "FilterVideo": {
+            "description_en": "The video filter parameters. This parameter does not take effect when TranscodeVideo is empty or TranscodeVideo.Codec is set to copy.\n\nThis parameter is not supported for the GenerateVideoPlaylist API",
+            "description_zh": "视频处理参数，参数TranscodeVideo为空时或TranscodeVideo.Codec为copy时，本参数无效。\n\nAPI为GenerateVideoPlaylist时不支持设置此参数",
+            "properties": {
+              "Delogos": {
+                "description_en": "Applies mosaic processing to a rectangular area of the video to remove logos or station watermarks",
+                "description_zh": "对视频上某矩形部分进行模糊处理，用于去除Logo、台标等",
+                "items": {
+                  "description_en": "The video mosaic processing parameters",
+                  "description_zh": "视频模糊处理参数",
+                  "properties": {
+                    "Duration": {
+                      "description_en": "The duration for which the mosaic is applied, in seconds (s). The default value is until the end of the video",
+                      "description_zh": "添加马赛克的持续时间，单位为秒（s），默认值持续到视频结束",
+                      "example": "15",
+                      "format": "double",
+                      "title": "Duration",
+                      "type": "number"
+                    },
+                    "Dx": {
+                      "description_en": "The meanings differ depending on whether the value is an integer or a decimal:\n\n0 (default): Both the offset in pixels and the ratio of horizontal offset to the output resolution height are 0.\nInteger: The offset in pixels (px). Valid values: [1,4096].\nDecimal: The ratio of horizontal offset to the output resolution height. Valid values: (0,1)",
+                      "description_zh": "取值为整数或小数时的不同含义如下：\n\n0（默认）：偏移像素和水平偏移量与输出分辨率高的比率都为0。\n整数：表示偏移像素，单位为像素（px），取值范围为[1,4096]。\n小数：表示水平偏移量与输出分辨率高的比率，取值范围为(0,1)",
+                      "example": "0",
+                      "format": "float",
+                      "title": "Dx",
+                      "type": "number"
+                    },
+                    "Dy": {
+                      "description_en": "Default value: 0. The meanings differ depending on whether the value is an integer or a decimal:\n\n0 (default): Both the offset in pixels and the ratio of vertical offset to the output resolution height are 0.\nInteger: The offset in pixels (px). Valid values: [1,4096].\nDecimal: The ratio of vertical offset to the output resolution height. Valid values: (0,1)",
+                      "description_zh": "默认值为0。取值为整数或小数时的不同含义如下：\n\n0（默认）：偏移像素和垂直偏移量与输出分辨率高的比率都为0。\n整数：表示偏移像素，单位为像素（px），取值范围为[1,4096]。\n小数：表示垂直偏移量与输出分辨率高的比率，取值范围为(0,1)",
+                      "example": "0",
+                      "format": "float",
+                      "title": "Dy",
+                      "type": "number"
+                    },
+                    "Height": {
+                      "description_en": "The height of the mosaic. The default value is the decimal 1.0, which fills the entire output video height. The meanings differ depending on whether the value is an integer or a decimal:\n\nInteger: The height in pixels (px). Valid values: [1,4096].\nDecimal: The ratio relative to the output video resolution height. Valid values: (0,1)",
+                      "description_zh": "马赛克的高度，默认值为小数型的1.0，即占满输出视频高度，取值为整数或小数时的不同含义如下：\n\n整数：像素值，单位为像素（px），取值范围为[1,4096]。\n小数：表示相对输出视频分辨率高度的比率，取值范围为(0,1)",
+                      "example": "40",
+                      "format": "float",
+                      "title": "Height",
+                      "type": "number"
+                    },
+                    "ReferPos": {
+                      "description_en": "The reference position for adding the mosaic. Valid values:\n\ntopleft (default): top-left corner\ntopright: top-right corner\nbottomright: bottom-right corner\nbottomleft: bottom-left corner",
+                      "description_zh": "添加马赛克的基准位置。取值范围如下：\n\ntopleft（默认）：左上角\ntopright：右上角\nbottomright：右下角\nbottomleft：左下角",
+                      "example": "topleft",
+                      "title": "ReferPos",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The start time for adding the mosaic, in seconds (s). The default value is the start time of the video",
+                      "description_zh": "添加马赛克的开始时间，单位为秒（s）。默认为从视频起始时间开始",
+                      "example": "0",
+                      "format": "double",
+                      "title": "StartTime",
+                      "type": "number"
+                    },
+                    "Width": {
+                      "description_en": "The width of the mosaic. The default value is the decimal 1.0, which fills the entire output video width. The meanings differ depending on whether the value is an integer or a decimal:\n\nInteger: The width in pixels (px). Valid values: [1,4096].\nDecimal: The ratio relative to the output video resolution width. Valid values: (0,1)",
+                      "description_zh": "马赛克的宽度，默认值为小数型的1.0，即占满输出视频宽度，取值为整数或小数时的不同含义如下：\n\n整数：像素值，单位为像素（px），取值范围为[1,4096]。\n小数：表示相对输出视频分辨率宽度的比率，取值范围为(0,1)",
+                      "example": "100",
+                      "format": "float",
+                      "title": "Width",
+                      "type": "number"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "Delogos",
+                "type": "array"
+              },
+              "Desensitization": {
+                "description_en": "The video desensitization configuration.\n\n<notice>\n\nThis parameter is applicable only to the CreateMediaConvertTask API.\n\n</notice>",
+                "description_zh": "视频脱敏配置。\n\n<notice>\n\n仅适用于CreateMediaConvertTask API。\n\n</notice>",
+                "properties": {
+                  "Face": {
+                    "description_en": "The face desensitization configuration.\nThis feature is in public preview. If you have any questions, join the DingTalk group for feedback. For the DingTalk group number, see [Contact us]（https://help.aliyun.com/document_detail/84454.html）",
+                    "description_zh": "人脸脱敏配置。\n公测中，如有任何使用问题，请加入钉钉群进行反馈，钉钉群号请参见[联系我们]（https://help.aliyun.com/document_detail/84454.html）",
+                    "properties": {
+                      "BlurRadius": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "Confidence": {
+                        "description_en": "The face confidence threshold, which sets the lower limit of confidence for face recognition. If the confidence value of a detected face is lower than this threshold, the face is not desensitized.\nValid values: 0.0 to 1.0.\nDefault value: 0.0 (no confidence filtering is performed)",
+                        "description_zh": "人脸置信阈值，用于设置人脸识别的置信度下限。若识别到的人脸置信值小于该阈值，则不会对人脸进行脱敏。\n取值范围：0.0 ~ 1.0。\n默认值：0.0（表示不进行置信度过滤）",
+                        "example": "0.4",
+                        "format": "float",
+                        "type": "number"
+                      },
+                      "MinSize": {
+                        "description_en": "The minimum face size threshold, which sets the minimum size of faces to be desensitized. If the width or height of a detected face is smaller than this threshold, the face is not desensitized. Unit: pixels. Default value: 0, which indicates no size restriction on faces",
+                        "description_zh": "最小人脸尺寸阈值，用于设置需要脱敏人脸的最小尺寸。若识别到的人脸宽度或高度小于该阈值，则不会对人脸进行脱敏。 单位为像素，默认值为 0，表示不对人脸尺寸进行限制",
+                        "example": "0.4",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "ScaleRatio": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "format": "float",
+                        "type": "number"
+                      },
+                      "Transparency": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "format": "float",
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "LicensePlate": {
+                    "description_en": "The license plate desensitization configuration.\nThis feature is in public preview. If you have any questions, join the DingTalk group for feedback. For the DingTalk group number, see [Contact us]（https://help.aliyun.com/document_detail/84454.html）",
+                    "description_zh": "车牌脱敏配置。\n公测中，如有任何使用问题，请加入钉钉群进行反馈，钉钉群号请参见[联系我们]（https://help.aliyun.com/document_detail/84454.html）",
+                    "properties": {
+                      "BlurRadius": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "Confidence": {
+                        "description_en": "The license plate confidence threshold, which sets the lower limit of confidence for license plate recognition. If the confidence value of a detected license plate is lower than this threshold, the license plate is not desensitized.\nValid values: 0.0 to 1.0.\nDefault value: 0.0 (no confidence filtering is performed)",
+                        "description_zh": "车牌置信阈值，用于设置车牌识别的置信度下限。若识别到的车牌置信值小于该阈值，则不会对车牌进行脱敏。\n取值范围：0.0 ~ 1.0。\n默认值：0.0（表示不进行置信度过滤）",
+                        "example": "0.4",
+                        "format": "float",
+                        "type": "number"
+                      },
+                      "MinSize": {
+                        "description_en": "The minimum license plate size threshold, which sets the minimum size of license plates to be desensitized. If the width or height of a detected license plate is smaller than this threshold, the license plate is not desensitized. Unit: pixels. Default value: 0, which indicates no size restriction on license plates",
+                        "description_zh": "最小车牌尺寸阈值，用于设置需要脱敏车牌的最小尺寸。若识别到的车牌宽度或高度小于该阈值，则不会对车牌进行脱敏。 单位为像素，默认值为 0，表示不对车牌尺寸进行限制",
+                        "example": "0.4",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "ScaleRatio": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "format": "float",
+                        "type": "number"
+                      },
+                      "Transparency": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "format": "float",
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              },
+              "Speed": {
+                "description_en": "The video playback speed setting. Valid values: [0.5,1.0]. Default value: 1.0.\n\nThis is the ratio of the transcoded media file playback speed to the source media file default playback speed, not speed-up transcoding.\n\n<notice>\n\nThis parameter is applicable only to the CreateMediaConvertTask API.\n\n</notice>",
+                "description_zh": "视频倍速播放设置，取值范围为[0.5,1.0]，默认值为 1.0。\n\n转码后媒体文件与源媒体文件默认播放速度的比值，非倍速转码。\n\n<notice>\n\n仅适用于CreateMediaConvertTask API。\n\n</notice>",
+                "example": "1.0",
+                "format": "float",
+                "type": "number"
+              },
+              "Watermarks": {
+                "description_en": "The list of video watermarks",
+                "description_zh": "视频水印列表",
+                "items": {
+                  "description_en": "The video watermark information",
+                  "description_zh": "视频水印信息",
+                  "properties": {
+                    "BorderColor": {
+                      "description_en": "The border color of the watermark text. The format is #RRGGBB. Default value: #000000. Values such as \"red\" and \"green\" are also supported.\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "水印文字的描边颜色。格式为#RRGGBB，默认值为#000000。也支持输入“red”、\"green\"等值。\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "red",
+                      "title": "BorderColor",
+                      "type": "string"
+                    },
+                    "BorderWidth": {
+                      "description_en": "The border width of the text watermark, in pixels (px). The value must be an integer. Valid values: [0,4096]. Default value: 0.\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "文字水印的描边宽度，单位为像素（px）。取值只能为整数，取值范围为[0,4096]，默认值为0。\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "2",
+                      "format": "int32",
+                      "title": "BorderWidth",
+                      "type": "integer"
+                    },
+                    "Content": {
+                      "description_en": "The content of the text watermark. Default value: empty.\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "文字水印的内容，默认值为空。\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "example",
+                      "title": "Content",
+                      "type": "string"
+                    },
+                    "Duration": {
+                      "description_en": "The duration for which the watermark is displayed, in seconds (s). The default value is until the end of the video",
+                      "description_zh": "添加水印持续的时间，单位为秒（s），默认值持续到视频结束",
+                      "example": "0",
+                      "format": "double",
+                      "title": "Duration",
+                      "type": "number"
+                    },
+                    "Dx": {
+                      "description_en": "The meanings differ depending on whether the value is an integer or a decimal:\n\n0 (default): Both the offset in pixels and the ratio of horizontal offset to the output resolution height are 0.\nInteger: The offset in pixels (px). Valid values: [1,4096].\nDecimal: The ratio of horizontal offset to the output resolution height. Valid values: (0,1)",
+                      "description_zh": "取值为整数或小数时不同含义如下：\n\n0（默认）：偏移像素和水平偏移量与输出分辨率高的比率都为0。\n整数：表示偏移像素，单位为像素（px），取值范围为[1,4096]。\n小数：表示水平偏移量与输出分辨率高的比率，取值范围为(0,1)",
+                      "example": "0",
+                      "format": "float",
+                      "title": "Dx",
+                      "type": "number"
+                    },
+                    "Dy": {
+                      "description_en": "The meanings differ depending on whether the value is an integer or a decimal:\n\n0 (default): Both the offset in pixels and the ratio of vertical offset to the output resolution height are 0.\n\nInteger: The offset in pixels (px). Valid values: [1,4096].\n\nDecimal: The ratio of vertical offset to the output resolution height. Valid values: (0,1)",
+                      "description_zh": "取值为整数或小数时的不同含义如下：\n\n0（默认）：表示偏移像素和垂直偏移量与输出分辨率高的比率都为0。\n\n整数：表示偏移像素，单位为像素（px），取值范围为[1,4096]。\n\n小数：表示垂直偏移量与输出分辨率高的比率，取值范围为(0,1)",
+                      "example": "0",
+                      "format": "float",
+                      "title": "Dy",
+                      "type": "number"
+                    },
+                    "FontApha": {
+                      "description_en": "The font opacity of the text watermark. Valid values: (0,1]. Default value: 1, which indicates fully opaque.\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "文字水印的字体透明度。取值范围为(0,1]，默认值为1，表示完全不透明。\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "0.8",
+                      "format": "float",
+                      "title": "FontApha",
+                      "type": "number"
+                    },
+                    "FontColor": {
+                      "description_en": "The font color of the watermark text. The format is #RRGGBB. Default value: #000000. Values such as \"red\" and \"green\" are also supported.\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "水印文字的字体颜色。格式为#RRGGBB，默认值为#000000。也支持输入“red”、\"green\"等值。\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "red",
+                      "title": "FontColor",
+                      "type": "string"
+                    },
+                    "FontName": {
+                      "description_en": "The font name of the text watermark. Valid values:\n\nSourceHanSans-Regular (default)\nSourceHanSans-Bold\nSourceHanSerif-Regular\nSourceHanSerif-Bold\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "文字水印的字体名称。取值范围如下：\n\nSourceHanSans-Regular（默认）\nSourceHanSans-Bold\nSourceHanSerif-Regular\nSourceHanSerif-Bold\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "SourceHanSans-Bold",
+                      "title": "FontName",
+                      "type": "string"
+                    },
+                    "FontSize": {
+                      "description_en": "The font size of the text watermark. Default value: 16. The value must be an integer. Valid values: (4,120).\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `text`.</notice>",
+                      "description_zh": "文字水印的字体大小，默认值为16。取值为整数，取值范围为(4,120)。\n\n<notice> 当参数`Type`取值为`text`时此参数生效。></notice>",
+                      "example": "18",
+                      "format": "int32",
+                      "title": "FontSize",
+                      "type": "integer"
+                    },
+                    "Height": {
+                      "description_en": "The height of the watermark image. The default value is the original height of the watermark image. The meanings differ depending on whether the value is an integer or a decimal:\n\nInteger: The height in pixels (px). Valid values: [1,4096].\nDecimal: The ratio relative to the output video resolution height. Valid values: (0,1)",
+                      "description_zh": "水印图片的高度，默认值为原水印图片的高度。取值为整数或小数时的不同含义如下：\n\n整数：表示去除Logo高度的像素值，单位为像素（px），取值范围为[1,4096]。\n小数：表示相对输出视频分辨率高度的比率，取值范围为(0,1)",
+                      "example": "40",
+                      "format": "float",
+                      "title": "Height",
+                      "type": "number"
+                    },
+                    "ReferPos": {
+                      "description_en": "The reference position for adding the watermark. Valid values:\n\ntopleft (default): top-left corner\ntopright: top-right corner\nbottomright: bottom-right corner\nbottomleft: bottom-left corner",
+                      "description_zh": "添加水印的基准位置。取值范围如下：\n\ntopleft（默认）：左上角\ntopright：右上角\nbottomright：右下角\nbottomleft：左下角",
+                      "example": "topleft",
+                      "title": "ReferPos",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The start time for adding the watermark, in seconds (s). The default value is the start time of the video",
+                      "description_zh": "添加水印的开始时间，单位为秒（s），默认从视频起始时间开始",
+                      "example": "0",
+                      "format": "double",
+                      "title": "StartTime",
+                      "type": "number"
+                    },
+                    "Type": {
+                      "description_en": "The watermark type. Valid values:\n\ntext (default): text watermark.\nfile: image or animated image watermark",
+                      "description_zh": "水印类型。取值范围如下：\n\ntext（默认）：文字水印。\nfile：图片或动图水印",
+                      "example": "text",
+                      "title": "Type",
+                      "type": "string"
+                    },
+                    "URI": {
+                      "description_en": "The OSS URI of the watermark file. Supported formats are PNG and MOV.\n\nThe OSS URI format is `oss://<bucket>/<object>`, where `<bucket>` is the name of an OSS bucket in the same region as the current project, and `<object>` is the full path of the file including the file name extension.\n\n<notice> This parameter takes effect only when the `Type` parameter is set to `file`.</notice>",
+                      "description_zh": "水印文件的OSS地址，支持的格式为PNG和MOV。\n\nOSS地址规则为`oss://<bucket>/<object>`，其中`<bucket>`为和当前项目处于同一地域的OSS Bucket名称，`<object>`为包含文件扩展名的文件完整路径。\n\n<notice> 当参数`Type`取值为`file`时此参数生效。></notice>",
+                      "example": "oss://test-bucket/watermark.jpg",
+                      "title": "URI",
+                      "type": "string"
+                    },
+                    "Width": {
+                      "description_en": "The width of the watermark image. The default value is the original width of the watermark image. The meanings differ depending on whether the value is an integer or a decimal:\n\nInteger: The width in pixels (px). Valid values: [1,4096].\nDecimal: The ratio relative to the output video resolution width. Valid values: (0,1)",
+                      "description_zh": "水印图片的宽度，默认值为原水印图片的宽度。取值为整数或小数时的不同含义如下：\n\n整数：表示去除Logo宽度的像素值，单位为像素（px），取值范围为[1,4096]。\n小数：表示相对输出视频分辨率宽度的比率，取值范围为(0,1)",
+                      "example": "80",
+                      "format": "float",
+                      "title": "Width",
+                      "type": "number"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "Watermarks",
+                "type": "array"
+              }
+            },
+            "title": "FilterVideo",
+            "type": "object"
+          },
+          "Stream": {
+            "description_en": "The list of video stream index numbers to process from the source file. An empty value (default) indicates that the video stream with the smallest index number (the first video stream) is processed. An index number greater than 100 indicates that all video streams are processed.\n\nExample: `[0,1]` processes video streams with index numbers 0 and 1. `[1]` processes the video stream with index number 1. `[101]` processes all video streams.\n\nOnly video streams with existing index numbers are processed. If a video stream corresponding to an index number does not exist, that index number is ignored",
+            "description_zh": "需要处理的源文件视频流索引号列表。空值（默认）表示处理索引号最小的视频流（第一路视频流），索引号大于100表示处理所有视频流。\n\n示例：`[0,1]`处理索引号为0和1的视频流；`[1]`处理索引号为1的视频流；`[101]`处理所有视频流。\n\n只处理索引号存在的视频流，索引号对应的视频流不存在时将忽略该索引号",
+            "items": {
+              "description_en": "The video stream index number to process",
+              "description_zh": "需要处理的视频流索引号",
+              "example": "0",
+              "format": "int32",
+              "type": "integer"
+            },
+            "title": "Stream",
+            "type": "array"
+          },
+          "TranscodeVideo": {
+            "description_en": "The video transcoding parameters. An empty value indicates that video processing is disabled and the output file does not contain a video stream.\n\nSetting this parameter to an empty value to disable video processing is not recommended",
+            "description_zh": "视频转码参数，空值表示禁用视频处理，输出文件中将不包含视频流。\n\n不推荐通过将该参数设为空值来禁用视频处理",
+            "properties": {
+              "AdaptiveResolutionDirection": {
+                "description_en": "Specifies whether to enable adaptive long/short side mode. Valid values:\n\ntrue: Enabled. The format of the Resolution parameter is `LongSide×ShortSide`.\nfalse (default): Disabled. The format of the Resolution parameter is `Width×Height`",
+                "description_zh": "是否开启长短边自适应。取值范围如下：\n\ntrue：是，此时参数Resolution的格式为`长边×短边`。\nfalse（默认）：否，此时参数Resolution的格式为`宽×高`",
+                "example": "true",
+                "title": "AdaptiveResolutionDirection",
+                "type": "boolean"
+              },
+              "BFrames": {
+                "description_en": "The number of consecutive B-frames. Default value: 3",
+                "description_zh": "连续B帧的数量，默认值为3",
+                "example": "3",
+                "format": "int32",
+                "title": "BFrames",
+                "type": "integer"
+              },
+              "Bitrate": {
+                "description_en": "The video stream bitrate, in bits per second (bit/s).\n\nThis parameter is mutually exclusive with CRF. If both this parameter and CRF are empty, encoding is performed with a CRF value of 23",
+                "description_zh": "视频流码率，单位为比特每秒（bit/s），\n\n该参数与CRF互斥，若该参数与参数CRF都为空值则按照参数CRF为23进行编码",
+                "example": "128000",
+                "format": "int32",
+                "title": "Bitrate",
+                "type": "integer"
+              },
+              "BitrateOption": {
+                "description_en": "The video bitrate option. Valid values:\n\nfixed: Always uses the specified target video bitrate.\nadaptive: Uses the source video bitrate when it is lower than the specified target video bitrate.\nfall: Returns a failure when the source video bitrate is lower than the specified target video bitrate.\n\nDefault value:\nFor the CreateMediaConvert API, the default value is fixed.\nFor the GenerateVideoPlaylist API, the default value is adaptive.\n\nThis parameter must be set together with the Bitrate parameter",
+                "description_zh": "视频码率选项。取值范围如下：\n\nfixed：始终使用设置的目标视频码率。\nadaptive：源视频码率小于设置的目标视频码率时使用源视频码率。\nfall：源视频码率小于设置的目标视频码率时返回失败。\n\n默认值：\nAPI为CreateMediaConvert时，默认值为fixed。\nAPI为GenerateVideoPlaylist时，默认值为adaptive。\n\n该参数需要与参数Bitrate一同设置",
+                "example": "fixed",
+                "title": "BitrateOption",
+                "type": "string"
+              },
+              "BufferSize": {
+                "description_en": "The decoding buffer size for variable bitrate, in bits per second (bps).\n\nThis parameter takes effect only when used together with the CRF parameter",
+                "description_zh": "动态码率下解码缓存大小，单位为比特每秒（bps）。\n\n该参数需要与参数CRF一起使用才有效",
+                "example": "4000000",
+                "format": "int32",
+                "title": "BufferSize",
+                "type": "integer"
+              },
+              "CRF": {
+                "description_en": "Specifies the constant quality mode. This parameter is mutually exclusive with Bitrate. Valid values: [0,51]. A higher value results in lower quality. Recommended values: [18,38]",
+                "description_zh": "指定恒定质量模式。与参数Bitrate互斥，取值范围为[0,51]，数值越大画质越差，建议取值范围为[18,38]",
+                "example": "18",
+                "format": "float",
+                "title": "CRF",
+                "type": "number"
+              },
+              "Codec": {
+                "description_en": "The video encoding format. Valid values:\n\nFor the CreateMediaConvert API: copy (default), h264, h265, vp9.\n<warning>When this parameter is set to copy, the video streams to be processed are directly copied to the output file, and other parameters under TranscodeVideo do not take effect. copy cannot be used for video concatenation and is typically used for container format conversion scenarios.</warning>\nFor the GenerateVideoPlaylist API: h264 (default), h265",
+                "description_zh": "视频编码格式。取值范围如下：\n\nAPI为CreateMediaConvert时：copy（默认），h264，h265，vp9。\n<warning>当该参数为copy时，表示将需要处理的视频流直接拷贝到输出文件，此时TranscodeVideo下的其余参数无效。copy不可用于视频拼接，通常应用于转封装场景。></warning>\nAPI为GenerateVideoPlaylist时：h264（默认），h265",
+                "example": "h264",
+                "title": "Codec",
+                "type": "string"
+              },
+              "FrameRate": {
+                "description_en": "The video frame rate. The default value is the same as the source video",
+                "description_zh": "视频帧率，默认与源视频一致",
+                "example": "25",
+                "format": "float",
+                "title": "FrameRate",
+                "type": "number"
+              },
+              "FrameRateOption": {
+                "description_en": "The frame rate option. Valid values:\n\nfixed: Always uses the specified target video frame rate.\nadaptive: Uses the source video frame rate when it is lower than the specified target video frame rate.\nfall: Returns a failure when the source video frame rate is lower than the specified target video frame rate.\n\nDefault value:\nFor the CreateMediaConvert API, the default value is fixed.\nFor the GenerateVideoPlaylist API, the default value is adaptive.\n\nThis parameter must be set together with the FrameRate parameter",
+                "description_zh": "帧率选项。取值范围如下：\n\nfixed：始终使用设置的目标视频帧率。\nadaptive：源视频帧率小于设置的目标视频帧率时使用源视频帧率。\nfall：源视频帧率小于设置的目标视频帧率时返回失败。\n\n默认值：\n当API为CreateMediaConvert时，默认值为fixed。\n当API为GenerateVideoPlaylist时，默认值为adaptive。\n\n该参数需要与参数FrameRate一同设置",
+                "example": "fixed",
+                "title": "FrameRateOption",
+                "type": "string"
+              },
+              "GOPSize": {
+                "description_en": "The number of frames between keyframes. Default value: 150.\n\nThis parameter is not supported for the GenerateVideoPlaylist API",
+                "description_zh": "关键帧间隔帧数，默认值为150。\n\nAPI为GenerateVideoPlaylist 时不支持该参数",
+                "example": "60",
+                "format": "int32",
+                "title": "GOPSize",
+                "type": "integer"
+              },
+              "MaxBitrate": {
+                "description_en": "The maximum bitrate limit for variable bitrate. When using this parameter, you must specify the BufferSize parameter.\n\nThis parameter takes effect only when used together with the CRF parameter",
+                "description_zh": "动态码率下限定最大码率。使用该参数时，必须指定参数BufferSize。\n\n该参数需要与参数CRF一起使用才有效",
+                "example": "128000",
+                "format": "int32",
+                "title": "MaxBitrate",
+                "type": "integer"
+              },
+              "PixelFormat": {
+                "description_en": "The pixel format. The default value is the same as the source video. Valid values:\n\nyuv420p\nyuv422p\nyuv444p\nyuv420p10le\nyuv422p10le\nyuv444p10le\nyuva420p\n\nyuva420p is available only for the CreateMediaConvert API, and the Codec parameter must be set to vp9",
+                "description_zh": "像素格式，默认与源视频一致。取值范围如下：\n\nyuv420p\nyuv422p\nyuv444p\nyuv420p10le\nyuv422p10le\nyuv444p10le\nyuva420p\n\nyuva420p仅在API为CreateMediaConvert时可用，且参数Codec必须为vp9",
+                "example": "yuv420p",
+                "title": "PixelFormat",
+                "type": "string"
+              },
+              "Refs": {
+                "description_en": "The number of reference frames. Default value: 2",
+                "description_zh": "参考帧的数量，默认值为2",
+                "example": "2",
+                "format": "int32",
+                "title": "Refs",
+                "type": "integer"
+              },
+              "Resolution": {
+                "description_en": "The resolution of the output video in the format of `WidthxHeight`. The default value is the same as the playback resolution of the source video. You can configure both width and height, or configure only width or height. You can also use the AdaptiveResolutionDirection parameter to configure both long and short sides, or configure only the long side or short side. The value range for a single side is (0,4096].\n\nExample 1: If AdaptiveResolutionDirection is false, `1280x720` sets the width to 1280 and the height to 720. `1280x` sets the width to 1280 and keeps the height the same as the source video. `x720` sets the height to 720 and keeps the width the same as the source video.\nExample 2: If AdaptiveResolutionDirection is true, `1280x720` sets the long side to 1280 and the short side to 720. `1280x` sets the long side to 1280 and keeps the short side the same as the source video. `x720` sets the short side to 720 and keeps the long side the same as the source video.\n\nIf the source video contains rotation information, the width/height and long/short side determination is based on the post-rotation state, which is the playback resolution",
+                "description_zh": "输出视频的分辨率，格式为`宽x高`，默认与源视频播放分辨率一致。支持同时配置宽高或单独配置宽或高，也可配合参数AdaptiveResolutionDirection同时配置长短边或单独配置长边或短边，单边取值范围为（0,4096]。\n\n示例1：若AdaptiveResolutionDirection为false，`1280x720`表示设置宽为1280，高为720；`1280x`表示设置宽为1280，高与源视频一致；`x720`表示设置高为720，宽与源视频一致。\n示例2：若AdaptiveResolutionDirection为true，`1280x720`表示设置长边为1280，短边为720；`1280x`表示设置长边为1280，短边与源视频一致；`x720`表示设置短边为720，长边与源视频一致。\n\n若源视频存在旋转信息，宽高、长短边的判断以旋转后的情况为准，即以播放分辨率为准",
+                "example": "640x480",
+                "title": "Resolution",
+                "type": "string"
+              },
+              "ResolutionOption": {
+                "description_en": "The resolution option. Valid values:\n\nfixed: Always uses the specified target video resolution.\nadaptive: Uses the source video resolution when the source video resolution area is smaller than the specified target video resolution area.\nfall: Returns a failure when the source video resolution area is smaller than the specified target video resolution area.\n\nDefault value:\nFor the CreateMediaConvert API, the default value is fixed.\nFor the GenerateVideoPlaylist API, the default value is adaptive.\n\nThis parameter must be set together with the Resolution parameter",
+                "description_zh": "分辨率选项。取值范围如下：\n\nfixed：始终使用设置的目标视频分辨率。\nadaptive：源视频分辨率面积小于设置的目标视频分辨率面积时使用源视频分辨率。\nfall：源视频分辨率面积小于设置的目标视频分辨率面积时返回失败。\n\n默认值：\n当API为CreateMediaConvert时，默认值为fixed。\n当API为GenerateVideoPlaylist时，默认值为adaptive。\n\n该参数需要与参数Resolution一同设置",
+                "example": "fixed",
+                "title": "ResolutionOption",
+                "type": "string"
+              },
+              "Rotation": {
+                "description_en": "The clockwise rotation angle of the video in degrees. Valid values:\n\n0 (default)\n90\n180\n270",
+                "description_zh": "视频顺时针旋转的度数。取值范围如下：\n\n0（默认）\n90\n180\n270",
+                "example": "90",
+                "format": "int32",
+                "title": "Rotation",
+                "type": "integer"
+              },
+              "ScaleType": {
+                "description_en": "The scaling mode. Valid values:\n\nstretch (default): Fixes the width/height or long/short sides and forcibly scales the video to fill the blank area by stretching.\ncrop: Scales proportionally to the minimum resolution that extends beyond the specified width/height or long/short side rectangle, and then center-crops the excess area.\nfill: Scales proportionally to the maximum resolution within the specified width/height or long/short side rectangle, and then center-fills the blank area with black.\nfit: Scales proportionally to the maximum resolution within the specified width/height or long/short side rectangle.\n\nThis parameter must be set together with the Resolution parameter",
+                "description_zh": "缩放模式。取值范围如下：\n\nstretch（默认）：固定宽高或长短边，强制缩放，拉伸以填满空白部分。\ncrop：等比缩放，缩放为延伸出指定宽高或长短边的矩形框外的最小分辨率，然后将超出的部分进行居中裁剪。\nfill：等比缩放，缩放为指定宽高或长短边的矩形内的最大分辨率，然后使用黑色居中填充空白部分。\nfit：等比缩放，缩放为指定宽高或长短边的矩形内的最大分辨率。\n\n该参数需要与参数Resolution一同设置",
+                "example": "crop",
+                "title": "ScaleType",
+                "type": "string"
+              },
+              "VideoSlim": {
+                "description_en": "Enables the Narrowband HD mode. Valid values:\n\n0: Default value. Disabled.\n\n1: Uses the Narrowband HD mode for transcoding.\nFor optimal results, use the officially recommended Bitrate or CRF parameters for video transcoding with Narrowband HD.\n\n<notice>Narrowband HD supports only H.264/H.265 formats, only yuv420p, 8-bit depth, and does not support multi-target video transcoding output or video concatenation. For more information, see [Narrowband HD overview]（https://help.aliyun.com/document_detail/2984556.html）",
+                "description_zh": "启用轻码高清模式，设置值如下：\n\n0：默认值，表示关闭。\n\n1：表示使用轻码高清模式转码。\n为获得最佳效果，轻码高清推荐使用官方推荐Bitrate或CRF参数进行视频转码编码。\n\n<notice>轻码高清仅支持h.264/h.265格式，仅支持yuv420p，8bit位深，不支持多路目标视频转码输出以及视频拼接。详情参考[轻码高清产品介绍]（https://help.aliyun.com/document_detail/2984556.html）",
+                "example": "0",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "title": "TranscodeVideo",
+            "type": "object"
+          }
+        },
+        "title": "Video Struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Create an asynchronous media transcoding task. This task processes audio and video files for media transcoding, media concatenation, video frame capture, and animated GIF generation",
   "description_zh": "创建一个异步的媒体转码任务。提供媒体转码、媒体拼接、视频截帧、视频转动图等相关音视频媒体文件处理能力",
@@ -3154,6 +4160,39 @@
   "pathPattern": "",
   "product_code": "imm",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "响应结构体",
+        "properties": {
+          "EventId": {
+            "description_en": "The ID of the event",
+            "description_zh": "事件ID",
+            "example": "0ED-1Bz8z71k5TtsUejT4UJ16Es****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "CA995EFD-083D-4F40-BE8A-BDF75FFFE0B6",
+            "title_en": "",
+            "title_zh": "请求 ID",
+            "type": "string"
+          },
+          "TaskId": {
+            "description_en": "The ID of the task",
+            "description_zh": "任务ID",
+            "example": "MediaConvert-adb1ee28-c4c9-42a7-9f54-3b8eadcb****",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "响应结构体",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "When concatenating media files, this specifies the index of the primary file in the Sources list. The default transcoding parameters (such as resolution and frame rate from the `Video` and `Audio` objects) are taken from this primary file. The default index is 0",

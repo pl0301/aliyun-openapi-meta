@@ -2,6 +2,156 @@
   "camel_example": "aliyun aiworkspace POST /api/v1/datasets/d-lfd60v0p0000ujtsdx/datasetfilemetas --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"DatasetFileMetas\":[\"example-string\"],\"WorkspaceId\":\"47800\",\"DatasetVersion\":\"v1\"}",
   "cmd_full_name": "aiworkspace create-dataset-file-metas",
   "cmd_name": "create-dataset-file-metas",
+  "components": {
+    "schemas": {
+      "DatasetFileMetaContentCreate": {
+        "description_en": "The details of the file metadata",
+        "description_zh": "文件元数据内容详情",
+        "properties": {
+          "Comment": {
+            "description_en": "The comment on the file",
+            "description_zh": "文件注释",
+            "example": "The first image file in the dataset.",
+            "title": "注释",
+            "type": "string"
+          },
+          "ContentType": {
+            "description_en": "The MIME type of the file. It includes a type and a subtype",
+            "description_zh": "文件的MIME类型。包含Type和SubType",
+            "enumValueTitles": {
+              "image/bmp": "BMP",
+              "image/gif": "GIF",
+              "image/heic ": "HEIC",
+              "image/jpeg": "JPEG",
+              "image/png": "PNG",
+              "image/svg+xml": "SVG",
+              "image/tiff": "TIFF",
+              "image/webp": "WEBP",
+              "image/x-icon": "ICON"
+            },
+            "example": "image/jpeg",
+            "required": true,
+            "title": "image/jpeg",
+            "type": "string"
+          },
+          "DataSize": {
+            "description_en": "The size of the file in bytes",
+            "description_zh": "文件大小，字节",
+            "example": "10000",
+            "format": "int64",
+            "required": false,
+            "title": "文件大小，字节",
+            "type": "integer"
+          },
+          "FileCreateTime": {
+            "description_en": "The time when the file was created. The time is in ISO 8601 format",
+            "description_zh": "文件创建时间，格式：ISO8601格式",
+            "example": "2025-01-12T14:36:01Z",
+            "format": "iso8601",
+            "title": "创建时间，格式：ISO8601格式",
+            "type": "string"
+          },
+          "FileFingerPrint": {
+            "description_en": "The fingerprint of the file. This value ensures the uniqueness of the file content and changes if the content is modified. For OSS files, this is the ETag. For NAS files, this is the MD5 value",
+            "description_zh": "文件指纹值。用于确定文件内容的唯一性，文件内容修改后该值会发生变化。OSS文件使用ETag，NAS文件使用MD5值",
+            "example": "D41D8CD98F*****E9800998ECF8",
+            "required": true,
+            "title": "md5/oss etag",
+            "type": "string"
+          },
+          "FileName": {
+            "description_en": "The name of the file",
+            "description_zh": "文件名",
+            "example": "00001.jpeg",
+            "required": false,
+            "title": "文件名",
+            "type": "string"
+          },
+          "FileType": {
+            "description_en": "The type of the file. This is the same as the Multipurpose Internet Mail Extensions (MIME) type",
+            "description_zh": "文件类型。与MIME Type相同",
+            "enumValueTitles": {
+              "application": "application",
+              "audio": "audio",
+              "image": "image",
+              "text": "text",
+              "video": "video"
+            },
+            "example": "image",
+            "required": true,
+            "title": "文件类型 image/audio/video/text",
+            "type": "string"
+          },
+          "FileUpdateTime": {
+            "description_en": "The time when the file was last modified. The time is in ISO 8601 format",
+            "description_zh": "文件最后修改时间，格式：ISO8601格式",
+            "example": "2025-01-12T14:36:01Z",
+            "format": "iso8601",
+            "required": true,
+            "title": "修改时间，格式：ISO8601格式",
+            "type": "string"
+          },
+          "MetaAttributes": {
+            "description_en": "The specific metadata of the file. This metadata cannot be used for retrieval. The value must be a JSON string",
+            "description_zh": "文件的特定元数据，暂不具备检索能力。JSON String格式",
+            "example": "{\n    \"ImageHeight\": 1080,\n    \"ImageWidth\": 1920\n}",
+            "title": "JSON String，存储文件的基础元数据，暂不具备检索能力",
+            "type": "string"
+          },
+          "Tags": {
+            "deprecated": false,
+            "description_en": "The tags that are manually added by users. The \\`add\\` operation is used to add tags to a tag group. The value must be a JSON string.\nThe following tag group is available:\n\nuser: A list of tag names added to a single piece of metadata.\n\n```\n{\n    \"user\":{\n        \"add\":[\"Lane line\",\"Sunny day\"]\n    }\n}\n```",
+            "description_zh": "用户手动打标：（add表示对标签组内的标签进行增加操作）。JSON String格式。\n可操作的标签组为：\nuser: 对单个元数据，用户自行添加的标签名列表。\n\n```\n{\n    \"user\":{\n        \"add\":[\"车道线\",\"晴天\"]\n    }\n}\n```",
+            "example": "{\n    \"user\":{\n        \"add\":[\"Lane line\",\"Sunny day\"]\n    }\n}",
+            "title": "标签组(json string)，仅更新user标签组",
+            "type": "string"
+          },
+          "Uri": {
+            "description_en": "The unique URI of the file. This URI records the unique path of the file. The path can be an OSS or NAS path.\n\n<details>\n\n<summary>\n\nOSS\n\n</summary>\n\noss\\://${bucket}/${path}\n\n</details>\n\n<details>\n\n<summary>\n\nNAS\n\n</summary>\n\nnas\\://${fileSystemId}/${path}\n\n</details>",
+            "description_zh": "文件唯一URI。用于记录文件唯一路径。支持OSS、NAS下的文件路径。\n<details>\n<summary>OSS</summary>\noss://${bucket}/${path}\n</details>\n<details>\n<summary>NAS</summary>\nnas://${fileSystemId}/${path}\n</details>",
+            "example": "oss://*****-test/dataset/1653421.jpg\nnas://0e25d***dff/dataset/1653421.jpg",
+            "required": true,
+            "title": "oss/nas/cpfs uri",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "DatasetFileMetaResponse": {
+        "description_en": "The returned result of the metadata operation for a single file",
+        "description_zh": "单个文件元数据操的作返回结果",
+        "properties": {
+          "DatasetFileMetaId": {
+            "description_en": "The metadata ID of the dataset file",
+            "description_zh": "文件元数据ID",
+            "example": "07914c9534586e4e7aa6e9dbca5009082df*******8a0d857b33296c59bf6",
+            "required": true,
+            "title": "文件元数据ID",
+            "type": "string"
+          },
+          "Result": {
+            "description_en": "The description of the reason why the metadata operation failed",
+            "description_zh": "文件元数据操作失败原因描述",
+            "example": "Not Found",
+            "required": true,
+            "title": "Not Found/Failed ...",
+            "type": "string"
+          },
+          "Uri": {
+            "description_en": "The file URI",
+            "description_zh": "文件的URI",
+            "example": "oss://l*****-test/dataset/1653421.jpg",
+            "required": false,
+            "title": "oss/nas/cpfs uri",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates file metadata records for a dataset in a batch",
   "description_zh": "批量创建数据集下的文件元数据记录",
@@ -156,6 +306,13 @@
             "type": "int"
           },
           {
+            "enum": [
+              "image",
+              "application",
+              "audio",
+              "video",
+              "text"
+            ],
             "example": "image",
             "help_en": "The type of the file. This is the same as the Multipurpose Internet Mail Extensions (MIME) type",
             "help_zh": "文件类型。与MIME Type相同",
@@ -168,6 +325,17 @@
             "type": "string"
           },
           {
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/tiff",
+              "image/bmp",
+              "image/gif",
+              "image/x-icon",
+              "image/svg+xml",
+              "image/webp",
+              "image/heic "
+            ],
             "example": "image/jpeg",
             "help_en": "The MIME type of the file. It includes a type and a subtype",
             "help_zh": "文件的MIME类型。包含Type和SubType",
@@ -222,6 +390,57 @@
   "pathPattern": "/api/v1/datasets/[DatasetId]/datasetfilemetas",
   "product_code": "AIWorkSpace",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The request result",
+        "description_zh": "请求结果",
+        "properties": {
+          "FailedDetails": {
+            "description_en": "A list of file metadata records that failed to be created",
+            "description_zh": "创建失败的文件元数据列表",
+            "items": {
+              "$ref": "#/components/schemas/DatasetFileMetaResponse",
+              "description_en": "The details of a file metadata record that failed to be created",
+              "description_zh": "创建失败的文件元数据详情"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "5A14FA81-DD4E-******-6343FE44B941",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Status": {
+            "description_en": "The status of the batch metadata creation. A value of \\`true\\` indicates that all records were created successfully. If the value is \\`false\\`, check \\`FailedDetails\\`",
+            "description_zh": "本批元数据创建结果的状态。全部成功为true，如果为false，需要查看FailedDetails",
+            "enumValueTitles": {
+              "false": "失败",
+              "true": "成功"
+            },
+            "example": "true",
+            "type": "boolean"
+          },
+          "SucceedDetails": {
+            "description_en": "A list of file metadata records that were successfully created",
+            "description_zh": "创建成功的文件元数据列表",
+            "items": {
+              "$ref": "#/components/schemas/DatasetFileMetaResponse",
+              "description_en": "The details of a file metadata record that was successfully created",
+              "description_zh": "创建成功的文件元数据详情"
+            },
+            "type": "array"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

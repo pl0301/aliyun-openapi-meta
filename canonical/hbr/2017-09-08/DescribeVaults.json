@@ -49,6 +49,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "UNKNOWN",
+        "CREATED",
+        "ERROR"
+      ],
       "example": "CREATED",
       "help_en": "The status of the backup vault. Valid values:\n\nUNKNOWN: unknown\nINITIALIZING: initializing\nCREATED: created\nERROR: error",
       "help_zh": "备份仓库状态。\n\nUNKNOWN：未知\nINITIALIZING：初始化中\nCREATED：已创建\nERROR：错误",
@@ -66,6 +71,7 @@
       "help_en": "The page number. Pages start from 1. Default value: 1",
       "help_zh": "分页页码，从1开始，默认值为1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -79,6 +85,8 @@
       "help_en": "The number of entries per page. Minimum value: 1. Maximum value: 99. Default value: 10",
       "help_zh": "分页大小，最小值为1，最大值为99，默认值为10",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -198,5 +206,580 @@
   ],
   "pathPattern": "",
   "product_code": "hbr",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The return code. A value of 200 indicates success",
+            "description_zh": "返回码。200表示成功",
+            "example": "200",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The returned message. The value \"successful\" is returned for a successful request. An error message is returned for a failed request",
+            "description_zh": "返回信息描述，成功一般返回successful，错误时会返回相应错误信息",
+            "example": "successful",
+            "type": "string"
+          },
+          "PageNumber": {
+            "description_en": "The page number. Pages start from 1. Default value: 1",
+            "description_zh": "分页页码，从1开始，默认值为1",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page. Minimum value: 1. Maximum value: 99. Default value: 10",
+            "description_zh": "分页大小，最小值为1，最大值为99，默认值为10",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "请求是否成功。\n\ntrue：成功\nfalse：失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The total number of backup vaults returned",
+            "description_zh": "返回备份仓库总数量",
+            "example": "8",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Vaults": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Vault": {
+                "description_en": "The list of backup vaults",
+                "description_zh": "备份仓库列表",
+                "example": "{'Vault': []}",
+                "items": {
+                  "description_en": "The list of backup vaults",
+                  "description_zh": "备份仓库列表",
+                  "properties": {
+                    "ArchiveBytesDone": {
+                      "description_en": "The amount of backup data in the archive tier. Unit: bytes",
+                      "description_zh": "归档层备份数据量。单位：字节",
+                      "example": "1024000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ArchiveStorageSize": {
+                      "description_en": "The billable capacity of the archive tier. Unit: bytes",
+                      "description_zh": "归档层计费容量，单位：字节",
+                      "example": "1024000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BackupPlanStatistics": {
+                      "description_en": "The backup plan statistics of the backup vault",
+                      "description_zh": "备份仓库备份计划统计",
+                      "properties": {
+                        "Archive": {
+                          "description_en": "The number of archive plans",
+                          "description_zh": "归档计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "CommonFileSystem": {
+                          "description_en": "The number of CPFS backup plans",
+                          "description_zh": "CPFS备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "CommonNas": {
+                          "description_en": "The number of general NAS backup plans",
+                          "description_zh": "通用NAS类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Csg": {
+                          "description_en": "The number of Cloud Storage Gateway backup plans",
+                          "description_zh": "云存储网关类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "EcsFile": {
+                          "description_en": "The number of ECS File Backup standard backup plans",
+                          "description_zh": "ECS文件备份标准版类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "EcsHana": {
+                          "description_en": "The number of SAP HANA backup plans",
+                          "description_zh": "SAP HANA类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Isilon": {
+                          "description_en": "The number of Isilon backup plans",
+                          "description_zh": "Isilon类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "LocalFile": {
+                          "description_en": "The number of local server backup plans",
+                          "description_zh": "本地服务器类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "LocalVm": {
+                          "description_en": "The number of local virtual machine backup plans",
+                          "description_zh": "本地虚拟机备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "MySql": {
+                          "description_en": "The number of MySQL backup plans",
+                          "description_zh": "MySQL类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Nas": {
+                          "description_en": "The number of NAS backup plans",
+                          "description_zh": "NAS类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Oracle": {
+                          "description_en": "The number of Oracle backup plans",
+                          "description_zh": "Oracle类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Oss": {
+                          "description_en": "The number of OSS backup plans",
+                          "description_zh": "OSS类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Ots": {
+                          "description_en": "The number of Tablestore backup plans",
+                          "description_zh": "表格存储类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "SqlServer": {
+                          "description_en": "The number of SQL Server backup plans",
+                          "description_zh": "SQL Server类型备份计划数量",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "BucketName": {
+                      "description_en": "The name of the OSS bucket used by the backup vault",
+                      "description_zh": "备份仓库试用的oss bucket名称",
+                      "example": "hbr-0005i51******t58",
+                      "type": "string"
+                    },
+                    "BytesDone": {
+                      "description_en": "The amount of backup data. Unit: bytes",
+                      "description_zh": "备份数据量。单位为Byte",
+                      "example": "20",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ChargeType": {
+                      "description_en": "The billing type of the backup vault",
+                      "description_zh": "备份仓库计费类型",
+                      "example": "FREE",
+                      "type": "string"
+                    },
+                    "ChargedStorageSize": {
+                      "description_en": "The billable capacity of the archive vault. Unit: bytes",
+                      "description_zh": "归档库计费容量，单位：字节",
+                      "example": "1024000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CompressionAlgorithm": {
+                      "description_en": "The compression algorithm used for the backup vault. Valid values:\n\nDISABLED: No compression is applied.\nSNAPPY: The SNAPPY compression algorithm is used.\nZSTD: Zstandard, a fast lossless compression algorithm",
+                      "description_zh": "对备份库进行压缩的加密算法，取值包括：\n\nDISABLED：不压缩加密。\nSNAPPY：使用SNAPPY加密算法。\nZSTD： 即Zstandard，一种快速的无损压缩算法",
+                      "example": "ZSTD",
+                      "type": "string"
+                    },
+                    "CreatedTime": {
+                      "description_en": "The time when the backup vault was created. The value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "备份仓库创建时间。UNIX时间戳，单位秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Dedup": {
+                      "description_en": "Indicates whether the deduplication feature is enabled",
+                      "description_zh": "是否开启重删功能",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "Description": {
+                      "description_en": "The description of the vault",
+                      "description_zh": "仓库描述",
+                      "example": "vault description",
+                      "type": "string"
+                    },
+                    "EncryptType": {
+                      "description_en": "The encryption type of the backup vault. Valid values:\n\nNONE: not encrypted.\nHBR_PRIVATE: encrypted by using a key provided by Cloud Backup (default).\nKMS: encrypted by using a user-specified KMS key",
+                      "description_zh": "备份仓库加密类型。\n\nNONE：不加密\nHBR_PRIVATE：HBR提供密钥加密（默认）\nKMS：使用用户的KMS key加密",
+                      "example": "HBR_PRIVATE",
+                      "type": "string"
+                    },
+                    "IndexAvailable": {
+                      "description_en": "Indicates whether the index is available (not being updated)",
+                      "description_zh": "索引是否可用（不处于更新状态）",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "IndexLevel": {
+                      "description_en": "The index level",
+                      "description_zh": "索引等级。\n\nOFF：不创建索引\nMETA：元数据索引\nALL：全文索引",
+                      "example": "OFF",
+                      "type": "string"
+                    },
+                    "IndexUpdateTime": {
+                      "description_en": "The index update time",
+                      "description_zh": "索引更新时间",
+                      "example": "1639645628",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "KmsKeyId": {
+                      "description_en": "The custom key or alias of Alibaba Cloud Key Management Service (KMS). This parameter is required only when EncryptType is set to KMS",
+                      "description_zh": "阿里云KMS服务自定义密钥Key或者Alias，仅当EncryptType=KMS时必填",
+                      "example": "alias/acs/acm",
+                      "type": "string"
+                    },
+                    "LatestReplicationTime": {
+                      "description_en": "The time of the last geo-redundancy backup synchronization. The value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "最后一次异地备份同步时间。UNIX时间戳，单位为秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "RedundancyType": {
+                      "description_en": "The data redundancy type of the backup vault. Valid values:\n\nLRS: locally redundant storage (LRS). Data is stored on multiple devices across different facilities within the same zone, ensuring data durability and availability in the event of hardware failure.\nZRS: zone-redundant storage (ZRS). Data is distributed across three zones in the same region. If one zone becomes unavailable, the data remains accessible",
+                      "description_zh": "备份仓库的数据冗余存储方式。取值包括：\n\nLRS：备份库（本地冗余 LRS）。采用数据冗余存储机制，将每个对象的不同冗余存储在同一个可用区内多个设施的多个设备上，确保硬件失效时的数据持久性和可用性。\nZRS：备份库（同城冗余 ZRS）。采用多可用区（AZ）机制，将用户的数据分散存放在同一地域（Region）的3个可用区。当某个可用区不可用时，仍然能够保障数据的正常访问",
+                      "example": "LRS",
+                      "type": "string"
+                    },
+                    "Replication": {
+                      "description_en": "Indicates whether the vault is a geo-redundancy backup repository",
+                      "description_zh": "是否为异地备份仓库。\ntrue：异地备份仓库。\nfalse：本地备份仓库",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "ReplicationProgress": {
+                      "description_en": "The replication progress of the backup vault",
+                      "description_zh": "备份库复制进度",
+                      "properties": {
+                        "HistoricalReplicationProgress": {
+                          "description_en": "The data replication progress of historical data in the backup vault. Valid values: 0 to 100",
+                          "description_zh": "备份库历史数据复制进度。取值0~100",
+                          "example": "100",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "NewReplicationProgress": {
+                          "description_en": "The latest replication time of incremental data in the backup vault",
+                          "description_zh": "备份库增量数据最新复制时间",
+                          "example": "1579413159",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ReplicationSourceOwnerId": {
+                      "description_en": "The ID of the account that owns the replication source",
+                      "description_zh": "复制源端账号ID",
+                      "example": "123***7890",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ReplicationSourceRegionId": {
+                      "description_en": "The region ID of the source backup vault for the geo-redundancy backup vault. This parameter is valid only for geo-redundancy backup vaults",
+                      "description_zh": "异地备份库的源库所属地域ID（仅对异地备份库有效）",
+                      "example": "cn-shanghai",
+                      "type": "string"
+                    },
+                    "ReplicationSourceVault": {
+                      "description_en": "Indicates whether the vault is the source backup vault of a geo-redundancy backup vault",
+                      "description_zh": "是否是异地备份库的源库\ntrue：是异地备份库的源库。\nfalse：不是异地备份库的源库",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "ReplicationSourceVaultId": {
+                      "description_en": "The ID of the source backup vault for the geo-redundancy repository",
+                      "description_zh": "异地备份仓库源仓库ID",
+                      "example": "v-*********************",
+                      "type": "string"
+                    },
+                    "ReplicationStatus": {
+                      "description_en": "The replication status of the replication target vault",
+                      "description_zh": "复制目标备份库复制状态",
+                      "example": "RUNNING",
+                      "type": "string"
+                    },
+                    "ReplicationTargetOwnerId": {
+                      "description_en": "The ID of the account that owns the replication target vault",
+                      "description_zh": "复制目标备份库所属账号ID",
+                      "example": "123***7890",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ReplicationTargetRegionId": {
+                      "description_en": "The destination region of the geo-redundancy backup vault",
+                      "description_zh": "异地备份库目标地域",
+                      "example": "cn-shanghai",
+                      "type": "string"
+                    },
+                    "ReplicationTargetVaultId": {
+                      "description_en": "The ID of the replication target vault",
+                      "description_zh": "复制目标备份库ID",
+                      "example": "v-123***7890",
+                      "type": "string"
+                    },
+                    "ResourceGroupId": {
+                      "description_en": "The resource group ID",
+                      "description_zh": "资源组ID",
+                      "example": "rg-*********************",
+                      "type": "string"
+                    },
+                    "Retention": {
+                      "description_en": "The retention period of the backup vault. Unit: days",
+                      "description_zh": "备份库保留时长，单位：天",
+                      "example": "2",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "RsTargetAccountIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "RsTargetAccountId": {
+                          "description_en": "The target account for resource sharing",
+                          "description_zh": "资源共享目标账号",
+                          "items": {
+                            "description_en": "The target account for resource sharing",
+                            "description_zh": "资源共享目标账号",
+                            "example": "123***7890",
+                            "format": "int64",
+                            "type": "integer"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SearchEnabled": {
+                      "description_en": "Indicates whether backup search is enabled",
+                      "description_zh": "是否开启备份搜索",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "SnapshotCount": {
+                      "description_en": "The number of snapshots in the vault",
+                      "description_zh": "仓库内的快照数量",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SourceTypes": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "SourceType": {
+                          "description_en": "The data source types backed up in the backup vault",
+                          "description_zh": "备份仓库备份的数据源类型",
+                          "items": {
+                            "description_en": "The backup source type",
+                            "description_zh": "备份数据源类型",
+                            "example": "ECS_FILE",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Status": {
+                      "description_en": "The status of the backup vault. Valid values:\nUNKNOWN: Unknown.\nINITIALIZING: The vault is being initialized.\nCREATED: The vault is created.\nERROR: An error occurred",
+                      "description_zh": "备份仓库状态。\nUNKNOWN：未知\nINITIALIZING：初始化中\nCREATED：已创建\nERROR：错误",
+                      "example": "CREATED",
+                      "type": "string"
+                    },
+                    "StorageSize": {
+                      "description_en": "The storage usage of the backup vault. Unit: bytes",
+                      "description_zh": "备份库使用量。单位为Byte",
+                      "example": "10",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The tag information of the backup vault",
+                          "description_zh": "备份仓库的标签信息",
+                          "items": {
+                            "description_en": "The tag information of the backup vault",
+                            "description_zh": "备份仓库的标签信息",
+                            "properties": {
+                              "Key": {
+                                "description_en": "The tag key of the vault. Valid values of N: 1 to 20",
+                                "description_zh": "仓库的标签键。N的取值范围：1~20。\n不支持以`aliyun`、`acs:`开头。\n不允许包含`http://`和`https://`。\n不允许为空字符串",
+                                "example": "aaa",
+                                "type": "string"
+                              },
+                              "Value": {
+                                "description_en": "The tag value of the vault. Valid values of N: 1 to 20",
+                                "description_zh": "仓库的标签值。N的取值范围：1~20。\n不支持以`aliyun`、`acs:`开头。\n不允许包含`http://`和`https://`。\n不允许为空字符串",
+                                "example": "a1",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "TrialInfo": {
+                      "description_en": "The free trial properties",
+                      "description_zh": "免费试用属性",
+                      "properties": {
+                        "KeepAfterTrialExpiration": {
+                          "description_en": "Indicates whether the vault is converted to pay-as-you-go after the free trial expires",
+                          "description_zh": "免费试用结束后是否转为按量付费",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "TrialExpireTime": {
+                          "description_en": "The expiration time of the free trial",
+                          "description_zh": "免费试用过期时间",
+                          "example": "1584597600",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "TrialStartTime": {
+                          "description_en": "The start time of the free trial",
+                          "description_zh": "免费试用开始时间",
+                          "example": "1579413159",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "TrialVaultReleaseTime": {
+                          "description_en": "The release time of the free trial vault",
+                          "description_zh": "免费试用仓库释放时间",
+                          "example": "1594965600",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "UpdatedTime": {
+                      "description_en": "The time when the backup vault was updated. The value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "备份仓库更新时间。UNIX时间戳，单位为秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "VaultId": {
+                      "description_en": "The backup vault ID",
+                      "description_zh": "备份仓库ID",
+                      "example": "v-*********************",
+                      "type": "string"
+                    },
+                    "VaultName": {
+                      "description_en": "The name of the backup vault",
+                      "description_zh": "备份仓库名称",
+                      "example": "vaultname",
+                      "type": "string"
+                    },
+                    "VaultOwnerId": {
+                      "description_en": "The ID of the account to which the vault belongs",
+                      "description_zh": "存储库所属账号ID",
+                      "example": "123***7890",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "VaultRegionId": {
+                      "description_en": "The region ID of the backup vault",
+                      "description_zh": "备份仓库所属的地域ID",
+                      "example": "cn-shanghai",
+                      "type": "string"
+                    },
+                    "VaultStatusMessage": {
+                      "description_en": "The error status information of the vault. This parameter is valid only for remote backup vaults. Valid values:\nUNKNOWN_ERROR: unknown error.\nSOURCE_VAULT_ALREADY_HAS_REPLICATION: the source vault already has another mirror vault configured",
+                      "description_zh": "（仅异地备份仓库有效）仓库错误状态信息，取值范围：\nUNKNOWN_ERROR表示未知错误。\nSOURCE_VAULT_ALREADY_HAS_REPLICATION表示复制源仓库已经设置了其他镜像仓库",
+                      "example": "SOURCE_VAULT_ALREADY_HAS_REPLICATION",
+                      "type": "string"
+                    },
+                    "VaultStorageClass": {
+                      "description_en": "The storage class of the backup vault. The value is STANDARD, which indicates standard storage",
+                      "description_zh": "备份仓库存储类型。取值仅为STANDARD，表示标准存储",
+                      "example": "STANDARD",
+                      "type": "string"
+                    },
+                    "VaultType": {
+                      "description_en": "The type of the backup vault. The value is STANDARD, which indicates a standard vault",
+                      "description_zh": "备份仓库类型。取值仅为STANDARD，表示普通仓库",
+                      "example": "STANDARD",
+                      "type": "string"
+                    },
+                    "WormEnabled": {
+                      "description_en": "Indicates whether backup lock is enabled",
+                      "description_zh": "是否开启备份锁定",
+                      "example": "true",
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

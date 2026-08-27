@@ -73,6 +73,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2019-05-23 12:00:00",
       "help_en": "The beginning of the time range to query. Specify the time in the YYYY-MM-DD HH:mm:ss format",
       "help_zh": "开始时间，格式：YYYY-MM-dd HH:mm:ss",
@@ -86,6 +87,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2019-05-23 12:00:00",
       "help_en": "The end of the time range to query. Specify the time in the YYYY-MM-DD HH:mm:ss format",
       "help_zh": "结束时间，格式：YYYY-MM-dd HH:mm:ss",
@@ -125,6 +127,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "true",
       "help_en": "Specifies whether to query the resource plan usage of linked accounts. Valid values:\n\ntrue: queries the resource plan usage of linked accounts.\nfalse: does not query the resource plan usage of linked accounts",
       "help_zh": "是否包含财务云子账号的资源包用量\ntrue：包含\nfalse：不包含",
@@ -153,5 +156,157 @@
   ],
   "pathPattern": "",
   "product_code": "BssOpenApi",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "Code": {
+            "description_en": "The HTTP status code",
+            "description_zh": "状态码",
+            "example": "Success",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The returned data",
+            "description_zh": "返回数据",
+            "properties": {
+              "DetailList": {
+                "itemNode": true,
+                "properties": {
+                  "DetailList": {
+                    "description_en": "The detailed resource plan usage",
+                    "description_zh": "明细数组",
+                    "items": {
+                      "properties": {
+                        "DeductDate": {
+                          "description_en": "The deduction date",
+                          "description_zh": "抵扣日期",
+                          "example": "2019/5/23 12:00",
+                          "type": "string"
+                        },
+                        "DeductFactorTotal": {
+                          "description_en": "The total computing capacity or storage capacity of the RI or SCU during the deduction",
+                          "description_zh": "RI或SCU在该时间段的算力或容量总量",
+                          "example": "1",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "DeductHours": {
+                          "description_en": "The deduct factor. This parameter is returned only if the CommodityCode parameter is set to ecsRi",
+                          "description_zh": "抵扣系数。 仅当CommodityCode为ecsRi有效",
+                          "example": "24",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "DeductMeasure": {
+                          "description_en": "The original measured amount",
+                          "description_zh": "原始计量量。表示用户在某段时间内实际使用的资源量，未经任何规则调整",
+                          "example": "1",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "DeductQuantity": {
+                          "description_en": "The computing capacity or storage capacity that is deducted in a pay-as-you-go instance",
+                          "description_zh": "实际抵扣对应按量实例的算力或容量。\n实际抵扣量（DeductQuantity）是基于原始计量量（DeductMeasure）并结合具体抵扣规则计算得出的。\n-",
+                          "example": "1",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "DeductedCommodityCode": {
+                          "description_en": "The code of the deducted service",
+                          "description_zh": "被抵扣商品code",
+                          "example": "rds",
+                          "type": "string"
+                        },
+                        "DeductedInstanceId": {
+                          "description_en": "The ID of the deducted instance",
+                          "description_zh": "被抵扣实例ID",
+                          "example": "oss-123123",
+                          "type": "string"
+                        },
+                        "DeductedProductDetail": {
+                          "description_en": "The name of the deducted service",
+                          "description_zh": "被抵商品（产品明细）名称",
+                          "example": "云数据库RDS",
+                          "type": "string"
+                        },
+                        "InstanceId": {
+                          "description_en": "The ID of the RI",
+                          "description_zh": "预留实例ID",
+                          "example": "oss-123123",
+                          "type": "string"
+                        },
+                        "InstanceSpec": {
+                          "description_en": "The instance type of the deducted instance",
+                          "description_zh": "被抵扣实例的规格",
+                          "example": "rds.mysql.s3.large",
+                          "type": "string"
+                        },
+                        "Region": {
+                          "description_en": "The region in which the instance resides. This parameter can be left empty",
+                          "description_zh": "计量中region,可以是空",
+                          "example": "cn-hangzhou ",
+                          "type": "string"
+                        },
+                        "ResCode": {
+                          "description_en": "The billable item",
+                          "description_zh": "计费项",
+                          "example": "PutRequest",
+                          "type": "string"
+                        },
+                        "ShareUid": {
+                          "description_en": "The UID of the deducted instance.\n\nIf the deduction is shared, the value of this parameter indicates the UID of the deducted instance.\nIf the deduction is not shared, the value of this parameter is the same as that of the uid parameter",
+                          "description_zh": "抵扣实例所属uid\n共享抵扣：抵扣实例所属uid\n非共享抵扣：等于uid字段",
+                          "example": "1111111111",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "Uid": {
+                          "description_en": "The UID of the deducted instance",
+                          "description_zh": "被抵扣实例的uid",
+                          "example": "1111111111",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "NextToken": {
+                "description_en": "The token that is used to retrieve the next page of results. You can set the LastToken parameter to this value in the next request. If null is returned, all results are queried",
+                "description_zh": "下次请求查询开始标识，填充到request的LastToken字段中。如果返回为null，则标识查询结束",
+                "example": "CAESF***zNTAw",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "Successful！",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "DF58589C-A06C-4224-8615-7797E6474FA3",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request is successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

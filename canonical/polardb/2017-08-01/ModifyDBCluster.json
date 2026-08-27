@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "pc-*************",
       "help_en": "The cluster ID.\nYou can call the https://help.aliyun.com/document_detail/173433.html operation to query information about all clusters in the specified region, including cluster IDs",
       "help_zh": "集群ID。\n您可以调用DescribeDBClusters接口查看目标地域下所有的集群信息，包括集群ID",
@@ -60,6 +61,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "FaultInjectToPrimaryAz",
+        "FaultInjectToDbNode",
+        "FaultInjection",
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "The dimension of the disaster recovery drill for the cluster. Valid values:\n`0` or `FaultInjection`: primary zone-level disaster recovery drill.\n`1`: node-level disaster recovery drill.\nIn the primary zone-level disaster recovery drill scenario, all compute nodes in the primary zone become unavailable. The failover in this scenario causes service interruptions.\nIn the node-level disaster recovery drill scenario, only a single compute node is supported for the drill. Specify the desired compute node name by using `DBNodeCrashList`",
       "help_zh": "集群的故障演练维度。取值范围如下：\n`0`或`FaultInjection`：主可用区维度故障演练。\n`1`：节点维度故障演练。\n主可用区维度故障演练场景，主可用区所有的计算节点均不可用，该场景的容灾切换是有损的。\n节点维度故障演练场景，仅支持单个计算节点进行演练，通过`DBNodeCrashList`传入期望计算节点名",
@@ -73,6 +81,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Enable",
+        "Disable"
+      ],
       "example": "Enable",
       "help_en": "Specifies whether to enable automatic storage scaling for the Standard Edition cluster. Valid values:\n\nEnable: enables automatic storage scaling.\nDisable: disables automatic storage scaling",
       "help_zh": "标准版集群是否开启存储自动扩容。取值范围如下：\n\nEnable：开启存储自动扩容。\nDisable：关闭存储自动扩容",
@@ -103,6 +115,8 @@
       "help_en": "The upper limit for automatic storage scaling of the Standard Edition cluster. Unit: GB.\n\nThe maximum value is 32000",
       "help_zh": "标准版集群存储自动扩容上限，单位：GB。\n\n取值最大为32000",
       "location": "query",
+      "maximum": "64000",
+      "minimum": "20",
       "name": "storage_upper_bound",
       "options": [
         "--storage-upper-bound"
@@ -125,6 +139,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "CrashSQLInjection",
+        "StopContainer"
+      ],
       "example": "0",
       "help_en": "The fault injection method. Valid values:\n\n0: instance fault injection based on `Crash SQL`",
       "help_zh": "故障注入方式。取值范围如下：\n\n0：基于`Crash SQL`的实例故障注入",
@@ -138,6 +156,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "OFF",
+        "ON"
+      ],
       "example": "OFF",
       "help_en": "The automatic IMCI-based query acceleration feature. Valid values:\n`ON`: enabled.\n`OFF`: disabled.\n\nOnly PolarDB for MySQL clusters are supported.\nFor cluster version requirements, see https://help.aliyun.com/document_detail/2854119.html",
       "help_zh": "自动列存索引提速功能。取值范围如下：\n`ON`：开启。\n`OFF`：关闭。\n\n仅支持PolarDB MySQL版集群。\n集群版本限制，请参见https://help.aliyun.com/document_detail/2854119.html",
@@ -192,109 +214,35 @@
   "pathPattern": "",
   "product_code": "polardb",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "Enables storage compression. Set the value to ON",
-      "help_zh": "开启存储压缩。取值为ON",
-      "name": "CompressStorage",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_zh": "AgenticDB 集群连接资源配额",
-      "name": "ConnectionResourceQuota",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The cluster ID.\nYou can call the https://help.aliyun.com/document_detail/173433.html operation to query information about all clusters in the specified region, including cluster IDs",
-      "help_zh": "集群ID。\n您可以调用DescribeDBClusters接口查看目标地域下所有的集群信息，包括集群ID",
-      "name": "DBClusterId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The list of node instance names for the disaster recovery drill.\nNode-level drills support only a single node. For zone-level drills, you can leave this parameter empty or specify all nodes",
-      "help_zh": "演练节点实例名列表。\n节点维度的演练只支持单个节点，可用区维度的演练可不传该参数，或传入所有节点",
-      "name": "DBNodeCrashList",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The cross-zone data replication mode of the cluster. Valid values:\n\nAsyncSync: asynchronous\nSemiSync: semi-synchronous",
-      "help_zh": "集群的跨可用区数据复制方式，取值范围如下：\n\nAsyncSync：异步。\nSemiSync：半同步",
-      "name": "DataSyncMode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The fault injection method. Valid values:\n\n0: instance fault injection based on `Crash SQL`",
-      "help_zh": "故障注入方式。取值范围如下：\n\n0：基于`Crash SQL`的实例故障注入",
-      "name": "FaultInjectionType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The dimension of the disaster recovery drill for the cluster. Valid values:\n`0` or `FaultInjection`: primary zone-level disaster recovery drill.\n`1`: node-level disaster recovery drill.\nIn the primary zone-level disaster recovery drill scenario, all compute nodes in the primary zone become unavailable. The failover in this scenario causes service interruptions.\nIn the node-level disaster recovery drill scenario, only a single compute node is supported for the drill. Specify the desired compute node name by using `DBNodeCrashList`",
-      "help_zh": "集群的故障演练维度。取值范围如下：\n`0`或`FaultInjection`：主可用区维度故障演练。\n`1`：节点维度故障演练。\n主可用区维度故障演练场景，主可用区所有的计算节点均不可用，该场景的容灾切换是有损的。\n节点维度故障演练场景，仅支持单个计算节点进行演练，通过`DBNodeCrashList`传入期望计算节点名",
-      "name": "FaultSimulateMode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The automatic IMCI-based query acceleration feature. Valid values:\n`ON`: enabled.\n`OFF`: disabled.\n\nOnly PolarDB for MySQL clusters are supported.\nFor cluster version requirements, see https://help.aliyun.com/document_detail/2854119.html",
-      "help_zh": "自动列存索引提速功能。取值范围如下：\n`ON`：开启。\n`OFF`：关闭。\n\n仅支持PolarDB MySQL版集群。\n集群版本限制，请参见https://help.aliyun.com/document_detail/2854119.html",
-      "name": "ImciAutoIndex",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Modifies the row compression settings",
-      "help_zh": "修改行压缩设置",
-      "name": "ModifyRowCompression",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The cross-zone automatic switchover mode of the cluster. Valid values:\n\nON: enables cross-zone automatic switchover.\nOFF: disables cross-zone automatic switchover",
-      "help_zh": "集群的跨可用区自动切换模式，取值范围如下：\n\nON：开启跨可用区自动切换。\nOFF：关闭跨可用区自动切换",
-      "name": "StandbyHAMode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to enable automatic storage scaling for the Standard Edition cluster. Valid values:\n\nEnable: enables automatic storage scaling.\nDisable: disables automatic storage scaling",
-      "help_zh": "标准版集群是否开启存储自动扩容。取值范围如下：\n\nEnable：开启存储自动扩容。\nDisable：关闭存储自动扩容",
-      "name": "StorageAutoScale",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The upper limit for automatic storage scaling of the Standard Edition cluster. Unit: GB.\n\nThe maximum value is 32000",
-      "help_zh": "标准版集群存储自动扩容上限，单位：GB。\n\n取值最大为32000",
-      "name": "StorageUpperBound",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The JSON string that contains the information about the databases and tables to be restored. The values of the database and table information are strings.\nExample: `[\n   {\n       \"tables\":[\n           {\n               \"name\":\"testtb\",\n               \"type\":\"table\",\n               \"newname\":\"testtb_restore\"\n           }\n       ],\n       \"name\":\"testdb\",\n       \"type\":\"db\",\n       \"newname\":\"testdb_restore\"\n   }\n]`.\nYou can call the https://help.aliyun.com/document_detail/194770.html operation to query the names of databases and tables that can be restored, and then specify the information in the corresponding fields in the preceding example",
-      "help_zh": "需要还原的目标库表信息的JSON串，库表信息的值都是字符串类型。\n例如，`[\n   {\n       \"tables\":[\n           {\n               \"name\":\"testtb\",\n               \"type\":\"table\",\n               \"newname\":\"testtb_restore\"\n           }\n       ],\n       \"name\":\"testdb\",\n       \"type\":\"db\",\n       \"newname\":\"testdb_restore\"\n   }\n]`。\n您可以通过https://help.aliyun.com/document_detail/194770.html接口查看支持恢复的库表名称详情，并将支持恢复的库表信息填入上述例子中的对应位置",
-      "name": "TableMeta",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "DBClusterId": {
+            "description_en": "The cluster ID",
+            "description_zh": "集群ID",
+            "example": "pc-*************",
+            "type": "string"
+          },
+          "OrderId": {
+            "description_en": "The order ID",
+            "description_zh": "生成的订单ID",
+            "example": "2148126708*****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CD3FA5F3-FAF3-44CA-AFFF-BAF869******",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

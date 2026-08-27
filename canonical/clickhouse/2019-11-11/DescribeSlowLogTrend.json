@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. Call the https://help.aliyun.com/document_detail/170875.html operation to query region IDs",
       "help_zh": "地域ID。您可以通过调用https://help.aliyun.com/document_detail/170875.html接口查询地域ID",
@@ -33,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cc-bp11xxl475ui8****",
       "help_en": "The cluster ID. Call the https://help.aliyun.com/document_detail/170879.html operation to query information about all clusters in a specific region, including cluster IDs",
       "help_zh": "集群ID。您可以通过调用https://help.aliyun.com/document_detail/170879.html接口查询目标地域下所有的集群信息，包括集群ID",
@@ -46,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2022-05-20 16:00:00",
       "help_en": "The beginning of the time range to query. Specify the time in the \\`yyyy-MM-dd hh:mm:ss\\` format. The time is in UTC",
       "help_zh": "查询开始时间。格式：yyyy-MM-dd hh:mm:ss（UTC时间）",
@@ -59,6 +62,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2022-05-27 16:00:00",
       "help_en": "The end of the time range to query. Specify the time in the \\`yyyy-MM-dd hh:mm:ss\\` format. The time is in UTC.\n\nThe end time must be later than the start time. The time range cannot exceed 7 days",
       "help_zh": "查询结束时间，格式：yyyy-MM-dd hh:mm:ss（UTC时间）。\n查询结束时间需晚于查询开始时间，且与查询开始时间间隔小于7天",
@@ -76,6 +80,8 @@
       "help_en": "The execution duration of a slow SQL query, in milliseconds. The minimum value is 1000. The default value is 1000. The operation returns slow SQL queries that take longer than this duration to execute",
       "help_zh": "慢SQL的执行耗时。最小值为1000，默认值为1000。单位：毫秒。返回参数将返回超过该耗时的慢SQL",
       "location": "query",
+      "maximum": "9999999999",
+      "minimum": "0",
       "name": "query_duration_ms",
       "options": [
         "--query-duration-ms"
@@ -87,5 +93,151 @@
   ],
   "pathPattern": "",
   "product_code": "clickhouse",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "7D3ECB0E-98CA-5E08-A9CA-F70C5A1E9BDF",
+            "type": "string"
+          },
+          "SlowLogTrend": {
+            "description_en": "The result set of the slow SQL queries",
+            "description_zh": "慢SQL的结果集合",
+            "properties": {
+              "Data": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ResultSet": {
+                    "description_en": "The list of slow SQL queries",
+                    "description_zh": "慢SQL列表",
+                    "items": {
+                      "description_en": "The list of slow SQL queries",
+                      "description_zh": "慢SQL列表",
+                      "properties": {
+                        "AvgQueryDurationMs": {
+                          "description_en": "The average execution duration. Unit: milliseconds",
+                          "description_zh": "平均执行耗时。单位：毫秒",
+                          "example": "2000",
+                          "type": "string"
+                        },
+                        "Count": {
+                          "description_en": "The total execution duration of slow SQL queries. Unit: milliseconds",
+                          "description_zh": "慢SQL执行耗时的总和。单位：毫秒",
+                          "example": "4000",
+                          "type": "string"
+                        },
+                        "MaxQueryDurationMs": {
+                          "description_en": "The longest execution duration. Unit: milliseconds",
+                          "description_zh": "最长执行耗时。单位：毫秒",
+                          "example": "3000",
+                          "type": "string"
+                        },
+                        "MinQueryDurationMs": {
+                          "description_en": "The shortest execution duration. Unit: milliseconds",
+                          "description_zh": "最短执行耗时。单位：毫秒",
+                          "example": "1000",
+                          "type": "string"
+                        },
+                        "QueryStartTime": {
+                          "description_en": "The start time of the query. The time is in the \\`yyyy-MM-dd hh:mm:ss\\` format. The time is in UTC",
+                          "description_zh": "查询开始的时间。格式：yyyy-MM-dd hh:mm:ss（UTC时间）",
+                          "example": "2022-05-22 20:00:01",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Rows": {
+                "description_en": "The number of rows in the result set",
+                "description_zh": "返回结果集的行数",
+                "example": "1",
+                "type": "string"
+              },
+              "RowsBeforeLimitAtLeast": {
+                "description_en": "The minimum number of rows that are returned before the \\`LIMIT\\` clause is applied",
+                "description_zh": "分页大小",
+                "example": "1",
+                "type": "string"
+              },
+              "Statistics": {
+                "description_en": "The statistics of the query results",
+                "description_zh": "查询结果的统计信息",
+                "properties": {
+                  "BytesRead": {
+                    "description_en": "The amount of data read. Unit: bytes",
+                    "description_zh": "读取的数据量大小。单位：Byte",
+                    "example": "697899",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "ElapsedTime": {
+                    "description_en": "The query execution duration. Unit: seconds",
+                    "description_zh": "读取SQL的耗时。单位：毫秒",
+                    "example": "0.001703578",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "RowsRead": {
+                    "description_en": "The number of rows read",
+                    "description_zh": "读取的行数",
+                    "example": "14721",
+                    "format": "int32",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "TableSchema": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ResultSet": {
+                    "description_en": "The table schema",
+                    "description_zh": "表结构",
+                    "items": {
+                      "description_en": "The schema of the result table",
+                      "description_zh": "结果表结构",
+                      "properties": {
+                        "Name": {
+                          "description_en": "The column name",
+                          "description_zh": "列名",
+                          "example": "query_start_time",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "The column type",
+                          "description_zh": "列类型",
+                          "example": "UInt64",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

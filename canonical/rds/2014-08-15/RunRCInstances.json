@@ -51,6 +51,8 @@
       "help_en": "The number of RDS Custom instances that you want to create. The parameter is available if you want to create multiple RDS Custom instances at a time.\n\nValid values: 1 to 10. Default value: 1",
       "help_zh": "需要创建的RDS Custom实例数量。本参数仅适用于批量创建RDS Custom实例。\n\n取值范围：1~30；默认为1",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "amount",
       "options": [
         "--amount"
@@ -73,6 +75,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "Month",
+        "Year"
+      ],
       "example": "Month",
       "help_en": "The unit of the subscription duration. Valid values:\n\nYear\nMonth (default)",
       "help_zh": "包年包月计费方式的时长单位。取值范围：\nYear：年\nMonth（默认）：月",
@@ -805,422 +811,48 @@
   "pathPattern": "",
   "product_code": "Rds",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "ACU type",
-      "help_zh": "acu类型",
-      "name": "AcuType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The number of RDS Custom instances that you want to create. The parameter is available if you want to create multiple RDS Custom instances at a time.\n\nValid values: 1 to 10. Default value: 1",
-      "help_zh": "需要创建的RDS Custom实例数量。本参数仅适用于批量创建RDS Custom实例。\n\n取值范围：1~30；默认为1",
-      "name": "Amount",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Specifies whether to enable the automatic payment feature. Valid values:\n\ntrue (default): enables the feature. Make sure that your account balance is sufficient.\nfalse: disables the feature. An unpaid order is generated.\n\nIf your account balance is insufficient, you can set the AutoPay parameter to false. In this case, an unpaid order is generated. You can complete the payment in the Expenses and Costs console",
-      "help_zh": "是否自动支付。取值范围：\ntrue（默认）：自动支付。您需要确保账户余额充足。\nfalse：只生成订单不扣费。\n如果您的支付方式余额不足，可以将参数AutoPay设置为false，此时会生成未支付订单，您可以登录RDS管理控制台自行支付",
-      "name": "AutoPay",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to enable auto-renewal for the instance. Valid values:\n\ntrue (default)\nfalse",
-      "help_zh": "实例是否自动续费，取值：\n\ntrue（默认）：是\nfalse：否",
-      "name": "AutoRenew",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to automatically use a coupon. Valid values:\ntrue (default): Yes.\nfalse: No.\n\nIf you use a coupon and later decrease the quota, the amount offset by the coupon will not be refunded",
-      "help_zh": "是否自动使用优惠券，取值：\ntrue（默认）：是。\nfalse：否。\n\n使用优惠券后，若需要进行降配操作，由代金券抵扣的金额将不会进行退款",
-      "name": "AutoUseCoupon",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "name": "BusinessInfo",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The client token that is used to ensure the idempotence of the request. You can use the client to generate the token, but you must make sure that the token is unique among different requests. The token can contain only ASCII characters and cannot exceed 64 characters in length",
-      "help_zh": "用于保证请求的幂等性，防止重复提交请求。由客户端生成该参数值，要保证在不同请求间唯一，最大值不超过64个ASCII字符，且该参数值中不能包含非ASCII字符",
-      "name": "ClientToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Information about the ACK Edge cluster",
-      "help_zh": "ACK Edge集群信息",
-      "name": "CreateAckEdgeParam",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Reserved parameter. Not supported currently",
-      "help_zh": "预留参数，暂不支持",
-      "name": "CreateExtraParam",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether the instance can be added to an ACK cluster. When this parameter is set to 1, the created instance can be added to an ACK cluster by invoking the AttachRCInstances API operation, enabling efficient management of container applications.\n\n1: Yes.\n0 (default): No",
-      "help_zh": "是否允许加入ACK集群。该参数配置为1时，创建的实例可以通过API接口AttachRCInstances添加到ACK集群中，从而实现对容器应用的高效管理。\n\n1：是。\n0（默认）：否",
-      "name": "CreateMode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The information about the data disks",
-      "help_zh": "数据盘列表",
-      "name": "DataDisk",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "Category",
-          "position": "query",
-          "required": false,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "InstanceIdSets": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "InstanceIdSet": {
+                "description_en": "The instance IDs (InstanceIdSet)",
+                "description_zh": "实例ID（InstanceIdSet）列表",
+                "items": {
+                  "description_en": "The instance IDs (InstanceIdSet)",
+                  "description_zh": "实例ID（InstanceIdSet）列表",
+                  "example": "{'InstanceIdSet': ['rc-x0a263765axt7e****']}",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "OrderId": {
+            "description_en": "The order ID",
+            "description_zh": "订单ID",
+            "example": "237850846720798",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "535BD857-E88F-5B4F-A18C-FAF59A74741F",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
         },
-        {
-          "name": "DeleteWithInstance",
-          "position": "query",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "name": "Device",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "Encrypted",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "PerformanceLevel",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "Size",
-          "position": "query",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "name": "SnapshotId",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to enable release protection. Valid values:  \ntrue: Enabled  \nfalse (default): Disabled",
-      "help_zh": "是否开启释放保护功能。取值：\ntrue：开启\nfalse（默认）：关闭",
-      "name": "DeletionProtection",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The deployment set ID",
-      "help_zh": "部署集ID",
-      "name": "DeploymentSetId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The instance description. The description must be 2 to 256 characters in length and cannot start with http:// or https://",
-      "help_zh": "实例描述。长度为 2~256 个英文或中文字符，不能以http://和https://开头",
-      "name": "Description",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to perform only a dry run, without performing the actual request. Valid values:\n\ntrue: performs only a dry run. The system checks the request for potential issues, including missing parameter values, incorrect request syntax, service limits, and insufficient inventory errors.\nfalse (default): performs a dry run and performs the actual request. If the request passes the dry run, the instance is directly created",
-      "help_zh": "是否对本次创建实例的操作执行预检查，取值：\ntrue：执行预检查操作，不创建实例。检查项目包含请求参数、请求格式、业务限制和库存等。\nfalse（默认）：发送正常请求，通过检查后直接创建实例",
-      "name": "DryRun",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Hostname of the instance (2–64 characters).  \n\nMultiple segments separated by periods (.) are supported. Each segment can contain uppercase and lowercase English letters, digits, and hyphens (-).  \nA period (.) or hyphen (-) cannot appear at the beginning or end of a segment, nor can two periods or hyphens appear consecutively",
-      "help_zh": "实例主机名（2~64个字符）。\n\n支持使用英文句号（.）分隔为多段，每段允许大小写英文字母、数字和短划线（-）。\n英文句号（.）或短划线（-）不能作为首尾字符，更不能连续使用",
-      "name": "HostName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the image used by the instance",
-      "help_zh": "实例使用的镜像ID",
-      "name": "ImageId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The billing method of the instance. Set the value to Prepaid, which indicates the subscription billing method",
-      "help_zh": "付费类型，取值：\nPrepaid：包年包月。\nPostpaid：按量付费",
-      "name": "InstanceChargeType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The instance name",
-      "help_zh": "长度为2~128个字符。以大小写字母或中文开头，可包含大小写字母、中文、数字、点号（）、下划线（）、半角冒号（:）或连字符（-)。默认值为实例的InstanceId。创建多台RdsCustom实例时，您可以批量设置有序的实例名称，并且可以包含方括号（[]）和逗号（,）。具体操作，请参见创建RDS Custom实例 (https://help.aliyun.com/zh/rds/apsaradb-rds-for-mysql/create-an-rds-custom-instance?spm=a2c4g.11186623.0.0.36ef7288jg7aZD#00481f9ba381u)",
-      "name": "InstanceName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The instance type. For more information about the instance types that are supported by RDS Custom instances, see https://help.aliyun.com/document_detail/2844823.html",
-      "help_zh": "实例资源规格。RDS Custom实例支持的资源规格，请参见https://help.aliyun.com/document_detail/2844823.html",
-      "name": "InstanceType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The reserved parameter. This parameter is not supported",
-      "help_zh": "预留参数，暂不支持",
-      "name": "InternetChargeType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The reserved parameter. This parameter is not supported",
-      "help_zh": "Custom for SQL Server公网出带宽最大值，单位为Mbit/s。\n\n取值范围：0~1024；默认值：0",
-      "name": "InternetMaxBandwidthOut",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The reserved parameter. This parameter is not supported",
-      "help_zh": "预留参数，暂不支持",
-      "name": "IoOptimized",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The name of the AccessKey pair. You can specify only one name",
-      "help_zh": "密钥对名称。仅支持传单个名称",
-      "name": "KeyPairName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "NetworkOptions",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The password of the account that is used to log on to the instance",
-      "help_zh": "实例的账号密码。长度为 8 至 30 个字符，必须同时包含大小写英文字母、数字和特殊符号中的三类字符。特殊符号可以是：`()~!@#$%^&*-_+=|{}[]:;'<>,.?/`",
-      "name": "Password",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to use the password preset in the image. When this parameter is used, the Password parameter must be empty, and you must ensure that the selected image has a password already configured. Default value: false",
-      "help_zh": "是否使用镜像预设的密码。使用该参数时，Password 参数必须为空，同时您需要确保使用的镜像已经设置了密码。 默认false",
-      "name": "PasswordInherit",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The subscription duration of the instance. Default value: 1",
-      "help_zh": "购买资源的时长，默认为1",
-      "name": "Period",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The unit of the subscription duration. Valid values:\n\nYear\nMonth (default)",
-      "help_zh": "包年包月计费方式的时长单位。取值范围：\nYear：年\nMonth（默认）：月",
-      "name": "PeriodUnit",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "PrivateIpAddress",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The coupon code",
-      "help_zh": "优惠券Code",
-      "name": "PromotionCode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The region ID. You can call the DescribeRegions operation to query the most recent region list",
-      "help_zh": "地域ID。可调用DescribeRegions获取",
-      "name": "RegionId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The resource group ID",
-      "help_zh": "资源组ID",
-      "name": "ResourceGroupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Scheduled elasticity rule",
-      "help_zh": "分时弹性规则",
-      "name": "ScheduledRule",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The reserved parameter. This parameter is not supported",
-      "help_zh": "预留参数，暂不支持",
-      "name": "SecurityEnhancementStrategy",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the security group to which you want to add the new instance. Instances in the same security group can communicate with each other. The maximum number of instances allowed in a security group varies based on the type of the security group. For more information, see the \"Security group limits\" section in https://help.aliyun.com/document_detail/25412.html.\n\nThe network type of the instance is determined by the security group specified by the SecurityGroupId parameter. For example, if the network type of the specified security group is VPC, the instance is a VPC-type instance. In this case, you must specify the VSwitchId parameter",
-      "help_zh": "实例所属于的安全组ID。同一个安全组内的实例之间可以互相访问，一个安全组能容纳的实例数量视安全组类型而定，具体请参见https://help.aliyun.com/document_detail/25412.html的安全组章节。\nSecurityGroupId决定了实例的网络类型，例如，如果设置的安全组的网络类型为专有网络VPC，实例则为VPC类型，并同时需要指定参数VSwitchId",
-      "name": "SecurityGroupId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "SecurityGroupIds",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The spot strategy for pay-as-you-go instances. This parameter takes effect only when the InstanceChargeType parameter is set to PostPaid. Valid values:  \n\nNoSpot: Normal pay-as-you-go instance.  \nSpotAsPriceGo: The system automatically bids based on the current market price.  \n\nDefault value: NoSpot",
-      "help_zh": "按量付费实例的竞价策略。当参数InstanceChargeType取值为PostPaid时生效。取值范围：\n\nNoSpot：正常按量付费实例。\nSpotAsPriceGo：系统自动出价，跟随当前市场实际价格。\n\n默认值：NoSpot",
-      "name": "SpotStrategy",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The deployment type of RDS Custom. Valid values:\n\neni: Dual network interface cards.\nedge: Point of presence (POP) node pool.\nshare: VPC",
-      "help_zh": "RDS Custom的形态。取值：\n\neni：双网卡。\nedge：边缘节点池。\nshare：VPC",
-      "name": "SupportCase",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The specification of the system disk",
-      "help_zh": "系统盘规格",
-      "name": "SystemDisk",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The list of tags",
-      "help_zh": "标签列表",
-      "name": "Tag",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "Key",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "name": "Value",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "array"
-    },
-    {
-      "help_en": "The instance user data. The raw data can be up to 32 KB in size.  \n\nDo not pass sensitive information, such as passwords and private keys, in plaintext. If you must pass such information, encrypt it first, encode it in Base64, and then transmit it. Decrypt and use it inside the instance. The following is an example of converting a script into a Base64-encoded string:  \n\n```\necho -n '#!/bin/sh\necho \"Hello World\"' | base64 -w 0\n```",
-      "help_zh": "实例自定义数据，原始数据最多为32KB。\n\n请勿以明文形式传递机密信息，例如密码和私钥等。如果确需传入，请先加密并使用Base64编码后再传送，再在实例内部进行解密使用。以下是将脚本转换为Base64字符串的示例：\n\n```\necho -n '#!/bin/sh\necho \"Hello World\"' | base64 -w 0\n```",
-      "name": "UserData",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether custom data is Base64-encoded.  \n\ntrue: Yes.  \nfalse (default): No",
-      "help_zh": "自定义数据，是否以Base64方式编码。\n\ntrue：是。\nfalse（默认）：否",
-      "name": "UserDataInBase64",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The vSwitch ID of the instance. You must specify this parameter when you create an instance of the virtual private cloud (VPC) type. The specified vSwitch and security group must belong to the same VPC.\n\nIf you specify the VSwitchId parameter, the zone specified by the ZoneId parameter must be the same as the zone in which the specified vSwitch resides. You can leave the ZoneId parameter empty. In this case, the system uses the zone in which the specified vSwitch resides",
-      "help_zh": "目标实例的虚拟交换机ID。如果您创建的是VPC类型RDS Custom实例，必须指定虚拟交换机ID，且安全组和虚拟交换机在同一个专有网络VPC中。\n如果您设置了VSwitchId参数，则设置的ZoneId参数必须和交换机所在的可用区保持一致。您也可以不设置ZoneId参数，系统将自动选择指定交换机所在的可用区",
-      "name": "VSwitchId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The zone ID of the instance. You can call the DescribeZones operation to query the zone IDs.\n\nIf you specify the VSwitchId parameter, the zone specified by the ZoneId parameter must be the same as the zone in which the specified vSwitch resides. You can leave the ZoneId parameter empty. In this case, the system uses the zone in which the specified vSwitch resides",
-      "help_zh": "实例所属的可用区ID，您可以调用DescribeZones获取可用区列表。\n如果您指定了VSwitchId参数，则指定的ZoneId参数必须和交换机所在的可用区保持一致。您也可以不指定ZoneId参数，系统将自动选择指定的交换机所在的可用区",
-      "name": "ZoneId",
-      "position": "query",
-      "required": false,
-      "type": "string"
+        "type": "object"
+      }
     }
-  ]
+  }
 }

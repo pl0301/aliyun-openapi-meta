@@ -2,6 +2,485 @@
   "camel_example": "aliyun csas CreatePrivateAccessApplication --region cn-hangzhou --Status Enabled --BrowserAccessStatus Disabled --PortRanges.1.Begin 80 --Description '这是一条内网访问应用' --UnauthorizedAccessConfig 'example-string' --AddressGroups.1 'example-string' --PortRanges.1.End 81 --Name private_access_application_name --TagIds.1 'tag-d3f64e8bdd4a0000' --L7ProxyDomainCustom 'app1.example.com' --L7Config 'example-string' --L7ProxyDomainAutomaticPrefix 'app-sample' --ConfigMode 'example-string' --Addresses.1 '192.168.0.0/16' --Protocol All --method POST --force",
   "cmd_full_name": "csas create-private-access-application",
   "cmd_name": "create-private-access-application",
+  "components": {
+    "schemas": {
+      "AddressGroup": {
+        "description_en": "Application address group",
+        "description_zh": "应用地址组",
+        "properties": {
+          "Addresses": {
+            "description_en": "Address list",
+            "description_zh": "地址列表",
+            "items": {
+              "description_en": "Address information",
+              "description_zh": "地址信息",
+              "example": "mmtcafts.alipay.com",
+              "required": false,
+              "type": "string"
+            },
+            "required": false,
+            "type": "array"
+          },
+          "Ports": {
+            "description_en": "Port list",
+            "description_zh": "端口信息列表",
+            "items": {
+              "description_en": "Port information",
+              "description_zh": "端口信息列表",
+              "properties": {
+                "Begin": {
+                  "description_en": "Start port. Must be less than or equal to the end port",
+                  "description_zh": "起始端口。小于等于结束端口",
+                  "example": "123",
+                  "format": "int32",
+                  "required": false,
+                  "type": "integer"
+                },
+                "End": {
+                  "description_en": "End port. Must be greater than or equal to the start port",
+                  "description_zh": "结束端口。大于等于起始端口",
+                  "example": "1234",
+                  "format": "int32",
+                  "required": false,
+                  "type": "integer"
+                }
+              },
+              "required": false,
+              "type": "object"
+            },
+            "required": false,
+            "type": "array"
+          }
+        },
+        "required": false,
+        "type": "object"
+      },
+      "PAApplicationUnauthorizedAccessConfig": {
+        "description_en": "The configuration for unauthorized application access requests",
+        "description_zh": "未授权应用访问申请配置",
+        "properties": {
+          "AllowReport": {
+            "description_en": "Specifies whether end users are allowed to submit approval requests",
+            "description_zh": "是否允许终端用户提交审批",
+            "example": "true",
+            "type": "boolean"
+          },
+          "BlockContent": {
+            "description_en": "The content displayed in the client interception pop-up window",
+            "description_zh": "客户端拦截弹窗展示内容",
+            "properties": {
+              "BlockTextEn": {
+                "description_en": "The English content",
+                "description_zh": "英文内容",
+                "properties": {
+                  "BrowserAlertContent": {
+                    "description_en": "The prompt content of the English block page",
+                    "description_zh": "英文拦截页面提示内容",
+                    "example": "You do not have permission to access this system. If you need to do so, please submit a permission request.",
+                    "type": "string"
+                  },
+                  "BrowserAlertStyle": {
+                    "description_en": "The background pattern of the English block page",
+                    "description_zh": "英文拦截页面背景图案",
+                    "example": "https://img.alicdn.com/xxx.png\n",
+                    "type": "string"
+                  },
+                  "BrowserAlertTitle": {
+                    "description_en": "The title of the English block page",
+                    "description_zh": "英文拦截页面标题",
+                    "example": "No Permission Access",
+                    "type": "string"
+                  },
+                  "ReportButtonText": {
+                    "description_en": "The text of the English report approval button",
+                    "description_zh": "英文报备审批按钮内容",
+                    "example": "Report",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "BlockTextZh": {
+                "description_en": "The Chinese content",
+                "description_zh": "中文内容",
+                "properties": {
+                  "BrowserAlertContent": {
+                    "description_en": "The prompt content of the block page",
+                    "description_zh": "拦截页面提示内容",
+                    "example": "您暂无权限访问该系统。如有工作需要，请提交权限申请。",
+                    "type": "string"
+                  },
+                  "BrowserAlertStyle": {
+                    "description_en": "The background pattern of the block page",
+                    "description_zh": "拦截页面背景图案",
+                    "example": "https://img.alicdn.com/xxx.png",
+                    "type": "string"
+                  },
+                  "BrowserAlertTitle": {
+                    "description_en": "The title of the block page",
+                    "description_zh": "拦截页面标题",
+                    "example": "无权限访问",
+                    "type": "string"
+                  },
+                  "ReportButtonText": {
+                    "description_en": "The text of the report approval button",
+                    "description_zh": "报备审批按钮内容",
+                    "example": "前往报备",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "Enabled": {
+            "description_en": "Specifies whether the feature is enabled. Valid values:\ntrue: Enabled. Users are redirected to an interception page when they access an unauthorized application.\nfalse: Disabled. An error message is returned by default when users access an unauthorized application",
+            "description_zh": "是否启用：\ntrue: 启用，应用未授权情况会跳转到拦截页面\nfalse: 未启用，应用未授权情况默认返回错误信息",
+            "example": "true",
+            "type": "boolean"
+          },
+          "ReportProcessId": {
+            "description_en": "The ID of the approval flow associated with the policy",
+            "description_zh": "策略关联审批流程ID",
+            "example": "approval-process-0ee84ac4f9c31bc5",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PAL7Config": {
+        "description_en": "The configuration for Layer 7 applications",
+        "description_zh": "7层应用配置",
+        "properties": {
+          "BypassConfig": {
+            "description_en": "The configuration for anonymous access",
+            "description_zh": "匿名访问配置",
+            "properties": {
+              "AppBypassFroms": {
+                "description_en": "An array of source IP address ranges that are allowed to anonymously access the application",
+                "description_zh": "可以匿名访问应用的源IP段数组",
+                "items": {
+                  "description_en": "An IP address range in CIDR format",
+                  "description_zh": "CIDR格式的IP段",
+                  "example": "10.x.x.1/24\n",
+                  "type": "string"
+                },
+                "title": "app匿名访问源IP",
+                "type": "array"
+              },
+              "Mode": {
+                "default": "disabled",
+                "description_en": "The anonymous access mode. The default value is disabled. Valid values:\n\ndisabled: Disables anonymous access.\n\nurl: Sets anonymous access at the URL level.\n\napp: Sets anonymous access at the application level",
+                "description_zh": "匿名访问模式。默认为disabled。取值：\ndisabled：禁用匿名访问。\nurl：按URL粒度进行匿名访问设置。\napp：按应用粒度进行匿名访问设置",
+                "enum": [
+                  "disabled",
+                  "app",
+                  "url"
+                ],
+                "example": "disabled",
+                "title": "匿名访问模式",
+                "type": "string"
+              },
+              "UrlBypassRules": {
+                "description_en": "An array of rules for anonymous access to URLs",
+                "description_zh": "URL匿名访问规则数组",
+                "items": {
+                  "description_en": "A rule for anonymous access to a URL",
+                  "description_zh": "URL匿名访问规则",
+                  "properties": {
+                    "Froms": {
+                      "description_en": "An array of source IP address ranges that are allowed to anonymously access the application paths",
+                      "description_zh": "可以匿名访问应用路径的源IP段数组",
+                      "items": {
+                        "description_en": "An IP address range in CIDR format",
+                        "description_zh": "CIDR格式的IP段",
+                        "example": "10.x.x.1/24\n",
+                        "type": "string"
+                      },
+                      "title": "源IP CIDR",
+                      "type": "array"
+                    },
+                    "Paths": {
+                      "description_en": "The URL paths that allow anonymous access",
+                      "description_zh": "允许匿名访问的URL路径",
+                      "items": {
+                        "description_en": "A URL path",
+                        "description_zh": "URL路径",
+                        "example": "/api/xxx",
+                        "type": "string"
+                      },
+                      "title": "url路径",
+                      "type": "array"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "url匿名访问规则",
+                "type": "array"
+              }
+            },
+            "title": "匿名访问",
+            "type": "object"
+          },
+          "CertId": {
+            "description_en": "The certificate ID. This parameter is required when you use a custom proxy domain name",
+            "description_zh": "证书ID。使用自定义代理域名时该参数必填",
+            "example": "cert-xxxx",
+            "title": "证书ID",
+            "type": "string"
+          },
+          "DnsConfig": {
+            "description_en": "The DNS configuration",
+            "description_zh": "DNS配置",
+            "properties": {
+              "DnsServers": {
+                "description_en": "An array of DNS server addresses. The gateway preferentially uses the DNS servers configured here to resolve internal domain names",
+                "description_zh": "DNS服务器地址数组。网关会优先使用此处配置的DNS服务器来解析内网域名",
+                "items": {
+                  "description_en": "A DNS server address",
+                  "description_zh": "DNS服务器地址",
+                  "example": "10.x.x.1",
+                  "type": "string"
+                },
+                "title": "DNS服务器地址",
+                "type": "array"
+              }
+            },
+            "title": "DNS配置",
+            "type": "object"
+          },
+          "JsHookConfig": {
+            "description_en": "The configuration for rewriting internal network requests in JavaScript",
+            "description_zh": "JS内网请求改写配置",
+            "properties": {
+              "Mode": {
+                "description_en": "The mode for rewriting internal network requests in JavaScript. The default value is disabled. Valid values:\n\ndisabled: Disables traffic redirection for JavaScript.\n\nwhitelist: Enables the whitelist mode to redirect traffic as needed",
+                "description_zh": "JS内网请求改写模式。默认为disabled。取值：\ndisabled：禁用JS引流。\nwhitelist：白名单模式，按需引流",
+                "enum": [
+                  "disabled",
+                  "whitelist",
+                  "blacklist",
+                  "global",
+                  "on_demand"
+                ],
+                "enumValueTitles": {
+                  "disabled": "disabled",
+                  "whitelist": "whitelist"
+                },
+                "example": "disabled",
+                "title": "JS改写模式",
+                "type": "string"
+              },
+              "ReplaceRules": {
+                "description_en": "An array of rules for rewriting internal network requests in JavaScript",
+                "description_zh": "JS内网请求改写规则数组",
+                "items": {
+                  "$ref": "#/components/schemas/PAL7ConfigReplaceRule",
+                  "description_en": "A rule for rewriting internal network requests in JavaScript",
+                  "description_zh": "JS内网请求改写规则"
+                },
+                "title": "改写规则",
+                "type": "array"
+              }
+            },
+            "title": "JS内网请求改写",
+            "type": "object"
+          },
+          "ProxyDomainTypes": {
+            "description_en": "The type of the proxy domain name. Valid values:\n\nautomatic: Uses a mapped proxy domain name.\n\ncustom: Uses a custom proxy domain name",
+            "description_zh": "代理域名类型。取值：\nautomatic：使用映射代理域名。\ncustom：使用自定义代理域名",
+            "enumValueTitles": {
+              "automatic": "映射代理域名",
+              "custom": "自定义代理域名"
+            },
+            "example": "automatic",
+            "format": "byte",
+            "title": "代理域名类型",
+            "type": "string"
+          },
+          "RequestHeaderRewriteConfig": {
+            "description_en": "The rules for rewriting HTTP request headers",
+            "description_zh": "HTTP请求头改写规则",
+            "properties": {
+              "Ops": {
+                "description_en": "An array of rewrite operations",
+                "description_zh": "改写操作数组",
+                "items": {
+                  "$ref": "#/components/schemas/PAL7ConfigRewriteOp",
+                  "description_en": "A rewrite operation",
+                  "description_zh": "改写操作"
+                },
+                "title": "改写操作",
+                "type": "array"
+              }
+            },
+            "title": "请求头改写",
+            "type": "object"
+          },
+          "RequestQueryRewriteConfig": {
+            "description_en": "The configuration for rewriting HTTP request query parameters",
+            "description_zh": "HTTP请求Query参数改写配置",
+            "properties": {
+              "Ops": {
+                "description_en": "An array of rewrite operations",
+                "description_zh": "改写操作数组",
+                "items": {
+                  "$ref": "#/components/schemas/PAL7ConfigRewriteOp",
+                  "description_en": "A rewrite operation",
+                  "description_zh": "改写操作"
+                },
+                "title": "改写操作",
+                "type": "array"
+              }
+            },
+            "title": "query参数改写",
+            "type": "object"
+          },
+          "ResponseHeaderRewriteConfig": {
+            "description_en": "The configuration for rewriting HTTP response headers",
+            "description_zh": "HTTP响应头重写配置",
+            "properties": {
+              "Ops": {
+                "description_en": "An array of rewrite operations",
+                "description_zh": "改写操作数组",
+                "items": {
+                  "$ref": "#/components/schemas/PAL7ConfigRewriteOp",
+                  "description_en": "A rewrite operation",
+                  "description_zh": "改写操作"
+                },
+                "title": "改写操作",
+                "type": "array"
+              }
+            },
+            "title": "响应头重写",
+            "type": "object"
+          },
+          "ResponseRewriteConfig": {
+            "description_en": "The configuration for rewriting internal domain names in HTML",
+            "description_zh": "HTML内网域名改写配置",
+            "properties": {
+              "Mode": {
+                "description_en": "The rewrite mode. The default value is auto. Valid values:\n\ndisabled: Disables rewriting of internal domain names in HTML.\n\nauto: Enables the automatic mode. The system automatically detects and rewrites internal domain names in HTML",
+                "description_zh": "改写模式。默认为auto。取值：\ndisabled：禁用HTML内网域名改写。\nauto：自动模式，会自动识别HTML中的内网域名并进行改写",
+                "enum": [
+                  "disabled",
+                  "auto",
+                  "replace"
+                ],
+                "enumValueTitles": {
+                  "auto": "auto",
+                  "disabled": "disabled"
+                },
+                "example": "auto",
+                "title": "改写模式",
+                "type": "string"
+              },
+              "ReplaceRules": {
+                "description_en": "An array of rewrite rules",
+                "description_zh": "改写规则数组",
+                "items": {
+                  "$ref": "#/components/schemas/PAL7ConfigReplaceRule",
+                  "description_en": "A rewrite rule",
+                  "description_zh": "改写规则"
+                },
+                "title": "改写规则",
+                "type": "array"
+              }
+            },
+            "title": "HTML内网域名改写",
+            "type": "object"
+          }
+        },
+        "title": "PA7层应用配置",
+        "type": "object"
+      },
+      "PAL7ConfigReplaceRule": {
+        "description_en": "Replacement rule",
+        "description_zh": "替换规则",
+        "properties": {
+          "From": {
+            "description_en": "The original content to be replaced",
+            "description_zh": "替换原内容",
+            "example": "before",
+            "title": "替换源",
+            "type": "string"
+          },
+          "To": {
+            "description_en": "The target content for replacement",
+            "description_zh": "替换目标内容",
+            "example": "after",
+            "title": "替换目标",
+            "type": "string"
+          }
+        },
+        "title": "替换规则",
+        "type": "object"
+      },
+      "PAL7ConfigRewriteOp": {
+        "description_en": "Rewrite operation",
+        "description_zh": "改写操作",
+        "properties": {
+          "Key": {
+            "description_en": "HTTP header or query parameter name. Required",
+            "description_zh": "HTTP Header或Query参数名，必填参数",
+            "example": "X-Test-Param",
+            "title": "header或query参数名，必填",
+            "type": "string"
+          },
+          "OldValue": {
+            "description_en": "Value to find and replace. Used only for the replace operation",
+            "description_zh": "替换操作参数：需要查找用于替换的值",
+            "example": "old_value",
+            "title": "Op=replace时的旧值",
+            "type": "string"
+          },
+          "Op": {
+            "description_en": "Operation type. Required.\n\nadd: Add an item.\n\nset: Set a value.\n\ndelete: Delete an item.\n\nreplace: Replace a value",
+            "description_zh": "操作类型，必填参数。取值：\nadd：添加操作。\nset：设置操作。\ndelete：删除操作。\nreplace：替换操作",
+            "enumValueTitles": {
+              "add": "添加",
+              "delete": "删除",
+              "replace": "替换",
+              "set": "设置"
+            },
+            "example": "add",
+            "title": "操作类型，必填",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "Target value as a string",
+            "description_zh": "字符串类型的目标值",
+            "example": "new_value",
+            "title": "新的值，可以为空",
+            "type": "string"
+          },
+          "ValueVariable": {
+            "description_en": "Target value as a string. Valid values:\n\nsase_app_name: Application name.\n\nsase_app_id: Application ID.\n\nsase_policy_name: Zero Trust policy name.\n\nsase_user_username: Username.\n\nsase_user_department: User department.\n\nsase_user_group_infos: User organizational structure information.\n\nsase_user_matched_user_groups: User group information.\n\nsase_client_addr: Client address.\n\nsase_client_ip: Client IP address.\n\nsase_client_port: Client port",
+            "description_zh": "字符串类型的目标值。取值：\n\nsase_app_name：应用名。\nsase_app_id：应用ID。\nsase_policy_name：零信任策略名。\nsase_user_username：用户名。\nsase_user_department：用户部门。\nsase_user_group_infos：用户组织架构信息。\nsase_user_matched_user_groups：用户组信息。\nsase_client_addr：客户端地址。\nsase_client_ip：客户端IP。\nsase_client_port：客户端端口",
+            "enum": [
+              "sase_app_name",
+              "sase_app_id",
+              "sase_policy_name",
+              "sase_policy_id",
+              "sase_user_username",
+              "sase_user_department",
+              "sase_user_group_infos",
+              "sase_user_matched_user_groups",
+              "sase_client_addr",
+              "sase_client_ip",
+              "sase_client_port"
+            ],
+            "example": "sase_app_name",
+            "title": "将值替换为变量。 sase_app_name: 应用名 sase_app_id: 应用ID sase_policy_name: 零信任策略名 sase_policy_id: 零信任策略ID sase_user_username: 用户名 sase_user_department: 用户部门 sase_user_group_infos: 用户组织架构信息 sase_user_matched_user_groups: 用户组信息 sase_client_addr: 客户端地址 sase_client_ip: 客户端IP sase_client_port: 客户端端口",
+            "type": "string"
+          }
+        },
+        "title": "改写操作",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates an internal-facing access application under the current Alibaba Cloud account",
   "description_zh": "创建当前阿里云账号下内网访问应用",
@@ -71,6 +550,8 @@
             "example": "80",
             "help_en": "The start port. The value must be less than or equal to the end port",
             "help_zh": "起始端口。小于等于结束端口",
+            "maximum": "65535",
+            "minimum": "1",
             "name": "begin",
             "options": [
               "--begin"
@@ -83,6 +564,8 @@
             "example": "81",
             "help_en": "The end port. The value must be greater than or equal to the start port",
             "help_zh": "结束端口。大于等于起始端口",
+            "maximum": "65535",
+            "minimum": "1",
             "name": "end",
             "options": [
               "--end"
@@ -107,6 +590,13 @@
       "type": "array"
     },
     {
+      "enum": [
+        "All",
+        "TCP",
+        "UDP",
+        "HTTP",
+        "HTTPS"
+      ],
       "example": "All",
       "help_en": "The protocol of the internal-facing access application. Valid values:\nAll: all protocols.\nTCP\nUDP",
       "help_zh": "内网访问应用协议。取值：\nAll：全部。\nTCP\nUDP",
@@ -120,6 +610,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Enabled",
+        "Disabled"
+      ],
       "example": "Enabled",
       "help_en": "The status of the internal-facing access application. Valid values:\nEnabled: enabled.\nDisabled: disabled",
       "help_zh": "内网访问应用状态。取值：\nEnabled：开启。\nDisabled：关闭",
@@ -195,6 +689,12 @@
               "element": {
                 "fields": [
                   {
+                    "enum": [
+                      "add",
+                      "set",
+                      "replace",
+                      "delete"
+                    ],
                     "example": "add",
                     "help_en": "Operation type. Required.\n\nadd: Add an item.\n\nset: Set a value.\n\ndelete: Delete an item.\n\nreplace: Replace a value",
                     "help_zh": "操作类型，必填参数。取值：\nadd：添加操作。\nset：设置操作。\ndelete：删除操作。\nreplace：替换操作",
@@ -243,6 +743,19 @@
                     "type": "string"
                   },
                   {
+                    "enum": [
+                      "sase_app_name",
+                      "sase_app_id",
+                      "sase_policy_name",
+                      "sase_policy_id",
+                      "sase_user_username",
+                      "sase_user_department",
+                      "sase_user_group_infos",
+                      "sase_user_matched_user_groups",
+                      "sase_client_addr",
+                      "sase_client_ip",
+                      "sase_client_port"
+                    ],
                     "example": "sase_app_name",
                     "help_en": "Target value as a string. Valid values:\n\nsase_app_name: Application name.\n\nsase_app_id: Application ID.\n\nsase_policy_name: Zero Trust policy name.\n\nsase_user_username: Username.\n\nsase_user_department: User department.\n\nsase_user_group_infos: User organizational structure information.\n\nsase_user_matched_user_groups: User group information.\n\nsase_client_addr: Client address.\n\nsase_client_ip: Client IP address.\n\nsase_client_port: Client port",
                     "help_zh": "字符串类型的目标值。取值：\n\nsase_app_name：应用名。\nsase_app_id：应用ID。\nsase_policy_name：零信任策略名。\nsase_user_username：用户名。\nsase_user_department：用户部门。\nsase_user_group_infos：用户组织架构信息。\nsase_user_matched_user_groups：用户组信息。\nsase_client_addr：客户端地址。\nsase_client_ip：客户端IP。\nsase_client_port：客户端端口",
@@ -281,6 +794,13 @@
         {
           "fields": [
             {
+              "enum": [
+                "disabled",
+                "whitelist",
+                "blacklist",
+                "global",
+                "on_demand"
+              ],
               "example": "disabled",
               "help_en": "The mode for rewriting internal network requests in JavaScript. The default value is disabled. Valid values:\n\ndisabled: Disables traffic redirection for JavaScript.\n\nwhitelist: Enables the whitelist mode to redirect traffic as needed",
               "help_zh": "JS内网请求改写模式。默认为disabled。取值：\ndisabled：禁用JS引流。\nwhitelist：白名单模式，按需引流",
@@ -360,6 +880,11 @@
               "type": "array"
             },
             {
+              "enum": [
+                "disabled",
+                "app",
+                "url"
+              ],
               "example": "disabled",
               "help_en": "The anonymous access mode. The default value is disabled. Valid values:\n\ndisabled: Disables anonymous access.\n\nurl: Sets anonymous access at the URL level.\n\napp: Sets anonymous access at the application level",
               "help_zh": "匿名访问模式。默认为disabled。取值：\ndisabled：禁用匿名访问。\nurl：按URL粒度进行匿名访问设置。\napp：按应用粒度进行匿名访问设置",
@@ -444,6 +969,12 @@
               "element": {
                 "fields": [
                   {
+                    "enum": [
+                      "add",
+                      "set",
+                      "replace",
+                      "delete"
+                    ],
                     "example": "add",
                     "help_en": "Operation type. Required.\n\nadd: Add an item.\n\nset: Set a value.\n\ndelete: Delete an item.\n\nreplace: Replace a value",
                     "help_zh": "操作类型，必填参数。取值：\nadd：添加操作。\nset：设置操作。\ndelete：删除操作。\nreplace：替换操作",
@@ -492,6 +1023,19 @@
                     "type": "string"
                   },
                   {
+                    "enum": [
+                      "sase_app_name",
+                      "sase_app_id",
+                      "sase_policy_name",
+                      "sase_policy_id",
+                      "sase_user_username",
+                      "sase_user_department",
+                      "sase_user_group_infos",
+                      "sase_user_matched_user_groups",
+                      "sase_client_addr",
+                      "sase_client_ip",
+                      "sase_client_port"
+                    ],
                     "example": "sase_app_name",
                     "help_en": "Target value as a string. Valid values:\n\nsase_app_name: Application name.\n\nsase_app_id: Application ID.\n\nsase_policy_name: Zero Trust policy name.\n\nsase_user_username: Username.\n\nsase_user_department: User department.\n\nsase_user_group_infos: User organizational structure information.\n\nsase_user_matched_user_groups: User group information.\n\nsase_client_addr: Client address.\n\nsase_client_ip: Client IP address.\n\nsase_client_port: Client port",
                     "help_zh": "字符串类型的目标值。取值：\n\nsase_app_name：应用名。\nsase_app_id：应用ID。\nsase_policy_name：零信任策略名。\nsase_user_username：用户名。\nsase_user_department：用户部门。\nsase_user_group_infos：用户组织架构信息。\nsase_user_matched_user_groups：用户组信息。\nsase_client_addr：客户端地址。\nsase_client_ip：客户端IP。\nsase_client_port：客户端端口",
@@ -530,6 +1074,11 @@
         {
           "fields": [
             {
+              "enum": [
+                "disabled",
+                "auto",
+                "replace"
+              ],
               "example": "auto",
               "help_en": "The rewrite mode. The default value is auto. Valid values:\n\ndisabled: Disables rewriting of internal domain names in HTML.\n\nauto: Enables the automatic mode. The system automatically detects and rewrites internal domain names in HTML",
               "help_zh": "改写模式。默认为auto。取值：\ndisabled：禁用HTML内网域名改写。\nauto：自动模式，会自动识别HTML中的内网域名并进行改写",
@@ -598,6 +1147,12 @@
               "element": {
                 "fields": [
                   {
+                    "enum": [
+                      "add",
+                      "set",
+                      "replace",
+                      "delete"
+                    ],
                     "example": "add",
                     "help_en": "Operation type. Required.\n\nadd: Add an item.\n\nset: Set a value.\n\ndelete: Delete an item.\n\nreplace: Replace a value",
                     "help_zh": "操作类型，必填参数。取值：\nadd：添加操作。\nset：设置操作。\ndelete：删除操作。\nreplace：替换操作",
@@ -646,6 +1201,19 @@
                     "type": "string"
                   },
                   {
+                    "enum": [
+                      "sase_app_name",
+                      "sase_app_id",
+                      "sase_policy_name",
+                      "sase_policy_id",
+                      "sase_user_username",
+                      "sase_user_department",
+                      "sase_user_group_infos",
+                      "sase_user_matched_user_groups",
+                      "sase_client_addr",
+                      "sase_client_ip",
+                      "sase_client_port"
+                    ],
                     "example": "sase_app_name",
                     "help_en": "Target value as a string. Valid values:\n\nsase_app_name: Application name.\n\nsase_app_id: Application ID.\n\nsase_policy_name: Zero Trust policy name.\n\nsase_user_username: Username.\n\nsase_user_department: User department.\n\nsase_user_group_infos: User organizational structure information.\n\nsase_user_matched_user_groups: User group information.\n\nsase_client_addr: Client address.\n\nsase_client_ip: Client IP address.\n\nsase_client_port: Client port",
                     "help_zh": "字符串类型的目标值。取值：\n\nsase_app_name：应用名。\nsase_app_id：应用ID。\nsase_policy_name：零信任策略名。\nsase_user_username：用户名。\nsase_user_department：用户部门。\nsase_user_group_infos：用户组织架构信息。\nsase_user_matched_user_groups：用户组信息。\nsase_client_addr：客户端地址。\nsase_client_ip：客户端IP。\nsase_client_port：客户端端口",
@@ -709,6 +1277,10 @@
           "type": "object"
         },
         {
+          "enum": [
+            "custom",
+            "automatic"
+          ],
           "example": "automatic",
           "help_en": "The type of the proxy domain name. Valid values:\n\nautomatic: Uses a mapped proxy domain name.\n\ncustom: Uses a custom proxy domain name",
           "help_zh": "代理域名类型。取值：\nautomatic：使用映射代理域名。\ncustom：使用自定义代理域名",
@@ -1007,118 +1579,27 @@
   "pathPattern": "",
   "product_code": "csas",
   "protocol": "HTTP|HTTPS",
-  "v1_body_parameters": [
-    {
-      "name": "AddressGroups",
-      "param_style": "flat",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The addresses of the internal-facing access application. You can specify up to 1,000 addresses",
-      "help_zh": "内网访问应用地址集合。最多可输入1000个内网访问应用地址",
-      "name": "Addresses",
-      "param_style": "flat",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The browser access status of the internal-facing access application. After this feature is enabled, you can access internal applications without a client. Default value: Disabled. Valid values:\nEnabled: enabled.\nDisabled: disabled",
-      "help_zh": "内网访问应用状态，开启后可以通过无端方式访问内网应用。默认值为Disabled。取值：\nEnabled：开启。\nDisabled：关闭",
-      "name": "BrowserAccessStatus",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "ConfigMode",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The description of the internal-facing access application. The description must be 1 to 128 characters in length and can contain letters, digits, periods (.), underscores (_), hyphens (-), and spaces. Chinese characters are supported",
-      "help_zh": "内网访问应用描述。长度为1~128个字符，支持中文和大小写英文字母，可包含数字、半角句号（.）、下划线（_）、短划线（-）和空格",
-      "name": "Description",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The browser access mode parameter: the application configuration",
-      "help_zh": "浏览器访问模式参数：应用配置",
-      "name": "L7Config",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The browser access mode parameter: the prefix of the mapped proxy domain name. The prefix must be 3 to 20 characters in length and can contain lowercase letters, digits, and hyphens (-)",
-      "help_zh": "浏览器访问模式参数：映射代理域名前缀。长度为3-20个字符，支持小写英文字母、数字和短划线（-）",
-      "name": "L7ProxyDomainAutomaticPrefix",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The browser access mode parameter: the custom proxy domain name. The value must be a valid domain name",
-      "help_zh": "浏览器访问模式参数：自定义代理域名。需要是一个合法的域名",
-      "name": "L7ProxyDomainCustom",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The name of the internal-facing access application. The name must be 1 to 128 characters in length and can contain letters, digits, periods (.), underscores (_), and hyphens (-). Chinese characters are supported",
-      "help_zh": "内网访问应用名称。长度为1~128个字符，支持中文和大小写英文字母，可包含数字、半角句号（.）、下划线（_）和短划线（-）",
-      "name": "Name",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The port ranges of the internal-facing access application. You can specify up to 65,535 port ranges. Port ranges cannot be duplicate or overlapping",
-      "help_zh": "内网访问应用端口范围集合。最多可输入65535个端口范围。多个端口范围不可重复或重叠",
-      "name": "PortRanges",
-      "param_style": "flat",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The protocol of the internal-facing access application. Valid values:\nAll: all protocols.\nTCP\nUDP",
-      "help_zh": "内网访问应用协议。取值：\nAll：全部。\nTCP\nUDP",
-      "name": "Protocol",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The status of the internal-facing access application. Valid values:\nEnabled: enabled.\nDisabled: disabled",
-      "help_zh": "内网访问应用状态。取值：\nEnabled：开启。\nDisabled：关闭",
-      "name": "Status",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The IDs of internal-facing access tags. You can associate up to 6 custom internal-facing access tags with each internal-facing access application",
-      "help_zh": "内网访问标签ID集合。1个内网访问应用最多可关联6个自定义类型的内网访问标签",
-      "name": "TagIds",
-      "param_style": "flat",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "name": "UnauthorizedAccessConfig",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "ApplicationId": {
+            "description_en": "The ID of the internal-facing access application",
+            "description_zh": "内网访问应用ID",
+            "example": "pa-application-e12860ef6c48****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "本次请求的ID",
+            "example": "BE4FB974-11BC-5453-9BE1-1606A73EACA6",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

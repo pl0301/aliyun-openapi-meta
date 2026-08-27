@@ -102,6 +102,9 @@
     {
       "fields": [
         {
+          "enum": [
+            "RTMP"
+          ],
           "example": "RTMP",
           "help_en": "Channel type:  \nRTMP: RTMP stream ingest  \nDingRTC: DingRTC channel type  ",
           "help_zh": "频道类型：\nRTMP: RTMP推流\nDingRTC: DingRTC频道类型",
@@ -272,67 +275,126 @@
   "pathPattern": "",
   "product_code": "avatar",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "Represents a business configuration",
-      "help_zh": "代表一个业务配置",
-      "name": "App",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Business request ID, supporting up to 64 characters.<notice>You can use this field to ensure idempotency when starting a digital human instance. The server guarantees that multiple invocations with the same bizId will start only one ingest endpoint instance.</notice>",
-      "help_zh": "业务请求id，最大支持64位字符<notice>可以使用该字段做业务启动数字人的幂等，服务端确保同一个bizId多次调用只会开启一路实例</notice>",
-      "name": "BizId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Channel information for pushing the digital human streaming media to a specified Channel. Standard RTMP protocol is currently supported.\n\n<warning>\n\nFor the Consultation Broadcasting scenario (corresponding to the \"Broadcast Digital Human\" in official documentation) and the Customer Service Assistant scenario (corresponding to the \"Interactive Digital Human\" in official documentation), pass the DingRTC channel type. The platform will use the DingRTC channel for stream ingest. Additionally, official documentation provides a stream pulling SDK (https://help.aliyun.com/document_detail/479357.html?spm=a2c4g.479356.0.0.170a6d79vSe56q) to facilitate Integration.\nOnly for the Virtual Streamer scenario (corresponding to the \"Stream Ingest Digital Human\" in official documentation) should you pass the corresponding stream ingest parameter information.\n\n\n</warning>",
-      "help_zh": "频道信息，将数字人流媒体推送到指定渠道。目前支持标准RTMP协议。\n\n<warning>\n\n针对使用咨询播报（对应官方文档的播报数字人）和客服助理（对应官方文档的互动数字人）两个场景，请传递DingRTC频道类型，平台会使用DingRTC渠道进行推流，同时官方文档中心提供了拉流端SDK (https://help.aliyun.com/document_detail/479357.html?spm=a2c4g.479356.0.0.170a6d79vSe56q)方便集成。\n仅针对使用虚拟主播（对应官方文档的推流数字人）场景需要传递对应的推流参数信息。\n\n\n</warning>",
-      "name": "Channel",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Digital human command execution request",
-      "help_zh": "数字人命令执行请求",
-      "name": "CommandRequest",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Tenant ID, obtained from the developer information of the corresponding business configuration in the digitized virtual human Open Platform",
-      "help_zh": "租户ID，从虚拟数字人开放平台的对应业务配置的开发者信息中获取的TenantId",
-      "name": "TenantId",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Configuration parameters related to the spoken content",
-      "help_zh": "播报内容相关的设置参数",
-      "name": "TextRequest",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "User information for starting this digital human (such as the Customer's own user information or device ID; if unavailable, a random number can be passed directly)",
-      "help_zh": "启动该数字人的用户信息（客户自身的用户信息，或者设备号等，如果没有可以直接传递随机数）",
-      "name": "User",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Code": {
+            "description_en": "Return Result code  ",
+            "description_zh": "返回结果码",
+            "example": "0",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "Return Result",
+            "description_zh": "返回结果",
+            "properties": {
+              "Channel": {
+                "description_en": "Channel information. Currently, this field returns channel information for DingRTC channels used by interactive and broadcasting digital human video streams, which is intended for client-side stream pulling. This field will not return corresponding information for interactive or stream ingest digital humans that use third-party stream ingest channels, such as RTMP stream ingest",
+                "description_zh": "频道信息，目前返回互动和播报数字人视频流DingRTC渠道的频道信息，用于进行客户端拉流使用；\n针对互动和推流数字人使用了三方推流通道的不会返回对应信息， 如RTMP推流",
+                "properties": {
+                  "AppId": {
+                    "description_en": "DingRTC application ID",
+                    "description_zh": "DingRTC应用id",
+                    "example": "ONEX7E28C7C221854",
+                    "type": "string"
+                  },
+                  "ChannelId": {
+                    "description_en": "channel ID  ",
+                    "description_zh": "频道ID",
+                    "example": "108293819",
+                    "type": "string"
+                  },
+                  "ExpiredTime": {
+                    "description_en": "Expiration Time of the DingRTC channel  ",
+                    "description_zh": "DingRTC通道到期时间",
+                    "example": "1677112265876",
+                    "type": "string"
+                  },
+                  "Gslb": {
+                    "description_en": "RTC channel addresses",
+                    "description_zh": "RTC 通道地址",
+                    "items": {
+                      "description_en": "RTC channel address",
+                      "description_zh": "RTC通道地址",
+                      "example": "https://rgslb.rtc.aliyuncs.com",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "Nonce": {
+                    "description_en": "A random string generated by the DingRTC server",
+                    "description_zh": "DingRTC服务器生成的随机字符串",
+                    "example": "CK-9b5c335b9ae75879441ee7b363886418",
+                    "type": "string"
+                  },
+                  "Token": {
+                    "description_en": "DingRTC token.  ",
+                    "description_zh": "DingRTC令牌码",
+                    "example": "e59f61b2482b4d0562ab542da3f824f7",
+                    "type": "string"
+                  },
+                  "Type": {
+                    "description_en": "Channel type",
+                    "description_zh": "通道类型",
+                    "example": "6",
+                    "type": "string"
+                  },
+                  "UserId": {
+                    "description_en": "UserId generated by DingRTC  ",
+                    "description_zh": "DingRTC生成的UserId",
+                    "example": "userId",
+                    "type": "string"
+                  },
+                  "UserInfoInChannel": {
+                    "description_en": "Information required by Alibaba Cloud RTC",
+                    "description_zh": "公有云音视频RTC需要的信息",
+                    "example": "公有云音视频RTC需要的信息",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "RequestId": {
+                "description_en": "Request ID",
+                "description_zh": "请求ID",
+                "example": "4C467B38-3910-447D-87BC-AC049166F216",
+                "type": "string"
+              },
+              "SessionId": {
+                "description_en": "Session ID. This is the unique identifier for this digitized virtual human instance. You must pass this ID when sending broadcast text or stopping the digitized virtual human instance. If lost, you can retrieve it by invoking the \"Query running digitized virtual human instances\" API.  ",
+                "description_zh": "会话ID。标识这一路数字人实例的唯一id，后续发送播报文本、停止数字人实例都需要传入该ID，如果丢失可以通过“查询运行中的数字人实例”API进行查询",
+                "example": "4f63f9e9788449f9adc88d9438c8dec3",
+                "type": "string"
+              },
+              "Token": {
+                "description_en": "Authentication token required for integration with interactive digital human. For details, refer to the interactive digital human integration document.  ",
+                "description_zh": "互动数字人对接需要的鉴权token ,具体可参考互动数字人接入文档",
+                "example": "879441ee7b363886418",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "Return message",
+            "description_zh": "返回信息",
+            "example": "错误信息示例",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the invocation succeeded.  ",
+            "description_zh": "调用是否成功",
+            "example": "True",
+            "type": "boolean"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

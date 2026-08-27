@@ -79,6 +79,10 @@
       }
     },
     {
+      "enum": [
+        "mt-plus",
+        "mt-turbo"
+      ],
       "example": "mt-turbo",
       "help_en": "The translation model",
       "help_zh": "翻译模型",
@@ -228,6 +232,10 @@
         {
           "fields": [
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether to convert the entire translated text to lowercase",
               "help_zh": "译文全转为小写",
@@ -240,6 +248,10 @@
               "type": "bool"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether to convert the entire translated text to uppercase",
               "help_zh": "译文全转为大写",
@@ -252,6 +264,10 @@
               "type": "bool"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether to convert the entire translated text to title case",
               "help_zh": "译文全转为 capitalized 首字母大写",
@@ -277,6 +293,10 @@
         {
           "fields": [
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether to skip the Content Moderation check. To set this to true, you must first complete the required process to disable Content Moderation",
               "help_zh": "是否跳过绿网检测（如果需要跳过绿网检测，需要先完成绿网关闭流程后再调用）",
@@ -300,6 +320,10 @@
           "type": "object"
         },
         {
+          "enum": [
+            "bizType",
+            "bizUserId"
+          ],
           "example": "{\"bizUserld\":\"123456\",\"bizType\":session\"}",
           "help_en": "Extended parameters for applying custom terminology that is isolated by user or business scenario",
           "help_zh": "扩展参数配置（bizUserld：业务层面的用户ID，用来区分不\n同业务用户，做到“按用户隔离”的术语干预，互不影响。\nbizType：业务场景类型/标识，用来区分不同场景，做到\n“按场景隔离”的术语干预，互不影响。）",
@@ -338,5 +362,130 @@
   ],
   "pathPattern": "/anytrans/translate/batch",
   "product_code": "AnyTrans",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The schema of the response body",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "code": {
+            "description_en": "The status code for the overall API call",
+            "description_zh": "响应状态码",
+            "example": "200",
+            "type": "string"
+          },
+          "data": {
+            "description_en": "The response payload that contains the translation results",
+            "description_zh": "返回数据",
+            "properties": {
+              "translationList": {
+                "description_en": "An array of translation results, one for each text provided in the request",
+                "description_zh": "批量翻译结果",
+                "items": {
+                  "description_en": "A single translation result",
+                  "description_zh": "单条翻译结果",
+                  "properties": {
+                    "code": {
+                      "description_en": "The status code for the individual translation within the batch",
+                      "description_zh": "响应状态码",
+                      "example": "200",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "detectedLang": {
+                      "description_en": "The language code of the detected source language",
+                      "description_zh": "",
+                      "type": "string"
+                    },
+                    "index": {
+                      "description_en": "The zero-based index of this result, which corresponds to the order of the source text in the original request",
+                      "description_zh": "单条翻译结果的索引",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "message": {
+                      "description_en": "The status message for the individual translation",
+                      "description_zh": "响应信息",
+                      "example": "OK",
+                      "type": "string"
+                    },
+                    "translation": {
+                      "description_en": "The translated text",
+                      "description_zh": "该索引对应的翻译结果",
+                      "example": "What will the weather be like tomorrow?",
+                      "type": "string"
+                    },
+                    "usage": {
+                      "description_en": "An object detailing the token usage for this translation",
+                      "description_zh": "token用量",
+                      "properties": {
+                        "inputTokens": {
+                          "description_en": "The number of tokens in the source text",
+                          "description_zh": "输入token数",
+                          "example": "53",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "outputTokens": {
+                          "description_en": "The number of tokens in the generated translation",
+                          "description_zh": "输出token数",
+                          "example": "8",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "totalTokens": {
+                          "description_en": "The total number of tokens processed for the translation (the sum of `inputTokens` and `outputTokens`)",
+                          "description_zh": "总token数",
+                          "example": "61",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "http状态码",
+            "example": "200",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "The response message",
+            "description_zh": "响应信息",
+            "example": "success",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The unique identifier for the request. Use this ID for tracing and troubleshooting",
+            "description_zh": "请求 id，用于追溯 API 调用链路",
+            "example": "3BE338D3-16B1-513F-8DD2-57C8528DEAAA",
+            "type": "string"
+          },
+          "success": {
+            "default": "true",
+            "description_en": "Indicates whether the API call was successful",
+            "description_zh": "接口调用是否成功",
+            "enumValueTitles": {
+              "false": "否",
+              "true": "是"
+            },
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

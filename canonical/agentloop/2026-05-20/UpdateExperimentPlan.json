@@ -2,6 +2,235 @@
   "camel_example": "",
   "cmd_full_name": "agentloop update-experiment-plan",
   "cmd_name": "update-experiment-plan",
+  "components": {
+    "schemas": {
+      "Evaluator": {
+        "description_en": "The evaluator configuration in an evaluation task. Used to reference a previously created evaluator or to describe an inline evaluator for the task",
+        "description_zh": "评估任务中的评估器配置，用于引用已创建的评估器，或以内联方式描述本次任务使用的评估器",
+        "example": "{\"evaluatorRef\":\"Builtin.agent_task_completion\",\"resultName\":\"agent_task_completion\",\"resultType\":\"score\",\"variableMapping\":{\"input\":\"trace.input\",\"output\":\"trace.output\",\"agent_trajectory\":\"trace.agent_trajectory\"}}",
+        "properties": {
+          "config": {
+            "description_en": "The evaluator runtime configuration. For inline LLM evaluators, this must include configurations such as prompt. When referencing an existing evaluator, this parameter is typically not required and is only specified when runtime parameters such as version need to be set",
+            "description_zh": "评估器运行配置。内联 LLM 评估器需要包含 prompt 等配置；引用已有评估器时通常不传，仅在需要指定版本等运行时参数时传入",
+            "example": "{\"version\":\"1.0.0\"}",
+            "title": "评估器配置（如prompt等）",
+            "type": "object"
+          },
+          "evaluatorRef": {
+            "description_en": "The reference name of a registered evaluator. When specified, the evaluator definition is loaded by this reference with higher priority. Both built-in evaluators and custom evaluators are supported",
+            "description_zh": "已注册评估器的引用名称。传入后优先按该引用加载评估器定义，支持内置评估器和自定义评估器",
+            "example": "Builtin.agent_task_completion",
+            "title": "评估器引用ID（引用已注册评估器时使用）",
+            "type": "string"
+          },
+          "filters": {
+            "description_en": "The evaluator-level data filter conditions. These take effect together with the task-level dataFilter.query",
+            "description_zh": "评估器级数据筛选条件，会与任务级 dataFilter.query 共同生效",
+            "example": "{\"query\":\"serviceName='checkout-service'\"}",
+            "title": "数据筛选条件",
+            "type": "object"
+          },
+          "name": {
+            "description_en": "The evaluator name. Required for inline evaluators when evaluatorRef is not specified. The evaluatorRef or name must be unique within the same task",
+            "description_zh": "评估器名称。未传 evaluatorRef 的内联评估器场景必填；同一任务内 evaluatorRef 或 name 不能重复",
+            "example": "agent_task_completion",
+            "title": "评估器名称",
+            "type": "string"
+          },
+          "resultName": {
+            "description_en": "The field name for the evaluation result. Required for inline evaluators. When referencing an existing evaluator, the metricName defined in the evaluator definition is used if this parameter is not specified",
+            "description_zh": "评估结果字段名。内联评估器场景必填；引用已有评估器时未传则使用评估器定义中的 metricName",
+            "example": "agent_task_completion",
+            "title": "评分名称",
+            "type": "string"
+          },
+          "resultType": {
+            "description_en": "The evaluation result type. Required for inline evaluators. Defaults to score when referencing an existing evaluator and this parameter is not specified",
+            "description_zh": "评估结果类型。内联评估器场景必填；引用已有评估器时未传默认为 score",
+            "enumValueTitles": {
+              "binary": "binary",
+              "score": "score",
+              "text": "text"
+            },
+            "example": "score",
+            "title": "结果类型：score / binary / text",
+            "type": "string"
+          },
+          "type": {
+            "description_en": "The evaluator type. Defaults to LLM if not specified. Inline CODE evaluators are currently not supported. For CODE type evaluators, reference a previously created evaluator by using evaluatorRef",
+            "description_zh": "评估器类型。未传时默认 LLM；内联 CODE 评估器当前不支持，CODE 类型请通过 evaluatorRef 引用已创建评估器",
+            "enumValueTitles": {
+              "AGENT": "AGENT",
+              "CODE": "CODE",
+              "LLM": "LLM"
+            },
+            "example": "AGENT",
+            "title": "评估器类型：LLM / CODE",
+            "type": "string"
+          },
+          "variableMapping": {
+            "additionalProperties": {
+              "description_en": "The value of a single variable mapping, indicating the evaluation data field path from which the evaluator variable reads",
+              "description_zh": "单个变量映射值，表示该评估器变量读取的评估数据字段路径",
+              "example": "trace.input",
+              "type": "string"
+            },
+            "description_en": "The variable mapping that maps evaluator variables to evaluation data fields. Required for LLM/AGENT inline evaluators. When referencing an existing evaluator, the variable names must exist in the evaluator definition",
+            "description_zh": "变量映射关系，将评估器变量映射到评估数据字段。LLM/AGENT 内联评估器必填，引用已有评估器时变量名必须存在于评估器定义中",
+            "example": "{\"input\":\"trace.input\",\"output\":\"trace.output\",\"agent_trajectory\":\"trace.agent_trajectory\"}",
+            "title": "变量映射",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ExperimentConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "endpointConnectorId": {
+            "description_en": "",
+            "description_zh": "端点连接器ID（user/agent模式时必填）",
+            "title": "端点连接器ID（user/agent模式时必填）",
+            "type": "string"
+          },
+          "label": {
+            "description_en": "",
+            "description_zh": "实验标签（A/B/C/D/E）",
+            "title": "实验标签（A/B/C/D/E）",
+            "type": "string"
+          },
+          "modelName": {
+            "description_en": "",
+            "description_zh": "模型名称（agent场景可填agent）",
+            "title": "模型名称（agent场景可填agent）",
+            "type": "string"
+          },
+          "modelParameters": {
+            "$ref": "#/components/schemas/ModelParameters",
+            "description_en": "",
+            "description_zh": "模型参数",
+            "title": "模型参数"
+          },
+          "modelProvider": {
+            "description_en": "",
+            "description_zh": "模型提供商：dashscope（默认）/ user / agent",
+            "title": "模型提供商：dashscope（默认）/ user / agent",
+            "type": "string"
+          },
+          "name": {
+            "description_en": "",
+            "description_zh": "实验名称",
+            "title": "实验名称",
+            "type": "string"
+          },
+          "promptTemplate": {
+            "description_en": "",
+            "description_zh": "Prompt消息模板，支持{{变量名}}占位符",
+            "items": {
+              "$ref": "#/components/schemas/PromptTemplateItem",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "title": "Prompt消息模板，支持{{变量名}}占位符",
+            "type": "array"
+          },
+          "requestBodyTemplate": {
+            "description_en": "",
+            "description_zh": "Agent请求体模板（agent模式时必填，支持{{变量名}}）",
+            "title": "Agent请求体模板（agent模式时必填，支持{{变量名}}）",
+            "type": "string"
+          },
+          "requestMethod": {
+            "description_en": "",
+            "description_zh": "Agent请求方法：POST（默认）/ GET",
+            "title": "Agent请求方法：POST（默认）/ GET",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ModelParameters": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "frequencyPenalty": {
+            "description_en": "",
+            "description_zh": "频率惩罚，正值减少重复，范围-2.0到2.0",
+            "format": "float",
+            "title": "频率惩罚，正值减少重复，范围-2.0到2.0",
+            "type": "number"
+          },
+          "maxTokens": {
+            "description_en": "",
+            "description_zh": "最大输出Token数",
+            "format": "int64",
+            "title": "最大输出Token数",
+            "type": "integer"
+          },
+          "presencePenalty": {
+            "description_en": "",
+            "description_zh": "存在惩罚，正值鼓励新话题，范围-2.0到2.0",
+            "format": "float",
+            "title": "存在惩罚，正值鼓励新话题，范围-2.0到2.0",
+            "type": "number"
+          },
+          "stopSequences": {
+            "description_en": "",
+            "description_zh": "停止序列，遇到时立即停止生成",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "title": "停止序列，遇到时立即停止生成",
+            "type": "array"
+          },
+          "temperature": {
+            "description_en": "",
+            "description_zh": "温度参数，控制输出随机性，范围0-2",
+            "format": "float",
+            "title": "温度参数，控制输出随机性，范围0-2",
+            "type": "number"
+          },
+          "topK": {
+            "description_en": "",
+            "description_zh": "Top K 采样参数，范围1-100",
+            "format": "int32",
+            "title": "Top K 采样参数，范围1-100",
+            "type": "integer"
+          },
+          "topP": {
+            "description_en": "",
+            "description_zh": "Top P 采样参数，范围0-1",
+            "format": "float",
+            "title": "Top P 采样参数，范围0-1",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "PromptTemplateItem": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "content": {
+            "description_en": "",
+            "description_zh": "内容，支持{{变量名}}占位符",
+            "title": "内容，支持{{变量名}}占位符",
+            "type": "string"
+          },
+          "role": {
+            "description_en": "",
+            "description_zh": "角色：system/user/assistant",
+            "title": "角色：system/user/assistant",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates an experiment plan",
   "description_zh": "更新实验计划",
@@ -63,6 +292,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "OFFLINE",
+        "ONLINE"
+      ],
       "example": "OFFLINE",
       "help_en": "The experiment type",
       "help_zh": "实验类型",
@@ -373,6 +606,11 @@
             "type": "string"
           },
           {
+            "enum": [
+              "AGENT",
+              "CODE",
+              "LLM"
+            ],
             "example": "AGENT",
             "help_en": "The evaluator type. Defaults to LLM if not specified. Inline CODE evaluators are currently not supported. For CODE type evaluators, reference a previously created evaluator by using evaluatorRef",
             "help_zh": "评估器类型。未传时默认 LLM；内联 CODE 评估器当前不支持，CODE 类型请通过 evaluatorRef 引用已创建评估器",
@@ -397,6 +635,11 @@
             "type": "string"
           },
           {
+            "enum": [
+              "score",
+              "binary",
+              "text"
+            ],
             "example": "score",
             "help_en": "The evaluation result type. Required for inline evaluators. Defaults to score when referencing an existing evaluator and this parameter is not specified",
             "help_zh": "评估结果类型。内联评估器场景必填；引用已有评估器时未传默认为 score",
@@ -547,6 +790,45 @@
   "pathPattern": "/api/v1/experiments/[agentSpace]/plans/[planId]",
   "product_code": "AgentLoop",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response for updating an experiment plan",
+        "description_zh": "更新实验计划响应",
+        "properties": {
+          "message": {
+            "description_en": "The prompt message",
+            "description_zh": "提示信息",
+            "example": "实验计划更新成功",
+            "type": "string"
+          },
+          "planId": {
+            "description_en": "The experiment plan ID",
+            "description_zh": "实验计划 ID",
+            "example": "exp-plan-e95bff54685a4ae29ff3a834c1008a71",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求 ID",
+            "example": "3FE4CD1E-FF41-56BE-B590-7A021D9C1524",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "status": {
+            "description_en": "The update result. The value is updated if the operation is successful",
+            "description_zh": "更新结果。成功为 updated",
+            "example": "updated",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body. Fields that are not included remain unchanged",

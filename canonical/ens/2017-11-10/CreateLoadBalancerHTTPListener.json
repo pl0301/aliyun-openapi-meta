@@ -37,6 +37,8 @@
       "help_en": "The listener port that is used by Edge Load Balancer (ELB) to receive requests and forward the requests to backend servers. Valid values: 1 to 65535.\n\nWe recommend that you use port 80 for HTTP",
       "help_zh": "接收请求并向后端服务器进行请求转发的监听端口。取值：1~65535。\nHTTP协议建议使用80端口",
       "location": "query",
+      "maximum": "65535",
+      "minimum": "1",
       "name": "listener_port",
       "options": [
         "--listener-port"
@@ -46,6 +48,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "on",
+        "off"
+      ],
       "example": "off",
       "help_en": "Specifies whether to enable redirection from HTTP to HTTPS. Valid values:\n\non\n\noff (default)",
       "help_zh": "是否开启HTTP至HTTPS的转发。取值：\n\non：开启。\noff（默认值）：关闭",
@@ -63,6 +69,8 @@
       "help_en": "The listener port that is used to redirect HTTP requests to HTTPS",
       "help_zh": "HTTP至HTTPS的监听转发端口",
       "location": "query",
+      "maximum": "65535",
+      "minimum": "0",
       "name": "forward_port",
       "options": [
         "--forward-port"
@@ -76,6 +84,8 @@
       "help_en": "The name of the listener. The value must be 1 to 80 characters in length.\n\nThe value cannot start with `http://` or `https://`",
       "help_zh": "设置监听名称。长度限制为1~80个字符。\n不能以`http://`和`https://`开头",
       "location": "query",
+      "max_length": "80",
+      "min_length": "1",
       "name": "description",
       "options": [
         "--description"
@@ -85,6 +95,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "on",
+        "off"
+      ],
       "example": "off",
       "help_en": "Specifies whether to use the X-Forwarded-For header to obtain the real IP address of the client. Valid values:\n\non\n\noff (default)",
       "help_zh": "是否开启通过X-Forwarded-For字段获取来访者真实IP。取值：\non：开启。\noff（默认值）：关闭",
@@ -98,6 +112,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "wrr",
+        "wlc",
+        "rr"
+      ],
       "example": "wrr",
       "help_en": "The scheduling algorithm. Valid values:\n\nwrr (default): Backend servers with higher weights receive more requests than backend servers with lower weights.\n\nwlc: Requests are distributed based on the weights and number of connections to backend servers. If two backend servers have the same weight, the backend server that has fewer connections receives more requests.\n\nrr: Requests are distributed to backend servers in sequence.\n\nsch: consistent hashing based on source IP addresses. Requests from the same source IP address are distributed to the same backend server.\n\nqch: consistent hashing based on QUIC connection IDs (CIDs). Requests that contain the same QUIC CID are distributed to the same backend server.\n\niqch: consistent hashing based on three specific bytes of iQUIC CIDs. Requests with the same second, third, and fourth bytes are distributed to the same backend server",
       "help_zh": "调度算法。取值：\nwrr（默认值）：权重值越高的后端服务器，被轮询到的次数（概率）也越高。\nwlc：除了根据每台后端服务器设定的权重值来进行轮询，同时还考虑后端服务器的实际负载（即连接数）。当权重值相同时，当前连接数越小的后端服务器被轮询到的次数（概率）也越高。\nrr：按照访问顺序依次将外部请求依序分发到后端服务器。\nsch：基于源IP地址的一致性Hash，相同的源地址会调度到相同的后端服务器。\nqch：基于QUIC Connection ID一致性Hash，相同的QUIC Connection ID会调度到相同的后端服务器。\niqch：针对iQUIC CID的特定三个字节进行一致Hash，第2~第4三个字节相同的会调度到相同的后端服务器",
@@ -128,6 +147,8 @@
       "help_en": "The domain name that you want to use for health checks.\n\nThis parameter takes effect only if you set HealthCheck to on",
       "help_zh": "用于健康检查的域名。\n\nHealthCheck值为on时才会有效",
       "location": "query",
+      "max_length": "80",
+      "min_length": "1",
       "name": "health_check_domain",
       "options": [
         "--health-check-domain"
@@ -141,6 +162,8 @@
       "help_en": "The URI used for health checks. The URI must be 1 to 80 characters in length.\n\n\n\nA URL must start with a forward slash (`/`) but cannot contain only forward slashes (`/`).\n\nThis parameter takes effect only if the HealthCheck parameter is set to on",
       "help_zh": "用于健康检查的URI。长度限制为1~80。\nURL不能只有`/`，但必须以`/`开头。\nHealthCheck值为on时才会有效",
       "location": "query",
+      "max_length": "80",
+      "min_length": "1",
       "name": "health_check_uri",
       "options": [
         "--health-check-uri"
@@ -154,6 +177,8 @@
       "help_en": "The number of consecutive successful health checks that must occur before an unhealthy and inaccessible backend server is declared healthy and accessible. Valid values: 2 to 10. Default value: 3.\n\nThis parameter takes effect only if you set HealthCheck to on",
       "help_zh": "健康检查连续成功多少次后，将后端服务器的健康检查状态由fail（后台服务器不可达）判定为success（后台服务器可达）。取值：2~10，默认值为3。\nHealthCheck值为on时才会有效",
       "location": "query",
+      "maximum": "10",
+      "minimum": "2",
       "name": "healthy_threshold",
       "options": [
         "--healthy-threshold"
@@ -167,6 +192,8 @@
       "help_en": "The number of consecutive failed health checks that must occur before a healthy and accessible backend server is declared unhealthy and inaccessible. Valid values: 2 to 10. Default value: 3.\n\nThis parameter takes effect only if you set HealthCheck to on",
       "help_zh": "健康检查连续失败多少次后，将后端服务器的健康检查状态由success（后台服务器可达）判定为fail（后台服务器不可达）。取值：2~10，默认值为3。\nHealthCheck值为on时才会有效",
       "location": "query",
+      "maximum": "10",
+      "minimum": "2",
       "name": "unhealthy_threshold",
       "options": [
         "--unhealthy-threshold"
@@ -180,6 +207,8 @@
       "help_en": "The timeout period of a health check response. If a backend server does not respond within the specified timeout period, the server fails the health check.\n\nDefault value: 5.\n\nValid values: 1 to 300.\n\nUnit: seconds.\n\n\n\nThis parameter takes effect only if the HealthCheck parameter is set to on.\n\nIf the value of HealthCheckTimeout is smaller than the value of HealthCheckInterval, the timeout period specified by HealthCheckTimeout becomes invalid, and the value of HealthCheckInterval is used as the timeout period",
       "help_zh": "接收来自运行状况检查的响应需要等待的时间。如果后端ENS在指定的时间内没有响应，则判定为健康检查失败。\n默认值：5秒。\n取值：1~300。\n单位：秒。\nHealthCheck值为on时才会有效。\n如果HealthCHeckTimeout的值小于HealthCheckInterval的值，则HealthCHeckTimeout无效，超时时间为HealthCheckInterval的值",
       "location": "query",
+      "maximum": "300",
+      "minimum": "1",
       "name": "health_check_timeout",
       "options": [
         "--health-check-timeout"
@@ -193,6 +222,8 @@
       "help_en": "The backend port that is used for health checks. Valid values: 1 to 65535.\n\nThis parameter takes effect only if you set HealthCheck to on",
       "help_zh": "健康检查的后端服务器的端口。取值：1~65535。\n\nHealthCheck值为on时才会有效",
       "location": "query",
+      "maximum": "65535",
+      "minimum": "1",
       "name": "health_check_connect_port",
       "options": [
         "--health-check-connect-port"
@@ -206,6 +237,8 @@
       "help_en": "The interval at which health checks are performed. Valid values: 1 to 50. Default value: 2. Unit: seconds.\n\nThis parameter takes effect only if you set HealthCheck to on",
       "help_zh": "健康检查的时间间隔。取值：1~50，默认值为2，单位：秒。\n\nHealthCheck值为on时才会有效",
       "location": "query",
+      "maximum": "50",
+      "minimum": "1",
       "name": "health_check_interval",
       "options": [
         "--health-check-interval"
@@ -232,6 +265,8 @@
       "help_en": "The timeout period for idle connections. Default value: 15. Valid values: 1 to 60. Unit: seconds.\n\nIf no request is received within the specified timeout period, ELB closes the connection. When a request is received, ELB creates a new connection",
       "help_zh": "指定连接空闲超时时间，默认值15秒，取值：1~60，单位：秒。\n\n超时时间内一直没有访问请求，负载均衡会暂时中断当前连接，直到一下次请求来临时重新建立新的连接",
       "location": "query",
+      "maximum": "60",
+      "minimum": "1",
       "name": "idle_timeout",
       "options": [
         "--idle-timeout"
@@ -245,6 +280,8 @@
       "help_en": "The timeout period of a request. Default value: 60. Valid values: 1 to 180. Unit: seconds.\n\nIf no response is received from the backend server within the specified timeout period, ALB returns an HTTP 504 error code to the client",
       "help_zh": "指定请求超时时间，默认值60秒。取值：1~180，单位：秒。\n\n超时时间内后端服务器一直没有响应，负载均衡将放弃等待，给客户端返回HTTP的504错误码",
       "location": "query",
+      "maximum": "180",
+      "minimum": "1",
       "name": "request_timeout",
       "options": [
         "--request-timeout"
@@ -254,6 +291,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "head",
+        "get"
+      ],
       "example": "head",
       "help_en": "The HTTP request method for health checks. Valid values:\n\nhead (default)\n\nget\n\nThis parameter takes effect only if the HealthCheck parameter is set to on",
       "help_zh": "监听HTTP类型健康检查的健康检查方法。取值：\n\nhead（默认值）。\nget。\n\nHealthCheck值为on时才会有效",
@@ -271,6 +312,8 @@
       "help_en": "The port used by the backend server of the ELB instance. Valid values: 1 to 65535",
       "help_zh": "负载均衡实例后端服务器使用的端口，取值：1~65535",
       "location": "query",
+      "maximum": "65535",
+      "minimum": "1",
       "name": "backend_server_port",
       "options": [
         "--backend-server-port"
@@ -282,5 +325,26 @@
   ],
   "pathPattern": "",
   "product_code": "Ens",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

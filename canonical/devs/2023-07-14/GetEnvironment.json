@@ -2,6 +2,181 @@
   "camel_example": "",
   "cmd_full_name": "devs get-environment",
   "cmd_name": "get-environment",
+  "components": {
+    "schemas": {
+      "Environment": {
+        "description_en": "An environment can be associated with a specific branch for development, or with an infrastructure stack to deploy services",
+        "description_zh": "环境可以与用于开发迭代的特定分支相关联，也可以与基础结构堆栈相关联，以便将服务部署到指定的环境",
+        "properties": {
+          "createdTime": {
+            "description_en": "The server-side timestamp indicating when the resource was created. This property is read-only",
+            "description_zh": "创建此对象时服务器的时间，只读",
+            "example": "2021-11-19T09:34:38Z",
+            "title": "创建此对象时服务器的时间，只读",
+            "type": "string"
+          },
+          "description": {
+            "description_en": "The description of the environment",
+            "description_zh": "资源描述",
+            "example": "test env",
+            "title": "资源描述",
+            "type": "string"
+          },
+          "generation": {
+            "description_en": "A system-generated, auto-incrementing number representing the configuration generation. This property is read-only and increments each time the `spec` is updated",
+            "description_zh": "当前配置的自增的序列号，由系统填充，只读。当spec更新时递增",
+            "example": "1",
+            "format": "int32",
+            "title": "当前资源的自增的序列号，由系统填充，只读，当spec、labels、description更新时递增。如果指定，系统会加入并发写校验，generation必须和系统中的状态值一致",
+            "type": "integer"
+          },
+          "kind": {
+            "description_en": "The type of the resource. This property is read-only",
+            "description_zh": "当前资源的类型，只读",
+            "example": "Environment",
+            "title": "当前资源的类型，只读",
+            "type": "string"
+          },
+          "labels": {
+            "additionalProperties": {
+              "description_en": "",
+              "description_zh": "",
+              "example": "value to the label key.",
+              "type": "string"
+            },
+            "description_en": "The key-value labels for the environment",
+            "description_zh": "资源的标签",
+            "title": "资源的标签",
+            "type": "object"
+          },
+          "name": {
+            "description_en": "The name of the environment. It must be unique within the project and cannot be changed",
+            "description_zh": "环境名称，项目下唯一，不可修改",
+            "example": "demo-env",
+            "required": true,
+            "title": "环境名称，项目下唯一，不可修改",
+            "type": "string"
+          },
+          "projectName": {
+            "description_en": "The name of the project that contains the environment. This property is read-only",
+            "description_zh": "环境所属的项目名称，只读",
+            "example": "demo-project",
+            "title": "环境所属的项目名称，只读",
+            "type": "string"
+          },
+          "spec": {
+            "$ref": "#/components/schemas/EnvironmentSpec",
+            "description_en": "The environment configuration",
+            "description_zh": "环境配置",
+            "required": true,
+            "title": "环境配置"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentStatus",
+            "description_en": "The current status of the environment",
+            "description_zh": "当前环境的状态",
+            "title": "当前环境的状态"
+          },
+          "uid": {
+            "description_en": "The ID of the owning Alibaba Cloud account. This property is read-only",
+            "description_zh": "当前阿里云主账号的ID，只读",
+            "example": "1455541096***548",
+            "required": false,
+            "title": "当前阿里云主账号的ID，只读",
+            "type": "string"
+          }
+        },
+        "title": "环境定义",
+        "type": "object"
+      },
+      "EnvironmentSpec": {
+        "description_en": "The configuration settings for the environment",
+        "description_zh": "环境配置",
+        "properties": {
+          "roleArn": {
+            "description_en": "The Alibaba Cloud Resource Name (ARN) of the environment role",
+            "description_zh": "环境角色",
+            "example": "acs:ram::*******:role/aliyundevsdefaultrole",
+            "title": "环境角色",
+            "type": "string"
+          },
+          "stagedConfigs": {
+            "$ref": "#/components/schemas/EnvironmentStagedConfigs",
+            "description_en": "The staged configs for the environment, which can be applied by a deployment",
+            "description_zh": "环境下保存的配置，可以通过部署达到该配置状态",
+            "title": "环境下保存的配置，可以通过部署达到该配置状态"
+          },
+          "type": {
+            "default": "Production",
+            "description_en": "The environment type. Valid values are testing, staging, and production",
+            "description_zh": "环境类型，只能在testing、staging、production中选择",
+            "enum": [
+              "Testing",
+              "Staging",
+              "Production"
+            ],
+            "example": "Testing",
+            "title": "环境类型，只能在testing、staging、production中选择",
+            "type": "string"
+          }
+        },
+        "title": "环境配置描述",
+        "type": "object"
+      },
+      "EnvironmentStatus": {
+        "description_en": "The current status of the environment",
+        "description_zh": "环境状态",
+        "properties": {
+          "latestEnvironmentDeploymentName": {
+            "description_en": "The name of the deployment plan for the most recent deployment. Each environment deployment generates a deployment plan that may include one or more services",
+            "description_zh": "最近一次部署计划的名称。每次环境部署都会产生一个部署计划，涉及若干个服务的部署",
+            "title": "最近一次部署计划的名称。每次环境部署都会产生一个部署计划，涉及若干个服务的部署",
+            "type": "string"
+          },
+          "observedGeneration": {
+            "description_en": "The most recent generation of the resource observed by the system",
+            "description_zh": "系统最新观测到的资源generation",
+            "example": "1",
+            "format": "int64",
+            "title": "资源最近的一次状态更新时的资源generation",
+            "type": "integer"
+          },
+          "observedTime": {
+            "description_en": "The timestamp when the status was last observed",
+            "description_zh": "资源最近的一次状态更新时间",
+            "example": "2021-11-19T09:34:38Z",
+            "title": "资源最近的一次状态更新时间",
+            "type": "string"
+          },
+          "servicesInstances": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ServiceInstance",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "description_en": "Service instances created by deploying project services using the current environment's configuration",
+            "description_zh": "项目下的服务使用当前环境中的配置进行部署后产生的服务实例",
+            "title": "项目下的服务使用当前环境中的配置进行部署后产生的服务实例",
+            "type": "object"
+          },
+          "servicesWithPendingChanges": {
+            "description_en": "A list of service names that have pending changes",
+            "description_zh": "存在未部署的变更的服务名称列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "example": "服务名称",
+              "type": "string"
+            },
+            "title": "存在未部署的变更的服务名称列表",
+            "type": "array"
+          }
+        },
+        "title": "环境状态",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves information about an environment",
   "description_zh": "查询一个环境",
@@ -49,5 +224,16 @@
   ],
   "pathPattern": "/2023-07-14/projects/[projectName]/environments/[name]",
   "product_code": "Devs",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "$ref": "#/components/schemas/Environment",
+        "description_en": "The environment entity",
+        "description_zh": "环境实体",
+        "title_en": "",
+        "title_zh": "环境实体"
+      }
+    }
+  }
 }

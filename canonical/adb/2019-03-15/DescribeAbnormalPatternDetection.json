@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "am-xxxx",
       "help_en": "The cluster ID.\n\nYou can call the https://help.aliyun.com/document_detail/129857.html operation to query the information about all AnalyticDB for MySQL clusters within a region, including cluster IDs",
       "help_zh": "集群ID。\n您可以调用https://help.aliyun.com/document_detail/129857.html接口查看目标地域下所有AnalyticDB MySQL集群的详情，包括集群ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-shenzhen",
       "help_en": "The region ID.\n\nYou can call the https://help.aliyun.com/document_detail/143074.html operation to query the most recent region list",
       "help_zh": "地域ID。\n您可以调用https://help.aliyun.com/document_detail/143074.html接口查看集群的地域ID",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2011-06-01T16:00Z",
       "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-ddTHH:mmZ</i>（UTC时间）",
@@ -60,6 +63,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2021-05-18T06:30Z",
       "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
       "help_zh": "结束时间。使用UTC时间，格式为yyyy-MM-ddTHH:mmZ",
@@ -88,5 +92,132 @@
   ],
   "pathPattern": "",
   "product_code": "adb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "",
+        "properties": {
+          "DBClusterId": {
+            "description_en": "The cluster ID",
+            "description_zh": "集群ID",
+            "example": "am-xxxx",
+            "type": "string"
+          },
+          "DetectionItems": {
+            "description_en": "The queried detection items and detection results",
+            "description_zh": "检测项及检测结果列表",
+            "items": {
+              "description_en": "The queried detection item and detection result",
+              "description_zh": "检测项及检测结果列表",
+              "properties": {
+                "Message": {
+                  "description_en": "The description of the detection result",
+                  "description_zh": "检测结果信息",
+                  "example": "Two SQL patterns that have abnormal totalTime metric values are detected. This may cause high CPU usage or slow queries, which affects system stability. Go to the monitoring page and use one-click diagnostics to view details and optimize the queries.",
+                  "type": "string"
+                },
+                "Name": {
+                  "description_en": "The name of the detection item",
+                  "description_zh": "检测项名字",
+                  "example": "Cost，PeakMemory",
+                  "type": "string"
+                },
+                "Results": {
+                  "description_en": "The detection result",
+                  "description_zh": "检测结果",
+                  "items": {
+                    "description_en": "The detection result items",
+                    "description_zh": "检测结果信息",
+                    "properties": {
+                      "AccessIp": {
+                        "description_en": "The IP address of the SQL client that submits the SQL pattern",
+                        "description_zh": "提交Pattern的相关SQL客户端IP地址",
+                        "example": "11.81.238.102",
+                        "type": "string"
+                      },
+                      "Detail": {
+                        "description_en": "The details about the detection report of the SQL pattern",
+                        "description_zh": "当前Pattern的检测报告详情",
+                        "example": "{}",
+                        "type": "string"
+                      },
+                      "FailedCount": {
+                        "description_en": "The number of failed SQL patterns within the time range",
+                        "description_zh": "查询时间范围内，Pattern的失败次数",
+                        "example": "63",
+                        "format": "int64",
+                        "type": "integer"
+                      },
+                      "PatternId": {
+                        "description_en": "The SQL pattern ID",
+                        "description_zh": "SQL Pattern的ID",
+                        "example": "5495577090378760322",
+                        "type": "string"
+                      },
+                      "QueryCount": {
+                        "description_en": "The number of executed SQL patterns within the time range",
+                        "description_zh": "查询时间范围内，Pattern的执行次数",
+                        "example": "72",
+                        "format": "int64",
+                        "type": "integer"
+                      },
+                      "RelatedMetrics": {
+                        "description_en": "The metrics related to the SQL pattern",
+                        "description_zh": "Pattern相关指标",
+                        "example": "Maximum query duration: 1.43s\nMaximum peak memory: 20.73 MB\nMaximum table read data volume: 10.12 MB",
+                        "type": "string"
+                      },
+                      "SQLPattern": {
+                        "description_en": "The SQL statement that represents the SQL pattern",
+                        "description_zh": "SQL Pattern的具体语句",
+                        "example": "SELECT *nFROM HIVE.`ADB_EXTERNAL_TPCH_10GB`.`External_customer`nLIMIT ?",
+                        "type": "string"
+                      },
+                      "Tables": {
+                        "description_en": "The names of tables",
+                        "description_zh": "表名",
+                        "example": "ad_marketing_engine.prod_dws_oe_promotion_daily_trend_report",
+                        "type": "string"
+                      },
+                      "User": {
+                        "description_en": "The name of the database account that is used to submit the query",
+                        "description_zh": "提交查询Pattern的用户名",
+                        "example": "test",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "Status": {
+                  "description_en": "The severity level of the detection result. Valid values:\n\nNORMAL\nWARNING\nCRITICAL",
+                  "description_zh": "检测结果状态。取值：\n\nNORMAL\nWARNING\nCRITICAL",
+                  "example": "NORMAL\nWARNNING\nCRITICAL",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "36B66482-A215-5F04-A42E-859983D89D7B",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "总记录数",
+            "example": "300",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

@@ -94,6 +94,9 @@
     {
       "fields": [
         {
+          "enum": [
+            "user"
+          ],
           "example": "user",
           "help_en": "The message role",
           "help_zh": "消息角色",
@@ -109,6 +112,10 @@
           "element": {
             "fields": [
               {
+                "enum": [
+                  "text",
+                  "file"
+                ],
                 "example": "text",
                 "help_en": "The content block type",
                 "help_zh": "内容块类型",
@@ -186,6 +193,10 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "user",
+              "assistant"
+            ],
             "help_en": "The role",
             "help_zh": "The role",
             "name": "role",
@@ -303,6 +314,10 @@
     {
       "fields": [
         {
+          "enum": [
+            "force",
+            "auto"
+          ],
           "example": "force",
           "help_en": "The web search mode",
           "help_zh": "联网搜索模式",
@@ -315,6 +330,12 @@
           "type": "string"
         },
         {
+          "enum": [
+            "standard",
+            "thinking",
+            "auto_thinking",
+            "reasoning_search"
+          ],
           "example": "standard",
           "help_en": "The Q&A mode",
           "help_zh": "问答模式",
@@ -467,6 +488,275 @@
   "pathPattern": "/qa/chat",
   "product_code": "MaasAISearchProxy",
   "protocol": "HTTPS|SSE",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "QaChatResponse",
+        "description_zh": "QaChatResponse",
+        "properties": {
+          "action": {
+            "description_en": "search / answer / clarify",
+            "description_zh": "search / answer / clarify",
+            "type": "string"
+          },
+          "cards": {
+            "description_en": "Lite tool cards (corresponding to the streaming data-card event). Unified as cardType/cardTitle/cardData. Supported types include weather, news, poi, stock_quote, and sports_news",
+            "description_zh": "Lite 工具卡片（流式对应 data-card）；统一为 cardType/cardTitle/cardData，支持 weather、news、poi、stock_quote、sports_news",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "cardData": {
+                  "description_en": "The card business data. Fields are mounted directly on this object without an additional type-named wrapper layer",
+                  "description_zh": "卡片业务数据，字段直接挂载于该对象下，不再嵌套按类型命名的包装层",
+                  "type": "object"
+                },
+                "cardTitle": {
+                  "description_en": "The card title",
+                  "description_zh": "卡片标题",
+                  "type": "string"
+                },
+                "cardType": {
+                  "description_en": "weather / news / poi / stock_quote / sports_news",
+                  "description_zh": "weather / news / poi / stock_quote / sports_news",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "code": {
+            "description_en": "The business code. Valid values: 200: success. 201: partial results blocked by compliance. 301: entire response blocked by compliance. 400: rate limited. 401: invalid parameters. 403: insufficient permissions. 500: internal error. 503: service temporarily unavailable. In streaming mode, this field is included in the finish/error event",
+            "description_zh": "业务码：200 成功；201 部分结果合规拦截；301 整单合规拦截；400 流控；401 参数错误；403 权限不足；500 内部错误；503 服务暂时不可用。流式时位于 finish/error 事件中",
+            "enum": [
+              "200",
+              "201",
+              "301",
+              "400",
+              "401",
+              "403",
+              "500",
+              "503"
+            ],
+            "format": "int32",
+            "type": "integer"
+          },
+          "content": {
+            "description_en": "The complete response body in Markdown format. When enableCitation=true, the content contains [[cite:n]] references",
+            "description_zh": "完整答案正文（markdown；enableCitation=true 时含 [[cite:n]]）",
+            "type": "string"
+          },
+          "data": {
+            "description_en": "The protocol data",
+            "description_zh": "协议数据",
+            "properties": {
+              "data": {
+                "description_en": "The structured payload",
+                "description_zh": "结构化载荷",
+                "example": "{\n  \"items\": [\n    {\n      \"sourceType\": \"web\",\n      \"index\": 1,\n      \"title\": \"杭州天气预报\",\n      \"url\": \"https://example.com/weather\",\n      \"snippet\": \"今日杭州多云...\",\n      \"score\": 0.95,\n      \"favicon\": \"https://example.com/favicon.ico\"\n    }\n  ]\n}\n",
+                "title_en": "",
+                "title_zh": "结构化载荷",
+                "type": "string"
+              },
+              "delta": {
+                "description_en": "The text delta",
+                "description_zh": "文本增量",
+                "example": "杭州今天多云，气温 18～25℃。",
+                "title_en": "",
+                "title_zh": "文本增量",
+                "type": "string"
+              },
+              "errorCode": {
+                "description_en": "The error code",
+                "description_zh": "错误码",
+                "example": "INTERNAL_ERROR",
+                "title_en": "",
+                "title_zh": "错误码",
+                "type": "string"
+              },
+              "errorText": {
+                "description_en": "The error description",
+                "description_zh": "错误描述",
+                "example": "模型服务暂时不可用",
+                "title_en": "",
+                "title_zh": "错误描述",
+                "type": "string"
+              },
+              "finishReason": {
+                "description_en": "The finish reason",
+                "description_zh": "完成原因",
+                "enum": [
+                  "stop",
+                  "error"
+                ],
+                "example": "stop",
+                "title_en": "",
+                "title_zh": "完成原因",
+                "type": "string"
+              },
+              "id": {
+                "description_en": "The request ID, same as requestId",
+                "description_zh": "请求 id，同 requestId",
+                "example": "2a127bc9-9474-405d-916d-8bc4475fa459",
+                "title_en": "",
+                "title_zh": "请求 id，同 requestId",
+                "type": "string"
+              },
+              "requestId": {
+                "description_en": "The request ID",
+                "description_zh": "请求 ID",
+                "example": "2a127bc9-9474-405d-916d-8bc4475fa459",
+                "title_en": "",
+                "title_zh": "请求 ID",
+                "type": "string"
+              },
+              "type": {
+                "description_en": "The event type, same as event",
+                "description_zh": "事件类型，同event",
+                "example": "start",
+                "title_en": "",
+                "title_zh": "事件类型，同event",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "协议数据",
+            "type": "object"
+          },
+          "event": {
+            "description_en": "The event type (the type field of an SSE frame when stream=true, consistent with data.type)",
+            "description_zh": "事件类型（stream=true 时 SSE 单帧 type 字段；与 data.type 一致）：\n\n生命周期\nstart / finish\n标记消息开始与结束；start 携带 messageId\n\n文本内容\ntext-start / text-delta / text-end\nMarkdown 正文流式输出；同一文本块共享 id\n\n召回中间结果（仅 action=search）\ndata-recall\n去重后召回 items，供前端「思考过程」展示\n\n信源引用（仅 action=search）\ndata-reference\nweb 信源列表，items[].sourceType=web\n\n追问推荐（enableFollowUp=true 且有结果）\ndata-follow-up\nquestions 数组\n\n阶段耗时（所有分支）\ndata-usage\nqp_ms / recall_rank_ms / first_token_ms / answer_ms / follow_up_ms / grand_total_ms / input_tokens / output_tokens / total_tokens（按分支取舍）\n\n异常\nerror（errorText / errorCode / retryable）→ finish(finishReason=error) → [DONE]\n\n典型序列：\nsearch: start → data-recall → text-* → data-reference → [data-follow-up] → data-usage → finish → [DONE]\nanswer: start → text-* → [data-follow-up] → data-usage → finish → [DONE]\nclarify: start → text-* → data-usage → finish → [DONE]\n\n注：不含 data-qp / data-ranked / data-image-info / data-video-info / json-* 等图文视频模板事件",
+            "example": "start",
+            "title_en": "",
+            "title_zh": "事件类型（stream=true 时）",
+            "type": "string"
+          },
+          "finishReason": {
+            "description_en": "stop / error",
+            "description_zh": "stop / error",
+            "type": "string"
+          },
+          "followUp": {
+            "description_en": "The follow-up question recommendations (corresponding to the streaming data-follow-up event)",
+            "description_zh": "追问推荐（对应流式 data-follow-up）",
+            "type": "object"
+          },
+          "id": {
+            "description_en": "The request ID",
+            "description_zh": "请求 ID",
+            "example": "2a127bc9-9474-405d-916d-8bc4475fa459",
+            "title_en": "",
+            "title_zh": "请求 ID",
+            "type": "string"
+          },
+          "messageId": {
+            "description_en": "The message ID",
+            "description_zh": "消息 ID",
+            "type": "string"
+          },
+          "reasoningContent": {
+            "description_en": "The model thinking content. Returns an empty string when thinking is not enabled",
+            "description_zh": "模型思考内容；未开启思考时为空字符串",
+            "type": "string"
+          },
+          "recall": {
+            "description_en": "The complete recall pool in non-streaming mode, semantically aligned with the streaming data-websearch event. The structure is {total, items}",
+            "description_zh": "非流式完整召回池，与流式 data-websearch 语义对齐；结构为 {total, items}",
+            "type": "object"
+          },
+          "references": {
+            "description_en": "The source reference list (corresponding to the streaming data-reference event, where items[].sourceType=web)",
+            "description_zh": "信源引用列表（对应流式 data-reference，items[].sourceType=web）",
+            "type": "object"
+          },
+          "requestId": {
+            "description_en": "The unique identifier of this request. Included in every streaming event and in the non-streaming summary object",
+            "description_zh": "本次请求唯一标识，流式每个事件 / 非流式汇总对象均携带",
+            "type": "string"
+          },
+          "searchResults": {
+            "description_en": "The unified search and tool results in non-streaming mode. Web results have sourceType=web. Each successful ToolCall has sourceType=tool and carries the complete result. In streaming mode, data-search-results retains original field names such as source_type/tool_name. Unknown publish times return 0",
+            "description_zh": "非流式统一搜索与工具结果；网页 sourceType=web，每个成功 ToolCall sourceType=tool 并携带完整 result；流式 data-search-results 保持 source_type/tool_name 等原字段名；未知发布时间返回 0",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "coverImage": {
+                  "description_en": "The cover image. Width and height are returned only when provided by the upstream source",
+                  "description_zh": "封面图；宽高仅在上游提供时返回",
+                  "type": "object"
+                },
+                "id": {
+                  "description_en": "The unique ID of the referenced content",
+                  "description_zh": "引用内容唯一 ID",
+                  "type": "string"
+                },
+                "logoUrl": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "publishTime": {
+                  "description_en": "The publish time in Unix seconds. Returns 0 if unknown",
+                  "description_zh": "发布时间，UnixSecond；未知为 0",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "result": {
+                  "description_en": "The complete provider execution result. Returned only when source_type=tool. The actual value may also be an array or scalar",
+                  "description_zh": "仅 source_type=tool 时返回，完整 Provider 执行结果；实际值也可能为数组或标量",
+                  "required": false,
+                  "type": "object"
+                },
+                "siteName": {
+                  "description_en": "The site name",
+                  "description_zh": "站点名",
+                  "type": "string"
+                },
+                "snippet": {
+                  "description_en": "The content snippet",
+                  "description_zh": "内容摘要",
+                  "type": "string"
+                },
+                "sourceType": {
+                  "description_en": "The content source. Valid values: web: web results. tool: tool results",
+                  "description_zh": "内容源：网页结果为 web，工具结果为 tool",
+                  "type": "string"
+                },
+                "title": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                },
+                "toolName": {
+                  "description_en": "The internal tool name. Returned only when sourceType=tool",
+                  "description_zh": "仅 sourceType=tool 时返回，内部 Tool 名称",
+                  "required": false,
+                  "type": "string"
+                },
+                "url": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "usage": {
+            "description_en": "The usage statistics containing only 5 fields. In non-streaming mode: toolUseTotalMs, inputTokens, outputTokens, enableThinking, and totalTokens. In streaming mode, the data-usage event uses the corresponding snake_case fields",
+            "description_zh": "用量统计仅包含 5 项：非流式为 toolUseTotalMs、inputTokens、outputTokens、enableThinking、totalTokens；流式 data-usage 为对应的 snake_case 字段",
+            "type": "object"
+          }
+        },
+        "title_en": "",
+        "title_zh": "QaChatResponse",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body parameters",

@@ -76,6 +76,31 @@
   "pathPattern": "/api/v1/jobs/[JobId]/pods/[PodId]/webterminal",
   "product_code": "pai-dlc",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned data",
+        "description_zh": "返回结果",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID which is used for diagnostics and Q\\&A",
+            "description_zh": "此次调用的请求ID，用于诊断和答疑",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "type": "string"
+          },
+          "WebTerminalUrl": {
+            "description_en": "The WebSocket URI for accessing the container. You must build a WebSocket client. For more information about the communication format, see the following code:\n\n    ws = new WebSocket(\n      `wss://xxxxx`,\n    );\n    ws.onopen = function open() {\n      console.warn('connected');\n      term.write('\\r');\n    };\n\n    ws.onclose = function close() {\n      console.warn('disconnected');\n      term.write('Connection closed');\n    };\n\n    // Return the following information in the backend.\n    ws.onmessage = function incoming(event) {\n      const msg = JSON.parse(event.data);\n      console.warn(msg);\n      if (msg.operation === 'stdout') {\n        term.write(msg.data);\n      } else {\n        console.warn('invalid msg operation: ' + msg);\n      }\n    };\n\n    // Enter the following code in the console.\n    term.onData(data => {\n      const msg = { operation: 'stdin', data: data };\n      ws.send(JSON.stringify(msg));\n    });\n\n    term.onResize(size => {\n      const msg = { operation: 'resize', cols: size.cols, rows: size.rows };\n      ws.send(JSON.stringify(msg));\n    });\n\n    fitAddon.fit();\n    };",
+            "description_zh": "进入容器的WebSocket链接。您需构建WebSocket客户端，详细通信格式请参考如下代码：\n  ```\n  ws = new WebSocket(\n    `wss://xxxxx`,\n  );\n  ws.onopen = function open() {\n    console.warn('connected');\n    term.write('\\r');\n  };\n\n  ws.onclose = function close() {\n    console.warn('disconnected');\n    term.write('Connection closed');\n  };\n\n  // 收到后端返回\n  ws.onmessage = function incoming(event) {\n    const msg = JSON.parse(event.data);\n    console.warn(msg);\n    if (msg.operation === 'stdout') {\n      term.write(msg.data);\n    } else {\n      console.warn('invalid msg operation: ' + msg);\n    }\n  };\n\n  // 控制台输入\n  term.onData(data => {\n    const msg = { operation: 'stdin', data: data };\n    ws.send(JSON.stringify(msg));\n  });\n\n  term.onResize(size => {\n    const msg = { operation: 'resize', cols: size.cols, rows: size.rows };\n    ws.send(JSON.stringify(msg));\n  });\n\n  fitAddon.fit();\n};\n```",
+            "example": "wss://*****",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "Specifies whether to create a shareable link to access the container. Valid values:\n\ntrue: returns a shareable link to access the container. The link will expire after 30 seconds and can only be used once. After you access the container by using the link, other requests that use this link to access the container become invalid.\nfalse: returns a common shareable link to access the container. If you use a common shareable link to access a container, Alibaba Cloud identity authentication is required. The link will expire after 30 seconds",

@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call the https://help.aliyun.com/document_detail/170875.html operation to find the region ID",
       "help_zh": "地域ID。您可以通过调用https://help.aliyun.com/document_detail/170875.html接口查询地域ID",
@@ -33,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cc-bp1190tj036am****",
       "help_en": "The cluster ID. You can call the https://help.aliyun.com/document_detail/170879.html operation to find information about all clusters in the destination region, including the cluster ID",
       "help_zh": "集群ID。您可以通过调用https://help.aliyun.com/document_detail/170879.html接口查询目标地域下所有的集群信息，包括集群ID",
@@ -46,10 +48,13 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "500",
       "help_en": "The shortest query duration. The minimum value is 1000. The default value is 1000. The unit is milliseconds. The response returns queries that run longer than this duration",
       "help_zh": "最短的查询耗时。最小值为1000，默认值为1000。单位：毫秒。返回参数将返回超过该耗时的查询",
       "location": "query",
+      "maximum": "9999999999",
+      "minimum": "0",
       "name": "query_duration_ms",
       "options": [
         "--query-duration-ms"
@@ -102,6 +107,8 @@
       "help_en": "The number of entries to return on each page. Valid values:\n\n30 (Default)\n\n50\n\n100",
       "help_zh": "每页记录数，取值：\n30（默认值）\n50\n100",
       "location": "query",
+      "maximum": "9999999999",
+      "minimum": "0",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -115,6 +122,8 @@
       "help_en": "The page number. The value must be greater than 0 and cannot exceed the maximum value of the Integer data type. The default value is 1",
       "help_zh": "页码，取值为：大于0且不超过Integer数据类型的最大值，默认值为1",
       "location": "query",
+      "maximum": "9999999999",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -139,5 +148,157 @@
   ],
   "pathPattern": "",
   "product_code": "clickhouse",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned result",
+        "description_zh": "返回的结果",
+        "properties": {
+          "ProcessList": {
+            "description_en": "The list of tasks",
+            "description_zh": "任务列表",
+            "properties": {
+              "Data": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ResultSet": {
+                    "description_en": "The details of the tasks",
+                    "description_zh": "任务详情",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "InitialAddress": {
+                          "description_en": "The IP address of the client that initiated the query",
+                          "description_zh": "发起查询的客户端IP地址",
+                          "example": "::ffff:10.1.XX.XX",
+                          "type": "string"
+                        },
+                        "InitialQueryId": {
+                          "description_en": "The query ID",
+                          "description_zh": "查询ID",
+                          "example": "2dd144fd-4230-4249-b15c-e63f964fbb5a",
+                          "type": "string"
+                        },
+                        "InitialUser": {
+                          "description_en": "The database account",
+                          "description_zh": "数据库账号",
+                          "example": "test",
+                          "type": "string"
+                        },
+                        "Query": {
+                          "description_en": "The query statement",
+                          "description_zh": "查询语句",
+                          "example": "select * from test order by score limit 1;",
+                          "type": "string"
+                        },
+                        "QueryDurationMs": {
+                          "description_en": "The query duration in milliseconds",
+                          "description_zh": "查询耗时。单位：毫秒",
+                          "example": "2000",
+                          "type": "string"
+                        },
+                        "QueryStartTime": {
+                          "description_en": "The time when the query started. The time is in the yyyy-MM-ddTHH:mm:ssZ format and is in UTC",
+                          "description_zh": "查询开始时间。格式：yyyy-MM-ddTHH:mm:ssZ（UTC时间）",
+                          "example": "2021-02-02T09:14:48Z",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Rows": {
+                "description_en": "The number of rows returned for the query",
+                "description_zh": "查询返回的数据行数",
+                "example": "1145700",
+                "type": "string"
+              },
+              "RowsBeforeLimitAtLeast": {
+                "description_en": "The page size in rows",
+                "description_zh": "分页大小",
+                "example": "1",
+                "type": "string"
+              },
+              "Statistics": {
+                "description_en": "The statistics of the query result",
+                "description_zh": "查询结果的统计信息",
+                "properties": {
+                  "BytesRead": {
+                    "description_en": "The size of the scanned data, in bytes",
+                    "description_zh": "扫描数据大小。单位：Byte",
+                    "example": "9141300000",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "ElapsedTime": {
+                    "description_en": "The elapsed time",
+                    "description_zh": "平均响应时间",
+                    "example": "4156",
+                    "format": "float",
+                    "type": "number"
+                  },
+                  "RowsRead": {
+                    "description_en": "The number of rows scanned",
+                    "description_zh": "扫描数据行数",
+                    "example": "1000000",
+                    "format": "int32",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "TableSchema": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ResultSet": {
+                    "description_en": "The details of the columns",
+                    "description_zh": "列表详情",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Name": {
+                          "description_en": "The name of the column",
+                          "description_zh": "列名",
+                          "example": "InitialUser",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "The type of the column",
+                          "description_zh": "列类型",
+                          "example": "String",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "FD61BB0D-788A-5185-A8E3-1B90BA8F6F04",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

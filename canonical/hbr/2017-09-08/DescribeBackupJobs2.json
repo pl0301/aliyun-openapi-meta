@@ -25,6 +25,7 @@
       "help_en": "The page number. Pages start from page 1. The default value is 1",
       "help_zh": "分页页码，从1开始，默认值为1",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -38,6 +39,8 @@
       "help_en": "The number of entries per page. Valid values: 1 to 99. The default value is 10",
       "help_zh": "分页大小，最小值为1，最大值为99，默认值为10",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -47,6 +50,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "ECS_FILE",
       "help_en": "The type of the data source. Valid values:\n\nECS_FILE: Backs up Elastic Compute Service (ECS) files.\n\nOSS: Backs up Alibaba Cloud Object Storage Service (OSS) buckets.\n\nNAS: Backs up Alibaba Cloud Apsara File Storage NAS (NAS) file systems.\n\nOTS: Backs up Alibaba Cloud Tablestore instances.\n\nUDM_ECS: Backs up entire ECS instances.\n\nUDM_ECS_DISK: A sub-task for disk backup in an ECS instance backup job.\n\nCOMMON_NAS: A generic NAS data source. This includes archive NAS and on-premises NAS data sources. Use the Values parameter of Filters to specify the data source type.\n\nFile: Backs up on-premises files.\n\nSYNC: Data synchronization",
       "help_zh": "数据源类型，取值范围：\n\nECS_FILE：备份ECS文件\nOSS：备份阿里云OSS\nNAS：备份阿里云NAS\nOTS：备份阿里云OTS\nUDM_ECS：备份ECS整机\nUDM_ECS_DISK：ECS整机备份-云盘备份子任务\nCOMMON_NAS：通用NAS数据源，包括归档NAS数据源和本地NAS数据源。您需要通过Filters的Values区分数据源类型。\nFile：本地文件备份\nSYNC：数据同步",
@@ -60,6 +64,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ASCEND",
+        "DESCEND"
+      ],
       "example": "DESCEND",
       "help_en": "The sort direction. Valid values:\n\nASCEND: Ascending order.\n\nDESCEND (Default): Descending order",
       "help_zh": "排序方向。取值范围：\n\nASCEND：升序\nDESCEND（默认）：降序",
@@ -144,5 +152,528 @@
   ],
   "pathPattern": "",
   "product_code": "hbr",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "BackupJobs": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "BackupJob": {
+                "description_en": "The list of backup jobs that meet the specified criteria",
+                "description_zh": "符合条件的备份任务列表",
+                "items": {
+                  "description_en": "The details of the backup job",
+                  "description_zh": "备份任务详情",
+                  "properties": {
+                    "ActualBytes": {
+                      "description_en": "The actual data volume of the backup job after deduplication. Unit: bytes",
+                      "description_zh": "去除重复后备份任务实际数据量。单位为字节",
+                      "example": "600",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ActualFiles": {
+                      "description_en": "The actual number of processed files",
+                      "description_zh": "表示实际处理的文件数",
+                      "example": "8",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ActualItems": {
+                      "description_en": "This parameter is valid only when SourceType is set to ECS_FILE. It indicates the actual number of items in the backup job",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，该参数有效。表示备份任务实际项目数",
+                      "example": "6",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BackupType": {
+                      "description_en": "The backup type. The value COMPLETE indicates a full backup",
+                      "description_zh": "备份类型。取值为COMPLETE，表示全量备份",
+                      "example": "COMPLETE",
+                      "type": "string"
+                    },
+                    "Bucket": {
+                      "description_en": "This parameter is valid only when SourceType is set to OSS. It indicates the name of the OSS bucket",
+                      "description_zh": "仅当SourceType取值为OSS时，该参数有效。表示备份OSS bucket名称",
+                      "example": "hbr-backup-oss",
+                      "type": "string"
+                    },
+                    "BytesDone": {
+                      "description_en": "The data volume of the incremental backup. Unit: bytes",
+                      "description_zh": "增量备份的数据量。单位为字节",
+                      "example": "800",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BytesTotal": {
+                      "description_en": "The total data volume of the data source. Unit: bytes",
+                      "description_zh": "数据源总数据量。单位为字节",
+                      "example": "1000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ChangeListPath": {
+                      "description_en": "The configuration of the incremental file synchronization list. This parameter is required only for synchronization",
+                      "description_zh": "增量文件同步列表的配置。（仅同步需要）",
+                      "example": "{\"dataSourceId\": \"ds-123456789\", \"path\": \"/changelist\"}",
+                      "type": "string"
+                    },
+                    "ClientId": {
+                      "description_en": "This parameter is valid only when SourceType is set to ECS_FILE. It indicates the ID of the backup client",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，该参数有效。表示备份客户端ID",
+                      "example": "c-*********************",
+                      "type": "string"
+                    },
+                    "CompleteTime": {
+                      "description_en": "The time when the backup job was completed. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "备份任务完成时间。UNIX时间，单位为秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CreateTime": {
+                      "description_en": "This parameter is valid only when SourceType is set to NAS. It indicates the time when the file system was created. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "仅当SourceType取值为NAS时，该参数有效。表示文件系统创建时间。UNIX时间，单位为秒",
+                      "example": "1607436917",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CreatedTime": {
+                      "description_en": "The time when the backup job was created. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "备份任务创建时间。UNIX时间，单位为秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CrossAccountRoleName": {
+                      "description_en": "The name of the RAM role that is created in the source account for cross-account backup and managed by the current account",
+                      "description_zh": "被当前账号管理的跨账号备份的原账号RAM中创建的角色名",
+                      "example": "BackupRole",
+                      "type": "string"
+                    },
+                    "CrossAccountType": {
+                      "description_en": "The type of the cross-account backup. Valid values:\n\nSELF_ACCOUNT: Backs up data within the same account.\n\nCROSS_ACCOUNT: Backs up data across accounts",
+                      "description_zh": "跨账号备份类型。支持： \nSELF_ACCOUNT：本账号备份\nCROSS_ACCOUNT：跨账号备份",
+                      "enumValueTitles": {},
+                      "example": "SELF_ACCOUNT",
+                      "type": "string"
+                    },
+                    "CrossAccountUserId": {
+                      "description_en": "The ID of the source account that is managed by the current account for cross-account backup",
+                      "description_zh": "被当前账号管理的跨账号备份的原账号ID",
+                      "example": "158975xxxxx4625",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DestDataSourceDetail": {
+                      "description_en": "The details of the destination data source. This parameter is required only for synchronization",
+                      "description_zh": "目的端数据源详情。（仅同步需要）",
+                      "example": "{\\\"prefix\\\":\\\"/\\\"}",
+                      "type": "string"
+                    },
+                    "DestDataSourceId": {
+                      "description_en": "The ID of the destination data source. This parameter is required only for synchronization",
+                      "description_zh": "目的端数据源ID。（仅同步需要）",
+                      "example": "ds-000cov4ufudxklj24zdk",
+                      "type": "string"
+                    },
+                    "DestSourceType": {
+                      "description_en": "The type of the destination data source. This parameter is required only for synchronization",
+                      "description_zh": "目的端数据源类型。（仅同步需要）",
+                      "example": "OSS",
+                      "type": "string"
+                    },
+                    "Detail": {
+                      "description_en": "The details of the ECS instance backup job",
+                      "description_zh": "ECS整机备份任务详情",
+                      "properties": {
+                        "DestinationNativeSnapshotErrorMessage": {
+                          "description_en": "The error message for the failed remote replication",
+                          "description_zh": "异地复制失败信息",
+                          "example": "ECS.CreatingSnapshot",
+                          "type": "string"
+                        },
+                        "DestinationNativeSnapshotId": {
+                          "description_en": "The ID of the remote replication snapshot",
+                          "description_zh": "异地复制快照ID",
+                          "example": "s-******************",
+                          "type": "string"
+                        },
+                        "DestinationNativeSnapshotProgress": {
+                          "description_en": "The progress of the remote replication",
+                          "description_zh": "异地复制进度",
+                          "example": "85",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "DestinationNativeSnapshotStatus": {
+                          "description_en": "The status of the remote replication",
+                          "description_zh": "异地复制状态",
+                          "example": "COMPLETE",
+                          "type": "string"
+                        },
+                        "DestinationRetention": {
+                          "description_en": "The retention period of the remote replication backup",
+                          "description_zh": "异地复制备份保留时间",
+                          "example": "30",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "DestinationSnapshotId": {
+                          "description_en": "The ID of the remote replication backup",
+                          "description_zh": "异地复制备份ID",
+                          "example": "s-******************",
+                          "type": "string"
+                        },
+                        "DiskNativeSnapshotIdList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "DiskNativeSnapshotId": {
+                              "description_en": "The mapping between snapshots and disks",
+                              "description_zh": "快照与云盘对应关系",
+                              "items": {
+                                "description_en": "The snapshot ID",
+                                "description_zh": "快照ID",
+                                "example": "s-******************",
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "DoCopy": {
+                          "description_en": "Indicates whether a remote replication is performed",
+                          "description_zh": "是否进行异地复制",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "InstanceInfos": {
+                          "description_en": "The information about the ECS instance, including the instance name and instance type",
+                          "description_zh": "ECS实例信息，包含ECS实例名称、实例规格等",
+                          "example": "{\n \"i-xxxxxxxx\": {\n \"hostName\": \"test\",\n \"instanceName\": \"test\",\n \"instanceType\": \"ecs.c7.xlarge\",\n \"osType\": \"linux\",\n \"diskIds\": [\n \"d-xxxxxxxx01\",\n \"d-xxxxxxxx02\"\n ],\n \"osNameEn\": \"Rocky Linux 8.8 64 bit\",\n \"osName\": \"Rocky Linux 8.8 64position\",\n \"platform\": \"Rocky Linux\"\n }\n}",
+                          "type": "object"
+                        },
+                        "NativeSnapshotId": {
+                          "description_en": "The snapshot ID",
+                          "description_zh": "快照ID",
+                          "example": "s-******************",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ErrorMessage": {
+                      "description_en": "The error message for the backup job",
+                      "description_zh": "备份任务的错误信息",
+                      "example": "PARTIAL_COMPLETE",
+                      "type": "string"
+                    },
+                    "Exclude": {
+                      "description_en": "This parameter is required only when SourceType is set to ECS_FILE. It indicates the path to files that do not need to be backed up. All files in this path are excluded. The path can be up to 255 characters long",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，需要配置该参数。表示不需要进行备份的路径，该路径下所有文件都不备份。最多支持255个字符",
+                      "example": "[\"/var\", \"/proc\"]",
+                      "type": "string"
+                    },
+                    "FileSystemId": {
+                      "description_en": "This parameter is valid only when SourceType is set to NAS. It indicates the file system ID",
+                      "description_zh": "仅当SourceType取值为NAS时，该参数有效。表示文件系统ID",
+                      "example": "005494",
+                      "type": "string"
+                    },
+                    "FilesDone": {
+                      "description_en": "The number of processed files",
+                      "description_zh": "表示文件已处理完成数",
+                      "example": "9",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "FilesTotal": {
+                      "description_en": "The total number of files to be processed",
+                      "description_zh": "表示需处理文件的总数",
+                      "example": "10",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Identifier": {
+                      "description_en": "This parameter is returned only when SourceType is set to CONTAINER. It indicates the ID of the cluster that is backed up by the container backup job. If the cluster is a Container Service for Kubernetes (ACK) cluster, this parameter indicates the ACK cluster ID",
+                      "description_zh": "仅SourceType=CONTAINER时返回，表示容器备份任务备份的集群标识。当集群类型为阿里云容器服务Kubernetes集群时，该值为Kubernetes集群ID",
+                      "example": "c83**************************b76",
+                      "title_en": "",
+                      "title_zh": "仅SourceType=CONTAINER时返回，表示容器备份任务备份的集群标识。当集群类型为阿里云容器服务Kubernetes集群时，该值为Kubernetes集群ID。",
+                      "type": "string"
+                    },
+                    "Include": {
+                      "description_en": "The source paths included in the backup job",
+                      "description_zh": "备份任务包含的备份路径",
+                      "example": "[\"/home/alice/*.pdf\", \"/home/bob/*.txt\"]",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "This parameter is valid only when SourceType is set to NAS. It indicates the ECS instance ID",
+                      "description_zh": "仅当SourceType取值为NAS时，该参数有效。表示ECS实例ID",
+                      "example": "i-*********************",
+                      "type": "string"
+                    },
+                    "InstanceName": {
+                      "description_en": "The name of the Tablestore instance",
+                      "description_zh": "表格存储实例名称",
+                      "example": "instancename",
+                      "type": "string"
+                    },
+                    "ItemsDone": {
+                      "description_en": "This parameter is valid only when SourceType is set to ECS_FILE. It indicates the number of backup items",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，该参数有效。表示备份项目数",
+                      "example": "8",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ItemsTotal": {
+                      "description_en": "This parameter is valid only when SourceType is set to ECS_FILE. It indicates the total number of items in the data source",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，该参数有效。表示数据源项目总数",
+                      "example": "10",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "JobId": {
+                      "description_en": "The backup job ID",
+                      "description_zh": "备份任务ID",
+                      "example": "job-000g********w7",
+                      "type": "string"
+                    },
+                    "JobName": {
+                      "description_en": "The name of the backup job",
+                      "description_zh": "备份任务名称",
+                      "example": "jobname",
+                      "type": "string"
+                    },
+                    "Options": {
+                      "description_en": "This parameter is required only when SourceType is set to ECS_FILE. It indicates whether to use Volume Shadow Copy Service (VSS) to define the backup path.\n\nThis feature is available only for Windows ECS instances.\n\nIf data in the backup source is changed, set this parameter to `{\"UseVSS\":true}` to ensure data consistency between the backup and the source.\n\nAfter you enable VSS, you cannot back up multiple file directories at the same time",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，需要配置该参数。表示是否使用Windows系统VSS定义备份路径。\n\n此功能仅支持Windows类型ECS实例。\n如果备份源中有数据更改，需要确保备份数据与源数据的一致时，才可配置为`[\"UseVSS\":true]`。\n选择使用VSS后，不支持多个文件目录同时备份",
+                      "example": "{\"UseVSS\":false}",
+                      "type": "string"
+                    },
+                    "OtsDetail": {
+                      "description_en": "The details of the Tablestore instance",
+                      "description_zh": "表格存储实例详情",
+                      "properties": {
+                        "TableNames": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "TableName": {
+                              "description_en": "The list of data table names in the Tablestore instance",
+                              "description_zh": "表格存储实例的数据表名称列表",
+                              "items": {
+                                "description_en": "The name of a data table in the Tablestore instance",
+                                "description_zh": "表格存储实例的数据表名称",
+                                "example": "[\"table1\", \"table2\", \"table3\"]",
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Paths": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Path": {
+                          "description_en": "The source path of the backup",
+                          "description_zh": "表示备份路径",
+                          "items": {
+                            "description_en": "The source path",
+                            "description_zh": "表示备份路径",
+                            "example": "\"/home\"",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "PlanId": {
+                      "description_en": "The backup plan ID",
+                      "description_zh": "备份计划ID",
+                      "example": "plan-20********35",
+                      "type": "string"
+                    },
+                    "Prefix": {
+                      "description_en": "This parameter is valid only when SourceType is set to OSS. It indicates the prefix of the backup object",
+                      "description_zh": "仅当SourceType取值为OSS时，该参数有效。表示备份对象前缀",
+                      "example": "example/",
+                      "type": "string"
+                    },
+                    "Progress": {
+                      "description_en": "The backup progress. The value is calculated as 100% × 100",
+                      "description_zh": "备份进度。值为100%*100",
+                      "example": "10000",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Report": {
+                      "description_en": "The job report",
+                      "description_zh": "任务报表",
+                      "properties": {
+                        "FailedFiles": {
+                          "description_en": "The list of failed files",
+                          "description_zh": "失败的文件列表",
+                          "example": "/temp/report/158975xxxxxx4625/r-0001hfxxxxxymsspjjtl/job-0001hfxxxxxymsspjjtl_failed.zip",
+                          "type": "string"
+                        },
+                        "ReportTaskStatus": {
+                          "description_en": "The status of report generation",
+                          "description_zh": "报告生成状态",
+                          "example": "COMPLETE",
+                          "type": "string"
+                        },
+                        "SkippedFiles": {
+                          "description_en": "The list of skipped files",
+                          "description_zh": "跳过的文件列表",
+                          "example": "/temp/report/158975xxxxxx4625/r-0001hfxxxxxymsspjjtl/job-0001hfxxxxxymsspjjtl_skipped.zip",
+                          "type": "string"
+                        },
+                        "SuccessFiles": {
+                          "description_en": "The list of successful files",
+                          "description_zh": "成功的文件列表",
+                          "example": "/temp/report/158975xxxxxx4625/r-0001hfxxxxxymsspjjtl/job-0001hfxxxxxymsspjjtl_success.zip",
+                          "type": "string"
+                        },
+                        "TotalFiles": {
+                          "description_en": "The list of all files. This parameter is not returned for data synchronization",
+                          "description_zh": "所有的文件列表。（数据同步不返回该字段）",
+                          "example": "/temp/report/158975xxxxxx4625/job-0001hfxxxxxymsspjjtl/job-0001hfxxxxxymsspjjtl_total.csv",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SourceType": {
+                      "description_en": "The type of the data source. Valid values:\n\nECS_FILE: Backs up ECS files.\n\nOSS: Backs up Alibaba Cloud OSS buckets.\n\nNAS: Backs up Alibaba Cloud NAS file systems",
+                      "description_zh": "数据源类型，取值范围：\n\nECS_FILE：备份ECS文件\nOSS：备份阿里云OSS\nNAS：备份阿里云NAS",
+                      "example": "ECS_FILE",
+                      "type": "string"
+                    },
+                    "Speed": {
+                      "description_en": "The actual average backup speed. Unit: KB/s",
+                      "description_zh": "实际的平均备份速度。单位为KB/s",
+                      "example": "500",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SpeedLimit": {
+                      "description_en": "This parameter is required only when SourceType is set to ECS_FILE. It indicates the traffic shaping settings for the backup. The format is `{start}|{end}|{bandwidth}`. Use the `|` character to separate multiple traffic shaping configurations. The time ranges of the configurations cannot overlap.\n\nstart: The start hour.\n\nend: The end hour.\n\nbandwidth: The throttling speed. Unit: KB/s",
+                      "description_zh": "仅当SourceType取值为ECS_FILE时，需要配置该参数。表示备份流量控制。格式为`{start}|{end}|{bandwidth}`。多个流量控制配置使用`|`分隔，并且配置时间不允许有重叠。\n\nstart：起始小时\nend：结束小时\nbandwidth：限制速率，单位KB/s",
+                      "example": "0:24:5120",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The time when the backup job started. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "备份任务开始时间。UNIX时间，单位为秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Status": {
+                      "description_en": "The status of the backup job. Valid values:\n\nCOMPLETE: The job is successful.\n\nPARTIAL_COMPLETE: The job is partially successful.\n\nFAILED: The job failed",
+                      "description_zh": "备份任务状态。取值范围：\n\nCOMPLETE：成功\nPARTIAL_COMPLETE：部分成功\nFAILED：失败",
+                      "example": "COMPLETE",
+                      "type": "string"
+                    },
+                    "TableName": {
+                      "description_en": "The name of the data table in the Tablestore instance",
+                      "description_zh": "表格存储实例的数据表名称",
+                      "example": "table1",
+                      "type": "string"
+                    },
+                    "TriggerMode": {
+                      "title_en": "",
+                      "title_zh": "备份任务触发方式",
+                      "type": "string"
+                    },
+                    "UpdatedTime": {
+                      "description_en": "The time when the backup job was updated. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "备份任务更新时间。UNIX时间，单位为秒",
+                      "example": "1554347313",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "VaultId": {
+                      "description_en": "The ID of the backup repository",
+                      "description_zh": "备份仓库ID",
+                      "example": "v-0006******q",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "Code": {
+            "description_en": "The return code. A value of 200 indicates that the request was successful",
+            "description_zh": "返回码，200表示成功",
+            "example": "200",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The message that is returned. If the request was successful, successful is returned. If the request failed, an error message is returned",
+            "description_zh": "返回信息描述，成功一般返回successful，错误时会返回相应错误信息",
+            "example": "successful",
+            "type": "string"
+          },
+          "PageNumber": {
+            "description_en": "The page number. Pages start from page 1. The default value is 1",
+            "description_zh": "分页页码，从1开始，默认值为1",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page. Valid values: 1 to 99. The default value is 10",
+            "description_zh": "分页大小，最小值为1，最大值为99，默认值为10",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful.\n\ntrue: The request was successful.\n\nfalse: The request failed",
+            "description_zh": "请求是否成功。\n\ntrue：成功\nfalse：失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The total number of backup jobs that meet the specified criteria",
+            "description_zh": "查询到的符合条件的备份任务总数",
+            "example": "8",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

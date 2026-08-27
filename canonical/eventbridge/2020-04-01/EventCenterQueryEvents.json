@@ -53,6 +53,8 @@
       "help_en": "The maximum number of results to return. Valid values: 0 to 10,000. The default value is 100",
       "help_zh": "允许返回的最大结果数目。 取值范围：0~10000，默认100",
       "location": "query",
+      "maximum": "10000",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -76,6 +78,11 @@
           "type": "string"
         },
         {
+          "enum": [
+            "timeseries",
+            "table",
+            "timeseries_and_table"
+          ],
           "example": "timeseries_and_table",
           "help_en": "The query type. Valid values:\n\ntimeseries: queries time series data.\n\ntable: queries table data.\n\ntimeseries_and_table: queries both time series data and table data",
           "help_zh": "查询类型：\n\ntimeseries：查询时序数据\ntable：查询表格数据\ntimeseries_and_table：同时查询时序数据和表格数据",
@@ -107,6 +114,18 @@
               "element": {
                 "fields": [
                   {
+                    "enum": [
+                      "COUNT",
+                      "SUM",
+                      "AVG",
+                      "COUNT_DISTINCT",
+                      "MAX",
+                      "MIN",
+                      "P50",
+                      "P90",
+                      "P95",
+                      "P99"
+                    ],
                     "example": "COUNT_DISTINCT",
                     "help_en": "The operator",
                     "help_zh": "操作符",
@@ -159,6 +178,23 @@
                     "type": "string"
                   },
                   {
+                    "enum": [
+                      "=",
+                      "!=",
+                      ">",
+                      ">=",
+                      "<",
+                      "<=",
+                      "exists",
+                      "does-not-exist",
+                      "starts-with",
+                      "does-not-start-with",
+                      "contains",
+                      "does-not-contain",
+                      "in",
+                      "not-in",
+                      "text-match"
+                    ],
                     "example": "=",
                     "help_en": "The operator",
                     "help_zh": "操作符",
@@ -185,6 +221,10 @@
                     "type": "array"
                   },
                   {
+                    "enum": [
+                      "AND",
+                      "OR"
+                    ],
                     "example": "AND",
                     "help_en": "The logical operator for combining nested filters",
                     "help_zh": "嵌套过滤条件的逻辑组合方式",
@@ -211,6 +251,23 @@
                           "type": "string"
                         },
                         {
+                          "enum": [
+                            "=",
+                            "!=",
+                            ">",
+                            ">=",
+                            "<",
+                            "<=",
+                            "exists",
+                            "does-not-exist",
+                            "starts-with",
+                            "does-not-start-with",
+                            "contains",
+                            "does-not-contain",
+                            "in",
+                            "not-in",
+                            "text-match"
+                          ],
                           "help_en": "The operator",
                           "help_zh": "操作符",
                           "name": "op",
@@ -262,6 +319,10 @@
               "type": "array"
             },
             {
+              "enum": [
+                "AND",
+                "OR"
+              ],
               "example": "AND",
               "help_en": "The logical operator for combining filter conditions",
               "help_zh": "筛选条件组合的逻辑",
@@ -289,6 +350,18 @@
               "element": {
                 "fields": [
                   {
+                    "enum": [
+                      "COUNT",
+                      "SUM",
+                      "AVG",
+                      "COUNT_DISTINCT",
+                      "MAX",
+                      "MIN",
+                      "P50",
+                      "P90",
+                      "P95",
+                      "P99"
+                    ],
                     "example": "AVG",
                     "help_en": "The operator",
                     "help_zh": "操作符",
@@ -377,6 +450,7 @@
               "example": "1687860901814",
               "help_en": "The start timestamp for the event query. Unit: milliseconds",
               "help_zh": "查询事件的开始时间戳，单位毫秒",
+              "minimum": "946684800000",
               "name": "start_time",
               "options": [
                 "--start-time"
@@ -389,6 +463,7 @@
               "example": "1687861201814",
               "help_en": "The end timestamp for the event query. Unit: milliseconds",
               "help_zh": "查询事件的结束时间戳，单位毫秒",
+              "minimum": "946684800000",
               "name": "end_time",
               "options": [
                 "--end-time"
@@ -424,5 +499,117 @@
   ],
   "pathPattern": "",
   "product_code": "eventbridge",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response schema",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Code": {
+            "description_en": "The status of the API call, which can be Success or a POP error code",
+            "description_zh": "接口状态或POP错误码。取值说明如下：Success：成功",
+            "example": "Success",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The returned data",
+            "description_zh": "返回结果",
+            "properties": {
+              "MaxResults": {
+                "description_en": "The maximum number of entries to return",
+                "description_zh": "本次请求所返回的最大记录条数",
+                "example": "100",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "本次请求所返回的最大记录条数",
+                "type": "integer"
+              },
+              "NextToken": {
+                "description_en": "The token used to retrieve the next page of results. If this parameter is empty, all results have been returned",
+                "description_zh": "表示当前调用返回读取到的位置。空代表数据已经读取完毕",
+                "example": "100",
+                "title_en": "",
+                "title_zh": "表示当前调用返回读取到的位置。空代表数据已经读取完毕。",
+                "type": "string"
+              },
+              "Table": {
+                "description_en": "The query results for the `table` query type",
+                "description_zh": "对应查询类型为table的查询结果",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "RowData": {
+                      "description_en": "A query result entry, represented as a key-value pair",
+                      "description_zh": "查询结果的条目，以k-v对表示",
+                      "example": "{\n  \"id\":\"xxx\",\n  \"source\":\"acs.ecs\"\n}",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "TimeSeries": {
+                "description_en": "The query results for the `time series` query type",
+                "description_zh": "对应查询类型为timeseries的查询结果",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "RowData": {
+                      "description_en": "A query result entry, represented as a key-value pair",
+                      "description_zh": "查询结果的条目，以k-v对表示",
+                      "example": "{\n  \"id\":\"xxx\",\n  \"source\":\"acs.ecs\"\n}",
+                      "type": "object"
+                    },
+                    "Time": {
+                      "description_en": "The timestamp",
+                      "description_zh": "用于显示时间戳",
+                      "example": "1683561600000",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "TotalCount": {
+                "description_en": "The total number of entries that meet the filter conditions. This parameter is optional and is not returned by default",
+                "description_zh": "TotalCount本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "example": "76",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "TotalCount本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "Specified parameter Limit is not valid.",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "本次请求的ID",
+            "example": "5DAF96FB-A4B6-548C-B999-XXXXXXXX",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the call was successful. `true` indicates success, and `false` indicates failure",
+            "description_zh": "操作是否成功。true表示成功，false表示失败",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

@@ -2,6 +2,163 @@
   "camel_example": "",
   "cmd_full_name": "pds create-file",
   "cmd_name": "create-file",
+  "components": {
+    "schemas": {
+      "UploadFormInfo": {
+        "description_en": "The required information for a form upload",
+        "description_zh": "表单上传信息",
+        "properties": {
+          "endpoint": {
+            "title": "数据存储地址",
+            "type": "string"
+          },
+          "form_data": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "表单上传信息",
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "UploadPartInfo": {
+        "description_en": "Part information",
+        "description_zh": "分段信息",
+        "properties": {
+          "etag": {
+            "description_en": "This field is deprecated. Do not use it",
+            "description_zh": "此字段已废弃，请勿使用",
+            "example": "\"0CC175B9C0F1B6A831C399E269772661\"",
+            "title": "etag",
+            "type": "string"
+          },
+          "internal_upload_url": {
+            "description_en": "The internal upload URL, which is used for access from within a VPC network. After you enable the intelligent data domain feature, this field is no longer used. The value of this parameter is adaptively returned in the upload_url field based on the request. If you need to use this field, contact PDS technical support",
+            "description_zh": "内网上传地址，用于VPC网络内部访问\n（开启智能数据域名后将不再使用该字段，根据请求该参数会自适应返回在upload_url字段值内，如需使用该字段请联系PDS技术支持）",
+            "example": "https://data-vpc.aliyunpds.com/xxx/xxx?Expires=xxx&OSSAccessKeyId=xxx&Signature=xxx&partNumber=1&uploadId=0CC175B9C0F1B6A831C399E269772661\n",
+            "title": "内网上传地址",
+            "type": "string"
+          },
+          "parallel_sha1_ctx": {
+            "description_en": "The SHA-1 context of the previous part. This field is valid only for parallel upload of multiple parts",
+            "description_zh": "上一个分段的sha1上下文，该字段只在多分片并发上传的模式下有效",
+            "properties": {
+              "h": {
+                "description_en": "The first five 32-bit variables of the SHA-1 hash of the previous data block. This field is valid only for parallel upload of multiple parts",
+                "description_zh": "上一个数据块SHA1的第1-5个32位变量，该字段只在多分片并发上传的模式下有效",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "title": "上一个数据块SHA1的第1-5个32位变量",
+                "type": "array"
+              },
+              "part_offset": {
+                "description_en": "The total length of data up to the previous data block, in bytes. The value must be a multiple of 64. This field is valid only for parallel upload of multiple parts",
+                "description_zh": "到上一个数据块为止的总长度，字节，需要为64的倍数，该字段只在多分片并发上传的模式下有效",
+                "example": "10240",
+                "format": "int64",
+                "title": "到上一个数据块为止的总长度，字节，需要为64的倍数",
+                "type": "integer"
+              }
+            },
+            "title": "上一个分段的sha1上下文",
+            "type": "object"
+          },
+          "parallel_sha256_ctx": {
+            "description_en": "The SHA-256 context of the previous part",
+            "description_zh": "上一个分段的sha256上下文",
+            "properties": {
+              "h": {
+                "description_en": "The first eight 32-bit variables of the SHA-256 hash of the previous data block",
+                "description_zh": "上一个数据块SHA256的第1-8个32位变量",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "title": "上一个数据块SHA256的第1-8个32位变量",
+                "type": "array"
+              },
+              "part_offset": {
+                "description_en": "The total length of data up to the previous data block, in bytes. The value must be a multiple of 64",
+                "description_zh": "到上一个数据块为止的总长度，字节，需要为64的倍数",
+                "format": "int64",
+                "title": "到上一个数据块为止的总长度，字节，需要为64的倍数",
+                "type": "integer"
+              }
+            },
+            "title": "上一个分段的sha256上下文",
+            "type": "object"
+          },
+          "part_number": {
+            "description_en": "The part number",
+            "description_zh": "段编号",
+            "example": "1",
+            "format": "int32",
+            "required": true,
+            "title": "段编号",
+            "type": "integer"
+          },
+          "part_size": {
+            "description_en": "This field is deprecated. Do not use it",
+            "description_zh": "此字段已废弃，请勿使用",
+            "example": "1024",
+            "format": "int64",
+            "title": "分段大小",
+            "type": "integer"
+          },
+          "upload_form_info": {
+            "$ref": "#/components/schemas/UploadFormInfo",
+            "description_en": "The form upload information",
+            "description_zh": "表单上传信息",
+            "title": "表单上传信息"
+          },
+          "upload_url": {
+            "description_en": "The upload URL. The URL is valid for 15 minutes by default. If the URL expires, you must call the GetUploadUrl operation again to obtain a new one. If you enable the intelligent data domain feature, the value of internal_upload_url is adaptively returned in this field based on the request",
+            "description_zh": "上传地址，默认有效时间15分钟，如果链接超时，需要重新调用GetUploadUrl进行获取\n（开启智能数据域名后，根据请求会自适应返回internal_upload_url值在该字段内）",
+            "example": "https://data.aliyunpds.com/xxx/xxx?Expires=xxx&OSSAccessKeyId=xxx&Signature=xxx&partNumber=1&uploadId=0CC175B9C0F1B6A831C399E269772661",
+            "required": true,
+            "title": "上传地址",
+            "type": "string"
+          }
+        },
+        "title": "分段信息",
+        "type": "object"
+      },
+      "UserTag": {
+        "description_en": "User tag",
+        "description_zh": "用户 tag",
+        "properties": {
+          "key": {
+            "description_en": "Key. Required. Must not contain the # character. The combined length of key and value in a single tag must not exceed 2000 bytes",
+            "description_zh": "key，不能为空，不能包含 #。单个元素中的 key 和 value 总长度不能超过 2000 字节",
+            "example": "topic",
+            "required": true,
+            "title": "key",
+            "type": "string",
+            "visibility": "Public"
+          },
+          "value": {
+            "description_en": "Value",
+            "description_zh": "value",
+            "required": true,
+            "title": "value",
+            "type": "string",
+            "visibility": "Public"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object",
+        "visibility": "Public"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a file or folder",
   "description_zh": "创建文件或文件夹",
@@ -49,6 +206,8 @@
       "help_en": "The file name. The name can be up to 1024 bytes in UTF-8 encoding and cannot contain forward slashes (/)",
       "help_zh": "文件名称，按照 utf8 编码最长 1024 字节，不能包含 /",
       "location": "body",
+      "max_length": "1024",
+      "min_length": "1",
       "name": "name",
       "options": [
         "--name"
@@ -59,6 +218,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "file",
+        "folder"
+      ],
       "example": "file",
       "help_en": "The file type. Valid values:\n\nfile: file.\nfolder: folder",
       "help_zh": "文件类型，可选值如下：\n\nfile：文件\nfolder：文件夹",
@@ -96,6 +259,7 @@
         "--drive-id"
       ],
       "param_style": "json",
+      "pattern": "^[0-9]*$",
       "raw_name": "drive_id",
       "required": false,
       "type": "string"
@@ -295,6 +459,7 @@
       "help_en": "The file description. The description can be up to 1024 characters. Default value: empty",
       "help_zh": "文件描述信息，最长 1024 字符，默认为空",
       "location": "body",
+      "max_length": "1024",
       "name": "description",
       "options": [
         "--description"
@@ -319,6 +484,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "sha1"
+      ],
       "example": "sha1",
       "help_en": "The hash algorithm name for the file content. Currently, only sha1 is supported",
       "help_zh": "文件内容hash算法名，当前只支持 sha1",
@@ -347,6 +515,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ignore",
+        "auto_rename",
+        "refuse"
+      ],
       "example": "ignore",
       "help_en": "The mode for handling files with duplicate names. Valid values:\n\nignore: allows files with duplicate names.\nauto_rename: automatically renames the file when a file with the same name exists. By default, the current timestamp is appended, such as xxx_20060102_150405.\nrefuse: rejects the creation of a new file when a file with the same name exists on the server, and returns the details of the existing file to the client.\n\nDefault value: ignore",
       "help_zh": "同名文件处理模式，可选值如下：\n\nignore：允许同名文件；\n\nauto_rename：当发现同名文件是，云端自动重命名，默认为追加当前时间点，如 xxx _20060102_150405；\n\nrefuse：当云端存在同名文件时，拒绝创建新文件，返回客户端已存在同名文件的详细信息。\n\n默认为 ignore",
@@ -434,6 +607,109 @@
   "pathPattern": "/v2/file/create",
   "product_code": "pds",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response information",
+        "description_zh": "返回信息",
+        "properties": {
+          "domain_id": {
+            "description_en": "The domain ID",
+            "description_zh": "域id",
+            "example": "bj1",
+            "title_en": "",
+            "title_zh": "域id",
+            "type": "string"
+          },
+          "drive_id": {
+            "description_en": "The drive ID",
+            "description_zh": "空间id",
+            "example": "1",
+            "title_en": "",
+            "title_zh": "空间id",
+            "type": "string"
+          },
+          "exist": {
+            "description_en": "Indicates whether the file exists",
+            "description_zh": "文件是否存在",
+            "example": "false",
+            "title_en": "",
+            "title_zh": "文件是否存在",
+            "type": "boolean"
+          },
+          "file_id": {
+            "description_en": "The file ID",
+            "description_zh": "文件id",
+            "example": "fileid1",
+            "title_en": "",
+            "title_zh": "文件id",
+            "type": "string"
+          },
+          "file_name": {
+            "description_en": "The file name",
+            "description_zh": "文件名",
+            "example": "a.txt",
+            "title_en": "",
+            "title_zh": "文件名",
+            "type": "string"
+          },
+          "parent_file_id": {
+            "description_en": "The parent folder ID",
+            "description_zh": "父目录id",
+            "example": "fileid5",
+            "title_en": "",
+            "title_zh": "父目录文件id",
+            "type": "string"
+          },
+          "part_info_list": {
+            "description_en": "The list of part information",
+            "description_zh": "分段信息列表",
+            "items": {
+              "$ref": "#/components/schemas/UploadPartInfo",
+              "description_en": "The part information",
+              "description_zh": "分段信息"
+            },
+            "title_en": "",
+            "title_zh": "分段信息",
+            "type": "array"
+          },
+          "rapid_upload": {
+            "description_en": "Indicates whether the file was rapidly uploaded",
+            "description_zh": "是否已经秒传",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "是否已经秒传",
+            "type": "boolean"
+          },
+          "status": {
+            "description_en": "The file status",
+            "description_zh": "文件状态",
+            "example": "uploading",
+            "title_en": "",
+            "title_zh": "文件状态",
+            "type": "string"
+          },
+          "type": {
+            "description_en": "The file type",
+            "description_zh": "文件类型",
+            "example": "file",
+            "type": "string"
+          },
+          "upload_id": {
+            "description_en": "The upload ID",
+            "description_zh": "上传id",
+            "example": "uploadid1",
+            "title_en": "",
+            "title_zh": "上传id",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "tags": [
     "api"
   ],

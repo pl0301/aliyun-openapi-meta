@@ -2,6 +2,337 @@
   "camel_example": "aliyun ossutil api select-object --bucket examplebucket --key exampledir/exampleobject.txt --region cn-hangzhou --x-oss-process 'csv/select'",
   "cmd_full_name": "oss select-object",
   "cmd_name": "select-object",
+  "components": {
+    "schemas": {
+      "CSVInput": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "AllowQuotedRecordDelimiter": {
+            "description_en": "Specifies whether the CSV content contains line feeds within quotes.\n<br>For example, if a column value is `\"abc\ndef\"` (where `\n` is a line feed), set this parameter to true. If this parameter is set to false, Select supports the header range semantics, which enables more efficient shard-based queries",
+            "description_zh": "指定CSV内容是否含有在引号中的换行符。\n<br>例如某一列值为`\"abc\\ndef\" `（此处`\\n`为换行）， 则该值需设置为true。当该值为false时，select支持header range的语义，可以更高效的进行分片查询",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "title": "description",
+            "type": "boolean"
+          },
+          "CommentCharacter": {
+            "description_en": "The comment symbol of the CSV file, which is Base64-encoded. Default value: empty (no comment symbol)",
+            "description_zh": "指定CSV的注释符，以Base64编码。默认值为空（即没有注释符）",
+            "example": "#",
+            "title": "description",
+            "type": "string"
+          },
+          "FieldDelimiter": {
+            "description_en": "The CSV column separator, which is Base64-encoded. Default value: `,` (optional). The value before encoding must be a single character, represented by the ANSI value of the character. For example, `,` is used in Java to represent a comma",
+            "description_zh": "指定CSV列分隔符，以Base64编码。默认值为`,`（可选）。未编码前的值必须为一个字符，以字符的ANSI值表示，例如在Java中使用`,`表示逗号",
+            "example": ",",
+            "title": "description",
+            "type": "string"
+          },
+          "FileHeaderInfo": {
+            "$ref": "#/components/schemas/FileHeaderInfo",
+            "description_en": "The header information of the CSV file. Valid values:\n\nUse: The CSV file has header information. You can use CSV column names as column names in the Select statement.\n\nIgnore: The CSV file has header information, but you cannot use CSV column names as column names in the Select statement.\n\nNone: The file has no header information. This is the default value",
+            "description_zh": "指定CSV文件头信息。\n\nUse：该CSV文件有头信息，可以用CSV列名作为Select中的列名。\n\nIgnore：该CSV文件有头信息，但不可用CSV列名作为Select中的列名。\n\nNone：该文件没有头信息，为默认值",
+            "enumValueTitles": {
+              "Ignore": "Ignore",
+              "None": "None",
+              "Use": "Use"
+            },
+            "example": "Use"
+          },
+          "QuoteCharacter": {
+            "description_en": "The quote character of the CSV file, which is Base64-encoded. Default value: `\\\"` (optional). In CSV, line feeds and column separators within quotes are treated as regular characters. The value before encoding must be a single character, represented by the ANSI value of the character. For example, `\\\"` is used in Java to represent a quote character",
+            "description_zh": "指定CSV的引号字符，以Base64编码。默认值为`\\”`（可选）。在CSV中引号内的换行符，列分隔符将被视作普通字符。未编码前的值必须为一个字符，以字符的ANSI值表示，例如在Java中使用`\\”`表示引号",
+            "example": "\\”",
+            "title": "description",
+            "type": "string"
+          },
+          "Range": {
+            "description_en": "The range of the file to query (optional). Two formats are supported:\n\nThe file queried by using the Range parameter query must have select meta. For more information about select meta, see [CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 scans rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 scans splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is consistent with the range parameter in range download.\n<br>This parameter is used only when the document is CSV or the JSON Type is LINES",
+            "description_zh": "指定查询文件的范围（可选）。支持两种格式：\n\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见[CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
+            "enumValueTitles": {
+              "line-range=start-end": "line-range=start-end",
+              "split-range=start-end": "split-range=start-end"
+            },
+            "example": "line-range=start-end",
+            "title": "description",
+            "type": "string"
+          },
+          "RecordDelimiter": {
+            "description_en": "The line feed, which is Base64-encoded. Default value: \n (optional). The value before encoding can contain up to two characters, represented by the ANSI value of the character. For example, \n is used in Java to represent a line feed",
+            "description_zh": "指定换行符，以Base64编码。默认值为\\n（可选）。未编码前的值最多为两个字符，以字符的ANSI值表示，例如在Java中使用\\n表示换行",
+            "example": "\\n",
+            "title": "description",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CSVOutput": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "FieldDelimiter": {
+            "description_en": "The CSV column delimiter in Base64 encoding. The value before encoding must be a single character, represented by the ANSI value of the character. For example, `,` is used in Java to represent a comma.\n<br>Default value: `,`",
+            "description_zh": "指定CSV列分隔符，以Base64编码。未编码前的值必须为一个字符，以字符的ANSI值表示，例如在Java中使用`,`表示逗号。\n<br>默认值：`,`",
+            "example": ",",
+            "title": "description",
+            "type": "string"
+          },
+          "RecordDelimiter": {
+            "description_en": "The line feed in Base64 encoding. The value before encoding can contain up to two characters, represented by the ANSI value of the character. For example, `\n` is used in Java to represent a line feed.\n<br>Default value: `\n`",
+            "description_zh": "指定换行符，以Base64编码。未编码前的值最多为两个字符，以字符的ANSI值表示，例如在Java中使用`\\n`表示换行。\n<br>默认值：`\\n`",
+            "example": "\\n",
+            "title": "description",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CompressionType": {
+        "description_en": "The file compression type (optional)",
+        "description_zh": "指定文件压缩类型（可选）",
+        "enum": [
+          "None",
+          "GZIP"
+        ],
+        "example": "None",
+        "title": "A short description of struct",
+        "type": "string"
+      },
+      "FileHeaderInfo": {
+        "description_en": "The file header of the CSV file (optional). Valid values:\nUse: The CSV file has a file header, and you can use CSV column names as column names in Select.\nIgnore: The CSV file has a file header, but CSV column names are not active as column names in Select.\nNone: The file has no file header. This is the default value",
+        "description_zh": "指定CSV文件头信息（可选）。\n取值：\nUse：该CSV文件有头信息，可以用CSV列名作为Select中的列名。\nIgnore：该CSV文件有头信息，但不可用CSV列名作为Select中的列名。\nNone：该文件没有头信息，为默认值",
+        "enum": [
+          "USE",
+          "IGNORE",
+          "NONE"
+        ],
+        "example": "Use",
+        "title": "A short description of struct",
+        "type": "string"
+      },
+      "InputSerialization": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "CSV": {
+            "$ref": "#/components/schemas/CSVInput",
+            "description_en": "The CSV input format",
+            "description_zh": "指定CSV输入格式"
+          },
+          "CompressionType": {
+            "$ref": "#/components/schemas/CompressionType",
+            "description_en": "The file compression type. Currently, no compression is supported. The only valid value is None",
+            "description_zh": "指定文件压缩类型（可选）。目前不支持任何压缩，即取值只能是None",
+            "example": "None"
+          },
+          "JSON": {
+            "$ref": "#/components/schemas/JSONInput",
+            "description_en": "The JSON input format",
+            "description_zh": "指定JSON输入格式"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JSONInput": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "ParseJsonNumberAsString": {
+            "description_en": "Parses numbers (integers and floating-point numbers) in JSON as character strings. Floating-point numbers in JSON may experience precision loss during parsing. To fully preserve the raw data, use this options. If you need to perform numerical calculations, you can cast the values to the required format in SQL, such as int, double, or decimal.\n<br>Default value: false",
+            "description_zh": "将JSON中的数字（整数和浮点数）解析成字符串。目前JSON中的浮点数解析时会损失精度，如果要完整保留原始数据，则推荐用该选项。如果需要进行数值计算，则可以在SQL中cast成需要的格式，例如int、double、decimal。\n<br>默认值： false",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          },
+          "Range": {
+            "description_en": "The range of the file parameter query. This parameter is optional. The following two formats are supported:\nThe file that you want parameter query by using the Range parameter must have select meta. For more information about select meta, see [CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 specifies to scan rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 specifies to scan splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is the same as the range parameter in range download.\n<br>This parameter is used only when the document is in CSV format or the JSON Type is LINES",
+            "description_zh": "指定查询文件的范围（可选）。支持两种格式：\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见[CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
+            "enumValueTitles": {
+              "line-range=start-end": "line-range=start-end",
+              "split-range=start-end": "split-range=start-end"
+            },
+            "example": "line-range=start-end",
+            "title": "description",
+            "type": "string"
+          },
+          "Type": {
+            "$ref": "#/components/schemas/JSONType",
+            "description_en": "The type of the input JSON",
+            "description_zh": "指定输入JSON的类型",
+            "enumValueTitles": {
+              " LINES": " LINES",
+              "DOCUMENT": "DOCUMENT"
+            },
+            "example": "DOCUMENT"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JSONOutput": {
+        "description_en": "The container that stores the results of the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "RecordDelimiter": {
+            "description_en": "The line feed in Base64 encoding. The value before encoding can contain up to two characters, represented by the ANSI value of the character. For example, `\n` is used in Java to represent a line feed.\n<br>Default value: `\n`",
+            "description_zh": "指定换行符，以Base64编码。未编码前的值最多为两个字符，以字符的ANSI值表示，例如在Java中使用`\\n`表示换行。\n<br>默认值：`\\n`",
+            "example": "\\n",
+            "title": "description",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JSONType": {
+        "description_en": "The type of the input JSON. Valid values:\nDOCUMENT: A single JSON object in the input data can span multiple lines.\nLINES: Each line in the input data contains a JSON object",
+        "description_zh": "指定输入JSON的类型。\n取值：\nDOCUMENT：输入数据中的单个JSON对象可以跨行。\nLINES：输入数据中的每一行都包含一个JSON对象",
+        "enum": [
+          "DOCUMENT",
+          "LINES"
+        ],
+        "enumValueTitles": {
+          "DOCUMENT": "DOCUMENT",
+          "LINES": "LINES"
+        },
+        "example": "DOCUMENT",
+        "title": "A short description of struct",
+        "type": "string"
+      },
+      "OutputSerialization": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "CSV": {
+            "$ref": "#/components/schemas/CSVOutput",
+            "description_en": "The format parameters for the output CSV",
+            "description_zh": "输出CSV的格式参数"
+          },
+          "EnablePayloadCrc": {
+            "description_en": "Each frame contains a 32-bit CRC32 checksum. The client can calculate the CRC32 value of the corresponding payload to verify data integrity",
+            "description_zh": "在每个Frame中会有一个32位的CRC32校验值。客户端可以计算相应payload的CRC32值进行数据完整性校验",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "title": "description",
+            "type": "boolean"
+          },
+          "JSON": {
+            "$ref": "#/components/schemas/JSONOutput",
+            "description_en": "The format parameters for the output JSON",
+            "description_zh": "输出JSON的格式参数"
+          },
+          "KeepAllColumns": {
+            "description_en": "Specifies whether to include the positions of all CSV columns in the response (optional).<br>Default value: false.\n <br>Only columns that appear in the SELECT statement have values. Columns that do not appear are empty. The data in each row of the response is arranged in ascending order of CSV column positions.\nFor example, the following statement:<br>\n`select _5, _1 from ossobject.`\n<br>If KeepAllColumns is set to true and there are six columns in total, the following data is returned:\n<br> `Value of 1st column,,,,Value of 5th column,\n`",
+            "description_zh": "指定返回结果中包含CSV所有列的位置（可选）。<br>默认值：false\n <br>仅在select语句里出现的列会有值，不出现的列则为空，返回结果中每一行的数据按照CSV列的顺序从低到高排列。\n例如以下语句：<br>\n`select _5, _1 from ossobject.`\n<br>如果KeepAllColumns = true，假设一共有6列数据，则返回以下数据：\n<br> `Value of 1st column,,,,Value of 5th column,\\n`",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          },
+          "OutputHeader": {
+            "description_en": "Specifies whether to output CSV header information at the beginning of the response.\n<br>Default value: false",
+            "description_zh": "在返回结果开头输出CSV头信息。\n<br>默认值：false",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          },
+          "OutputRawData": {
+            "description_en": "Specifies whether the output data is raw data.\n\nIf you specify the OutputRawData value in the request, OSS returns data based on the request.\n\nIf you do not specify the OutputRawData value in the request, OSS automatically selects a format to return data.\n\nIf you explicitly set OutputRawData to True and the SQL statement does not return data for a long time, the HTTP request may time out because no data is returned",
+            "description_zh": "指定输出数据为纯数据。\n\n您在请求中指定OutputRawData值时，OSS服务端会按照请求中的要求返回数据。\n\n您在请求中不指定OutputRawData值时，OSS服务端会自动选择一种格式返回。\n\n当您显式地指定OutputRawData为True时，如果该SQL长时间内没有返回数据，则HTTP请求可能因没有数据返回而超时",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "SelectRequest": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "Expression": {
+            "description_en": "The Base64-encoded SQL statement",
+            "description_zh": "以Base64 编码的SQL语句",
+            "example": "c2VsZWN0IGNvdW50KCopIGZyb20gb3Nzb2JqZWN0IHdoZXJlIF80ID4gNDU=",
+            "title": "description",
+            "type": "string"
+          },
+          "InputSerialization": {
+            "$ref": "#/components/schemas/InputSerialization",
+            "description_en": "The input serialization parameters",
+            "description_zh": "输入序列化参数"
+          },
+          "Options": {
+            "$ref": "#/components/schemas/SelectRequestOptions",
+            "description_en": "The other optional parameters",
+            "description_zh": "其他可选参数"
+          },
+          "OutputSerialization": {
+            "$ref": "#/components/schemas/OutputSerialization",
+            "description_en": "The output serialization parameters",
+            "description_zh": "输出序列化参数"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "SelectRequestOptions": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "MaxSkippedRecordsAllowed": {
+            "description_en": "The maximum number of rows that can be skipped. A row is skipped if the data in the row does not match the type expected in the SQL statement, or if one or more columns are missing and SkipPartialDataRecord is set to True. If the number of skipped rows exceeds the value of this parameter, OSS stops processing and reports an error.\n<br>Default value: 0.\n\nIf a row is an invalid CSV row, for example, a column contains an odd number of consecutive quote characters, OSS immediately stops processing and reports an error because the error is likely to affect the parsing of the entire CSV file. This parameter is used to adjust the tolerance for irregular data but does not apply to invalid CSV files",
+            "description_zh": "指定最大能容忍的跳过的行数。当某一行数据因为不匹配SQL中期望的类型、或者某一列或者多列数据缺失且SkipPartialDataRecord为True时，该行数据会被跳过。如果跳过的行数超过该参数的值，OSS会停止处理并报错。\n<br>默认值：0\n\n如果某一行是非法CSV行，例如在一列中间连续含有奇数个quote字符，则OSS会马上停止处理并报错，因为该错误很可能会影响对整个CSV文件的解析。即该参数用来调整对非整齐数据的容忍度，但不应用于非法的CSV文件",
+            "example": "0",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "SkipPartialDataRecord": {
+            "description_en": "Specifies whether to skip rows with missing data.\n\nIf this parameter is set to false, OSS ignores missing columns (treating the column values as null) without reporting errors.\n\nIf this parameter is set to true, the entire row is skipped because the data is incomplete. If the number of skipped rows exceeds the specified maximum number of rows that can be skipped, OSS reports an error and stops processing",
+            "description_zh": "忽略缺失数据的行。\n\n当该参数为false时，OSS会忽略缺失某些列（该列值当做null）而不报错。\n\n当该参数为true时，该行数据因为不完整而被整体跳过。当跳过的行数超过指定的最大跳过行数时OSS会报错并停止处理",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Executes an SQL statement on a specified object and returns the execution result",
   "description_zh": "对目标文件执行SQL语句，返回执行结果",
@@ -82,6 +413,10 @@
         {
           "fields": [
             {
+              "enum": [
+                "None",
+                "GZIP"
+              ],
               "example": "None",
               "help_en": "The file compression type (optional)",
               "help_zh": "指定文件压缩类型（可选）",
@@ -96,6 +431,11 @@
             {
               "fields": [
                 {
+                  "enum": [
+                    "USE",
+                    "IGNORE",
+                    "NONE"
+                  ],
                   "example": "Use",
                   "help_en": "The file header of the CSV file (optional). Valid values:\nUse: The CSV file has a file header, and you can use CSV column names as column names in Select.\nIgnore: The CSV file has a file header, but CSV column names are not active as column names in Select.\nNone: The file has no file header. This is the default value",
                   "help_zh": "指定CSV文件头信息（可选）。\n取值：\nUse：该CSV文件有头信息，可以用CSV列名作为Select中的列名。\nIgnore：该CSV文件有头信息，但不可用CSV列名作为Select中的列名。\nNone：该文件没有头信息，为默认值",
@@ -156,6 +496,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "line-range=start-end",
+                    "split-range=start-end"
+                  ],
                   "example": "line-range=start-end",
                   "help_en": "The range of the file to query (optional). Two formats are supported:\n\nThe file queried by using the Range parameter query must have select meta. For more information about select meta, see https://help.aliyun.com/document_detail/74054.html.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 scans rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 scans splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is consistent with the range parameter in range download.\n<br>This parameter is used only when the document is CSV or the JSON Type is LINES",
                   "help_zh": "指定查询文件的范围（可选）。支持两种格式：\n\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见https://help.aliyun.com/document_detail/74054.html。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
@@ -168,6 +512,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "true",
+                    "false"
+                  ],
                   "example": "true",
                   "help_en": "Specifies whether the CSV content contains line feeds within quotes.\n<br>For example, if a column value is `\"abc\ndef\"` (where `\n` is a line feed), set this parameter to true. If this parameter is set to false, Select supports the header range semantics, which enables more efficient shard-based queries",
                   "help_zh": "指定CSV内容是否含有在引号中的换行符。\n<br>例如某一列值为`\"abc\\ndef\" `（此处`\\n`为换行）， 则该值需设置为true。当该值为false时，select支持header range的语义，可以更高效的进行分片查询",
@@ -193,6 +541,10 @@
             {
               "fields": [
                 {
+                  "enum": [
+                    "DOCUMENT",
+                    "LINES"
+                  ],
                   "example": "DOCUMENT",
                   "help_en": "The type of the input JSON. Valid values:\nDOCUMENT: A single JSON object in the input data can span multiple lines.\nLINES: Each line in the input data contains a JSON object",
                   "help_zh": "指定输入JSON的类型。\n取值：\nDOCUMENT：输入数据中的单个JSON对象可以跨行。\nLINES：输入数据中的每一行都包含一个JSON对象",
@@ -205,6 +557,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "line-range=start-end",
+                    "split-range=start-end"
+                  ],
                   "example": "line-range=start-end",
                   "help_en": "The range of the file parameter query. This parameter is optional. The following two formats are supported:\nThe file that you want parameter query by using the Range parameter must have select meta. For more information about select meta, see https://help.aliyun.com/document_detail/74054.html.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 specifies to scan rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 specifies to scan splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is the same as the range parameter in range download.\n<br>This parameter is used only when the document is in CSV format or the JSON Type is LINES",
                   "help_zh": "指定查询文件的范围（可选）。支持两种格式：\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见https://help.aliyun.com/document_detail/74054.html。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
@@ -217,6 +573,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "true",
+                    "false"
+                  ],
                   "example": "false",
                   "help_en": "Parses numbers (integers and floating-point numbers) in JSON as character strings. Floating-point numbers in JSON may experience precision loss during parsing. To fully preserve the raw data, use this options. If you need to perform numerical calculations, you can cast the values to the required format in SQL, such as int, double, or decimal.\n<br>Default value: false",
                   "help_zh": "将JSON中的数字（整数和浮点数）解析成字符串。目前JSON中的浮点数解析时会损失精度，如果要完整保留原始数据，则推荐用该选项。如果需要进行数值计算，则可以在SQL中cast成需要的格式，例如int、double、decimal。\n<br>默认值： false",
@@ -315,6 +675,10 @@
               "type": "object"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether to include the positions of all CSV columns in the response (optional).<br>Default value: false.\n <br>Only columns that appear in the SELECT statement have values. Columns that do not appear are empty. The data in each row of the response is arranged in ascending order of CSV column positions.\nFor example, the following statement:<br>\n`select _5, _1 from ossobject.`\n<br>If KeepAllColumns is set to true and there are six columns in total, the following data is returned:\n<br> `Value of 1st column,,,,Value of 5th column,\n`",
               "help_zh": "指定返回结果中包含CSV所有列的位置（可选）。<br>默认值：false\n <br>仅在select语句里出现的列会有值，不出现的列则为空，返回结果中每一行的数据按照CSV列的顺序从低到高排列。\n例如以下语句：<br>\n`select _5, _1 from ossobject.`\n<br>如果KeepAllColumns = true，假设一共有6列数据，则返回以下数据：\n<br> `Value of 1st column,,,,Value of 5th column,\\n`",
@@ -327,6 +691,10 @@
               "type": "bool"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether to output CSV header information at the beginning of the response.\n<br>Default value: false",
               "help_zh": "在返回结果开头输出CSV头信息。\n<br>默认值：false",
@@ -339,6 +707,10 @@
               "type": "bool"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false",
               "help_en": "Specifies whether the output data is raw data.\n\nIf you specify the OutputRawData value in the request, OSS returns data based on the request.\n\nIf you do not specify the OutputRawData value in the request, OSS automatically selects a format to return data.\n\nIf you explicitly set OutputRawData to True and the SQL statement does not return data for a long time, the HTTP request may time out because no data is returned",
               "help_zh": "指定输出数据为纯数据。\n\n您在请求中指定OutputRawData值时，OSS服务端会按照请求中的要求返回数据。\n\n您在请求中不指定OutputRawData值时，OSS服务端会自动选择一种格式返回。\n\n当您显式地指定OutputRawData为True时，如果该SQL长时间内没有返回数据，则HTTP请求可能因没有数据返回而超时",
@@ -351,6 +723,10 @@
               "type": "bool"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "true",
               "help_en": "Each frame contains a 32-bit CRC32 checksum. The client can calculate the CRC32 value of the corresponding payload to verify data integrity",
               "help_zh": "在每个Frame中会有一个32位的CRC32校验值。客户端可以计算相应payload的CRC32值进行数据完整性校验",
@@ -376,6 +752,10 @@
         {
           "fields": [
             {
+              "enum": [
+                "false",
+                "true"
+              ],
               "example": "false",
               "help_en": "Specifies whether to skip rows with missing data.\n\nIf this parameter is set to false, OSS ignores missing columns (treating the column values as null) without reporting errors.\n\nIf this parameter is set to true, the entire row is skipped because the data is incomplete. If the number of skipped rows exceeds the specified maximum number of rows that can be skipped, OSS reports an error and stops processing",
               "help_zh": "忽略缺失数据的行。\n\n当该参数为false时，OSS会忽略缺失某些列（该列值当做null）而不报错。\n\n当该参数为true时，该行数据因为不完整而被整体跳过。当跳过的行数超过指定的最大跳过行数时OSS会报错并停止处理",
@@ -427,6 +807,18 @@
   "pathPattern": "/[key]",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "If the header x-oss-select-output-raw is set to true, the returned result is the raw object data rather than Frame-wrapped data. The client can retrieve the data in the same way as calling the Get API.\nIf x-oss-select-output-raw is set to false, the result is returned in Frame format.\nThe Frame format is `Version|Frame-Type | Payload Length | Header Checksum | Payload | Payload Checksum<1 byte><--3 bytes--><---4 bytes----><-------4 bytes--><variable><----4bytes---------->`。\n\n\nAll checksums are CRC32. All integers in a Frame are encoded in big endian. The current Version is 1",
+        "description_zh": "若header x-oss-select-output-raw值为true，则表明返回结果是对象数据（而不是Frame包装的），客户端可以完全按照Get API的方式获取数据。\n若x-oss-select-output-raw的值为false，请求结果以Frame形式返回。\nFrame的格式为`Version|Frame-Type | Payload Length | Header Checksum | Payload | Payload Checksum<1 byte><--3 bytes--><---4 bytes----><-------4 bytes--><variable><----4bytes---------->`。\n\n\nChecksum均为CRC32。Frame里所有的整数均以大端编码（big endian），且Version目前为1",
+        "example": "无",
+        "format": "binary",
+        "type": "string"
+      }
+    },
+    "5XX": {}
+  },
   "v1_body_parameters": [
     {
       "help_en": "The container that stores the SelectObject request",

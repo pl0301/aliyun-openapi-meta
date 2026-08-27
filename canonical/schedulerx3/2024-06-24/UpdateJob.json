@@ -23,6 +23,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "xxljob-b6ec1xxxx",
       "help_en": "The cluster ID",
       "help_zh": "集群ID",
@@ -36,6 +37,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "test-app",
       "help_en": "The application name",
       "help_zh": "应用名称",
@@ -49,6 +51,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "74",
       "help_en": "The node ID",
       "help_zh": "任务ID",
@@ -66,6 +69,7 @@
       "help_en": "The node name",
       "help_zh": "任务名称",
       "location": "formData",
+      "max_length": "200",
       "name": "name",
       "options": [
         "--name"
@@ -79,6 +83,7 @@
       "help_en": "The node description",
       "help_zh": "任务描述",
       "location": "formData",
+      "max_length": "300",
       "name": "description",
       "options": [
         "--description"
@@ -92,6 +97,8 @@
       "help_en": "The routing strategy. Valid values:\n\n1: round robin\n2: random\n3: first\n4: last\n5: least frequently used\n6: least recently used\n7: consistent hashing\n8: shard broadcast",
       "help_zh": "路由策略：\n\n1: 轮询\n2: 随机\n3: 第一个\n4: 最后一个\n5: 最不经常使用\n6: 最近最久未使用\n7: 一致性哈希\n8: 分片广播",
       "location": "formData",
+      "maximum": "20",
+      "minimum": "1",
       "name": "route_strategy",
       "options": [
         "--route-strategy"
@@ -105,6 +112,7 @@
       "help_en": "The node parameters",
       "help_zh": "任务参数",
       "location": "formData",
+      "max_length": "2000",
       "name": "parameters",
       "options": [
         "--parameters"
@@ -118,6 +126,8 @@
       "help_en": "The maximum concurrency of the node.\nThe maximum number of instances that can run simultaneously for the same node. A value of 1 indicates that repeated execution is not allowed. If the concurrency limit is exceeded, the current scheduling is skipped",
       "help_zh": "任务并发数\n同一个任务同一时间允许运行的最大实例个数，1表示不允许重复执行。如果超过并发数，会跳过当前调度",
       "location": "formData",
+      "maximum": "200",
+      "minimum": "1",
       "name": "max_concurrency",
       "options": [
         "--max-concurrency"
@@ -157,6 +167,7 @@
       "help_en": "The jobhandler name",
       "help_zh": "jobhandler名称",
       "location": "formData",
+      "max_length": "200",
       "name": "job_handler",
       "options": [
         "--job-handler"
@@ -179,6 +190,14 @@
       "type": "string"
     },
     {
+      "enum": [
+        "-1",
+        "1",
+        "2",
+        "3",
+        "5",
+        "100"
+      ],
       "example": "1",
       "help_en": "The time type. Valid values:\n\n-1: none\n1: cron\n3: fix_rate\n5: one_time\n100: api",
       "help_zh": "时间类型，目前支持以下几种类型：\n\n-1: none\n1：cron\n3：fix_rate\n5：one_time\n100:：api",
@@ -235,6 +254,7 @@
       "help_en": "The execution priority of the node. Valid values:\n\n1: low\n5: medium\n10: high\n15: very high",
       "help_zh": "任务执行优先级。目前支持以下几种配置：\n\n1: 低\n5: 中\n10: 高\n15: 非常高",
       "location": "formData",
+      "minimum": "1",
       "name": "priority",
       "options": [
         "--priority"
@@ -244,6 +264,12 @@
       "type": "int"
     },
     {
+      "enum": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
       "example": "1",
       "help_en": "The start time type",
       "help_zh": "开始时间类型",
@@ -420,6 +446,11 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "1",
+              "2",
+              "3"
+            ],
             "example": "1",
             "help_en": "The contact type. \nDefault configurations: 1",
             "help_zh": "联系人类型 \n默认配置: 1",
@@ -459,6 +490,11 @@
       "type": "array"
     },
     {
+      "enum": [
+        "1",
+        "2",
+        "3"
+      ],
       "example": "1",
       "help_en": "The client blocking strategy. Valid values:\n1: serial execution on a single machine\n2: ignore subsequent scheduling\n3: override previous scheduling",
       "help_zh": "客户端阻塞处理策略。\n1: 单机串行\n2: 忽略后续调度\n3: 覆盖之前调度",
@@ -498,6 +534,16 @@
       "type": "int"
     },
     {
+      "enum": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
       "example": "1",
       "help_en": "The dependency strategy",
       "help_zh": "依赖策略",
@@ -538,5 +584,41 @@
   ],
   "pathPattern": "",
   "product_code": "SchedulerX3",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The response code",
+            "description_zh": "响应码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "Parameter error: content is null.",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID generated by Alibaba Cloud for this request. You can use this ID to troubleshoot issues",
+            "description_zh": "本次调用请求的ID，是由阿里云为该请求生成的唯一标识符，可用于排查和定位问题",
+            "example": "3808cf26-dde2-4286-8503-b0a2cd4065a7",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the call was successful. Valid values:\ntrue: The call was successful.\nfalse: The call failed",
+            "description_zh": "是否调用成功。\ntrue：调用成功\nfalse：调用失败",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

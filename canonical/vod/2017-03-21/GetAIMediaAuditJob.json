@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "bdbc266af6894*****943a70176d92e9",
       "help_en": "The ID of the automated review job",
       "help_zh": "智能审核作业ID",
@@ -36,5 +37,737 @@
   ],
   "pathPattern": "",
   "product_code": "vod",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response data",
+        "description_zh": "返回结果数据",
+        "properties": {
+          "MediaAuditJob": {
+            "description_en": "The information about the automated review job",
+            "description_zh": "智能审核作业信息",
+            "properties": {
+              "Code": {
+                "description_en": "The error code of the job. Check this field when Status is fail",
+                "description_zh": "作业错误码。当Status为失败时，可关注该字段",
+                "example": "0",
+                "type": "string"
+              },
+              "CompleteTime": {
+                "description_en": "The time when the job ended. The time is in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format (UTC)",
+                "description_zh": "作业结束时间。格式为：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                "example": "2017-01-11T13:00:00Z",
+                "type": "string"
+              },
+              "CreationTime": {
+                "description_en": "The time when the job started. The time is in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format (UTC)",
+                "description_zh": "作业开始时间。格式为：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                "example": "2017-01-11T12:00:00Z",
+                "type": "string"
+              },
+              "Data": {
+                "description_en": "The job result data",
+                "description_zh": "作业结果数据",
+                "properties": {
+                  "AbnormalModules": {
+                    "description_en": "The content types that contain violations. Multiple values are separated by commas (,). Valid values:\n\nvideo: video.\nimage-cover: thumbnail.\ntext-title: title",
+                    "description_zh": "违规的审核内容。多个使用英文逗号（,）分隔，取值：\n\nvideo：视频。\nimage-cover：封面。\ntext-title：标题",
+                    "example": "video",
+                    "type": "string"
+                  },
+                  "AudioResult": {
+                    "description_en": "The audio review results",
+                    "description_zh": "音频审核结果",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Label": {
+                          "description_en": "The category of the review result:\n\nnormal: normal.\nspam: spam.\nad: advertisement.\npolitics: politically sensitive content.\nterrorism: terrorist content.\nabuse: abuse.\nporn: pornographic content.\nflood: flooding.\ncontraband: prohibited content.\nmeaningless: meaningless content",
+                          "description_zh": "审核结果分类：\n\nnormal：正常。\nspam：含垃圾信息。\nad：广告。\npolitics：涉政。\nterrorism：暴恐。\nabuse：辱骂。\nporn：色情。\nflood：灌水。\ncontraband：违禁。\nmeaningless：无意义",
+                          "example": "normal",
+                          "type": "string"
+                        },
+                        "Scene": {
+                          "description_en": "The review scene. Fixed value: antispam",
+                          "description_zh": "审核场景。取固定值：antispam",
+                          "example": "antispam",
+                          "type": "string"
+                        },
+                        "Score": {
+                          "description_en": "The result score",
+                          "description_zh": "结果分数",
+                          "example": "99.91",
+                          "type": "string"
+                        },
+                        "Suggestion": {
+                          "description_en": "The review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                          "description_zh": "审核结果建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                          "example": "pass",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "ImageResult": {
+                    "description_en": "The image review results",
+                    "description_zh": "图片审核结果",
+                    "items": {
+                      "description_en": "The image review result data",
+                      "description_zh": "图片审核结果数据",
+                      "properties": {
+                        "Label": {
+                          "description_en": "The category of the image review result. Multiple values are separated by commas (,). Valid values:\n\nporn: pornography.\nterrorism: terrorist content or politically sensitive content.\nad: image or text violation.\nlive: undesirable scene.\nlogo: logo in image.\nnormal: normal",
+                          "description_zh": "图片审核结果分类。多个使用英文逗号（,）分隔，取值：\n\nporn：涉黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nlogo：图片logo。\nnormal：正常",
+                          "example": "normal",
+                          "type": "string"
+                        },
+                        "Result": {
+                          "description_en": "The details of the image review result",
+                          "description_zh": "图片审结结果详情",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "Label": {
+                                "description_en": "The category of the review result.\n\nWhen scene is porn, valid values:\n\nporn: pornographic content.\nsexy: sexy content.\nnormal: normal.\n\nWhen scene is terrorism, valid values:\n\nnormal: normal.\nbloody: bloody content.\nexplosion: explosion or smoke.\noutfit: special outfit.\nlogo: special logo.\nweapon: weapon.\npolitics: politically sensitive content.\nviolence: violence.\ncrowd: crowd gathering.\nparade: parade.\ncarcrash: car crash scene.\nflag: flag.\nlocation: landmark.\nothers: others.\n\nWhen scene is ad, valid values:\n\nnormal: normal.\nad: other advertisement.\npolitics: text contains politically sensitive content.\nporn: text contains pornographic content.\nabuse: text contains abusive content.\nterrorism: text contains terrorist content.\ncontraband: text contains prohibited content.\nspam: text contains other spam content.\nnpx: psoriasis advertisement.\nqrcode: contains a QR code.\nprogramCode: contains a mini program code.\n\nWhen scene is live, valid values:\nnormal: normal.\nmeaningless: no content in the image (such as black screen or white screen).\nPIP: Picture-in-Picture (PiP).\nsmoking: smoking.\ndrivelive: in-car live streaming.\n\nWhen scene is logo, valid values:\nnormal: normal.\nTV: contains a controlled logo.\ntrademark: contains a trademark",
+                                "description_zh": "审核结果分类。\n\n当scene为porn时，取值：\n\nporn：色情。\nsexy：性感。\nnormal：正常。\n\n当scene为terrorism时，取值：\n\nnormal：正常。\nbloody：血腥。\nexplosion：爆炸烟光。\noutfit：特殊装束。\nlogo：特殊标识。\nweapon：武器。\npolitics：渉政。\nviolence：打斗。\ncrowd：聚众。\nparade：游行。\ncarcrash：车祸现场。\nflag：旗帜。\nlocation：地标。\nothers：其它。\n\n当scene为ad时，取值：\n\nnormal：正常。\nad：其他广告。\npolitics：文字含涉政内容。\nporn：文字含涉黄内容。\nabuse：文字含辱骂内容。\nterrorism：文字含暴恐内容。\ncontraband：文字含违禁内容。\nspam：文字含其他垃圾内容。\nnpx：牛皮癣广告。\nqrcode：含二维码。\nprogramCode：含小程序码。\n\n当scene为live时，取值：\nnormal：正常。\nmeaningless：图片中无内容（例如黑屏、白屏）。\nPIP：画中画。\nsmoking：吸烟。\ndrivelive：车内直播。\n\n当scene为logo时，取值：\nnormal：正常。\nTV：含受管控的logo。\ntrademark：含商标",
+                                "example": "porn",
+                                "type": "string"
+                              },
+                              "Scene": {
+                                "description_en": "The review scene. Valid values:\n\nporn: pornography detection.\nterrorism: terrorist content or politically sensitive content.\nad: image or text violation.\nlive: undesirable scene.\nlogo: logo in image",
+                                "description_zh": "审核场景。取值：\n\nporn：鉴黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nlogo：图片logo",
+                                "example": "porn",
+                                "type": "string"
+                              },
+                              "Score": {
+                                "description_en": "The score of the image that hits the label. Value range: `[0, 100]`. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                                "description_zh": "命中Label的图片的分数。取值范围：`[0, 100]`，命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "Suggestion": {
+                                "description_en": "The review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                                "description_zh": "审核结果建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                                "example": "pass",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "Suggestion": {
+                          "description_en": "The review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                          "description_zh": "审核结果建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                          "example": "pass",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "The image type. Valid values: cover (thumbnail)",
+                          "description_zh": "图片分类。取值：cover（封面）",
+                          "example": "cover",
+                          "type": "string"
+                        },
+                        "Url": {
+                          "description_en": "The URL of the image",
+                          "description_zh": "图片的地址",
+                          "example": "http://www.test.com/****.jpg",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "Label": {
+                    "description_en": "The category of the review result. Multiple values are separated by commas (,). Valid values:\n\nporn: pornography.\nterrorism: terrorist content or politically sensitive content.\nad: image or text violation.\nlive: undesirable scene.\nlogo: logo in image.\naudio: audio anti-spam.\nnormal: normal",
+                    "description_zh": "审核结果分类。多个使用英文逗号（,）分隔，取值：\n\nporn：涉黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nlogo：图片logo。\naudio：语音反垃圾。\nnormal：正常",
+                    "example": "normal",
+                    "type": "string"
+                  },
+                  "Suggestion": {
+                    "description_en": "The review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                    "description_zh": "审核结果建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                    "example": "pass",
+                    "type": "string"
+                  },
+                  "TextResult": {
+                    "description_en": "The text review results",
+                    "description_zh": "文本审核结果",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Content": {
+                          "description_en": "The text content",
+                          "description_zh": "文本内容",
+                          "example": "Test",
+                          "type": "string"
+                        },
+                        "Label": {
+                          "description_en": "The category of the review result. Valid values:\nspam: spam.\nad: advertisement.\nabuse: abuse.\nflood: flooding.\ncontraband: prohibited content.\nmeaningless: meaningless content.\nnormal: normal",
+                          "description_zh": "审核结果分类。取值：\nspam：含垃圾信息。\nad：广告。\nabuse：辱骂。\nflood：灌水。\ncontraband：违禁。\nmeaningless：无意义。\nnormal：普通",
+                          "example": "ad",
+                          "type": "string"
+                        },
+                        "Scene": {
+                          "description_en": "The review scene. Fixed value: antispam",
+                          "description_zh": "审核场景。取固定值：antispam",
+                          "example": "antispam",
+                          "type": "string"
+                        },
+                        "Score": {
+                          "description_en": "The score of the image that hits the label. Value range: `[0, 100]`. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                          "description_zh": "命中Label的图片的分数。取值范围：`[0, 100]`，命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                          "example": "100",
+                          "type": "string"
+                        },
+                        "Suggestion": {
+                          "description_en": "The review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                          "description_zh": "审核结果建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                          "example": "pass",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "The text categorization. Valid values: title (title)",
+                          "description_zh": "文本分类。取值：title（标题）",
+                          "example": "title",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "VideoResult": {
+                    "description_en": "The video review results",
+                    "description_zh": "视频审核结果",
+                    "properties": {
+                      "AdResult": {
+                        "description_en": "The advertisement review result",
+                        "description_zh": "广告审核结果",
+                        "properties": {
+                          "AverageScore": {
+                            "description_en": "The average score of the advertisement review result",
+                            "description_zh": "广告审核结果平均分数",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "CounterList": {
+                            "description_en": "The categories of the review results and the number of video snapshots in each category",
+                            "description_zh": "审核结果各分类及其视频截图的张数",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Count": {
+                                  "description_en": "The number of video snapshots",
+                                  "description_zh": "视频截图张数",
+                                  "example": "10",
+                                  "format": "int32",
+                                  "type": "integer"
+                                },
+                                "Label": {
+                                  "description_en": "The category of the advertisement review result. Valid values:\nnormal: normal.\nad: other advertisement.\npolitics: text contains politically sensitive content.\nporn: text contains pornographic content.\nabuse: text contains abusive content.\nterrorism: text contains terrorist content.\ncontraband: text contains prohibited content.\nspam: text contains other spam content.\nnpx: psoriasis advertisement.\nqrcode: contains a QR code.\nprogramCode: contains a mini program code",
+                                  "description_zh": "广告审核结果分类。取值：\nnormal：正常。\nad：其他广告。\npolitics：文字含涉政内容。\nporn：文字含涉黄内容。\nabuse：文字含辱骂内容。\nterrorism：文字含暴恐内容。\ncontraband：文字含违禁内容。\nspam：文字含其他垃圾内容。\nnpx：牛皮癣广告。\nqrcode：含二维码。\nprogramCode：含小程序码",
+                                  "example": "ad",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "Label": {
+                            "description_en": "The category of the advertisement review result. Valid values:\nnormal: normal.\nad: other advertisement.\npolitics: text contains politically sensitive content.\nporn: text contains pornographic content.\nabuse: text contains abusive content.\nterrorism: text contains terrorist content.\ncontraband: text contains prohibited content.\nspam: text contains other spam content.\nnpx: psoriasis advertisement.\nqrcode: contains a QR code.\nprogramCode: contains a mini program code",
+                            "description_zh": "广告审核结果分类。取值：\nnormal：正常。\nad：其他广告。\npolitics：文字含涉政内容。\nporn：文字含涉黄内容。\nabuse：文字含辱骂内容。\nterrorism：文字含暴恐内容。\ncontraband：文字含违禁内容。\nspam：文字含其他垃圾内容。\nnpx：牛皮癣广告。\nqrcode：含二维码。\nprogramCode：含小程序码",
+                            "example": "ad",
+                            "type": "string"
+                          },
+                          "MaxScore": {
+                            "description_en": "The highest review score",
+                            "description_zh": "最高审核分数",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "Suggestion": {
+                            "description_en": "The review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                            "description_zh": "审核结果建议。取值范围：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                            "example": "block",
+                            "type": "string"
+                          },
+                          "TopList": {
+                            "description_en": "The information about the video snapshots with the highest scores that hit the label",
+                            "description_zh": "命中Label下分数最高的视频截图信息",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Label": {
+                                  "description_en": "The category of the advertisement review result. Valid values:\nnormal: normal.\nad: other advertisement.\npolitics: text contains politically sensitive content.\nporn: text contains pornographic content.\nabuse: text contains abusive content.\nterrorism: text contains terrorist content.\ncontraband: text contains prohibited content.\nspam: text contains other spam content.\nnpx: psoriasis advertisement.\nqrcode: contains a QR code.\nprogramCode: contains a mini program code",
+                                  "description_zh": "广告审核结果分类。取值：\nnormal：正常。\nad：其他广告。\npolitics：文字含涉政内容。\nporn：文字含涉黄内容。\nabuse：文字含辱骂内容。\nterrorism：文字含暴恐内容。\ncontraband：文字含违禁内容。\nspam：文字含其他垃圾内容。\nnpx：牛皮癣广告。\nqrcode：含二维码。\nprogramCode：含小程序码",
+                                  "example": "ad",
+                                  "type": "string"
+                                },
+                                "Score": {
+                                  "description_en": "The score of the video snapshot that hits the label",
+                                  "description_zh": "命中Label的视频截图的分数",
+                                  "example": "100",
+                                  "type": "string"
+                                },
+                                "Timestamp": {
+                                  "description_en": "The position of the video snapshot in the video. Unit: milliseconds",
+                                  "description_zh": "视频截图在视频中的位置。单位：毫秒",
+                                  "example": "500",
+                                  "type": "string"
+                                },
+                                "Url": {
+                                  "description_en": "The URL of the video snapshot",
+                                  "description_zh": "视频截图地址",
+                                  "example": "http://temp-testbucket.oss-cn-shanghai.aliyuncs.com/aivideocensor/****.jpg",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "Label": {
+                        "description_en": "The category of the review result. Valid values:\nporn: pornography.\nterrorism: terrorist content or politically sensitive content.\nad: image or text violation.\nlive: undesirable scene.\nlogo: logo in image.\nnormal: normal",
+                        "description_zh": "审核结果分类。取值：\nporn：涉黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nlogo：图片logo。\nnormal：正常",
+                        "example": "normal",
+                        "type": "string"
+                      },
+                      "LiveResult": {
+                        "description_en": "The undesirable content review result",
+                        "description_zh": "不良内容审核结果",
+                        "properties": {
+                          "AverageScore": {
+                            "description_en": "The average score of the review result",
+                            "description_zh": "审核结果平均分数",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "CounterList": {
+                            "description_en": "The categories of the review results and the number of video snapshots in each category",
+                            "description_zh": "审核结果各分类及其视频截图张数",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Count": {
+                                  "description_en": "The number of video snapshots",
+                                  "description_zh": "视频截图张数",
+                                  "example": "4",
+                                  "format": "int32",
+                                  "type": "integer"
+                                },
+                                "Label": {
+                                  "description_en": "The category of the review result. Valid values:\nnormal: normal.\nmeaningless: no content in the image (such as black screen or white screen).\nPIP: Picture-in-Picture (PiP).\nsmoking: smoking.\ndrivelive: in-car live streaming",
+                                  "description_zh": "审核结果分类。取值：\nnormal：正常。\nmeaningless：图片中无内容（例如黑屏、白屏）。\nPIP：画中画。\nsmoking：吸烟。\ndrivelive：车内直播",
+                                  "example": "smoking",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "Label": {
+                            "description_en": "The category of the review result. Valid values:\nnormal: normal.\nmeaningless: no content in the image (such as black screen or white screen).\nPIP: Picture-in-Picture (PiP).\nsmoking: smoking.\ndrivelive: in-car live streaming",
+                            "description_zh": "审核结果分类。取值：\nnormal：正常。\nmeaningless：图片中无内容（例如黑屏、白屏）。\nPIP：画中画。\nsmoking：吸烟。\ndrivelive：车内直播",
+                            "example": "smoking",
+                            "type": "string"
+                          },
+                          "MaxScore": {
+                            "description_en": "The highest review score",
+                            "description_zh": "最高审核分数",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "Suggestion": {
+                            "description_en": "The review result suggestion. Valid values:\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                            "description_zh": "审核结果建议。取值：\nblock：违规。\nreview：疑似。\npass：通过",
+                            "example": "block",
+                            "type": "string"
+                          },
+                          "TopList": {
+                            "description_en": "The information about the video snapshots with the highest scores that hit the label",
+                            "description_zh": "命中Label下分数最高的视频截图信息",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Label": {
+                                  "description_en": "The category of the review result. Valid values:\nnormal: normal.\nmeaningless: no content in the image (such as black screen or white screen).\nPIP: Picture-in-Picture (PiP).\nsmoking: smoking.\ndrivelive: in-car live streaming",
+                                  "description_zh": "审核结果分类。取值范围：\nnormal：正常。\nmeaningless：图片中无内容（例如黑屏、白屏）。\nPIP：画中画。\nsmoking：吸烟。\ndrivelive：车内直播",
+                                  "example": "smoking",
+                                  "type": "string"
+                                },
+                                "Score": {
+                                  "description_en": "The score of the video snapshot that hits the label",
+                                  "description_zh": "命中Label的视频截图的分数",
+                                  "example": "100",
+                                  "type": "string"
+                                },
+                                "Timestamp": {
+                                  "description_en": "The position of the video snapshot in the video. Unit: milliseconds",
+                                  "description_zh": "视频截图在视频中的位置。单位：毫秒",
+                                  "example": "500",
+                                  "type": "string"
+                                },
+                                "Url": {
+                                  "description_en": "The URL of the video snapshot",
+                                  "description_zh": "视频截图的地址",
+                                  "example": "http://temp-testbucket.oss-cn-shanghai.aliyuncs.com/aivideocensor/****.jpg",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "LogoResult": {
+                        "description_en": "The logo review result",
+                        "description_zh": "Logo审核结果",
+                        "properties": {
+                          "AverageScore": {
+                            "description_en": "The average score of the video snapshots that hit the label",
+                            "description_zh": "命中Label的视频截图的平均分值",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "CounterList": {
+                            "description_en": "The categories of the review results and the number of video snapshots in each category",
+                            "description_zh": "审核结果各分类及其视频截图张数",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Count": {
+                                  "description_en": "The number of video snapshots",
+                                  "description_zh": "视频截图张数",
+                                  "example": "2",
+                                  "format": "int32",
+                                  "type": "integer"
+                                },
+                                "Label": {
+                                  "description_en": "The category of the logo review result. Valid values:\nnormal: normal.\nTV: contains a controlled logo.\ntrademark: contains a trademark",
+                                  "description_zh": "logo审核结果分类。取值：\nnormal：正常。\nTV：含受管控的logo。\ntrademark：含商标",
+                                  "example": "TV",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "Label": {
+                            "description_en": "The category of the logo review result. Valid values:\nnormal: normal.\nTV: contains a controlled logo.\ntrademark: contains a trademark",
+                            "description_zh": "Logo审核结果分类。取值：\nnormal：正常。\nTV：含受管控的Logo。\ntrademark：含商标",
+                            "example": "TV",
+                            "type": "string"
+                          },
+                          "MaxScore": {
+                            "description_en": "The highest score of the video snapshots that hit the label",
+                            "description_zh": "命中Label的视频截图的最高分数",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "Suggestion": {
+                            "description_en": "The logo review suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                            "description_zh": "Logo审核建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                            "example": "block",
+                            "type": "string"
+                          },
+                          "TopList": {
+                            "description_en": "The information about the video snapshots with the highest scores that hit the label",
+                            "description_zh": "命中Label下分数最高的视频截图信息",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Label": {
+                                  "description_en": "The category of the logo review result. Valid values:\nnormal: normal.\nTV: contains a controlled logo.\ntrademark: contains a trademark",
+                                  "description_zh": "Logo审核结果分类。取值：\nnormal：正常。\nTV：含受管控的Logo。\ntrademark：含商标",
+                                  "example": "TV",
+                                  "type": "string"
+                                },
+                                "Score": {
+                                  "description_en": "The score of the video snapshot that hits the label",
+                                  "description_zh": "命中Label的视频截图的分数",
+                                  "example": "100",
+                                  "type": "string"
+                                },
+                                "Timestamp": {
+                                  "description_en": "The position of the video snapshot in the video. Unit: milliseconds",
+                                  "description_zh": "视频截图在视频中的位置。单位：毫秒",
+                                  "example": "5000",
+                                  "type": "string"
+                                },
+                                "Url": {
+                                  "description_en": "The URL of the video snapshot",
+                                  "description_zh": "视频截图的地址",
+                                  "example": "http://temp-testbucket.oss-cn-shanghai.aliyuncs.com/aivideocensor/****.jpg",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "PornResult": {
+                        "description_en": "The pornography detection result",
+                        "description_zh": "鉴黄审核结果",
+                        "properties": {
+                          "AverageScore": {
+                            "description_en": "The average score of the video snapshots that hit the label. Value range: `[0, 100]`. The value is accurate to 10 decimal places. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                            "description_zh": "命中Label的视频截图的平均分数。取值范围：`[0, 100`]，精度小数点后10位。命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "CounterList": {
+                            "description_en": "The categories of the review results and the number of video snapshots in each category",
+                            "description_zh": "审核结果各分类及其视频截图的张数",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Count": {
+                                  "description_en": "The number of video snapshots",
+                                  "description_zh": "视频截图张数",
+                                  "example": "0",
+                                  "format": "int32",
+                                  "type": "integer"
+                                },
+                                "Label": {
+                                  "description_en": "The pornography detection result. Valid values:\n\nporn: pornographic content.\nsexy: sexy content.\nnormal: normal",
+                                  "description_zh": "鉴黄审核结果。取值范围：\n\nporn：色情。\nsexy：性感。\nnormal：正常",
+                                  "example": "porn",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "Label": {
+                            "description_en": "The pornography detection result. Valid values:\n\nporn: pornographic content.\nsexy: sexy content.\nnormal: normal",
+                            "description_zh": "鉴黄审核结果。取值范围：\n\nporn：色情。\nsexy：性感。\nnormal：正常",
+                            "example": "porn",
+                            "type": "string"
+                          },
+                          "MaxScore": {
+                            "description_en": "The highest score of the video snapshots that hit the label. Value range: `[0, 100]`. The value is accurate to 10 decimal places. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                            "description_zh": "命中Label的视频截图的最高分数。取值范围：`[0, 100`]，精度小数点后10位。命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "Suggestion": {
+                            "description_en": "The pornography detection suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                            "description_zh": "鉴黄审核建议。取值范围：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                            "example": "pass",
+                            "type": "string"
+                          },
+                          "TopList": {
+                            "description_en": "The information about the video snapshots with the highest scores that hit the label",
+                            "description_zh": "命中Label下分数最高的视频截图信息",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Label": {
+                                  "description_en": "The pornography detection result. Valid values:\n\nporn: pornographic content.\nsexy: sexy content.\nnormal: normal",
+                                  "description_zh": "鉴黄审核结果。取值范围：\n\nporn：色情。\nsexy：性感。\nnormal：正常",
+                                  "example": "porn",
+                                  "type": "string"
+                                },
+                                "Score": {
+                                  "description_en": "The score of the video snapshot that hits the label. Value range: `[0, 100]`. The value is accurate to 10 decimal places. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                                  "description_zh": "命中Label的视频截图的分数。取值范围：`[0, 100`]，精度小数点后10位。命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                                  "example": "100",
+                                  "type": "string"
+                                },
+                                "Timestamp": {
+                                  "description_en": "The position of the video snapshot in the video. Unit: milliseconds",
+                                  "description_zh": "视频截图在视频中的位置。单位：毫秒",
+                                  "example": "3005",
+                                  "type": "string"
+                                },
+                                "Url": {
+                                  "description_en": "The URL of the video snapshot",
+                                  "description_zh": "视频截图的地址",
+                                  "example": "http://temp-testbucket.oss-cn-shanghai.aliyuncs.com/aivideocensor/****.jpg",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "Suggestion": {
+                        "description_en": "The video review result suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                        "description_zh": "视频审核结果建议。取值：\n\nblock：违规。\nreview：疑似。\npass：通过",
+                        "example": "pass",
+                        "type": "string"
+                      },
+                      "TerrorismResult": {
+                        "description_en": "The terrorism and politically sensitive content review result",
+                        "description_zh": "暴恐涉政审核结果",
+                        "properties": {
+                          "AverageScore": {
+                            "description_en": "The average score of the video snapshots that hit the label. Value range: `[0, 100]`. The value is accurate to 10 decimal places. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                            "description_zh": "命中Label的视频截图的平均分数。取值范围：`[0, 100`]，精度小数点后10位。命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "CounterList": {
+                            "description_en": "The categories of the terrorism and politically sensitive content review results and the number of video snapshots in each category",
+                            "description_zh": "包括暴恐涉政结果各分类及其视频截图张数",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Count": {
+                                  "description_en": "The number of video snapshots",
+                                  "description_zh": "视频截图张数",
+                                  "example": "0",
+                                  "format": "int32",
+                                  "type": "integer"
+                                },
+                                "Label": {
+                                  "description_en": "The terrorism and politically sensitive content review result. Valid values:\nnormal: normal.\nbloody: bloody content.\nexplosion: explosion or smoke.\noutfit: special outfit.\nlogo: special logo.\nweapon: weapon.\npolitics: politically sensitive content.\nviolence: violence.\ncrowd: crowd gathering.\nparade: parade.\ncarcrash: car crash scene.\nflag: flag.\nlocation: landmark.\nothers: others",
+                                  "description_zh": "暴恐涉政审核结果。取值：\nnormal：正常。\nbloody：血腥。\nexplosion：爆炸烟光。\noutfit：特殊装束。\nlogo：特殊标识。\nweapon：武器。\npolitics：渉政。\nviolence：打斗。\ncrowd：聚众。\nparade：游行。\ncarcrash：车祸现场。\nflag：旗帜。\nlocation：地标。\nothers：其它",
+                                  "example": "terrorism",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          },
+                          "Label": {
+                            "description_en": "The terrorism and politically sensitive content review result. Valid values:\n\nnormal: normal.\nbloody: bloody content.\nexplosion: explosion or smoke.\noutfit: special outfit.\nlogo: special logo.\nweapon: weapon.\npolitics: politically sensitive content.\nviolence: violence.\ncrowd: crowd gathering.\nparade: parade.\ncarcrash: car crash scene.\nflag: flag.\nlocation: landmark.\nothers: others",
+                            "description_zh": "暴恐涉政审核结果。取值范围：\n\nnormal：正常。\nbloody：血腥。\nexplosion：爆炸烟光。\noutfit：特殊装束。\nlogo：特殊标识。\nweapon：武器。\npolitics：渉政。\nviolence：打斗。\ncrowd：聚众。\nparade：游行。\ncarcrash：车祸现场。\nflag：旗帜。\nlocation：地标。\nothers：其它",
+                            "example": "normal",
+                            "type": "string"
+                          },
+                          "MaxScore": {
+                            "description_en": "The highest score of the video snapshots that hit the label. Value range: `[0, 100]`. The value is accurate to 10 decimal places. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                            "description_zh": "命中Label的视频截图的最高分数。取值范围：`[0, 100`]，精度小数点后10位。命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                            "example": "100",
+                            "type": "string"
+                          },
+                          "Suggestion": {
+                            "description_en": "The terrorism and politically sensitive content review suggestion. Valid values:\n\nblock: Violation detected.\nreview: Suspected violation.\npass: Passed",
+                            "description_zh": "暴恐涉政审核建议。取值：\n\nblock（违规）\nreview（疑似）\npass（通过）",
+                            "example": "pass",
+                            "type": "string"
+                          },
+                          "TopList": {
+                            "description_en": "The information about the video snapshots with the highest scores that hit the label",
+                            "description_zh": "命中Label下分数最高的视频截图信息",
+                            "items": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "properties": {
+                                "Label": {
+                                  "description_en": "The terrorism and politically sensitive content review result. Valid values:\n\nnormal: normal.\nbloody: bloody content.\nexplosion: explosion or smoke.\noutfit: special outfit.\nlogo: special logo.\nweapon: weapon.\npolitics: politically sensitive content.\nviolence: violence.\ncrowd: crowd gathering.\nparade: parade.\ncarcrash: car crash scene.\nflag: flag.\nlocation: landmark.\nothers: others",
+                                  "description_zh": "暴恐涉政审核结果。取值范围：\n\nnormal：正常。\nbloody：血腥。\nexplosion：爆炸烟光。\noutfit：特殊装束。\nlogo：特殊标识。\nweapon：武器。\npolitics：渉政。\nviolence：打斗。\ncrowd：聚众。\nparade：游行。\ncarcrash：车祸现场。\nflag：旗帜。\nlocation：地标。\nothers：其它",
+                                  "example": "normal",
+                                  "type": "string"
+                                },
+                                "Score": {
+                                  "description_en": "The score of the video snapshot that hits the label. Value range: `[0, 100]`. The value is accurate to 10 decimal places. The score indicates the probability of the corresponding label. A higher score indicates higher accuracy",
+                                  "description_zh": "命中Label的视频截图的分数。取值范围：`[0, 100`]，精度小数点后10位。命中结果为对应分类Label的概率，值越高则命中准确性越高",
+                                  "example": "100",
+                                  "type": "string"
+                                },
+                                "Timestamp": {
+                                  "description_en": "The position of the video snapshot in the video. Unit: milliseconds",
+                                  "description_zh": "视频截图在视频中的位置。单位：毫秒",
+                                  "example": "5",
+                                  "type": "string"
+                                },
+                                "Url": {
+                                  "description_en": "The URL of the video snapshot",
+                                  "description_zh": "视频截图的地址",
+                                  "example": "http://ali*****.com/aivideocensor/yytysursrutyrxuq/****.jpg",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "type": "object"
+              },
+              "JobId": {
+                "description_en": "The job ID",
+                "description_zh": "作业ID",
+                "example": "bdbc266af6894*****943a70176d92e9",
+                "type": "string"
+              },
+              "MediaId": {
+                "description_en": "The video ID",
+                "description_zh": "视频ID",
+                "example": "fe028d09441d*****d1afffb138cd7e",
+                "type": "string"
+              },
+              "Message": {
+                "description_en": "The error message of the job. Check this field when Status is fail",
+                "description_zh": "作业错误信息。当Status为失败时，可关注该字段",
+                "example": "OK",
+                "type": "string"
+              },
+              "Status": {
+                "description_en": "The job status. Valid values:\n\nsuccess: The job is successful.\nfail: The job failed.\ninit: The job is being initialized.\nprocessing: The job is being processed",
+                "description_zh": "作业状态。取值：\n\nsuccess：成功。\nfail：失败。\ninit：初始化。\nprocessing：处理中",
+                "example": "success",
+                "type": "string"
+              },
+              "Type": {
+                "description_en": "The job type. Only automated review is supported",
+                "description_zh": "作业类型。目前仅支持\"智能审核\"一种类型",
+                "example": "AIMediaAudit",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "EAA3E96A-02E2-41*****85-08E1D568ED3A",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

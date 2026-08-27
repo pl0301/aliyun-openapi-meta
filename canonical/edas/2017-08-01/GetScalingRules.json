@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "33e39be9-3e5f-*********",
       "help_en": "The ID of the application",
       "help_zh": "应用ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "d8bb9d60-9**************",
       "help_en": "The ID of the instance group to which the application is deployed",
       "help_zh": "部署分组ID",
@@ -47,6 +49,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "SCALE_IN",
+        "SCALE_OUT"
+      ],
       "example": " SCALE_IN",
       "help_en": "The type of the scaling rule. You can leave this parameter empty. Valid values:\n\nSCALE_IN: scale-in rules\n\nSCALE_OUT: scale-out rules",
       "help_zh": "可不传或指定规则类型：\nSCALE_IN表示缩容。\nSCALE_OUT表示扩容",
@@ -62,5 +68,231 @@
   ],
   "pathPattern": "/pop/v5/app/scalingRules",
   "product_code": "Edas",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The content that is returned",
+        "description_zh": "接口响应",
+        "properties": {
+          "Code": {
+            "description_en": "The HTTP status code that is returned",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Data": {
+            "description_en": "The data that is returned",
+            "description_zh": "数据详情",
+            "properties": {
+              "ClusterType": {
+                "description_en": "The type of the cluster. Valid values:\n\n0: regular Docker cluster\n\n1: Swarm cluster (deprecated)\n\n2: Elastic Compute Service (ECS) cluster\n\n3: self-managed Kubernetes cluster in EDAS\n\n4: cluster in which Pandora automatically registers applications\n\n5: Container Service for Kubernetes (ACK) clusters",
+                "description_zh": "集群类型：\n\n0：普通Docker集群。\n1：Swarm集群（已废弃）。\n2：ECS集群。\n3：EDAS自建K8s集群。\n4：Pandora自动注册应用集群类型。\n5：容器服务K8s集群",
+                "example": "2",
+                "format": "int32",
+                "type": "integer"
+              },
+              "OversoldFactor": {
+                "description_en": "The overcommit ratio supported by a Docker cluster. Valid values:\n\n1: 1:1, which means that resources are not overcommitted.\n\n2: 1:2, which means that resources are overcommitted by 1:2.\n\n4: 1:4, which means that resources are overcommitted by 1:4.\n\n8: 1:8, which means that resources are overcommitted by 1:8",
+                "description_zh": "Docker集群支持超卖比例：\n1：1:1比例，不超卖。\n2：1:2比例超卖。\n4：1:4比例超卖。\n8：1:8比例超卖",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "RuleList": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Rule": {
+                    "description_en": "The array data of the scaling rule",
+                    "description_zh": "规则列表",
+                    "items": {
+                      "description_en": "The object data of the scaling rule",
+                      "description_zh": "规则对象",
+                      "properties": {
+                        "AppId": {
+                          "description_en": "The ID of the application",
+                          "description_zh": "应用ID",
+                          "example": "33e39be9-3e5f-*********",
+                          "type": "string"
+                        },
+                        "Cond": {
+                          "description_en": "The relationship among the conditions that trigger the scaling rule.\n\nOR: one of the conditions\n\nAND: all conditions",
+                          "description_zh": "触发条件：\nOR：满足任一条件即触发。\nAND：满足所有条件才触发",
+                          "example": "OR",
+                          "type": "string"
+                        },
+                        "Cpu": {
+                          "description_en": "The minimum CPU utilization that triggers the scaling rule",
+                          "description_zh": "触发指标CPU使用率",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "CreateTime": {
+                          "description_en": "The time when the scaling rule was created. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                          "description_zh": "创建时间的时间戳",
+                          "example": "1574251601801",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "Duration": {
+                          "description_en": "The duration of the scaling rule. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                          "description_zh": "持续时间的时间戳",
+                          "example": "1574251601",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Enable": {
+                          "description_en": "Indicates whether scale-ins or scale-outs are allowed. Valid values:\n\ntrue: Scale-ins or scale-outs are allowed.\n\nfalse: Scale-ins or scale-outs are disallowed",
+                          "description_zh": "是否启用弹性扩容或缩容：\n\ntrue：启用。\nfalse：不启用",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "GroupId": {
+                          "description_en": "The ID of the instance group to which the application is deployed",
+                          "description_zh": "应用实例分组ID",
+                          "example": "d8bb9d60-91b5-4cdf-****-************",
+                          "type": "string"
+                        },
+                        "InstNum": {
+                          "description_en": "The maximum number of instances in the group when a scale-out is performed, or the minimum number of instances in the group when a scale-in is performed",
+                          "description_zh": "扩容时表示分组内的最大实例数，缩容时表示分组内最小实例数",
+                          "example": "2",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "LoadNum": {
+                          "description_en": "The system load that triggers the scaling rule. The system load is evaluated based on the number of processes that are being executed by CPUs and the number of processes that wait to be executed by CPUs",
+                          "description_zh": "触发指标：系统负载，即指当前正在被CPU执行和等待被CPU执行的进程数",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "MetricType": {
+                          "description_en": "The type of the metric",
+                          "description_zh": "Metric类型",
+                          "example": "HSF",
+                          "type": "string"
+                        },
+                        "Mode": {
+                          "description_en": "The type of the scaling rule. Valid values:\n\nSCALE_IN: scale-in rules\n\nSCALE_OUT: scale-out rules",
+                          "description_zh": "规则类型：\nSCALE_IN：缩容。\nSCALE_OUT：扩容",
+                          "example": "SCALE_OUT",
+                          "type": "string"
+                        },
+                        "MultiAzPolicy": {
+                          "description_en": "The policy of auto scaling across multiple zones. Valid values:\n\nPRIORITY: The vSwitch that is first selected has the highest priority.\n\nBALANCE: This policy evenly distributes instances across zones in which the vSwitches reside",
+                          "description_zh": "多可用区扩缩容策略：\nPRIORITY：优先级策略。\nBALANCE：均衡分布策略",
+                          "example": "PRIORITY",
+                          "type": "string"
+                        },
+                        "ResourceFrom": {
+                          "description_en": "The source of the instance that you want to add during a scale-out. Valid values:\n\nNEW: Elastic resources are used.\n\nAVAILABLE: The existing resources are used.\n\nAVAILABLE_FIRST: The existing resources are used first",
+                          "description_zh": "实例来源：\nNEW：弹性资源。\nAVAILABLE：已有资源。\nAVAILABLE_FIRST：已有资源优先",
+                          "example": "AVAILABLE",
+                          "type": "string"
+                        },
+                        "Rt": {
+                          "description_en": "The service latency that triggers the scaling rule. Unit: milliseconds",
+                          "description_zh": "触发指标：服务时延，单位为ms",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "SpecId": {
+                          "description_en": "The ID of the specification",
+                          "description_zh": "Spec ID",
+                          "example": "03f493c0-xxxx-xxxx-xxxx-12e85cadeb41",
+                          "type": "string"
+                        },
+                        "Step": {
+                          "description_en": "The number of instances that are added during each scale-out or removed during each scale-in",
+                          "description_zh": "每次扩容或缩容的实例数",
+                          "example": "1",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "TemplateId": {
+                          "description_en": "The ID of the launch template",
+                          "description_zh": "启动模版ID",
+                          "example": "lt-bp1xxxxn73pxxxxf83l",
+                          "type": "string"
+                        },
+                        "TemplateVersion": {
+                          "description_en": "The version of the launch template",
+                          "description_zh": "启动模版的版本号",
+                          "example": "1143542",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "UpdateTime": {
+                          "description_en": "The time when the scaling rule was last modified. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                          "description_zh": "修改时间的时间戳",
+                          "example": "1574251601785",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "VSwitchIds": {
+                          "description_en": "The IDs of the vSwitches. The IDs of multiple vSwitches are separated by commas (,)",
+                          "description_zh": "vSwitch ID列表。如果设置了多个，以半角逗号（,）分割",
+                          "example": "vsw-mxxxxkxxxx4xxxxwbionj",
+                          "type": "string"
+                        },
+                        "VpcId": {
+                          "description_en": "The ID of the VPC",
+                          "description_zh": "VPC ID",
+                          "example": "vpc-wz9b246z******",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "UpdateTime": {
+                "description_en": "The time when the scaling rule was last updated. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                "description_zh": "更新时间的时间戳",
+                "example": "1574251601785",
+                "format": "int64",
+                "type": "integer"
+              },
+              "VpcId": {
+                "description_en": "The ID of the virtual private cloud (VPC)",
+                "description_zh": "VPC ID",
+                "example": "vpc-wz9b246z******",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The message that is returned",
+            "description_zh": "返回信息",
+            "example": "success",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "D16979DC-4D42-***********",
+            "type": "string"
+          },
+          "UpdateTime": {
+            "description_en": "The time when the scaling rule was last updated. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+            "description_zh": "更新时间的时间戳",
+            "example": "1574251601785",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

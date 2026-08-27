@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "default",
       "help_en": "The microservice namespace to which the application belongs",
       "help_zh": "应用所属的微服务命名空间",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "spring-cloud-a",
       "help_en": "The application name",
       "help_zh": "应用名称",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "0.8",
       "help_en": "A percentage threshold for triggering circuit breaking. Valid values: 0-1. These values represent 0% to 100%",
       "help_zh": "熔断比例阈值：触发熔断的比例阈值，取值范围为0 - 1，代表0% - 100%",
@@ -60,6 +63,10 @@
       "type": "float"
     },
     {
+      "enum": [
+        "true",
+        "false"
+      ],
       "example": "true",
       "help_en": "Specifies whether to enable the rule.\n\nValid values:\n\ntrue\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->\n\nfalse\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->",
       "help_zh": "规则的启用状态",
@@ -73,6 +80,7 @@
       "type": "bool"
     },
     {
+      "doc_required": true,
       "example": "/a",
       "help_en": "The name of the interface to which the rule applies. The interface name must be the same as the name on the interface details page in the console",
       "help_zh": "接口名称：适用该规则的应用资源。需要与控制台接口详情处接口名称一致",
@@ -112,6 +120,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "The threshold type.\n\nValid values:\n\n0\n\n    <!-- -->\n\n    :\n\n    <!-- -->\n\n    slow call proportion\n\n    <!-- -->\n\n1\n\n    <!-- -->\n\n    :\n\n    <!-- -->\n\n    abnormal proportion\n\n    <!-- -->",
       "help_zh": "阈值类型：选择以慢调用比例或异常比例作为阈值",
@@ -203,6 +215,13 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1",
+        "2",
+        "4",
+        "3"
+      ],
       "example": "0",
       "help_en": "The resource type.\n\nValid values:\n\n0: custom interface\n1: web\n2: RPC\n3: route\n4: SQL",
       "help_zh": "资源类型",
@@ -232,6 +251,193 @@
   "pathPattern": "",
   "product_code": "mse",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "Code": {
+            "description_en": "The response code returned",
+            "description_zh": "响应码",
+            "example": "200",
+            "title_en": "",
+            "title_zh": "响应码。",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The details of the rule",
+            "description_zh": "规则信息",
+            "properties": {
+              "AppId": {
+                "description_en": "The ID of the application",
+                "description_zh": "应用ID",
+                "example": "hkhon1po62@c3df23522bXXXXX",
+                "title_en": "",
+                "title_zh": "应用ID。",
+                "type": "string"
+              },
+              "AppName": {
+                "description_en": "The name of the application",
+                "description_zh": "应用名称",
+                "example": "spring-cloud-a",
+                "title_en": "",
+                "title_zh": "应用名称。",
+                "type": "string"
+              },
+              "Enable": {
+                "description_en": "Indicates whether the rule is enabled",
+                "description_zh": "规则的启用状态",
+                "example": "true",
+                "title_en": "",
+                "title_zh": "规则的启用状态。",
+                "type": "boolean"
+              },
+              "HalfOpenBaseAmountPerStep": {
+                "description_en": "The minimum number of requests that can be passed in each step after circuit breaking recovers",
+                "description_zh": "熔断恢复每步最小通过数目",
+                "example": "5",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "熔断恢复每步最小通过数目。",
+                "type": "integer"
+              },
+              "HalfOpenRecoveryStepNum": {
+                "description_en": "The number of circuit breaking recovery steps",
+                "description_zh": "熔断恢复阶段数",
+                "example": "1",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "熔断恢复阶段数。",
+                "type": "integer"
+              },
+              "Id": {
+                "description_en": "The ID of the rule",
+                "description_zh": "规则ID",
+                "example": "1",
+                "format": "int64",
+                "title_en": "",
+                "title_zh": "规则ID。",
+                "type": "integer"
+              },
+              "MaxAllowedRtMs": {
+                "description_en": "The maximum response time (RT). Unit: milliseconds. If the RT of a request is greater than the value of this parameter, a slow call is counted. If you set Strategy to 0, you must specify this parameter",
+                "description_zh": "慢调用RT（单位毫秒）：阈值类型为慢调用比例时，超过该时长则判定为慢请求",
+                "example": "200",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "慢调用RT（单位毫秒）：超过该时长则判定为慢请求，阈值类型为慢调用比例时必填。",
+                "type": "integer"
+              },
+              "MinRequestAmount": {
+                "description_en": "The minimum number of requests to trigger circuit breaking. If the number of requests in the current time window is less than the value of this parameter, circuit breaking is not triggered even if the circuit breaking rule is met",
+                "description_zh": "触发熔断的最小请求数目，若当前统计窗口请求数小于此值，即使达到熔断条件规则也不会触发",
+                "example": "10",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "触发熔断的最小请求数目，若当前统计窗口请求数小于此值，即使达到熔断条件规则也不会触发。",
+                "type": "integer"
+              },
+              "Namespace": {
+                "description_en": "The microservice namespace to which the application belongs",
+                "description_zh": "应用所属的微服务命空间",
+                "example": "default",
+                "title_en": "",
+                "title_zh": "应用所属的微服务命空间。",
+                "type": "string"
+              },
+              "RegionId": {
+                "description_en": "The region in which the instance resides",
+                "description_zh": "集群所在地域",
+                "example": "cn-hangzhou",
+                "title_en": "",
+                "title_zh": "集群所在地域。",
+                "type": "string"
+              },
+              "Resource": {
+                "description_en": "The name of the interface to which the rule is applicable. The interface name must be the same as the name on the interface details page in the console",
+                "description_zh": "接口名称：适用该规则的应用资源。需要与控制台接口详情处接口名称一致",
+                "example": "/a",
+                "title_en": "",
+                "title_zh": "接口名称：适用该规则的应用资源。需要与控制台接口详情处接口名称一致。",
+                "type": "string"
+              },
+              "RetryTimeoutMs": {
+                "description_en": "The period in which circuit breaking is implemented. Unit: milliseconds. If circuit breaking is implemented on the requests for the route, the calls to all the requests for the route fail in the configured circuit breaking period",
+                "description_zh": "熔断时长（单位毫秒）：即熔断触发后持续的时间。资源进入熔断状态后，在配置的熔断时长内，请求都会快速失败",
+                "example": "10000",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "熔断时长（单位毫秒）：即熔断触发后持续的时间。资源进入熔断状态后，在配置的熔断时长内，请求都会快速失败。",
+                "type": "integer"
+              },
+              "StatIntervalMs": {
+                "description_en": "The length of the time window. Unit: milliseconds. The valid range is from 1 second to 120 minutes",
+                "description_zh": "统计窗口时长（单位毫秒）：统计的时间窗口长度，取值范围为1秒~120分钟",
+                "example": "20000",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "统计窗口时长（单位毫秒）：统计的时间窗口长度，取值范围为1秒~120分钟。",
+                "type": "integer"
+              },
+              "Strategy": {
+                "description_en": "The threshold type.\n\nValid values:\n\n0\n\n    <!-- -->\n\n    :\n\n    <!-- -->\n\n    Slow call ratio\n\n    <!-- -->\n\n1\n\n    <!-- -->\n\n    :\n\n    <!-- -->\n\n    Abnormal proportion\n\n    <!-- -->",
+                "description_zh": "阈值类型：选择以慢调用比例或异常比例作为阈值",
+                "enumValueTitles": {
+                  "0": "慢调用比例",
+                  "1": "异常比例"
+                },
+                "example": "0",
+                "format": "int32",
+                "title_en": "",
+                "title_zh": "阈值类型：选择以慢调用比例或异常比例作为阈值。",
+                "type": "integer"
+              },
+              "Threshold": {
+                "description_en": "A percentage threshold for triggering circuit breaking. Valid values: 0-1. These values represent 0% to 100%",
+                "description_zh": "熔断比例阈值：触发熔断的比例阈值，取值范围为0 - 1，代表0% - 100%",
+                "example": "0.8",
+                "format": "float",
+                "title_en": "",
+                "title_zh": "熔断比例阈值：触发熔断的比例阈值，取值范围为0 - 1，代表0% - 100%。",
+                "type": "number"
+              }
+            },
+            "title_en": "",
+            "title_zh": "规则信息。",
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "The message returned",
+            "description_zh": "响应信息",
+            "example": "OK",
+            "title_en": "",
+            "title_zh": "响应信息。",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "EE5C32A1-BC0E-4B79-817C-103E4EDF****",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful.\n\nValid values:\n\ntrue\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->\n\nfalse\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->",
+            "description_zh": "请求结果",
+            "enumValueTitles": {
+              "false": "请求失败",
+              "true": "请求成功"
+            },
+            "example": "true",
+            "title_en": "",
+            "title_zh": "请求结果。",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "tags": [
     "msc"
   ]

@@ -2,6 +2,86 @@
   "camel_example": "",
   "cmd_full_name": "agentloop list-experiment-plans",
   "cmd_name": "list-experiment-plans",
+  "components": {
+    "schemas": {
+      "ExperimentPlanData": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "createdAt": {
+            "description_en": "",
+            "description_zh": "创建时间（毫秒时间戳）",
+            "format": "int64",
+            "title": "创建时间（毫秒时间戳）",
+            "type": "integer"
+          },
+          "datasetId": {
+            "description_en": "",
+            "description_zh": "关联的数据集ID",
+            "title": "关联的数据集ID",
+            "type": "string"
+          },
+          "description": {
+            "description_en": "",
+            "description_zh": "描述信息",
+            "title": "描述信息",
+            "type": "string"
+          },
+          "experimentCount": {
+            "description_en": "",
+            "description_zh": "该计划下的实验执行次数",
+            "format": "int32",
+            "title": "该计划下的实验执行次数",
+            "type": "integer"
+          },
+          "experimentType": {
+            "description_en": "",
+            "description_zh": "实验类型：offline（离线实验）/ online（在线实验）",
+            "title": "实验类型：offline（离线实验）/ online（在线实验）",
+            "type": "string"
+          },
+          "pipelineName": {
+            "description_en": "",
+            "description_zh": "关联的数据处理Pipeline名称（未关联时为空）。关联后，该计划下的实验执行完成写实验结果Logstore时，会按本次实验轨迹的traceId过滤并调用PreviewPipeline，将轨迹经Pipeline处理后的结果一并写入",
+            "title": "关联的数据处理Pipeline名称（未关联时为空）。关联后，该计划下的实验执行完成写实验结果Logstore时，会按本次实验轨迹的traceId过滤并调用PreviewPipeline，将轨迹经Pipeline处理后的结果一并写入",
+            "type": "string"
+          },
+          "planId": {
+            "description_en": "",
+            "description_zh": "实验计划ID",
+            "title": "实验计划ID",
+            "type": "string"
+          },
+          "planName": {
+            "description_en": "",
+            "description_zh": "实验计划名称",
+            "title": "实验计划名称",
+            "type": "string"
+          },
+          "querySql": {
+            "description_en": "",
+            "description_zh": "dataset-partial 模式下的自定义查询SQL子句",
+            "title": "dataset-partial 模式下的自定义查询SQL子句",
+            "type": "string"
+          },
+          "status": {
+            "description_en": "",
+            "description_zh": "状态：pending/running/stopped",
+            "title": "状态：pending/running/stopped",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description_en": "",
+            "description_zh": "更新时间（毫秒时间戳）",
+            "format": "int64",
+            "title": "更新时间（毫秒时间戳）",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries the list of experiment plans",
   "description_zh": "查询实验计划列表",
@@ -47,6 +127,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "running",
+        "stopped",
+        "pending"
+      ],
       "example": "pending",
       "help_en": "Filters by exact status",
       "help_zh": "按状态精确过滤",
@@ -115,6 +200,72 @@
   "pathPattern": "/api/v1/experiments/[agentSpace]/plans",
   "product_code": "AgentLoop",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response for the experiment plan list",
+        "description_zh": "实验计划列表响应",
+        "properties": {
+          "maxResults": {
+            "description_en": "The maximum number of entries returned",
+            "description_zh": "最大返回条数",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          },
+          "nextToken": {
+            "description_en": "The token for the next page",
+            "description_zh": "下一页 Token",
+            "example": "eyJsYXN0SWQiOjEwMX0=",
+            "type": "string"
+          },
+          "page": {
+            "description_en": "The page number",
+            "description_zh": "页码信息",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description_en": "The number of entries per page",
+            "description_zh": "每页条数",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          },
+          "plans": {
+            "description_en": "The list of experiment plan summaries",
+            "description_zh": "实验计划摘要列表",
+            "example": "[{\"planId\": \"exp-plan-e95bff54685a4ae29ff3a834c1008a71\", \"planName\": \"rca_benchmark_eval_experiment\", \"experimentType\": \"offline\", \"description\": \"\", \"status\": \"pending\", \"datasetId\": \"rca_benckmark_eval\", \"querySql\": \"\", \"experimentCount\": 5, \"createdAt\": 1784612365000, \"updatedAt\": 1784619562000}, {\"planId\": \"exp-plan-0242d983f5d340fd8479cf2c19eb279e\", \"planName\": \"arms_agent_experiment\", \"experimentType\": \"online\", \"description\": \"\", \"status\": \"stopped\", \"datasetId\": \"arms_customer_agent_level1\", \"querySql\": \"\", \"experimentCount\": 4, \"createdAt\": 1784257858000, \"updatedAt\": 1784721811000}, {\"planId\": \"b7f0ad3d-3765-446a-a744-ab64ab8bf386\", \"planName\": \"arms_customer_agent_plan\", \"experimentType\": \"offline\", \"description\": \"\", \"status\": \"stopped\", \"datasetId\": \"arms_customer_agent_level1\", \"querySql\": \"where \\\"input\\\" LIKE '%探针%'\", \"experimentCount\": 65, \"createdAt\": 1782310430000, \"updatedAt\": 1784692254000}]",
+            "items": {
+              "$ref": "#/components/schemas/ExperimentPlanData",
+              "description_en": "A single experiment plan summary object",
+              "description_zh": "单个实验计划摘要对象"
+            },
+            "type": "array"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求 ID",
+            "example": "3FE4CD1E-FF41-56BE-B590-7A021D9C1524",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "total": {
+            "description_en": "The total number of records that match the filter criteria",
+            "description_zh": "符合条件的总记录数",
+            "example": "6",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The AgentSpace name",

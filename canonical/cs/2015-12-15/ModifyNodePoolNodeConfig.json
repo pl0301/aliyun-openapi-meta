@@ -2,6 +2,403 @@
   "camel_example": "aliyun cs PUT /clusters/c23421cfa74454bc8b37163fd19af0000/nodepools/np8d8c9c2cd0f64e89884f82a5fbcd0000/node_config --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"rolling_policy\":{\"max_parallelism\":3,\"max_failed_nodes\":0},\"node_names\":[\"cn-beijing.10.180.xx.xx\"],\"kubelet_config\":\"example-string\",\"containerd_config\":\"example-string\",\"os_config\":{\"hugepage\":\"example-string\",\"sysctl\":{\"key\":\"example-string\"}}}",
   "cmd_full_name": "cs modify-node-pool-node-config",
   "cmd_name": "modify-node-pool-node-config",
+  "components": {
+    "schemas": {
+      "Hugepage": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "khugepagedAllocSleepMillisecs": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int64",
+            "type": "integer"
+          },
+          "khugepagedDefrag": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int64",
+            "type": "integer"
+          },
+          "khugepagedPagesToScan": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int64",
+            "type": "integer"
+          },
+          "khugepagedScanSleepMillisecs": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int64",
+            "type": "integer"
+          },
+          "transparentDefrag": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "transparentEnabled": {
+            "description_en": "",
+            "description_zh": "",
+            "title": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "containerd_config": {
+        "description_en": "Configuration for the containerd runtime",
+        "description_zh": "containerd 运行时配置",
+        "properties": {
+          "ignoreImageDefinedVolume": {
+            "description_en": "Whether to ignore volumes defined in the image",
+            "description_zh": "忽略镜像中定义的数据卷",
+            "title": "忽略镜像中定义的数据卷。",
+            "type": "boolean"
+          },
+          "insecureRegistries": {
+            "description_en": "A list of insecure registries that skip TLS certificate verification",
+            "description_zh": "跳过证书认证的镜像仓库",
+            "items": {
+              "description_en": "The address of an insecure registry",
+              "description_zh": "跳过证书认证的镜像仓库地址",
+              "example": "example.com",
+              "type": "string"
+            },
+            "title": "跳过证书认证的镜像仓库。",
+            "type": "array"
+          },
+          "limitCore": {
+            "description_en": "Maximum core dump size in bytes",
+            "description_zh": "coredump 大小",
+            "format": "int64",
+            "title": "coredump 大小。",
+            "type": "integer"
+          },
+          "limitMemLock": {
+            "description_en": "Maximum locked memory in bytes",
+            "description_zh": "最大内存锁定量限制",
+            "format": "int64",
+            "title": "最大内存锁定量限制。",
+            "type": "integer"
+          },
+          "limitNoFile": {
+            "description_en": "Maximum number of open file handles",
+            "description_zh": "最大文件句柄数量限制",
+            "format": "int64",
+            "title": "最大文件句柄数量限制。",
+            "type": "integer"
+          },
+          "maxConcurrentDownloads": {
+            "description_en": "The maximum number of concurrent image layer downloads",
+            "description_zh": "最大并发下载数",
+            "format": "int64",
+            "title": "最大并发下载数。",
+            "type": "integer"
+          },
+          "registryMirrors": {
+            "description_en": "A list of registry mirrors to accelerate image pulls",
+            "description_zh": "镜像加速器配置",
+            "items": {
+              "description_en": "The address of a registry mirror",
+              "description_zh": "镜像加速器地址",
+              "example": "https://example.com",
+              "type": "string"
+            },
+            "title": "替代镜像仓库配置。",
+            "type": "array"
+          }
+        },
+        "title": "containerd配置",
+        "type": "object"
+      },
+      "kubelet_config": {
+        "description_en": "The supported kubelet configurations",
+        "description_zh": "支持的kubelet配置",
+        "properties": {
+          "allowedUnsafeSysctls": {
+            "description_en": "The whitelisted unsafe sysctls",
+            "description_zh": "允许的sysctl模式白名单",
+            "items": {
+              "description_en": "The whitelisted unsafe sysctls",
+              "description_zh": "允许的sysctl模式白名单",
+              "example": "net.core.somaxconn",
+              "type": "string"
+            },
+            "title": "允许的sysctl模式白名单。",
+            "type": "array"
+          },
+          "clusterDNS": {
+            "description_en": "The list of IP addresses of the DNS servers",
+            "description_zh": "集群 DNS 服务器的 IP 地址的列表",
+            "items": {
+              "description_en": "A DNS server IP address",
+              "description_zh": "集群 DNS 服务器的 IP 地址",
+              "example": "127.0.xx.xx",
+              "type": "string"
+            },
+            "title": "集群 DNS 服务器的 IP 地址的列表。",
+            "type": "array"
+          },
+          "containerLogMaxFiles": {
+            "description_en": "The maximum number of log files that can be stored in each container",
+            "description_zh": "每个容器可以存在的日志文件个数上限",
+            "example": "5",
+            "format": "int64",
+            "title": "每个容器可以存在的日志文件个数上限。",
+            "type": "integer"
+          },
+          "containerLogMaxSize": {
+            "description_en": "The maximum size that a log file can reach before it is rotated",
+            "description_zh": "日志文件被轮转之前可以到达的最大大小",
+            "example": "10Mi",
+            "title": "日志文件被轮转之前可以到达的最大大小。",
+            "type": "string"
+          },
+          "containerLogMaxWorkers": {
+            "description_en": "The maximum number of concurrent programs that rotate logs",
+            "description_zh": "指定执行日志轮换操作所需的并发工作程序的最大数量",
+            "example": "1",
+            "format": "int32",
+            "title": "指定执行日志轮换操作所需的并发工作程序的最大数量。",
+            "type": "integer"
+          },
+          "containerLogMonitorInterval": {
+            "description_en": "The duration at which the container logs are monitored for rotating logs",
+            "description_zh": "指定监视容器日志以执行日志轮转操作的持续时间",
+            "example": "10s",
+            "title": "指定监视容器日志以执行日志轮转操作的持续时间。",
+            "type": "string"
+          },
+          "cpuCFSQuota": {
+            "description_en": "Specifies whether to use Completely Fair Scheduler (CFS) quota to enforce pod CPU limits",
+            "description_zh": "CPU CFS配额约束开关",
+            "example": "true",
+            "title": "CPU CFS配额约束开关。",
+            "type": "boolean"
+          },
+          "cpuCFSQuotaPeriod": {
+            "description_en": "The duration for the CPU CFS quota",
+            "description_zh": "CPU CFS配额周期值",
+            "example": "100ms",
+            "title": "CPU CFS配额周期值。",
+            "type": "string"
+          },
+          "cpuManagerPolicy": {
+            "description_en": "The CPU management policy used by kubelet",
+            "description_zh": "CPU管理器策略",
+            "example": "none",
+            "title": "CPU管理器策略。",
+            "type": "string"
+          },
+          "eventBurst": {
+            "description_en": "The maximum number of burst peaks for the event records",
+            "description_zh": "事件记录的个数的突发峰值上限",
+            "example": "10",
+            "format": "int64",
+            "title": "事件记录的个数的突发峰值上限。",
+            "type": "integer"
+          },
+          "eventRecordQPS": {
+            "description_en": "Specifies the maximum number of events that can be generated per second",
+            "description_zh": "每秒可生成的事件数量",
+            "example": "5",
+            "format": "int64",
+            "title": "每秒可生成的事件数量。",
+            "type": "integer"
+          },
+          "evictionHard": {
+            "description_en": "A set of eviction thresholds that will trigger a pod eviction if met",
+            "description_zh": "触发Pod驱逐操作的一组硬性门限",
+            "title": "触发Pod驱逐操作的一组硬性门限。",
+            "type": "object"
+          },
+          "evictionSoft": {
+            "description_en": "A set of eviction thresholds that will trigger a pod eviction if met over a corresponding grace period",
+            "description_zh": "设置一组驱逐阈值",
+            "title": "设置一组驱逐阈值。",
+            "type": "object"
+          },
+          "evictionSoftGracePeriod": {
+            "description_en": "A set of grace periods for eviction thresholds",
+            "description_zh": "设置一组驱逐宽限期",
+            "title": "设置一组驱逐宽限期。",
+            "type": "object"
+          },
+          "featureGates": {
+            "description_en": "A feature gate that is used to enable an experimental feature",
+            "description_zh": "特性开关，用来开启实验性功能的配置",
+            "title": "特性开关，用来开启实验性功能的配置。",
+            "type": "object"
+          },
+          "imageGCHighThresholdPercent": {
+            "description_en": "The percentage of disk usage after which image garbage collection always runs",
+            "description_zh": "镜像用量超过此阈值，则镜像垃圾回收会持续执行",
+            "example": "85",
+            "format": "int32",
+            "title": "镜像用量超过此阈值，则镜像垃圾回收会持续执行。",
+            "type": "integer"
+          },
+          "imageGCLowThresholdPercent": {
+            "description_en": "The percentage of disk usage before which image garbage collection never runs",
+            "description_zh": "镜像用量低于此阈值时不会执行镜像垃圾回收操作",
+            "example": "80",
+            "format": "int32",
+            "title": "镜像用量低于此阈值时不会执行镜像垃圾回收操作。",
+            "type": "integer"
+          },
+          "kubeAPIBurst": {
+            "description_en": "The maximum number of burst requests sent to the API server per second",
+            "description_zh": "每秒发送到API Server的突发请求数量上限",
+            "example": "10",
+            "format": "int64",
+            "title": "每秒发送到API Server的突发请求数量上限。",
+            "type": "integer"
+          },
+          "kubeAPIQPS": {
+            "description_en": "The QPS when kubelet communicates with the Kubernetes API server",
+            "description_zh": "与API Server通信的每秒查询个数",
+            "example": "5",
+            "format": "int64",
+            "title": "与API Server通信的每秒查询个数。",
+            "type": "integer"
+          },
+          "kubeReserved": {
+            "description_en": "A set of configurations that specify resources reserved for the Kubernetes system",
+            "description_zh": "kubernetes系统预留的资源配置",
+            "title": "kubernetes系统预留的资源配置。",
+            "type": "object"
+          },
+          "maxPods": {
+            "description_en": "The maximum number of running pods",
+            "description_zh": "运行的Pod个数上限",
+            "example": "110",
+            "format": "int64",
+            "title": "运行的Pod个数上限。",
+            "type": "integer"
+          },
+          "memoryManagerPolicy": {
+            "description_en": "The name of the policy to be used by the memory manager",
+            "description_zh": "内存管理器要使用的策略",
+            "example": "none",
+            "title": "内存管理器要使用的策略。",
+            "type": "string"
+          },
+          "podPidsLimit": {
+            "description_en": "The maximum number of processes per pod",
+            "description_zh": "Pod 中可使用的 PID 个数上限",
+            "example": "-1",
+            "format": "int64",
+            "title": "Pod 中可使用的 PID 个数上限。",
+            "type": "integer"
+          },
+          "readOnlyPort": {
+            "description_en": "The read-only port",
+            "description_zh": "只读端口号",
+            "example": "0",
+            "format": "int64",
+            "title": "只读端口号。",
+            "type": "integer"
+          },
+          "registryBurst": {
+            "description_en": "The maximum number of images that can be pulled from bursty image pulls",
+            "description_zh": "突发性镜像拉取的个数上限",
+            "example": "10",
+            "format": "int64",
+            "title": "突发性镜像拉取的个数上限。",
+            "type": "integer"
+          },
+          "registryPullQPS": {
+            "description_en": "The maximum queries per second (QPS) of the image repository",
+            "description_zh": "镜像仓库的QPS上限",
+            "example": "5",
+            "format": "int64",
+            "title": "镜像仓库的QPS上限。",
+            "type": "integer"
+          },
+          "reservedMemory": {
+            "description_en": "A list of configurations that specify memory reservations for non-uniform memory access (NUMA) nodes",
+            "description_zh": "为NUMA节点预留内存",
+            "items": {
+              "description_en": "The memory limit",
+              "description_zh": "内存资源限制",
+              "properties": {
+                "limits": {
+                  "description_en": "The memory limit",
+                  "description_zh": "内存资源限制",
+                  "example": "{\"memory\": \"1Gi\"}",
+                  "title": "资源列表。",
+                  "type": "object"
+                },
+                "numaNode": {
+                  "description_en": "The NUMA node identifier",
+                  "description_zh": "NUMA 节点",
+                  "example": "0",
+                  "format": "int32",
+                  "title": "NUMA 节点。",
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            "title": "为NUMA节点预留内存。",
+            "type": "array"
+          },
+          "serializeImagePulls": {
+            "description_en": "Specifies whether to pull one image at a time",
+            "description_zh": "是否逐一拉取镜像",
+            "example": "true",
+            "title": "是否逐一拉取镜像。",
+            "type": "boolean"
+          },
+          "serverTLSBootstrap": {
+            "description_en": "",
+            "description_zh": "启用 kubelet 服务端证书的自动签发与轮换功能。启用时，需同时在 kubelet 的 featureGates 中配置 \"RotateKubeletServerCertificate\": true\n\n仅 1.30 及以上版本的集群可用。\n1.30 至 v1.33 版本的集群需提交工单申请",
+            "example": "true",
+            "type": "boolean"
+          },
+          "systemReserved": {
+            "description_en": "A set of configurations that specify reserved resources for the system",
+            "description_zh": "系统预留的资源配置",
+            "title": "系统预留的资源配置。",
+            "type": "object"
+          },
+          "topologyManagerPolicy": {
+            "description_en": "The name of the Topology Manager policy that you want to use",
+            "description_zh": "使用的拓扑管理器策略名称",
+            "example": "restricted",
+            "title": "使用的拓扑管理器策略名称。",
+            "type": "string"
+          },
+          "tracing": {
+            "description_en": "The versioned configuration information for the Managed Service for OpenTelemetry client",
+            "description_zh": "OpenTelemetry 追踪客户端设置版本化的配置信息",
+            "properties": {
+              "endpoint": {
+                "description_en": "The endpoint of the collector",
+                "description_zh": "采集器的端点",
+                "example": "localhost:4317",
+                "title": "采集器的端点。",
+                "type": "string"
+              },
+              "samplingRatePerMillion": {
+                "description_en": "The number of samples to be collected per million spans",
+                "description_zh": "每百万 span 要采集的样本数",
+                "example": "200000",
+                "format": "int32",
+                "title": "每百万 span 要采集的样本数。",
+                "type": "integer"
+              }
+            },
+            "title": "OpenTelemetry 追踪客户端设置版本化的配置信息。",
+            "type": "object"
+          }
+        },
+        "title": "Kubelet参数配置。",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Modifies the node configurations in a cluster node pool, such as kubelet configurations and rolling update configurations. Modifying node configurations applies changes in batches and restarts kubelet, which may affect node operations and workload execution. Perform this operation during off-peak hours",
   "description_zh": "您可以调用ModifyNodePoolNodeConfig接口修改集群节点池中节点配置信息，例如kubelet配置、节点轮转配置等。修改节点配置会按批次变更节点配置并重启kubelet, 可能会对节点运行和工作负载运行产生一定影响，请在业务低峰期操作",
@@ -791,6 +1188,43 @@
   "pathPattern": "/clusters/[ClusterId]/nodepools/[NodepoolId]/node_config",
   "product_code": "CS",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "响应体",
+        "properties": {
+          "nodepool_id": {
+            "description_en": "The node pool ID",
+            "description_zh": "节点池ID",
+            "example": "np737c3ac1ac684703b9e10673aa2c****",
+            "title_en": "",
+            "title_zh": "节点池ID。",
+            "type": "string"
+          },
+          "request_id": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "D7631D83-6E98-1949-B665-766A62****",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          },
+          "task_id": {
+            "description_en": "The task ID",
+            "description_zh": "任务ID",
+            "example": "T-5fd211e924e1d00787****",
+            "title_en": "",
+            "title_zh": "任务ID。",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "响应体。",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

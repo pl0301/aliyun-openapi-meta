@@ -2,6 +2,47 @@
   "camel_example": "aliyun paistudio GET /api/v1/spots/ml.gu7xf.8xlarge-gu108/pricehistory --region cn-hangzhou --Order asc --EndTime '2024-12-30T09:36:46Z' --PageSize 10 --PageNumber 1 --SortBy GmtCreatedTime --StartTime '2024-12-26T09:36:46Z' --SpotDuration 0 --header \"Content-Type=application/json\"",
   "cmd_full_name": "paistudio get-spot-price-history",
   "cmd_name": "get-spot-price-history",
+  "components": {
+    "schemas": {
+      "SpotPriceItem": {
+        "description_en": "",
+        "description_zh": "抢占式实例价格",
+        "properties": {
+          "InstanceType": {
+            "description_en": "",
+            "description_zh": "抢占式实例类型",
+            "example": "ml.gu8xf.8xlarge-gu108",
+            "title": "抢占式实例类型",
+            "type": "string"
+          },
+          "SpotDiscount": {
+            "description_en": "",
+            "description_zh": "抢占式实例折扣",
+            "example": "0.1",
+            "format": "float",
+            "title": "抢占式实例折扣",
+            "type": "number"
+          },
+          "Timestamp": {
+            "description_en": "",
+            "description_zh": "抢占式实例当前价格时间戳",
+            "example": "2024-01-17T06:00:00Z",
+            "title": "抢占式实例当前价格时间戳",
+            "type": "string"
+          },
+          "ZoneId": {
+            "description_en": "",
+            "description_zh": "可用区ID",
+            "example": "cn-wulanchabu-a",
+            "title": "可用区ID",
+            "type": "string"
+          }
+        },
+        "title": "抢占式实例价格",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the historical prices of spot instances",
   "description_zh": "获取抢占式实例历史价格",
@@ -98,6 +139,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "GmtCreatedTime"
+      ],
       "example": "GmtCreatedTime",
       "help_en": "The field to sort by. Default value: GmtCreatedTime. Valid values:\n\nGmtCreatedTime\n\nThis parameter applies only when you query historical prices for Lingjun instance types",
       "help_zh": "用于排序的字段名，默认值： GmtCreatedTime，可选字段：\n\nGmtCreatedTime\n\n仅查询灵骏规格的历史价格时该参数生效",
@@ -111,6 +155,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "asc",
+        "desc"
+      ],
       "example": "asc",
       "help_en": "The sort order. Default value: asc. Valid values:\n\ndesc: descending order.\n\nasc: ascending order.\n\nThis parameter applies only when you query historical prices for Lingjun instance types",
       "help_zh": "排序顺序。默认值：asc，取值如下：\ndesc：降序。\nasc：升序。\n\n仅查询灵骏规格的历史价格时该参数生效",
@@ -127,6 +175,42 @@
   "pathPattern": "/api/v1/spots/[InstanceType]/pricehistory",
   "product_code": "PaiStudio",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Details about historical spot instance prices",
+        "description_zh": "抢占式实例历史价格详情",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "8BDA4440-DD3C-5F4B-BBDD-94A9CE1E75C7",
+            "type": "string"
+          },
+          "SpotPriceHistory": {
+            "description_en": "A list of historical spot instance price details",
+            "description_zh": "抢占式实例历史价格详情列表",
+            "items": {
+              "$ref": "#/components/schemas/SpotPriceItem",
+              "description_en": "Historical spot instance price details",
+              "description_zh": "抢占式实例历史价格详情"
+            },
+            "type": "array"
+          },
+          "TotalCount": {
+            "description_en": "The total number of historical spot instance prices",
+            "description_zh": "抢占式实例历史价格总数",
+            "example": "194",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The end time for querying historical spot instance prices. Specify the time in ISO 8601 format using UTC+0, as yyyy-MM-ddTHH:mm:ssZ. Default value: empty. An empty value means the current time",

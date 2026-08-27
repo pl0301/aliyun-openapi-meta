@@ -2,6 +2,60 @@
   "camel_example": "aliyun pai-dlc GET /api/v1/jobs/dlc-20210126170216-0000000/metrics --region cn-hangzhou --TimeStep 5m --EndTime '2020-11-09T16:00:00Z' --MetricType GpuMemoryUsage --StartTime '2020-11-08T16:00:00Z' --Token 'eyXXXX-XXXX.XXXXX' --header \"Content-Type=application/json\"",
   "cmd_full_name": "pai-dlc get-job-metrics",
   "cmd_name": "get-job-metrics",
+  "components": {
+    "schemas": {
+      "Metric": {
+        "description_en": "The metric",
+        "description_zh": "监控指标",
+        "properties": {
+          "Time": {
+            "description_en": "The timestamp. Unit: milliseconds",
+            "description_zh": "时间戳（Unix Timestamp），单位为毫秒",
+            "example": "1616987726587",
+            "format": "int64",
+            "title": "时间戳（毫秒）",
+            "type": "integer"
+          },
+          "Value": {
+            "description_en": "The value of the monitoring data",
+            "description_zh": "监控数据的值",
+            "example": "23.45",
+            "format": "float",
+            "title": "样本值",
+            "type": "number"
+          }
+        },
+        "title": "监控指标样本",
+        "type": "object"
+      },
+      "PodMetric": {
+        "description_en": "The metrics of the job",
+        "description_zh": "任务监控数据",
+        "properties": {
+          "Metrics": {
+            "description_en": "The metrics list",
+            "description_zh": "监控数据列表",
+            "items": {
+              "$ref": "#/components/schemas/Metric",
+              "description_en": "The metric",
+              "description_zh": "监控数据"
+            },
+            "title": "监控指标样本序列",
+            "type": "array"
+          },
+          "PodId": {
+            "description_en": "The node ID",
+            "description_zh": "节点ID",
+            "example": "dlc-20210329110128-******-worker-0",
+            "title": "Pod编号",
+            "type": "string"
+          }
+        },
+        "title": "Pod监控指标",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Obtains the monitoring data of a job, including the CPU, GPU, and memory utilization, network, and disk read/write rate. ⚠️ Note: Except for pay-as-you-go tasks based on general-purpose computing resources, all task types are connected to CloudMonitor. Use the CloudMonitor API to call related monitoring. The overwritten features in the original API are no longer maintained. For more information, see \\[Training monitoring and alerting]\\(https://www.alibabacloud.com/help/zh/pai/user-guide/training-monitoring-and-alerting)",
   "description_zh": "获取一个任务的监控数据，包括CPU、GPU、Memory的使用率、Network、Disk读写速率等。\n\n⚠️注意：除基于通用计算资源的按量付费（后付费）任务外，其余任务类型均已对接云监控。相关监控调用请使用云监控接口，原接口中已被覆盖的功能将不再维护。更多信息，请参见训练监控与报警 (https://www.alibabacloud.com/help/zh/pai/user-guide/training-monitoring-and-alerting)",
@@ -101,5 +155,46 @@
   ],
   "pathPattern": "/api/v1/jobs/[JobId]/metrics",
   "product_code": "pai-dlc",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The monitoring data of the job",
+        "description_zh": "任务监控数据信息",
+        "properties": {
+          "JobId": {
+            "description_en": "The job ID",
+            "description_zh": "任务ID",
+            "example": "dlc-20210126170216-*******",
+            "title_en": "",
+            "title_zh": "作业ID",
+            "type": "string"
+          },
+          "PodMetrics": {
+            "description_en": "The monitoring metrics of the job",
+            "description_zh": "任务监控数据列表",
+            "items": {
+              "$ref": "#/components/schemas/PodMetric",
+              "description_en": "The monitoring metric of the job",
+              "description_zh": "任务监控数据"
+            },
+            "title_en": "",
+            "title_zh": "任务监控指标序列集合",
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID. You can troubleshoot issues based on the request ID",
+            "description_zh": "本次调用的请求ID，用于诊断和答疑",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "title_en": "",
+            "title_zh": "请求ID",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "作业监控指标",
+        "type": "object"
+      }
+    }
+  }
 }

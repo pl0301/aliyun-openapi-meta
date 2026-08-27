@@ -23,6 +23,16 @@
   },
   "parameters": [
     {
+      "enum": [
+        "PureDocument",
+        "PureImage",
+        "PureAudio",
+        "PureVideo",
+        "AigcDocument",
+        "AigcImage",
+        "AigcAudio",
+        "AigcVideo"
+      ],
       "example": "PureDocument",
       "help_en": "Watermark type. Valid values:  \nPureDocument: Document watermark.  \nPureImage: Image watermark.  \nPureAudio: Audio watermark.  \nPureVideo: Video watermark.  \nAigcDocument: AIGC document watermark.  \nAigcImage: AIGC image watermark.  \nAigcAudio: AIGC audio watermark.  \nAigcVideo: AIGC video watermark.  ",
       "help_zh": "水印类型。取值：\nPureDocument：文档水印。\nPureImage：图片水印。\nPureAudio：音频水印。\nPureVideo：视频水印。\nAigcDocument：AIGC文档水印。\nAigcImage：AIGC图片水印。\nAigcAudio：AIGC音频水印。\nAigcVideo：AIGC视频水印",
@@ -62,10 +72,17 @@
       "type": "string"
     },
     {
+      "enum": [
+        "32",
+        "40",
+        "64"
+      ],
       "example": "32",
       "help_en": "The bit width of the watermark information. The default value is 32. This parameter must be consistent between embedding and extraction. For example, if a 40-bit software development kit (SDK) is used for embedding, this value must also be set to 40 during extraction",
       "help_zh": "水印信息的容量位宽，默认为32。该参数嵌入和提取时需要保持一致。比如嵌入时使用的是 40 位的SDK，那么提取时也需要将该值设为 40",
       "location": "formData",
+      "maximum": "64",
+      "minimum": "32",
       "name": "wm_info_size",
       "options": [
         "--wm-info-size"
@@ -92,6 +109,7 @@
       "help_en": "Base64-encoded string-formatted watermark information. If this value is set, WmInfoUint cannot be set",
       "help_zh": "Base64 编码后的字符串格式水印信息 。若设置该值，则 WmInfoUint 不能设置",
       "location": "formData",
+      "max_length": "400",
       "name": "wm_info_bytes_b64",
       "options": [
         "--wm-info-bytes-b64"
@@ -101,6 +119,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "true",
+        "false"
+      ],
       "example": "false",
       "help_en": "Video watermark parameter: whether to use the long-video watermark software development kit (SDK). The default value is false. Valid values:\n\ntrue: Yes\nfalse: No",
       "help_zh": "视频水印参数：是否使用长视频水印SDK，默认为false。取值：\n\ntrue: 是\nfalse: 否",
@@ -167,6 +189,10 @@
     {
       "fields": [
         {
+          "enum": [
+            "true",
+            "false"
+          ],
           "example": "true",
           "help_en": "Specifies whether to enable zero-width character invisible watermark. The zero-width character invisible watermark can resist document insertion, deletion, modification, saving as (with unchanged format), partial text copy and paste, and CopytoTxt attacks. It cannot resist format conversion to PDF attacks. Valid values:\n\ntrue: Yes\nfalse: No",
           "help_zh": "是否启用零宽字符暗水印。零宽字符暗水印可以抵抗文档增、删、改、另存（格式不变）、部分文本复制粘贴、CopytoTxt攻击。不能抵抗格式转换toPDF攻击。取值：\n\ntrue：是\nfalse：否",
@@ -179,6 +205,10 @@
           "type": "bool"
         },
         {
+          "enum": [
+            "true",
+            "false"
+          ],
           "example": "true",
           "help_en": "Specifies whether to enable widget invisible watermark. The widget invisible watermark can resist document insertion, deletion, modification, saving as (with unchanged format), and copying all content in a DOCX file and pasting it into a new DOCX document. It cannot resist format conversion attacks. Valid values:\n\ntrue: Yes\nfalse: No",
           "help_zh": "是否启用组件暗水印。组件暗水印可以抵抗文档增、删、改、另存（格式不变）、docx全选复制拷贝到新docx文档，不能抵抗格式转换攻击。取值：\n\ntrue：是\nfalse：否",
@@ -210,6 +240,7 @@
                   "example": "hello ****",
                   "help_en": "Visible watermark text for the background. Formatted as a UTF-8 string",
                   "help_zh": "背景明水印文案。格式为utf8字符串",
+                  "max_length": "1000",
                   "name": "visible_text",
                   "options": [
                     "--visible-text"
@@ -219,6 +250,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "repeat",
+                    "pos"
+                  ],
                   "example": "pos",
                   "help_en": "Background visible watermark mode. Valid values:\n\npos: Embeds a visible watermark text at a specific position in the background.\nrepeat: Tiles multiple instances of the visible watermark text across the document background",
                   "help_zh": "背景明水印模式。取值：\n\npos：在背景的特定位置嵌入一处明水印文案。\nrepeat：在文档背景中平铺嵌入多处明水印文案",
@@ -234,6 +269,7 @@
                   "example": "30",
                   "help_en": "The font size of the visible watermark text. A larger value indicates a larger font",
                   "help_zh": "明水印文字字号。取值越大，字体越大",
+                  "maximum": "200",
                   "name": "font_size",
                   "options": [
                     "--font-size"
@@ -250,6 +286,7 @@
                   "options": [
                     "--font-color"
                   ],
+                  "pattern": "^0[xX][0-9a-fA-F]{6}$",
                   "raw_name": "FontColor",
                   "required": false,
                   "type": "string"
@@ -258,6 +295,8 @@
                   "example": "30",
                   "help_en": "The counterclockwise rotation angle of the visible watermark text, in degrees. Valid values range from 1 to 360",
                   "help_zh": "明水印文字逆时针旋转角度。取值范围1~360",
+                  "maximum": "360",
+                  "minimum": "0",
                   "name": "angle",
                   "options": [
                     "--angle"
@@ -274,6 +313,7 @@
                   "options": [
                     "--pos-x"
                   ],
+                  "pattern": "^[\\d.]+$",
                   "raw_name": "PosX",
                   "required": false,
                   "type": "string"
@@ -286,6 +326,7 @@
                   "options": [
                     "--pos-y"
                   ],
+                  "pattern": "^[\\d.]+$",
                   "raw_name": "PosY",
                   "required": false,
                   "type": "string"
@@ -294,6 +335,7 @@
                   "example": "3",
                   "help_en": "This parameter takes effect only when Mode is set to repeat. It specifies the number of times the visible watermark repeats horizontally",
                   "help_zh": "Mode为repeat时生效。表示明水印在水平方向上重复出现的次数",
+                  "maximum": "200",
                   "name": "horizontal_number",
                   "options": [
                     "--horizontal-number"
@@ -306,6 +348,7 @@
                   "example": "3",
                   "help_en": "Effective only when Mode is set to repeat. Specifies the Count of times the visible watermark repeats vertically",
                   "help_zh": "Mode为repeat时生效。表示明水印在垂直方向上重复出现的次数",
+                  "maximum": "200",
                   "name": "vertical_number",
                   "options": [
                     "--vertical-number"
@@ -318,6 +361,8 @@
                   "example": "100",
                   "help_en": "Transparency parameter for the visible watermark. Value range: 1–255. A higher value indicates less transparency",
                   "help_zh": "明水印透明度参数。取值范围1~255。取值越大，越不透明",
+                  "maximum": "255",
+                  "minimum": "1",
                   "name": "opacity",
                   "options": [
                     "--opacity"
@@ -338,6 +383,10 @@
               "type": "object"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "true",
               "help_en": "Specifies whether to add an invisible background watermark. Valid values:\n\ntrue: Yes\nfalse: No",
               "help_zh": "是否添加背景暗水印。取值：\n\ntrue：是\nfalse：否",
@@ -355,6 +404,8 @@
                   "example": "10",
                   "help_en": "Transparency parameter for the background invisible watermark. Value range: 1–13. A higher value indicates less transparency",
                   "help_zh": "背景暗水印透明度参数。取值范围1~13。取值越大，越不透明",
+                  "maximum": "255",
+                  "minimum": "1",
                   "name": "opacity",
                   "options": [
                     "--opacity"
@@ -401,6 +452,12 @@
     {
       "fields": [
         {
+          "enum": [
+            "lossless_row_shift_embed",
+            "lossy_number_embed",
+            "lossy_time_stamp_embed",
+            "lossy_zero_width_embed"
+          ],
           "example": "lossy_zero_width_embed",
           "help_en": "Watermark embedding mode.  \nValues:  \n\nlossless_row_shift_embed: Lossless data method  \nlossy_number_embed: Lossy numeric method  \nlossy_time_stamp_embed: UNIX timestamp method  \nlossy_zero_width_embed: Zero-width character method  ",
           "help_zh": "水印嵌入方式。\n取值：\n\nlossless_row_shift_embed：数据无损方法\nlossy_number_embed：数据有损方法\nlossy_time_stamp_embed：时间戳方法\nlossy_zero_width_embed：零宽字符方法",
@@ -437,6 +494,11 @@
           "type": "int"
         },
         {
+          "enum": [
+            "Min",
+            "Sec",
+            "MilSec"
+          ],
           "example": "Sec",
           "help_en": "UNIX timestamp watermark parameter. Position where the watermark is embedded. Choose one of Min (minute), Sec (second), or MilSec (millisecond). The algorithm modifies the data at the selected position",
           "help_zh": "时间戳水印参数。水印嵌入位置。可以为Min（分）、Sec（秒）、MilSec（毫秒），三者选一个填入，选择哪个，则算法修改哪个位置的数据",
@@ -464,6 +526,8 @@
           "example": "2",
           "help_en": "Bit width of watermark information per UNIX timestamp. Specifies how many bits of information a single timestamp can carry. A larger value theoretically reduces the number of rows required to extract the information, but increases the magnitude of timestamp modification. The modification range is 2^n, where n is the value of this parameter",
           "help_zh": "时间戳水印信息位宽。指定单个时间戳容纳多少信息，这个数越大，提取信息需要的行数理论上越少，但是修改的时间幅度变大，幅度范围是2的n次方，n为此参数值",
+          "maximum": "4",
+          "minimum": "1",
           "name": "embed_bits_number_in_each_time",
           "options": [
             "--embed-bits-number-in-each-time"
@@ -514,6 +578,14 @@
               "type": "string"
             },
             {
+              "enum": [
+                "top-right",
+                "pos",
+                "bottom-right",
+                "bottom-left",
+                "repeat",
+                "top-left"
+              ],
               "example": "pos",
               "help_en": "Text watermark display mode. Valid values:\npos: fixed position mode.\nrepeat: tile mode.\ntop-left: top-left mode.\ntop-right: top-right mode.\nbottom-left: bottom-left mode.\nbottom-right: bottom-right mode",
               "help_zh": "文本水印显示模式。取值：\npos：固定位置模式。\nrepeat：平铺模式。\ntop-left：左上模式。\ntop-right：右上模式。\nbottom-left：左下模式。\nbottom-right：右下模式",
@@ -756,6 +828,14 @@
               "type": "string"
             },
             {
+              "enum": [
+                "top-right",
+                "pos",
+                "bottom-right",
+                "bottom-left",
+                "repeat",
+                "top-left"
+              ],
               "example": "pos",
               "help_en": "Watermark display mode. Valid values:  \npos: Fixed position mode.  \nrepeat: Tile mode.  \ntop-left: Top-left mode.  \ntop-right: Top-right mode.  \nbottom-left: Bottom-left mode.  \nbottom-right: Bottom-right mode.  ",
               "help_zh": "Logo水印显示模式。取值：\npos：固定位置模式。\nrepeat：平铺模式。\ntop-left：左上模式。\ntop-right：右上模式。\nbottom-left：左下模式。\nbottom-right：右下模式",
@@ -962,6 +1042,10 @@
               "type": "string"
             },
             {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "true",
               "help_en": "Whether to enable.\n\ntrue: Display\n\nfalse: Do not display",
               "help_zh": "是否启用。\n\ntrue ：  显示\n\nfalse： 不显示",
@@ -1014,6 +1098,10 @@
               "type": "string"
             },
             {
+              "enum": [
+                "pos",
+                "bottom-right"
+              ],
               "example": "bottom-right",
               "help_en": "Text watermark display mode. Valid values:\npos: Fixed position with the origin at the top-left corner.\nbottom-right: Bottom-right mode",
               "help_zh": "文本水印显示模式。取值：\npos：固定位置，左上角为原点。\nbottom-right：左下模式",
@@ -1251,139 +1339,40 @@
   "pathPattern": "",
   "product_code": "csas",
   "protocol": "HTTP|HTTPS",
-  "v1_body_parameters": [
-    {
-      "help_en": "Audio control parameters",
-      "help_zh": "音频控制参数",
-      "name": "AudioControl",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "CSV watermark embedding control parameters",
-      "help_zh": "Csv嵌入水印控制参数",
-      "name": "CsvControl",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Document watermark control parameters",
-      "help_zh": "文档水印控制参数",
-      "name": "DocumentControl",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "URL for downloading the file to embed. The URL must support public network access",
-      "help_zh": "可用于下载待嵌入文件的URL，需要可以公网访问",
-      "name": "FileUrl",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The filename of the file to embed. The backend validates the file type based on the filename extension",
-      "help_zh": "待嵌入文件的文件名，后端需要根据文件名的后缀判断校验文件类型",
-      "name": "Filename",
-      "position": "body",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "Image watermark control parameters",
-      "help_zh": "图片水印控制参数",
-      "name": "ImageControl",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Image watermark parameter: the desired JPEG compression quality factor for the output image. Default value is 95. Valid range: 1 to 100",
-      "help_zh": "图像水印参数：期望的输出图像jpeg压缩质量因子，默认值 95。取值：1~100",
-      "name": "ImageEmbedJpegQuality",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Image watermark parameter: A higher value indicates greater robustness but reduced visual quality. Default value: 2. Valid values: 0 to 4",
-      "help_zh": "图像水印参数：更大的值意味着更高的鲁棒性，但是视觉质量会下降。默认值2。取值：0~4",
-      "name": "ImageEmbedLevel",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Specifies whether to enable invisible watermark embedding. Default value: true.  \nValid values:  \ntrue: Yes  \nfalse: No",
-      "help_zh": "是否启用嵌入暗水印。默认为true。\n取值：\ntrue：是\nfalse：否",
-      "name": "InvisibleEnable",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Short video watermark parameter: specifies the video bitrate. By default, the video bitrate is automatically retrieved. You can use this parameter to explicitly specify the bitrate used during extraction. This parameter usually does not need to be set",
-      "help_zh": "短视频水印参数：含义为视频的比特率，默认会自动获取视频的比特率，可以通过该参数强制指定提取时使用的比特率。通常无需设置该参数",
-      "name": "VideoBitrate",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Video control parameters",
-      "help_zh": "视频控制参数",
-      "name": "VideoControl",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Video watermark parameter: whether to use the long-video watermark software development kit (SDK). The default value is false. Valid values:\n\ntrue: Yes\nfalse: No",
-      "help_zh": "视频水印参数：是否使用长视频水印SDK，默认为false。取值：\n\ntrue: 是\nfalse: 否",
-      "name": "VideoIsLong",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Base64-encoded string-formatted watermark information. If this value is set, WmInfoUint cannot be set",
-      "help_zh": "Base64 编码后的字符串格式水印信息 。若设置该值，则 WmInfoUint 不能设置",
-      "name": "WmInfoBytesB64",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The bit width of the watermark information. The default value is 32. This parameter must be consistent between embedding and extraction. For example, if a 40-bit software development kit (SDK) is used for embedding, this value must also be set to 40 during extraction",
-      "help_zh": "水印信息的容量位宽，默认为32。该参数嵌入和提取时需要保持一致。比如嵌入时使用的是 40 位的SDK，那么提取时也需要将该值设为 40",
-      "name": "WmInfoSize",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Watermark information in decimal numeric format. If this parameter is set, WmInfoBytesB64 cannot be set.  \n\nThe valid value range depends on the WmInfoSize parameter:  \n\nWhen WmInfoSize is 32, the value range is 1 to 4294967295.  \n\nWhen WmInfoSize is 40, the value range is 1 to 1099511627775.  \n\nWhen WmInfoSize is 64, the value range is 1 to 18446744073709551615",
-      "help_zh": "10进制数字格式水印信息。若设置该值，则 WmInfoBytesB64 不能设置。\n\n取值范围取决于 WmInfoSize 参数：\n\n当 WmInfoSize 为32时，取值范围为 1~4294967295。\n\n当 WmInfoSize 为40时，取值范围为 1~1099511627775。\n\n当 WmInfoSize 为64时，取值范围为 1~18446744073709551615",
-      "name": "WmInfoUint",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Watermark type. Valid values:  \nPureDocument: Document watermark.  \nPureImage: Image watermark.  \nPureAudio: Audio watermark.  \nPureVideo: Video watermark.  \nAigcDocument: AIGC document watermark.  \nAigcImage: AIGC image watermark.  \nAigcAudio: AIGC audio watermark.  \nAigcVideo: AIGC video watermark",
-      "help_zh": "水印类型。取值：\nPureDocument：文档水印。\nPureImage：图片水印。\nPureAudio：音频水印。\nPureVideo：视频水印。\nAigcDocument：AIGC文档水印。\nAigcImage：AIGC图片水印。\nAigcAudio：AIGC音频水印。\nAigcVideo：AIGC视频水印",
-      "name": "WmType",
-      "position": "body",
-      "required": true,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Data": {
+            "description_en": "Job information",
+            "description_zh": "任务信息",
+            "properties": {
+              "TaskId": {
+                "description_en": "The Job ID, used for subsequent queries of task execution results",
+                "description_zh": "任务ID，用于后续查询任务执行结果",
+                "example": "job:5GfrJYsoaffmCE7Z5bZtjUefzxfd****",
+                "title_en": "",
+                "title_zh": "嵌入任务ID",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The ID of this request",
+            "description_zh": "本次请求的ID",
+            "example": "BE4FB974-11BC-5453-9BE1-1606A73EACA6",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

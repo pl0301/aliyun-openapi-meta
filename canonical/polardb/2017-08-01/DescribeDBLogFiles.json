@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "pc-*************",
       "help_en": "The cluster ID",
       "help_zh": "集群ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "pi-*************",
       "help_en": "The ID of the node in the PolarDB cluster",
       "help_zh": "PolarDB集群中节点的ID",
@@ -73,6 +75,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "2023-08-20T16:00:00Z",
       "help_en": "The start of the time range to query. The time must be in UTC and formatted as `yyyy-MM-ddTHH:mm:ssZ`",
       "help_zh": "查询开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
@@ -86,6 +89,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "2023-09-20T16:00:00Z",
       "help_en": "The end of the time range to query. The time must be in UTC and formatted as `yyyy-MM-ddTHH:mm:ssZ`",
       "help_zh": "查询结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
@@ -99,6 +103,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "HaSwitchLogList",
+        "HaSwitchLogInfo",
+        "SimulateSwitchLogs"
+      ],
       "example": "HaSwitchLogList",
       "help_en": "The log type. Valid values:\n\nHaSwitchLogList: A list of failover logs.\n\nHaSwitchLogInfo: Details of a failover log.\n\nSimulateSwitchLogs: Failover simulation logs",
       "help_zh": "日志类型，可选值：\n\nHaSwitchLogList：主备切换日志列表\nHaSwitchLogInfo：主备切换日志详情\nSimulateSwitchLogs：演练日志切换日志",
@@ -166,5 +175,501 @@
   ],
   "pathPattern": "",
   "product_code": "polardb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "DBInstanceName": {
+            "description_en": "The cluster ID",
+            "description_zh": "逻辑实例名称",
+            "example": "pc-****************",
+            "type": "string"
+          },
+          "DBInstanceType": {
+            "description_en": "The instance type. Valid values:\n\npolardb_mysql_rw: read-write instance.\n\npolardb_mysql_ro: read-only instance.\n\npolardb_mysql_standby: standby instance",
+            "description_zh": "实例类型，取值说明： \npolardb_mysql_rw：读写实例。\npolardb_mysql_ro：只读实例。\npolardb_mysql_standby：standby实例",
+            "example": "polardb_mysql_rw",
+            "type": "string"
+          },
+          "HaLogItems": {
+            "description_en": "A list of failover logs",
+            "description_zh": "主备切换日志列表",
+            "items": {
+              "description_en": "The failover log",
+              "description_zh": "主备切换日志",
+              "properties": {
+                "AffectedSessions": {
+                  "description_en": "The number of affected sessions during the failover",
+                  "description_zh": "切换时影响会话数",
+                  "example": "100",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "FromDBType": {
+                  "description_en": "The instance type before the failover. Valid values:\n\npolardb_mysql_rw: read-write instance.\n\npolardb_mysql_ro: read-only instance.\n\npolardb_mysql_standby: standby instance",
+                  "description_zh": "切换前实例类型，取值说明： \npolardb_mysql_rw：读写实例。\npolardb_mysql_ro：只读实例。\npolardb_mysql_standby：standby实例",
+                  "example": "polardb_mysql_rw",
+                  "type": "string"
+                },
+                "SwitchCauseCode": {
+                  "description_en": "The error code for the failover cause",
+                  "description_zh": "切换原因错误码",
+                  "example": "Platform.Ha.AuroraService.ManualOperations",
+                  "type": "string"
+                },
+                "SwitchCauseDetail": {
+                  "description_en": "Details about the failover cause",
+                  "description_zh": "切换原因详情",
+                  "example": "Platform.Ha.ManuallyTriggered",
+                  "type": "string"
+                },
+                "SwitchFinishTime": {
+                  "description_en": "The time when the failover was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "切换结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-05-20T03:09:56Z",
+                  "type": "string"
+                },
+                "SwitchId": {
+                  "description_en": "The failover log ID",
+                  "description_zh": "主备切换日志 ID",
+                  "example": "e571f897-9b3c-4012-9470-88333832dec4",
+                  "type": "string"
+                },
+                "SwitchStartTime": {
+                  "description_en": "The time when the failover started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "切换开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-05-20T03:09:45Z",
+                  "type": "string"
+                },
+                "SwitchType": {
+                  "description_en": "The failover type",
+                  "description_zh": "切换类型",
+                  "example": "0",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "TotalSessions": {
+                  "description_en": "The total number of sessions during the failover",
+                  "description_zh": "切换时总会话数",
+                  "example": "10000",
+                  "format": "int64",
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "HaStatus": {
+            "description_en": "Indicates whether a failover record exists. Valid values:\n\n1: No\n\n0: Yes",
+            "description_zh": "主备切换记录是否存在。取值说明\n1：不存在\n0：存在",
+            "enumValueTitles": {
+              "0": "0",
+              "1": "1"
+            },
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "ItemsNumbers": {
+            "description_en": "The number of log items on the current page",
+            "description_zh": "当前页查询日志列表内的Item数量",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageNumber": {
+            "description_en": "The page number. It must be a positive integer that does not exceed the maximum value of the Integer data type. Default value: 1",
+            "description_zh": "页码，取值为大于0且不超过Integer数据类型的最大值，默认值为1",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries to return on each page. Valid values: 5 to 50. Default value: 10",
+            "description_zh": "每页记录数，取值：5~50。默认值：10",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "24A1990B-4F6E-482B-B8CB-75C612******",
+            "type": "string"
+          },
+          "SwitchListItems": {
+            "description_en": "A list of fault simulation records",
+            "description_zh": "故障演练记录列表",
+            "items": {
+              "description_en": "The fault simulation record",
+              "description_zh": "演练记录",
+              "properties": {
+                "DBNodeCrashList": {
+                  "description_en": "The IDs of nodes on which to simulate a fault.\n\nFor a node-level fault simulation, specify the ID of a single node. For an availability zone-level fault simulation, you can either omit this parameter or specify the IDs of all nodes in the zone",
+                  "description_zh": "演练节点实例名列表。\n节点维度的演练只支持单个节点，可用区维度的演练可不传该参数，或传入所有节点",
+                  "items": {
+                    "description_en": "The node ID",
+                    "description_zh": "演练节点实例",
+                    "example": "pi-bp19v6xsl0u2c1cqq,pi-bp1ap84xmpf4c1c1t",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "EndTime": {
+                  "description_en": "The time when the fault simulation was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "切换结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-02-10T02:25:00Z",
+                  "type": "string"
+                },
+                "EventFinishTime": {
+                  "description_en": "The time when the system event was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "系统事件结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-04-19T02:12:00Z",
+                  "type": "string"
+                },
+                "EventStartTime": {
+                  "description_en": "The time when the system event started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "系统事件开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-04-19T01:12:00Z",
+                  "type": "string"
+                },
+                "FaultInjectionType": {
+                  "description_en": "The fault injection method. Valid values:\n\nCrashSQLInjection: Injects a fault into the instance by using `Crash SQL`",
+                  "description_zh": "故障注入方式。取值范围如下：\n\n0：基于`Crash SQL`的实例故障注入",
+                  "example": "CrashSQLInjection",
+                  "type": "string"
+                },
+                "SimulateListId": {
+                  "description_en": "The fault simulation record ID",
+                  "description_zh": "逻辑实例演练记录ID",
+                  "example": "23",
+                  "type": "string"
+                },
+                "SimulateMode": {
+                  "description_en": "The fault simulation mode",
+                  "description_zh": "演练模式",
+                  "example": "0",
+                  "type": "string"
+                },
+                "SimulateStatus": {
+                  "description_en": "The fault simulation status. Valid values:\n\n0: Pending\n\n1: Success\n\n2: Running\n\n3: Failed\n\n4: Aborted\n\n5: Awaiting rollback",
+                  "description_zh": "演练状态。\n\n0：等待调度\n1：成功\n2：进行中\n3：失败\n4：中断\n5：等待回切",
+                  "example": "2",
+                  "type": "string"
+                },
+                "SimulateTaskId": {
+                  "description_en": "The fault simulation task ID",
+                  "description_zh": "演练任务 ID",
+                  "example": "23",
+                  "type": "string"
+                },
+                "StartTime": {
+                  "description_en": "The time when the fault simulation started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "切换开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-02-25T01:05:00Z",
+                  "type": "string"
+                },
+                "SwitchLogItems": {
+                  "description_en": "A list of fault simulation logs",
+                  "description_zh": "故障演练日志列表",
+                  "items": {
+                    "description_en": "The fault simulation log",
+                    "description_zh": "故障演练日志",
+                    "properties": {
+                      "DBInstanceId": {
+                        "description_en": "The cluster ID.\n\nYou can call the [DescribeDBClusters]（https://help.aliyun.com/document_detail/98094.html） operation to query the details of your clusters, including the cluster IDs",
+                        "description_zh": "集群ID。\n您可以通过[DescribeDBClusters]（https://help.aliyun.com/document_detail/98094.html）接口查看账号下所有集群的详细信息（如集群ID）",
+                        "example": "pc-*************",
+                        "type": "string"
+                      },
+                      "DstDbType": {
+                        "description_en": "The destination database type. Valid values:\n\nPolarDBMySQL: A major version upgrade of PolarDB for MySQL.\n\nRDS: A migration from RDS to PolarDB for MySQL",
+                        "description_zh": "目标数据库类型。取值如下：\nPolarDBMySQL：PolarDB大版本升级迁移时的源数据库类型。\nRDS：将数据从RDS迁移至PolarDB MySQL时的源数据类型",
+                        "example": "PolarDBMySQL",
+                        "type": "string"
+                      },
+                      "EventFinishTime": {
+                        "description_en": "The time when the system event was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                        "description_zh": "系统事件结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                        "example": "2025-04-19T02:12:00Z\n",
+                        "type": "string"
+                      },
+                      "EventStartTime": {
+                        "description_en": "The time when the system event started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                        "description_zh": "系统事件开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                        "example": "2025-04-19T01:12:00Z",
+                        "type": "string"
+                      },
+                      "SimulateListId": {
+                        "description_en": "The simulation list ID",
+                        "description_zh": "演练列表 ID",
+                        "example": "96",
+                        "type": "string"
+                      },
+                      "SimulateLogId": {
+                        "description_en": "The simulation log ID",
+                        "description_zh": "演练日志 ID",
+                        "example": "23",
+                        "type": "string"
+                      },
+                      "SimulateStatus": {
+                        "description_en": "The fault simulation status. Valid values:\n\n0: Pending\n\n1: Success\n\n2: Running\n\n3: Failed\n\n4: Aborted\n\n5: Awaiting rollback",
+                        "description_zh": "演练状态。\n\n0：等待调度\n1：成功\n2：进行成\n3：失败\n4：中断\n5：等待回切",
+                        "example": "1",
+                        "type": "string"
+                      },
+                      "SrcDbType": {
+                        "description_en": "The source database type. Valid values:\n\nPolarDBMySQL: A major version upgrade of PolarDB for MySQL.\n\nRDS: A migration from RDS to PolarDB for MySQL",
+                        "description_zh": "源数据库类型。取值如下：\nPolarDBMySQL：PolarDB大版本升级迁移时的源数据库类型。\nRDS：将数据从RDS迁移至PolarDB MySQL时的源数据类型",
+                        "example": "PolarDBMySQL",
+                        "type": "string"
+                      },
+                      "SwitchStepItems": {
+                        "description_en": "A list of fault simulation steps",
+                        "description_zh": "故障演练步骤列表",
+                        "items": {
+                          "description_en": "The fault simulation step",
+                          "description_zh": "故障演练步骤",
+                          "properties": {
+                            "EndTime": {
+                              "description_en": "The time when the step was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                              "description_zh": "查询结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                              "example": "2025-08-14T02:07:00Z",
+                              "type": "string"
+                            },
+                            "IsSuccess": {
+                              "description_en": "Indicates whether the step was successful. Valid values:\n\n`true`: The step was successful.\n\n`false`: The step failed",
+                              "description_zh": "是否调用API成功，取值：\n\n`true`：调用API成功\n\n`false`：调用API失败",
+                              "example": "true",
+                              "type": "string"
+                            },
+                            "SimulatePhase": {
+                              "description_en": "The fault simulation phase. Valid values:\n\nPolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION: The fault injection phase.\n\nPolarDB.MySQL.FaultSimulate.Phase.RECOVERY: The recovery phase.\n\nPolarDB.MySQL.FaultSimulate.Phase.POST_PROCESS: The post-processing phase",
+                              "description_zh": "演练阶段。\n\nPolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION：故障注入\nPolarDB.MySQL.FaultSimulate.Phase.RECOVERY：恢复阶段\nPolarDB.MySQL.FaultSimulate.Phase.POST_PROCESS：后处理阶段",
+                              "example": "PolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION",
+                              "type": "string"
+                            },
+                            "StartTime": {
+                              "description_en": "The time when the step started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                              "description_zh": "查询开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                              "example": "2025-04-19T02:12:00Z",
+                              "type": "string"
+                            },
+                            "StepName": {
+                              "description_en": "The name of the current step. You can call the [DescribeHistoryTasks]（https://help.aliyun.com/document_detail/2400077.html） operation to query the current step of a specified task. A common value is do_pause, which indicates that the system waits for a specified period of time",
+                              "description_zh": "当前执行的步骤名。您可以通过[DescribeHistoryTasks]（https://help.aliyun.com/document_detail/2400077.html）查询指定任务ID当前的执行步骤。常见取值**do_pause**表示等待预设时间执行",
+                              "example": "init_task_info",
+                              "type": "string"
+                            },
+                            "TimeCost": {
+                              "description_en": "The duration of the step in milliseconds",
+                              "description_zh": "请求处理的耗时，单位毫秒（ms）",
+                              "example": "1000",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "SwitchStepItems": {
+                  "description_en": "A list of failover steps",
+                  "description_zh": "切换步骤列表",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "DBNodeId": {
+                        "description_en": "The cluster node ID.\n\nThis parameter is returned only when the `Key` parameter in the request is not set to `PolarDBDiskUsage`",
+                        "description_zh": "数据库集群节点ID。\n\n当请求参数中`Key`的值设置为`PolarDBDiskUsage`时，不会返回该参数",
+                        "example": "pi-*************",
+                        "type": "string"
+                      },
+                      "EndTime": {
+                        "description_en": "The time when the step was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                        "description_zh": "步骤结束时间。格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                        "example": "2025-07-23T02:30:00Z",
+                        "type": "string"
+                      },
+                      "IsSuccess": {
+                        "description_en": "Indicates whether the step was successful. Valid values:\n\n`true`: The step was successful.\n\n`false`: The step failed",
+                        "description_zh": "更新联系人是否成功，取值：\n\n`true`：更新成功\n`false`：更新失败",
+                        "example": "true",
+                        "type": "string"
+                      },
+                      "SimulatePhase": {
+                        "description_en": "The fault simulation phase. Valid values:\n\nPolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION: The fault injection phase.\n\nPolarDB.MySQL.FaultSimulate.Phase.RECOVERY: The recovery phase.\n\nPolarDB.MySQL.FaultSimulate.Phase.POST_PROCESS: The post-processing phase",
+                        "description_zh": "演练阶段。\n\nPolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION：故障注入\nPolarDB.MySQL.FaultSimulate.Phase.RECOVERY：恢复阶段\nPolarDB.MySQL.FaultSimulate.Phase.POST_PROCESS：后处理阶段",
+                        "example": "PolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION",
+                        "type": "string"
+                      },
+                      "StartTime": {
+                        "description_en": "The time when the step started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                        "description_zh": "步骤开始时间。格式为`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                        "example": "2025-07-16T02:12:00Z",
+                        "type": "string"
+                      },
+                      "StepName": {
+                        "description_en": "The name of the current step. You can call the [DescribeHistoryTasks]（https://help.aliyun.com/document_detail/2400077.html） operation to query the current step of a specified task. A common value is do_pause, which indicates that the system waits for a specified period of time",
+                        "description_zh": "当前执行的步骤名。您可以通过[DescribeHistoryTasks]（https://help.aliyun.com/document_detail/2400077.html）查询指定任务ID当前的执行步骤。常见取值**do_pause**表示等待预设时间执行",
+                        "example": "init_task_info",
+                        "type": "string"
+                      },
+                      "TimeCost": {
+                        "description_en": "The duration of the step in milliseconds",
+                        "description_zh": "请求处理的耗时，单位毫秒（ms）",
+                        "example": "1000",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "SwitchLogItems": {
+            "description_en": "A list of fault simulation logs",
+            "description_zh": "故障演练日志列表",
+            "items": {
+              "description_en": "The fault simulation log",
+              "description_zh": "故障演练日志",
+              "properties": {
+                "DBInstanceId": {
+                  "description_en": "The cluster ID.\n\nYou can call the [DescribeDBClusters]（https://help.aliyun.com/document_detail/98094.html） operation to query the details of your clusters, including the cluster IDs",
+                  "description_zh": "集群ID。\n您可以通过[DescribeDBClusters]（https://help.aliyun.com/document_detail/98094.html）接口查看账号下所有集群的详细信息（如集群ID）",
+                  "example": "pc-*************",
+                  "type": "string"
+                },
+                "DstDbType": {
+                  "description_en": "The destination database type. Valid values:\n\nPolarDBMySQL: A major version upgrade of PolarDB for MySQL.\n\nRDS: A migration from RDS to PolarDB for MySQL",
+                  "description_zh": "目标数据库类型。取值如下：\nPolarDBMySQL：PolarDB大版本升级迁移时的源数据库类型。\nRDS：将数据从RDS迁移至PolarDB MySQL时的源数据类型",
+                  "example": "PolarDBMySQL",
+                  "type": "string"
+                },
+                "EventFinishTime": {
+                  "description_en": "The time when the system event was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "系统事件结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-04-19T02:12:00Z",
+                  "type": "string"
+                },
+                "EventStartTime": {
+                  "description_en": "The time when the system event started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                  "description_zh": "系统事件开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                  "example": "2025-04-19T01:12:00Z",
+                  "type": "string"
+                },
+                "SimulateListId": {
+                  "description_en": "The simulation list ID",
+                  "description_zh": "演练列表 ID",
+                  "example": "231",
+                  "type": "string"
+                },
+                "SimulateStatus": {
+                  "description_en": "The fault simulation status. Valid values:\n\n0: Pending\n\n1: Success\n\n2: Running\n\n3: Failed\n\n4: Aborted\n\n5: Awaiting rollback",
+                  "description_zh": "演练状态。\n\n0：等待调度\n1：成功\n2：进行成\n3：失败\n4：中断\n5：等待回切",
+                  "example": "1",
+                  "type": "string"
+                },
+                "Simulatecode": {
+                  "description_en": "The status code of the fault simulation",
+                  "description_zh": "演练状态",
+                  "example": "0",
+                  "type": "string"
+                },
+                "SrcDbType": {
+                  "description_en": "The source database type. Valid values:\n\nPolarDBMySQL: A major version upgrade of PolarDB for MySQL.\n\nRDS: A migration from RDS to PolarDB for MySQL",
+                  "description_zh": "源数据库类型。取值如下：\nPolarDBMySQL：PolarDB大版本升级迁移时的源数据库类型。\nRDS：将数据从RDS迁移至PolarDB MySQL时的源数据类型",
+                  "example": "PolarDBMySQL",
+                  "type": "string"
+                },
+                "SwitchStepItems": {
+                  "description_en": "A list of failover steps",
+                  "description_zh": "切换步骤列表",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "DBNodeId": {
+                        "description_en": "The node ID.\n\nYou must specify either the `DBNodeId` or `DBClusterId` parameter. You can call the [DescribeDBClusters]（https://help.aliyun.com/document_detail/98094.html） operation to query the details of your clusters, including the node IDs",
+                        "description_zh": "节点ID。\n`DBNodeId`和`DBClusterId`必选其一填入。您可以通过[DescribeDBClusters]（https://help.aliyun.com/document_detail/98094.html）接口查看账号下所有集群的详细信息，包括节点ID",
+                        "example": "pi-*************",
+                        "type": "string"
+                      },
+                      "EndTime": {
+                        "description_en": "The time when the step was complete. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                        "description_zh": "步骤结束时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                        "example": "2025-03-27T02:27:00Z",
+                        "type": "string"
+                      },
+                      "IsSuccess": {
+                        "description_en": "Indicates whether the step was successful. Valid values:\n\n`true`: The step was successful.\n\n`false`: The step failed",
+                        "description_zh": "调用是否成功，取值：\n\n`true`：调用成功\n\n`false`：调用失败",
+                        "example": "true",
+                        "type": "string"
+                      },
+                      "SimulatePhase": {
+                        "description_en": "The fault simulation phase. Valid values:\n\nPolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION: The fault injection phase.\n\nPolarDB.MySQL.FaultSimulate.Phase.RECOVERY: The recovery phase.\n\nPolarDB.MySQL.FaultSimulate.Phase.POST_PROCESS: The post-processing phase",
+                        "description_zh": "演练阶段。\n\nPolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION：故障注入\nPolarDB.MySQL.FaultSimulate.Phase.RECOVERY：恢复阶段\nPolarDB.MySQL.FaultSimulate.Phase.POST_PROCESS：后处理阶段",
+                        "example": "PolarDB.MySQL.FaultSimulate.Phase.FAULT_INJECTION",
+                        "type": "string"
+                      },
+                      "StartTime": {
+                        "description_en": "The time when the step started. The time is in the `yyyy-MM-ddTHH:mm:ssZ` format and is displayed in UTC",
+                        "description_zh": "步骤开始时间。格式：`yyyy-MM-ddTHH:mm:ssZ`（UTC时间）",
+                        "example": "2024-10-21T02:12:00Z",
+                        "type": "string"
+                      },
+                      "StepMsg": {
+                        "description_en": "A message about the execution status of the step",
+                        "description_zh": "步骤信息",
+                        "example": "This step exec success ",
+                        "type": "string"
+                      },
+                      "StepName": {
+                        "description_en": "The name of the step",
+                        "description_zh": "步骤名称",
+                        "example": "init_task_info",
+                        "type": "string"
+                      },
+                      "TimeCost": {
+                        "description_en": "The duration of the step in milliseconds",
+                        "description_zh": "请求处理的耗时，单位毫秒（ms）",
+                        "example": "1000",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "TotalRecords": {
+            "description_en": "The total number of records",
+            "description_zh": "总记录数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

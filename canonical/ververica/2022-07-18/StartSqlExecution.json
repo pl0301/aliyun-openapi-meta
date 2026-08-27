@@ -2,6 +2,44 @@
   "camel_example": "aliyun ververica POST /api/v2/namespaces/default-namespace/sql-execution --region cn-hangzhou --header \"workspace=a14bda1c4a0000\" --header \"Content-Type=application/json\" --body \"example-string\"",
   "cmd_full_name": "ververica start-sql-execution",
   "cmd_name": "start-sql-execution",
+  "components": {
+    "schemas": {
+      "StartSqlExecutionBody": {
+        "properties": {
+          "description": {
+            "title": "执行描述",
+            "type": "string"
+          },
+          "sqlFileId": {
+            "title": "关联的查询脚本 ID，提供执行环境配置（Session Cluster、Flink 配置等），同时作为 parentResourceId 用于去重",
+            "type": "string"
+          },
+          "sqlScript": {
+            "title": "执行的 SQL 脚本内容",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "StartSqlExecutionResult": {
+        "properties": {
+          "newlyCreated": {
+            "title": "是否为新创建的执行（false 表示复用了已有的非终态执行）",
+            "type": "boolean"
+          },
+          "sqlExecutionId": {
+            "title": "SQL 执行 ID（UUID 格式）",
+            "type": "string"
+          },
+          "success": {
+            "title": "操作是否成功",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Executes an SQL query script task",
   "description_zh": "该接口用于执行sql数据查询脚本任务",
@@ -96,6 +134,66 @@
   "pathPattern": "/api/v2/namespaces/[namespace]/sql-execution",
   "product_code": "ververica",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response data",
+        "description_zh": "响应数据",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/StartSqlExecutionResult",
+            "description_en": "The complete information of the SQL script returned upon success. This parameter is valid when success is true",
+            "description_zh": "成功时返回的 SQL 脚本完整信息。当 success = true 时有效",
+            "example": "如返回示例所示"
+          },
+          "errorCode": {
+            "description_en": "The business error code. This parameter is not empty when success is false. This parameter is empty when success is true",
+            "description_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description_en": "The business error message. This parameter is not empty when success is false. This parameter is empty when success is true",
+            "description_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "httpCode": {
+            "description_en": "The business status code, which is always 200. Use success to determine whether the request was successful",
+            "description_zh": "业务状态码，统一为200；使用success表示业务请求是否成功",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "业务状态码，统一为200；使用success表示业务请求是否成功。",
+            "type": "integer"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CBC799F0-AS7S-1D30-8A4F-882ED4DD****",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the business request was successful",
+            "description_zh": "表示业务请求是否成功",
+            "example": "True",
+            "title_en": "",
+            "title_zh": "表示业务请求是否成功。",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "响应数据。",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body, which contains the SQL content to execute and description information",

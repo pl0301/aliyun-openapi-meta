@@ -2,6 +2,268 @@
   "camel_example": "aliyun ossutil api create-select-object-meta --bucket examplebucket --key exampledir/exampleobject.png --region cn-hangzhou --x-oss-process 'csv/meta'",
   "cmd_full_name": "oss create-select-object-meta",
   "cmd_name": "create-select-object-meta",
+  "components": {
+    "schemas": {
+      "CSVInput": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "AllowQuotedRecordDelimiter": {
+            "description_en": "Specifies whether the CSV content contains line feeds within quotes.\n<br>For example, if a column value is `\"abc\ndef\"` (where `\n` is a line feed), set this parameter to true. If this parameter is set to false, Select supports the header range semantics, which enables more efficient shard-based queries",
+            "description_zh": "指定CSV内容是否含有在引号中的换行符。\n<br>例如某一列值为`\"abc\\ndef\" `（此处`\\n`为换行）， 则该值需设置为true。当该值为false时，select支持header range的语义，可以更高效的进行分片查询",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "title": "description",
+            "type": "boolean"
+          },
+          "CommentCharacter": {
+            "description_en": "The comment symbol of the CSV file, which is Base64-encoded. Default value: empty (no comment symbol)",
+            "description_zh": "指定CSV的注释符，以Base64编码。默认值为空（即没有注释符）",
+            "example": "#",
+            "title": "description",
+            "type": "string"
+          },
+          "FieldDelimiter": {
+            "description_en": "The CSV column separator, which is Base64-encoded. Default value: `,` (optional). The value before encoding must be a single character, represented by the ANSI value of the character. For example, `,` is used in Java to represent a comma",
+            "description_zh": "指定CSV列分隔符，以Base64编码。默认值为`,`（可选）。未编码前的值必须为一个字符，以字符的ANSI值表示，例如在Java中使用`,`表示逗号",
+            "example": ",",
+            "title": "description",
+            "type": "string"
+          },
+          "FileHeaderInfo": {
+            "$ref": "#/components/schemas/FileHeaderInfo",
+            "description_en": "The header information of the CSV file. Valid values:\n\nUse: The CSV file has header information. You can use CSV column names as column names in the Select statement.\n\nIgnore: The CSV file has header information, but you cannot use CSV column names as column names in the Select statement.\n\nNone: The file has no header information. This is the default value",
+            "description_zh": "指定CSV文件头信息。\n\nUse：该CSV文件有头信息，可以用CSV列名作为Select中的列名。\n\nIgnore：该CSV文件有头信息，但不可用CSV列名作为Select中的列名。\n\nNone：该文件没有头信息，为默认值",
+            "enumValueTitles": {
+              "Ignore": "Ignore",
+              "None": "None",
+              "Use": "Use"
+            },
+            "example": "Use"
+          },
+          "QuoteCharacter": {
+            "description_en": "The quote character of the CSV file, which is Base64-encoded. Default value: `\\\"` (optional). In CSV, line feeds and column separators within quotes are treated as regular characters. The value before encoding must be a single character, represented by the ANSI value of the character. For example, `\\\"` is used in Java to represent a quote character",
+            "description_zh": "指定CSV的引号字符，以Base64编码。默认值为`\\”`（可选）。在CSV中引号内的换行符，列分隔符将被视作普通字符。未编码前的值必须为一个字符，以字符的ANSI值表示，例如在Java中使用`\\”`表示引号",
+            "example": "\\”",
+            "title": "description",
+            "type": "string"
+          },
+          "Range": {
+            "description_en": "The range of the file to query (optional). Two formats are supported:\n\nThe file queried by using the Range parameter query must have select meta. For more information about select meta, see [CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 scans rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 scans splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is consistent with the range parameter in range download.\n<br>This parameter is used only when the document is CSV or the JSON Type is LINES",
+            "description_zh": "指定查询文件的范围（可选）。支持两种格式：\n\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见[CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
+            "enumValueTitles": {
+              "line-range=start-end": "line-range=start-end",
+              "split-range=start-end": "split-range=start-end"
+            },
+            "example": "line-range=start-end",
+            "title": "description",
+            "type": "string"
+          },
+          "RecordDelimiter": {
+            "description_en": "The line feed, which is Base64-encoded. Default value: \n (optional). The value before encoding can contain up to two characters, represented by the ANSI value of the character. For example, \n is used in Java to represent a line feed",
+            "description_zh": "指定换行符，以Base64编码。默认值为\\n（可选）。未编码前的值最多为两个字符，以字符的ANSI值表示，例如在Java中使用\\n表示换行",
+            "example": "\\n",
+            "title": "description",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CompressionType": {
+        "description_en": "The file compression type (optional)",
+        "description_zh": "指定文件压缩类型（可选）",
+        "enum": [
+          "None",
+          "GZIP"
+        ],
+        "example": "None",
+        "title": "A short description of struct",
+        "type": "string"
+      },
+      "FileHeaderInfo": {
+        "description_en": "The file header of the CSV file (optional). Valid values:\nUse: The CSV file has a file header, and you can use CSV column names as column names in Select.\nIgnore: The CSV file has a file header, but CSV column names are not active as column names in Select.\nNone: The file has no file header. This is the default value",
+        "description_zh": "指定CSV文件头信息（可选）。\n取值：\nUse：该CSV文件有头信息，可以用CSV列名作为Select中的列名。\nIgnore：该CSV文件有头信息，但不可用CSV列名作为Select中的列名。\nNone：该文件没有头信息，为默认值",
+        "enum": [
+          "USE",
+          "IGNORE",
+          "NONE"
+        ],
+        "example": "Use",
+        "title": "A short description of struct",
+        "type": "string"
+      },
+      "InputSerialization": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "CSV": {
+            "$ref": "#/components/schemas/CSVInput",
+            "description_en": "The CSV input format",
+            "description_zh": "指定CSV输入格式"
+          },
+          "CompressionType": {
+            "$ref": "#/components/schemas/CompressionType",
+            "description_en": "The file compression type. Currently, no compression is supported. The only valid value is None",
+            "description_zh": "指定文件压缩类型（可选）。目前不支持任何压缩，即取值只能是None",
+            "example": "None"
+          },
+          "JSON": {
+            "$ref": "#/components/schemas/JSONInput",
+            "description_en": "The JSON input format",
+            "description_zh": "指定JSON输入格式"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JSONInput": {
+        "description_en": "The container that stores the Select request",
+        "description_zh": "保存Select请求的容器",
+        "properties": {
+          "ParseJsonNumberAsString": {
+            "description_en": "Parses numbers (integers and floating-point numbers) in JSON as character strings. Floating-point numbers in JSON may experience precision loss during parsing. To fully preserve the raw data, use this options. If you need to perform numerical calculations, you can cast the values to the required format in SQL, such as int, double, or decimal.\n<br>Default value: false",
+            "description_zh": "将JSON中的数字（整数和浮点数）解析成字符串。目前JSON中的浮点数解析时会损失精度，如果要完整保留原始数据，则推荐用该选项。如果需要进行数值计算，则可以在SQL中cast成需要的格式，例如int、double、decimal。\n<br>默认值： false",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          },
+          "Range": {
+            "description_en": "The range of the file parameter query. This parameter is optional. The following two formats are supported:\nThe file that you want parameter query by using the Range parameter must have select meta. For more information about select meta, see [CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 specifies to scan rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 specifies to scan splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is the same as the range parameter in range download.\n<br>This parameter is used only when the document is in CSV format or the JSON Type is LINES",
+            "description_zh": "指定查询文件的范围（可选）。支持两种格式：\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见[CreateSelectObjectMeta]（https://help.aliyun.com/document_detail/74054.html）。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
+            "enumValueTitles": {
+              "line-range=start-end": "line-range=start-end",
+              "split-range=start-end": "split-range=start-end"
+            },
+            "example": "line-range=start-end",
+            "title": "description",
+            "type": "string"
+          },
+          "Type": {
+            "$ref": "#/components/schemas/JSONType",
+            "description_en": "The type of the input JSON",
+            "description_zh": "指定输入JSON的类型",
+            "enumValueTitles": {
+              " LINES": " LINES",
+              "DOCUMENT": "DOCUMENT"
+            },
+            "example": "DOCUMENT"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JSONType": {
+        "description_en": "The type of the input JSON. Valid values:\nDOCUMENT: A single JSON object in the input data can span multiple lines.\nLINES: Each line in the input data contains a JSON object",
+        "description_zh": "指定输入JSON的类型。\n取值：\nDOCUMENT：输入数据中的单个JSON对象可以跨行。\nLINES：输入数据中的每一行都包含一个JSON对象",
+        "enum": [
+          "DOCUMENT",
+          "LINES"
+        ],
+        "enumValueTitles": {
+          "DOCUMENT": "DOCUMENT",
+          "LINES": "LINES"
+        },
+        "example": "DOCUMENT",
+        "title": "A short description of struct",
+        "type": "string"
+      },
+      "SelectMetaRequest": {
+        "description_en": "The container that stores SelectMetaRequest information",
+        "description_zh": "保存SelectMetaRequest信息的容器",
+        "properties": {
+          "InputSerialization": {
+            "$ref": "#/components/schemas/InputSerialization",
+            "description_en": "The input serialization parameter (optional)",
+            "description_zh": "输入序列化参数（可选）"
+          },
+          "OverwriteIfExists": {
+            "description_en": "Recalculates SelectMeta and overwrites existing data.\n<br>Default value: false (if Select Meta already exists, the existing data is returned directly)",
+            "description_zh": "重新计算SelectMeta，覆盖已有数据。\n<br>默认值：false（即如果Select Meta已存在则直接返回）",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "description",
+            "type": "boolean"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "SelectMetaStatus": {
+        "description_en": "The container that stores CreateSelectObjectMeta information",
+        "description_zh": "保存CreateSelectObjectMeta信息的容器",
+        "properties": {
+          "ColsCount": {
+            "description_en": "A 4-bit integer that specifies the total number of columns",
+            "description_zh": "4位整数，总列数",
+            "example": "0x00000004",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "ErrorMessage": {
+            "description_en": "The detailed error message. If no error occurs, this value is empty",
+            "description_zh": "详细的错误信息。如果无错误，则error_message为空",
+            "example": "The body size in select request exceeds the max allowed size.",
+            "title": "description",
+            "type": "string"
+          },
+          "Offset": {
+            "description_en": "An 8-bit integer that specifies the file offset when the scan ends",
+            "description_zh": "8位整数，扫描结束时的文件偏移",
+            "example": "0x0000000000000065",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "RowsCount": {
+            "description_en": "An 8-bit integer that specifies the total number of rows",
+            "description_zh": "8位整数，总行数",
+            "example": "0x0000000000000003",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "SplitsCount": {
+            "description_en": "A 4-bit integer that specifies the total number of splits",
+            "description_zh": "4位整数，总split个数",
+            "example": "0x00000001",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "Status": {
+            "description_en": "A 4-bit integer that specifies the final status",
+            "description_zh": "4位整数，最终的status",
+            "example": "0x000000c8",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "TotalScannedBytes": {
+            "description_en": "An 8-bit integer that specifies the total size of scanned data",
+            "description_zh": "8位整数，最终扫描过的数据大小",
+            "example": "0x0000000000000065",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the total number of rows, total number of columns (for CSV files), and the number of splits for a target file. If this information does not exist, the entire file is scanned, analyzed, and the information is recorded. Subsequent calls to this API return the saved information without rescanning the entire file",
   "description_zh": "获取目标文件总的行数，总的列数（对于CSV文件），以及Splits个数。如果该信息不存在，则会扫描整个文件，分析并记录下CSV文件的上述信息。重复调用该API则会保存上述信息而不必重新扫描整个文件",
@@ -69,6 +331,10 @@
         {
           "fields": [
             {
+              "enum": [
+                "None",
+                "GZIP"
+              ],
               "example": "None",
               "help_en": "The file compression type (optional)",
               "help_zh": "指定文件压缩类型（可选）",
@@ -83,6 +349,11 @@
             {
               "fields": [
                 {
+                  "enum": [
+                    "USE",
+                    "IGNORE",
+                    "NONE"
+                  ],
                   "example": "Use",
                   "help_en": "The file header of the CSV file (optional). Valid values:\nUse: The CSV file has a file header, and you can use CSV column names as column names in Select.\nIgnore: The CSV file has a file header, but CSV column names are not active as column names in Select.\nNone: The file has no file header. This is the default value",
                   "help_zh": "指定CSV文件头信息（可选）。\n取值：\nUse：该CSV文件有头信息，可以用CSV列名作为Select中的列名。\nIgnore：该CSV文件有头信息，但不可用CSV列名作为Select中的列名。\nNone：该文件没有头信息，为默认值",
@@ -143,6 +414,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "line-range=start-end",
+                    "split-range=start-end"
+                  ],
                   "example": "line-range=start-end",
                   "help_en": "The range of the file to query (optional). Two formats are supported:\n\nThe file queried by using the Range parameter query must have select meta. For more information about select meta, see https://help.aliyun.com/document_detail/74054.html.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 scans rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 scans splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is consistent with the range parameter in range download.\n<br>This parameter is used only when the document is CSV or the JSON Type is LINES",
                   "help_zh": "指定查询文件的范围（可选）。支持两种格式：\n\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见https://help.aliyun.com/document_detail/74054.html。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
@@ -155,6 +430,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "true",
+                    "false"
+                  ],
                   "example": "true",
                   "help_en": "Specifies whether the CSV content contains line feeds within quotes.\n<br>For example, if a column value is `\"abc\ndef\"` (where `\n` is a line feed), set this parameter to true. If this parameter is set to false, Select supports the header range semantics, which enables more efficient shard-based queries",
                   "help_zh": "指定CSV内容是否含有在引号中的换行符。\n<br>例如某一列值为`\"abc\\ndef\" `（此处`\\n`为换行）， 则该值需设置为true。当该值为false时，select支持header range的语义，可以更高效的进行分片查询",
@@ -180,6 +459,10 @@
             {
               "fields": [
                 {
+                  "enum": [
+                    "DOCUMENT",
+                    "LINES"
+                  ],
                   "example": "DOCUMENT",
                   "help_en": "The type of the input JSON. Valid values:\nDOCUMENT: A single JSON object in the input data can span multiple lines.\nLINES: Each line in the input data contains a JSON object",
                   "help_zh": "指定输入JSON的类型。\n取值：\nDOCUMENT：输入数据中的单个JSON对象可以跨行。\nLINES：输入数据中的每一行都包含一个JSON对象",
@@ -192,6 +475,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "line-range=start-end",
+                    "split-range=start-end"
+                  ],
                   "example": "line-range=start-end",
                   "help_en": "The range of the file parameter query. This parameter is optional. The following two formats are supported:\nThe file that you want parameter query by using the Range parameter must have select meta. For more information about select meta, see https://help.aliyun.com/document_detail/74054.html.\n\nQuery by row: line-range=start-end. For example, line-range=10-20 specifies to scan rows 10 through 20.\n\nQuery by split: split-range=start-end. For example, split-range=10-20 specifies to scan splits 10 through 20.\n\n<br>Both start and end are inclusive. The format is the same as the range parameter in range download.\n<br>This parameter is used only when the document is in CSV format or the JSON Type is LINES",
                   "help_zh": "指定查询文件的范围（可选）。支持两种格式：\n使用Range参数查询的文件需要有select meta。关于select meta的更多信息，请参见https://help.aliyun.com/document_detail/74054.html。\n\n按行查询：line-range=start-end。例如line-range=10-20表示扫描第10行到第20行。\n\n按Split查询：split-range=start-end。例如split-range=10-20表示扫描第10到第20个split。\n\n<br>其中start和end均为inclusive。其格式和range get中的range参数一致。\n<br>仅在文档是CSV或者JSON Type为LINES时使用",
@@ -204,6 +491,10 @@
                   "type": "string"
                 },
                 {
+                  "enum": [
+                    "true",
+                    "false"
+                  ],
                   "example": "false",
                   "help_en": "Parses numbers (integers and floating-point numbers) in JSON as character strings. Floating-point numbers in JSON may experience precision loss during parsing. To fully preserve the raw data, use this options. If you need to perform numerical calculations, you can cast the values to the required format in SQL, such as int, double, or decimal.\n<br>Default value: false",
                   "help_zh": "将JSON中的数字（整数和浮点数）解析成字符串。目前JSON中的浮点数解析时会损失精度，如果要完整保留原始数据，则推荐用该选项。如果需要进行数值计算，则可以在SQL中cast成需要的格式，例如int、double、decimal。\n<br>默认值： false",
@@ -238,6 +529,10 @@
           "type": "object"
         },
         {
+          "enum": [
+            "true",
+            "false"
+          ],
           "example": "false",
           "help_en": "Recalculates SelectMeta and overwrites existing data.\n<br>Default value: false (if Select Meta already exists, the existing data is returned directly)",
           "help_zh": "重新计算SelectMeta，覆盖已有数据。\n<br>默认值：false（即如果Select Meta已存在则直接返回）",
@@ -266,6 +561,15 @@
   "pathPattern": "/[key]",
   "product_code": "Oss",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "$ref": "#/components/schemas/SelectMetaStatus",
+        "description_en": "The container that stores the CreateSelectObjectMeta response information",
+        "description_zh": "保存CreateSelectObjectMeta信息的容器"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The container that stores the CreateSelectObjectMeta request",

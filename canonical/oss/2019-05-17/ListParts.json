@@ -2,6 +2,59 @@
   "camel_example": "aliyun ossutil api list-parts --bucket examplebucket --key exampledir/exampleobject/txt --region cn-hangzhou --encoding-type 'example-string' --upload-id 0004B999EF5A239BB9138C6227D69F95 --max-parts 1000 --part-number-marker 100",
   "cmd_full_name": "oss list-parts",
   "cmd_name": "list-parts",
+  "components": {
+    "schemas": {
+      "EncodeType": {
+        "description_en": "Specifies the encoding type used in the response. If the encoding-type parameter is specified in the request, the Key values in the response are encoded",
+        "description_zh": "指明返回结果中编码使用的类型。如果请求的参数中指定了encoding-type，那返回的结果会对Key进行编码",
+        "enum": [
+          "url"
+        ],
+        "example": "url",
+        "title": "specifies the encoding method to use",
+        "type": "string"
+      },
+      "Part": {
+        "description_en": "The container that stores information about uploaded parts",
+        "description_zh": "保存已上传Part信息的容器",
+        "properties": {
+          "ETag": {
+            "description_en": "The ETag value returned by OSS after the part is successfully uploaded",
+            "description_zh": "Part成功上传后，OSS返回的ETag值",
+            "example": "3349DC700140D7F86A0784842780****",
+            "title": "description",
+            "type": "string"
+          },
+          "LastModified": {
+            "description_en": "The time when the part was uploaded",
+            "description_zh": "Part上传的时间",
+            "example": "2012-02-23T07:01:34.000Z",
+            "format": "iso8601",
+            "title": "description",
+            "type": "string"
+          },
+          "PartNumber": {
+            "description_en": "The part number",
+            "description_zh": "Part数目",
+            "example": "1",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          },
+          "Size": {
+            "description_en": "The size of the uploaded part",
+            "description_zh": "已上传Part大小",
+            "example": "6291456",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Lists all parts that have been successfully uploaded for a specified upload ID",
   "description_zh": "列举指定Upload ID所属的所有已经上传成功Part",
@@ -86,6 +139,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "url"
+      ],
       "example": "url",
       "help_en": "Specifies the encoding type for the returned content. Keys use UTF-8 characters, but XML 1.0 does not support parsing certain control characters, such as characters with ASCII values from 0 to 10. If a key contains control characters that are not supported by XML 1.0, you can specify Encoding-type to encode the returned keys.\n\nDefault value: None\n\nValid values: url",
       "help_zh": "指定对返回的内容进行编码，指定编码的类型。Key使用UTF-8字符，但xml 1.0标准不支持解析一些控制字符，比如ascii值从0到10的字符。对于Key中包含xml 1.0标准不支持的控制字符，可以通过指定Encoding-type对返回的Key进行编码。\n\n默认值：无\n\n可选值：url",
@@ -102,5 +158,79 @@
   ],
   "pathPattern": "/[key]",
   "product_code": "Oss",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body that contains the results of the List Part request",
+        "description_zh": "保存List Part请求结果的响应体",
+        "properties": {
+          "ListPartResult": {
+            "description_en": "The container that stores the results of the List Part request",
+            "description_zh": "保存List Part请求结果的容器",
+            "properties": {
+              "Bucket": {
+                "description_en": "The bucket name",
+                "description_zh": "Bucket名称",
+                "example": "example-bucket",
+                "type": "string"
+              },
+              "IsTruncated": {
+                "description_en": "Indicates whether the returned ListParts result list is truncated. A value of \"true\" indicates that not all results are returned. A value of \"false\" indicates that all results are returned",
+                "description_zh": "标明本次返回的ListParts结果列表是否被截断。“true”表示本次没有返回全部结果；“false”表示本次已经返回了全部结果",
+                "example": "true",
+                "type": "boolean"
+              },
+              "Key": {
+                "description_en": "The object name",
+                "description_zh": "Object名称",
+                "example": "multipart.data",
+                "type": "string"
+              },
+              "MaxParts": {
+                "description_en": "The maximum number of parts in the request",
+                "description_zh": "返回请求中最大的Part数目",
+                "example": "20",
+                "format": "int64",
+                "type": "integer"
+              },
+              "NextPartNumberMarker": {
+                "description_en": "If not all results are returned, the response includes the NextPartNumberMarker element, which indicates the PartNumberMarker value for the next request",
+                "description_zh": "如果本次没有返回全部结果，响应请求中将包含NextPartNumberMarker元素，用于标明接下来请求的PartNumberMarker值",
+                "example": "5",
+                "format": "int64",
+                "type": "integer"
+              },
+              "Part": {
+                "description_en": "The list that stores part information",
+                "description_zh": "保存Part信息的列表",
+                "items": {
+                  "$ref": "#/components/schemas/Part",
+                  "description_en": "The container that stores part information",
+                  "description_zh": "保存Part信息的容器"
+                },
+                "type": "array"
+              },
+              "PartNumberMarker": {
+                "description_en": "The starting part number position of this list result",
+                "description_zh": "本次List结果的Part Number起始位置",
+                "example": "10",
+                "format": "int64",
+                "type": "integer"
+              },
+              "UploadId": {
+                "description_en": "The upload event ID",
+                "description_zh": "Upload事件ID",
+                "example": "0004B999EF5A239BB9138C6227D69F95",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "5xx": {}
+  }
 }

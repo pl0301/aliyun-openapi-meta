@@ -2,6 +2,562 @@
   "camel_example": "aliyun elasticsearch PUT /openapi/instances/es-cn-n6w1ptcb300090000 --region cn-hangzhou --clientToken '5A2CFF0E-5718-45B5-9D4D-70B3FF0000' --orderActionType upgrade --force false --header \"Content-Type=application/json\" --body {\"nodeSpec\":{\"spec\":\"elasticsearch.r5.xlarge\"}}",
   "cmd_full_name": "elasticsearch update-instance",
   "cmd_name": "update-instance",
+  "components": {
+    "schemas": {
+      "ClientNodeConfiguration": {
+        "description_en": "The client node configuration information",
+        "description_zh": "协调节点配置信息",
+        "properties": {
+          "amount": {
+            "description_en": "The number of client nodes",
+            "description_zh": "协调节点数量",
+            "example": "3",
+            "format": "int64",
+            "maximum": "25",
+            "minimum": "2",
+            "required": true,
+            "title": "协调节点数量",
+            "type": "integer"
+          },
+          "disk": {
+            "description_en": "The storage size of the client node. Unit: GB",
+            "description_zh": "协调节点存储空间大小，单位：GB",
+            "enum": [
+              "20"
+            ],
+            "example": "20",
+            "format": "int64",
+            "maximum": "20",
+            "minimum": "20",
+            "required": true,
+            "title": "协调节点磁盘大小",
+            "type": "integer"
+          },
+          "diskType": {
+            "description_en": "The storage type of the client node. Only cloud_efficiency (ultra cloud disk) is supported",
+            "description_zh": "协调节点存储类型，仅支持cloud_efficiency（高效云盘）",
+            "enum": [
+              "cloud_efficiency"
+            ],
+            "example": "cloud_ssd",
+            "required": true,
+            "title": "协调节点磁盘类型",
+            "type": "string"
+          },
+          "spec": {
+            "description_en": "The node specifications of the client node. For more information, see [Specifications]（https://help.aliyun.com/document_detail/271718.html）",
+            "description_zh": "协调节点规格。规格信息可通过[产品规格]（https://help.aliyun.com/document_detail/271718.html）查看",
+            "enum": [
+              "elasticsearch.sn1ne.large.new",
+              "elasticsearch.sn2ne.large.new",
+              "elasticsearch.sn1ne.xlarge.new",
+              "elasticsearch.sn2ne.xlarge.new",
+              "elasticsearch.sn1ne.2xlarge.new",
+              "elasticsearch.sn2ne.2xlarge.new",
+              "elasticsearch.sn1ne.4xlarge.new",
+              "elasticsearch.sn2ne.4xlarge.new",
+              "elasticsearch.sn1ne.8xlarge.new",
+              "elasticsearch.ic5.large",
+              "elasticsearch.sn1ne.large",
+              "elasticsearch.sn2ne.large",
+              "elasticsearch.r5.large",
+              "elasticsearch.ic5.xlarge",
+              "elasticsearch.sn1ne.xlarge",
+              "elasticsearch.sn2ne.xlarge",
+              "elasticsearch.r5.xlarge",
+              "elasticsearch.ic5.2xlarge",
+              "elasticsearch.sn1ne.2xlarge",
+              "elasticsearch.sn2ne.2xlarge",
+              "elasticsearch.r5.2xlarge",
+              "elasticsearch.ic5.3xlarge",
+              "elasticsearch.ic5.4xlarge",
+              "elasticsearch.sn1ne.4xlarge",
+              "elasticsearch.sn2ne.4xlarge",
+              "elasticsearch.sn1ne.8xlarge"
+            ],
+            "example": "elasticsearch.sn2ne.large",
+            "required": true,
+            "title": "协调节点规格",
+            "type": "string"
+          }
+        },
+        "required": false,
+        "title": "协调节点配置信息",
+        "type": "object"
+      },
+      "ElasticDataNodeConfiguration": {
+        "description_en": "",
+        "description_zh": "弹性数据节点配置信息",
+        "properties": {
+          "amount": {
+            "description_zh": "弹性节点数量",
+            "example": "3",
+            "format": "int64",
+            "maximum": "50",
+            "minimum": "2",
+            "required": false,
+            "title": "弹性节点数量",
+            "type": "integer"
+          },
+          "disk": {
+            "description_zh": "弹性节点存储空间大小，单位为GB",
+            "example": "20",
+            "format": "int64",
+            "maximum": "20480",
+            "minimum": "20",
+            "required": false,
+            "title": "弹性节点磁盘大小",
+            "type": "integer"
+          },
+          "diskEncryption": {
+            "description_zh": "是否为弹性节点开启云盘加密：\n\ntrue：开启\nfalse：不开启",
+            "example": "false",
+            "required": false,
+            "title": "弹性节点磁盘加密",
+            "type": "boolean"
+          },
+          "diskType": {
+            "description_zh": "弹性节点存储类型，支持：\n\ncloud_ssd：SSD云盘\ncloud_essd：ESSD云盘\ncloud_efficiency：高效云盘",
+            "enum": [
+              "cloud_essd",
+              "cloud_efficiency",
+              "cloud_ssd"
+            ],
+            "example": "cloud_ssd",
+            "required": false,
+            "title": "弹性节点磁盘类型",
+            "type": "string"
+          },
+          "performanceLevel": {
+            "description_zh": "ESSD云盘的性能级别。当弹性节点的磁盘类型为ESSD云盘时，必选。支持：PL1、PL2、PL3",
+            "enum": [
+              "PL0",
+              "PL1",
+              "PL2",
+              "PL3"
+            ],
+            "example": "PL1",
+            "required": false,
+            "title": "弹性节点essd磁盘等级",
+            "type": "string"
+          },
+          "spec": {
+            "description_zh": "弹性节点规格。规格信息可通过[产品规格]（https://help.aliyun.com/document_detail/271718.html）查看",
+            "enum": [
+              "elasticsearch.sn1ne.large.new",
+              "elasticsearch.sn2ne.large.new",
+              "elasticsearch.sn1ne.xlarge.new",
+              "elasticsearch.sn2ne.xlarge.new",
+              "elasticsearch.sn1ne.2xlarge.new",
+              "elasticsearch.sn2ne.2xlarge.new",
+              "elasticsearch.sn1ne.4xlarge.new",
+              "elasticsearch.sn2ne.4xlarge.new",
+              "elasticsearch.sn1ne.8xlarge.new",
+              "openstore.hybrid.i2.2xlarge",
+              "openstore.hybrid.i2g.4xlarge",
+              "openstore.i2g.4xlarge",
+              "elasticsearch.sn1ne.large",
+              "elasticsearch.sn2ne.large",
+              "elasticsearch.r5.large",
+              "elasticsearch.ic5.xlarge",
+              "elasticsearch.sn1ne.xlarge",
+              "elasticsearch.sn2ne.xlarge",
+              "elasticsearch.r5.xlarge",
+              "elasticsearch.ic5.2xlarge",
+              "elasticsearch.sn1ne.2xlarge",
+              "elasticsearch.sn2ne.2xlarge",
+              "elasticsearch.r5.2xlarge",
+              "elasticsearch.ic5.3xlarge",
+              "elasticsearch.ic5.4xlarge",
+              "elasticsearch.sn1ne.4xlarge",
+              "elasticsearch.sn2ne.4xlarge",
+              "elasticsearch.r6.4xlarge",
+              "elasticsearch.sn1ne.8xlarge",
+              "elasticsearch.sn2ne.8xlarge",
+              "elasticsearch.r6.8xlarge",
+              "elasticsearch.c6.13xlarge",
+              "elasticsearch.i2g.2xlarge",
+              "elasticsearch.i2g.4xlarge",
+              "elasticsearch.i2.4xlarge",
+              "elasticsearch.i2g.8xlarge",
+              "elasticsearch.d1.2xlarge",
+              "elasticsearch.d1.4xlarge",
+              "elasticsearch.n4.small",
+              "elasticsearch.ic5.large"
+            ],
+            "example": "elasticsearch.sn2ne.large",
+            "required": true,
+            "title": "弹性节点规格",
+            "type": "string"
+          }
+        },
+        "required": false,
+        "title": "弹性节点配置信息",
+        "type": "object"
+      },
+      "KibanaNodeConfiguration": {
+        "description_en": "The Kibana node configuration information",
+        "description_zh": "Kibana节点配置信息",
+        "properties": {
+          "amount": {
+            "description_en": "The number of Kibana nodes",
+            "description_zh": "Kibana节点数量",
+            "enum": [
+              "1"
+            ],
+            "example": "2",
+            "format": "int64",
+            "maximum": "1",
+            "minimum": "1",
+            "required": false,
+            "title": "Kibana节点数量",
+            "type": "integer"
+          },
+          "disk": {
+            "description_en": "The storage space of the Kibana node. Unit: GB",
+            "description_zh": "Kibana节点存储空间大小，单位：GB",
+            "example": "20",
+            "format": "int64",
+            "required": false,
+            "title": "Kibana节点磁盘大小",
+            "type": "integer"
+          },
+          "spec": {
+            "description_en": "The Kibana node specifications. For more information, see [Product specifications]（https://help.aliyun.com/document_detail/271718.html）",
+            "description_zh": "Kibana节点规格。规格信息可通过[产品规格]（https://help.aliyun.com/document_detail/271718.html）查看",
+            "enum": [
+              "elasticsearch.sn1ne.large.new",
+              "elasticsearch.sn2ne.large.new",
+              "elasticsearch.sn2ne.xlarge.new",
+              "elasticsearch.sn2ne.2xlarge.new",
+              "elasticsearch.sn1ne.large",
+              "elasticsearch.n4.small",
+              "elasticsearch.sn2ne.large",
+              "elasticsearch.sn2ne.xlarge",
+              "elasticsearch.sn2ne.2xlarge"
+            ],
+            "example": "elasticsearch.sn2ne.large",
+            "required": true,
+            "title": "Kibana节点规格",
+            "type": "string"
+          }
+        },
+        "required": false,
+        "title": "Kibana节点设置",
+        "type": "object"
+      },
+      "MasterNodeConfiguration": {
+        "description_en": "The configuration information of dedicated master nodes",
+        "description_zh": "专有主节点配置信息",
+        "properties": {
+          "amount": {
+            "description_en": "The number of dedicated master nodes",
+            "description_zh": "专有主节点数量",
+            "example": "3",
+            "format": "int64",
+            "maximum": "3",
+            "minimum": "3",
+            "required": true,
+            "title": "专有主节点数量",
+            "type": "integer"
+          },
+          "disk": {
+            "description_en": "The storage space of dedicated master nodes. Unit: GB",
+            "description_zh": "专有主节点存储空间，单位：GB",
+            "example": "20",
+            "format": "int64",
+            "maximum": "20",
+            "minimum": "20",
+            "required": true,
+            "title": "专有主节点磁盘大小",
+            "type": "integer"
+          },
+          "diskType": {
+            "description_en": "The storage type of dedicated master nodes. Valid values:\ncloud_ssd: standard SSD\ncloud_essd (default): Enterprise SSD (ESSD)",
+            "description_zh": "专有主节点存储类型，支持：\ncloud_ssd：SSD云盘\ncloud_essd（默认）：ESSD云盘",
+            "enum": [
+              "cloud_essd",
+              "cloud_ssd"
+            ],
+            "example": "cloud_essd",
+            "required": true,
+            "title": "专有主节点磁盘类型",
+            "type": "string"
+          },
+          "spec": {
+            "description_en": "The node specifications of dedicated master nodes. For more information, see [Product specifications]（https://help.aliyun.com/document_detail/271718.html）",
+            "description_zh": "专有主节点规格。规格信息可通过[产品规格]（https://help.aliyun.com/document_detail/271718.html）查看",
+            "enum": [
+              "elasticsearch.sn1ne.large.new",
+              "elasticsearch.sn2ne.large.new",
+              "elasticsearch.sn1ne.xlarge.new",
+              "elasticsearch.sn2ne.xlarge.new",
+              "elasticsearch.sn1ne.2xlarge.new",
+              "elasticsearch.sn2ne.2xlarge.new",
+              "elasticsearch.sn1ne.4xlarge.new",
+              "elasticsearch.sn2ne.4xlarge.new",
+              "elasticsearch.sn1ne.8xlarge.new",
+              "elasticsearch.sn2ne.large",
+              "elasticsearch.r5.large",
+              "elasticsearch.ic5.xlarge",
+              "elasticsearch.sn1ne.xlarge",
+              "elasticsearch.sn2ne.xlarge",
+              "elasticsearch.r5.xlarge",
+              "elasticsearch.ic5.2xlarge",
+              "elasticsearch.sn1ne.2xlarge",
+              "elasticsearch.sn2ne.2xlarge",
+              "elasticsearch.r5.2xlarge",
+              "elasticsearch.ic5.3xlarge"
+            ],
+            "example": "elasticsearch.sn2ne.large",
+            "required": true,
+            "title": "专有主节点规格",
+            "type": "string"
+          }
+        },
+        "required": false,
+        "title": "专有主节点设置",
+        "type": "object"
+      },
+      "NodeSpec": {
+        "description_en": "Data node configuration information",
+        "description_zh": "数据节点配置信息",
+        "properties": {
+          "disk": {
+            "description_en": "Storage space size of data nodes, in GB",
+            "description_zh": "数据节点存储空间大小，单位为GB",
+            "example": "20",
+            "format": "int32",
+            "maximum": "20480",
+            "minimum": "20",
+            "required": false,
+            "title": "数据节点磁盘大小",
+            "type": "integer"
+          },
+          "diskEncryption": {
+            "default": "false",
+            "description_en": "Whether to enable cloud disk encryption for data nodes:\n\ntrue: Enabled\nfalse: Disabled",
+            "description_zh": "是否为数据节点开启云盘加密：\n\ntrue：开启\nfalse：不开启",
+            "example": "false",
+            "required": false,
+            "title": "数据节点磁盘加密",
+            "type": "boolean"
+          },
+          "diskPreference": {
+            "description_en": "Storage preference",
+            "description_zh": "存储方式偏好",
+            "enum": [
+              "high_availability",
+              "high_cost_performance"
+            ],
+            "title": "存储方式偏好",
+            "type": "string"
+          },
+          "diskType": {
+            "description_en": "Storage type of data nodes. Supported values:\n\ncloud_ssd: SSD cloud disk\ncloud_essd: ESSD cloud disk\ncloud_efficiency: Ultra cloud disk",
+            "description_zh": "数据节点存储类型，支持：\n\ncloud_ssd：SSD云盘\ncloud_essd：ESSD云盘\ncloud_efficiency：高效云盘",
+            "enum": [
+              "cloud_essd",
+              "cloud_efficiency",
+              "cloud_ssd"
+            ],
+            "example": "cloud_ssd",
+            "required": false,
+            "title": "数据节点磁盘类型",
+            "type": "string"
+          },
+          "performanceLevel": {
+            "description_en": "Performance level of ESSD cloud disks. Required when the disk type of data nodes is ESSD cloud disk. Supported values: PL1, PL2, PL3",
+            "description_zh": "ESSD云盘的性能级别。当数据节点的磁盘类型为ESSD云盘时，必选。支持：PL1、PL2、PL3",
+            "enum": [
+              "PL0",
+              "PL1",
+              "PL2",
+              "PL3",
+              "CPL0",
+              "CPL1"
+            ],
+            "example": "PL1",
+            "required": false,
+            "title": "数据节点essd磁盘等级",
+            "type": "string"
+          },
+          "spec": {
+            "description_en": "Data node specification. Specification details can be viewed in [Product Specifications]（https://help.aliyun.com/document_detail/271718.html）",
+            "description_zh": "数据节点规格。规格信息可通过[产品规格]（https://help.aliyun.com/document_detail/271718.html）查看",
+            "enum": [
+              "elasticsearch.sn1ne.large.new",
+              "elasticsearch.sn2ne.large.new",
+              "elasticsearch.sn1ne.xlarge.new",
+              "elasticsearch.sn2ne.xlarge.new",
+              "elasticsearch.sn1ne.2xlarge.new",
+              "elasticsearch.sn2ne.2xlarge.new",
+              "elasticsearch.sn1ne.4xlarge.new",
+              "elasticsearch.sn2ne.4xlarge.new",
+              "elasticsearch.sn1ne.8xlarge.new",
+              "openstore.hybrid.i2.2xlarge",
+              "openstore.hybrid.i2g.4xlarge",
+              "openstore.i2g.4xlarge",
+              "elasticsearch.sn1ne.large",
+              "elasticsearch.sn2ne.large",
+              "elasticsearch.r5.large",
+              "elasticsearch.ic5.xlarge",
+              "elasticsearch.sn1ne.xlarge",
+              "elasticsearch.sn2ne.xlarge",
+              "elasticsearch.r5.xlarge",
+              "elasticsearch.ic5.2xlarge",
+              "elasticsearch.sn1ne.2xlarge",
+              "elasticsearch.sn2ne.2xlarge",
+              "elasticsearch.r5.2xlarge",
+              "elasticsearch.ic5.3xlarge",
+              "elasticsearch.ic5.4xlarge",
+              "elasticsearch.sn1ne.4xlarge",
+              "elasticsearch.sn2ne.4xlarge",
+              "elasticsearch.r6.4xlarge",
+              "elasticsearch.sn1ne.8xlarge",
+              "elasticsearch.sn2ne.8xlarge",
+              "elasticsearch.r6.8xlarge",
+              "elasticsearch.c6.13xlarge",
+              "elasticsearch.i2g.2xlarge",
+              "elasticsearch.i2g.4xlarge",
+              "elasticsearch.i2.4xlarge",
+              "elasticsearch.i2g.8xlarge",
+              "elasticsearch.d1.2xlarge",
+              "elasticsearch.d1.4xlarge",
+              "elasticsearch.n4.small",
+              "elasticsearch.ic5.large"
+            ],
+            "example": "elasticsearch.sn2ne.large",
+            "required": true,
+            "title": "数据节点规格",
+            "type": "string"
+          }
+        },
+        "required": false,
+        "title": "数据节点配置",
+        "type": "object"
+      },
+      "WarmNodeConfiguration": {
+        "description_en": "The configuration information of cold data nodes",
+        "description_zh": "冷数据节点配置信息",
+        "properties": {
+          "amount": {
+            "description_en": "The number of cold data nodes",
+            "description_zh": "冷数据节点数量",
+            "example": "3",
+            "format": "int64",
+            "maximum": "50",
+            "minimum": "1",
+            "required": false,
+            "title": "节点数量",
+            "type": "integer"
+          },
+          "disk": {
+            "description_en": "The storage space size of cold data nodes, in GB",
+            "description_zh": "冷数据节点存储空间大小，单位为GB",
+            "example": "500",
+            "format": "int64",
+            "maximum": "20480",
+            "minimum": "500",
+            "required": false,
+            "title": "节点磁盘",
+            "type": "integer"
+          },
+          "diskEncryption": {
+            "default": "false",
+            "description_en": "Specifies whether to enable cloud disk encryption for cold data nodes. Valid values:\n\ntrue: enabled.\nfalse: not enabled",
+            "description_zh": "是否为冷数据节点开启云盘加密：\n\ntrue：开启\nfalse：不开启",
+            "example": "false",
+            "required": false,
+            "title": "节点磁盘加密",
+            "type": "boolean"
+          },
+          "diskType": {
+            "description_en": "The storage type of cold data nodes. Only cloud_efficiency (ultra cloud disk) is supported",
+            "description_zh": "冷数据节点存储类型，仅支持cloud_efficiency（高效云盘）",
+            "enum": [
+              "cloud_efficiency"
+            ],
+            "example": "cloud_efficiency",
+            "required": false,
+            "title": "节点磁盘类型",
+            "type": "string"
+          },
+          "performanceLevel": {
+            "description_en": "The performance level (PL) of the ESSD cloud disk. This parameter is required when the disk type of cold data nodes is a standard SSD. Valid values: PL1, PL2, and PL3",
+            "description_zh": "ESSD云盘的性能级别。当冷数据节点的磁盘类型为ESSD云盘时，必选。支持：PL1、PL2、PL3",
+            "enum": [
+              "PL0",
+              "PL1",
+              "PL2",
+              "PL3"
+            ],
+            "example": "PL1",
+            "required": false,
+            "title": "节点essd磁盘等级",
+            "type": "string"
+          },
+          "spec": {
+            "description_en": "The node specifications of cold data nodes. For more information, see [Product specifications]（https://help.aliyun.com/document_detail/271718.html）",
+            "description_zh": "冷数据节点规格。规格信息可通过[产品规格]（https://help.aliyun.com/document_detail/271718.html）查看",
+            "enum": [
+              "elasticsearch.sn1ne.large.new",
+              "elasticsearch.sn2ne.large.new",
+              "elasticsearch.sn1ne.xlarge.new",
+              "elasticsearch.sn2ne.xlarge.new",
+              "elasticsearch.sn1ne.2xlarge.new",
+              "elasticsearch.sn2ne.2xlarge.new",
+              "elasticsearch.sn1ne.4xlarge.new",
+              "elasticsearch.sn2ne.4xlarge.new",
+              "elasticsearch.sn1ne.8xlarge.new",
+              "elasticsearch.ic5.large",
+              "elasticsearch.sn1ne.large",
+              "elasticsearch.sn2ne.large",
+              "elasticsearch.r5.large",
+              "elasticsearch.ic5.xlarge",
+              "elasticsearch.sn1ne.xlarge",
+              "elasticsearch.sn2ne.xlarge",
+              "elasticsearch.r5.xlarge",
+              "elasticsearch.ic5.2xlarge",
+              "elasticsearch.sn1ne.2xlarge",
+              "elasticsearch.sn2ne.2xlarge",
+              "elasticsearch.r5.2xlarge",
+              "elasticsearch.ic5.3xlarge",
+              "elasticsearch.ic5.4xlarge",
+              "elasticsearch.sn1ne.4xlarge",
+              "elasticsearch.sn2ne.4xlarge",
+              "openstore.i2g.4xlarge",
+              "elasticsearch.r6.4xlarge",
+              "elasticsearch.sn1ne.8xlarge",
+              "elasticsearch.sn2ne.8xlarge",
+              "elasticsearch.r6.8xlarge",
+              "group.c6.large.200",
+              "group.c6.large.500",
+              "group.c6.large.1t",
+              "group.g6.large.1t",
+              "group.g6.large.2t",
+              "group.g6.xlarge.2t",
+              "group.g6.xlarge.4t",
+              "group.g6.2xlarge.4t",
+              "group.g6.2xlarge.8t",
+              "group.c6.4xlarge.8t",
+              "group.c6.4xlarge.16t",
+              "elasticsearch.d1.2xlarge",
+              "elasticsearch.d1.4xlarge",
+              "elasticsearch.d2s.5xlarge"
+            ],
+            "example": "elasticsearch.sn2ne.large",
+            "required": true,
+            "title": "节点规格",
+            "type": "string"
+          }
+        },
+        "required": false,
+        "title": "集群节点设置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Upgrades an Elasticsearch cluster by increasing the number of nodes, roles, specifications, or disk configurations",
   "description_zh": "Elasticsearch集群升配，增加节点数，角色，规格，磁盘配置",
@@ -34,6 +590,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "es-cn-n6w1ptcb30009****",
       "help_en": "The instance ID",
       "help_zh": "实例ID",
@@ -92,6 +649,8 @@
           "example": "20",
           "help_en": "Storage space size of data nodes, in GB",
           "help_zh": "数据节点存储空间大小，单位为GB",
+          "maximum": "20480",
+          "minimum": "20",
           "name": "disk",
           "options": [
             "--disk"
@@ -101,6 +660,14 @@
           "type": "int"
         },
         {
+          "enum": [
+            "PL0",
+            "PL1",
+            "PL2",
+            "PL3",
+            "CPL0",
+            "CPL1"
+          ],
           "example": "PL1",
           "help_en": "Performance level of ESSD cloud disks. Required when the disk type of data nodes is ESSD cloud disk. Supported values: PL1, PL2, PL3",
           "help_zh": "ESSD云盘的性能级别。当数据节点的磁盘类型为ESSD云盘时，必选。支持：PL1、PL2、PL3",
@@ -113,6 +680,11 @@
           "type": "string"
         },
         {
+          "enum": [
+            "cloud_essd",
+            "cloud_efficiency",
+            "cloud_ssd"
+          ],
           "example": "cloud_ssd",
           "help_en": "Storage type of data nodes. Supported values:\n\ncloud_ssd: SSD cloud disk\ncloud_essd: ESSD cloud disk\ncloud_efficiency: Ultra cloud disk",
           "help_zh": "数据节点存储类型，支持：\n\ncloud_ssd：SSD云盘\ncloud_essd：ESSD云盘\ncloud_efficiency：高效云盘",
@@ -125,6 +697,10 @@
           "type": "string"
         },
         {
+          "enum": [
+            "high_availability",
+            "high_cost_performance"
+          ],
           "help_en": "Storage preference",
           "help_zh": "存储方式偏好",
           "name": "disk_preference",
@@ -148,6 +724,48 @@
           "type": "bool"
         },
         {
+          "enum": [
+            "elasticsearch.sn1ne.large.new",
+            "elasticsearch.sn2ne.large.new",
+            "elasticsearch.sn1ne.xlarge.new",
+            "elasticsearch.sn2ne.xlarge.new",
+            "elasticsearch.sn1ne.2xlarge.new",
+            "elasticsearch.sn2ne.2xlarge.new",
+            "elasticsearch.sn1ne.4xlarge.new",
+            "elasticsearch.sn2ne.4xlarge.new",
+            "elasticsearch.sn1ne.8xlarge.new",
+            "openstore.hybrid.i2.2xlarge",
+            "openstore.hybrid.i2g.4xlarge",
+            "openstore.i2g.4xlarge",
+            "elasticsearch.sn1ne.large",
+            "elasticsearch.sn2ne.large",
+            "elasticsearch.r5.large",
+            "elasticsearch.ic5.xlarge",
+            "elasticsearch.sn1ne.xlarge",
+            "elasticsearch.sn2ne.xlarge",
+            "elasticsearch.r5.xlarge",
+            "elasticsearch.ic5.2xlarge",
+            "elasticsearch.sn1ne.2xlarge",
+            "elasticsearch.sn2ne.2xlarge",
+            "elasticsearch.r5.2xlarge",
+            "elasticsearch.ic5.3xlarge",
+            "elasticsearch.ic5.4xlarge",
+            "elasticsearch.sn1ne.4xlarge",
+            "elasticsearch.sn2ne.4xlarge",
+            "elasticsearch.r6.4xlarge",
+            "elasticsearch.sn1ne.8xlarge",
+            "elasticsearch.sn2ne.8xlarge",
+            "elasticsearch.r6.8xlarge",
+            "elasticsearch.c6.13xlarge",
+            "elasticsearch.i2g.2xlarge",
+            "elasticsearch.i2g.4xlarge",
+            "elasticsearch.i2.4xlarge",
+            "elasticsearch.i2g.8xlarge",
+            "elasticsearch.d1.2xlarge",
+            "elasticsearch.d1.4xlarge",
+            "elasticsearch.n4.small",
+            "elasticsearch.ic5.large"
+          ],
           "example": "elasticsearch.sn2ne.large",
           "help_en": "Data node specification. Specification details can be viewed in https://help.aliyun.com/document_detail/271718.html",
           "help_zh": "数据节点规格。规格信息可通过https://help.aliyun.com/document_detail/271718.html查看",
@@ -178,6 +796,8 @@
           "example": "3",
           "help_en": "The number of dedicated master nodes",
           "help_zh": "专有主节点数量",
+          "maximum": "3",
+          "minimum": "3",
           "name": "amount",
           "options": [
             "--amount"
@@ -187,6 +807,28 @@
           "type": "int"
         },
         {
+          "enum": [
+            "elasticsearch.sn1ne.large.new",
+            "elasticsearch.sn2ne.large.new",
+            "elasticsearch.sn1ne.xlarge.new",
+            "elasticsearch.sn2ne.xlarge.new",
+            "elasticsearch.sn1ne.2xlarge.new",
+            "elasticsearch.sn2ne.2xlarge.new",
+            "elasticsearch.sn1ne.4xlarge.new",
+            "elasticsearch.sn2ne.4xlarge.new",
+            "elasticsearch.sn1ne.8xlarge.new",
+            "elasticsearch.sn2ne.large",
+            "elasticsearch.r5.large",
+            "elasticsearch.ic5.xlarge",
+            "elasticsearch.sn1ne.xlarge",
+            "elasticsearch.sn2ne.xlarge",
+            "elasticsearch.r5.xlarge",
+            "elasticsearch.ic5.2xlarge",
+            "elasticsearch.sn1ne.2xlarge",
+            "elasticsearch.sn2ne.2xlarge",
+            "elasticsearch.r5.2xlarge",
+            "elasticsearch.ic5.3xlarge"
+          ],
           "example": "elasticsearch.sn2ne.large",
           "help_en": "The node specifications of dedicated master nodes. For more information, see https://help.aliyun.com/document_detail/271718.html",
           "help_zh": "专有主节点规格。规格信息可通过https://help.aliyun.com/document_detail/271718.html查看",
@@ -202,6 +844,8 @@
           "example": "20",
           "help_en": "The storage space of dedicated master nodes. Unit: GB",
           "help_zh": "专有主节点存储空间，单位：GB",
+          "maximum": "20",
+          "minimum": "20",
           "name": "disk",
           "options": [
             "--disk"
@@ -211,6 +855,10 @@
           "type": "int"
         },
         {
+          "enum": [
+            "cloud_essd",
+            "cloud_ssd"
+          ],
           "example": "cloud_essd",
           "help_en": "The storage type of dedicated master nodes. Valid values:\ncloud_ssd: standard SSD\ncloud_essd (default): Enterprise SSD (ESSD)",
           "help_zh": "专有主节点存储类型，支持：\ncloud_ssd：SSD云盘\ncloud_essd（默认）：ESSD云盘",
@@ -238,6 +886,9 @@
     {
       "fields": [
         {
+          "enum": [
+            "cloud_efficiency"
+          ],
           "example": "cloud_ssd",
           "help_en": "The storage type of the client node. Only cloud_efficiency (ultra cloud disk) is supported",
           "help_zh": "协调节点存储类型，仅支持cloud_efficiency（高效云盘）",
@@ -253,6 +904,8 @@
           "example": "3",
           "help_en": "The number of client nodes",
           "help_zh": "协调节点数量",
+          "maximum": "25",
+          "minimum": "2",
           "name": "amount",
           "options": [
             "--amount"
@@ -262,6 +915,34 @@
           "type": "int"
         },
         {
+          "enum": [
+            "elasticsearch.sn1ne.large.new",
+            "elasticsearch.sn2ne.large.new",
+            "elasticsearch.sn1ne.xlarge.new",
+            "elasticsearch.sn2ne.xlarge.new",
+            "elasticsearch.sn1ne.2xlarge.new",
+            "elasticsearch.sn2ne.2xlarge.new",
+            "elasticsearch.sn1ne.4xlarge.new",
+            "elasticsearch.sn2ne.4xlarge.new",
+            "elasticsearch.sn1ne.8xlarge.new",
+            "elasticsearch.ic5.large",
+            "elasticsearch.sn1ne.large",
+            "elasticsearch.sn2ne.large",
+            "elasticsearch.r5.large",
+            "elasticsearch.ic5.xlarge",
+            "elasticsearch.sn1ne.xlarge",
+            "elasticsearch.sn2ne.xlarge",
+            "elasticsearch.r5.xlarge",
+            "elasticsearch.ic5.2xlarge",
+            "elasticsearch.sn1ne.2xlarge",
+            "elasticsearch.sn2ne.2xlarge",
+            "elasticsearch.r5.2xlarge",
+            "elasticsearch.ic5.3xlarge",
+            "elasticsearch.ic5.4xlarge",
+            "elasticsearch.sn1ne.4xlarge",
+            "elasticsearch.sn2ne.4xlarge",
+            "elasticsearch.sn1ne.8xlarge"
+          ],
           "example": "elasticsearch.sn2ne.large",
           "help_en": "The node specifications of the client node. For more information, see https://help.aliyun.com/document_detail/271718.html",
           "help_zh": "协调节点规格。规格信息可通过https://help.aliyun.com/document_detail/271718.html查看",
@@ -274,9 +955,14 @@
           "type": "string"
         },
         {
+          "enum": [
+            "20"
+          ],
           "example": "20",
           "help_en": "The storage size of the client node. Unit: GB",
           "help_zh": "协调节点存储空间大小，单位：GB",
+          "maximum": "20",
+          "minimum": "20",
           "name": "disk",
           "options": [
             "--disk"
@@ -301,6 +987,9 @@
     {
       "fields": [
         {
+          "enum": [
+            "cloud_efficiency"
+          ],
           "example": "cloud_efficiency",
           "help_en": "The storage type of cold data nodes. Only cloud_efficiency (ultra cloud disk) is supported",
           "help_zh": "冷数据节点存储类型，仅支持cloud_efficiency（高效云盘）",
@@ -328,6 +1017,8 @@
           "example": "3",
           "help_en": "The number of cold data nodes",
           "help_zh": "冷数据节点数量",
+          "maximum": "50",
+          "minimum": "1",
           "name": "amount",
           "options": [
             "--amount"
@@ -337,6 +1028,52 @@
           "type": "int"
         },
         {
+          "enum": [
+            "elasticsearch.sn1ne.large.new",
+            "elasticsearch.sn2ne.large.new",
+            "elasticsearch.sn1ne.xlarge.new",
+            "elasticsearch.sn2ne.xlarge.new",
+            "elasticsearch.sn1ne.2xlarge.new",
+            "elasticsearch.sn2ne.2xlarge.new",
+            "elasticsearch.sn1ne.4xlarge.new",
+            "elasticsearch.sn2ne.4xlarge.new",
+            "elasticsearch.sn1ne.8xlarge.new",
+            "elasticsearch.ic5.large",
+            "elasticsearch.sn1ne.large",
+            "elasticsearch.sn2ne.large",
+            "elasticsearch.r5.large",
+            "elasticsearch.ic5.xlarge",
+            "elasticsearch.sn1ne.xlarge",
+            "elasticsearch.sn2ne.xlarge",
+            "elasticsearch.r5.xlarge",
+            "elasticsearch.ic5.2xlarge",
+            "elasticsearch.sn1ne.2xlarge",
+            "elasticsearch.sn2ne.2xlarge",
+            "elasticsearch.r5.2xlarge",
+            "elasticsearch.ic5.3xlarge",
+            "elasticsearch.ic5.4xlarge",
+            "elasticsearch.sn1ne.4xlarge",
+            "elasticsearch.sn2ne.4xlarge",
+            "openstore.i2g.4xlarge",
+            "elasticsearch.r6.4xlarge",
+            "elasticsearch.sn1ne.8xlarge",
+            "elasticsearch.sn2ne.8xlarge",
+            "elasticsearch.r6.8xlarge",
+            "group.c6.large.200",
+            "group.c6.large.500",
+            "group.c6.large.1t",
+            "group.g6.large.1t",
+            "group.g6.large.2t",
+            "group.g6.xlarge.2t",
+            "group.g6.xlarge.4t",
+            "group.g6.2xlarge.4t",
+            "group.g6.2xlarge.8t",
+            "group.c6.4xlarge.8t",
+            "group.c6.4xlarge.16t",
+            "elasticsearch.d1.2xlarge",
+            "elasticsearch.d1.4xlarge",
+            "elasticsearch.d2s.5xlarge"
+          ],
           "example": "elasticsearch.sn2ne.large",
           "help_en": "The node specifications of cold data nodes. For more information, see https://help.aliyun.com/document_detail/271718.html",
           "help_zh": "冷数据节点规格。规格信息可通过https://help.aliyun.com/document_detail/271718.html查看",
@@ -352,6 +1089,8 @@
           "example": "500",
           "help_en": "The storage space size of cold data nodes, in GB",
           "help_zh": "冷数据节点存储空间大小，单位为GB",
+          "maximum": "20480",
+          "minimum": "500",
           "name": "disk",
           "options": [
             "--disk"
@@ -361,6 +1100,12 @@
           "type": "int"
         },
         {
+          "enum": [
+            "PL0",
+            "PL1",
+            "PL2",
+            "PL3"
+          ],
           "example": "PL1",
           "help_en": "The performance level (PL) of the ESSD cloud disk. This parameter is required when the disk type of cold data nodes is a standard SSD. Valid values: PL1, PL2, and PL3",
           "help_zh": "ESSD云盘的性能级别。当冷数据节点的磁盘类型为ESSD云盘时，必选。支持：PL1、PL2、PL3",
@@ -388,9 +1133,14 @@
     {
       "fields": [
         {
+          "enum": [
+            "1"
+          ],
           "example": "2",
           "help_en": "The number of Kibana nodes",
           "help_zh": "Kibana节点数量",
+          "maximum": "1",
+          "minimum": "1",
           "name": "amount",
           "options": [
             "--amount"
@@ -400,6 +1150,17 @@
           "type": "int"
         },
         {
+          "enum": [
+            "elasticsearch.sn1ne.large.new",
+            "elasticsearch.sn2ne.large.new",
+            "elasticsearch.sn2ne.xlarge.new",
+            "elasticsearch.sn2ne.2xlarge.new",
+            "elasticsearch.sn1ne.large",
+            "elasticsearch.n4.small",
+            "elasticsearch.sn2ne.large",
+            "elasticsearch.sn2ne.xlarge",
+            "elasticsearch.sn2ne.2xlarge"
+          ],
           "example": "elasticsearch.sn2ne.large",
           "help_en": "The Kibana node specifications. For more information, see https://help.aliyun.com/document_detail/271718.html",
           "help_zh": "Kibana节点规格。规格信息可通过https://help.aliyun.com/document_detail/271718.html查看",
@@ -439,6 +1200,11 @@
     {
       "fields": [
         {
+          "enum": [
+            "cloud_essd",
+            "cloud_efficiency",
+            "cloud_ssd"
+          ],
           "example": "cloud_ssd",
           "help_en": "The diskType",
           "help_zh": "弹性节点存储类型，支持：\n\ncloud_ssd：SSD云盘\ncloud_essd：ESSD云盘\ncloud_efficiency：高效云盘",
@@ -466,6 +1232,8 @@
           "example": "3",
           "help_en": "The amount",
           "help_zh": "弹性节点数量",
+          "maximum": "50",
+          "minimum": "2",
           "name": "amount",
           "options": [
             "--amount"
@@ -475,6 +1243,48 @@
           "type": "int"
         },
         {
+          "enum": [
+            "elasticsearch.sn1ne.large.new",
+            "elasticsearch.sn2ne.large.new",
+            "elasticsearch.sn1ne.xlarge.new",
+            "elasticsearch.sn2ne.xlarge.new",
+            "elasticsearch.sn1ne.2xlarge.new",
+            "elasticsearch.sn2ne.2xlarge.new",
+            "elasticsearch.sn1ne.4xlarge.new",
+            "elasticsearch.sn2ne.4xlarge.new",
+            "elasticsearch.sn1ne.8xlarge.new",
+            "openstore.hybrid.i2.2xlarge",
+            "openstore.hybrid.i2g.4xlarge",
+            "openstore.i2g.4xlarge",
+            "elasticsearch.sn1ne.large",
+            "elasticsearch.sn2ne.large",
+            "elasticsearch.r5.large",
+            "elasticsearch.ic5.xlarge",
+            "elasticsearch.sn1ne.xlarge",
+            "elasticsearch.sn2ne.xlarge",
+            "elasticsearch.r5.xlarge",
+            "elasticsearch.ic5.2xlarge",
+            "elasticsearch.sn1ne.2xlarge",
+            "elasticsearch.sn2ne.2xlarge",
+            "elasticsearch.r5.2xlarge",
+            "elasticsearch.ic5.3xlarge",
+            "elasticsearch.ic5.4xlarge",
+            "elasticsearch.sn1ne.4xlarge",
+            "elasticsearch.sn2ne.4xlarge",
+            "elasticsearch.r6.4xlarge",
+            "elasticsearch.sn1ne.8xlarge",
+            "elasticsearch.sn2ne.8xlarge",
+            "elasticsearch.r6.8xlarge",
+            "elasticsearch.c6.13xlarge",
+            "elasticsearch.i2g.2xlarge",
+            "elasticsearch.i2g.4xlarge",
+            "elasticsearch.i2.4xlarge",
+            "elasticsearch.i2g.8xlarge",
+            "elasticsearch.d1.2xlarge",
+            "elasticsearch.d1.4xlarge",
+            "elasticsearch.n4.small",
+            "elasticsearch.ic5.large"
+          ],
           "example": "elasticsearch.sn2ne.large",
           "help_en": "The spec",
           "help_zh": "弹性节点规格。规格信息可通过https://help.aliyun.com/document_detail/271718.html查看",
@@ -490,6 +1300,8 @@
           "example": "20",
           "help_en": "The disk",
           "help_zh": "弹性节点存储空间大小，单位为GB",
+          "maximum": "20480",
+          "minimum": "20",
           "name": "disk",
           "options": [
             "--disk"
@@ -499,6 +1311,12 @@
           "type": "int"
         },
         {
+          "enum": [
+            "PL0",
+            "PL1",
+            "PL2",
+            "PL3"
+          ],
           "example": "PL1",
           "help_en": "The performanceLevel",
           "help_zh": "ESSD云盘的性能级别。当弹性节点的磁盘类型为ESSD云盘时，必选。支持：PL1、PL2、PL3",
@@ -567,6 +1385,278 @@
   "pathPattern": "/openapi/instances/[InstanceId]",
   "product_code": "elasticsearch",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "headers": {},
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "5FFD9ED4-C2EC-4E89-B22B-1ACB6FE1****",
+            "type": "string"
+          },
+          "Result": {
+            "description_en": "The returned result",
+            "description_zh": "返回结果",
+            "properties": {
+              "createdAt": {
+                "description_en": "The time when the instance was created",
+                "description_zh": "实例创建时间",
+                "example": "2018-07-13T03:58:07.253Z",
+                "type": "string"
+              },
+              "description": {
+                "description_en": "The instance name",
+                "description_zh": "实例名称",
+                "example": "test",
+                "type": "string"
+              },
+              "domain": {
+                "description_en": "The internal-facing access endpoint of the instance for private network access",
+                "description_zh": "实例的私网访问域名",
+                "example": "es-cn-abc.elasticsearch.aliyuncs.com",
+                "type": "string"
+              },
+              "esVersion": {
+                "description_en": "The instance version",
+                "description_zh": "实例版本",
+                "example": "5.5.3_with_X-Pack",
+                "type": "string"
+              },
+              "instanceId": {
+                "description_en": "The instance ID",
+                "description_zh": "实例ID",
+                "example": "es-cn-abc",
+                "type": "string"
+              },
+              "kibanaConfiguration": {
+                "description_en": "The Kibana node configuration",
+                "description_zh": "Kibana节点配置",
+                "properties": {
+                  "amount": {
+                    "description_en": "The number of nodes",
+                    "description_zh": "节点数量",
+                    "example": "1",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "disk": {
+                    "description_en": "The storage size of the node",
+                    "description_zh": "节点存储空间大小",
+                    "example": "20",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "diskType": {
+                    "description_en": "The storage type of the node. You can ignore this parameter",
+                    "description_zh": "节点存储类型（可忽略该参数）",
+                    "example": "cloud_ssd",
+                    "type": "string"
+                  },
+                  "spec": {
+                    "description_en": "The node specifications",
+                    "description_zh": "节点规格",
+                    "example": "elasticsearch.n4.small",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "masterConfiguration": {
+                "description_en": "The master node configuration",
+                "description_zh": "Master节点配置",
+                "properties": {
+                  "amount": {
+                    "description_en": "The number of nodes",
+                    "description_zh": "节点数量",
+                    "example": "3",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "disk": {
+                    "description_en": "The storage size of the node. Unit: GB",
+                    "description_zh": "节点的存储空间大小，单位：GB",
+                    "example": "20",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "diskType": {
+                    "description_en": "The storage type of the node. Only cloud_ssd (standard SSD) is supported",
+                    "description_zh": "节点的存储类型。只支持cloud_ssd（SSD云盘）",
+                    "example": "cloud_ssd",
+                    "type": "string"
+                  },
+                  "spec": {
+                    "description_en": "The node specifications",
+                    "description_zh": "节点规格",
+                    "example": "elasticsearch.sn2ne.large",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "nodeAmount": {
+                "description_en": "The number of data nodes",
+                "description_zh": "数据节点的数量",
+                "example": "2",
+                "format": "int32",
+                "type": "integer"
+              },
+              "nodeSpec": {
+                "description_en": "The data node configuration",
+                "description_zh": "数据节点配置信息",
+                "properties": {
+                  "disk": {
+                    "description_en": "The storage size of the node. Unit: GB",
+                    "description_zh": "节点存储空间大小，单位：GB",
+                    "example": "40",
+                    "format": "int32",
+                    "type": "integer"
+                  },
+                  "diskType": {
+                    "description_en": "The storage type of the node. Valid values:\n\ncloud_ssd: standard SSD.\ncloud_efficiency: ultra disk",
+                    "description_zh": "节点存储类型。支持：\n\ncloud_ssd：SSD云盘\ncloud_efficiency：高效云盘",
+                    "example": "cloud_ssd",
+                    "type": "string"
+                  },
+                  "spec": {
+                    "description_en": "The node specifications",
+                    "description_zh": "节点规格",
+                    "example": "elasticsearch.sn2ne.xlarge",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "paymentType": {
+                "description_en": "The billing method of the instance. Valid values:\n\nprepaid: subscription.\npostpaid: pay-as-you-go",
+                "description_zh": "实例的付费方式。支持：\n\nprepaid：包年包月\npostpaid：按量付费",
+                "example": "postpaid",
+                "type": "string"
+              },
+              "status": {
+                "description_en": "The status of the instance. Valid values:\n\nactive: Normal.\nactivating: Taking effect.\ninactive: Frozen.\ninvalid: Invalid",
+                "description_zh": "实例的状态。支持：\n\nactive：正常\nactivating：生效中\ninactive：冻结\ninvalid：失效",
+                "example": "active",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "400": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "401": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "404": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "500": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body parameters",

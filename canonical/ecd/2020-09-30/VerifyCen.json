@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call https://help.aliyun.com/document_detail/196646.html to query the regions supported by Elastic Desktop Service",
       "help_zh": "地域ID。可以调用https://help.aliyun.com/document_detail/196646.html获取无影云电脑支持的地域列表",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cen-3gwy16dojz1m65****",
       "help_en": "The CEN instance ID",
       "help_zh": "云企业网实例ID",
@@ -60,6 +62,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "192.168.0.0/16",
       "help_en": "The IPv4 CIDR block of the office network",
       "help_zh": "办公网络对应的IPv4网段",
@@ -88,5 +91,87 @@
   ],
   "pathPattern": "",
   "product_code": "ecd",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response object",
+        "description_zh": "返回对象",
+        "properties": {
+          "CidrBlocks": {
+            "description_en": "The recommended IPv4 CIDR blocks. Three CIDR blocks are randomly recommended. This parameter is returned when `Status` is `Conflict`",
+            "description_zh": "推荐使用的IPv4网段，随机推荐三个网段。当`Status`为`Conflict`时，返回该参数",
+            "items": {
+              "description_en": "The recommended IPv4 CIDR blocks. Three CIDR blocks are randomly recommended. This parameter is returned when `Status` is `Conflict`",
+              "description_zh": "推荐使用的IPv4网段，随机推荐三个网段。当`Status`为`Conflict`时，返回该参数",
+              "example": " [\"10.0.XX.XX\",\"172.24.XX.XX\",\"192.168.XX.XX\"]",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "0AF9D857-AE96-53D6-B317-5DD665EC4EC0",
+            "type": "string"
+          },
+          "RouteEntries": {
+            "description_en": "The list of route information contained in the CEN instance",
+            "description_zh": "云企业网实例包含的路由信息列表",
+            "items": {
+              "description_en": "The route information contained in the CEN instance",
+              "description_zh": "云企业网实例包含的路由信息",
+              "properties": {
+                "DestinationCidrBlock": {
+                  "description_en": "The destination CIDR block of the route",
+                  "description_zh": "路由网段",
+                  "example": "172.16.XX.XX",
+                  "type": "string"
+                },
+                "NextHopInstanceId": {
+                  "description_en": "The instance ID of the network instance associated with the routing entry",
+                  "description_zh": "路由对应的网络实例ID",
+                  "example": "vpc-uf62bu0xs5j8md54p****",
+                  "type": "string"
+                },
+                "RegionId": {
+                  "description_en": "The region ID of the route",
+                  "description_zh": "路由所属的地域ID",
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The route check result",
+                  "description_zh": "路由校验结果",
+                  "enumValueTitles": {
+                    "Access": "校验通过",
+                    "Conflict": "存在网段冲突"
+                  },
+                  "example": "Access",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "Status": {
+            "description_en": "The result of the CIDR block conflict check",
+            "description_zh": "网段冲突校验的结果",
+            "enumValueTitles": {
+              "Access": "校验通过。所有路由的校验结果均为Access。",
+              "Conflict": "存在网段冲突。至少有一条路由的校验结果为Conflict。",
+              "InvalidCen.CenUidInvalid": "阿里云账号错误或者该阿里云账号没有访问云电脑服务的权限。",
+              "InvalidCen.ParameterCenInstanceId": "云企业网实例ID与所属阿里云账号ID配置错误，阿里云账号下未包含配置的云企业网实例。",
+              "VerifyCode.InvalidTokenCode": "验证码错误。",
+              "VerifyCode.ReachTokenRetryTime": "验证码达到重试次数上限。"
+            },
+            "example": "Access",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

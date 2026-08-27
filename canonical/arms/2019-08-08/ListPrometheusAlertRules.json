@@ -34,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID of the instance",
       "help_zh": "地域ID",
@@ -47,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "c0bad479465464e1d8c1e641b0afb****",
       "help_en": "The ID of the cluster",
       "help_zh": "集群ID",
@@ -143,5 +145,188 @@
   ],
   "pathPattern": "",
   "product_code": "ARMS",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Code": {
+            "description_en": "The HTTP status code. The status code 200 indicates that the request was successful. Other status codes indicate that the request failed",
+            "description_zh": "状态码。200为成功，其他状态码为异常",
+            "example": "200",
+            "format": "int64",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "The returned message",
+            "description_zh": "返回结果的提示信息",
+            "example": "success",
+            "type": "string"
+          },
+          "PrometheusAlertRules": {
+            "description_en": "The returned struct",
+            "description_zh": "返回结构体",
+            "items": {
+              "description_en": "The returned struct",
+              "description_zh": "返回结构体",
+              "properties": {
+                "AlertId": {
+                  "description_en": "The ID of the alert rule",
+                  "description_zh": "告警规则ID",
+                  "example": "3888704",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "AlertName": {
+                  "description_en": "The name of the alert rule",
+                  "description_zh": "告警规则名称",
+                  "example": "Prometheus_Alert",
+                  "type": "string"
+                },
+                "Annotations": {
+                  "description_en": "The annotations of the alert rule",
+                  "description_zh": "告警规则的注释",
+                  "items": {
+                    "description_en": "The annotation of the alert rule",
+                    "description_zh": "告警规则的注释",
+                    "properties": {
+                      "Name": {
+                        "description_en": "The name of the annotation",
+                        "description_zh": "注释的名称",
+                        "example": "message",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The value of the annotation",
+                        "description_zh": "注释的值",
+                        "example": "${{$labels.pod_name}}CPU使用率大于80%，当前值{{$value}}%",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "ClusterId": {
+                  "description_en": "The ID of the cluster",
+                  "description_zh": "集群ID",
+                  "example": "c0bad479465464e1d8c1e641b0afb****",
+                  "type": "string"
+                },
+                "DispatchRuleId": {
+                  "description_en": "The ID of the notification policy. This parameter is returned if the NotifyType parameter is set to `DISPATCH_RULE`",
+                  "description_zh": "通知策略ID，当NotifyType指定为`DISPATCH_RULE`时显示此参数",
+                  "example": "10282",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "Duration": {
+                  "description_en": "The duration of the alert. Valid values: 1 to 1440. Unit: minutes",
+                  "description_zh": "持续时间，范围在1m~1440m，单位为分钟",
+                  "example": "1m",
+                  "type": "string"
+                },
+                "Expression": {
+                  "description_en": "The expression of the alert rule",
+                  "description_zh": "告警表达式",
+                  "example": "100 * (sum(rate(container_cpu_usage_seconds_total[1m])) by (pod_name) / sum(label_replace(kube_pod_container_resource_limits_cpu_cores, \\\"pod_name\\\", \\\"$1\\\", \\\"pod\\\", \\\"(.*)\\\")) by (pod_name))>75",
+                  "type": "string"
+                },
+                "Labels": {
+                  "description_en": "The tags of the alert rule",
+                  "description_zh": "告警规则的标签",
+                  "items": {
+                    "description_en": "The tag of the alert rule",
+                    "description_zh": "告警规则的标签",
+                    "properties": {
+                      "Name": {
+                        "description_en": "The name of the tag",
+                        "description_zh": "标签的名称",
+                        "example": "severity",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The value of the tag associated with the instance",
+                        "description_zh": "标签的值",
+                        "example": "critical",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "Message": {
+                  "description_en": "The alert message. Tags can be referenced in the {{$labels.xxx}} format",
+                  "description_zh": "告警通知消息，支持按照{{$labels.xxx}}格式来引用标签",
+                  "example": "${{$labels.pod_name}}CPU使用率大于80%，当前值{{$value}}%",
+                  "type": "string"
+                },
+                "NotifyType": {
+                  "description_en": "The method that is used to send alert notifications. Valid values:\n\nALERT_MANAGER: Alert notifications are sent by Operation Center.\nDISPATCH_RULE: Alert notifications are",
+                  "description_zh": "通知类型， 取值：\n\n`ALERT_MANAGER`：通过报警运维中心通知。\n`DISPATCH_RULE`：指定通知策略进行通知",
+                  "example": "ALERT_MANAGER",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "Indicates whether the alert rule is enabled. Valid values:\n\n1: The alert rule is enabled.\n0: The alert rule is disabled",
+                  "description_zh": "告警规则启用状态，取值：\n\n`1`：开启\n`0`：关闭",
+                  "example": "1",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "Tags": {
+                  "description_en": "The tags",
+                  "description_zh": "标签",
+                  "items": {
+                    "description_en": "The tag",
+                    "description_zh": "标签",
+                    "properties": {
+                      "Key": {
+                        "description_en": "The tag key",
+                        "description_zh": "Tag的主键",
+                        "example": "key",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The tag value",
+                        "description_zh": "Tag的值",
+                        "example": "value",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "Type": {
+                  "description_en": "The type of the alert rule",
+                  "description_zh": "告警规则类型",
+                  "example": "自定义",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request",
+            "description_zh": "请求ID",
+            "example": "9FEA6D00-317F-45E3-9004-7FB8B0B7****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "调用是否成功",
+            "example": "True",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

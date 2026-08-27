@@ -34,6 +34,16 @@
       "type": "string"
     },
     {
+      "enum": [
+        "rds_apsradb_upgrade",
+        "rds_apsaradb_ha",
+        "rds_apsaradb_ssl_update",
+        "rds_apsaradb_major_upgrade",
+        "rds_apsradb_transfer",
+        "rds_apsaradb_network_upgrade",
+        "rds_apsaradb_modify_config",
+        "rds_apsaradb_maxscale"
+      ],
       "example": "rds_apsradb_transfer",
       "help_en": "The type of the O\\&M event. If this parameter is not specified, all types of O\\&M events are queried.\n\nValid values:\n\nrds_apsradb_upgrade: minor version update\nrds_apsaradb_ha: primary/secondary switchover\nrds_apsaradb_ssl_update: SSL certificate update\nrds_apsaradb_major_upgrade: major version upgrade\nrds_apsradb_transfer: instance migration\nrds_apsaradb_modify_config: network upgrade\nrds_apsaradb_modify_config: instance parameter adjustment\nrds_apsaradb_maxscale: proxy minor version update",
       "help_zh": "运维事件类型，如果为空则查询所有类型",
@@ -51,6 +61,8 @@
       "help_en": "The number of entries per page. Default value: 25. Maximum value: 100",
       "help_zh": "分页大小，默认为25，最大 100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "10",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -64,6 +76,8 @@
       "help_en": "The page number. Pages start from page 1. Default value: 1",
       "help_zh": "页码，大于 0, 默认 1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -166,5 +180,230 @@
   ],
   "pathPattern": "",
   "product_code": "R-kvstore",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Items": {
+            "description_en": "The list of O\\&M events",
+            "description_zh": "运维事件列表",
+            "items": {
+              "description_en": "Details about the O\\&M event",
+              "description_zh": "运维事件详情",
+              "properties": {
+                "AllowCancel": {
+                  "description_en": "Indicates whether the event can be canceled. The value 1 indicates that the event can be canceled. The value 0 indicates that the event cannot be canceled",
+                  "description_zh": "是否允许取消，1 表示允许用户取消事件，0 表示不允许取消",
+                  "example": "1",
+                  "type": "string"
+                },
+                "AllowChange": {
+                  "description_en": "Indicates whether the switching time can be changed. The value 1 indicates that the switching time can be changed. The value 0 indicates that the switching time cannot be changed",
+                  "description_zh": "是否允许修改时间，1 表示允许用户修改时间，0 表示不允许用户修改时间",
+                  "example": "1",
+                  "type": "string"
+                },
+                "ChangeLevel": {
+                  "description_en": "The code of the task level. The value S1 indicates the system O\\&M level. The value S0 indicates the exception fixing level",
+                  "description_zh": "事件等级代码，S1 系统运维 S0 风险修复",
+                  "example": "S1",
+                  "type": "string"
+                },
+                "ChangeLevelEn": {
+                  "description_en": "The level of the task in English",
+                  "description_zh": "事件等级（英文）",
+                  "example": "System maintenance\n",
+                  "type": "string"
+                },
+                "ChangeLevelZh": {
+                  "description_en": "The level of the task in Chinese",
+                  "description_zh": "事件等级（中文）",
+                  "example": "系统运维\n",
+                  "type": "string"
+                },
+                "CreatedTime": {
+                  "description_en": "The time when the O\\&M task was created. The time follows the ISO 8601 standard in the yyyy-MM-ddThh:mm:ssZ format. The time is displayed in UTC",
+                  "description_zh": "创建时间，为 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                  "example": "2018-05-30T14:30:00Z\n",
+                  "type": "string"
+                },
+                "CurrentAVZ": {
+                  "description_en": "The current zone",
+                  "description_zh": "当前可用区",
+                  "example": "cn-beijing-h\n",
+                  "type": "string"
+                },
+                "DbType": {
+                  "description_en": "The database type of the instance. The return value is Redis",
+                  "description_zh": "数据库类型，返回值：redis",
+                  "example": "redis",
+                  "type": "string"
+                },
+                "DbVersion": {
+                  "description_en": "The version of the database engine",
+                  "description_zh": "内核版本号",
+                  "example": "5.0",
+                  "type": "string"
+                },
+                "Deadline": {
+                  "description_en": "The deadline before which the time to preform the O&M task can be modified. The time in UTC is displayed in the yyyy-MM-ddTHH:mm:ssZ format",
+                  "description_zh": "任务执行时间可调整范围的最晚期限，为 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                  "example": "2018-05-30T23:59:59Z",
+                  "type": "string"
+                },
+                "Id": {
+                  "description_en": "The ID of the O\\&M event",
+                  "description_zh": "运维事件 ID",
+                  "example": "11111",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "Impact": {
+                  "description_en": "The impact of the task",
+                  "description_zh": "事件影响",
+                  "example": "TransientDisconnection",
+                  "type": "string"
+                },
+                "ImpactEn": {
+                  "description_en": "The impact of the task in English",
+                  "description_zh": "事件影响（英文）",
+                  "example": "Transient instance disconnection",
+                  "type": "string"
+                },
+                "ImpactZh": {
+                  "description_en": "The impact of the task in Chinese",
+                  "description_zh": "事件影响（中文）",
+                  "example": "实例闪断\n",
+                  "type": "string"
+                },
+                "InsComment": {
+                  "description_en": "The alias and description of the instance",
+                  "description_zh": "实例别名/实例备注",
+                  "example": "test",
+                  "type": "string"
+                },
+                "InsName": {
+                  "description_en": "The instance ID",
+                  "description_zh": "实例ID",
+                  "example": "r-bp1lgal1sdvxrz****",
+                  "type": "string"
+                },
+                "ModifiedTime": {
+                  "description_en": "The time when the O\\&M task was modified. The time follows the ISO 8601 standard in the yyyy-MM-ddThh:mm:ssZ format. The time is displayed in UTC",
+                  "description_zh": "修改时间，为 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                  "example": "2018-05-30T14:30:00Z\n",
+                  "type": "string"
+                },
+                "PrepareInterval": {
+                  "description_en": "The required preparation period between the task start time and the switchover time. The time is displayed in the HH:mm:ss format",
+                  "description_zh": "开始时间到切换时间之间所需的准备时间, 格式为 HH:mm:ss",
+                  "example": "04:00:00\n",
+                  "type": "string"
+                },
+                "Region": {
+                  "description_en": "The region ID of the instance",
+                  "description_zh": "地域ID",
+                  "example": "cn-hanghzou",
+                  "type": "string"
+                },
+                "ResultInfo": {
+                  "description_en": "The information about the execution result",
+                  "description_zh": "执行结果信息",
+                  "example": "userCancel",
+                  "type": "string"
+                },
+                "StartTime": {
+                  "description_en": "The time when the event is executed in the backend. The time must be in UTC. Format: YYYY-MM-DDTHH:mm:ssZ",
+                  "description_zh": "后台执行事件的时间点，为 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                  "example": "2018-05-30T00:00:00Z\n",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The status of the O\\&M event. Valid values:\n\n3: filters pending events.\n4: filters in-progress events.\n5: filters successful events.\n6: filters failed events.\n7: filters canceled events",
+                  "description_zh": "运维事件状态，返回值：\n3：待处理事件。\n4：处理中事件。\n5：成功结束事件。\n6：失败结束事件。\n7：已取消事件",
+                  "example": "5",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "SubInsNames": {
+                  "description_en": "The list of sub-events",
+                  "description_zh": "子事件列表",
+                  "items": {
+                    "description_en": "The name of the sub-event",
+                    "description_zh": "子事件名称",
+                    "example": "sub1369716295573-tes2cy6****.2013052818****\n",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "SwitchTime": {
+                  "description_en": "The time when the system performs the switchover operation. The time follows the ISO 8601 standard in the yyyy-MM-ddThh:mm:ssZ format. The time is displayed in UTC",
+                  "description_zh": "后台发起切换操作的时间点，为 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                  "example": "2018-05-30T14:30:00Z\n",
+                  "type": "string"
+                },
+                "TaskParams": {
+                  "description_en": "The O\\&M event parameters",
+                  "description_zh": "运维事件参数",
+                  "example": "{\n      \"Action\": \"UpgradeDBInstance\"\n}",
+                  "type": "string"
+                },
+                "TaskType": {
+                  "description_en": "The type of the O\\&M event",
+                  "description_zh": "运维事件务类型",
+                  "example": "rds_apsaradb_transfer",
+                  "type": "string"
+                },
+                "TaskTypeEn": {
+                  "description_en": "The cause of the O\\&M event",
+                  "description_zh": "产生运维事件原因英文",
+                  "example": "Minor version update",
+                  "type": "string"
+                },
+                "TaskTypeZh": {
+                  "description_en": "The reason for the task in Chinese",
+                  "description_zh": "任务原因中文",
+                  "example": "小版本升级\n",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries returned per page. Default 25",
+            "description_zh": "分页大小，默认为25",
+            "example": "25",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "2D9F3768-EDA9-4811-943E-42C8006E****",
+            "type": "string"
+          },
+          "TotalRecordCount": {
+            "description_en": "The number of O\\&M events returned",
+            "description_zh": "返回运维事件记录数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

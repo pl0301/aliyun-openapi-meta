@@ -88,6 +88,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "3",
       "help_en": "The number of automatic reruns after the file execution fails",
       "help_zh": "文件出错后，\n自动重跑的次数",
@@ -114,6 +115,12 @@
       "type": "int"
     },
     {
+      "enum": [
+        "ALL_ALLOWD",
+        "FAILURE_ALLOWED",
+        "ALL_DENIED",
+        "ALL_ALLOWED"
+      ],
       "example": "ALL_ALLOWED",
       "help_en": "The rerun policy. Valid values:\n\nALL_ALLOWED: Reruns are allowed regardless of whether the task succeeds or fails.\n\nFAILURE_ALLOWED: Reruns are allowed only when the task fails.\n\nALL_DENIED: Reruns are not allowed regardless of whether the task succeeds or fails.\n\nThis parameter corresponds to the Support for Rerun setting in Scheduling > Scheduling Policies for Data Studio tasks in the DataWorks console (https://workbench.data.aliyun.com/console).\n\nValid values:\n\nALL_ALLOWD\n\nFAILURE_ALLOWED\n\nALL_DENIED\n\nALL_ALLOWED",
       "help_zh": "重跑属性。取值如下：\n\nALL_ALLOWED：运行成功或失败后皆可重跑。\nFAILURE_ALLOWED：运行成功后不可重跑，运行失败后可以重跑。\nALL_DENIED：运行成功或失败皆不可重跑。\n\n该参数与DataWorks控制台 (https://workbench.data.aliyun.com/console)中，数据开发任务的“调度配置>时间属性>重跑属性”配置内容对应",
@@ -157,6 +164,7 @@
       "help_en": "The timestamp (in milliseconds) when automatic scheduling starts.\n\nThis parameter corresponds to the start time of Effective Period in Scheduling > Scheduling Time for Data Studio tasks in the DataWorks console (https://workbench.data.aliyun.com/console)",
       "help_zh": "开始自动调度的毫秒时间戳。\n\n\n该参数与DataWorks控制台 (https://workbench.data.aliyun.com/console)中，数据开发任务的“调度配置>时间属性>生效日期”配置的开始时间的毫秒时间戳对应",
       "location": "formData",
+      "minimum": "0",
       "name": "start_effect_date",
       "options": [
         "--start-effect-date"
@@ -170,6 +178,7 @@
       "help_en": "The timestamp (in milliseconds) when automatic scheduling stops.\n\nThis parameter corresponds to the end time of Effective Period in Scheduling > Scheduling Time for Data Studio tasks in the DataWorks console (https://workbench.data.aliyun.com/console)",
       "help_zh": "停止自动调度的时间戳，单位为毫秒。\n\n\n该参数与DataWorks控制台 (https://workbench.data.aliyun.com/console)中，数据开发任务的“调度配置>时间属性>生效日期”配置的结束时间的毫秒时间戳对应",
       "location": "formData",
+      "minimum": "0",
       "name": "end_effect_date",
       "options": [
         "--end-effect-date"
@@ -192,6 +201,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "DAY",
+        "NOT_DAY"
+      ],
       "example": "NOT_DAY",
       "help_en": "The type of scheduling cycle. Valid values: NOT_DAY (minute, hour) and DAY (day, week, month).\n\nThis parameter corresponds to the Scheduling Cycle setting in Scheduling > Scheduling Time for Data Studio tasks in the DataWorks console (https://workbench.data.aliyun.com/console)",
       "help_zh": "调度周期的类型，包括NOT_DAY（分钟、小时）和DAY（日、周、月）。\n\n\n该参数与DataWorks控制台 (https://workbench.data.aliyun.com/console)中，数据开发任务的“调度配置>时间属性>调度周期”对应",
@@ -205,6 +218,14 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NONE",
+        "USER_DEFINE",
+        "CHILD",
+        "SELF",
+        "USER_DEFINE_AND_SELF",
+        "CHILD_AND_SELF"
+      ],
       "example": "USER_DEFINE",
       "help_en": "The dependency mode on the previous cycle. Valid values:\n\nSELF: Depends on the current node.\n\nCHILD: Depends on the child nodes.\n\nUSER_DEFINE: Depends on other nodes.\n\nNONE: No dependencies. Does not depend on the previous cycle",
       "help_zh": "依赖上一周期的方式。取值如下：\n\nSELF：依赖项选择本节点。\nCHILD：依赖项选择一级子节点。\nUSER_DEFINE：依赖项选择其他节点。\nNONE：未选择依赖项，即不会依赖上一周期",
@@ -257,6 +278,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "100000001",
       "help_en": "The file ID. You can call the https://help.aliyun.com/document_detail/173942.html operation to obtain the file ID",
       "help_zh": "文件的ID。\n您可以调用https://help.aliyun.com/document_detail/173942.html接口获取文件ID",
@@ -335,6 +357,12 @@
       "type": "bool"
     },
     {
+      "enum": [
+        "NORMAL",
+        "SKIP",
+        "PAUSE",
+        "MANUAL"
+      ],
       "example": "NORMAL",
       "help_en": "The scheduling type. Valid values:\n\nNORMAL: Normal scheduled task.\n\nMANUAL: Manually triggered node. Not scheduled for daily execution. Corresponds to nodes in manually triggered workflows.\n\nPAUSE: Paused task.\n\nSKIP: Dry-run task. Scheduled for daily execution but is directly marked as successful when scheduling starts",
       "help_zh": "调度的类型，取值如下：\n\nNORMAL：正常调度任务。\nMANUAL：手动任务，不会被日常调度，对应手动业务流程下的节点。\nPAUSE：暂停任务。\nSKIP：空跑任务，被日常调度，但启动调度时直接被置为成功",
@@ -454,5 +482,47 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response",
+        "description_zh": "返回结果\n",
+        "properties": {
+          "ErrorCode": {
+            "description_en": "The error code",
+            "description_zh": "错误码\n",
+            "example": "Invalid.Tenant.ConnectionNotExists",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息\n",
+            "example": "The connection does not exist.",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码\n",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID. Use this ID to troubleshoot issues",
+            "description_zh": "本次调用的唯一ID。出现错误后，您可以根据该ID排查问题\n",
+            "example": "0000-ABCD-EFGH-IJKLMNOPQ",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the call succeeded. Valid values:\n\ntrue: The call succeeded.\n\nfalse: The call failed",
+            "description_zh": "调用是否成功。取值如下：\n\ntrue：调用成功。\nfalse：调用失败",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

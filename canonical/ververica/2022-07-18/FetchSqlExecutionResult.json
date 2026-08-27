@@ -2,6 +2,373 @@
   "camel_example": "aliyun ververica GET /api/v2/namespaces/default-namespace/sql-execution/exec-sql-20250405abc:fetchSqlExecutionResult --region cn-hangzhou --header \"workspace=a14bd5d90a0000\" --header \"Content-Type=application/json\"",
   "cmd_full_name": "ververica fetch-sql-execution-result",
   "cmd_name": "fetch-sql-execution-result",
+  "components": {
+    "schemas": {
+      "Cell": {
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DqlResult": {
+        "properties": {
+          "statementIndex": {
+            "format": "int32",
+            "title": "对应的 SQL 语句索引",
+            "type": "integer"
+          },
+          "submitPreviewResult": {
+            "$ref": "#/components/schemas/SubmitPreviewResult",
+            "title": "预览提交结果"
+          },
+          "tableResults": {
+            "items": {
+              "$ref": "#/components/schemas/TableResult"
+            },
+            "title": "表格查询结果列表",
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "MetadataInfo": {
+        "description_en": "The metadata information",
+        "description_zh": "元信息",
+        "properties": {
+          "key": {
+            "description_en": "The metadata field",
+            "description_zh": "元信息字段",
+            "example": "topic",
+            "title": "元信息字段",
+            "type": "string"
+          },
+          "virtual": {
+            "description_en": "Specifies whether the metadata is read only",
+            "description_zh": "是否仅可读",
+            "title": "是否仅可读",
+            "type": "boolean"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "PrimaryKey": {
+        "description_en": "The primary key of the table",
+        "description_zh": "表主键",
+        "properties": {
+          "columns": {
+            "description_en": "The primary key column group",
+            "description_zh": "主键列组",
+            "items": {
+              "description_en": "The column name",
+              "description_zh": "列名称",
+              "example": "id",
+              "type": "string"
+            },
+            "required": true,
+            "title": "列",
+            "type": "array"
+          },
+          "constraintName": {
+            "description_en": "The constraint name",
+            "description_zh": "约束名",
+            "example": "pk",
+            "required": true,
+            "title": "约束名",
+            "type": "string"
+          },
+          "constraintType": {
+            "required": true,
+            "title": "CONSTRAINT_TYPE_INVALID;\nCONSTRAINT_TYPE_PRIMARY_KEY;\nCONSTRAINT_TYPE_UNIQUE;",
+            "type": "string"
+          },
+          "enforced": {
+            "required": true,
+            "type": "boolean"
+          }
+        },
+        "required": false,
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "Row": {
+        "properties": {
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "RowUpdate": {
+        "properties": {
+          "row": {
+            "$ref": "#/components/schemas/Row"
+          },
+          "rowKind": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Schema": {
+        "description_en": "The schema information about the table",
+        "description_zh": "表schema信息",
+        "properties": {
+          "columns": {
+            "description_en": "The information about columns",
+            "description_zh": "列信息",
+            "items": {
+              "$ref": "#/components/schemas/TableColumn",
+              "description_en": "The information about the fields that are contained in the table",
+              "description_zh": "表字段信息"
+            },
+            "title": "列信息",
+            "type": "array"
+          },
+          "primaryKey": {
+            "$ref": "#/components/schemas/PrimaryKey",
+            "description_en": "The information about the primary key",
+            "description_zh": "主键信息"
+          },
+          "watermarkSpecs": {
+            "description_en": "The watermark information",
+            "description_zh": "watermark信息",
+            "items": {
+              "$ref": "#/components/schemas/WatermarkSpec",
+              "description_en": "The watermark information",
+              "description_zh": "水印信息"
+            },
+            "title": "watermark信息",
+            "type": "array"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "SqlExecution": {
+        "properties": {
+          "batchMode": {
+            "title": "是否为批模式",
+            "type": "boolean"
+          },
+          "description": {
+            "title": "描述",
+            "type": "string"
+          },
+          "message": {
+            "title": "错误/状态信息",
+            "type": "string"
+          },
+          "name": {
+            "title": "名称",
+            "type": "string"
+          },
+          "namespace": {
+            "example": "default-namespace",
+            "title": "项目空间",
+            "type": "string"
+          },
+          "sessionClusterName": {
+            "title": "Session Cluster 名称",
+            "type": "string"
+          },
+          "sqlExecutionId": {
+            "title": "SQL 执行 ID",
+            "type": "string"
+          },
+          "sqlFileId": {
+            "title": "关联的 SqlFile ID",
+            "type": "string"
+          },
+          "sqlScript": {
+            "title": "SQL 脚本内容",
+            "type": "string"
+          },
+          "state": {
+            "title": "执行状态",
+            "type": "string"
+          },
+          "statements": {
+            "items": {
+              "$ref": "#/components/schemas/SqlStatement"
+            },
+            "type": "array"
+          },
+          "workspace": {
+            "example": "edcef******b4f",
+            "title": "工作空间",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SqlExecutionFetchResult": {
+        "properties": {
+          "dqlResult": {
+            "$ref": "#/components/schemas/DqlResult"
+          },
+          "sqlExecution": {
+            "$ref": "#/components/schemas/SqlExecution"
+          }
+        },
+        "type": "object"
+      },
+      "SqlStatement": {
+        "properties": {
+          "index": {
+            "format": "int32",
+            "title": "语句索引",
+            "type": "integer"
+          },
+          "message": {
+            "title": "错误/状态信息",
+            "type": "string"
+          },
+          "sqlScript": {
+            "title": "单条 SQL 脚本",
+            "type": "string"
+          },
+          "statusState": {
+            "title": "语句状态",
+            "type": "string"
+          },
+          "type": {
+            "title": "语句类型（DQL / DML_OR_DDL）",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SubmitPreviewResult": {
+        "properties": {
+          "queryId": {
+            "title": "查询id",
+            "type": "string"
+          },
+          "sessionId": {
+            "title": "session id",
+            "type": "string"
+          },
+          "tableSchemas": {
+            "items": {
+              "$ref": "#/components/schemas/TableSchema"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "TableColumn": {
+        "description_en": "The information about columns",
+        "description_zh": "列信息",
+        "properties": {
+          "expression": {
+            "description_en": "The computed column",
+            "description_zh": "计算列",
+            "example": "“”",
+            "title": "表达式",
+            "type": "string"
+          },
+          "logicalType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "metadataInfo": {
+            "$ref": "#/components/schemas/MetadataInfo",
+            "description_en": "The metadata information",
+            "description_zh": "元信息",
+            "title": "元信息"
+          },
+          "name": {
+            "description_en": "The column name",
+            "description_zh": "列名",
+            "example": "name",
+            "required": true,
+            "title": "列名",
+            "type": "string"
+          },
+          "nullable": {
+            "description_en": "Specifies whether the column can have a null value",
+            "description_zh": "是否可为空",
+            "example": "true",
+            "title": "是否可为空",
+            "type": "boolean"
+          },
+          "type": {
+            "description_en": "The data type of the column",
+            "description_zh": "字段类型",
+            "example": "string",
+            "title": "字段类型",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "TableResult": {
+        "properties": {
+          "collectSinkOperatorId": {
+            "type": "string"
+          },
+          "rowUpdates": {
+            "items": {
+              "$ref": "#/components/schemas/RowUpdate"
+            },
+            "type": "array"
+          },
+          "tableName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TableSchema": {
+        "properties": {
+          "collectSinkOperatorId": {
+            "type": "string"
+          },
+          "schema": {
+            "$ref": "#/components/schemas/Schema"
+          },
+          "tableName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "WatermarkSpec": {
+        "description_en": "The watermark information",
+        "description_zh": "Watermark信息",
+        "properties": {
+          "column": {
+            "description_en": "The column of the event time attribute",
+            "description_zh": "event time属性的列",
+            "example": "time",
+            "title": "event time属性的列",
+            "type": "string"
+          },
+          "watermarkExpression": {
+            "description_en": "The watermark expression",
+            "description_zh": "watermark表达式",
+            "example": "INTERVAL '5' SECOND",
+            "title": "watermark表达式",
+            "type": "string"
+          },
+          "watermarkType": {
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the execution result of an SQL data query submitted through the platform",
   "description_zh": "该接口用于获取平台提交的 SQL 数据查询执行结果",
@@ -63,6 +430,66 @@
   "pathPattern": "/api/v2/namespaces/[namespace]/sql-execution/[sqlExecutionId]:fetchSqlExecutionResult",
   "product_code": "ververica",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response data",
+        "description_zh": "响应数据",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SqlExecutionFetchResult",
+            "description_en": "The execution result details returned when the request is successful",
+            "description_zh": "成功时返回的执行结果详情",
+            "example": "{ \"jobs\": [ { \"jid\": \"4df35f8e54554b23bf7dcd38a151****\", \"name\": \"69d001d5-419a-4bfc-9c2e-849cacd3****\", \"state\": \"RUNNING\", \"start-time\": 1659154942068, \"end-time\": -1, \"duration\": 188161756, \"last-modification\": 1659154968305, \"tasks\": { \"total\": 2, \"created\": 0, \"scheduled\": 0, \"deploying\": 0, \"running\": 2, \"finished\": 0, \"canceling\": 0, \"canceled\": 0, \"failed\": 0, \"reconciling\": 0, \"initializing\": 0 } } ] }"
+          },
+          "errorCode": {
+            "description_en": "The business error code. This value is not empty when success is false. This value is empty when success is true",
+            "description_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description_en": "The business error message. This value is not empty when success is false. This value is empty when success is true",
+            "description_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空",
+            "example": "\"\"",
+            "title_en": "",
+            "title_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空。",
+            "type": "string"
+          },
+          "httpCode": {
+            "description_en": "The business status code. The value is always 200. Use success to determine whether the request was successful",
+            "description_zh": "业务状态码，统一为200；使用success表示业务请求是否成功",
+            "example": "200",
+            "format": "int32",
+            "title_en": "",
+            "title_zh": "业务状态码，统一为200；使用success表示业务请求是否成功。",
+            "type": "integer"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CBC799F0-AS7S-1D30-8A4F-882ED4DD****",
+            "title_en": "",
+            "title_zh": "请求ID。",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the business request was successful",
+            "description_zh": "表示业务请求是否成功",
+            "example": "true",
+            "title_en": "",
+            "title_zh": "表示业务请求是否成功。",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "响应数据。",
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The namespace name",

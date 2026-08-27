@@ -2,6 +2,363 @@
   "camel_example": "",
   "cmd_full_name": "hcs-mgw create-job",
   "cmd_name": "create-job",
+  "components": {
+    "schemas": {
+      "Audit": {
+        "description_en": "The audit method",
+        "description_zh": "审计方式",
+        "properties": {
+          "LogMode": {
+            "description_en": "Specifies whether to push migration logs to Simple Log Service (SLS). To push migration logs to SLS, you must create the AliyunOSSImportSlsAuditRole role and grant the required permissions to the role. Valid values: off, basic, and detail. off: does not push migration logs. basic: pushes only migration failure logs. detail: pushes migration success logs and migration failure logs",
+            "description_zh": "日志推送。推送迁移日志到SLS，需要创建AliyunOSSImportSlsAuditRole角色，并对角色完成授权。\n取值： off，不推送日志；basic，仅推送文件迁移失败日志；detail，推送文件迁移成功和失败日志",
+            "example": "off",
+            "title": "日志推送。取值： off，不推送日志；basic，仅推送文件迁移失败日志；detail，推送文件迁移成功和失败日志。推送迁移日志到SLS，需要创建AliyunOSSImportSlsAuditRole角色，并对角色完成授权。",
+            "type": "string"
+          }
+        },
+        "title": "审计方式。",
+        "type": "object"
+      },
+      "CreateJobInfo": {
+        "description_en": "Details of the migration task to create",
+        "description_zh": "创建迁移任务详情",
+        "properties": {
+          "AppendableToNormal": {
+            "description_en": "Specifies whether to migrate appendable files as normal or multipart files. Default value: false",
+            "description_zh": "是否把appendable文件迁成normal/multipart文件，默认false",
+            "example": "false",
+            "title": "是否把appendable文件迁成normal/multipart文件，默认false",
+            "type": "boolean"
+          },
+          "Audit": {
+            "$ref": "#/components/schemas/Audit",
+            "description_en": "The audit method",
+            "description_zh": "审计方式",
+            "title": "审计方式。"
+          },
+          "ConvertSymlinkTarget": {
+            "description_en": "Specifies whether to transform the target of a symbolic link. When migrating data from OSS to a local server, from a local server to OSS, or between two local servers, set this parameter to \\`true\\` to ensure that symbolic links can be accessed after migration",
+            "description_zh": "是否转换软链接Target。当源和目的数据地址是OSS到Local，Local到OSS，Local到Local时，可以指定转换软链接Target，使得迁移后的软链接能够正常访问",
+            "example": "false",
+            "title": "是否转换软链接Target。当源和目的数据地址是oss到local，local到oss，local到local时，可以指定转换软链接Target，使得迁移后的软链接能够正常访问。",
+            "type": "boolean"
+          },
+          "CreateReport": {
+            "description_en": "Specifies whether to create a migration report",
+            "description_zh": "是否创建迁移报告",
+            "example": "true",
+            "title": "是否创建迁移报告。",
+            "type": "boolean"
+          },
+          "DestAddress": {
+            "description_en": "The name of the destination data address",
+            "description_zh": "目的数据地址名称",
+            "example": "test_dest_address",
+            "required": true,
+            "title": "目的数据地址名称。",
+            "type": "string"
+          },
+          "EnableMultiVersioning": {
+            "description_en": "Specifies whether to migrate multiple object versions. Multi-version migration is not supported",
+            "description_zh": "是否迁移多版本。暂不支持多版本迁移",
+            "example": "false",
+            "title": "是否迁移多版本。暂不支持多版本迁移。",
+            "type": "boolean"
+          },
+          "FilterRule": {
+            "$ref": "#/components/schemas/FilterRule",
+            "description_en": "The filter rule",
+            "description_zh": "过滤规则",
+            "title": "过滤规则。"
+          },
+          "ImportQos": {
+            "$ref": "#/components/schemas/ImportQos",
+            "description_en": "The task throttling settings",
+            "description_zh": "任务限流",
+            "title": "任务限流。"
+          },
+          "Name": {
+            "description_en": "The task name.<br>\nThe name must be 3 to 63 characters in length and can contain lowercase letters, digits, hyphens (-), and underscores (). The name is case-sensitive and must be UTF-8 encoded. It cannot start with a hyphen (-) or an underscore (). This parameter cannot be empty.<br>",
+            "description_zh": "任务名称。  \n取值：英文小写字母、数字和特殊字符-和_，最短 3 字符， 最长 63 个字符，区分大小写，utf8 编码并且不可以- 和_开头，不能为空",
+            "example": "test_name",
+            "required": true,
+            "title": "任务名称。取值：英文小写字母、数字和特殊字符-和_，最短 3 字符， 最长 63 个字符，区分大小写，utf8 编码并且不可以- 和_开头，不能为空。",
+            "type": "string"
+          },
+          "OverwriteMode": {
+            "description_en": "The file overwrite mode.<br>\nValid values: \\`never\\` and \\`always\\`. \\`never\\`: Does not overwrite existing files. \\`always\\`: Overwrites existing files.<br>",
+            "description_zh": "文件覆盖方式。  \n取值：never，不覆盖；always，覆盖；",
+            "example": "always",
+            "required": true,
+            "title": "文件覆盖方式。取值：never，不覆盖；always，覆盖；",
+            "type": "string"
+          },
+          "ParentVersion": {
+            "description_en": "The parent task ID. Specify this ID when you create a subtask to retry failed file transfers",
+            "description_zh": "父任务ID。创建失败文件重试子任务时可以指定父任务ID",
+            "example": "6af62558-970d-4f44-8663-4e297170fd6a",
+            "title": "父任务ID。创建失败文件重试子任务时可以指定父任务ID。",
+            "type": "string"
+          },
+          "ScheduleRule": {
+            "$ref": "#/components/schemas/ScheduleRule",
+            "description_en": "The scheduling rule",
+            "description_zh": "调度规则",
+            "title": "调度规则。"
+          },
+          "SrcAddress": {
+            "description_en": "The name of the source data address",
+            "description_zh": "源数据地址名称",
+            "example": "test_src_address",
+            "required": true,
+            "title": "源数据地址名称。",
+            "type": "string"
+          },
+          "Tags": {
+            "description_en": "The tags, in key-value format.<br>\nAllowed characters include uppercase and lowercase letters, digits, hyphens (-), and underscores (_). The maximum length is 1024 characters.<br>",
+            "description_zh": "标签，KeyValue格式。   \n允许字符：英文大小写字母、数字和特殊字符-_,。长度限制：1024个字符",
+            "example": "K1:V1,K2:V2",
+            "title": "标签，KeyValue格式。 允许字符：英文大小写字母、数字和特殊字符-_,。长度限制：1KB。",
+            "type": "string"
+          },
+          "TargetStorageClass": {
+            "description_en": "Specifies the StorageClass for destination files. The destination address can only be OSS. Valid values: Standard, IA, Archive, ColdArchive, DeepColdArchive",
+            "description_zh": "指定设置目的文件的storageClass，目的地址只能是oss。 合法值：Standard IA Archive ColdArchive DeepColdArchive",
+            "example": "Standard",
+            "title": "指定设置目的文件的storageClass，目的地址只能是oss。 合法值：Standard IA Archive ColdArchive DeepColdArchive",
+            "type": "string"
+          },
+          "TransferMode": {
+            "description_en": "The file transfer mode.<br>\nValid values: \\`all\\` (full transfer) and \\`lastmodified\\` (incremental transfer).<br>\n\\`OverwriteMode\\` and \\`TransferMode\\` are used together:<br><br>\n\n\\`always\\` and \\`all\\`: Forces a full overwrite.\n\n\\`always\\` and \\`lastmodified\\`: Overwrites files based on their last modified time.\n\n\\`never\\` and an empty value for \\`TransferMode\\`: Does not overwrite files with the same name",
+            "description_zh": "文件传输方式。  \n取值：all，全量传输；lastmodified，增量传输。  \nOverwriteMode与TransferMode结合使用，分别设置：  \nalways，all：强制覆盖 ;\nalways, lastmodified：根据文件最后修改时间覆盖 ;\nnever，空值：同名文件不覆盖",
+            "example": "all",
+            "required": true,
+            "title": "文件传输方式。取值：all，强制覆盖；lastmodified，根据最后修改时间覆盖。 OverwriteMode与TransferMode结合使用，分别设置： always，all：强制覆盖 always, lastmodified：根据文件最后修改时间覆盖 never，all：不覆盖。",
+            "type": "string"
+          },
+          "WithLastModifyTime": {
+            "description_en": "Specifies whether to preserve the lastModifyTime. Default value: true",
+            "description_zh": "是否保留lastModifyTime，默认true",
+            "example": "true",
+            "title": "是否保留lastModifyTime，默认true",
+            "type": "boolean"
+          },
+          "WithStorageClass": {
+            "description_en": "Specifies whether to migrate the StorageClass property. This is allowed only for OSS-to-OSS migration",
+            "description_zh": "是否迁移StorageClass属性，只允许oss->oss",
+            "example": "false",
+            "title": "是否迁移StorageClass属性，只允许oss->oss",
+            "type": "boolean"
+          }
+        },
+        "title": "创建迁移任务详情。",
+        "type": "object"
+      },
+      "FileTypeFilters": {
+        "description_en": "The filter based on the file type",
+        "description_zh": "文件类型过滤器",
+        "properties": {
+          "ExcludeDir": {
+            "description_en": "Specifies whether to filter out files in directories",
+            "description_zh": "过滤目录文件",
+            "example": "false",
+            "title": "过滤目录文件。",
+            "type": "boolean"
+          },
+          "ExcludeSymlink": {
+            "description_en": "Specifies whether to filter out symbolic links",
+            "description_zh": "过滤软链接",
+            "example": "false",
+            "title": "过滤软链接。",
+            "type": "boolean"
+          }
+        },
+        "title": "文件类型过滤器。",
+        "type": "object"
+      },
+      "FilterRule": {
+        "description_en": "The filtering rule",
+        "description_zh": "过滤规则",
+        "properties": {
+          "FileTypeFilters": {
+            "$ref": "#/components/schemas/FileTypeFilters",
+            "description_en": "The filter based on the file type",
+            "description_zh": "文件类型过滤器",
+            "title": "文件类型过滤器。"
+          },
+          "KeyFilters": {
+            "$ref": "#/components/schemas/KeyFilters",
+            "description_en": "The filter based on the file name",
+            "description_zh": "文件名过滤器",
+            "title": "文件名过滤器。"
+          },
+          "LastModifiedFilters": {
+            "$ref": "#/components/schemas/LastModifiedFilters",
+            "description_en": "The filter based on the file modification time",
+            "description_zh": "文件修改时间过滤器",
+            "title": "文件修改时间过滤器。"
+          }
+        },
+        "title": "过滤规则。",
+        "type": "object"
+      },
+      "ImportQos": {
+        "description_en": "The throttling settings of the task",
+        "description_zh": "任务限流",
+        "properties": {
+          "MaxBandWidth": {
+            "description_en": "The maximum bandwidth. Unit: bit/s",
+            "description_zh": "带宽，单位bit/s",
+            "example": "1073741824",
+            "format": "int64",
+            "title": "带宽，单位bit/s。",
+            "type": "integer"
+          },
+          "MaxImportTaskQps": {
+            "description_en": "The number of files that are migrated per second",
+            "description_zh": "每秒迁移文件数",
+            "example": "1000",
+            "format": "int64",
+            "title": "每秒迁移文件数。",
+            "type": "integer"
+          }
+        },
+        "title": "任务限流。",
+        "type": "object"
+      },
+      "KeyFilterItem": {
+        "description_en": "The filter based on the file name",
+        "description_zh": "文件名过滤项",
+        "properties": {
+          "Regex": {
+            "description_en": "The regular expressions",
+            "description_zh": "正则表达式列表",
+            "items": {
+              "description_en": "The regular expression",
+              "description_zh": "正则表达式",
+              "example": ".*\\.jpg$",
+              "type": "string"
+            },
+            "title": "正则表达式列表。",
+            "type": "array"
+          }
+        },
+        "title": "文件名过滤项。",
+        "type": "object"
+      },
+      "KeyFilters": {
+        "description_en": "The filter based on the file name",
+        "description_zh": "文件名过滤器",
+        "properties": {
+          "Excludes": {
+            "$ref": "#/components/schemas/KeyFilterItem",
+            "description_en": "The excluded file name",
+            "description_zh": "排除文件名",
+            "title": "排除文件名。"
+          },
+          "Includes": {
+            "$ref": "#/components/schemas/KeyFilterItem",
+            "description_en": "The included file name",
+            "description_zh": "包含文件名",
+            "title": "包含文件名"
+          }
+        },
+        "title": "文件名过滤器。",
+        "type": "object"
+      },
+      "LastModifiedFilters": {
+        "description_en": "The filter based on the file modification time",
+        "description_zh": "文件修改时间过滤器",
+        "properties": {
+          "Excludes": {
+            "$ref": "#/components/schemas/LastModifyFilterItem",
+            "description_en": "The excluded file modification time",
+            "description_zh": "排除文件修改时间",
+            "title": "排除文件修改时间。"
+          },
+          "Includes": {
+            "$ref": "#/components/schemas/LastModifyFilterItem",
+            "description_en": "The included file modification time",
+            "description_zh": "包含文件修改时间",
+            "title": "包含文件修改时间。"
+          }
+        },
+        "title": "文件修改时间过滤器。",
+        "type": "object"
+      },
+      "LastModifyFilterItem": {
+        "description_en": "The filter based on the file modification time",
+        "description_zh": "文件修改时间过滤项",
+        "properties": {
+          "TimeFilter": {
+            "description_en": "The time filters",
+            "description_zh": "时间过滤器列表",
+            "items": {
+              "$ref": "#/components/schemas/TimeFilter",
+              "description_en": "The time filter",
+              "description_zh": "时间过滤器"
+            },
+            "title": "时间过滤器列表。",
+            "type": "array"
+          }
+        },
+        "title": "文件修改时间过滤项。",
+        "type": "object"
+      },
+      "ScheduleRule": {
+        "description_en": "The scheduling rule",
+        "description_zh": "调度规则",
+        "properties": {
+          "MaxScheduleCount": {
+            "description_en": "The maximum number of times that the migration task is automatically scheduled. Each time the migration task is run, the execution ID increases by one until the task is run the specified number of times. The task is automatically scheduled based on the specified start time and pause time. The task is no longer automatically scheduled after the task is run the specified number of times. However, you can still manually start the task",
+            "description_zh": "自动调度轮次限制，任务执行ID在轮次限制内（任务从开始到结束为一轮执行）会根据启动时间和暂停时间自动调度，超过轮次限制不再自动调度，但是依然可以手动执行",
+            "example": "1",
+            "format": "int64",
+            "title": "自动调度轮次限制，任务执行ID在轮次限制内（任务从开始到结束为一轮执行）会根据启动时间和暂停时间自动调度，超过轮次限制不再自动调度，但是依然可以手动执行。",
+            "type": "integer"
+          },
+          "StartCronExpression": {
+            "description_en": "The time when the migration task started. You can use a CRON expression to specify the time. The interval at which the migration task is run is at least 1 hour",
+            "description_zh": "启动时间，Cron表达式，间隔不低于1小时",
+            "example": "0 0 * * * ?",
+            "title": "启动时间，Cron表达式，间隔不低于1小时。",
+            "type": "string"
+          },
+          "SuspendCronExpression": {
+            "description_en": "The time when the migration task paused. You can use a CRON expression to specify the time. The interval at which the migration task is run is at least 1 hour",
+            "description_zh": "暂停时间，Cron表达式，间隔不低于1小时",
+            "example": "0 0 * * * ?",
+            "title": "暂停时间，Cron表达式，间隔不低于1小时。",
+            "type": "string"
+          }
+        },
+        "title": "调度规则。",
+        "type": "object"
+      },
+      "TimeFilter": {
+        "description_en": "The time filter",
+        "description_zh": "时间过滤器",
+        "properties": {
+          "EndTime": {
+            "description_en": "The time when the migration task ended",
+            "description_zh": "结束时间",
+            "example": "2006-12-31T59:59:59Z",
+            "title": "结束时间。",
+            "type": "string"
+          },
+          "StartTime": {
+            "description_en": "The time when the migration task started",
+            "description_zh": "开始时间",
+            "example": "2006-01-01T00:00:00Z",
+            "title": "开始时间。",
+            "type": "string"
+          }
+        },
+        "title": "时间过滤器。",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a migration task",
   "description_zh": "创建迁移任务",
@@ -559,6 +916,7 @@
   "pathPattern": "/job",
   "product_code": "hcs-mgw",
   "protocol": "HTTPS",
+  "responses": {},
   "v1_body_parameters": [
     {
       "help_en": "The request body for creating the migration task",

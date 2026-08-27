@@ -141,6 +141,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "EciService",
+        "K8sAgent"
+      ],
       "example": "K8sAgent",
       "help_en": "The event source. Valid values:\n\nEciService\n\nK8sAgent\n\nIf you leave this parameter empty, all events are queried",
       "help_zh": "事件源。取值范围：\n\nEciService\nK8sAgent\n\n默认为空，查询所有事件",
@@ -158,6 +162,8 @@
       "help_en": "Returns only new events to enable incremental polling",
       "help_zh": "返回最近几秒内新增的事件，用于轮询增量事件",
       "location": "query",
+      "maximum": "3600",
+      "minimum": "60",
       "name": "since_second",
       "options": [
         "--since-second"
@@ -171,6 +177,8 @@
       "help_en": "The maximum number of ECI instances to return. Default value: 200.\n\nThe response may contain fewer entries than the specified value",
       "help_zh": "限定此次返回资源（ECI实例）的数量。默认为200个。\n\n返回结果可能小于指定的数量，但不会多于指定的数量",
       "location": "query",
+      "maximum": "200",
+      "minimum": "1",
       "name": "limit",
       "options": [
         "--limit"
@@ -182,5 +190,209 @@
   ],
   "pathPattern": "",
   "product_code": "Eci",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response schema",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Data": {
+            "description_en": "A list of event information",
+            "description_zh": "事件信息列表",
+            "items": {
+              "description_en": "A list of event information",
+              "description_zh": "事件信息列表",
+              "properties": {
+                "Annotations": {
+                  "description_en": "The annotations of the ECI instance",
+                  "description_zh": "ECI实例的注解",
+                  "example": "\"{\\\"tenancy.x-k8s.io/namespace\\\":\\\"redis\\\"}\"",
+                  "type": "string"
+                },
+                "ContainerGroupId": {
+                  "description_en": "The ID of the ECI instance",
+                  "description_zh": "ECI实例ID",
+                  "example": "eci-uf6fonnghi50v6nq****",
+                  "type": "string"
+                },
+                "Events": {
+                  "description_en": "A list of events",
+                  "description_zh": "事件列表",
+                  "items": {
+                    "description_en": "A list of events",
+                    "description_zh": "事件列表",
+                    "properties": {
+                      "Count": {
+                        "description_en": "The number of times the event occurred",
+                        "description_zh": "事件数量",
+                        "example": "10",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "FirstTimestamp": {
+                        "description_en": "The time when the event first occurred",
+                        "description_zh": "事件第一次出现的时间",
+                        "example": "2021-10-04T09:08:04Z",
+                        "type": "string"
+                      },
+                      "LastTimestamp": {
+                        "description_en": "The time when the event last occurred",
+                        "description_zh": "事件最后一次出现的时间",
+                        "example": "2021-10-04T09:08:04Z",
+                        "type": "string"
+                      },
+                      "Message": {
+                        "description_en": "The event message",
+                        "description_zh": "事件信息",
+                        "example": "Started container",
+                        "type": "string"
+                      },
+                      "Metadata": {
+                        "description_en": "The event metadata",
+                        "description_zh": "事件元数据",
+                        "properties": {
+                          "Name": {
+                            "description_en": "The event name",
+                            "description_zh": "事件名称",
+                            "example": "eci-uto-created-eci-for-ubuntu.167e3fb73cc7f9cb",
+                            "type": "string"
+                          },
+                          "Namespace": {
+                            "description_en": "The namespace",
+                            "description_zh": "命名空间",
+                            "example": "default",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "Reason": {
+                        "description_en": "The reason for the event",
+                        "description_zh": "事件原因",
+                        "example": "Started",
+                        "type": "string"
+                      },
+                      "ReportingComponent": {
+                        "description_en": "The component that reports the event",
+                        "description_zh": "上报事件的组件",
+                        "example": "test",
+                        "type": "string"
+                      },
+                      "ReportingInstance": {
+                        "description_en": "The instance that reports the event",
+                        "description_zh": "上报事件的实例",
+                        "example": "test",
+                        "type": "string"
+                      },
+                      "Source": {
+                        "description_en": "The source",
+                        "description_zh": "来源",
+                        "properties": {
+                          "Component": {
+                            "description_en": "The component",
+                            "description_zh": "组件",
+                            "example": "kubelet",
+                            "type": "string"
+                          },
+                          "Host": {
+                            "description_en": "The host",
+                            "description_zh": "主机类型",
+                            "example": "eci",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "Type": {
+                        "description_en": "The event type. Valid values:\n\nNormal\n\nWarning",
+                        "description_zh": "事件类型。可能值：\n\nNormal\nWarning",
+                        "example": "Normal",
+                        "type": "string"
+                      },
+                      "involvedObject": {
+                        "description_en": "The resource object that is associated with the event",
+                        "description_zh": "事件关联的资源对象",
+                        "properties": {
+                          "ApiVersion": {
+                            "description_en": "The Kubernetes version",
+                            "description_zh": "K8s版本",
+                            "example": "v1",
+                            "type": "string"
+                          },
+                          "Kind": {
+                            "description_en": "The resource type",
+                            "description_zh": "资源类型",
+                            "example": "Pod",
+                            "type": "string"
+                          },
+                          "Name": {
+                            "description_en": "The resource name",
+                            "description_zh": "资源名称",
+                            "example": "test",
+                            "type": "string"
+                          },
+                          "Namespace": {
+                            "description_en": "The namespace where the resource resides",
+                            "description_zh": "资源所在命名空间",
+                            "example": "default",
+                            "type": "string"
+                          },
+                          "Uid": {
+                            "description_en": "The ID of the resource",
+                            "description_zh": "资源ID",
+                            "example": "eci-8vb5nkcq3a5cu0p3****",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "Name": {
+                  "description_en": "The name of the ECI instance",
+                  "description_zh": "ECI实例名称",
+                  "example": "test",
+                  "type": "string"
+                },
+                "Namespace": {
+                  "description_en": "The namespace where the ECI instance resides",
+                  "description_zh": "ECI实例所在命名空间",
+                  "example": "redis",
+                  "type": "string"
+                },
+                "uuid": {
+                  "description_en": "The UUID of the ECI instance",
+                  "description_zh": "ECI实例的UUID",
+                  "example": "3fc6b309-****-****",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1340C38D-6189-54D1-86F6-7D5ECF3E0088",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The number of events returned",
+            "description_zh": "返回的事件条数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

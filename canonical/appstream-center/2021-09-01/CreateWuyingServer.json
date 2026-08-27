@@ -75,6 +75,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "cloud_auto"
+      ],
       "example": "cloud_auto",
       "help_en": "The type of the system cloud disk",
       "help_zh": "系统盘类型",
@@ -116,6 +119,9 @@
             "type": "int"
           },
           {
+            "enum": [
+              "cloud_auto"
+            ],
             "example": "cloud_auto",
             "help_en": "The type of the data cloud disk",
             "help_zh": "数据盘类型",
@@ -207,6 +213,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "PrePaid"
+      ],
       "example": "PrePaid",
       "help_en": "The billing method",
       "help_zh": "付费类型",
@@ -233,6 +242,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "Month",
+        "Year"
+      ],
       "example": "Month",
       "help_en": "The unit of the subscription duration",
       "help_zh": "时间单位",
@@ -331,6 +344,8 @@
       "help_en": "The bandwidth value. This parameter takes effect only when NetworkStrategyType is set to DirectIp. Unit: Mbit/s. Valid values: 2 to 100",
       "help_zh": "带宽值，NetworkStrategyType为DirectIp有效，单位：Mbps，范围2～100",
       "location": "formData",
+      "maximum": "1000",
+      "minimum": "2",
       "name": "bandwidth",
       "options": [
         "--bandwidth"
@@ -417,214 +432,49 @@
   "pathPattern": "",
   "product_code": "appstream-center",
   "protocol": "HTTPS",
-  "v1_body_parameters": [
-    {
-      "help_en": "The number of workstations to create",
-      "help_zh": "数量",
-      "name": "Amount",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "Specifies whether to enable automatic payment",
-      "help_zh": "自动支付",
-      "name": "AutoPay",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "Specifies whether to enable auto-renewal",
-      "help_zh": "自动续费",
-      "name": "AutoRenew",
-      "position": "body",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The bandwidth value. This parameter takes effect only when NetworkStrategyType is set to DirectIp. Unit: Mbit/s. Valid values: 2 to 100",
-      "help_zh": "带宽值，NetworkStrategyType为DirectIp有效，单位：Mbps，范围2～100",
-      "name": "Bandwidth",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The region ID",
-      "help_zh": "地域",
-      "name": "BizRegionId",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The billing method",
-      "help_zh": "付费类型",
-      "name": "ChargeType",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The list of data cloud disks",
-      "help_zh": "数据盘列表",
-      "name": "DataDisk",
-      "param_style": "flat",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "help_en": "The hostname. The following limits apply:\n\nA period (.) or hyphen (-) cannot be used as the first or last character, and consecutive periods or hyphens are not allowed.\n\nWindows workstations: The hostname must be 2 to 15 characters in length. It cannot contain periods (.). Consecutive hyphens are not allowed, and the hostname cannot be all digits. The hostname can contain uppercase and lowercase letters, digits, and hyphens (-).\n\nLinux workstations:\n\nThe hostname must be 2 to 64 characters in length and can contain multiple periods (.). Each segment separated by a period can contain uppercase and lowercase letters, digits, and hyphens (-).\n\nYou can use the placeholder `${instance_id}` to include the instance ID in the HostName parameter. For example, if you set `HostName=k8s-${instance_id}` and the ECS instance ID is `i-123abc****`, the hostname is `k8s-i-123abc****`.\n\nWhen you create multiple workstation instances at a time, you can use the `name_prefix[begin_number,bits]name_suffix` format to assign sequential hostnames. For example, if you set HostName to `ecd-[1,4]-test`, the hostname of the first workstation is `ecd-0001-test`, the hostname of the second workstation is `ecd-0002-test`, and so on.\n\n`name_prefix`: The prefix of the hostname.\n\n`[begin_number,bits]`: The sequential number in the hostname.\n\n    - `begin_number`: The starting number. Valid values: 0 to 999999. Default value: 0. If the value is invalid, it is set to 0.\n\n    - `bits`: The number of digits. Valid values: 1 to 6. Default value: 6. If the value is invalid, it is set to 6.\n\n`name_suffix`: The suffix of the hostname",
-      "help_zh": "主机名称。限制说明如下：\n\n半角句号（.）和短划线（-）不能作为首尾字符，更不能连续使用。\n\nwindows工作站：字符长度为2~15，不支持半角句号（.），不能连续使用短划线，不能全是数字。允许包含大小写英文字母、数字和短划线（-）。\n\nLinux工作站：\n\n字符长度为2~64，支持多个半角句号（.），点之间为一段，每段允许包含大小写英文字母、数字和短划线（-）。\n\n支持通过占位符`${instance_id}`将实例ID 写入HostName参数。例如：`HostName=k8s-${instance_id}`，并且创建的 ECS 实例 ID 为`i-123abc****`，则该实例的主机名为`k8s-i-123abc****`。\n\n一次创建多台工作站实例时，可以使用`name_prefix[begin_number,bits]name_suffix`的命名格式为多台工作站统一命名。例如，设置Hostname 的取值为`ecd-[1,4]-test`，则第一台工作站主机名称为`ecd-0001-test`，第二台工作站主机名称为`ecd-0002-test`，依次类推。\n\n`name_prefix`：主机名称的前缀。\n\n`[begin_number,bits]`：主机名称中的有序数字。\n\n    - `begin_number`：起始数字，取值支持0~999999，默认值为 0，若取值非法也设置为0。\n\n    - `bits`：数字位数，取值支持1~6，默认值为 6，若取值非法也设置为6。\n\n`name_suffix`：主机名称的后缀",
-      "name": "HostName",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The idempotence token that ensures the uniqueness of the operation",
-      "help_zh": "幂等性令牌，确保操作唯一性",
-      "name": "IdempotenceToken",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The image ID",
-      "help_zh": "镜像ID",
-      "name": "ImageId",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "MaxPrice",
-      "position": "body",
-      "required": false,
-      "type": "float"
-    },
-    {
-      "help_en": "The network policy type (invite-only preview)",
-      "help_zh": "网络策略类型（邀测）",
-      "name": "NetworkStrategyType",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The office network ID",
-      "help_zh": "办公网络ID",
-      "name": "OfficeSiteId",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The logon password of the workstation",
-      "help_zh": "工作站登录密码",
-      "name": "Password",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The subscription duration",
-      "help_zh": "购买时长",
-      "name": "Period",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The unit of the subscription duration",
-      "help_zh": "时间单位",
-      "name": "PeriodUnit",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The discount ID.\n\n\nIf PromotionId is specified, the system attempts to apply the corresponding discount",
-      "help_zh": "折扣ID。\n\n\n如果设置了PromotionId，则会尝试应用相应的折扣优惠",
-      "name": "PromotionId",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "SavingPlanId",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The workstation instance type",
-      "help_zh": "工作站规格",
-      "name": "ServerInstanceType",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "ServerPortRange",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "SubPayType",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The type of the system cloud disk",
-      "help_zh": "系统盘类型",
-      "name": "SystemDiskCategory",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The performance level of the system cloud disk",
-      "help_zh": "系统盘性能等级",
-      "name": "SystemDiskPerformanceLevel",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The size of the system cloud disk. Unit: GB",
-      "help_zh": "系统盘大小，单位GB",
-      "name": "SystemDiskSize",
-      "position": "body",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The list of vSwitches in the office network",
-      "help_zh": "办公网络交换机列表",
-      "name": "VSwitchIds",
-      "param_style": "repeatList",
-      "position": "body",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "name": "VirtualNodePoolId",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The workstation name. When you create multiple workstations, a numeric suffix is automatically appended",
-      "help_zh": "工作站名称，创建多台时自动增加数字后缀",
-      "name": "WuyingServerName",
-      "position": "body",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response",
+        "description_zh": "请求响应",
+        "properties": {
+          "Data": {
+            "description_en": "The response data",
+            "description_zh": "响应数据",
+            "properties": {
+              "OrderId": {
+                "description_en": "The order ID",
+                "description_zh": "订单ID",
+                "example": "23429322113****",
+                "type": "string"
+              },
+              "WuyingServerIdList": {
+                "description_en": "The list of workstation IDs",
+                "description_zh": "工作站ID列表",
+                "items": {
+                  "description_en": "The workstation ID",
+                  "description_zh": "工作站ID",
+                  "example": "ws-0byd****2lwi",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1CBAFFAB-B697-4049-A9B1-67E1FC5F****",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

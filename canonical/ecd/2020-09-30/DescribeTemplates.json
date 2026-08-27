@@ -53,6 +53,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "USER_TEMPLATE",
+        "SYSTEM_TEMPLATE"
+      ],
       "example": "USER_TEMPLATE",
       "help_en": "The templatetype to query. If this parameter is not specified, templates of all types are queried",
       "help_zh": "指定查询的模板类型，不传则表示查询所有类型的模板",
@@ -92,6 +96,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "CloudDesktop"
+      ],
       "example": "CloudDesktop",
       "help_en": "The product type. Set this parameter to `CloudDesktop`",
       "help_zh": "产品类型。固定填写`CloudDesktop`",
@@ -135,6 +142,7 @@
       "help_en": "The page number of the current page in a paged query. Paging starts from page 1",
       "help_zh": "分页查询时，当前页的页码",
       "location": "formData",
+      "minimum": "0",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -148,6 +156,8 @@
       "help_en": "The maximum number of rows per page in a paged query. Paging is used to return results in batches",
       "help_zh": "分页查询时，每页最大行数",
       "location": "formData",
+      "maximum": "100",
+      "minimum": "0",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -159,5 +169,398 @@
   ],
   "pathPattern": "",
   "product_code": "ecd",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "ListResult<TemplateModel>",
+        "description_zh": "ListResult<TemplateModel>",
+        "properties": {
+          "Code": {
+            "description_en": "The operation result. A value of `success` indicates success. Otherwise, an error message is returned",
+            "description_zh": "修改结果。返回`success`表示成功，否则将返回错误信息",
+            "example": "success",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "The list of queried template information",
+            "description_zh": "查询的模板信息列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "AutoPay": {
+                  "description_en": "Indicates whether automatic payment is enabled for subscription orders",
+                  "description_zh": "是否自动支付包年包月订单",
+                  "type": "boolean"
+                },
+                "AutoRenew": {
+                  "description_en": "Indicates whether auto-renewal is enabled for the subscription shared cloud computer",
+                  "description_zh": "是否为包年包月共享型云电脑开启自动续费",
+                  "type": "boolean"
+                },
+                "ChargeType": {
+                  "description_en": "The billing type of the cloud computer",
+                  "description_zh": "云电脑的付费类型",
+                  "example": "PrePaid",
+                  "type": "string"
+                },
+                "DataDiskList": {
+                  "description_en": "The size and specification configurations of data cloud disks",
+                  "description_zh": "数据盘大小和规格配置",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "PerformanceLevel": {
+                        "description_en": "The performance level of the data cloud disk",
+                        "description_zh": "数据盘性能等级",
+                        "enumValueTitles": {
+                          "AutoPL": "SSD高速云盘",
+                          "PL0": "ESSD高速云盘PL0等级",
+                          "PL1": "ESSD高速云盘PL1等级"
+                        },
+                        "example": "AutoPL",
+                        "type": "string"
+                      },
+                      "Size": {
+                        "description_en": "The data cloud disk size. Unit: GiB",
+                        "description_zh": "数据盘大小。单位：GiB",
+                        "example": "100",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "DefaultLanguage": {
+                  "description_en": "The default startup language configured in the template",
+                  "description_zh": "模板设置的默认启动语言",
+                  "enumValueTitles": {
+                    "en-US": "英语",
+                    "ja-JP": "日语",
+                    "zh-CN": "简体中文",
+                    "zh-HK": "繁体中文（香港）"
+                  },
+                  "example": "zh-CN",
+                  "type": "string"
+                },
+                "Description": {
+                  "description_en": "The template description",
+                  "description_zh": "模板描述",
+                  "example": "我的模板",
+                  "type": "string"
+                },
+                "GmtCreate": {
+                  "description_en": "The creation time of the template (UTC)",
+                  "description_zh": "模板的创建时间（UTC时间）",
+                  "example": "2025-04-25T05:18:46.000+00:00",
+                  "type": "string"
+                },
+                "GmtModified": {
+                  "description_en": "The update time of the template (UTC)",
+                  "description_zh": "模板的更新时间（UTC时间）",
+                  "example": "2025-04-25T05:18:46.000+00:00",
+                  "type": "string"
+                },
+                "ImageId": {
+                  "description_en": "The image ID",
+                  "description_zh": "镜像ID",
+                  "example": "m-5q8ehbihx*****",
+                  "type": "string"
+                },
+                "ImageType": {
+                  "description_en": "The image type",
+                  "description_zh": "镜像类型",
+                  "enumValueTitles": {
+                    "Community": "社区镜像",
+                    "Shared": "共享镜像",
+                    "System": "系统镜像",
+                    "User": "用户自定义镜像"
+                  },
+                  "example": "User",
+                  "type": "string"
+                },
+                "Period": {
+                  "description_en": "The subscription duration of the subscription shared cloud computer. This parameter takes effect only when ChargeType is set to PrePaid, and is required in that case. The unit is specified by PeriodUnit",
+                  "description_zh": "包年包月共享型云电脑的购买时长。当参数`ChargeType`取值为`PrePaid`时才生效，且为必选值。单位由`PeriodUnit`指定。\n如果`PeriodUnit`为`Month`，该参数的取值范围：\n    - 1\n    - 2\n    - 3\n    - 6\n如果`PeriodUnit`为`Year`，该参数的取值范围：\n    - 1\n    - 2\n    - 3\n    - 4\n    - 5",
+                  "example": "1",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "PeriodUnit": {
+                  "description_en": "The unit of the subscription billing duration. Billable methods use this parameter to specify the time unit",
+                  "description_zh": "包年包月计费方式的时长单位",
+                  "example": "Month",
+                  "type": "string"
+                },
+                "PolicyGroupId": {
+                  "description_en": "The policy group ID",
+                  "description_zh": "策略ID",
+                  "example": "pg-0caoeogkhz*****",
+                  "type": "string"
+                },
+                "PostPaidAfterUsedUp": {
+                  "description_en": "Indicates whether the cloud computer automatically switches to pay-as-you-go billing after the duration plan is exhausted",
+                  "description_zh": "时长包用尽后是否自动转为按量付费继续使用",
+                  "type": "boolean"
+                },
+                "ProductType": {
+                  "description_en": "The product type",
+                  "description_zh": "产品类型",
+                  "enumValueTitles": {
+                    "CloudDesktop": "云电脑"
+                  },
+                  "example": "CLOUD_DESKTOP",
+                  "type": "string"
+                },
+                "RegionConfigList": {
+                  "description_en": "The region-related configuration parameters",
+                  "description_zh": "地域相关的配置参数",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "CpuCount": {
+                        "description_en": "The number of vCPUs included in the cloud computer specification",
+                        "description_zh": "云电脑规格包含的vCPU数量",
+                        "example": "4",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "GpuSpec": {
+                        "description_en": "The GPU memory information. This field is displayed only when the specification is a graphics-accelerated type",
+                        "description_zh": "GPU显存信息。只要在规格是图形型的场景才会显示",
+                        "example": "4GiB",
+                        "type": "string"
+                      },
+                      "MemorySize": {
+                        "description_en": "The memory size. Unit: MiB",
+                        "description_zh": "内存大小。单位：MiB",
+                        "example": "8192",
+                        "format": "int64",
+                        "type": "integer"
+                      },
+                      "OfficeSiteId": {
+                        "description_en": "The office network ID",
+                        "description_zh": "办公网络ID",
+                        "example": "cn-beijing+dir-3040*****",
+                        "type": "string"
+                      },
+                      "RegionId": {
+                        "description_en": "The region ID",
+                        "description_zh": "地域ID",
+                        "example": "cn-shenzhen",
+                        "type": "string"
+                      },
+                      "ResourceInstanceType": {
+                        "description_en": "The cloud computer specification ID",
+                        "description_zh": "云电脑规格ID",
+                        "example": "eds.enterprise_office.4c8g",
+                        "type": "string"
+                      },
+                      "SnapshotPolicyId": {
+                        "description_en": "The snapshot policy ID",
+                        "description_zh": "快照策略ID",
+                        "example": "sp-b9fasjuu0*****",
+                        "type": "string"
+                      },
+                      "SubnetId": {
+                        "description_en": "The subnet ID",
+                        "description_zh": "子网ID",
+                        "example": "vsw-dgea1*****",
+                        "type": "string"
+                      },
+                      "VolumeEncryptionEnable": {
+                        "description_en": "Indicates whether disk encryption is enabled",
+                        "description_zh": "是否开启了磁盘加密设置参数",
+                        "example": "false",
+                        "type": "boolean"
+                      },
+                      "VolumeEncryptionKey": {
+                        "description_en": "The KMS key ID used when disk encryption is enabled",
+                        "description_zh": "开启磁盘加密的情况下使用的KMS的密钥ID",
+                        "example": "3bc77be0-cbce-4a29-b07b-13f16394****",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "RequestId": {
+                  "description_en": "The request ID",
+                  "description_zh": "请求ID",
+                  "example": "1871984F-51F6-5588-BAF6-******",
+                  "type": "string"
+                },
+                "ResourceGroupId": {
+                  "description_en": "The resource group ID",
+                  "description_zh": "资源组ID",
+                  "example": "rg-a5fqjjqaejt***",
+                  "type": "string"
+                },
+                "ResourceTagList": {
+                  "description_en": "The cloud computer tags in key-value format",
+                  "description_zh": "云电脑标签。Key-Value格式",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "Key": {
+                        "description_en": "The tag key",
+                        "description_zh": "标签键",
+                        "example": "env",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The tag value",
+                        "description_zh": "属性值",
+                        "example": "8核16GB",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "SiteConfigList": {
+                  "description_en": "The site configuration management",
+                  "description_zh": "区域配置管理",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "AppRuleId": {
+                        "description_en": "The application control policy ID",
+                        "description_zh": "应用管控策略ID",
+                        "example": "bwr-5a5371e0*******",
+                        "type": "string"
+                      },
+                      "SiteId": {
+                        "description_en": "The site name",
+                        "description_zh": "站点名称",
+                        "enumValueTitles": {
+                          "mainland": "中国内地（大陆）",
+                          "outside_mainland": "港澳台和海外"
+                        },
+                        "example": "mainland",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "SystemDiskPerformanceLevel": {
+                  "description_en": "The system cloud disk type",
+                  "description_zh": "系统盘类型",
+                  "enumValueTitles": {
+                    "AutoPL": "SSD高速云盘",
+                    "PL0": "ESSD高速云盘PL0等级",
+                    "PL1": "ESSD高速云盘PL1等级"
+                  },
+                  "example": "AutoPL",
+                  "type": "string"
+                },
+                "SystemDiskSize": {
+                  "description_en": "The system cloud disk size. Unit: GiB",
+                  "description_zh": "系统盘大小。单位：GiB",
+                  "example": "80",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "TemplateId": {
+                  "description_en": "The template ID",
+                  "description_zh": "模板ID",
+                  "example": "b-0caoeogs88y*****",
+                  "type": "string"
+                },
+                "TemplateName": {
+                  "description_en": "The template name",
+                  "description_zh": "模板名称",
+                  "example": "我的模板001",
+                  "type": "string"
+                },
+                "TemplateType": {
+                  "description_en": "The templatetype",
+                  "description_zh": "模板类型",
+                  "enumValueTitles": {
+                    "SYSTEM_TEMPLATE": "系统模板",
+                    "USER_TEMPLATE": "用户自定义模板"
+                  },
+                  "example": "USER_TEMPLATE",
+                  "type": "string"
+                },
+                "TimerGroupId": {
+                  "description_en": "The scheduled task group ID",
+                  "description_zh": "定时任务组ID",
+                  "example": "bcc-dweha*****",
+                  "type": "string"
+                },
+                "UserDuration": {
+                  "description_en": "The per-user usage duration plan",
+                  "description_zh": "单用户使用时长套餐",
+                  "example": "120",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "The error message. This parameter is not returned when Code is `success`",
+            "description_zh": "错误信息。当Code为`success`时，不返回该参数",
+            "example": "success",
+            "type": "string"
+          },
+          "PageNumber": {
+            "description_en": "The current page number",
+            "description_zh": "当前页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page",
+            "description_zh": "每页行数",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "1871984F-51F6-5588-BAF6-*******",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the operation is successful",
+            "description_zh": "操作是否成功",
+            "example": "True",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries",
+            "description_zh": "总数",
+            "example": "94",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "ListResult<TemplateModel>",
+        "type": "object"
+      }
+    }
+  }
 }

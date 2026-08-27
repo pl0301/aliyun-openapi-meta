@@ -2,6 +2,45 @@
   "camel_example": "aliyun ossutil api get-object-acl --bucket examplebucket --key exampledir/exampleobject/txt --region cn-hangzhou --version-id list1",
   "cmd_full_name": "oss get-object-acl",
   "cmd_name": "get-object-acl",
+  "components": {
+    "schemas": {
+      "ObjectACL": {
+        "default": "default",
+        "description_en": "The access control list (ACL) of the object when it is created in OSS.\n\nValid values:\n\ndefault: The object inherits the ACL of the bucket in which it is stored.\nprivate: The object is a private resource. Only the object owner and authorized users have read and access permissions on the object. Other users cannot access the object.\npublic-read: The object is a public-read resource. Only the object owner and authorized users have read and access permissions on the object. Other users have only read permissions on the object. Exercise caution when you set this value.\npublic-read-write: The object is a public-read-write resource. All users have read and access permissions on the object. Exercise caution when you set this value.\n\nFor more information about ACLs, see **[ACL]（https://help.aliyun.com/document_detail/100676.html）**",
+        "description_zh": "指定OSS创建Object时的访问权限。\n取值：\n\ndefault（默认）：Object遵循所在存储空间的访问权限。\nprivate：Object是私有资源。只有Object的拥有者和授权用户有该Object的读写权限，其他用户没有权限操作该Object。\npublic-read：Object是公共读资源。只有Object的拥有者和授权用户有该Object的读写权限，其他用户只有该Object的读权限。请谨慎使用该权限。\npublic-read-write：Object是公共读写资源。所有用户都有该Object的读写权限。请谨慎使用该权限。\n\n关于访问权限的更多信息，请参见**[读写权限ACL]（https://help.aliyun.com/document_detail/100676.html）**",
+        "enum": [
+          "private",
+          "public-read",
+          "public-read-write",
+          "default"
+        ],
+        "example": "public-read",
+        "type": "string"
+      },
+      "Owner": {
+        "description_en": "The container that stores the information about the bucket owner",
+        "description_zh": "保存Bucket拥有者信息的容器",
+        "properties": {
+          "DisplayName": {
+            "description_en": "The name of the bucket owner. Currently, this value is the same as the ID",
+            "description_zh": "Bucket拥有者的名称 （目前和ID一致）",
+            "example": "ut_test_bucket",
+            "title": "The display name of the owner",
+            "type": "string"
+          },
+          "ID": {
+            "description_en": "The user ID of the bucket owner",
+            "description_zh": "Bucket拥有者的用户ID",
+            "example": "ut_test_bucket",
+            "title": "The ID of the owner",
+            "type": "string"
+          }
+        },
+        "title": "Container for the owner's display name and ID",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the access permissions of a file (Object) in a bucket",
   "description_zh": "获取存储空间（Bucket）下某个文件（Object）的访问权限（ACL）",
@@ -62,5 +101,41 @@
   ],
   "pathPattern": "/[key]?acl",
   "product_code": "Oss",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body that contains the ACL information",
+        "description_zh": "存储ACL信息的响应体",
+        "properties": {
+          "AccessControlPolicy": {
+            "description_en": "The container that stores the ACL information",
+            "description_zh": "存储ACL信息的容器",
+            "properties": {
+              "AccessControlList": {
+                "description_en": "The container that stores the ACL information",
+                "description_zh": "存储ACL信息的容器",
+                "properties": {
+                  "Grant": {
+                    "$ref": "#/components/schemas/ObjectACL",
+                    "description_en": "The ACL of the object",
+                    "description_zh": "Object的ACL权限"
+                  }
+                },
+                "type": "object"
+              },
+              "Owner": {
+                "$ref": "#/components/schemas/Owner",
+                "description_en": "The container that stores the information about the bucket owner",
+                "description_zh": "保存Bucket拥有者信息的容器"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "5XX": {}
+  }
 }

@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "ehpc-hz-jeJki6****",
       "help_en": "The cluster ID",
       "help_zh": "集群ID",
@@ -33,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "1583907780",
       "help_en": "The beginning of the time range to query. The time is a timestamp. This value is a UNIX timestamp representing the number of seconds that have elapsed since the epoch time January 1, 1970, 00:00:00 UTC",
       "help_zh": "查询开始时间点。Unix时间戳类型，表示从1970-1-1 00:00:00 UTC计算起的秒数",
@@ -46,6 +48,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1583907790",
       "help_en": "The end of the time range to query. The time is a timestamp. This value is a UNIX timestamp representing the number of seconds that have elapsed since the epoch time January 1, 1970, 00:00:00 UTC",
       "help_zh": "查询结束时间点。Unix时间戳类型，表示从1970-1-1 00:00:00 UTC计算起的秒数",
@@ -140,78 +143,72 @@
   "pathPattern": "",
   "product_code": "EHPC",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The data aggregation interval. Unit: seconds.\n\nValid values: 1, 10, 60, 600, and 3600.\n\nDefault value: 1",
-      "help_zh": "数据聚合间隔。单位：秒。\n\n取值范围：1、10、60、600、3600。\n\n默认值：1",
-      "name": "AggregationInterval",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The data aggregation type. Valid values:\n\nsum: the sum of the data\navg: the average value\nmax: the maximum value\nmin: the minimum value\n\nAggregation is disabled by default",
-      "help_zh": "数据聚合类别。取值范围：\nsum：统计和。\navg：平均值。\nmax：最大值。\nmin：最小值。\n\n默认不使用聚合",
-      "name": "AggregationType",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The cluster ID",
-      "help_zh": "集群ID",
-      "name": "ClusterId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The filter conditions. A JSON-formatted string that contains several key-value pairs. Valid values of the key:\n\nInstanceId: the ID of the node\nHostname: the hostname of the node\nNetworkInterface: the name of the network interface\nDiskDevice: the name of the disk",
-      "help_zh": "指定过滤条件。JSON格式字符串，包含若干key:value对。key的取值范围：\nInstanceId：节点ID。\nHostname：节点主机名称。\nNetworkInterface：网络接口名称。\nDiskDevice：磁盘设备名称",
-      "name": "Filter",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The beginning of the time range to query. The time is a timestamp. This value is a UNIX timestamp representing the number of seconds that have elapsed since the epoch time January 1, 1970, 00:00:00 UTC",
-      "help_zh": "查询开始时间点。Unix时间戳类型，表示从1970-1-1 00:00:00 UTC计算起的秒数",
-      "name": "From",
-      "position": "query",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The category of the output performance metrics. Separate multiple metrics with commas (,). Valid values:\n\ncpu\nmemory",
-      "help_zh": "输出性能指标的类别，多个指标用半角逗号（,）隔开。取值范围：\ncpu：CPU。\nmemory：内存",
-      "name": "MetricCategories",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The dimensions of the performance metric. Valid values:\n\nmachine\nprocess\nnetwork\ndisk",
-      "help_zh": "性能指标的维度。取值范围：\nmachine： 整机。\nprocess：进程。\nnetwork：网络。\ndisk：磁盘",
-      "name": "MetricScope",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "Specifies whether to return logs in reverse order of timestamps. Default value: false",
-      "help_zh": "按时间逆序返回日志。\n默认值：false",
-      "name": "Reverse",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The end of the time range to query. The time is a timestamp. This value is a UNIX timestamp representing the number of seconds that have elapsed since the epoch time January 1, 1970, 00:00:00 UTC",
-      "help_zh": "查询结束时间点。Unix时间戳类型，表示从1970-1-1 00:00:00 UTC计算起的秒数",
-      "name": "To",
-      "position": "query",
-      "required": true,
-      "type": "int"
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "MetricLogs": {
+            "itemNode": true,
+            "properties": {
+              "MetricLog": {
+                "description_en": "The queried performance metric data",
+                "description_zh": "性能数据列表",
+                "items": {
+                  "properties": {
+                    "DiskDevice": {
+                      "description_en": "The name of the disk",
+                      "description_zh": "磁盘设备名称",
+                      "example": "vda1",
+                      "type": "string"
+                    },
+                    "Hostname": {
+                      "description_en": "The hostname of the node",
+                      "description_zh": "节点主机名称",
+                      "example": "compute000",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "The node ID",
+                      "description_zh": "节点ID",
+                      "example": "i-bp132g97g7zwnvta****",
+                      "type": "string"
+                    },
+                    "MetricData": {
+                      "description_en": "A JSON-formatted serialized string that contains performance metric data of multiple categories",
+                      "description_zh": "JSON序列化字符串，包含多个类别性能指标数值",
+                      "example": "{\\\"process|cpusage\\\":0,\\\"process|cpuser\\\":0,\\\"process|cpusys\\\":0,******}",
+                      "type": "string"
+                    },
+                    "NetworkInterface": {
+                      "description_en": "The name of the network interface",
+                      "description_zh": "网络接口名称",
+                      "example": "eth1",
+                      "type": "string"
+                    },
+                    "Time": {
+                      "description_en": "The timestamp of the log. The time is a timestamp. This value is a UNIX timestamp representing the number of seconds that have elapsed since the epoch time January 1, 1970, 00:00:00 UTC",
+                      "description_zh": "日志时间戳。Unix时间戳类型，表示从1970-1-1 00:00:00 UTC计算起的秒数",
+                      "example": "1583907780",
+                      "format": "int32",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "015C2C4D-1884-4EB7-BCD3-C5BB8D7E56DB",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

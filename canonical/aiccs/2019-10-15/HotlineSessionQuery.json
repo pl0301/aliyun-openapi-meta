@@ -20,6 +20,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "ccc_xp_pre-cn-***",
       "help_en": "AICCS instance ID.  \nYou can obtain it in the Instance Management section of the left-side navigation pane in the Artificial Intelligence Cloud Call Service console (https://aiccs.console.aliyun.com/overview)",
       "help_zh": "AICCS实例ID。\n您可以在智能联络中心控制台 (https://aiccs.console.aliyun.com/overview)左侧导航栏的<b>实例管理</b>中获取",
@@ -219,6 +220,8 @@
       "help_en": "Page size. The value must be greater than 0. Default value: 20",
       "help_zh": "每页大小。取值大于0，默认值：20",
       "location": "query",
+      "maximum": "50",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -232,6 +235,8 @@
       "help_en": "Current page number. The value must be greater than 0. Default Value: 1",
       "help_zh": "当前页。取值大于0，默认值：1",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "1",
       "name": "page_no",
       "options": [
         "--page-no"
@@ -241,6 +246,12 @@
       "type": "int"
     },
     {
+      "enum": [
+        "normal",
+        "queueClose",
+        "dailingClose",
+        "ivrClose"
+      ],
       "example": "normal",
       "help_en": "Call result. Valid values:  \n\nnormal: Normal hang-up.  \ntouchRouteError: Queue hang-up.  \ntouchInQueue: Queue hang-up.  \ntouchInLoss: Queue hang-up.  \nuserHangup: User hang-up or IVR hang-up.  \nsysHangup: System hang-up or IVR hang-up.  \ntransferAgent: User hang-up or IVR hang-up.  \ndailing: Agent hang-up during ringing.  \nTouchRingCallLoss: Queue hang-up during ringing",
       "help_zh": "呼叫结果。取值：\n\nnormal：正常挂机。\ntouchRouteError：队列挂机。\ntouchInQueue：队列挂机。\ntouchInLoss：队列挂机。\nuserHangup：用户挂机，IVR挂机。\nsysHangup：系统挂机，IVR挂机。\ntransferAgent：用户挂机，IVR挂机。\ndailing：客服挂机，振铃挂机。\nTouchRingCallLoss：队列挂机，振铃挂机",
@@ -397,5 +408,261 @@
   ],
   "pathPattern": "",
   "product_code": "aiccs",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "result",
+        "description_zh": "result",
+        "properties": {
+          "Code": {
+            "description_en": "Status code. A value of \"Success\" indicates that the request succeeded",
+            "description_zh": "状态码。返回Success表示请求成功",
+            "example": "Success",
+            "type": "string"
+          },
+          "Data": {
+            "description_en": "Call data",
+            "description_zh": "通话数据",
+            "properties": {
+              "CallDetailRecord": {
+                "description_en": "Call detail records",
+                "description_zh": "通话记录",
+                "items": {
+                  "description_en": "Call record information",
+                  "description_zh": "通话记录信息",
+                  "properties": {
+                    "Acid": {
+                      "description_en": "Session ID. The acid in WebSocket after an incoming call",
+                      "description_zh": "会话ID。入呼后，websocket中的acid",
+                      "example": "7719786",
+                      "type": "string"
+                    },
+                    "ActiveTransferId": {
+                      "description_en": "Agent ID.  \n\nThis field is null in non–change owner scenarios.  ",
+                      "description_zh": "坐席ID。\n非转交场景数据为Null",
+                      "example": "12",
+                      "type": "string"
+                    },
+                    "CallContinueTime": {
+                      "description_en": "Call duration, in seconds.  \n\nUnconnected calls do not include call duration.  ",
+                      "description_zh": "通话时长。单位：秒。\n\n未接通场景无通话时长",
+                      "example": "37",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "CallResult": {
+                      "description_en": "Call result. Valid values:\n\nnormal: Normal hang-up.\ntouchRouteError: Queue hang-up.\ntouchInQueue: Queue hang-up.\ntouchInLoss: Queue hang-up.\nuserHangup: User hang-up or IVR hang-up.\nsysHangup: System hang-up or IVR hang-up.\ntransferAgent: User hang-up or IVR hang-up.\ndailing: Agent hang-up or ring-off hang-up.\nTouchRingCallLoss: Queue hang-up or ring-off hang-up",
+                      "description_zh": "呼叫结果。取值：\n\nnormal：正常挂机。\ntouchRouteError：队列挂机。\ntouchInQueue：队列挂机。\ntouchInLoss：队列挂机。\nuserHangup：用户挂机，IVR挂机。\nsysHangup：系统挂机，IVR挂机。\ntransferAgent：用户挂机，IVR挂机。\ndailing：客服挂机，振铃挂机。\nTouchRingCallLoss：队列挂机，振铃挂机",
+                      "example": "normal",
+                      "type": "string"
+                    },
+                    "CallType": {
+                      "description_en": "Call type. Valid values:\n1: Outbound call\n2: Inbound call\n3: Change owner",
+                      "description_zh": "呼叫类型。取值：\n1：外呼\n2：入呼\n3：转交",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "CalledNumber": {
+                      "description_en": "Called number",
+                      "description_zh": "被叫号码",
+                      "example": "135615*****",
+                      "type": "string"
+                    },
+                    "CallingNumber": {
+                      "description_en": "Calling party number, such as a user's phone number, agent number, or machine number",
+                      "description_zh": "发起方号码。例如用户手机号码、客服坐席号码、机器号码等",
+                      "example": "0571773",
+                      "type": "string"
+                    },
+                    "CreateTime": {
+                      "description_en": "Call creation time.\n\nIn outbound scenarios, this is the time when the outbound call was initiated.\nIn inbound scenarios, this is the time when the call entered the ACC system",
+                      "description_zh": "通话创建时间。\n\n外呼场景为外呼发起时间。\n入呼场景为通话进入ACC系统时间",
+                      "example": "2020-10-02 22:32:55",
+                      "type": "string"
+                    },
+                    "EvaluationLevel": {
+                      "description_en": "Satisfaction rating, indicated by star level. Valid values:\n\n2: Two-star satisfaction\n3: Three-star satisfaction\n4: Four-star satisfaction\n5: Five-star satisfaction\n\nThis field has no data in outbound scenarios or scenarios where the call was not answered",
+                      "description_zh": "满意度，评价星级。取值：\n\n2：二级满意度\n3：三级满意度\n4：四级满意度\n5：五级满意度\n\n外呼场景和未接通场景无数据",
+                      "example": "4",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "EvaluationScore": {
+                      "description_en": "Satisfaction score. Valid values:\n1: Very dissatisfied\n2: Dissatisfied\n3: Neutral\n4: Satisfied\n5: Very satisfied\n\nThis field has no data in outbound scenarios or scenarios where the call was not answered",
+                      "description_zh": "满意度-评价得分。取值：\n1：非常不满意\n2：不满意\n3：一般\n4：满意\n5：非常满意\n\n外呼场景和未接通场景无数据",
+                      "example": "4",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "GroupId": {
+                      "description_en": "Skill group ID.  \n\nWhen CallType is 1, outbound call scenarios do not include skill group information.  ",
+                      "description_zh": "技能组ID。\n\n当CallType取值为1时，外呼场景无技能组信息",
+                      "example": "123456",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "GroupName": {
+                      "description_en": "Skill group name.  \nWhen CallType is 1, outbound call scenarios do not include skill group information",
+                      "description_zh": "技能组名称。\n当CallType取值为1时，外呼场景无技能组信息",
+                      "example": "自动化技能组",
+                      "type": "string"
+                    },
+                    "HangUpRole": {
+                      "description_en": "Party that hung up. Valid values:  \n\n1: System hung up  \n2: Customer hung up  \n3: Agent hung up  \nnull: Unknown  ",
+                      "description_zh": "挂机方。取值：\n\n1：系统挂机\n2：客户挂机\n3：客服挂机\nnull：未知",
+                      "example": "2",
+                      "type": "string"
+                    },
+                    "HangUpTime": {
+                      "description_en": "Hang-up time.  ",
+                      "description_zh": "挂断时间",
+                      "example": "2020-10-02 22:33:46",
+                      "type": "string"
+                    },
+                    "Id": {
+                      "description_en": "The GUID of the call detail record",
+                      "description_zh": "通话详情全局唯一ID",
+                      "example": "acc1c58dab4a4dd280e3813c66",
+                      "type": "string"
+                    },
+                    "InQueueTime": {
+                      "description_en": "Time when the call entered the queue for assignment.  \n\nOutbound call scenarios do not include queue entry time.  ",
+                      "description_zh": "热线分配-入队时间。\n外呼场景无入队时间",
+                      "example": "2020-10-02 22:32:55",
+                      "type": "string"
+                    },
+                    "MemberId": {
+                      "description_en": "Membership ID",
+                      "description_zh": "会员ID",
+                      "example": "7856876",
+                      "type": "string"
+                    },
+                    "MemberName": {
+                      "description_en": "Membership name",
+                      "description_zh": "会员名称",
+                      "example": "匿名会员",
+                      "type": "string"
+                    },
+                    "OutQueueTime": {
+                      "description_en": "The time when the hotline call is assigned and dequeued.\n\nOutbound scenarios do not have a dequeue time",
+                      "description_zh": "热线分配出队时间。\n\n外呼场景无出队时间",
+                      "example": "2020-10-02 22:32:59",
+                      "type": "string"
+                    },
+                    "PassiveTransferId": {
+                      "description_en": "Agent ID. The phone number to which the call is transferred.\nThis field is null in non-transfer scenarios",
+                      "description_zh": "坐席ID。转交电话号码。\n非转交场景数据为Null",
+                      "example": "12",
+                      "type": "string"
+                    },
+                    "PassiveTransferIdType": {
+                      "description_en": "The recipient of the transferred session. Valid values:\n1: Agent ID.\n2: Transferred phone number.\n\nThis field is null in non-transfer scenarios",
+                      "description_zh": "会话被转交方。取值：\n1：坐席ID。\n2：转交电话号码。\n\n非转交场景数据为Null",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "PickUpTime": {
+                      "description_en": "The time when the call is answered",
+                      "description_zh": "接起时间",
+                      "example": "2020-10-02 22:33:09",
+                      "type": "string"
+                    },
+                    "QueueUpContinueTime": {
+                      "description_en": "Queue duration",
+                      "description_zh": "排队时长",
+                      "example": "4",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RingContinueTime": {
+                      "description_en": "Ringing duration, in seconds.\n\nOutbound scenarios do not have ringing duration",
+                      "description_zh": "振铃时长。单位：秒。\n\n外呼场景无振铃时间",
+                      "example": "10",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RingEndTime": {
+                      "description_en": "The time when ringing ends.\n\nOutbound scenarios do not have a ring end time",
+                      "description_zh": "振铃结束时间。\n\n外呼场景无振铃结束时间",
+                      "example": "2020-10-02 22:33:09",
+                      "type": "string"
+                    },
+                    "RingStartTime": {
+                      "description_en": "Ringing start time.  \n\nOutbound call scenarios do not include ringing start time.  ",
+                      "description_zh": "振铃开始时间。\n\n外呼场景无振铃开始时间",
+                      "example": "2020-10-02 22:32:59",
+                      "type": "string"
+                    },
+                    "ServicerId": {
+                      "description_en": "Agent ID.  \nIn inbound scenarios, agent information is unavailable until the call is assigned to an agent",
+                      "description_zh": "坐席ID。\n呼入场景未分配到到坐席之前无坐席信息",
+                      "example": "555555",
+                      "type": "string"
+                    },
+                    "ServicerName": {
+                      "description_en": "Agent name.\nAgent information is unavailable before the call is assigned to an agent in inbound scenarios",
+                      "description_zh": "坐席名称。\n呼入场景未分配到到坐席之前无坐席信息",
+                      "example": "刘测试",
+                      "type": "string"
+                    },
+                    "TrunkCall": {
+                      "description_en": "Long-distance call",
+                      "description_zh": "长途电话",
+                      "example": "1861111****",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "PageNumber": {
+                "description_en": "Current page number",
+                "description_zh": "当前页",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "Number of items per page",
+                "description_zh": "每页的数量",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "Total number of records",
+                "description_zh": "总共记录数",
+                "example": "26",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "Message": {
+            "description_en": "Description of the status code",
+            "description_zh": "状态码描述",
+            "example": "xxxx",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求ID",
+            "example": "EE339D98-9BD3-4413-B165",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the API call succeeded",
+            "description_zh": "接口调用是否成功",
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

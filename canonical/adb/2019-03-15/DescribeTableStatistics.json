@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "am-bp183qgrwywa6****",
       "help_en": "The cluster ID.\n\nCall the https://help.aliyun.com/document_detail/129857.html operation to query the cluster ID",
       "help_zh": "集群ID。\n\n您可以调用https://help.aliyun.com/document_detail/129857.html接口查看集群ID",
@@ -38,6 +39,8 @@
       "help_en": "The number of entries to return on each page. Valid values:\n\n30 (default)\n\n50\n\n100",
       "help_zh": "每页记录数，取值：\n30（默认值）\n50\n100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "30",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -51,6 +54,8 @@
       "help_en": "The page number. The value must be a positive integer. Default value: 1",
       "help_zh": "页码，取值为大于0的正整数。默认值为1",
       "location": "query",
+      "maximum": "2147483647",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -115,65 +120,154 @@
   "pathPattern": "",
   "product_code": "adb",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The list of information",
+        "description_zh": "信息列表",
+        "properties": {
+          "DBClusterId": {
+            "description_en": "The cluster ID",
+            "description_zh": "集群ID",
+            "example": "am-****************",
+            "type": "string"
+          },
+          "Items": {
+            "itemNode": true,
+            "properties": {
+              "TableStatisticRecords": {
+                "description_en": "The list of table statistics",
+                "description_zh": "表统计信息列表",
+                "items": {
+                  "description_en": "The details",
+                  "description_zh": "详情",
+                  "properties": {
+                    "ColdDataSize": {
+                      "description_en": "The total size of cold data, in bytes.\n\nThis parameter is returned only for clusters of kernel version 3.1.3.4 or later",
+                      "description_zh": "冷数据总量，单位：Byte。\n仅内核版本为3.1.3.4或以上集群才会返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DataSize": {
+                      "description_en": "The data size of the table records, in bytes.\n\nThe data size of table records does not include the data of common indexes and primary key indexes",
+                      "description_zh": "表记录数据量，单位：Byte。\n\n表记录数据量，不包含普通索引、主键索引的数据",
+                      "example": "15592",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "HotDataSize": {
+                      "description_en": "The size of hot data, in bytes",
+                      "description_zh": "热数据量，单位：Byte",
+                      "example": "1048576",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "IndexSize": {
+                      "description_en": "The data size of common indexes, in bytes",
+                      "description_zh": "普通索引数据量，单位：Byte",
+                      "example": "3076",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "OtherSize": {
+                      "description_en": "The size of other data, in bytes",
+                      "description_zh": "其他，单位：Byte",
+                      "example": "1048576",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "PartitionCount": {
+                      "description_en": "The number of partitions",
+                      "description_zh": "分区数",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "PrimaryKeyIndexSize": {
+                      "description_en": "The data size of primary key indexes, in bytes",
+                      "description_zh": "主键索引数据量，单位：Byte",
+                      "example": "16340",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "RowCount": {
+                      "description_en": "The number of rows in the table",
+                      "description_zh": "表行数",
+                      "example": "3",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SchemaName": {
+                      "description_en": "The database name",
+                      "description_zh": "数据库名称",
+                      "example": "test_schema",
+                      "type": "string"
+                    },
+                    "SpaceRatio": {
+                      "description_en": "The tablespace ratio, in percentage.\n\nFormula: Tablespace ratio = Total data size of the table / Total data size of the instance × 100",
+                      "description_zh": "表空间占比，单位：%。\n\n计算公式为：表空间占比 = 表总数据量 / 实例总数据量 * 100",
+                      "example": "66.23",
+                      "format": "double",
+                      "type": "number"
+                    },
+                    "TableName": {
+                      "description_en": "The table name",
+                      "description_zh": "表名称",
+                      "example": "test_table",
+                      "type": "string"
+                    },
+                    "TotalSize": {
+                      "description_en": "The total data size, in bytes.\n\nThe total data size is calculated using one of the following formulas: Total data size = Hot data size + Cold data size, or Total data size = Data size of table records + Data size of common indexes + Data size of primary key indexes + Other data size",
+                      "description_zh": "总数据量，单位：Byte。\n\n总数据量的计算，以下2个公式都成立。计算公式1：总数据量 = 热数据量 + 冷数据量，计算公式2：总数据量 = 表记录数据量 + 普通索引数据量 + 主键索引数据量 + 其他",
+                      "example": "1577",
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页数",
+            "example": "1",
+            "type": "string"
+          },
+          "PageSize": {
+            "description_en": "The number of entries on the current page",
+            "description_zh": "本页记录数",
+            "example": "30",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "4C4433FF-5D3A-4C3E-A19C-6D93B2******",
+            "type": "string"
+          },
+          "SchemaNames": {
+            "description_en": "The list of database names",
+            "description_zh": "数据库名称列表",
+            "example": "['adb_external_tpch_10gb', 'dw_bccb', 'dw_fm', 'dw_test', 'dw_yph']",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries",
+            "description_zh": "总记录数",
+            "example": "1",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "tags": [
     "Perth"
-  ],
-  "v1_parameters": [
-    {
-      "help_en": "The cluster ID.\n\nCall the https://help.aliyun.com/document_detail/129857.html operation to query the cluster ID",
-      "help_zh": "集群ID。\n\n您可以调用https://help.aliyun.com/document_detail/129857.html接口查看集群ID",
-      "name": "DBClusterId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The keyword for the query. Fuzzy search by table name is supported",
-      "help_zh": "查询关键字，支持根据表名模糊搜索",
-      "name": "Keyword",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The sorting rule for the returned results. The value is a JSON array that is ordered by the sequence of the elements in the array. Each element consists of `Field` and `Type`. Example: `[{ \"Field\":\"TableName\", \"Type\":\"Asc\" }]`.\n\n`Field`: the field by which to sort the results. Valid values: TableName, ColdDataSize, DataSize, PrimaryKeyIndexSize, RowCount, IndexSize, SchemaName, and PartitionCount.\n\n`Type`: the sorting type. Valid values (case-insensitive):\n\nDesc: descending.\n\nAsc: ascending",
-      "help_zh": "根据指定字段进行排序，格式为JSON，是一个有序JSON数组，按输入数组的顺序进行复合排序，包含`Field`和`Type`两个字段，例如`[{ \"Field\":\"TableName\", \"Type\":\"Asc\" }]`。其中：\n`Field`表示需要排序的字段名。支持排序的字段包括：TableName、ColdDataSize、DataSize、PrimaryKeyIndexSize、RowCount、IndexSize、SchemaName、PartitionCount。\n`Type`表示排序类型，支持如下取值（取值均不区分大小写）：\n    * Desc：降序。\n    * Asc：升序",
-      "name": "Order",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The page number. The value must be a positive integer. Default value: 1",
-      "help_zh": "页码，取值为大于0的正整数。默认值为1",
-      "name": "PageNumber",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The number of entries to return on each page. Valid values:\n\n30 (default)\n\n50\n\n100",
-      "help_zh": "每页记录数，取值：\n30（默认值）\n50\n100",
-      "name": "PageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The region ID.\n\nCall the https://help.aliyun.com/document_detail/143074.html operation to query the region ID",
-      "help_zh": "地域ID。\n您可以调用https://help.aliyun.com/document_detail/143074.html接口查看地域ID",
-      "name": "RegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The database name",
-      "help_zh": "数据库名称",
-      "name": "SchemaName",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    }
   ]
 }

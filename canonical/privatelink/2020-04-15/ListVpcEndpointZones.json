@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-huhehaote",
       "help_en": "The ID of the region.\n\nCall the https://help.aliyun.com/document_detail/120468.html operation to obtain the region ID",
       "help_zh": "要查询的地域ID。\n\n您可以通过调用https://help.aliyun.com/document_detail/120468.html接口获取地域ID",
@@ -51,6 +52,8 @@
       "help_en": "The number of entries to return on each page. Valid values: 1 to 1000. Default value: 50",
       "help_zh": "分批次查询时每次显示的条目数。取值范围：1~1000，默认值：50",
       "location": "query",
+      "maximum": "1000",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -60,6 +63,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "ep-hp33b2e43fays7s8****",
       "help_en": "The ID of the endpoint.\n\nAfter you specify the endpoint ID, the system queries the zones of the endpoint",
       "help_zh": "要查询可用区的终端节点ID。\n\n指定终端节点ID后，系统会查询该终端节点的可用区",
@@ -75,5 +79,102 @@
   ],
   "pathPattern": "",
   "product_code": "Privatelink",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "MaxResults": {
+            "description_en": "The number of entries returned on each page",
+            "description_zh": "分批次查询时每次显示的条目数",
+            "example": "50",
+            "format": "int32",
+            "type": "integer"
+          },
+          "NextToken": {
+            "description_en": "The token that is used to retrieve the next page of results. Valid values:\n\nIf this parameter is empty, no next page exists.\n\nIf a value is returned, use the value to retrieve the next page of results",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。取值：\n如果NextToken为空表示没有下一次查询。\n如果NextToken有返回值，该取值表示下一次查询开始的令牌",
+            "example": "caeba0bbb2be03f84eb48b699f0a4883",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "0ED8D006-F706-4D23-88ED-E11ED28DCAC0",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "总记录数",
+            "example": "12",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Zones": {
+            "description_en": "The collection of zone information",
+            "description_zh": "可用区信息集合",
+            "items": {
+              "description_en": "The information about the zone",
+              "description_zh": "可用区信息",
+              "properties": {
+                "EniId": {
+                  "description_en": "The ID of the endpoint ENI",
+                  "description_zh": "终端节点网卡ID",
+                  "example": "eni-hp3c8qj1tyct8aqy****",
+                  "type": "string"
+                },
+                "EniIp": {
+                  "description_en": "The IP address of the endpoint ENI",
+                  "description_zh": "终端节点网卡的IP地址",
+                  "example": "192.168.2.23",
+                  "type": "string"
+                },
+                "RegionId": {
+                  "description_en": "The ID of the region where the endpoint is deployed",
+                  "description_zh": "终端节点所属的地域ID",
+                  "example": "cn-huhehaote",
+                  "type": "string"
+                },
+                "VSwitchId": {
+                  "description_en": "The vSwitch in the zone. The system automatically creates an endpoint elastic network interface (ENI) in the vSwitch",
+                  "description_zh": "可用区中的交换机，系统会自动在该交换机下创建一个终端节点网卡",
+                  "example": "vsw-hjkshjvdkdvd****",
+                  "type": "string"
+                },
+                "ZoneDomain": {
+                  "description_en": "The domain name of the zone.\n\nAfter an endpoint connection is established, use this domain name to access the service resources of the endpoint service",
+                  "description_zh": "可用区域名。\n\n终端节点连接建立成功后，可以通过该可用区域名访问终端节点服务中的服务资源",
+                  "example": "ep-hp3f033dp24c5yc9****-cn-huhehaote-a.epsrv-hp3itcpowf37m3d5****.cn-huhehaote.privatelink.aliyuncs.com",
+                  "type": "string"
+                },
+                "ZoneId": {
+                  "description_en": "The zone ID",
+                  "description_zh": "可用区ID",
+                  "example": "cn-huhehaote-a",
+                  "type": "string"
+                },
+                "ZoneIpv6Address": {
+                  "description_en": "The IPv6 address of the endpoint ENI",
+                  "description_zh": "终端节点网卡的IPv6地址",
+                  "example": "2408:4005:3b6:****:6955:c3cb:34c:****\n",
+                  "type": "string"
+                },
+                "ZoneStatus": {
+                  "description_en": "The status of the zone. Valid values:\n\nCreating: The zone is being created.\n\nWait: The zone is waiting to be connected.\n\nConnected: The zone is connected.\n\nDeleting: The zone is being deleted.\n\nDisconnecting: The zone is being disconnected.\n\nDisconnected: The zone is disconnected.\n\nConnecting: The zone is being connected",
+                  "description_zh": "可用区状态，取值：\n\nCreating：创建中。\nWait：等待连接。\nConnected：已连接。\nDeleting：删除中。\nDisconnecting：断开连接中。\nDisconnected：已断开。\nConnecting：连接中",
+                  "example": "Wait",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

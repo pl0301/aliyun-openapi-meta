@@ -2,6 +2,404 @@
   "camel_example": "aliyun apig POST /v1/services --region cn-hangzhou --clientToken xxx --header \"Content-Type=application/json\" --body {\"serviceConfigs\":[{\"sourceId\":\"nacos-instance-001\",\"validationOptions\":{\"skipVerifyAIChatCompletion\":true},\"groupName\":\"DEFAULT_GROUP\",\"addresses\":[\"dev.com:8080\"],\"aiServiceConfig\":\"example-string\",\"modelProviderId\":\"mp-xxx0000\",\"qualifier\":\"LATEST\",\"agentServiceConfig\":\"example-string\",\"expressType\":\"Standard\",\"name\":\"user-service\",\"namespace\":\"PUBLIC\",\"dnsServers\":[\"100.100.1.156:53\"]}],\"sourceType\":\"MSE_NACOS\",\"resourceGroupId\":\"rg-xxx\",\"gatewayId\":\"gw-cq7l5s5lhtg000\"}",
   "cmd_full_name": "apig create-service",
   "cmd_name": "create-service",
+  "components": {
+    "schemas": {
+      "AgentServiceConfig": {
+        "description_en": "The agent service configuration",
+        "description_zh": "Agent服务配置",
+        "properties": {
+          "address": {
+            "description_en": "The address",
+            "description_zh": "地址",
+            "example": "https://dashscope.aliyuncs.com/api/v1",
+            "required": true,
+            "title": "地址",
+            "type": "string"
+          },
+          "customConfig": {
+            "description_en": "The custom configuration. Required when provider is set to custom",
+            "description_zh": "自定义配置（provider=custom 时填写）",
+            "if": {
+              "properties": {
+                "provider": {
+                  "const": "custom",
+                  "enum": []
+                }
+              }
+            },
+            "properties": {
+              "apiKey": {
+                "description_en": "The API key",
+                "description_zh": "API密钥",
+                "example": "app-xxx\n",
+                "type": "string"
+              },
+              "apiKeyGenerateMode": {
+                "description_en": "The key generation mode",
+                "description_zh": "密钥生成模式",
+                "enumValueTitles": {
+                  "Custom": "自定义模式",
+                  "Reference": "引用模式"
+                },
+                "example": "Reference",
+                "type": "string"
+              }
+            },
+            "then": {
+              "properties": {
+                "customConfig": {
+                  "enum": []
+                }
+              }
+            },
+            "type": "object"
+          },
+          "dashScopeConfig": {
+            "description_en": "The DashScope service configuration. Required when provider is set to qwen. The appCredentials parameter cannot be empty, and each entry must have non-empty appId and apiKey values",
+            "description_zh": "百炼服务配置（provider=qwen 时填写，appCredentials 不能为空，每项 appId+apiKey 非空）",
+            "if": {
+              "properties": {
+                "provider": {
+                  "const": "qwen",
+                  "enum": []
+                }
+              }
+            },
+            "properties": {
+              "appCredentials": {
+                "description_en": "The application configuration",
+                "description_zh": "应用配置",
+                "items": {
+                  "description_en": "The parameter",
+                  "description_zh": "参数",
+                  "properties": {
+                    "apiKey": {
+                      "description_en": "apiKey",
+                      "description_zh": "apiKey",
+                      "example": "sk-xxx",
+                      "title": "apiKey",
+                      "type": "string"
+                    },
+                    "appId": {
+                      "description_en": "The application ID",
+                      "description_zh": "应用ID",
+                      "example": "app-xxx",
+                      "title": "应用ID",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "应用配置",
+                "type": "array"
+              }
+            },
+            "then": {
+              "properties": {
+                "dashScopeConfig": {
+                  "enum": []
+                }
+              }
+            },
+            "title": "百炼服务配置",
+            "type": "object"
+          },
+          "difyConfig": {
+            "description_en": "The Dify service configuration. Required when provider is set to dify. The botType and apiKey parameters cannot be empty",
+            "description_zh": "Dify服务配置（provider=dify 时填写，botType+apiKey 非空）",
+            "if": {
+              "properties": {
+                "provider": {
+                  "const": "dify",
+                  "enum": []
+                }
+              }
+            },
+            "properties": {
+              "apiKey": {
+                "description_en": "API Key",
+                "description_zh": "API Key",
+                "example": "app-xxx",
+                "title": "apiKey",
+                "type": "string"
+              },
+              "botType": {
+                "description_en": "The interaction type",
+                "description_zh": "交互类型",
+                "enumValueTitles": {
+                  "agent": "Agent 类型",
+                  "chatflow": "对话流",
+                  "completion": "文本补全类型"
+                },
+                "example": "chatflow",
+                "title": "交互类型",
+                "type": "string"
+              }
+            },
+            "then": {
+              "properties": {
+                "difyConfig": {
+                  "enum": []
+                }
+              }
+            },
+            "title": "Dify服务配置",
+            "type": "object"
+          },
+          "enableHealthCheck": {
+            "description_en": "Specifies whether to enable health check",
+            "description_zh": "启用健康检查",
+            "enumValueTitles": {
+              "false": "否",
+              "true": "是"
+            },
+            "example": "true",
+            "title": "启用健康检查",
+            "type": "boolean"
+          },
+          "enableOutlierDetection": {
+            "description_en": "Specifies whether to enable outlier detection",
+            "description_zh": "是否启用异常检测",
+            "enumValueTitles": {
+              "false": "否",
+              "true": "是"
+            },
+            "example": "true",
+            "type": "boolean"
+          },
+          "protocols": {
+            "description_en": "The list of communication protocols",
+            "description_zh": "通信协议列表",
+            "items": {
+              "description_en": "The protocol",
+              "description_zh": "协议",
+              "enumValueTitles": {
+                "Custom": "自定义/OpenAI 兼容协议\t",
+                "DashScope": "百炼 DashScope 协议",
+                "Dify": "Dify 协议"
+              },
+              "example": "DashScope",
+              "type": "string"
+            },
+            "required": false,
+            "title": "协议",
+            "type": "array"
+          },
+          "provider": {
+            "description_en": "The service provider",
+            "description_zh": "服务供应商",
+            "enumValueTitles": {
+              "custom": "自定义",
+              "dify": "Dify",
+              "qwen": "百炼（通义千问）"
+            },
+            "example": "qwen",
+            "required": true,
+            "title": "服务供应商",
+            "type": "string"
+          }
+        },
+        "title": "Agent服务配置",
+        "type": "object"
+      },
+      "AiServiceConfig": {
+        "description_en": "The struct description",
+        "description_zh": "结构体描述",
+        "properties": {
+          "ApiKeyGenerateMode": {
+            "description_en": "API key generation mode",
+            "description_zh": "API 密钥的生成模式",
+            "example": "Custom",
+            "type": "string"
+          },
+          "address": {
+            "description_en": "The service endpoint",
+            "description_zh": "服务地址",
+            "example": "https://dashscope.aliyun.com",
+            "title": "服务地址",
+            "type": "string"
+          },
+          "apiKeys": {
+            "description_en": "The API keys",
+            "description_zh": "apiKey列表",
+            "items": {
+              "description_en": "apiKey",
+              "description_zh": "apiKey",
+              "example": "sk-xxx",
+              "type": "string"
+            },
+            "title": "apiKey列表",
+            "type": "array"
+          },
+          "bedrockServiceConfig": {
+            "description_en": "Bedrock service configuration",
+            "description_zh": "Bedrock服务专属配置",
+            "properties": {
+              "awsAccessKey": {
+                "description_en": "AWS-AccessKey",
+                "description_zh": "AWS访问密钥",
+                "example": "AKIAIOSFODNN7EXAMPLE",
+                "title": "AWS-AccessKey",
+                "type": "string"
+              },
+              "awsRegion": {
+                "description_en": "AWS-Region",
+                "description_zh": "AWS区域",
+                "example": "us-east-1",
+                "title": "AWS-Region",
+                "type": "string"
+              },
+              "awsSecretKey": {
+                "description_en": "AWS-SecretKey",
+                "description_zh": "AWS密钥",
+                "example": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+                "title": "AWS-SecretKey",
+                "type": "string"
+              }
+            },
+            "title": "Bedrock服务专属配置",
+            "type": "object"
+          },
+          "compatibleProtocols": {
+            "description_en": "Supported compatible protocols",
+            "description_zh": "服务支持的兼容协议列表",
+            "items": {
+              "description_en": "string",
+              "description_zh": "参数",
+              "example": "\"openai\", \"anthropic\"",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "defaultModelName": {
+            "description_en": "Default model name",
+            "description_zh": "默认使用的模型名称",
+            "example": "gpt-4",
+            "type": "string"
+          },
+          "enableHealthCheck": {
+            "description_en": "Specifies whether to enable health check",
+            "description_zh": "是否启用健康检查",
+            "example": "true",
+            "title": "是否启用健康检查",
+            "type": "boolean"
+          },
+          "enableOutlierDetection": {
+            "description_en": "Enable outlier detection",
+            "description_zh": "是否启用异常值检测功能",
+            "example": "true",
+            "type": "boolean"
+          },
+          "paiEASServiceConfig": {
+            "description_en": "PAI-EAS service configuration settings",
+            "description_zh": "PAI-EAS服务专属配置",
+            "properties": {
+              "endpointType": {
+                "description_en": "Type of endpoint",
+                "description_zh": "连接类型：私网(vpc)/公网(public)",
+                "example": "\"public\"，\"private\"",
+                "title": "连接类型：私网(vpc)/公网(public)",
+                "type": "string"
+              },
+              "serviceId": {
+                "description_en": "Service identifier",
+                "description_zh": "服务ID",
+                "example": "svc-cvaeb0um1hkqp79k72v0",
+                "title": "服务ID",
+                "type": "string"
+              },
+              "serviceName": {
+                "description_en": "Name of the service",
+                "description_zh": "服务名称",
+                "example": "auto-ai-service",
+                "title": "服务名称",
+                "type": "string"
+              },
+              "workspaceId": {
+                "description_en": "Workspace identifier",
+                "description_zh": "工作空间ID",
+                "example": "cb89d4de30042df4459442589664e00d",
+                "title": "工作空间ID",
+                "type": "string"
+              }
+            },
+            "title": "PAI-EAS服务专属配置",
+            "type": "object"
+          },
+          "protocols": {
+            "description_en": "The LLM protocols",
+            "description_zh": "模型协议列表",
+            "items": {
+              "description_en": "The protocol",
+              "description_zh": "协议",
+              "example": "OpenAI/v1",
+              "type": "string"
+            },
+            "title": "模型协议列表",
+            "type": "array"
+          },
+          "provider": {
+            "description_en": "The Large Language Model (LLM) provider",
+            "description_zh": "大模型提供商",
+            "example": "qwen\nmoonshot\nbaichuan\nyi\nzhipuai\n360ai\nhunyuan\nstepfun\nspark\nopenai\nclaude\nanthropic\ndoubao\nminimax\ngemini\nazure\ndeepseek\ncustom\npai-eas\nbedrock\nvertex",
+            "title": "大模型提供商",
+            "type": "string"
+          },
+          "vertexServiceConfig": {
+            "description_en": "Vertex AI service configuration",
+            "description_zh": "Vertex AI 服务的配置信息",
+            "properties": {
+              "geminiSafetySetting": {
+                "additionalProperties": {
+                  "description_en": "string",
+                  "description_zh": "参数",
+                  "example": "{\"BLOCK_NONE\": \"true\"}",
+                  "type": "string"
+                },
+                "description_en": "Gemini safety settings",
+                "description_zh": "Gemini 模型的安全过滤级别设置",
+                "type": "object"
+              },
+              "vertexAuthKey": {
+                "description_en": "Vertex AI authentication key",
+                "description_zh": "Vertex AI 的认证密钥",
+                "example": "{\\\"type\\\":\\\"service_account\\\",\\\"project_id\\\":\\\"my-project\\\",\\\"private_key\\\":\\\"-----BEGIN PRIVATE KEY-----...\\\",\\\"client_email\\\":\\\"xxx@xxx.iam.gserviceaccount.com\\\",\\\"token_uri\\\":\\\"https://oauth2.googleapis.com/token\\\"}",
+                "type": "string"
+              },
+              "vertexAuthServiceName": {
+                "description_en": "Vertex AI auth service name",
+                "description_zh": "Vertex AI 使用的认证服务名称",
+                "example": "google-oauth2",
+                "type": "string"
+              },
+              "vertexProjectId": {
+                "description_en": "Vertex AI project ID",
+                "description_zh": "Google Cloud 项目 ID",
+                "example": "my-project",
+                "type": "string"
+              },
+              "vertexRegion": {
+                "description_en": "Vertex AI region",
+                "description_zh": "Vertex AI 服务所在的 Google Cloud 区域",
+                "example": "us-central1",
+                "type": "string"
+              },
+              "vertexTokenRefreshAhead": {
+                "description_en": "Vertex token refresh lead time",
+                "description_zh": "在访问令牌过期前多少秒提前刷新",
+                "example": "300",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates services",
   "description_zh": "创建服务",
@@ -43,6 +441,16 @@
       "type": "string"
     },
     {
+      "enum": [
+        "AGENT",
+        "SAE_K8S_SERVICE",
+        "K8S",
+        "FC3",
+        "DNS",
+        "AI",
+        "VIP",
+        "MSE_NACOS"
+      ],
       "example": "MSE_NACOS",
       "help_en": "The service source type. Valid values:\nMSE_NACOS: a service in MSE Nacos.\nK8S: a service in a Kubernetes cluster of Container Service.\nVIP: a fixed address service.\nDNS: a DNS domain name service.\nFC3: a service in Function Compute.\nSAE_K8S_SERVICE: an SAE Kubernetes service.\nAI: an AI service.\nAGENT: an Agent service",
       "help_zh": "服务来源：\nMSE_NACOS: MSE Nacos里的服务。\nK8S: 容器服务里K8S集群里的服务。\nVIP: 固定地址服务。\nDNS: DNS域名服务。\nFC3: 函数计算里的服务。\nSAE_K8S_SERVICE: SAE K8S服务\nAI: AI服务\nAGENT: Agent服务",
@@ -513,6 +921,10 @@
                 "type": "object"
               },
               {
+                "enum": [
+                  "true",
+                  "false"
+                ],
                 "example": "true",
                 "help_en": "Specifies whether to enable health check",
                 "help_zh": "启用健康检查",
@@ -525,6 +937,11 @@
                 "type": "bool"
               },
               {
+                "enum": [
+                  "dify",
+                  "custom",
+                  "qwen"
+                ],
                 "example": "qwen",
                 "help_en": "The service provider",
                 "help_zh": "服务供应商",
@@ -539,6 +956,11 @@
               {
                 "fields": [
                   {
+                    "enum": [
+                      "completion",
+                      "agent",
+                      "chatflow"
+                    ],
                     "example": "chatflow",
                     "help_en": "The interaction type",
                     "help_zh": "交互类型",
@@ -574,6 +996,10 @@
                 "type": "object"
               },
               {
+                "enum": [
+                  "true",
+                  "false"
+                ],
                 "example": "true",
                 "help_en": "Specifies whether to enable outlier detection",
                 "help_zh": "是否启用异常检测",
@@ -600,6 +1026,10 @@
                     "type": "string"
                   },
                   {
+                    "enum": [
+                      "Reference",
+                      "Custom"
+                    ],
                     "example": "Reference",
                     "help_en": "The key generation mode",
                     "help_zh": "密钥生成模式",
@@ -767,6 +1197,57 @@
   "pathPattern": "/v1/services",
   "product_code": "APIG",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "响应体",
+        "properties": {
+          "code": {
+            "description_en": "The response status code",
+            "description_zh": "响应状态码",
+            "example": "Ok",
+            "type": "string"
+          },
+          "data": {
+            "description_en": "The response data",
+            "description_zh": "响应数据",
+            "properties": {
+              "serviceIds": {
+                "description_en": "The list of service IDs",
+                "description_zh": "服务ID列表",
+                "items": {
+                  "description_en": "The service ID",
+                  "description_zh": "服务ID",
+                  "example": "svc-crbgq0dlhtgrdb***",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "message": {
+            "description_en": "The response message",
+            "description_zh": "响应消息",
+            "example": "success",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "C67DED2B-F19B-5BEC-88C1-D6EB854CD0D4",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "eu-central-1",
       "help_en": "The region ID of the NAT gateway instance to which the NAT IP addresses belong.\n\nYou can call the https://help.aliyun.com/document_detail/36063.html operation to query the most recent region list",
       "help_zh": "要查询的NAT IP地址列表所属NAT网关实例的地域ID。\n\n您可以通过调用https://help.aliyun.com/document_detail/36063.html接口获取地域ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "ngw-gw8v16wgvtq26vh59****",
       "help_en": "The instance ID of the NAT gateway to which the NAT IP addresses belong",
       "help_zh": "要查询NAT IP地址所属NAT网关实例ID",
@@ -159,6 +161,10 @@
       "type": "array"
     },
     {
+      "enum": [
+        "cidr",
+        "prefix"
+      ],
       "example": "cidr",
       "help_en": "The origin of the NAT IP address to query. Valid values:\nprefix: a NAT IP address that belongs to an IP prefix.\n\ncidr: a standalone NAT IP address that does not belong to any IP prefix.\n\nEmpty: queries all NAT IP addresses",
       "help_zh": "要查询的NAT IP来源的属性枚举。可能值：\nprefix：属于IP前缀的NAT IP。\n\ncidr：不属于任何IP前缀的孤立NAT IP。\n\n空：查询全部NAT IP",
@@ -187,5 +193,101 @@
   ],
   "pathPattern": "",
   "product_code": "Vpc",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "NatIps": {
+            "description_en": "The list of NAT IP addresses",
+            "description_zh": "NAT IP地址列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "Ipv4Prefix": {
+                  "description_en": "The CIDR block of the IP prefix to which the NAT IP address belongs",
+                  "description_zh": "查询的NAT IP地址所属的IP前缀地址段",
+                  "example": "192.168.0.0/28",
+                  "required": false,
+                  "type": "string"
+                },
+                "IsDefault": {
+                  "description_en": "Indicates whether the NAT IP address is the default one. Valid values:\n\ntrue: The NAT IP address is the default one.\n\nfalse: The NAT IP address is not the default one",
+                  "description_zh": "是否是默认NAT IP地址。取值：\n\ntrue：是默认NAT IP地址。\n\nfalse：不是默认NAT IP地址",
+                  "example": "true",
+                  "type": "boolean"
+                },
+                "NatGatewayId": {
+                  "description_en": "The instance ID of the VPC NAT gateway to which the NAT IP address belongs",
+                  "description_zh": "查询的NAT IP地址所属的VPC NAT网关实例ID",
+                  "example": "ngw-gw8v16wgvtq26vh59****",
+                  "type": "string"
+                },
+                "NatIp": {
+                  "description_en": "The NAT IP address",
+                  "description_zh": "查询的NAT IP地址",
+                  "example": "192.168.0.126",
+                  "type": "string"
+                },
+                "NatIpCidr": {
+                  "description_en": "The CIDR block to which the NAT IP address belongs",
+                  "description_zh": "查询的NAT IP地址所在的地址段",
+                  "example": "192.168.0.0/24",
+                  "type": "string"
+                },
+                "NatIpDescription": {
+                  "description_en": "The description of the NAT IP address",
+                  "description_zh": "查询的NAT IP地址的描述信息",
+                  "example": "default",
+                  "type": "string"
+                },
+                "NatIpId": {
+                  "description_en": "The instance ID of the NAT IP address",
+                  "description_zh": "查询的NAT IP地址实例ID",
+                  "example": "vpcnatip-gw8a863sut1zijxh0****",
+                  "type": "string"
+                },
+                "NatIpName": {
+                  "description_en": "The name of the NAT IP address",
+                  "description_zh": "查询的NAT IP地址的名称",
+                  "example": "default",
+                  "type": "string"
+                },
+                "NatIpStatus": {
+                  "description_en": "The status of the NAT IP address. Valid values:\n\nAvailable: available.\nDeleted: deleted.\nDeleting: being deleted.\nCreating: being created.\nAssociated: associated with an SNAT or DNAT entry.\nAssociating: being associated with an SNAT or DNAT entry",
+                  "description_zh": "查询的NAT IP地址的状态。取值：\n\nAvailable：可用状态。\nDeleted：已删除。\nDeleting：删除中。\nCreating：创建中。\nAssociated：已关联SNAT或DNAT条目。\nAssociating：关联SNAT或DNAT条目中",
+                  "example": "Available",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "NextToken": {
+            "description_en": "The pagination token that is used in the next request to retrieve a new page of results. Valid values:\nIf NextToken is empty, no next query exists.\nIf NextToken is returned, the value indicates the token for the next query",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。取值：\n如果NextToken为空表示没有下一次查询。\n如果NextToken有返回值，该取值表示下一次查询开始的令牌",
+            "example": "FFmyTO70tTpLG6I3FmYAXGKPd****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "7E78CEEA-BF8F-44D1-9DCD-D9141135B71E",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of NAT IP addresses returned",
+            "description_zh": "查询到的NAT IP地址结果数目",
+            "example": "1",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

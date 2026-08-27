@@ -2,6 +2,149 @@
   "camel_example": "aliyun paillmtrace PUT /api/v1/PAILLMTrace/eval/trace/c43793673a384d39daa0a351b1000000 --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"ModelConfig\":\"example-string\",\"EvaluationId\":\"44aea0ee00000000be5be24b2abb8f98\",\"EvaluationConfig\":\"example-string\",\"MaxTime\":\"2025-04-05_13:24:25_2025-04-05\",\"MinTime\":\"2025-04-05_13:24:25_2025-04-05\",\"AppName\":\"my-llm-app\"}",
   "cmd_full_name": "paillmtrace evaluate-trace",
   "cmd_name": "evaluate-trace",
+  "components": {
+    "schemas": {
+      "EvaluationConfig": {
+        "description_en": "This configuration structure defines the JSON paths needed to extract specific values from trace data in JSON format. They are required for evaluation operations",
+        "description_zh": "从json格式的链路数据里要一些提取特定路径上的值，作为评估操作的输入。在这个EvaluationConfig结构体里定义这些json路径",
+        "properties": {
+          "Answer": {
+            "description_en": "The answer to the user's question from the LLM application",
+            "description_zh": "基于大语言模型的应用针对用户问题的回答",
+            "properties": {
+              "JsonPathInSpan": {
+                "description_en": "The JSON path where the Answer is stored in the trace log",
+                "description_zh": "链路log里存放Answer的json path",
+                "example": "attributes.output.value",
+                "minLength": 1,
+                "type": "string"
+              },
+              "JsonPathInSpanValue": {
+                "description_en": "If the value retrieved at the JSON path is itself a JSON string, a further JSON path must be defined within this JSON to obtain the actual value",
+                "description_zh": "如果json path处取到的值本身仍然是json string，那么需要进一步定义这个json里的json path以获取实际的值",
+                "example": "message/value",
+                "type": "string"
+              },
+              "SpanName": {
+                "description_en": "The span name in the trace log",
+                "description_zh": "链路log的span名称",
+                "example": "query",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Context": {
+            "description_en": "The context node information referenced when the model answers a question",
+            "description_zh": "大模型回答问题时参考的上下文节点信息",
+            "properties": {
+              "JsonPathInSpan": {
+                "description_en": "The JSON path where the Context is stored in the trace log",
+                "description_zh": "链路log里存放Context的json path",
+                "example": "attributes.retrieval.documents[*].document.content",
+                "minLength": 1,
+                "type": "string"
+              },
+              "JsonPathInSpanValue": {
+                "description_en": "If the value retrieved at the JSON path is itself a JSON string, a further JSON path must be defined within this JSON to obtain the actual value",
+                "description_zh": "如果json path处取到的值本身仍然是json string，那么需要进一步定义这个json里的json path以获取实际的值",
+                "example": "message/value",
+                "type": "string"
+              },
+              "SpanName": {
+                "description_en": "The span name in the trace log",
+                "description_zh": "链路log的span名称",
+                "example": "retrieve",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "Query": {
+            "description_en": "The question from the user to the LLM application",
+            "description_zh": "用户向基于大语言模型的应用提出的问题",
+            "properties": {
+              "JsonPathInSpan": {
+                "description_en": "The JSON path where the Query is stored in the trace log",
+                "description_zh": "链路log里存放Query的json path",
+                "example": "attributes.input.value",
+                "minLength": 1,
+                "type": "string"
+              },
+              "JsonPathInSpanValue": {
+                "description_en": "If the value retrieved at the JSON path is itself a JSON string, a further JSON path must be defined within this JSON to obtain the actual value",
+                "description_zh": "如果json path处取到的值本身仍然是json string，那么需要进一步定义这个json里的json path以获取实际的值",
+                "example": "message/value",
+                "type": "string"
+              },
+              "SpanName": {
+                "description_en": "The span name in the trace log",
+                "description_zh": "链路log的span名称",
+                "example": "query",
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ModelConfig": {
+        "description_en": "The access configuration structure of the model used in the evaluation",
+        "description_zh": "评估任务内部使用的大模型的访问配置结构体",
+        "properties": {
+          "ApiKey": {
+            "description_en": "The authentication key required when the evaluation task calls a model which the user has permission to use, acting under the user's name",
+            "description_zh": "评估任务需要以用户名义调用用户有使用权的大模型时，需要填充的认证key",
+            "example": "lRQ6ny2BP1g73fsgf9O+Hr4DEedezQ",
+            "type": "string"
+          },
+          "Endpoint": {
+            "description_en": "The model service endpoint required when the evaluation task calls the model",
+            "description_zh": "评估任务需要以用户名义调用用户有使用权的大模型时，需要填充的模型服务地址",
+            "example": "https://aiservice.cn-hangzhou.aliyuncs.com/v1",
+            "type": "string"
+          },
+          "IsSelfHost": {
+            "description_en": "Whether the model service is provided by the user (True), or by Alibaba Cloud PAI (False)",
+            "description_zh": "用户的大模型服务是自己提供的(True)、还是阿里云PAI提供的(False)",
+            "example": "False",
+            "type": "boolean"
+          },
+          "Name": {
+            "description_en": "The model name",
+            "description_zh": "大模型的名称",
+            "example": "pai-judge\nthemis\nqwen\ngpt",
+            "type": "string"
+          },
+          "Temperature": {
+            "description_en": "Controls the randomness of the model output. Maximum value: 0.2",
+            "description_zh": "控制大模型输出随机性的温度参数。最大可设置到0.2",
+            "example": "0.1",
+            "format": "float",
+            "type": "number"
+          },
+          "TopP": {
+            "description_en": "Controls the randomness of the model output",
+            "description_zh": "控制大模型输出随机性的top p参数",
+            "example": "0.9",
+            "format": "float",
+            "type": "number"
+          },
+          "UseFunctionCall": {
+            "description_en": "Whether the model is allowed to use external tools",
+            "description_zh": "评估任务需要以用户名义调用用户有使用权的大模型时，是否允许大模型调用外部工具",
+            "example": "True",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Evaluates a specified piece of trace data",
   "description_zh": "评估一条指定的trace数据",
@@ -93,6 +236,7 @@
               "example": "attributes.retrieval.documents[*].document.content",
               "help_en": "The JSON path where the Context is stored in the trace log",
               "help_zh": "链路log里存放Context的json path",
+              "min_length": "1",
               "name": "json_path_in_span",
               "options": [
                 "--json-path-in-span"
@@ -105,6 +249,7 @@
               "example": "retrieve",
               "help_en": "The span name in the trace log",
               "help_zh": "链路log的span名称",
+              "min_length": "1",
               "name": "span_name",
               "options": [
                 "--span-name"
@@ -142,6 +287,7 @@
               "example": "attributes.output.value",
               "help_en": "The JSON path where the Answer is stored in the trace log",
               "help_zh": "链路log里存放Answer的json path",
+              "min_length": "1",
               "name": "json_path_in_span",
               "options": [
                 "--json-path-in-span"
@@ -154,6 +300,7 @@
               "example": "query",
               "help_en": "The span name in the trace log",
               "help_zh": "链路log的span名称",
+              "min_length": "1",
               "name": "span_name",
               "options": [
                 "--span-name"
@@ -191,6 +338,7 @@
               "example": "attributes.input.value",
               "help_en": "The JSON path where the Query is stored in the trace log",
               "help_zh": "链路log里存放Query的json path",
+              "min_length": "1",
               "name": "json_path_in_span",
               "options": [
                 "--json-path-in-span"
@@ -203,6 +351,7 @@
               "example": "query",
               "help_en": "The span name in the trace log",
               "help_zh": "链路log的span名称",
+              "min_length": "1",
               "name": "span_name",
               "options": [
                 "--span-name"
@@ -364,6 +513,45 @@
   "pathPattern": "/api/v1/PAILLMTrace/eval/trace/[TraceId]",
   "product_code": "PaiLLMTrace",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Code": {
+            "description_en": "The internal error code. This parameter is returned if an exception occurred",
+            "description_zh": "内部错误码。只在响应出错时被设置",
+            "example": "InvalidInputParams",
+            "type": "string"
+          },
+          "EvaluationId": {
+            "description_en": "the task ID of the evaluation task to which the trace belongs",
+            "description_zh": "链路数据所属的评估任务的任务id",
+            "example": "6000043e103011f0922edec44617e03c",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The error message. This parameter is returned if an exception occurred",
+            "description_zh": "响应错误信息。只在响应出错时被设置",
+            "example": "eval_request missing dataset id or times",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "Id of the request",
+            "description_zh": "Id of the request",
+            "example": "F1AB295E-0D1F-5ECE-9FFA-98ABB4CB5DF5",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

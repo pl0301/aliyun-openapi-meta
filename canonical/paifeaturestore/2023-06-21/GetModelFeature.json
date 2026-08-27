@@ -49,5 +49,266 @@
   ],
   "pathPattern": "/api/v1/instances/[InstanceId]/modelfeatures/[ModelFeatureId]",
   "product_code": "PaiFeatureStore",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "ExportTrainingSetTableScript": {
+            "description_en": "Script for exporting the training set table",
+            "description_zh": "导出训练样本表脚本",
+            "example": "from feature_store_py.fs_client import FeatureStoreClient\\nfrom feature_store_py.fs_project import FeatureStoreProject\\nfrom feature_store_py.fs_datasource import LabelInput, MaxComputeDataSource, TrainingSetOutput\\nfrom feature_store_py.fs_features import FeatureSelector\\nfrom feature_store_py.fs_config import LabelInputConfig, PartitionConfig, FeatureViewConfig\\nfrom feature_store_py.fs_config import TrainSetOutputConfig, EASDeployConfig\\nimport datetime\\nimport sys\\n\\ncur_day = args['dt']\\nprint('cur_day = ', cur_day)\\noffset = datetime.timedelta(days=-1)\\npre_day = (datetime.datetime.strptime(cur_day, '%Y%m%d') + offset).strftime('%Y%m%d')\\nprint('pre_day = ', pre_day)\\n\\n\\naccess_key_id = o.account.access_id\\naccess_key_secret = o.account.secret_access_key\\nfs = FeatureStoreClient(access_key_id=access_key_id, access_key_secret=access_key_secret, region='cn-beijing')\\ncur_project_name = 'p1'\\nproject = fs.get_project(cur_project_name)\\n\\nlabel_partitions = PartitionConfig(name = 'ds', value = cur_day)\\nlabel_input_config = LabelInputConfig(partition_config=label_partitions)\\n\\nfeature_view_1_partitions = PartitionConfig(name = 'ds', value = pre_day)\\nfeature_view_1_config = FeatureViewConfig(name = 'user_fea',\\npartition_config=feature_view_1_partitions)\\n\\nfeature_view_2_partitions = PartitionConfig(name = 'ds', value = pre_day)\\nfeature_view_2_config = FeatureViewConfig(name = 'seq_fea',\\npartition_config=feature_view_2_partitions)\\n\\nfeature_view_3_partitions = PartitionConfig(name = 'ds', value = pre_day)\\nfeature_view_3_config = FeatureViewConfig(name = 'item_fea',\\npartition_config=feature_view_3_partitions)\\n\\nfeature_view_config_list = [feature_view_1_config,feature_view_2_config,feature_view_3_config]\\ntrain_set_partitions = PartitionConfig(name = 'ds', value = cur_day)\\ntrain_set_output_config = TrainSetOutputConfig(partition_config=train_set_partitions)\\n\\n\\nmodel_name = 'rank_v1'\\ncur_model = project.get_model(model_name)\\ntask = cur_model.export_train_set(label_input_config, feature_view_config_list, train_set_output_config)\\ntask.wait()\\nprint('task_summary = ', task.task_summary)\\n",
+            "title_en": "",
+            "title_zh": "导出training set表脚本",
+            "type": "string"
+          },
+          "Features": {
+            "description_en": "Feature list",
+            "description_zh": "特征列表",
+            "items": {
+              "description_en": "Feature",
+              "description_zh": "特征",
+              "properties": {
+                "AliasName": {
+                  "description_en": "Feature alias",
+                  "description_zh": "特征别名",
+                  "example": "feature2",
+                  "title_en": "",
+                  "title_zh": "特征别名。",
+                  "type": "string"
+                },
+                "FeatureViewId": {
+                  "description_en": "Feature view ID",
+                  "description_zh": "特征视图ID",
+                  "example": "3",
+                  "title_en": "",
+                  "title_zh": "特征视图ID。",
+                  "type": "string"
+                },
+                "FeatureViewName": {
+                  "description_en": "Feature view name",
+                  "description_zh": "特征视图名称",
+                  "example": "feature_view_1",
+                  "title_en": "",
+                  "title_zh": "特征视图名称。",
+                  "type": "string"
+                },
+                "Name": {
+                  "description_en": "Feature name",
+                  "description_zh": "特征名称",
+                  "example": "feature1",
+                  "title_en": "",
+                  "title_zh": "特征名称。",
+                  "type": "string"
+                },
+                "PrefixName": {
+                  "example": "cand_seq__",
+                  "type": "string"
+                },
+                "Type": {
+                  "description_en": "Feature type.\n\n● INT32\n\n● INT64\n\n● FLOAT\n\n● DOUBLE\n\n● STRING\n\n● BOOLEAN\n\n● TIMESTAMP",
+                  "description_zh": "特征类型。\n\n● INT32\n\n● INT64\n\n● FLOAT\n\n● DOUBLE\n\n● STRING\n\n● BOOLEAN\n\n● TIMESTAMP",
+                  "example": "INT32",
+                  "title_en": "",
+                  "title_zh": "特征类型。\n● INT32\n● INT64\n● FLOAT\n● DOUBLE\n● STRING\n● BOOLEAN\n● TIMESTAMP",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title_en": "",
+            "title_zh": "特征列表。",
+            "type": "array"
+          },
+          "GmtCreateTime": {
+            "description_en": "Creation time",
+            "description_zh": "创建时间",
+            "example": "2023-07-04T14:46:22.227+08:00",
+            "title_en": "",
+            "title_zh": "创建时间。",
+            "type": "string"
+          },
+          "GmtModifiedTime": {
+            "description_en": "Update time",
+            "description_zh": "更新时间",
+            "example": "2023-07-04T14:46:22.227+08:00",
+            "title_en": "",
+            "title_zh": "更新时间。",
+            "type": "string"
+          },
+          "LabelPriorityLevel": {
+            "description_en": "Label table priority. The default value is 0. Set to 1 to give priority to the label table, or set to 2 to give priority to the feature view",
+            "description_zh": "Label 表优先级，默认值为 0，设置为 1 表示 Label 表优先，设置为 2 表示 特征视图优先",
+            "example": "0",
+            "format": "int64",
+            "title_en": "",
+            "title_zh": "label 表优先级，默认为0，表示不允许 label 表特征与特征视图特征有冲突。1 表示有冲突时 label 表优先。2表示特征视图优先。",
+            "type": "integer"
+          },
+          "LabelTableId": {
+            "description_en": "Label table ID",
+            "description_zh": "Label表ID",
+            "example": "3",
+            "title_en": "",
+            "title_zh": "Label表ID。",
+            "type": "string"
+          },
+          "LabelTableName": {
+            "description_en": "Label table name",
+            "description_zh": "Label表名称",
+            "example": "label_table1",
+            "title_en": "",
+            "title_zh": "Label表名称。",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "Model feature name",
+            "description_zh": "模型特征名称",
+            "example": "model_feature1",
+            "title_en": "",
+            "title_zh": "模型特征名称。",
+            "type": "string"
+          },
+          "Owner": {
+            "description_en": "Alibaba Cloud account ID of the creator",
+            "description_zh": "创建人的阿里云账号ID",
+            "example": "1231243253****",
+            "title_en": "",
+            "title_zh": "创建人。",
+            "type": "string"
+          },
+          "ProjectId": {
+            "description_en": "Project ID",
+            "description_zh": "项目ID",
+            "example": "5",
+            "title_en": "",
+            "title_zh": "项目ID。",
+            "type": "string"
+          },
+          "ProjectName": {
+            "description_en": "Project name",
+            "description_zh": "项目名称",
+            "example": "project1",
+            "title_en": "",
+            "title_zh": "项目名称。",
+            "type": "string"
+          },
+          "Relations": {
+            "description_en": "Feature relations",
+            "description_zh": "特征关系",
+            "properties": {
+              "Domains": {
+                "description_en": "Domain list",
+                "description_zh": "Domain列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "DomainType": {
+                      "description_en": "Domain type.\n\n● FeatureEntity - Feature entity\n\n● FeatureView - Feature view\n\n● ModelFeature - Model feature",
+                      "description_zh": "Domain类型。\n\n● FeatureEntity-特征实体\n\n● FeatureView-特征视图\n\n● ModelFeature-模型特征",
+                      "example": "FeatureEntity",
+                      "title_en": "",
+                      "title_zh": "Domain类型。\n● FeatureEntity-特征实体\n● FeatureView-特征视图\n● ModelFeature-模型特征",
+                      "type": "string"
+                    },
+                    "Id": {
+                      "description_en": "Domain ID",
+                      "description_zh": "Domain ID",
+                      "example": "3",
+                      "title_en": "",
+                      "title_zh": "Domain ID。",
+                      "type": "string"
+                    },
+                    "Name": {
+                      "description_en": "Domain name",
+                      "description_zh": "Domain名称",
+                      "example": "feature_entity_1",
+                      "title_en": "",
+                      "title_zh": "Domain名称。",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title_en": "",
+                "title_zh": "Domain列表。",
+                "type": "array"
+              },
+              "Links": {
+                "description_en": "Feature relation link information list",
+                "description_zh": "特征关系连接信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "From": {
+                      "description_en": "Source ID of the link",
+                      "description_zh": "连接头ID",
+                      "example": "model_feature_2",
+                      "title_en": "",
+                      "title_zh": "连接头ID。",
+                      "type": "string"
+                    },
+                    "Link": {
+                      "description_en": "Link dependency field",
+                      "description_zh": "连接依赖字段",
+                      "example": "user_id",
+                      "title_en": "",
+                      "title_zh": "连接依赖字段。",
+                      "type": "string"
+                    },
+                    "To": {
+                      "description_en": "Target ID of the link",
+                      "description_zh": "连接尾ID",
+                      "example": "feature_entity_3",
+                      "title_en": "",
+                      "title_zh": "连接尾ID。",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title_en": "",
+                "title_zh": "特征关系连接信息列表。",
+                "type": "array"
+              }
+            },
+            "title_en": "",
+            "title_zh": "特征关系。",
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "Request ID",
+            "description_zh": "请求ID",
+            "example": "0C89F5E1-7F24-5EEC-9F05-508A39278CC8",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "TrainingSetFGTable": {
+            "description_en": "Name of the exported training set FG table",
+            "description_zh": "导出训练集FG表的名称",
+            "example": "table2",
+            "title_en": "",
+            "title_zh": "导出训练集FG表的名称。",
+            "type": "string"
+          },
+          "TrainingSetTable": {
+            "description_en": "Name of the exported training set table",
+            "description_zh": "导出训练集表的名称",
+            "example": "table1",
+            "title_en": "",
+            "title_zh": "导出训练集表的名称。",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

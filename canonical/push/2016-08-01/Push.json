@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "23267207",
       "help_en": "AppKey information",
       "help_zh": "AppKey信息",
@@ -34,6 +35,11 @@
       "type": "int"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "MESSAGE",
+        "NOTICE"
+      ],
       "example": "MESSAGE",
       "help_en": "Push type. Valid values:\nNOTICE: Notification. Notifications are delivered to devices through vendor channels such as APNs, Huawei, Xiaomi, and HarmonyOS, and are displayed directly in the device notification bar. When an Android device is online (app process is alive), the notification is preferentially delivered through the Alibaba Cloud proprietary channel, where the Push SDK constructs and displays the notification, providing better push performance and potentially saving vendor push message quotas in some scenarios.\nMESSAGE: Message. Messages are delivered through the Alibaba Cloud proprietary online channel. They are not displayed in the notification bar by default, but need to be received and processed by the app when the process is active, allowing the business to decide whether to trigger certain business behaviors. When the device is offline (app process is inactive), messages cannot be received in a timely manner. In this case, you can use the `iOSRemind` or `AndroidRemind` parameters below to convert messages to notifications when the device is offline; or set the `StoreOffline` parameter below so the push system saves the message when the device is offline and automatically delivers it when the device comes online",
       "help_zh": "推送类型。取值：\nNOTICE：表示通知。通知的特点是会走APNs、华为、小米、鸿蒙等厂商通道下发到设备端，并直接在设备通知栏弹出。当Android设备在线(App进程存活)时，它会优先走阿里云自有通道，由推送SDK构造通知并弹出，从而获得更好的推送性能，并在某些场景下能节省厂商推送消息额度。\nMESSAGE：表示消息。消息的特点是会走阿里云自有在线通道下发，它不会默认在通知栏弹出，而是需要由App在进程活跃时接收并处理，由业务自行决定是否触发某些业务行为。设备离线(App进程不活跃)时，将无法及时接收到消息，此时可以通过下述的`iOSRemind`或`AndroidRemind`参数，在设备离线时将消息转为通知下发；或者设置下述的`StoreOffline`参数，在设备离线时，由推送系统保存该消息，等设备上线后再自动将消息下发",
@@ -47,6 +53,13 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "iOS",
+        "ANDROID",
+        "ALL",
+        "HARMONY"
+      ],
       "example": "HARMONY",
       "help_en": "Device type. Valid values:\n\nHARMONY: HarmonyOS device\niOS: iOS device\nANDROID: Android device\nALL: When the AppKey is for a legacy dual-platform application, this represents pushing to both Android and iOS devices simultaneously; when the AppKey is for a new single-platform application, the effect is the same as specifying the device type corresponding to the application type",
       "help_zh": "设备类型，取值范围为：\n\nHARMONY：鸿蒙设备\niOS：iOS设备\nANDROID：Android设备\nALL：当AppKey为旧版本双端应用时，代表同时推送Android和iOS设备；当AppKey为新版本单端应用时，效果和指定该应用类型对应的设备类型一样",
@@ -60,6 +73,16 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "ALL",
+        "DEVICE",
+        "ACCOUNT",
+        "ALIAS",
+        "TAG",
+        "TBD",
+        "FILE"
+      ],
       "example": "ALL",
       "help_en": "Push target. Valid values:\n\nDEVICE: Push by device.\nACCOUNT: Push by account.\nALIAS: Push by alias.\nTAG: Push by tag.\nALL: Push to all devices (the interval between two full pushes of the same DeviceType must be at least 1 second).\nPushing to all iOS devices will push to devices that have been active within the last 24 months but have not uninstalled the app. Once APNs (Apple Push Notification service) receives the push request without returning an error, it is considered delivered, which may cause a surge in active device counts and generate significant costs. Please use with discretion.\nTBD: Initialize continuous push. The push target is specified by the subsequent https://help.aliyun.com/document_detail/2249917.html API",
       "help_zh": "推送目标。可取值：\n\nDEVICE：根据设备推送。\nACCOUNT：根据账号推送。\nALIAS：根据别名推送。\nTAG：根据标签推送。\nALL：推送给全部设备（同一种DeviceType的两次全推的间隔至少为1秒）。\n对iOS设备全推，会推送给24个月内活跃过但未卸载的设备，一旦APNs（苹果推送服务）接收到推送请求且未返回错误信息即为送达，导致活跃设备数暴增，从而产生大量费用，请您酌情使用。\nTBD：初始化持续推送，推送目标由后续的https://help.aliyun.com/document_detail/2249917.html接口指定",
@@ -73,6 +96,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "ALL",
       "help_en": "Set based on the Target type. Multiple values are separated by commas. If the limit is exceeded, split into multiple pushes.\n\nTarget=DEVICE: Values such as `deviceid1,deviceid2` (up to 1000).\nTarget=ACCOUNT: Values such as `account1,account2` (up to 1000).\nTarget=ALIAS: Values such as `alias1,alias2` (up to 1000).\nTarget=TAG: Supports single and multiple tags. For the format, see https://help.aliyun.com/document_detail/434847.html.\nTarget=ALL: Value is ALL (fixed parameter for full push).\nTarget=TBD: Value is TBD (fixed parameter for continuous push)",
       "help_zh": "根据Target类型来设定，多个值使用逗号分隔，超过限制需要分多次推送。\n\nTarget=DEVICE，值如`deviceid1,deviceid2`（最多支持1000个）。\nTarget=ACCOUNT，值如`account1,account2`（最多支持1000个）。\nTarget=ALIAS，值如`alias1,alias2`（最多支持1000个）。\nTarget=TAG，支持单Tag和多Tag，格式请参见https://help.aliyun.com/document_detail/434847.html。\nTarget=ALL，值为ALL（全推固定参数组合）。\nTarget=TBD，值为TBD（持续推送固定参数组合）",
@@ -164,6 +188,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "hello",
       "help_en": "Notification content/message content for Android and HarmonyOS push; iOS message/notification content. The push content size is limited. See https://help.aliyun.com/document_detail/434629.html",
       "help_zh": "Android和Harmony推送时通知的内容/消息的内容；iOS消息/通知内容，推送的内容大小是有限制的，参见https://help.aliyun.com/document_detail/434629.html",
@@ -190,6 +215,10 @@
       "type": "bool"
     },
     {
+      "enum": [
+        "PRODUCT",
+        "DEV"
+      ],
       "example": "DEV",
       "help_en": "iOS notifications are sent through the APNs center, and the corresponding environment information must be provided.\n\nDEV: Development environment, applicable to apps installed and debugged directly via Xcode.\nPRODUCT: Production environment, applicable to apps distributed via App Store, TestFlight, Ad Hoc, and enterprise distribution",
       "help_zh": "iOS的通知是通过APNs中心来发送的，需要填写对应的环境信息。\n\nDEV：开发环境，适用于Xcode直接安装调试的应用。\nPRODUCT：生产环境，适用于 App Store、TestFlight、Ad Hoc 及企业分发的应用",
@@ -385,6 +414,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "start",
+        "update",
+        "end"
+      ],
       "example": "start",
       "help_en": "Start, update, or end a Live Activity.\n\nEnum: start | update | end",
       "help_zh": "启动、更新、结束实时活动。\n\n枚举：start | update | end",
@@ -476,6 +510,12 @@
       "type": "int"
     },
     {
+      "enum": [
+        "NONE",
+        "VIBRATE",
+        "SOUND",
+        "BOTH"
+      ],
       "example": "BOTH",
       "help_en": "Notification alert type. Valid values:\n\nVIBRATE: Vibration (default)\nSOUND: Sound\nBOTH: Sound and vibration\nNONE: Silent",
       "help_zh": "通知的提醒方式。可取值：\n\nVIBRATE：振动（默认值）\nSOUND：声音\nBOTH：声音和振动\nNONE：静音",
@@ -502,6 +542,12 @@
       "type": "bool"
     },
     {
+      "enum": [
+        "APPLICATION",
+        "ACTIVITY",
+        "URL",
+        "NONE"
+      ],
       "example": "APPLICATION",
       "help_en": "Action after clicking the notification. Valid values:\n\nAPPLICATION: Open the application (default)\nACTIVITY: Open an Android Activity\nURL: Open a URL\nNONE: No redirect",
       "help_zh": "点击通知后动作。可取值：\n\nAPPLICATION：打开应用（默认值）\nACTIVITY：打开应用AndroidActivity\nURL：打开URL\nNONE：无跳转",
@@ -580,6 +626,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1",
+        "2"
+      ],
       "example": "1",
       "help_en": "Notification style. Valid values:\n0: Standard mode (default)\n1: Long text mode (supported by Huawei, Honor, Xiaomi, OPPO, Meizu, and proprietary channels)\n2: Big picture mode (supported by the proprietary channel, not supported on Xiaomi devices)\n3: List mode (supported by Huawei, Honor, Xiaomi, OPPO, and proprietary channels)\nIf using a non-standard mode, this parameter must be provided",
       "help_zh": "通知样式，取值为：\n0：标准模式（默认）\n1：长文本模式（支持华为、荣耀、小米、OPPO、魅族、自有通道）\n2：大图模式（支持自有通道，不支持小米机型）\n3：列表模式（支持华为、荣耀、小米、OPPO、自有通道）\n若使用非标准模式，此参数必须提供",
@@ -688,6 +739,8 @@
       "help_en": "Android custom notification bar style. Value range: 1-100",
       "help_zh": "Android自定义通知栏样式，取值：1-100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "0",
       "name": "android_notification_bar_type",
       "options": [
         "--android-notification-bar-type"
@@ -701,6 +754,8 @@
       "help_en": "Priority of the Android notification position in the notification bar. Valid values: -2, -1, 0, 1, 2",
       "help_zh": "Android通知在通知栏展示时排列位置的优先级。可取值： -2，-1，0，1，2",
       "location": "query",
+      "maximum": "2",
+      "minimum": "-2",
       "name": "android_notification_bar_priority",
       "options": [
         "--android-notification-bar-priority"
@@ -736,6 +791,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "LOW",
+        "NORMAL"
+      ],
       "example": "LOW",
       "help_en": "Set the Huawei notification message classification importance parameter, which determines notification behavior on user devices. Valid values:\n\nLOW: Information and marketing messages\nNORMAL: Service and communication messages\n\nHuawei channel currently recommends using AndroidMessageHuaweiCategory for notification classification. AndroidNotificationHuaweiChannel is no longer required.\nRequires application on the Huawei platform. Application Link (https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/message-classification-0000001149358835#section893184112272)",
       "help_zh": "设置Huawei通知消息分类importance参数，决定用户设备消息通知行为，取值如下：\n\nLOW：资讯营销类消息\nNORMAL：服务与通讯类消息\n\n当前华为通道建议使用AndroidMessageHuaweiCategory进行通知分类，可不再使用AndroidNotificationHuaweiChannel。\n需要在Huawei平台申请，申请链接 (https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/message-classification-0000001149358835#section893184112272)",
@@ -749,6 +808,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "LOW",
+        "NORMAL"
+      ],
       "example": "LOW",
       "help_en": "Set the Honor notification message classification importance parameter, which determines notification behavior on user devices. Valid values:\n\nLOW: Information and marketing messages\nNORMAL: Service and communication messages\n\nRequires application on the Honor platform. Application Link (https://developer.honor.com/cn/docs/11002/guides/notification-class#%E8%87%AA%E5%88%86%E7%B1%BB%E6%9D%83%E7%9B%8A%E7%94%B3%E8%AF%B7)",
       "help_zh": "设置荣耀通知消息分类importance参数，决定用户设备消息通知行为，取值如下：\n\nLOW：资讯营销类消息\nNORMAL：服务与通讯类消息\n\n需要在荣耀平台申请，申请链接 (https://developer.honor.com/cn/docs/11002/guides/notification-class#%E8%87%AA%E5%88%86%E7%B1%BB%E6%9D%83%E7%9B%8A%E7%94%B3%E8%AF%B7)",
@@ -775,6 +838,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "classification",
       "help_en": "Set the vivo notification message classification. Valid values:\n\n0: Operational messages (default)\n1: System messages\n\nvivo channel currently recommends using AndroidMessageVivoCategory for notification classification. AndroidNotificationVivoChannel is no longer required.\nRequires application on the vivo platform. For details, see: Application Link (https://dev.vivo.com.cn/documentCenter/doc/359)",
       "help_zh": "设置vivo通知消息分类，取值为：\n\n0：运营类消息（默认）\n1：系统类消息\n\n当前vivo通道建议使用AndroidMessageVivoCategory进行通知分类，可不再使用AndroidNotificationVivoChannel。\n需要在vivo平台申请，详见：申请链接 (https://dev.vivo.com.cn/documentCenter/doc/359)",
@@ -827,6 +894,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "HIGH",
+        "NORMAL"
+      ],
       "example": "HIGH",
       "help_en": "Huawei channel notification delivery priority. Valid values:\n\nHIGH\nNORMAL\n\nRequires permission application. For details, see: Application Link (https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/faq-0000001050042183#section037425218509)",
       "help_zh": "华为通道通知投递优先级，取值如下：\n\nHIGH\nNORMAL\n\n需要申请权限，具体请参见：申请链接 (https://developer.huawei.com/consumer/cn/doc/development/HMSCore-Guides/faq-0000001050042183#section037425218509)",
@@ -892,6 +963,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Set vendor channel notification type:\n0: Official notification (default).\n1: Test notification.\n\nWhen this parameter is configured, it is equivalent to simultaneously configuring AndroidHuaweiTargetUserType, AndroidHonorTargetUserType, AndroidVivoPushMode, and AndroidOppoIntentEnv. The specific vendor channel parameters can override this parameter.\nCurrently supported by: Huawei channel, Honor channel, vivo channel, and OPPO Fluid Cloud",
       "help_zh": "设置厂商通道通知类型：\n0：正式通知（默认）。\n1：测试通知。\n\n本参数配置后等价于同时配置AndroidHuaweiTargetUserType、AndroidHonorTargetUserType、AndroidVivoPushMode、AndroidOppoIntentEnv四个参数，具体厂商通道的对应参数能覆盖本参数。\n当前支持：华为通道、荣耀通道、vivo通道、OPPO流体云",
@@ -905,6 +980,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Set Huawei channel notification type:\n0: Official notification (default).\n1: Test notification.\n\nEach application can send up to 500 test notifications per day, and these are not subject to the daily per-device push limit",
       "help_zh": "设置华为通道通知类型：\n0：正式通知（默认）。\n1：测试通知。\n\n每个应用每日可发送该测试通知500条且不受每日单设备推送数量上限要求",
@@ -918,6 +997,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Set Honor channel notification type:\n0: Official notification (default).\n1: Test notification.\n\nEach application can send up to 1000 test notifications per day, and these are not subject to the daily per-device push limit",
       "help_zh": "设置荣耀通道通知类型：\n0：正式通知（默认）。\n1：测试通知。\n\n每个应用每日可发送该测试通知1000条且不受每日单设备推送数量上限要求",
@@ -931,6 +1014,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Set vivo channel notification type:\n0: Official push (default).\n1: Test push.\n\nFor test push, please configure the test device on the vivo console in advance. The test device RegId can be obtained by searching for \"onReceiveRegId regId\" in the device startup logs",
       "help_zh": "设置vivo通道通知类型：\n0：正式推送（默认）。\n1：测试推送。\n\n测试推送请事先在vivo控制台配置测试设备。测试设备RegId可在设备启动日志中搜索“onReceiveRegId regId”获得",
@@ -944,6 +1031,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "1",
       "help_en": "Set OPPO Fluid Cloud push environment:\n0: Production environment (default).\n1: Test environment.\n\nOPPO Fluid Cloud test environment requires setting up the client environment as described in Environment Setup (https://open.oppomobile.com/documentation/page/info?id=13590)",
       "help_zh": "设置OPPO流体云推送环境\n0：正式环境（默认）。\n1：测试环境。\n\nOPPO流体云测试环境需要参考环境搭建 (https://open.oppomobile.com/documentation/page/info?id=13590)在客户端搭建",
@@ -957,6 +1048,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "1",
       "help_en": "Set Huawei Quick Notification parameter:\n0: Send Huawei standard notification (default).\n1: Send Huawei Quick Notification",
       "help_zh": "设置华为快通知参数\n0：发送华为普通通知（默认）。\n1：发送华为快通知",
@@ -1013,6 +1108,8 @@
       "help_en": "Set the badge increment value, which is added to the current badge count. Value range: [1-99].\nOnly effective for Huawei/Honor vendor channel push. When both AndroidBadgeAddNum and AndroidBadgeSetNum are present, AndroidBadgeSetNum takes precedence",
       "help_zh": "设置角标累加值，在原角标的基础上进行累加，取值范围[1~99]。\n仅华为/荣耀厂商通道推送时有效。AndroidBadgeAddNum 与 AndroidBadgeSetNum 同时存在时，以AndroidBadgeSetNum为准",
       "location": "query",
+      "maximum": "99",
+      "minimum": "1",
       "name": "android_badge_add_num",
       "options": [
         "--android-badge-add-num"
@@ -1026,6 +1123,8 @@
       "help_en": "Set a fixed badge number. Value range: [0-99].\n\nFor vendor channel push, only effective on Huawei and Honor channels. For Alibaba Cloud proprietary channel push, only effective on Huawei, Honor, and vivo devices",
       "help_zh": "设置角标数字固定值，取值范围[0~99]。\n\n厂商通道推送时仅华为、荣耀通道生效。 阿里云自有通道推送时仅华为机型、荣耀机型与vivo机型上生效",
       "location": "query",
+      "maximum": "99",
+      "minimum": "1",
       "name": "android_badge_set_num",
       "options": [
         "--android-badge-set-num"
@@ -1087,6 +1186,21 @@
       "type": "string"
     },
     {
+      "enum": [
+        "IM",
+        "VOIP",
+        "SUBSCRIPTION",
+        "TRAVEL",
+        "HEALTH",
+        "WORK",
+        "ACCOUNT",
+        "EXPRESS",
+        "FINANCE",
+        "DEVICE_REMINDER",
+        "MAIL",
+        "CUSTOMER_SERVICE",
+        "MARKETING"
+      ],
       "example": "IM",
       "help_en": "Notification message category. After completing the notification message self-classification rights application, this is used to identify the message type. Different notification message types affect how messages are displayed and how alerts are triggered. Valid values:\n\nIM: Instant messaging\nVOIP: Audio/video calls\nSUBSCRIPTION: Subscriptions\nTRAVEL: Travel\nHEALTH: Health\nWORK: Work task reminders\nACCOUNT: Account updates\nEXPRESS: Orders & logistics\nFINANCE: Finance\nDEVICE_REMINDER: Device reminders\nMAIL: Email\nCUSTOMER_SERVICE: Customer service messages\nMARKETING: News, content recommendations, social updates, product promotions, financial updates, lifestyle information, surveys, feature recommendations, operational promotions (only identifies content, does not accelerate message delivery), collectively referred to as information and marketing messages\n\nFor details, see the HarmonyOS official documentation Notification.category (https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/push-scenariozed-api-request-param-V5#section17371529101117)",
       "help_zh": "通知消息类别。完成申请通知消息自分类权益后，用于标识消息类型，不同的通知消息类型影响消息展示和提醒方式。取值如下：\n\nIM：即时聊天\nVOIP：音视频通话\nSUBSCRIPTION：订阅\nTRAVEL：出行\nHEALTH：健康\nWORK：工作事项提醒\nACCOUNT：账号动态\nEXPRESS：订单&物流\nFINANCE：财务\nDEVICE_REMINDER：设备提醒\nMAIL：邮件\nCUSTOMER_SERVICE：客服消息\nMARKETING：新闻、内容推荐、社交动态、产品促销、财经动态、生活资讯、调研、功能推荐、运营活动（仅对内容进行标识，不会加快消息发送），统称为资讯营销类消息\n\n详情参见鸿蒙官网 Notification.category (https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/push-scenariozed-api-request-param-V5#section17371529101117)",
@@ -1100,6 +1214,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "SOCIAL_COMMUNICATION",
+        "SERVICE_INFORMATION",
+        "CONTENT_INFORMATION",
+        "CUSTOMER_SERVICE",
+        "OTHER_TYPES"
+      ],
       "example": "SOCIAL_COMMUNICATION",
       "help_en": "Use the specified notification channel type. Only effective when the Alibaba Cloud proprietary channel is online.\n\nSOCIAL_COMMUNICATION: Social communication.\nSERVICE_INFORMATION: Service reminders.\nCONTENT_INFORMATION: Content information.\nCUSTOMER_SERVICE: Customer service messages. This type is used for customer service messages between users and merchants, and must be initiated by the user.\nOTHER_TYPES: Other.\n\nFor details, see the HarmonyOS official documentation SlotType (https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-notificationmanager-V5#slottype)",
       "help_zh": "使用指定类型的通知渠道。仅在阿里云自有通道在线时有效。\n\nSOCIAL_COMMUNICATION: 社交通信。\nSERVICE_INFORMATION: 服务提醒。\nCONTENT_INFORMATION: 内容资讯。\nCUSTOMER_SERVICE: 客服消息。该类型用于用户与商家之间的客服消息，需由用户主动发起。\nOTHER_TYPES: 其他。\n\n详情参见鸿蒙官网 SlotType (https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-notificationmanager-V5#slottype)",
@@ -1126,6 +1247,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "APP_HOME_PAGE",
+        "APP_CUSTOM_PAGE"
+      ],
       "example": "APP_HOME_PAGE",
       "help_en": "Action after clicking the notification. Valid values:\n\nAPP_HOME_PAGE: Open app home page\nAPP_CUSTOM_PAGE: Open app custom page",
       "help_zh": "点击通知后动作。可取值：\n\nAPP_HOME_PAGE：打开应用首页\nAPP_CUSTOM_PAGE：打开应用自定义页面",
@@ -1165,6 +1290,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "NORMAL",
+        "MULTI_LINE"
+      ],
       "example": "NORMAL",
       "help_en": "Notification message style:\nNORMAL: Standard notification (default)\nMULTI_LINE: Multi-line text style",
       "help_zh": "通知消息样式：\nNORMAL: 普通通知（默认值）\nMULTI_LINE: 多行文本样式",
@@ -1338,6 +1467,7 @@
       "help_en": "Delay time before triggering SMS, in seconds.\n\nMust be set when using SMS convergence. Recommended to be 15 seconds or more, with a maximum of 3 days, to avoid duplication between SMS and push notifications.\n\nWhen SMS convergence is used, the ExpireTime parameter becomes ineffective. The notification expiration time is calculated based on the SmsDelaySecs parameter, with the expiration time being the current time plus SmsDelaySecs",
       "help_zh": "触发短信的延迟时间，单位：秒。\n\n若使用短信联动必须设置，推荐设置为15秒以上，最大不超过3天，避免短信和推送的重复。\n\n短信联动时，ExpireTime参数失效，通知失效时间以SmsDelaySecs参数计算，失效时间为当前时间加上SmsDelaySecs时间",
       "location": "query",
+      "minimum": "1",
       "name": "sms_delay_secs",
       "options": [
         "--sms-delay-secs"
@@ -1347,10 +1477,16 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Condition for triggering SMS. Valid values:\n\n0: Triggered when push is not received.\n1: Triggered when user has not opened the notification",
       "help_zh": "触发短信的条件。可取值：\n\n0：推送未收到时触发。\n1：用户未打开时触发",
       "location": "query",
+      "maximum": "1",
+      "minimum": "0",
       "name": "sms_send_policy",
       "options": [
         "--sms-send-policy"
@@ -1364,6 +1500,7 @@
       "help_en": "This parameter is deprecated",
       "help_zh": "该参数已废弃",
       "location": "query",
+      "minimum": "10000",
       "name": "send_speed",
       "options": [
         "--send-speed"
@@ -1416,6 +1553,8 @@
       "help_en": "An idempotent parameter to prevent duplicate pushes caused by API client retries. When the same IdempotentToken is used for calls within 15 minutes, only one push will be made, and subsequent calls will return the result of the first successful push.\n\n\nThe parameter format is a standard 36-character UUID (8-4-4-4-12). Each valid character is a hexadecimal digit in the range 0-9 or a-f, case-insensitive.\nThis parameter is only used to prevent duplicate pushes caused by retries. It cannot prevent duplicate pushes caused by concurrent calls",
       "help_zh": "用于防止API调用端重试造成服务端重复推送的一个幂等参数。15分钟内使用相同IdempotentToken进行调用时，只会进行一次推送，后续返回第一次成功推送的结果。\n\n\n参数格式为标准36位UUID(8-4-4-4-12)，每个有效字符是0-9 或 a-f 范围内的一个十六进制的数字，不区分大小写。\n此参数仅用于避免重试造成的重复推送，无法避免并发调用造成的重复推送",
       "location": "query",
+      "max_length": "36",
+      "min_length": "36",
       "name": "idempotent_token",
       "options": [
         "--idempotent-token"
@@ -1425,6 +1564,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Meizu message type:\n0: Public message (default)\n1: Private message",
       "help_zh": "魅族消息类型\n0 公信消息（默认）\n1 私信消息",
@@ -1602,5 +1745,28 @@
   ],
   "pathPattern": "",
   "product_code": "Push",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "MessageId": {
+            "description_en": "The message ID that identifies a push operation",
+            "description_zh": "标志一次推送的消息ID",
+            "example": "501029",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "9998B3CC-ED9E-4CB3-A8FB-DCC61296BFBC",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

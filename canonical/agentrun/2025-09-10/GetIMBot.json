@@ -2,6 +2,200 @@
   "camel_example": "",
   "cmd_full_name": "agentrun get-im-bot",
   "cmd_name": "get-im-bot",
+  "components": {
+    "schemas": {
+      "ErrorResult": {
+        "description_en": "The error response structure",
+        "description_zh": "错误响应结构体",
+        "properties": {
+          "code": {
+            "description_en": "The error code. SUCCESS indicates the request was successful. Otherwise, a specific error code is returned, such as ERR_BAD_REQUEST, ERR_VALIDATION_FAILED, or ERR_INTERNAL_SERVER_ERROR",
+            "description_zh": "SUCCESS 为成功，失败情况返回对应错误类型，比如 ERR_BAD_REQUEST ERR_VALIDATION_FAILED ERR_INTERNAL_SERVER_ERROR",
+            "example": "SUCCESS",
+            "title": "结果码",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "A human-readable description of the error",
+            "description_zh": "错误信息描述",
+            "example": "Conflict Transaction, process failed",
+            "title": "Error Message",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The unique request identifier, used for troubleshooting",
+            "description_zh": "唯一的请求标识符，用于问题追踪",
+            "example": "55D4BE40-2811-5CFB-8482-E0E98D575B1E",
+            "title": "Request ID",
+            "type": "string"
+          }
+        },
+        "title": "Error Response",
+        "type": "object"
+      },
+      "IMBotInfo": {
+        "description_en": "",
+        "description_zh": "成功响应 data 中单条；不包含 botBizSecret、完整 metadata（与 io.IMBotInfo 一致）",
+        "properties": {
+          "agentRuntimeId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "botBizId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "botBizType": {
+            "description_en": "",
+            "description_zh": "dingtalk、wecom、feishu、custom",
+            "enum": [
+              "dingtalk",
+              "wecom",
+              "feishu",
+              "custom"
+            ],
+            "type": "string"
+          },
+          "botMode": {
+            "description_en": "",
+            "description_zh": "standard、custom",
+            "enum": [
+              "standard",
+              "custom"
+            ],
+            "type": "string"
+          },
+          "botName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "createdAt": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "currentInstances": {
+            "description_en": "",
+            "description_zh": "可选；来自账号元数据 scaling.currentInstances，同一租户下各 Bot 响应中值相同",
+            "format": "int64",
+            "type": "integer"
+          },
+          "description": {
+            "description_en": "",
+            "description_zh": "Bot 描述信息",
+            "type": "string"
+          },
+          "id": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "imChannelServerResourceName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "lastMessageTime": {
+            "description_en": "",
+            "description_zh": "可选",
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/IMBotMetadata",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "status": {
+            "description_en": "",
+            "description_zh": "",
+            "enum": [
+              "running",
+              "stopped"
+            ],
+            "type": "string"
+          },
+          "tenantId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "title": "IM Bot 信息",
+        "type": "object"
+      },
+      "IMBotMetadata": {
+        "description_en": "",
+        "description_zh": "创建、更新请求体中 metadata；标准模式下须满足运行时绑定校验；解码兼容历史字段名见 IMBotMetadata.UnmarshalJSON；IMBotInfo 不返回完整 metadata",
+        "properties": {
+          "agentRuntimeEndpointId": {
+            "description_en": "",
+            "description_zh": "可选",
+            "type": "string"
+          },
+          "agentRuntimeEndpointUrl": {
+            "description_en": "",
+            "description_zh": "标准模式下必填：下游 Agent 可调用的 URL；custom 模式可省略",
+            "type": "string"
+          },
+          "agentRuntimeId": {
+            "description_en": "",
+            "description_zh": "绑定的 Agent Runtime UUID",
+            "type": "string"
+          },
+          "customFunctionMeta": {
+            "description_en": "",
+            "description_zh": "自定义函数元信息；可选；与后端 IMBotMetadata 持久化字段一致",
+            "maxLength": 128,
+            "type": "string"
+          },
+          "protocolType": {
+            "description_en": "",
+            "description_zh": "标准模式下必填，与 ValidateAgentRuntimeProtocolTypeValue 一致（大小写敏感）；custom 模式可省略",
+            "type": "string"
+          },
+          "role": {
+            "description_en": "",
+            "description_zh": "不写入单 Bot 持久化 JSON；用于首次/更新时设置租户级 FC RAM 执行角色 ARN（acs:ram::...）；FC 启用且非 custom 时按服务逻辑校验",
+            "maxLength": 2048,
+            "type": "string"
+          }
+        },
+        "title": "IM Bot 元数据",
+        "type": "object"
+      },
+      "IMBotResult": {
+        "description_en": "",
+        "description_zh": "成功：code=OK，data 为 IMBotInfo；失败见统一错误 JSON（含 message 等，与 respond.go 一致）",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "OK 表示成功",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/IMBotInfo",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "requestId": {
+            "description_en": "",
+            "description_zh": "与响应头 x-funagent-request-id 对应",
+            "type": "string"
+          }
+        },
+        "title": "IM Bot 单条操作响应",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Gets the details of a specific IM Bot",
   "description_zh": "获取 IM Bot",
@@ -35,5 +229,21 @@
   ],
   "pathPattern": "/2025-09-10/agents/im-bots/[imBotId]",
   "product_code": "AgentRun",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "$ref": "#/components/schemas/IMBotResult",
+        "description_en": "The details of the IM Bot",
+        "description_zh": ""
+      }
+    },
+    "500": {
+      "schema": {
+        "$ref": "#/components/schemas/ErrorResult",
+        "description_en": "",
+        "description_zh": ""
+      }
+    }
+  }
 }

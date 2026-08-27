@@ -2,6 +2,295 @@
   "camel_example": "aliyun paiautoml POST /api/automl/v1/autofe/experiment --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"Description\":\"This_is_an_AutoFE_experiment.\",\"Accessibility\":\"PUBLIC\",\"WorkspaceId\":\"283301\",\"Tag\":[{\"Value\":\"group_name\",\"Key\":\"group\"}],\"AutofeExperimentConfiguration\":\"example-string\",\"Name\":\"my_experiment_x\"}",
   "cmd_full_name": "paiautoml create-autofe-experiment",
   "cmd_name": "create-autofe-experiment",
+  "components": {
+    "schemas": {
+      "AutofeExperimentConfiguration": {
+        "description_en": "The configuration of the AutoFE experiment",
+        "description_zh": "AutoFE实验配置信息",
+        "properties": {
+          "odps_config": {
+            "description_en": "MaxCompute configurations",
+            "description_zh": "MaxCompute配置",
+            "properties": {
+              "odps_access_id": {
+                "description_en": "odps access id",
+                "description_zh": "odps access id",
+                "example": "Ltx***yw\n",
+                "title": "odps_access_id",
+                "type": "string"
+              },
+              "odps_access_key": {
+                "description_en": "odps access key",
+                "description_zh": "odps access key",
+                "example": "Tc***Mu\n",
+                "title": "odps_access_key",
+                "type": "string"
+              },
+              "odps_endpoint": {
+                "description_en": "odps endpoint",
+                "description_zh": "odps endpoint",
+                "example": "http://service.cn-beijing.maxcompute.aliyun.com/api",
+                "required": true,
+                "title": "odps_endpoint",
+                "type": "string"
+              },
+              "odps_project_name": {
+                "description_en": "The name of the MaxCompute project",
+                "description_zh": "odps项目名称",
+                "example": "pai_rec",
+                "required": true,
+                "title": "odps_project_name",
+                "type": "string"
+              },
+              "odps_region_id": {
+                "description_en": "The MaxCompute region ID",
+                "description_zh": "odps区域id",
+                "example": "cn-beijing",
+                "required": true,
+                "title": "odps_region_id",
+                "type": "string"
+              },
+              "odps_role_arn": {
+                "description_en": "The service-linked role for PAIAutoML. If this parameter is specified, AccessKey ID and Secret are not required",
+                "description_zh": "PAIAutoML服务关联角色。填写该值后，可不提供ak/sk",
+                "example": "acs:ram::xxx:role/aliyunserviceroleforpaiautoml\n",
+                "title": "odps_role_arn",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "odps_config",
+            "type": "object"
+          },
+          "oss_config": {
+            "description_en": "Object Storage Service (OSS) configurations",
+            "description_zh": "oss配置",
+            "properties": {
+              "oss_access_id": {
+                "description_en": "oss access id",
+                "description_zh": "oss access id",
+                "example": "Ltx***yw",
+                "required": false,
+                "title": "oss_access_id",
+                "type": "string"
+              },
+              "oss_access_key": {
+                "description_en": "oss access key",
+                "description_zh": "oss access key",
+                "example": "Tc***Mu",
+                "required": false,
+                "title": "oss_access_key",
+                "type": "string"
+              },
+              "oss_bucket": {
+                "description_en": "The name of the OSS bucket",
+                "description_zh": "oss_bucket名称",
+                "example": "autofe-service",
+                "required": true,
+                "title": "oss_bucket",
+                "type": "string"
+              },
+              "oss_endpoint": {
+                "description_en": "oss endpoint",
+                "description_zh": "oss endpoint",
+                "example": "oss-cn-beijing.aliyuncs.com",
+                "required": true,
+                "title": "oss_endpoint",
+                "type": "string"
+              },
+              "oss_role_arn": {
+                "description_en": "The service-linked role for PAIAutoML. If this parameter is specified, AccessKey ID and Secret are not required",
+                "description_zh": "PAIAutoML服务关联角色。填写该值后，可不提供ak/sk",
+                "example": "acs:ram::xxx:role/aliyunserviceroleforpaiautoml\n",
+                "required": false,
+                "title": "oss_role_arn",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "oss_config",
+            "type": "object"
+          },
+          "yml_config": {
+            "description_en": "AutoFE runtime configurations",
+            "description_zh": "AutoFE运行时配置",
+            "properties": {
+              "action": {
+                "description_en": "The operations of the experiment. Valid values: `fs_train`, `train`, `analyze`, `pipeline`, `selection`, and `transform`",
+                "description_zh": "实验进行的操作，可选值包括：`fs_train`，`train`， `analyze`， `pipeline`， `selection`， `transform`",
+                "example": "fs_train",
+                "title": "action",
+                "type": "string"
+              },
+              "aggregate_only": {
+                "description_en": "Specifies whether to perform only aggregate data analysis. If you specify false, the four operations are also performed",
+                "description_zh": "是否只进行统计类的特征加工及选择。如选择False，则同时会进行四则运算类的特征加工及选择",
+                "example": "true / false",
+                "title": "aggregate_only",
+                "type": "string"
+              },
+              "analyze_exp_id": {
+                "description_en": "The ID of the feature analysis experiment. This parameter is used only if data analysis is already done. If AutoFE is performed for the first time, this parameter is not required",
+                "description_zh": "特征分析实验的id。该id仅在已经进行过数据分析的场景下使用，如果是首次进行自动特征工程，不需要提供该参数",
+                "example": "特征分析实验id， 如sRudaBC",
+                "title": "analyze_exp_id",
+                "type": "string"
+              },
+              "cpu": {
+                "description_en": "The CPU usage of each worker in the experiment",
+                "description_zh": "特征工程中每个Worker cpu使用量",
+                "example": "2",
+                "title": "cpu",
+                "type": "string"
+              },
+              "data_partition": {
+                "description_en": "The data partition",
+                "description_zh": "数据分区",
+                "example": "ds=20230720",
+                "title": "data_partition",
+                "type": "string"
+              },
+              "data_source": {
+                "description_en": "The name of the data source",
+                "description_zh": "数据源名称",
+                "example": "MaxCompute表名，如ad_click_table_name",
+                "required": true,
+                "title": "data_source",
+                "type": "string"
+              },
+              "data_type": {
+                "description_en": "The type of the data",
+                "description_zh": "数据类型",
+                "example": "odps / oss",
+                "title": "data_type",
+                "type": "string"
+              },
+              "debug_mode": {
+                "description_en": "Specifies whether to enable the debug mode",
+                "description_zh": "是否启用debug模式",
+                "example": "false",
+                "title": "debug_mode",
+                "type": "string"
+              },
+              "exclude_columns": {
+                "description_en": "The name of the column to be ignored. For example, the ID columns or other columns not relevant to feature engineering",
+                "description_zh": "需要忽略的列名称。有某些id列，某些不需要参与特征工程的列",
+                "example": "c1,c2,c3",
+                "title": "exclude_columns",
+                "type": "string"
+              },
+              "feature_selection": {
+                "description_en": "Specifies whether to use the results of feature selection for feature analysis",
+                "description_zh": "是否利用特征选择结果做特征分析",
+                "example": "true",
+                "title": "feature_selection",
+                "type": "string"
+              },
+              "filter_thresh": {
+                "description_en": "The filtering threshold of low frequency features",
+                "description_zh": "低频特征过滤阈值",
+                "example": "10",
+                "title": "filter_thresh",
+                "type": "string"
+              },
+              "iv_thresh": {
+                "description_en": "The information value threshold for feature selection. If the information value of a feature is lower than iv_thresh, the feature is filtered out. We recommend that you set this parameter to 0.02",
+                "description_zh": "在特征选择过程中使用了Information value作为，特征过滤依据。iv_thresh为information value的阈值，低于该值，则特征会标过滤掉。推荐使用0.02",
+                "example": "0.02",
+                "title": "iv_thresh",
+                "type": "string"
+              },
+              "label": {
+                "description_en": "The name of the label column of the input data",
+                "description_zh": "输入数据的label列名称",
+                "example": "label列名称，如is_click",
+                "required": true,
+                "title": "label",
+                "type": "string"
+              },
+              "memory": {
+                "description_en": "The memory usage of each worker in the experiment",
+                "description_zh": "特征工程中每个Worker内存使用量",
+                "example": "4000",
+                "title": "memory",
+                "type": "string"
+              },
+              "output_config_oss_dir": {
+                "description_en": "The output path of the dynamic configurations",
+                "description_zh": "运行任务时动态配置的输出路径",
+                "example": "oss://bucket_name/folder/",
+                "required": true,
+                "title": "output_config_oss_dir",
+                "type": "string"
+              },
+              "pipeline_exp_id": {
+                "description_en": "The ID of the pipeline training experiment",
+                "description_zh": "pipeline训练实验id",
+                "example": "pipeline训练实验id，如sRudaBC",
+                "title": "pipeline_exp_id",
+                "type": "string"
+              },
+              "reuse_results": {
+                "description_en": "Specifies whether to reuse the intermediate results",
+                "description_zh": "是否重用中间结果",
+                "example": "false",
+                "title": "reuse_results",
+                "type": "string"
+              },
+              "sample_ratio": {
+                "description_en": "The ratio of data samples. You can specify this parameter when the data size is too large",
+                "description_zh": "当输入数据量过大时，可以提供采样比例",
+                "example": "0~1之间的小数，采样比例。sample_size / sample_ratio 提供一个即可。",
+                "title": "sample_ratio",
+                "type": "string"
+              },
+              "sample_size": {
+                "description_en": "The number of data samples. This parameter is needed when the data size is too large",
+                "description_zh": "当输入数据量过大时，需要提供采样数据量",
+                "example": "e.g., 5000000，表示对数据采样5000000行，作为自动特征工程的输入。",
+                "title": "sample_size",
+                "type": "string"
+              },
+              "selection_exp_id": {
+                "description_en": "The ID of the feature selection experiment",
+                "description_zh": "特征选择实验id",
+                "example": "特征选择实验id， 如sRudaBC",
+                "title": "selection_exp_id",
+                "type": "string"
+              },
+              "skip_select": {
+                "description_en": "Specifies whether all original features are contained in the output",
+                "description_zh": "输出特征是否包含全部原始特征",
+                "example": "true",
+                "title": "skip_select",
+                "type": "string"
+              },
+              "workers": {
+                "description_en": "The number of workers to be used in AutoFE",
+                "description_zh": "自动特征工程中需要使用的worker数量",
+                "example": "10",
+                "title": "workers",
+                "type": "string"
+              },
+              "workspace_name": {
+                "description_en": "The name of the workspace",
+                "description_zh": "工作空间名称",
+                "example": "my_workspace_1",
+                "required": true,
+                "title": "workspace_name",
+                "type": "string"
+              }
+            },
+            "required": true,
+            "title": "yml_config",
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "CreateAutofeExperiment",
   "description_zh": "CreateAutofeExperiment",
@@ -594,6 +883,49 @@
   "pathPattern": "/api/automl/v1/autofe/experiment",
   "product_code": "paiAutoML",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Code": {
+            "description_en": "The internal error code. This parameter is returned if an exception occurred",
+            "description_zh": "状态码",
+            "example": "INVALID_INPUT_PARAMS",
+            "type": "string"
+          },
+          "Detail": {
+            "description_en": "The detailed information about the request error",
+            "description_zh": "额外的错误信息。只在响应出错时被设置",
+            "example": "{}",
+            "type": "object"
+          },
+          "ExperimentId": {
+            "description_en": "The ID of the experiment",
+            "description_zh": "实验ID",
+            "example": "t8cNdMO",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The error message. This parameter is returned if an exception occurred",
+            "description_zh": "响应错误信息。只在响应出错时被设置",
+            "example": "Missing 'user_id' in request.",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The ID of the POP request",
+            "description_zh": "POP的请求id",
+            "example": "22A1EC4E-15A2-51FF-BFA3-10D6735BAA69",
+            "type": "string"
+          }
+        },
+        "title_en": "Schema of Response",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

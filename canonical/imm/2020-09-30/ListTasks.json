@@ -2,6 +2,117 @@
   "camel_example": "aliyun imm ListTasks --region cn-hangzhou --Order asc --Status Succeeded --NextToken 'MTIzNDU2Nzg6aW1tdGVzdDpleGFtcGxlYnVja2V0OmRhdGFzZXQwMDE6b3NzOi8vZXhhbXBsZWJ1Y2tldC9zYW1wbGVvYmplY3QxLmpwZw==' --ProjectName 'test-project' --TaskTypes '[\"OfficeConversion\"]' --RequestDefinition true --MaxResults 1 --Sort TaskId --StartTimeRange 'example-string' --EndTimeRange 'example-string' --TagSelector 'test=val1'",
   "cmd_full_name": "imm list-tasks",
   "cmd_name": "list-tasks",
+  "components": {
+    "schemas": {
+      "TaskInfo": {
+        "description_en": "The task information",
+        "description_zh": "任务信息对象",
+        "properties": {
+          "Code": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "ResourceNotFound",
+            "title": "错误码",
+            "type": "string"
+          },
+          "EndTime": {
+            "description_en": "The end time of the task",
+            "description_zh": "任务结束时间",
+            "example": "2021-12-24T03:01:49.480109219Z",
+            "title": "任务结束时间",
+            "type": "string"
+          },
+          "Message": {
+            "description_en": "The error message",
+            "description_zh": "错误消息",
+            "example": "The specified resource project is not found.",
+            "title": "错误消息",
+            "type": "string"
+          },
+          "Progress": {
+            "description_en": "The progress of the task",
+            "description_zh": "任务进度",
+            "example": "0",
+            "format": "int32",
+            "title": "任务进度",
+            "type": "integer"
+          },
+          "StartTime": {
+            "description_en": "The start time of the task",
+            "description_zh": "任务开始时间",
+            "example": "2021-12-24T03:01:41.662060377Z",
+            "title": "任务开始时间",
+            "type": "string"
+          },
+          "Status": {
+            "description_en": "The status of the task. Valid values:\n\nRunning: The task is running.\nSucceeded: The task is successful.\nFailed: The task failed",
+            "description_zh": "任务运行状态。包括如下选项：\n\nRunning：任务运行中。\n\nSucceeded：任务执行成功。\n\nFailed：任务执行失败",
+            "example": "Running",
+            "title": "任务状态",
+            "type": "string"
+          },
+          "Tags": {
+            "description_en": "The tags of the task. You can search for tasks by tag",
+            "description_zh": "任务标签信息，用于根据标签搜索任务",
+            "title": "标签",
+            "type": "object"
+          },
+          "TaskId": {
+            "description_en": "The ID of the task",
+            "description_zh": "任务ID",
+            "example": "c2b277b9-0d30-4882-ad6d-ad661382****",
+            "title": "任务唯一ID",
+            "type": "string"
+          },
+          "TaskRequestDefinition": {
+            "description_en": "The parameter definition in the JSON string format. For more information, see the Request parameters section of the topic about an asynchronous processing task",
+            "description_zh": "格式为JSON字符串，内容参考各类数据处理异步任务的请求参数定义",
+            "example": "{\n\t\"ProjectName\":\"test-project\",\n\t\"CompressedFormat\":\"zip\",\n\t\"TargetURI\":\"oss://test-bucket/output/test.zip\",\n\t\"Sources\":[{\"URI\":\"oss://test-bucket/input/test.jpg\"}]\n}",
+            "title": "task信息",
+            "type": "string"
+          },
+          "TaskType": {
+            "description_en": "The type of the task",
+            "description_zh": "任务类型",
+            "example": "VideoLabelClassification",
+            "title": "任务类型",
+            "type": "string"
+          },
+          "UserData": {
+            "description_en": "The custom user data",
+            "description_zh": "用户自定义信息",
+            "example": "{\"ID\": \"user1\",\"Name\": \"test-user1\",\"Avatar\": \"http://example.com?id=user1\"}",
+            "title": "用户自定义信息",
+            "type": "string"
+          }
+        },
+        "title": "任务信息",
+        "type": "object"
+      },
+      "TimeRange": {
+        "description_en": "The time range",
+        "description_zh": "时间范围对象",
+        "properties": {
+          "End": {
+            "description_en": "The end time",
+            "description_zh": "结束时间",
+            "example": "2016-12-31T00:00:00+08:00",
+            "title": "end time",
+            "type": "string"
+          },
+          "Start": {
+            "description_en": "The start time",
+            "description_zh": "开始时间",
+            "example": "2016-12-31T00:00:00+08:00",
+            "title": "start time",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Lists tasks based on specific conditions, such as by time range and by tag",
   "description_zh": "该接口提供通过多种条件查询任务列表的功能。通过该接口可以查询指定时间范围内的任务、或者通过创建任务时指定的Tag搜索任务等",
@@ -102,6 +213,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "asc",
+        "desc"
+      ],
       "example": "asc",
       "help_en": "The sort order. Valid values:\n\nasc: in ascending order. This is the default value.\ndesc: in descending order",
       "help_zh": "排序方式。取值范围如下：\n\nasc（默认）：升序\n\ndesc：降序",
@@ -115,6 +230,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Succeeded",
+        "Failed",
+        "Running"
+      ],
       "example": "Succeeded",
       "help_en": "The task status. Valid values:\n\nRunning: The task is running.\nSucceeded: The task is successful.\nFailed: The task failed",
       "help_zh": "任务运行状态。取值范围如下：\n\nRunning：任务运行中。\n\nSucceeded：任务执行完成，成功。\n\nFailed：任务执行完成，失败",
@@ -221,5 +341,63 @@
   ],
   "pathPattern": "",
   "product_code": "imm",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The matched tasks",
+        "description_zh": "符合条件的任务列表",
+        "properties": {
+          "MaxResults": {
+            "description_en": "The length of the returned result list",
+            "description_zh": "本次返回的任务列表长度",
+            "example": "1",
+            "title_en": "",
+            "title_zh": "最大结果数量",
+            "type": "string"
+          },
+          "NextToken": {
+            "description_en": "The pagination token. The pagination token is used in the next request to retrieve a new page of results if the total number of results exceeds the value of the MaxResults parameter. This parameter has a value only when not all results are returned.\n\nYou can specify the value of the NextToken parameter in the next request to list remaining results",
+            "description_zh": "翻页标记。当任务列表总数大于设置的MaxResults时，用于翻页的Token。符合条件的任务列表未全部返回时，此参数才有值。\n\n下一次列出任务列表时将此值作为NextToken传入，将后续的任务列表返回",
+            "example": "MTIzNDU2Nzg6aW1tdGVzdDpleGFtcGxlYnVja2V0OmRhdGFzZXQwMDE6b3NzOi8vZXhhbXBsZWJ1Y2tldC9zYW1wbGVvYmplY3QxLmpwZw==",
+            "title_en": "",
+            "title_zh": "翻页标记",
+            "type": "string"
+          },
+          "ProjectName": {
+            "description_en": "The name of the project",
+            "description_zh": "项目名称",
+            "example": "immtest",
+            "title_en": "",
+            "title_zh": "项目名称",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "9847E7D0-A9A3-0053-84C6-BA16FFFA726E",
+            "title_en": "",
+            "title_zh": "请求唯一Id",
+            "type": "string"
+          },
+          "Tasks": {
+            "description_en": "The tasks",
+            "description_zh": "任务信息列表",
+            "items": {
+              "$ref": "#/components/schemas/TaskInfo",
+              "description_en": "The details of the task",
+              "description_zh": "任务的详细信息"
+            },
+            "title_en": "",
+            "title_zh": "任务信息",
+            "type": "array"
+          }
+        },
+        "title_en": "",
+        "title_zh": "图片检测结果",
+        "type": "object"
+      }
+    },
+    "500": {}
+  }
 }

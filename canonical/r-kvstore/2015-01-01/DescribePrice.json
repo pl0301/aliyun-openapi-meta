@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call the https://help.aliyun.com/document_detail/473763.html operation to query the region ID",
       "help_zh": "地域ID，可调用https://help.aliyun.com/document_detail/473763.html查询",
@@ -60,6 +61,14 @@
       "type": "string"
     },
     {
+      "doc_required": true,
+      "enum": [
+        "BUY",
+        "UPGRADE",
+        "DOWNGRADE",
+        "RENEW",
+        "CONVERT"
+      ],
       "example": "BUY",
       "help_en": "The order type. Valid values:\n\nBUY: specifies the orders that are used to purchase instances.\nUPGRADE: specifies the orders that are used to change the configurations of instances.\nRENEW: specifies the orders that are used to renew instances.\nCONVERT: specifies the orders that are used to change the billing methods of instances",
       "help_zh": "订单类型，取值：\nBUY：新购。\nUPGRADE：变更配置。\nRENEW：续费。\nCONVERT：转换付费类型",
@@ -99,6 +108,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "PrePaid",
+        "PostPaid"
+      ],
       "example": "PostPaid",
       "help_en": "The billing method. Valid values:\n\nPostPaid (default): pay-as-you-go\nPrePaid: subscription",
       "help_zh": "付费类型，取值：\nPostPaid（默认）：按量付费。\nPrePaid：包年包月",
@@ -112,6 +125,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "STAND_ALONE",
+        "MASTER_SLAVE"
+      ],
       "example": "MASTER_SLAVE",
       "help_en": "The node type. Valid values:\n\nSTAND_ALONE: standalone\nMASTER_SLAVE (default): high availability (master-replica)",
       "help_zh": "节点类型，取值：\nSTAND_ALONE：单副本。\nMASTER_SLAVE（默认）：高可用（双副本）",
@@ -257,5 +274,913 @@
   ],
   "pathPattern": "",
   "product_code": "R-kvstore",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Order": {
+            "description_en": "The information about the order",
+            "description_zh": "订单信息",
+            "properties": {
+              "Code": {
+                "description_en": "The order code",
+                "description_zh": "订单码",
+                "example": "\"\"\n",
+                "type": "string"
+              },
+              "Coupons": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Coupon": {
+                    "description_en": "Details about coupons",
+                    "description_zh": "优惠券信息",
+                    "items": {
+                      "description_en": "Details about the coupon",
+                      "description_zh": "优惠券信息",
+                      "properties": {
+                        "CouponNo": {
+                          "description_en": "The coupon ID",
+                          "description_zh": "优惠券编码",
+                          "example": "youhuiquan_promotion_option_id_for_blank",
+                          "type": "string"
+                        },
+                        "Description": {
+                          "description_en": "The coupon description",
+                          "description_zh": "优惠券描述",
+                          "example": "coupondemo",
+                          "type": "string"
+                        },
+                        "IsSelected": {
+                          "description_en": "Indicates whether the coupon is selected",
+                          "description_zh": "是否选中该优惠券",
+                          "example": "true",
+                          "type": "string"
+                        },
+                        "Name": {
+                          "description_en": "The coupon name",
+                          "description_zh": "优惠券名称",
+                          "example": "test",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "Currency": {
+                "description_en": "The currency used for payment. A value of CNY is used when the order was generated on the China site (aliyun.com), and a value of USD is used when the order was generated on the international site (alibabacloud.com)",
+                "description_zh": "币种，中国站为CNY（人民币）；国际站为USD（美元）",
+                "example": "CNY",
+                "type": "string"
+              },
+              "DepreciateInfo": {
+                "description_en": "The activity information",
+                "description_zh": "活动信息",
+                "properties": {
+                  "CheapRate": {
+                    "description_en": "The price reduction rate",
+                    "description_zh": "降价比例",
+                    "example": "30%",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "CheapStandAmount": {
+                    "description_en": "The new total price displayed on the official website",
+                    "description_zh": "降价后官网总价",
+                    "example": "9*",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "ContractActivity": {
+                    "description_en": "The activity information",
+                    "description_zh": "活动信息",
+                    "properties": {
+                      "ActivityId": {
+                        "description_en": "The activity ID",
+                        "description_zh": "活动ID",
+                        "example": "****",
+                        "format": "int64",
+                        "type": "integer"
+                      },
+                      "ActivityName": {
+                        "description_en": "The activity name",
+                        "description_zh": "活动名称",
+                        "example": "合同优惠_整单_xxx折",
+                        "type": "string"
+                      },
+                      "FinalFee": {
+                        "description_en": "The preferential price",
+                        "description_zh": "优惠后费用",
+                        "example": "\n",
+                        "format": "double",
+                        "type": "number"
+                      },
+                      "FinalPromFee": {
+                        "description_en": "The total discount amount",
+                        "description_zh": "优惠总费用",
+                        "example": "\n",
+                        "format": "double",
+                        "type": "number"
+                      },
+                      "OptionCode": {
+                        "description_en": "The promotion code",
+                        "description_zh": "优惠ID",
+                        "example": "****",
+                        "type": "string"
+                      },
+                      "OptionIds": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "itemNode": true,
+                        "properties": {
+                          "OptionId": {
+                            "description_en": "The promotion IDs",
+                            "description_zh": "优惠ID列表",
+                            "items": {
+                              "description_en": "The promotion ID",
+                              "description_zh": "优惠ID",
+                              "example": "*****",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "ProdFee": {
+                        "description_en": "The original price",
+                        "description_zh": "原价",
+                        "example": "****",
+                        "format": "double",
+                        "type": "number"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "Differential": {
+                    "description_en": "The promotional offer (displayed in the total order amount)",
+                    "description_zh": "差价优惠（订单总价展示）",
+                    "example": "**",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "DifferentialName": {
+                    "description_en": "The name of the promotional offer",
+                    "description_zh": "差价优惠名称",
+                    "example": "XXXXX",
+                    "type": "string"
+                  },
+                  "IsContractActivity": {
+                    "description_en": "Indicates whether eligibility for the contracted discount is met",
+                    "description_zh": "命中合同优惠",
+                    "example": "false",
+                    "type": "boolean"
+                  },
+                  "IsShow": {
+                    "description_en": "Indicates whether the price reduction rate is displayed",
+                    "description_zh": "是否展示降价幅度",
+                    "example": "true",
+                    "type": "boolean"
+                  },
+                  "ListPrice": {
+                    "description_en": "The list price",
+                    "description_zh": "目录价",
+                    "example": "1*",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "MonthPrice": {
+                    "description_en": "The monthly price",
+                    "description_zh": "折合月价",
+                    "example": "**",
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "OriginalStandAmount": {
+                    "description_en": "The original total price displayed on the official website",
+                    "description_zh": "原始官网总价",
+                    "example": "12*",
+                    "format": "int64",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              "DiscountAmount": {
+                "description_en": "The discount amount of the order",
+                "description_zh": "订单优惠金额",
+                "example": "0.21",
+                "type": "string"
+              },
+              "HandlingFeeAmount": {
+                "description_en": "The service fees of the order",
+                "description_zh": "手续费",
+                "example": "0.1",
+                "type": "string"
+              },
+              "IsContractActivity": {
+                "description_en": "Indicates whether eligibility for the contracted discount is met",
+                "description_zh": "命中合同优惠",
+                "example": "false\n",
+                "type": "boolean"
+              },
+              "Message": {
+                "description_en": "The information about the order",
+                "description_zh": "订单信息",
+                "example": "\"\"",
+                "type": "string"
+              },
+              "OriginalAmount": {
+                "description_en": "The original price of the order",
+                "description_zh": "订单原价",
+                "example": "0.21",
+                "type": "string"
+              },
+              "RuleIds": {
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "RuleId": {
+                    "description_en": "The rule IDs",
+                    "description_zh": "活动ID",
+                    "items": {
+                      "description_en": "The rule ID",
+                      "description_zh": "活动ID",
+                      "example": "[202]",
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "ShowDiscountInfo": {
+                "description_en": "Indicates whether the discount information is displayed",
+                "description_zh": "是否展示折扣信息",
+                "type": "boolean"
+              },
+              "StandDiscountPrice": {
+                "description_en": "The discount",
+                "description_zh": "折扣价格",
+                "example": "****",
+                "format": "int64",
+                "type": "integer"
+              },
+              "StandPrice": {
+                "description_en": "The discounted price",
+                "description_zh": "折扣价",
+                "example": "0\n",
+                "format": "int64",
+                "type": "integer"
+              },
+              "TradeAmount": {
+                "description_en": "The transaction price of the order",
+                "description_zh": "订单实际交易价",
+                "example": "10",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "OrderParams": {
+            "description_en": "The parameters of the order. When OrderParamOut is set to `true`, this parameter is returned",
+            "description_zh": "订单参数，当OrderParamOut为`true`时返回",
+            "example": "String",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "3A40BE4E-1890-4972-889C-FEFA37663635",
+            "type": "string"
+          },
+          "Rules": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Rule": {
+                "description_en": "Details about promotion rules",
+                "description_zh": "活动规格",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Name": {
+                      "description_en": "The name of the rule",
+                      "description_zh": "活动名称",
+                      "example": "test",
+                      "type": "string"
+                    },
+                    "RuleDescId": {
+                      "description_en": "The ID of the rule",
+                      "description_zh": "策略ID",
+                      "example": "1111111111",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Title": {
+                      "description_en": "The title of the rule",
+                      "description_zh": "策略标题",
+                      "example": "test",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "SubOrders": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "SubOrder": {
+                "description_en": "The orders that match the coupons",
+                "description_zh": "优惠券对应的策略",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "ContractActivity": {
+                      "description_en": "Indicates whether eligibility for the contracted discount is met",
+                      "description_zh": "命中合同优惠",
+                      "example": "****",
+                      "type": "boolean"
+                    },
+                    "DepreciateInfo": {
+                      "description_en": "The price reduction information",
+                      "description_zh": "降价信息",
+                      "properties": {
+                        "CheapRate": {
+                          "description_en": "The price reduction rate",
+                          "description_zh": "降价比例",
+                          "example": "****",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "CheapStandAmount": {
+                          "description_en": "The new total price displayed on the official website",
+                          "description_zh": "降价后官网总价",
+                          "example": "****",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "ContractActivity": {
+                          "description_en": "The contract promotion",
+                          "description_zh": "合同优惠",
+                          "properties": {
+                            "ActivityId": {
+                              "description_en": "The activity ID",
+                              "description_zh": "活动id",
+                              "example": "1412025702634847",
+                              "format": "int64",
+                              "type": "integer"
+                            },
+                            "ActivityName": {
+                              "description_en": "The activity name",
+                              "description_zh": "活动名称",
+                              "example": "****",
+                              "type": "string"
+                            },
+                            "FinalFee": {
+                              "description_en": "The preferential price",
+                              "description_zh": "优惠后费用",
+                              "example": "****",
+                              "format": "double",
+                              "type": "number"
+                            },
+                            "FinalPromFee": {
+                              "description_en": "The total discount amount",
+                              "description_zh": "优惠总费用",
+                              "example": "****",
+                              "format": "double",
+                              "type": "number"
+                            },
+                            "OptionCode": {
+                              "description_en": "The promotion ID",
+                              "description_zh": "优惠id",
+                              "example": "****",
+                              "type": "string"
+                            },
+                            "OptionIds": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "itemNode": true,
+                              "properties": {
+                                "OptionId": {
+                                  "description_en": "The promotion IDs",
+                                  "description_zh": "优惠ID列表",
+                                  "items": {
+                                    "description_en": "The promotion ID",
+                                    "description_zh": "优惠ID",
+                                    "example": "\n",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "type": "array"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "ProdFee": {
+                              "description_en": "The original price",
+                              "description_zh": "原价",
+                              "example": "****",
+                              "format": "double",
+                              "type": "number"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Differential": {
+                          "description_en": "The promotional offer (displayed in the total order amount)",
+                          "description_zh": "差价优惠（订单总价展示）",
+                          "example": "****",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "DifferentialName": {
+                          "description_en": "The name of the promotional offer",
+                          "description_zh": "差价优惠名称",
+                          "example": "****",
+                          "type": "string"
+                        },
+                        "IsContractActivity": {
+                          "description_en": "Indicates whether eligibility for the contracted discount is met",
+                          "description_zh": "命中合同优惠",
+                          "example": "false",
+                          "type": "boolean"
+                        },
+                        "ListPrice": {
+                          "description_en": "The list price",
+                          "description_zh": "目录价",
+                          "example": "****",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "MonthPrice": {
+                          "description_en": "The monthly price",
+                          "description_zh": "折合月价",
+                          "example": "****",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "OriginalStandAmount": {
+                          "description_en": "The original total price displayed on the official website",
+                          "description_zh": "原始官网总价",
+                          "example": "****",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "StartTime": {
+                          "description_en": "The start time of the activity",
+                          "description_zh": "活动开始时间",
+                          "example": "2024-11-18T00:00:00Z",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DiscountAmount": {
+                      "description_en": "The discount amount of the order",
+                      "description_zh": "订单优惠金额",
+                      "example": "0.21",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "The instance ID",
+                      "description_zh": "实例ID",
+                      "example": "r-bp1xxxxxxxxxxxxx",
+                      "type": "string"
+                    },
+                    "IsContractActivity": {
+                      "description_en": "Indicates whether eligibility for the contracted discount is met",
+                      "description_zh": "命中合同优惠",
+                      "example": "****",
+                      "type": "boolean"
+                    },
+                    "ModuleInstance": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ModuleInstance": {
+                          "description_en": "The configuration details for each instance of an order line item",
+                          "description_zh": "订单行实例配置",
+                          "items": {
+                            "description_en": "The configuration sub-item of the instance in the order",
+                            "description_zh": "订单行实例配置子对象",
+                            "properties": {
+                              "ContractActivity": {
+                                "description_en": "Indicates whether eligibility for the contracted discount is met",
+                                "description_zh": "命中合同优惠",
+                                "example": "****",
+                                "type": "boolean"
+                              },
+                              "DepreciateInfo": {
+                                "description_en": "The price reduction information",
+                                "description_zh": "降价信息",
+                                "properties": {
+                                  "CheapRate": {
+                                    "description_en": "The price reduction rate",
+                                    "description_zh": "降价比例",
+                                    "example": "******",
+                                    "format": "double",
+                                    "type": "number"
+                                  },
+                                  "CheapStandAmount": {
+                                    "description_en": "The new total price displayed on the official website",
+                                    "description_zh": "降价后官网总价",
+                                    "example": "****",
+                                    "format": "double",
+                                    "type": "number"
+                                  },
+                                  "Differential": {
+                                    "description_en": "The promotional offer (displayed in the total order amount)",
+                                    "description_zh": "差价优惠（订单总价展示）",
+                                    "example": "****",
+                                    "format": "double",
+                                    "type": "number"
+                                  },
+                                  "DifferentialName": {
+                                    "description_en": "The name of the promotional offer",
+                                    "description_zh": "差价优惠名称",
+                                    "example": "****",
+                                    "type": "string"
+                                  },
+                                  "IsContractActivity": {
+                                    "description_en": "Indicates whether eligibility for the contracted discount is met",
+                                    "description_zh": "命中合同优惠",
+                                    "example": "****",
+                                    "type": "boolean"
+                                  },
+                                  "IsShow": {
+                                    "description_en": "Indicates whether the price reduction rate is displayed",
+                                    "description_zh": "是否展示降价幅度",
+                                    "example": "true",
+                                    "type": "boolean"
+                                  },
+                                  "ListPrice": {
+                                    "description_en": "The list price",
+                                    "description_zh": "目录价",
+                                    "example": "****",
+                                    "format": "double",
+                                    "type": "number"
+                                  },
+                                  "MonthPrice": {
+                                    "description_en": "The monthly price",
+                                    "description_zh": "折合月价",
+                                    "example": "****",
+                                    "format": "double",
+                                    "type": "number"
+                                  },
+                                  "OriginalStandAmount": {
+                                    "description_en": "The original total price displayed on the official website",
+                                    "description_zh": "原始官网总价",
+                                    "example": "****",
+                                    "format": "double",
+                                    "type": "number"
+                                  },
+                                  "StartTime": {
+                                    "description_en": "The start time of the activity",
+                                    "description_zh": "活动开始时间",
+                                    "example": "2024-09-23T14:00:01Z",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "DiscountFee": {
+                                "description_en": "The discount",
+                                "description_zh": "折扣费用",
+                                "example": "****",
+                                "format": "double",
+                                "type": "number"
+                              },
+                              "ModuleAttrs": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "itemNode": true,
+                                "properties": {
+                                  "moduleAttr": {
+                                    "description_en": "The module attributes",
+                                    "description_zh": "模块属性",
+                                    "items": {
+                                      "description_en": "The module attribute",
+                                      "description_zh": "订购参数",
+                                      "properties": {
+                                        "Code": {
+                                          "description_en": "The attribute code",
+                                          "description_zh": "属性代码",
+                                          "example": "****",
+                                          "type": "string"
+                                        },
+                                        "Name": {
+                                          "description_en": "The attribute name",
+                                          "description_zh": "属性名称",
+                                          "example": "****",
+                                          "type": "string"
+                                        },
+                                        "Type": {
+                                          "description_en": "The attribute type",
+                                          "description_zh": "属性类型",
+                                          "example": "****",
+                                          "format": "int64",
+                                          "type": "integer"
+                                        },
+                                        "Value": {
+                                          "description_en": "The attribute value",
+                                          "description_zh": "属性类型",
+                                          "example": "****",
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "ModuleCode": {
+                                "description_en": "The module code",
+                                "description_zh": "模块code",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "ModuleId": {
+                                "description_en": "The module ID",
+                                "description_zh": "模块Id",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "ModuleName": {
+                                "description_en": "The module name",
+                                "description_zh": "模块名称",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "NeedOrderPay": {
+                                "description_en": "Indicates whether the order is paid",
+                                "description_zh": "在订单中是否需要支付",
+                                "example": "true",
+                                "type": "boolean"
+                              },
+                              "PayFee": {
+                                "description_en": "The actual amount paid",
+                                "description_zh": "实付金额",
+                                "example": "0.0\n",
+                                "format": "double",
+                                "type": "number"
+                              },
+                              "PricingModule": {
+                                "description_en": "Indicates whether the item is billed",
+                                "description_zh": "是否计价项",
+                                "example": "****",
+                                "type": "boolean"
+                              },
+                              "StandPrice": {
+                                "description_en": "The discounted price",
+                                "description_zh": "折扣价",
+                                "example": "****",
+                                "format": "double",
+                                "type": "number"
+                              },
+                              "TotalProductFee": {
+                                "description_en": "The original price of the instance",
+                                "description_zh": "产品原价",
+                                "example": "0.0\n",
+                                "format": "double",
+                                "type": "number"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "OptionalPromotions": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "OptionalPromotion": {
+                          "description_en": "The optional promotions",
+                          "description_zh": "可选择的优惠选项列表结果",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "ActivityExtInfo": {
+                                "description_en": "The additional activity information",
+                                "description_zh": "活动额外信息",
+                                "example": "****",
+                                "type": "object"
+                              },
+                              "CanPromFee": {
+                                "description_en": "The amount that can be deducted by using the coupon",
+                                "description_zh": "可优惠价格",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "CouponNo": {
+                                "description_en": "Indicates whether coupons are used. Valid values:\n\ndefault or null (default): Coupons are used.\nyouhuiquan_promotion_option_id_for_blank: Coupons are not used",
+                                "description_zh": "是否使用优惠券，取值说明：\n\ndefault或null（默认）：使用优惠券。\nyouhuiquan_promotion_option_id_for_blank：不使用优惠券",
+                                "example": "default",
+                                "type": "string"
+                              },
+                              "Description": {
+                                "description_en": "The description of the coupon",
+                                "description_zh": "备注",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "Name": {
+                                "description_en": "The coupon name",
+                                "description_zh": "优惠券名称",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "OptionCode": {
+                                "description_en": "The promotion code",
+                                "description_zh": "活动额外信息",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "PromotionName": {
+                                "description_en": "The promotion name",
+                                "description_zh": "优惠名称",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "PromotionOptionNo": {
+                                "description_en": "The promotion ID",
+                                "description_zh": "优惠号",
+                                "example": "youhuiquan_promotion_option_id_for_blank",
+                                "type": "string"
+                              },
+                              "Selected": {
+                                "description_en": "Indicates whether the promotion option is selected",
+                                "description_zh": "是否外部选中",
+                                "example": "false",
+                                "type": "boolean"
+                              },
+                              "Show": {
+                                "description_en": "Indicates whether the discount is displayed",
+                                "description_zh": "优惠是否展示",
+                                "example": "False",
+                                "type": "boolean"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "OriginalAmount": {
+                      "description_en": "The original price of the order",
+                      "description_zh": "订单原价",
+                      "example": "0.21",
+                      "type": "string"
+                    },
+                    "PromDetailList": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "PromDetail": {
+                          "description_en": "Details about promotions",
+                          "description_zh": "优惠明细信息",
+                          "items": {
+                            "description_en": "Details about the promotion",
+                            "description_zh": "优惠信息",
+                            "properties": {
+                              "ActivityExtInfo": {
+                                "description_en": "The additional activity information",
+                                "description_zh": "活动额外信息",
+                                "example": "****",
+                                "type": "object"
+                              },
+                              "DerivedPromType": {
+                                "description_en": "The derived promotion type",
+                                "description_zh": "优惠子类型",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "FinalPromFee": {
+                                "description_en": "The discount amount",
+                                "description_zh": "优惠金额",
+                                "example": "****",
+                                "format": "double",
+                                "type": "number"
+                              },
+                              "OptionCode": {
+                                "description_en": "The coupon code",
+                                "description_zh": "优惠券代号",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "PromType": {
+                                "description_en": "The promotion type",
+                                "description_zh": "优惠子类型",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "PromotionCode": {
+                                "description_en": "The promotion code",
+                                "description_zh": "优惠码",
+                                "example": "****",
+                                "type": "string"
+                              },
+                              "PromotionId": {
+                                "description_en": "The promotion ID",
+                                "description_zh": "优惠ID",
+                                "example": "****",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "PromotionName": {
+                                "description_en": "The promotion name",
+                                "description_zh": "优惠活动名称",
+                                "example": "****",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "RuleIds": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "RuleId": {
+                          "description_en": "The hit rule IDs",
+                          "description_zh": "活动ID",
+                          "items": {
+                            "description_en": "The ID of the hit rule",
+                            "description_zh": "命中策略的ID",
+                            "example": "RuleId: 1111111111",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "StandDiscountPrice": {
+                      "description_en": "The discounted price",
+                      "description_zh": "折扣价格",
+                      "example": "****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "StandPrice": {
+                      "description_en": "The discounted price",
+                      "description_zh": "折扣价",
+                      "example": "****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TradeAmount": {
+                      "description_en": "The transaction price of the order",
+                      "description_zh": "订单实际交易价",
+                      "example": "10",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

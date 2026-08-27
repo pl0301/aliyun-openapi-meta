@@ -27,6 +27,8 @@
       "help_en": "The semantic job name, which also serves as the job identifier for subsequent calls to RunSemanticJob, DeleteSemanticJob, ListSemanticJobRuns, and DownloadSemanticResults. The name must be unique within the current tenant",
       "help_zh": "语义任务名称，也是后续 RunSemanticJob、DeleteSemanticJob、ListSemanticJobRuns 和 DownloadSemanticResults 的任务标识。名称须在当前租户内唯一",
       "location": "formData",
+      "max_length": "64",
+      "min_length": "2",
       "name": "name",
       "options": [
         "--name"
@@ -113,5 +115,127 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The standard response for creating a semantic job. Data contains the saved job definition. Subsequent calls use the Name, ProjectId, and reference file information from Data",
+        "description_zh": "创建语义任务的标准响应。Data 为已保存的任务定义，后续调用通过其中的 Name、ProjectId 和参考文件信息衔接",
+        "properties": {
+          "Data": {
+            "description_en": "The saved semantic job definition. Use Data.Name to call RunSemanticJob, DeleteSemanticJob, ListSemanticJobRuns, and DownloadSemanticResults",
+            "description_zh": "已保存的语义任务定义。使用 Data.Name 调用 RunSemanticJob、DeleteSemanticJob、ListSemanticJobRuns 和 DownloadSemanticResults",
+            "properties": {
+              "Creator": {
+                "description_en": "The job creator identifier, equivalent to UserId, used to display creation ownership",
+                "description_zh": "任务创建者标识，等同于 UserId，用于展示创建归属",
+                "example": "user-demo",
+                "type": "string"
+              },
+              "GmtCreate": {
+                "description_en": "The creation time of the job definition, expressed as a UNIX timestamp in milliseconds",
+                "description_zh": "任务定义创建时间，单位为毫秒的 Unix 时间戳",
+                "example": "1700000000000",
+                "format": "int64",
+                "type": "integer"
+              },
+              "GmtModified": {
+                "description_en": "The last modification time of the job definition, expressed as a UNIX timestamp in milliseconds",
+                "description_zh": "任务定义最近修改时间，单位为毫秒的 Unix 时间戳",
+                "example": "1700000000000",
+                "format": "int64",
+                "type": "integer"
+              },
+              "Id": {
+                "description_en": "The internal unique ID of the job definition, which identifies the job created by this call",
+                "description_zh": "任务定义的内部唯一 ID，用于标识本次创建的任务",
+                "example": "1",
+                "format": "int64",
+                "type": "integer"
+              },
+              "Name": {
+                "description_en": "The saved job name. Use this value for subsequent operations such as running, deleting, querying run records, and downloading results",
+                "description_zh": "已保存的任务名称；后续运行、删除、查询运行记录和下载结果均使用该值",
+                "example": "semantic-job-demo",
+                "type": "string"
+              },
+              "ProjectId": {
+                "description_en": "The DataWorks workspace ID to which the job belongs. Use this value as the ProjectId for GetSemanticJobDetail, GetSemanticJobLog, and KillSemanticJob",
+                "description_zh": "任务所属 DataWorks 工作空间 ID；用于 GetSemanticJobDetail、GetSemanticJobLog 和 KillSemanticJob 的 ProjectId",
+                "example": "100",
+                "format": "int64",
+                "type": "integer"
+              },
+              "ReferenceFileIds": {
+                "description_en": "The list of associated uploaded file IDs. For singleTableFile, the single file in this list is read at runtime",
+                "description_zh": "已关联的上传文件 ID 列表；singleTableFile 运行时读取其中的唯一文件",
+                "items": {
+                  "description_en": "The FileId returned by UploadSemanticFile after the PUT upload is complete",
+                  "description_zh": "由 UploadSemanticFile 返回并完成 PUT 上传后的 FileId",
+                  "example": "FID1",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "ReferenceFileUris": {
+                "description_en": "The list of associated external reference file URIs. For singleTableFile, the single file in this list is read at runtime",
+                "description_zh": "已关联的外部参考文件 URI 列表；singleTableFile 运行时读取其中的唯一文件",
+                "items": {
+                  "description_en": "The accessible reference file URI provided by the caller",
+                  "description_zh": "调用方提供的可访问参考文件 URI",
+                  "example": "https://example.com/reference.pdf",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "ResourceGroupId": {
+                "description_en": "The ID of the resource group that is used when running this job",
+                "description_zh": "运行本任务时将使用的资源组标识",
+                "example": "rg-demo",
+                "type": "string"
+              },
+              "Source": {
+                "description_en": "The saved input datasource config, corresponding to the Source in the creation request. The data scope to be analyzed is determined based on this configuration at runtime",
+                "description_zh": "已保存的输入数据源配置，与创建请求中的 Source 对应；运行时据此选择待分析的数据范围",
+                "type": "object"
+              },
+              "Type": {
+                "description_en": "The saved Source.type data source type, used to quickly identify the job input type",
+                "description_zh": "已保存的 Source.type 数据源类型，用于快速识别任务输入类型",
+                "example": "maxcompute",
+                "type": "string"
+              },
+              "UserId": {
+                "description_en": "The identifier of the user who created the job",
+                "description_zh": "创建该任务的用户标识",
+                "example": "user-demo",
+                "type": "string"
+              }
+            },
+            "title_en": "",
+            "title_zh": "业务数据",
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The request ID. Used for locating logs and troubleshooting issues",
+            "description_zh": "请求 ID。用于定位日志和排查问题",
+            "example": "676271D6-53B4-57BE-89FA-72F7AE1418DF",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "请求是否成功",
+            "title_en": "",
+            "title_zh": "请求是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  }
 }

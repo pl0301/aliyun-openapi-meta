@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "am-bp1r053byu48p****",
       "help_en": "The cluster ID.\n\nYou can call the https://help.aliyun.com/document_detail/129857.html operation to query the information about all AnalyticDB for MySQL clusters within a region, including cluster IDs",
       "help_zh": "集群ID。\n您可以调用https://help.aliyun.com/document_detail/129857.html接口查看目标地域下所有AnalyticDB MySQL集群的详情，包括集群ID",
@@ -34,6 +35,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "1632931200000",
       "help_en": "The beginning of the time range to query. Specify a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC.\n\nOnly data within the last 14 days can be queried",
       "help_zh": "查询开始时间，格式为Unix时间戳，单位：毫秒。\n仅支持查看14天内的数据",
@@ -47,6 +49,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "1633017540000",
       "help_en": "The end of the time range to query. Specify a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC.\n\n\n\nThe end time must be later than the start time.\n\nThe maximum time range that can be specified is 24 hours",
       "help_zh": "查询结束时间，格式为Unix时间戳，单位：毫秒。\n\n查询结束时间需晚于查询开始时间。\n开始时间与结束时间的间隔不能超过24小时",
@@ -60,6 +63,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID of the cluster.\n\nYou can call the https://help.aliyun.com/document_detail/143074.html operation to query the most recent region list",
       "help_zh": "地域ID。\n您可以调用https://help.aliyun.com/document_detail/143074.html接口查看AnalyticDB MySQL版支持的地域和可用区信息，包括地域ID",
@@ -73,6 +77,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "{\"Type\":\"status\",\"Value\":\"finished\"}",
       "help_en": "The query condition for SQL statements, which can contain the `Type`, `Value`, and `Min` or `Max` fields. Specify the condition in the JSON format. `Type` specifies the query dimension. Valid values for Type: `maxCost`, `status`, and `cost`. `Value`, `Min`, or `Max` specifies the query range for the dimension. Valid values:\n\n`{\"Type\":\"maxCost\",\"Value\":\"100\"}`: queries the top 100 most time-consuming SQL statements. Set `Value` to 100.\n`{\"Type\":\"status\",\"Value\":\"finished\"}`: queries executed SQL statements. You can set `Value` to `running` to query SQL statements that are being executed. You can also set Value to `failed` to query SQL statements that failed to be executed.\n`{\"Type\":\"cost\",\"Min\":\"10\",\"Max\":\"200\"}`: queries SQL statements whose execution durations are in the range of 10 to 200 milliseconds. You can also customize the maximum and minimum execution durations",
       "help_zh": "指定SQL的查询条件，格式为JSON字符串，包含`Type`、`Value`、`Min`或`Max`等字段。其中`Type` 表示查询维度（当前仅支持3个取值：`maxCost`、`status`和`cost`），`Value`、`Min`或`Max`表示该维度下的查询范围。具体支持的取值范围如下：\n` {\"Type\":\"maxCost\",\"Value\":\"100\"}`：表示查看执行耗时最长的前100条SQL详情，当前`Value`的取值仅支持设置为100。\n`{\"Type\":\"status\",\"Value\":\"finished\"}`：表示查看已完成的SQL详情（包含执行成功和失败的SQL）。您也可以将`Value`设置为`running`或`failed`来查询正在执行或执行失败的SQL详情。\n`{\"Type\":\"cost\",\"Min\":\"10\",\"Max\":\"200\"}`：表示查看执行耗时为10毫秒~200毫秒的SQL详情，您也可以自定义执行耗时的最大值与最小值，单位：毫秒",
@@ -270,5 +275,235 @@
   ],
   "pathPattern": "",
   "product_code": "adb",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "详情",
+        "properties": {
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "页数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries per page",
+            "description_zh": "本页记录数",
+            "example": "30",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Querys": {
+            "description_en": "The queried SQL statements",
+            "description_zh": "SQL语句详情列表",
+            "items": {
+              "description_en": "The queried SQL statement",
+              "description_zh": "详情",
+              "properties": {
+                "ClientIp": {
+                  "description_en": "The source IP address",
+                  "description_zh": "访问源地址",
+                  "example": "59.82.xx.xx",
+                  "type": "string"
+                },
+                "Cost": {
+                  "description_en": "The total execution duration. Unit: milliseconds.\n\nThis value is the cumulative value of the `QueuedTime`, `TotalPlanningTime`, and `ExecutionTime` parameters",
+                  "description_zh": "查询的总耗时。单位：毫秒。\n该耗时指标是`QueuedTime`、`TotalPlanningTime`和`ExecutionTime`三个耗时指标的累加值",
+                  "example": "10",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "Database": {
+                  "description_en": "The name of the database on which the SQL statement is executed",
+                  "description_zh": "执行SQL语句的数据库名称",
+                  "example": "adb_demo",
+                  "type": "string"
+                },
+                "EtlWriteRows": {
+                  "description_en": "The number of rows written to the table by an extract, transform, and load (ETL) task",
+                  "description_zh": "ETL任务写表的行数",
+                  "example": "0",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "ExecutionTime": {
+                  "description_en": "The execution duration. Unit: milliseconds",
+                  "description_zh": "查询执行的耗时，单位：毫秒",
+                  "example": "6",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "OutputDataSize": {
+                  "description_en": "The amount of returned data. Unit: bytes",
+                  "description_zh": "返回数据量，单位：Byte",
+                  "example": "9",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "OutputRows": {
+                  "description_en": "The number of rows returned",
+                  "description_zh": "返回行数",
+                  "example": "1",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "PatternId": {
+                  "description_en": "The SQL pattern ID.\n\nYou can call the [DescribePatternPerformance]（https://help.aliyun.com/document_detail/612503.html） operation to query the performance metrics of an SQL pattern within a time range",
+                  "description_zh": "SQL Pattern的ID。\n您可以调用[DescribePatternPerformance]（https://help.aliyun.com/document_detail/612503.html）接口查看指定时间内该SQLPattern执行的详细指标",
+                  "example": "-5575924945138******",
+                  "type": "string"
+                },
+                "PeakMemory": {
+                  "description_en": "The peak memory. Unit: bytes",
+                  "description_zh": "峰值内存，单位：Byte",
+                  "example": "16648",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "ProcessId": {
+                  "description_en": "The query ID",
+                  "description_zh": "查询ID",
+                  "example": "2021093000414401000000023503151******",
+                  "type": "string"
+                },
+                "QueryProperties": {
+                  "description_en": "The query properties",
+                  "description_zh": "属性键值描述",
+                  "items": {
+                    "properties": {
+                      "Name": {
+                        "description_en": "The name of the query property",
+                        "description_zh": "查询属性名称",
+                        "example": "ff",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The value of the query property",
+                        "description_zh": "查询属性值",
+                        "example": "40",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "QueueTime": {
+                  "description_en": "The amount of time that is consumed for queuing. Unit: milliseconds",
+                  "description_zh": "排队耗时，单位：毫秒",
+                  "example": "0",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "RcHost": {
+                  "description_en": "The IP address and port number of the AnalyticDB for MySQL frontend node on which the SQL statement is executed",
+                  "description_zh": "执行SQL语句的AnalyticDB MySQL前端节点IP和端口信息",
+                  "example": "10.0.xx.xx:3004",
+                  "type": "string"
+                },
+                "ResourceCostRank": {
+                  "description_en": "The execution duration rank of operators that are used in the SQL statement.\n\nThis field is returned only for SQL statements that have the `Status` parameter set to `running`",
+                  "description_zh": "SQL语句内部算子的耗时排名。\n仅状态为执行中，即`Status`取值为`running`的SQL语句支持返回该字段",
+                  "example": "1",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "ResourceGroup": {
+                  "description_en": "The resource group to which the SQL statement belongs",
+                  "description_zh": "SQL语句所属的资源池",
+                  "example": "user_default",
+                  "type": "string"
+                },
+                "SQL": {
+                  "description_en": "The SQL statement.\n\nFor performance considerations, an SQL statement cannot exceed 5,120 characters in length. Otherwise, the SQL statement is truncated. You can call the [DownloadDiagnosisRecords]（https://help.aliyun.com/document_detail/308212.html） operation to download the diagnostic information about SQL statements that meet a condition in an AnalyticDB for MySQL cluster, including the complete SQL statements",
+                  "description_zh": "SQL语句详情。\n出于性能考虑，当前SQL语句最长支持显示5120个字符，超出限制的SQL语句会被截断。您可以调用[DownloadDiagnosisRecords]（https://help.aliyun.com/document_detail/308212.html）接口下载符合指定条件的SQL语句的摘要信息，包括完整的SQL语句",
+                  "example": "SELECT count(*)\\nFROM nation",
+                  "type": "string"
+                },
+                "SQLTruncated": {
+                  "description_en": "Indicates whether the SQL statement is truncated. Valid values:\n\ntrue\nfalse",
+                  "description_zh": "查询结果的长度是否超过阈值（即是否被截断），取值如下：\ntrue：查询结果的长度超过阈值。\nfalse：查询结果的长度未超过阈值",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "SQLTruncatedThreshold": {
+                  "description_en": "The maximum length of the SQL statement. 5120 is returned. Unit: character. SQL statements that exceed this limit are truncated",
+                  "description_zh": "SQL语句的截断阈值，固定为5120个字符。超过该长度的SQL语句会被截断",
+                  "example": "5120",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "ScanRows": {
+                  "description_en": "The number of entries scanned",
+                  "description_zh": "扫描行数",
+                  "example": "1",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "ScanSize": {
+                  "description_en": "The amount of scanned data. Unit: bytes",
+                  "description_zh": "扫描数据量，单位：Byte",
+                  "example": "9",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "StartTime": {
+                  "description_en": "The beginning of the time range in which the SQL statement is executed. This value is a UNIX timestamp representing the number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                  "description_zh": "SQL语句的执行开始时间，格式为Unix时间戳，单位：毫秒",
+                  "example": "1632933704000",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "Status": {
+                  "description_en": "The state of the SQL statement. Valid values:\n\nrunning\nfinished\nfailed",
+                  "description_zh": "SQL语句的状态，取值为：\nrunning：执行中。\nfinished：已完成。\nfailed：执行失败",
+                  "example": "finished",
+                  "type": "string"
+                },
+                "TotalPlanningTime": {
+                  "description_en": "The amount of time that is consumed to generate an execution plan. Unit: milliseconds",
+                  "description_zh": "生成执行计划的耗时，单位：毫秒",
+                  "example": "4",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "TotalStages": {
+                  "description_en": "The total number of stages generated",
+                  "description_zh": "查询生成的总Stage数量",
+                  "example": "2",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "UserName": {
+                  "description_en": "The username that is used to execute the SQL statement",
+                  "description_zh": "执行SQL语句的用户名",
+                  "example": "test_user",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "109462AF-B5FA-3D5A-9377-B27E5B******",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "总记录数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

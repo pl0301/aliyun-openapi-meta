@@ -77,6 +77,7 @@
       "help_en": "The number of attack events to return on each page for a paged query. Default value: 10",
       "help_zh": "分页查询时，设置每页包含攻击事件的数量。默认值为10",
       "location": "query",
+      "maximum": "50",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -103,6 +104,8 @@
       "help_en": "The number of days to query backwards from the current time. Default value: 7",
       "help_zh": "指定从当前时间向前查询的天数。默认值为7天",
       "location": "query",
+      "maximum": "186",
+      "minimum": "1",
       "name": "query_days",
       "options": [
         "--query-days"
@@ -114,5 +117,89 @@
   ],
   "pathPattern": "",
   "product_code": "antiddos-public",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回参数",
+        "properties": {
+          "DdosEventList": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DdosEvent": {
+                "description_en": "A list of DDoS attack events",
+                "description_zh": "DDoS攻击事件的详情列表",
+                "items": {
+                  "description_en": "A list of DDoS attack events",
+                  "description_zh": "DDoS攻击事件的详情列表",
+                  "properties": {
+                    "DdosStatus": {
+                      "description_en": "The status of the event. Valid values:\n\nmitigating: Traffic is being scrubbed.\n\nblackholed: Blackhole filtering is activated for the asset.\n\nnormal: The event has ended",
+                      "description_zh": "事件的状态。取值：\n\nmitigating：表示清洗中，即正在进行流量清洗。\nblackholed：表示黑洞中，即公网IP资产处于黑洞状态。\nnormal：表示正常，即事件已结束",
+                      "example": "normal",
+                      "type": "string"
+                    },
+                    "DdosType": {
+                      "description_en": "The type of the DDoS attack event. Valid values:\n\ndefense: a traffic scrubbing event.\n\nblackhole: a blackhole filtering event",
+                      "description_zh": "DDoS攻击事件的类型。取值：\n\ndefense：表示流量清洗事件。\nblackhole：表示黑洞事件",
+                      "example": "blackhole",
+                      "type": "string"
+                    },
+                    "DelayTime": {
+                      "description_en": "The time of the last attack. This is a UNIX timestamp. Unit: milliseconds.\n\nThis parameter is returned only for some blackhole filtering events where the asset that is assigned a public IP address was attacked multiple times",
+                      "description_zh": "最后一次遭受攻击的时间。使用时间戳表示，单位：毫秒。\n\n只有在部分黑洞攻击事件中，公网IP资产遭到多次攻击时，才会返回该参数",
+                      "example": "1637817679000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "EndTime": {
+                      "description_en": "The end time of the event. This is a UNIX timestamp. Unit: milliseconds",
+                      "description_zh": "事件的结束时间。使用时间戳表示，单位：毫秒",
+                      "example": "1637817679000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "StartTime": {
+                      "description_en": "The start time of the event. This is a UNIX timestamp. Unit: milliseconds",
+                      "description_zh": "事件的开始时间。使用时间戳表示，单位：毫秒",
+                      "example": "1637812279000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "UnBlackholeTime": {
+                      "description_en": "The time when blackhole filtering was deactivated. This is a UNIX timestamp. Unit: milliseconds.\n\nThis parameter is returned only when DdosType is blackhole, which indicates a blackhole filtering event",
+                      "description_zh": "黑洞解除时间。使用时间戳表示，单位：毫秒。\n\n只有当DdosType为blackhole（表示黑洞事件）时，才会返回该参数",
+                      "example": "1637814079000",
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "RequestId": {
+            "description_en": "The ID of the request. Alibaba Cloud generates a unique ID for each request. You can use the ID to troubleshoot issues",
+            "description_zh": "本次调用请求的ID，是由阿里云为该请求生成的唯一标识符，可用于排查和定位问题",
+            "example": "BC0907F8-A9F3-5E11-977B-D59CD98C64ED",
+            "type": "string"
+          },
+          "Total": {
+            "description_en": "The total number of DDoS attack events found",
+            "description_zh": "查询到的DDoS攻击事件的总数量",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

@@ -1,6 +1,48 @@
 {
   "cmd_full_name": "dataworks-public list-cluster-configs",
   "cmd_name": "list-cluster-configs",
+  "components": {
+    "schemas": {
+      "ClusterConfig": {
+        "description_en": "The configuration information of the cluster",
+        "description_zh": "集群配置信息",
+        "properties": {
+          "ConfigValue": {
+            "backendName": "value",
+            "description_en": "The configuration value",
+            "description_zh": "配置值",
+            "example": "{\"spark.driver.memory\":\"1g\"}",
+            "title": "Config value",
+            "type": "string",
+            "visibility": "Public"
+          },
+          "EnableOverwrite": {
+            "backendName": "enableOverwrite",
+            "description_en": "Specifies whether to overwrite the advanced settings of nodes in DataStudio. Valid values:\n\ntrue\nfalse",
+            "description_zh": "是否覆盖数据开发中节点的高级设置：\ntrue（覆盖）\nfalse（不覆盖）",
+            "enumValueTitles": {},
+            "example": "false",
+            "title": "Whether to overwrite node config",
+            "type": "boolean",
+            "visibility": "Public"
+          },
+          "ModuleName": {
+            "backendName": "module",
+            "description_en": "The module in which the cluster is configured. Valid values:\n\nide: DataStudio.\nda: DataAnalysis.\nscheduler.auto: Operation Center - auto triggered instances.\nscheduler.backfill: Operation Center - data backfill instances.\nscheduler.test: Operation Center - test instances.\nscheduler.manual: Operation Center - manually triggered instances",
+            "description_zh": "配置在哪个模块生效，支持的模块如下：\nscheduler.test：运维中心 - 测试实例。\nscheduler.manual：运维中心 - 手动实例。\nide：DataStudio（数据开发）。\nscheduler.backfill：运维中心 - 补数据实例。\nda：数据分析。\nscheduler.auto：运维中心 - 周期实例",
+            "enumValueTitles": {},
+            "example": "ide",
+            "title": "DataWorks module name",
+            "type": "string",
+            "visibility": "Public"
+          }
+        },
+        "title": "Cluster config",
+        "type": "object",
+        "visibility": "Public"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries the configurations of submodules in a workspace. You can query information about SPARK parameters",
   "description_zh": "列出集群在某个工作空间下分模块的配置信息，目前支持列出 SPARK 参数",
@@ -60,5 +102,58 @@
   ],
   "pathPattern": "",
   "product_code": "dataworks-public",
-  "protocol": "HTTPS"
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The returned data",
+        "description_zh": "返回结构",
+        "properties": {
+          "ClusterConfigs": {
+            "description_en": "A list of configurations of cluster modules",
+            "description_zh": "集群分模块的配置信息列表",
+            "items": {
+              "$ref": "#/components/schemas/ClusterConfig",
+              "description_en": "The configuration information of a cluster on a module",
+              "description_zh": "集群在某个模块的配置信息"
+            },
+            "type": "array"
+          },
+          "ErrorCode": {
+            "description_en": "The error code",
+            "description_zh": "错误码",
+            "example": "101011005",
+            "type": "string"
+          },
+          "ErrorMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "Invalid.Cluster.ClusterNotFound",
+            "type": "string"
+          },
+          "HttpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "HTTP 状态码",
+            "example": "200",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID. You can locate logs and troubleshoot issues based on the ID",
+            "description_zh": "请求的ID。用于定位日志，排查问题",
+            "example": "0000-ABCD-*****",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue\nfalse",
+            "description_zh": "请求是否成功：\ntrue（成功）\nfalse（失败）",
+            "enumValueTitles": {},
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

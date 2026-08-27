@@ -23,6 +23,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "1623396736000",
       "help_en": "The start time when the ticket was created. Use this parameter with EndDate to query tickets created within a specific time range",
       "help_zh": "工单创建时间, 配合EndDate使用, 用于查询在指定的开始和结束时间范围内创建的工单",
@@ -36,6 +37,7 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1623396736000",
       "help_en": "The end time when the ticket was created. Use this parameter with StartDate to query tickets created within a specific time range",
       "help_zh": "工单创建截止时间, 配合StartDate使用, 用于查询在指定的开始和结束时间范围内提交的工单",
@@ -49,10 +51,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "1",
       "help_en": "The page number for a paged query",
       "help_zh": "分页查询页码参数",
       "location": "query",
+      "maximum": "9999999",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -62,10 +67,13 @@
       "type": "int"
     },
     {
+      "doc_required": true,
       "example": "10",
       "help_en": "The number of entries to return on each page",
       "help_zh": "分页查询条数参数",
       "location": "query",
+      "maximum": "100",
+      "minimum": "10",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -149,5 +157,111 @@
   ],
   "pathPattern": "",
   "product_code": "Workorder",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AccessDeniedDetail": {
+            "description_en": "The details of the permission error. If you have the required permissions, an empty string is returned",
+            "description_zh": "无权限错误详细信息。如果有权限，则返回空字符串",
+            "example": "{\\\"AuthAction\\\":\\\"ram:ListTickets\\\",\\\"AuthPrincipalDisplayName\\\":\\\"2146216584788xxxxx\\\",\\\"AuthPrincipalOwnerId\\\":\\\"1135850448xxxxx\\\",\\\"AuthPrincipalType\\\":\\\"SubUser\\\",\\\"NoPermissionType\\\":\\\"ImplicitDeny\\\",\\\"PolicyType\\\":\\\"AccountLevelIdentityBasedPolicy\\\"}",
+            "type": "string"
+          },
+          "Code": {
+            "description_en": "The return code of the request",
+            "description_zh": "接口请求结果返回码",
+            "example": "0",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Data": {
+            "description_en": "The list of your tickets",
+            "description_zh": "返回值为我的工单列表数据",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "Status": {
+                  "description_en": "The ticket status. Valid values: assigned (Pending response), dealing (In progress), wait_feedback (Waiting for feedback), feedback (Feedback received), wait_confirm (Pending confirmation), and confirmed (Completed)",
+                  "description_zh": "工单状态, 参考值如下\n1, \"assigned\", \"待响应\", \n2, \"dealing\", \"处理中\",\n3, \"wait_feedback\", \"待反馈\",\n4, \"feedback\", \"已反馈\",\n5, \"wait_confirm\", \"待确认\",\n6, \"confirmed\", \"已完成\"",
+                  "properties": {
+                    "Label": {
+                      "description_en": "The description of the status. Example: Completed",
+                      "description_zh": "状态描述, 如已完成",
+                      "example": "Completed",
+                      "type": "string"
+                    },
+                    "Value": {
+                      "description_en": "The value of the status. For example, a value of 6 indicates that the ticket is completed",
+                      "description_zh": "状态值, 如6, 代表已完成",
+                      "example": "6",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "TicketId": {
+                  "description_en": "The ticket ID",
+                  "description_zh": "工单编号",
+                  "example": "0005PYGCW",
+                  "type": "string"
+                },
+                "Title": {
+                  "description_en": "The ticket title",
+                  "description_zh": "工单标题",
+                  "example": "Why did ECS renewal fail?",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "Message": {
+            "description_en": "The error message. This parameter is returned only when the value of success is false",
+            "description_zh": "错误信息, 当success=false的时候, 可以取到message",
+            "example": "入参解析失败",
+            "type": "string"
+          },
+          "PageNumber": {
+            "description_en": "The page number of the paged query",
+            "description_zh": "分页查询参数的页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries returned on each page",
+            "description_zh": "分页查询参数的每页条数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The unique ID of the request. A unique ID is returned for each request",
+            "description_zh": "接口请求的唯一ID, 每次调用requestID唯一",
+            "example": "AC0AB2EC-AFBC-44BA-AE77-132A5A1EC0AD",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the call was successful. A value of true indicates that the call was successful",
+            "description_zh": "调用接口返回是否成功, true代表调用正常",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The total number of query results, which is the total number of your tickets",
+            "description_zh": "查询结果总数, 即我的工单记录总条数",
+            "example": "99",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

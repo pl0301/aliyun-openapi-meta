@@ -2,6 +2,669 @@
   "camel_example": "aliyun paistudio POST /api/v1/quotas --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"QuotaName\":\"test-quota\",\"Min\":\"example-string\",\"Description\":\"this_is_a_test_quota\",\"ResourceGroupIds\":[\"rgl593id9qqwkmbr\"],\"AllocateStrategy\":\"ByNodeSpecs\",\"QuotaConfig\":\"example-string\",\"ResourceType\":\"ECS\",\"Labels\":[\"example-string\"],\"ClusterSpec\":\"example-string\",\"ParentQuotaId\":\"quota1ci8g793pgm\",\"QueueStrategy\":\"PaiStrategyIntelligent\"}",
   "cmd_full_name": "paistudio create-quota",
   "cmd_name": "create-quota",
+  "components": {
+    "schemas": {
+      "ACS": {
+        "description_en": "ACS-related configuration",
+        "description_zh": "ACS相关配置",
+        "properties": {
+          "ACSQuotaId": {
+            "description_en": "ACS resource ID",
+            "description_zh": "ACS资源ID",
+            "example": "rq-3kbt2gtimmyw7fgfgothocvh",
+            "title": "ACS Identifier",
+            "type": "string"
+          },
+          "AssociatedProducts": {
+            "description_en": "Product codes that can use the ACS Quota.\n\nConstraints:  \nYou can select multiple sub-products, but some sub-products are mutually exclusive. The following combinations can be selected simultaneously:  \nPAI-DLC, PAI-DSW  \nPAI-EAS",
+            "description_zh": "可使用ACS Quota的产品码。\n\n约束：\n可以选多个子产品，但有些子产品之间存在互斥关系。可同时选择：\nPAI-DLC、PAI-DSW\nPAI-EAS",
+            "items": {
+              "description_en": "Product code of the product that uses ACS resources",
+              "description_zh": "使用ACS资源的产品码",
+              "example": "PAI-DLC",
+              "type": "string"
+            },
+            "title": "Products that can use ACS Quota",
+            "type": "array"
+          }
+        },
+        "title": "ACS Quota Related Configuration",
+        "type": "object"
+      },
+      "BindingPolicy": {
+        "description_en": "The policy for binding nodes",
+        "description_zh": "绑定节点规则",
+        "properties": {
+          "ExcludeNodes": {
+            "description_en": "A list of node IDs to exclude from scheduling",
+            "description_zh": "不可包含的节点名称列表",
+            "items": {
+              "description_en": "The node ID to exclude",
+              "description_zh": "强制不包含的节点id",
+              "example": "lrndef",
+              "type": "string"
+            },
+            "title": "不可包含的节点名称列表",
+            "type": "array"
+          },
+          "IncludeNodes": {
+            "description_en": "A list of node IDs to include in the scheduling",
+            "description_zh": "必须包含的节点名称列表",
+            "items": {
+              "description_en": "The node ID to include",
+              "description_zh": "强制添加的节点id",
+              "example": "lrnabc",
+              "type": "string"
+            },
+            "title": "必须包含的节点名称列表",
+            "type": "array"
+          },
+          "NodeSpecCount": {
+            "description_en": "The number of nodes to be selected by the scheduler",
+            "description_zh": "由调度器选择节点数量",
+            "example": "5",
+            "format": "int64",
+            "title": "由调度器选择节点数量",
+            "type": "integer"
+          }
+        },
+        "title": "绑定节点规则",
+        "type": "object"
+      },
+      "ClusterSpec": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "ClusterType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "DataSources": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/DataSource",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "type": "array"
+          },
+          "Image": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DataSource": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "DataSourceId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "MountPath": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Uri": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "EniCacheConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "CachePoolSize": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int32",
+            "maximum": "255",
+            "type": "integer"
+          },
+          "Enabled": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ForwardInfo": {
+        "description_en": "VPC Forward Info",
+        "description_zh": "用户 VPC 转发信息",
+        "properties": {
+          "EipAllocationId": {
+            "description_en": "EIP Allocation ID",
+            "description_zh": "EIP 分配 ID",
+            "example": "eip-h29r78ieufbih",
+            "title": "EIP Allocation ID",
+            "type": "string"
+          },
+          "NatGatewayId": {
+            "description_en": "NAT Gateway ID",
+            "description_zh": "NAT 网关 ID",
+            "example": "nat-7j4mka9wguxj",
+            "title": "NAT Gateway ID",
+            "type": "string"
+          }
+        },
+        "title": "User VPC Forward Info",
+        "type": "object"
+      },
+      "Label": {
+        "description_en": "label struct  ",
+        "description_zh": "label 结构体",
+        "properties": {
+          "Key": {
+            "description_en": "The key of the label.  ",
+            "description_zh": "label的key",
+            "example": "testAccTag",
+            "title": "Key of label.",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "The value of the label.  ",
+            "description_zh": "label的值",
+            "example": "nihao",
+            "title": "Value of label.",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "NodeSpec": {
+        "description_en": "Specifications for a single resource",
+        "description_zh": "单资源规格信息",
+        "properties": {
+          "BindingPolicy": {
+            "$ref": "#/components/schemas/BindingPolicy",
+            "description_en": "Rule for attaching resource nodes",
+            "description_zh": "资源节点绑定规则",
+            "title": "资源节点绑定规则"
+          },
+          "Count": {
+            "description_en": "Number of resource nodes with this specification",
+            "description_zh": "资源节点规格数量",
+            "example": "10",
+            "format": "int64",
+            "title": "资源节点规格数量",
+            "type": "integer"
+          },
+          "HyperType": {
+            "description_en": "Type of supernode to use. You cannot specify both a node specification and a supernode type",
+            "description_zh": "使用的超节点规格。指定规格时，节点规格与超节点不可同时指定",
+            "title": "使用的超节点规格。指定规格时，节点规格与超节点不可同时指定。",
+            "type": "string"
+          },
+          "Type": {
+            "description_en": "Type of the resource node specification",
+            "description_zh": "资源节点规格类型",
+            "example": "ecs.g6.4xlarge",
+            "title": "资源节点规格类型",
+            "type": "string"
+          }
+        },
+        "title": "资源节点规格数量",
+        "type": "object"
+      },
+      "OversoldUsageConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Disabled": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "DisabledBy": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "QuotaConfig": {
+        "description_en": "The resource quota configurations",
+        "description_zh": "资源配额配置",
+        "properties": {
+          "ACS": {
+            "$ref": "#/components/schemas/ACS",
+            "description_en": "The ACS-related configurations",
+            "description_zh": "ACS相关配置",
+            "title": "ACS conf\n(Deprecated)"
+          },
+          "ClusterId": {
+            "description_en": "The ID of the cluster where the quota resides",
+            "description_zh": "Quota所在集群ID",
+            "example": "ceeb3724255364***",
+            "title": "Quota所在集群Id",
+            "type": "string"
+          },
+          "ControlPlaneClusterId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "DefaultGPUDriver": {
+            "description_en": "The default GPU driver version for the resource quota",
+            "description_zh": "资源配额默认的驱动版本",
+            "example": "470.199.02",
+            "title": "资源配额默认的驱动版本",
+            "type": "string"
+          },
+          "EnableGPUShare": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "EnablePreemptSubquotaWorkloads": {
+            "deprecated": false,
+            "description_en": "Specifies whether workloads in sub-quotas can be preempted",
+            "description_zh": "是否能够抢占子Quota资源",
+            "example": "false",
+            "title": "是否能够抢占子Quota资源（Deprecating，请使用EnableSubQuotaPreemption）",
+            "type": "boolean"
+          },
+          "EnableSelfQuotaPreemption": {
+            "description_en": "Specifies whether guaranteed resources within this quota can be preempted",
+            "description_zh": "开启本Quota保障资源抢占",
+            "title": "开启本Quota保障资源抢占",
+            "type": "boolean"
+          },
+          "EnableSubQuotaPreemption": {
+            "description_en": "Specifies whether resources in sub-quotas can be preempted",
+            "description_zh": "是否能够抢占子Quota资源",
+            "title": "是否能够抢占子Quota资源",
+            "type": "boolean"
+          },
+          "EniCacheConfig": {
+            "$ref": "#/components/schemas/EniCacheConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "IsEncryptedResource": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "OversoldUsageConfig": {
+            "$ref": "#/components/schemas/OversoldUsageConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "ResourceSpecs": {
+            "description_en": "The resource specification templates",
+            "description_zh": "资源规格模板",
+            "items": {
+              "$ref": "#/components/schemas/WorkspaceSpecs",
+              "description_en": "A resource specification template",
+              "description_zh": "资源规格模板列表"
+            },
+            "title": "资源规格模板",
+            "type": "array"
+          },
+          "SandboxCacheConfig": {
+            "$ref": "#/components/schemas/SandboxCacheConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "SelfQuotaPreemptionConfig": {
+            "$ref": "#/components/schemas/SelfQuotaPreemptionConfig",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "SubQuotaPreemptionConfig": {
+            "$ref": "#/components/schemas/SubQuotaPreemptionConfig",
+            "description_en": "The configuration for the sub-quota preemption task",
+            "description_zh": "抢占子Quota任务配置",
+            "title": "抢占子Quota任务配置"
+          },
+          "SupportGPUDrivers": {
+            "description_en": "The GPU driver versions supported by the resource quota",
+            "description_zh": "资源配额支持的驱动版本",
+            "items": {
+              "description_en": "The GPU driver version",
+              "description_zh": "驱动版本号",
+              "example": "470.199.02",
+              "type": "string"
+            },
+            "title": "资源配额支持的驱动版本",
+            "type": "array"
+          },
+          "SupportRDMA": {
+            "description_en": "Specifies whether RDMA is supported",
+            "description_zh": "是否支持RDMA",
+            "example": "false",
+            "title": "是否支持RDMA",
+            "type": "boolean"
+          },
+          "UseCase": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "UserVpc": {
+            "$ref": "#/components/schemas/UserVpc",
+            "description_en": "The user VPC information",
+            "description_zh": "用户VPC信息"
+          },
+          "WorkloadTypes": {
+            "description_en": "",
+            "description_zh": "Quota支持的任务类型",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "title": "Quota支持的任务类型",
+            "type": "array"
+          }
+        },
+        "title": "资源配额配置",
+        "type": "object"
+      },
+      "ResourceAmount": {
+        "description_en": "Resource amount  ",
+        "description_zh": "资源量",
+        "properties": {
+          "CPU": {
+            "description_en": "Total CPU  ",
+            "description_zh": "CPU总量",
+            "example": "100",
+            "title": "CPU总量",
+            "type": "string"
+          },
+          "GPU": {
+            "description_en": "Total GPU cards  ",
+            "description_zh": "GPU卡总量",
+            "example": "16",
+            "title": "GPU卡总量",
+            "type": "string"
+          },
+          "GPUType": {
+            "description_en": "GPU card type  ",
+            "description_zh": "GPU卡类型",
+            "example": "GPU",
+            "title": "GPU卡类型",
+            "type": "string"
+          },
+          "Memory": {
+            "description_en": "Total memory  ",
+            "description_zh": "Memory总量",
+            "example": "100Gi",
+            "title": "Memory总量",
+            "type": "string"
+          }
+        },
+        "title": "资源量",
+        "type": "object"
+      },
+      "ResourceSpec": {
+        "description_en": "The allocation policy. This policy specifies the node specifications, the number of nodes, and the amount of resources",
+        "description_zh": "分配策略：资源节点规格和数量，资源量",
+        "properties": {
+          "NodeSpecs": {
+            "description_en": "The resource node specifications",
+            "description_zh": "资源节点规格",
+            "items": {
+              "$ref": "#/components/schemas/NodeSpec",
+              "description_en": "The specifications of a single node",
+              "description_zh": "单资源规格信息"
+            },
+            "title": "资源节点规格",
+            "type": "array"
+          }
+        },
+        "title": "资源配额分配策略",
+        "type": "object"
+      },
+      "SandboxCacheConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Enabled": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SelfQuotaPreemptionConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "PreemptedPriorities": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "format": "int32",
+              "maximum": "9",
+              "minimum": "1",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "PreemptedProducts": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "PreemptorPriorities": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "format": "int32",
+              "maximum": "9",
+              "minimum": "1",
+              "type": "integer"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "SubQuotaPreemptionConfig": {
+        "description_en": "",
+        "description_zh": "抢占子Quota配置",
+        "properties": {
+          "PreemptedPriorityUpperBound": {
+            "description_en": "",
+            "description_zh": "被抢占任务最高优先级",
+            "example": "9",
+            "format": "int64",
+            "title": "被抢占任务最高优先级",
+            "type": "integer"
+          },
+          "PreemptedProducts": {
+            "description_en": "",
+            "description_zh": "可被抢占的任务类型",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "example": "dlc",
+              "type": "string"
+            },
+            "title": "可被抢占的任务类型",
+            "type": "array"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "UserVpc": {
+        "description_en": "UserVpc",
+        "description_zh": "UserVpc",
+        "properties": {
+          "DefaultForwardInfo": {
+            "$ref": "#/components/schemas/ForwardInfo",
+            "description_en": "The default public gateway information",
+            "description_zh": "默认公网网关信息",
+            "title": "Default Forward Info"
+          },
+          "DefaultRoute": {
+            "description_en": "The default routing. Valid values:\neth0: uses the default network interface controller (NIC) to access external networks through the public gateway.\neth1: uses the user's elastic network interfaces (ENIs) to access external networks through the private gateway",
+            "description_zh": "默认路由。取值如下：\neth0：表示使用默认网卡，通过公共网关访问外部网络。\neth1：表示使用用户弹性网卡，通过私有网关访问外部网络",
+            "example": "eth0",
+            "title": "DefaultRoute",
+            "type": "string"
+          },
+          "ExtendedCIDRs": {
+            "description_en": "The secondary CIDR blocks",
+            "description_zh": "扩展网段",
+            "items": {
+              "description_en": "The secondary CIDR blocks",
+              "description_zh": "扩展网段",
+              "example": "\"192.168.0.1/24\"",
+              "type": "string"
+            },
+            "title": "ExtendedCIDRs",
+            "type": "array"
+          },
+          "RoleArn": {
+            "description_en": "The OSS access authorization information",
+            "description_zh": "OSS访问授权信息",
+            "example": "acs:ram::25xxxx:role/AliyunPAIDLCDefaultRole",
+            "title": "RoleArn",
+            "type": "string"
+          },
+          "SecurityGroupId": {
+            "description_en": "The security group ID",
+            "description_zh": "安全组ID",
+            "example": "sg-abcdef****",
+            "title": "SecurityGroupID",
+            "type": "string"
+          },
+          "SwitchId": {
+            "description_en": "The vSwitch ID",
+            "description_zh": "交换机ID",
+            "example": "vs-abcdef****",
+            "title": "VSW ID",
+            "type": "string"
+          },
+          "VpcId": {
+            "description_en": "VPC ID",
+            "description_zh": "VPC ID",
+            "example": "vpc-abcdef****",
+            "title": "VPC ID",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "WorkspaceSpec": {
+        "description_en": "Specification template",
+        "description_zh": "规格模板",
+        "properties": {
+          "Code": {
+            "description_en": "Invalidity reason code when using guaranteed resources is invalid  ",
+            "description_zh": "使用保障资源时不合法情况下，不合法原因代码",
+            "example": "\"\"",
+            "title": "使用保障资源时不合法情况下，不合法原因代码",
+            "type": "string"
+          },
+          "CodeType": {
+            "description_en": "Type of invalidity reason when using guaranteed resources is invalid  ",
+            "description_zh": "使用保障资源时不合法情况下，不合法原因类型",
+            "example": "\"\"",
+            "title": "使用保障资源时不合法情况下，不合法原因类型",
+            "type": "string"
+          },
+          "IsGuaranteedValid": {
+            "description_en": "Indicates whether the use of guaranteed resources is valid.  ",
+            "description_zh": "使用保障资源时是否合法",
+            "example": "true",
+            "title": "使用保障资源时是否合法",
+            "type": "boolean"
+          },
+          "IsOverSoldValid": {
+            "description_en": "Indicates whether the use of oversold resources is valid.  ",
+            "description_zh": "使用超卖资源时是否合法",
+            "example": "true",
+            "title": "使用超卖资源时是否合法",
+            "type": "boolean"
+          },
+          "Reason": {
+            "description_en": "Invalidity reason content when using guaranteed resources is invalid  ",
+            "description_zh": "使用保障资源时不合法情况下，不合法原因内容",
+            "example": "\"\"",
+            "title": "使用保障资源时不合法情况下，不合法原因内容",
+            "type": "string"
+          },
+          "Spec": {
+            "$ref": "#/components/schemas/ResourceAmount",
+            "description_en": "Specification resource information  ",
+            "description_zh": "规格资源信息",
+            "title": "规格资源信息"
+          },
+          "SpecName": {
+            "description_en": "Template Name  ",
+            "description_zh": "模板名称",
+            "example": "spec_test",
+            "title": "模板名称",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "WorkspaceSpecs": {
+        "description_en": "Specification template used for submitting workloads available within the workspace",
+        "description_zh": "工作空间内可用的提交workload时使用的规格模板",
+        "properties": {
+          "Product": {
+            "description_en": "Applicable product (DLC, DSW, EAS, ...)  ",
+            "description_zh": "适用产品（DLC，DSW，EAS，...)",
+            "example": "DLC",
+            "title": "适用产品（DLC，DSW，EAS，...)",
+            "type": "string"
+          },
+          "Specs": {
+            "description_en": "List of resource specifications  ",
+            "description_zh": "资源规格列表",
+            "items": {
+              "$ref": "#/components/schemas/WorkspaceSpec",
+              "description_en": "Template Configuration for workspace specifications",
+              "description_zh": "工作空间规格模板配置"
+            },
+            "title": "资源规格列表",
+            "type": "array"
+          },
+          "WorkspaceId": {
+            "description_en": "Workspace ID  ",
+            "description_zh": "工作空间id",
+            "example": "122421",
+            "title": "工作空间id",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Call the `CreateQuota` operation to create a quota",
   "description_zh": "您可以通过CreateQuota接口创建一个资源配额",
@@ -865,6 +1528,7 @@
             {
               "help_en": "The CachePoolSize",
               "help_zh": "The CachePoolSize",
+              "maximum": "255",
               "name": "cache_pool_size",
               "options": [
                 "--cache-pool-size"
@@ -1083,6 +1747,35 @@
   "pathPattern": "/api/v1/quotas",
   "product_code": "PaiStudio",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response schema",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "QuotaId": {
+            "description_en": "The quota ID",
+            "description_zh": "资源配额ID",
+            "example": "quotad2kd8ljpsno",
+            "title_en": "",
+            "title_zh": "Quota Id",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "CBF05F13-B24C-5129-9048-4FA684DCD579",
+            "title_en": "",
+            "title_zh": "请求Id",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

@@ -2,6 +2,99 @@
   "camel_example": "aliyun sls PUT /metricstores/my_metric_store --project my-project --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"mode\":\"standard\",\"autoSplit\":true,\"infrequentAccessTTL\":1,\"maxSplitShard\":64,\"appendMeta\":true,\"hot_ttl\":1,\"shardingPolicy\":\"example-string\",\"ttl\":7}",
   "cmd_full_name": "sls update-metric-store",
   "cmd_name": "update-metric-store",
+  "components": {
+    "schemas": {
+      "ShardingPolicy": {
+        "description_en": "The hash write configuration",
+        "description_zh": "哈希写入配置",
+        "properties": {
+          "enabled": {
+            "description_en": "",
+            "description_zh": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
+            "title": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
+            "type": "boolean"
+          },
+          "queryActiveTime": {
+            "description_en": "",
+            "description_zh": "查询生效时间，Unix Timestamp",
+            "example": "1764659409",
+            "format": "int64",
+            "title": "查询生效时间，Unix Timestamp",
+            "type": "integer"
+          },
+          "shardGroup": {
+            "description_en": "",
+            "description_zh": "ShardGroup 配置，整个 LogStore 的哈希区间将被均为切分成多个大小相同的 ShardGroup。写入的数据计算一级哈希后选择相应的 ShardGroup 写入",
+            "properties": {
+              "groupCount": {
+                "description_en": "",
+                "description_zh": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个",
+                "example": "8",
+                "format": "int32",
+                "required": true,
+                "title": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个。",
+                "type": "integer"
+              },
+              "keys": {
+                "description_en": "",
+                "description_zh": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "example": "userId",
+                  "type": "string"
+                },
+                "required": true,
+                "title": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复。",
+                "type": "array"
+              }
+            },
+            "title": "ShardGroup 配置，整个 LogStore 的哈希区间将被均为切分成多个大小相同的 ShardGroup。写入的数据计算一级哈希后选择相应的 ShardGroup 写入。",
+            "type": "object"
+          },
+          "shardHash": {
+            "description_en": "",
+            "description_zh": "ShardHash 配置，二级哈希。此配置用于在 ShardGroup 内部选择 shard 进行写入",
+            "properties": {
+              "keys": {
+                "description_en": "",
+                "description_zh": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "example": "instanceId",
+                  "type": "string"
+                },
+                "required": true,
+                "title": "用于计算哈希的键，大小写敏感，顺序敏感，键不能重复。",
+                "type": "array"
+              },
+              "maxHashCount": {
+                "default": "2",
+                "description_en": "",
+                "description_zh": "表示哈希重试个数，当写入失败时，会切换哈希值进行写入重试。可选值为 1、2、4。1 表示不带重试，2 表示最多一次重试，4 表示最多 3次重试",
+                "enum": [
+                  "1",
+                  "2",
+                  "4"
+                ],
+                "example": "2",
+                "format": "int32",
+                "required": true,
+                "title": "表示哈希重试个数，当写入失败时，会切换哈希值进行写入重试。可选值为 1、2、4。1 表示不带重试，2 表示最多一次重试，4 表示最多 3次重试。",
+                "type": "integer"
+              }
+            },
+            "required": false,
+            "title": "ShardHash 配置，二级哈希。此配置用于在 ShardGroup 内部选择 shard 进行写入",
+            "type": "object"
+          }
+        },
+        "title": "哈希写入配置",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Updates the configuration of an existing Metricstore. A Metricstore is used to store metrics",
   "description_zh": "更新一个已存在的时序库的配置，时序库可用于存储时序数据",
@@ -211,6 +304,11 @@
               "type": "array"
             },
             {
+              "enum": [
+                "1",
+                "2",
+                "4"
+              ],
               "example": "2",
               "help_en": "The maxHashCount",
               "help_zh": "表示哈希重试个数，当写入失败时，会切换哈希值进行写入重试。可选值为 1、2、4。1 表示不带重试，2 表示最多一次重试，4 表示最多 3次重试",
@@ -273,6 +371,60 @@
   "pathPattern": "/metricstores/[name]",
   "product_code": "Sls",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "headers": {
+        "Connection": {
+          "schema": {
+            "example": "close",
+            "title_en": "是否长链接。取值包括：  close：不是长链接，则每个HTTP请求都会重新建立TCP连接。 keep-alive：长链接，TCP连接建立后保持连接状态，节省连接所需时间和带宽。",
+            "title_zh": "是否长链接。取值包括：  close：不是长链接，则每个HTTP请求都会重新建立TCP连接。 keep-alive：长链接，TCP连接建立后保持连接状态，节省连接所需时间和带宽。",
+            "type": "string"
+          }
+        },
+        "Content-Length": {
+          "schema": {
+            "example": "0",
+            "title_en": "响应内容长度。",
+            "title_zh": "响应内容长度。",
+            "type": "string"
+          }
+        },
+        "Content-Type": {
+          "schema": {
+            "example": "application/json",
+            "title_en": "返回的响应体的内容格式。",
+            "title_zh": "返回的响应体的内容格式。",
+            "type": "string"
+          }
+        },
+        "Date": {
+          "schema": {
+            "example": "Sun, 27 May 2018 08:25:04 GMT",
+            "title_en": "返回响应的时间。",
+            "title_zh": "返回响应的时间。",
+            "type": "string"
+          }
+        },
+        "Server": {
+          "schema": {
+            "example": "nginx",
+            "title_en": "服务器名称。",
+            "title_zh": "服务器名称。",
+            "type": "string"
+          }
+        },
+        "x-log-requestid": {
+          "schema": {
+            "example": "5B0A6B60BB6EE39764D458B5",
+            "title_en": "服务端产生的标识，该请求的唯一ID。",
+            "title_zh": "服务端产生的标识，该请求的唯一ID。",
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body",

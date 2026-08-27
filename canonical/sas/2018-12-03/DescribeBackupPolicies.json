@@ -89,46 +89,212 @@
   "pathPattern": "",
   "product_code": "Sas",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The page number from which to start displaying the returned results. Default value: 1, which indicates that the display starts from page 1",
-      "help_zh": "设置从返回结果的第几页开始显示。默认值为1，表示从第1页开始显示",
-      "name": "CurrentPage",
-      "position": "query",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The identification information of the server protected by the anti-ransomware policy to query. You can enter the IP address or instance ID of the server",
-      "help_zh": "要查询的防勒索策略防护的服务器的识别信息。可输入服务器的IP地址或实例ID",
-      "name": "MachineRemark",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The name of the anti-ransomware protection policy to query",
-      "help_zh": "要查询的防勒索防护策略的名称",
-      "name": "Name",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The number of backup policies on each page during paginated queries. Default value: 10, which indicates that each page contains 10 protection policies",
-      "help_zh": "设置分页查询时，每页包含的备份策略的数量。默认值为10，表示每页包含10个防护策略",
-      "name": "PageSize",
-      "position": "query",
-      "required": true,
-      "type": "int"
-    },
-    {
-      "help_en": "The status of the anti-ransomware protection policy.\n\nenabled: The policy is manually enabled.\n\ndisabled: The policy is manually disabled. After the policy is disabled, running backup tasks will stop.\n\nclosed: The anti-ransomware capacity is exceeded, and the system disables the policy",
-      "help_zh": "防勒索防护策略的状态。\n\nenabled：策略已手动启用。\n\ndisabled：策略已手动停用。策略停用后，正在运行的备份任务将停止。\n\nclosed：防勒索容量超出，系统停用策略",
-      "name": "Status",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "PageInfo": {
+            "description_en": "The pagination information",
+            "description_zh": "分页信息",
+            "properties": {
+              "Count": {
+                "description_en": "The number of entries displayed on the current page during paginated queries",
+                "description_zh": "分页查询时，当前页显示的数据条数",
+                "example": "3",
+                "format": "int32",
+                "type": "integer"
+              },
+              "CurrentPage": {
+                "description_en": "The page number of the current page in the returned data",
+                "description_zh": "返回数据当前页的页码",
+                "example": "1",
+                "format": "int32",
+                "type": "integer"
+              },
+              "PageSize": {
+                "description_en": "The number of backup policies on each page during paginated queries. Default value: 10, which indicates that each page contains 10 backup policies",
+                "description_zh": "分页查询时，每页包含的备份策略的数量。默认值为10，表示每页包含10个备份策略",
+                "example": "10",
+                "format": "int32",
+                "type": "integer"
+              },
+              "TotalCount": {
+                "description_en": "The total number of backup policies in the returned data",
+                "description_zh": "返回数据中备份策略的总数量",
+                "example": "30",
+                "format": "int32",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "Policies": {
+            "description_en": "The details of protection policies",
+            "description_zh": "防护策略的详情",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "ClientErrorCount": {
+                  "description_en": "The number of errors reported by the anti-ransomware client",
+                  "description_zh": "防勒索客户端的报错数量",
+                  "example": "2",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "ClientErrorUuidList": {
+                  "description_en": "The UUID list of clients in the abnormal state",
+                  "description_zh": "客户端状态异常UUID列表",
+                  "items": {
+                    "description_en": "The UUID list of clients in the abnormal state",
+                    "description_zh": "客户端状态异常UUID列表",
+                    "example": "[\"3bb30859-b3b5-4f28-868f-b0892c98****\",\"3bb30859-b3b5-4f28-868f-b0892c98****\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "ClientStatus": {
+                  "description_en": "The status of the anti-ransomware client. Valid values:\n\nrunning: Normal.\n\nexception: Abnormal",
+                  "description_zh": "防勒索客户端的状态。取值：\n\nrunning：状态正常\n\nexception：状态异常",
+                  "example": "running",
+                  "type": "string"
+                },
+                "HealthClientCount": {
+                  "description_en": "The number of clients in the normal state",
+                  "description_zh": "状态为“正常”的客户端的数量",
+                  "example": "2",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "HealthClientUuidList": {
+                  "description_en": "The UUID list of clients in the healthy state",
+                  "description_zh": "状态为健康的客户端的UUID列表",
+                  "items": {
+                    "description_en": "The UUID list of clients in the healthy state",
+                    "description_zh": "状态为健康的客户端的UUID列表",
+                    "example": "[\"3bb30859-b3b5-4f28-868f-b0892c98****\",\"3bb30859-b3b5-4f28-868f-b0892c98****\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "Id": {
+                  "description_en": "The ID of the anti-ransomware protection policy",
+                  "description_zh": "防勒索防护策略的ID",
+                  "example": "11",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "LastStatusSyncTime": {
+                  "description_en": "The latest update time of the anti-ransomware protection policy status, in milliseconds",
+                  "description_zh": "防勒索防护策略状态最新更新时间，单位毫秒",
+                  "example": "1719488535027",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "Name": {
+                  "description_en": "The name of the anti-ransomware protection policy",
+                  "description_zh": "防勒索防护策略的名称",
+                  "example": "SecurityStrategy-20200303",
+                  "type": "string"
+                },
+                "Policy": {
+                  "description_en": "The content of the anti-ransomware protection policy. This parameter is in JSON format. The following section describes the fields:\n\nIsDefault: The type of the protection policy. Valid values:\n    - 1: Recommended policy.\n    - 0: Custom policy.\nInclude: The file types to protect. To protect all file types, set this parameter to [].\nSource: The server directories to protect. To protect all directories, set this parameter to [].\nExcludeSystemPath: Specifies whether to exclude specified directories. Set this parameter to true to exclude directories. If you do not want to exclude directories, you do not need to set this parameter.\nExclude: The specified protection directory addresses. If no specific protection directory address is set, set this parameter to [].\nSchedule: The execution time and interval of the data backup task. We recommend that you specify a non-peak hour at a non-round time. The following provides setting examples:\n    - Example 1: I|1583216092|P21D indicates that the data backup starts at 2020-03-03 14:14:52 and the backup policy is executed at an interval of 3 weeks.\n    - Example 2: I|1583216092|PT24H indicates that the data backup starts at 2020-03-03 14:14:52 and the backup policy is executed at an interval of 24 hours.\nRetention: The retention period of the backup data, in days. 7 indicates 1 week, 365 indicates 1 year, and -1 indicates permanent retention.\nSpeedLimiter: The backup network bandwidth limit. For example, 0:24:30720 indicates that the backup network bandwidth limit from 0:00 to 24:00 is 30 MByte/s.\nUseVss: Specifies whether to enable the VSS (Windows) feature. Valid values:\n    -  true: Enable.\n    -  false: Disable.\n\nThe VSS (Windows) feature is only available for Windows systems. After it is enabled, it can effectively reduce the issue of individual file backup failures caused by process occupation. We recommend that you enable this feature. After this feature is enabled, file backup for exFAT and FAT32 disk formats will not be supported",
+                  "description_zh": "防勒索防护策略的内容。该参数为JSON格式，字段说明如下：\n\nIsDefault：防护策略的类型。取值：\n    - 1：推荐策略\n    - 0：自定义策略\nInclude：要防护的文件类型。防护全部文件类型时，该参数设置为[]。\nSource：要防护的服务器目录。需要防护全部目录时，该参数设置为[]。\nExcludeSystemPath：设置是否排除指定目录。要排除该参数设置为true，不排除则无需设置该参数。\nExclude：设置指定的防护目录地址。不设置指定防护目录地址时，该参数设置为[]。\nSchedule：设置数据备份任务的执行时间和执行间隔。建议指定在业务低峰期非整点。设置示例如下：\n    - 例1：I|1583216092|P21D表示数据备份开始时间为2020-03-03 14:14:52，备份策略执行间隔为3周。\n    - 例2：I|1583216092|PT24H表示数据备份开始时间为2020-03-03 14:14:52，备份策略执行间隔为24小时。\nRetention：设置备份数据保留时间，单位为天。7表示1周，365表示1年，-1表示永久。\nSpeedLimiter：设置备份网络带宽限制。例如：0:24:30720表示0~24时备份网络带宽限制为30 MByte/s。\nUseVss：是否启用VSS（Windows）功能。取值：\n    -  true：启用\n    -  false：不启用\n\nVSS（Windows）功能仅为Windows系统开启，开启后会有效降低因进程占用导致的个别文件备份失败的问题，建议开启。启用该功能后，将不支持exFAT和FAT32磁盘格式的文件备份",
+                  "example": "{\"Exclude\":[\"/bin/\",\"/usr/bin/\",\"/sbin/\",\"/boot/\",\"/proc/\",\"/sys/\",\"/srv/\",\"/lib/\",\"/selinux/\",\"/usr/sbin/\",\"/run/\",\"/lib32/\",\"/lib64/\",\"/lost+found/\",\"/var/lib/kubelet/\",\"/var/lib/ntp/proc\",\"/var/lib/container\",\"Windows\\\\\",\"Python27\\\\\",\"Program Files (x86)\\\\\",\"Program Files\\\\\",\"Boot\\\\\",\"$RECYCLE.BIN\",\"System Volume Information\\\\\",\"Users\\\\Administrator\\\\NTUSER.DAT*\",\"ProgramData\\\\\",\"pagefile.sys\",\"Users\\\\Default\\\\NTUSER.DAT*\",\"Users\\\\Administrator\\\\ntuser.*\"],\"ExcludeSystemPath\":true,\"Include\":[],\"IsDefault\":1,\"Retention\":7,\"Schedule\":\"I|1630689360|PT24H\",\"Source\":[],\"SpeedLimiter\":\"\",\"UseVss\":true}",
+                  "type": "string"
+                },
+                "PolicyRegionId": {
+                  "description_en": "The region ID of the backup service selected when installing the anti-ransomware client on non-Alibaba Cloud servers",
+                  "description_zh": "非阿里云服务器中安装防勒索客户端时选择的备份服务地域ID",
+                  "example": "ch-hangzhou",
+                  "type": "string"
+                },
+                "PolicyVersion": {
+                  "description_en": "The version of the protection policy. Valid values:\n\n1.0.0.\n2.0.0",
+                  "description_zh": "防护策略的版本。取值：\n\n1.0.0。\n2.0.0",
+                  "example": "2.0.0",
+                  "type": "string"
+                },
+                "PreStatus": {
+                  "description_en": "The previous status of the anti-ransomware protection policy.\n\nenabled: The policy is manually enabled.\n\ndisabled: The policy is manually disabled. After the policy is disabled, running backup tasks will stop.\n\nclosed: The anti-ransomware capacity is exceeded, and the system disables the policy",
+                  "description_zh": "防勒索防护策略的上一次状态。\n\nenabled：策略已手动启用。\n\ndisabled：策略已手动停用。策略停用后，正在运行的备份任务将停止。\n\nclosed：防勒索容量超出，系统停用策略",
+                  "example": "disabled",
+                  "type": "string"
+                },
+                "RemarkedUuidList": {
+                  "description_en": "The UUID list of servers returned after retrieval by the MachineRemark request parameter",
+                  "description_zh": "请求参数MachineRemark检索后返回的服务器的UUID列表",
+                  "items": {
+                    "description_en": "The UUID list of servers returned after retrieval by the MachineRemark request parameter",
+                    "description_zh": "请求参数MachineRemark检索后返回的服务器的UUID列表",
+                    "example": "[\"3bb30859-b3b5-4f28-868f-b0892c98****\",\"3bb30859-b3b5-4f28-868f-b0892c98****\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "ServerType": {
+                  "description_en": "The server type. Valid values:\n\nOUT_CLOUD: Non-Alibaba Cloud server.\nALIYUN: Alibaba Cloud server.\nTRIPARTITE: Simple Application Server",
+                  "description_zh": "服务器类型。取值：\n\nOUT_CLOUD：非阿里云服务器\nALIYUN：阿里云服务器\nTRIPARTITE：轻量级应用服务器",
+                  "example": "OUT_CLOUD",
+                  "type": "string"
+                },
+                "ServiceErrorCount": {
+                  "description_en": "The number of servers with data backup exceptions",
+                  "description_zh": "数据备份异常的服务器的数量",
+                  "example": "2",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "ServiceErrorUuidList": {
+                  "description_en": "The UUID list of servers with data backup exceptions",
+                  "description_zh": "数据备份异常的服务器的UUID列表",
+                  "items": {
+                    "description_en": "The UUID list of servers with data backup exceptions",
+                    "description_zh": "数据备份异常的服务器的UUID列表",
+                    "example": "[\"3bb30859-b3b5-4f28-868f-b0892c98****\",\"3bb30859-b3b5-4f28-868f-b0892c98****\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "Status": {
+                  "description_en": "The status of the anti-ransomware protection policy.\n\nenabled: The policy is manually enabled.\n\ndisabled: The policy is manually disabled. After the policy is disabled, running backup tasks will stop.\n\nclosed: The anti-ransomware capacity is exceeded, and the system disables the policy",
+                  "description_zh": "防勒索防护策略的状态。\n\nenabled：策略已手动启用。\n\ndisabled：策略已手动停用。策略停用后，正在运行的备份任务将停止。\n\nclosed：防勒索容量超出，系统停用策略",
+                  "example": "enabled",
+                  "type": "string"
+                },
+                "UpgradeStatus": {
+                  "description_en": "The upgrade status of the policy. Valid values:\n\nNotUpgraded: Not upgraded.\nUpgrading: Upgrading.\nUpgradeFailed: Upgrade failed.\nUpgradeSuccess: Upgrade succeeded",
+                  "description_zh": "策略的升级状态。取值：\n\nNotUpgraded：未升级\nUpgrading：升级中\nUpgradeFailed：升级失败\nUpgradeSuccess：升级成功",
+                  "example": "Upgrading",
+                  "type": "string"
+                },
+                "UuidList": {
+                  "description_en": "The UUID list of servers protected by the anti-ransomware protection policy",
+                  "description_zh": "防勒索防护策略防护的服务器的UUID列表",
+                  "items": {
+                    "description_en": "The UUID list of servers protected by the anti-ransomware protection policy",
+                    "description_zh": "防勒索防护策略防护的服务器的UUID列表",
+                    "example": "[\"3bb30859-b3b5-4f28-868f-b0892c98****\",\"3bb30859-b3b5-4f28-868f-b0892c98****\"]",
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID, which is a unique identifier generated by Alibaba Cloud for the request. It can be used to troubleshoot and locate issues",
+            "description_zh": "本次调用请求的ID，是由阿里云为该请求生成的唯一标识符，可用于排查和定位问题",
+            "example": "BE120DAB-F4E7-4C53-ADC3-A97578ABF384",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }

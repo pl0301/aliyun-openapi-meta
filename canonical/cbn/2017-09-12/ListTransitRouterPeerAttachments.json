@@ -77,6 +77,8 @@
       "help_en": "The number of entries to return on each page. Default value: 20. Maximum value: 100",
       "help_zh": "分批次查询时每次显示的条目数。默认值为20，最大值为100",
       "location": "query",
+      "maximum": "100",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -144,77 +146,187 @@
   "pathPattern": "",
   "product_code": "Cbn",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The ID of the CEN instance",
-      "help_zh": "云企业网实例ID",
-      "name": "CenId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The number of entries to return on each page. Default value: 20. Maximum value: 100",
-      "help_zh": "分批次查询时每次显示的条目数。默认值为20，最大值为100",
-      "name": "MaxResults",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The token for the next query. Valid values:\n\nIf this is your first query or no next query is to be sent, do not specify this parameter.\n\nIf a next query is to be sent, set the value to the NextToken value returned from the last API call",
-      "help_zh": "是否拥有下一次查询的令牌（Token）。取值：\n\n第一次查询和没有下一次查询时，均无需填写。\n如果有下一次查询，取值为上一次API调用返回的NextToken值",
-      "name": "NextToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the region where the Enterprise Edition transit router is deployed.\n\nFor more information, see https://help.aliyun.com/document_detail/36063.html",
-      "help_zh": "企业版转发路由器实例所属的地域ID。\n\n您可以通过调用https://help.aliyun.com/document_detail/36063.html接口获取地域ID",
-      "name": "RegionId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The tags.\n\nYou can specify up to 20 tags",
-      "help_zh": "标签信息。\n\n一次最多支持输入20个标签信息",
-      "name": "Tag",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": false,
-      "sub_parameters": [
-        {
-          "name": "Key",
-          "position": "query",
-          "required": false,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response parameters",
+        "description_zh": "返回结果",
+        "properties": {
+          "MaxResults": {
+            "description_en": "The number of entries returned per page",
+            "description_zh": "分批次查询时每次显示的条目数",
+            "example": "20",
+            "format": "int32",
+            "type": "integer"
+          },
+          "NextToken": {
+            "description_en": "The token that is used for the next query. Valid values:\n\nIf this parameter is empty, no more data is returned.\n\nIf a value is returned for this parameter, the value is the token that is used for the next query",
+            "description_zh": "是否拥有下一次查询的令牌（Token）。取值：\n\n如果NextToken为空表示没有下一次查询。\n如果NextToken有返回值，该取值表示下一次查询开始的令牌",
+            "example": "dd20****",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "AA97AFA3-8E48-4BD7-9F3E-A9F6176018A0",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned",
+            "description_zh": "列表条目数",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "TransitRouterAttachments": {
+            "description_en": "A list of inter-region connections",
+            "description_zh": "跨地域连接信息列表",
+            "items": {
+              "description_en": "The details of the inter-region connection",
+              "description_zh": "跨地域连接信息",
+              "properties": {
+                "AutoPublishRouteEnabled": {
+                  "description_en": "Indicates whether the Enterprise Edition transit router automatically advertises routes to the peer region.\n\nfalse (default): No.\n\ntrue: Yes",
+                  "description_zh": "企业版转发路由器实例是否自动发布跨地域连接的路由到对端地域。\n\nfalse（默认值）：否。\ntrue：是",
+                  "example": "false",
+                  "type": "boolean"
+                },
+                "Bandwidth": {
+                  "description_en": "The bandwidth of the inter-region connection. Unit: Mbit/s.\n\nIf BandwidthType is set to BandwidthPackage, this parameter indicates the bandwidth that is allocated to the inter-region connection.\n\nIf BandwidthType is set to DataTransfer, this parameter indicates the maximum bandwidth of the inter-region connection",
+                  "description_zh": "跨地域连接的带宽值。单位：Mbps。\n\n\n当BandwidthType取值为BandwidthPackage时，该参数表示跨地域连接可使用的带宽值。\n当BandwidthType取值为DataTransfer时，该参数表示跨地域连接的限速带宽值",
+                  "example": "2",
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "BandwidthType": {
+                  "description_en": "The bandwidth allocation method. Valid values:\n\nBandwidthPackage: Bandwidth is allocated from a bandwidth plan.\n\nDataTransfer: The inter-region connection is not allocated a specific bandwidth and is billed on a pay-by-traffic basis",
+                  "description_zh": "带宽的分配方式。取值：\n\nBandwidthPackage：从带宽包中分配带宽。\n\nDataTransfer：不为跨地域连接分配带宽，按使用流量计费",
+                  "example": "BandwidthPackage",
+                  "type": "string"
+                },
+                "CenBandwidthPackageId": {
+                  "description_en": "The ID of the bandwidth plan that is associated with the inter-region connection",
+                  "description_zh": "跨地域连接绑定的带宽包ID",
+                  "example": "cenbwp-3xrxupouolw5ou****",
+                  "type": "string"
+                },
+                "CenId": {
+                  "description_en": "The ID of the CEN instance",
+                  "description_zh": "云企业网实例ID",
+                  "example": "cen-j3jzhw1zpau2km****\n",
+                  "type": "string"
+                },
+                "CreationTime": {
+                  "description_en": "The time when the inter-region connection was created.\n\nThe time is displayed in the ISO 8601 standard in the `YYYY-MM-DDThh:mmZ` format. The time is displayed in UTC",
+                  "description_zh": "跨地域连接的创建时间。\n\n时间按照ISO8601标准表示，并使用UTC时间。格式为：`YYYY-MM-DDThh:mmZ`",
+                  "example": "2021-06-16T02:50Z",
+                  "type": "string"
+                },
+                "DefaultLinkType": {
+                  "description_en": "The default link type.\n\nGold (default): Gold.\n\nPlatinum: Platinum",
+                  "description_zh": "默认链路类型。\n\nGold（默认值）：金。\nPlatinum：铂金",
+                  "example": "Gold",
+                  "type": "string"
+                },
+                "GeographicSpanId": {
+                  "description_en": "The connected areas of the bandwidth plan",
+                  "description_zh": "带宽包的互通区域",
+                  "example": "china_china",
+                  "type": "string"
+                },
+                "PeerTransitRouterId": {
+                  "description_en": "The ID of the peer transit router",
+                  "description_zh": "对端转发路由器实例ID",
+                  "example": "tr-m5eq27g6bndum7e88****",
+                  "type": "string"
+                },
+                "PeerTransitRouterOwnerId": {
+                  "description_en": "The ID of the Alibaba Cloud account to which the peer transit router belongs",
+                  "description_zh": "对端转发路由器实例所属账号ID",
+                  "example": "253460731706911258",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "PeerTransitRouterRegionId": {
+                  "description_en": "The ID of the region where the peer transit router is deployed",
+                  "description_zh": "对端转发路由器实例所属地域ID",
+                  "example": "cn-qingdao",
+                  "type": "string"
+                },
+                "RegionId": {
+                  "description_en": "The ID of the region where the Enterprise Edition transit router is deployed",
+                  "description_zh": "企业版转发路由器所属地域ID",
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "ResourceType": {
+                  "description_en": "The type of resource that is associated with the connection.\n\nVPC: virtual private cloud (VPC).\n\nCCN: Cloud Connect Network (CCN) instance.\n\nVBR: virtual border router (VBR).\n\nTR: transit router",
+                  "description_zh": "连接所关联的资源类型。\n\nVPC：专有网络实例。\nCCN：云连接网实例。\nVBR：边界路由器实例。\nTR：转发路由器实例",
+                  "example": "TR",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The status of the inter-region connection.\n\nAttached: The connection is attached.\n\nAttaching: The connection is being attached.\n\nDetaching: The connection is being detached.\n\nDetached: The connection is detached",
+                  "description_zh": "跨地域连接的状态。\n\nAttached：已加载。\nAttaching：加载中。\nDetaching：卸载中。\nDetached：已卸载",
+                  "example": "Attached",
+                  "type": "string"
+                },
+                "Tags": {
+                  "description_en": "The list of tags",
+                  "description_zh": "标签列表",
+                  "items": {
+                    "description_en": "The tags",
+                    "description_zh": "",
+                    "properties": {
+                      "Key": {
+                        "description_en": "The tag key",
+                        "description_zh": "标签键",
+                        "example": "tag_A1",
+                        "type": "string"
+                      },
+                      "Value": {
+                        "description_en": "The tag value",
+                        "description_zh": "标签值",
+                        "example": "test",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "TransitRouterAttachmentDescription": {
+                  "description_en": "The description of the inter-region connection",
+                  "description_zh": "跨地域连接的描述信息",
+                  "example": "testdesc",
+                  "type": "string"
+                },
+                "TransitRouterAttachmentId": {
+                  "description_en": "The ID of the inter-region connection",
+                  "description_zh": "跨地域连接ID",
+                  "example": "tr-attach-5u4qbayfv2io5v****",
+                  "type": "string"
+                },
+                "TransitRouterAttachmentName": {
+                  "description_en": "The name of the inter-region connection",
+                  "description_zh": "跨地域连接的名称",
+                  "example": "test",
+                  "type": "string"
+                },
+                "TransitRouterId": {
+                  "description_en": "The ID of the Enterprise Edition transit router",
+                  "description_zh": "企业版转发路由器实例ID",
+                  "example": "tr-bp1su1ytdxtataupl****",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
         },
-        {
-          "name": "Value",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "array"
-    },
-    {
-      "help_en": "The ID of the inter-region connection",
-      "help_zh": "跨地域连接ID",
-      "name": "TransitRouterAttachmentId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The ID of the Enterprise Edition transit router",
-      "help_zh": "企业版转发路由器实例ID",
-      "name": "TransitRouterId",
-      "position": "query",
-      "required": false,
-      "type": "string"
+        "type": "object"
+      }
     }
-  ]
+  }
 }

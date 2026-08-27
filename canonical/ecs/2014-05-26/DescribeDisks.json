@@ -21,6 +21,7 @@
   },
   "parameters": [
     {
+      "doc_required": true,
       "example": "cn-hangzhou",
       "help_en": "The region ID of the block storage device. You can call https://help.aliyun.com/document_detail/25609.html to query the most recent region list",
       "help_zh": "块存储所属的地域ID。您可以调用https://help.aliyun.com/document_detail/25609.html查看最新的阿里云地域列表",
@@ -168,6 +169,7 @@
       "help_en": "This parameter will be offline soon. Use NextToken and MaxResults for paging operations",
       "help_zh": "该参数即将下线，推荐您使用参数 `NextToken `与 `MaxResults `完成分页查询操作",
       "location": "query",
+      "minimum": "1",
       "name": "page_number",
       "options": [
         "--page-number"
@@ -181,6 +183,8 @@
       "help_en": "This parameter will be offline soon. Use NextToken and MaxResults for paging operations",
       "help_zh": "该参数即将下线，推荐您使用参数 `NextToken `与 `MaxResults `完成分页查询操作",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -207,6 +211,8 @@
       "help_en": "The maximum number of entries to return. Valid values: 10 to 500.\n\nDefault value:\nIf this parameter is not specified or is set to a value less than 10, the default value is 10.\nIf this parameter is set to a value greater than 500, the default value is 500",
       "help_zh": "返回的最大数。取值范围：10~500。\n\n默认值：\n当不设置值或者设置的值小于10，默认值为10。\n当设置的值大于500时，默认值为500",
       "location": "query",
+      "maximum": "500",
+      "minimum": "1",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -509,5 +515,505 @@
   ],
   "pathPattern": "",
   "product_code": "Ecs",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Disks": {
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Disk": {
+                "description_en": "The collection of disk information",
+                "description_zh": "磁盘信息组成的集合",
+                "items": {
+                  "description_en": "The disk information",
+                  "description_zh": "磁盘信息",
+                  "properties": {
+                    "AttachedTime": {
+                      "description_en": "The time when the disk was last attached. The time follows the ISO 8601 standard in the yyyy-MM-ddThh:mmZ format. The time is displayed in UTC+0",
+                      "description_zh": "该磁盘最后一次挂载的时间。按照ISO8601标准表示，使用UTC+0时间。格式为：yyyy-MM-ddThh:mmZ",
+                      "example": "2021-06-07T06:08:56Z",
+                      "type": "string"
+                    },
+                    "Attachments": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Attachment": {
+                          "description_en": "The list of attachment information of the disk, consisting of Attachment objects. This list is not returned when you query Shared Block Storage devices",
+                          "description_zh": "磁盘所涉及的挂载信息。由`Attachment`对象组成的列表，查询共享块存储时不返回该列表",
+                          "items": {
+                            "description_en": "The attachment information of the disk",
+                            "description_zh": "磁盘所涉及的挂载信息",
+                            "properties": {
+                              "AttachedTime": {
+                                "description_en": "The time when the disk was attached. The time is displayed in UTC+0",
+                                "description_zh": "挂载的时间，以UTC +0时间为准",
+                                "example": "2021-06-07T06:08:56Z",
+                                "type": "string"
+                              },
+                              "Device": {
+                                "description_en": "The device name",
+                                "description_zh": "设备名称",
+                                "example": "/dev/xvda",
+                                "type": "string"
+                              },
+                              "InstanceId": {
+                                "description_en": "The instance ID of the attached instance",
+                                "description_zh": "所挂载的实例ID",
+                                "example": "i-bp67acfmxazb4q****",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "AutoSnapshotPolicyId": {
+                      "description_en": "The ID of the automatic snapshot policy applied to the disk.\nThis parameter is being deprecated. If multiple automatic snapshot policies are applied to the disk, only one policy ID is returned. Use DescribeAutoSnapshotPolicyAssociations to query all automatic snapshot policies applied to the disk",
+                      "description_zh": "云盘采用的自动快照策略ID。\n该参数即将被弃用。如果云盘应用了多条自动快照策略，只会返回其中一条。建议您使用DescribeAutoSnapshotPolicyAssociations查询云盘应用的所有自动快照策略",
+                      "example": "sp-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "BdfId": {
+                      "description_en": "This parameter is in invitational preview and is not publicly available",
+                      "description_zh": "该参数正在邀测中，暂未开放使用",
+                      "example": "null",
+                      "type": "string"
+                    },
+                    "BurstingEnabled": {
+                      "description_en": "Indicates whether the performance burst feature is enabled. Valid values:\n\ntrue: Enabled.\nfalse: Not enabled.\n\nThis parameter is supported only when DiskCategory is set to cloud_auto. For more information, see [ESSD AutoPL disks]（https://help.aliyun.com/document_detail/368372.html）",
+                      "description_zh": "是否开启Burst（性能突发）。可能值：\n\ntrue：是。\nfalse：否。\n\n当`DiskCategory`取值为`cloud_auto`时才支持设置该参数。更多信息，请参见[ESSD AutoPL云盘]（https://help.aliyun.com/document_detail/368372.html）",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "Category": {
+                      "description_en": "The category of the disk. Valid values:\n\ncloud: basic disk.\ncloud_efficiency: ultra disk. \ncloud_ssd: standard SSD.\ncloud_essd: enterprise SSD (ESSD).\ncloud_auto: ESSD AutoPL disk.\nlocal_ssd_pro: I/O-intensive local disk. \nlocal_hdd_pro: throughput-intensive local disk.\ncloud_essd_entry: ESSD Entry disk.\nelastic_ephemeral_disk_standard: elastic ephemeral disk - standard.\nelastic_ephemeral_disk_premium: elastic ephemeral disk - premium.\nephemeral: (retired) local disk.\nephemeral_ssd: (retired) local SSD",
+                      "description_zh": "磁盘种类。可能值：\n\ncloud：普通云盘。\ncloud_efficiency：高效云盘。 \ncloud_ssd：SSD盘。\ncloud_essd：ESSD云盘。\ncloud_auto：ESSD AutoPL云盘。\nlocal_ssd_pro：I/O密集型本地盘。 \nlocal_hdd_pro：吞吐密集型本地盘。\ncloud_essd_entry：ESSD Entry云盘。\nelastic_ephemeral_disk_standard：弹性临时盘-标准版。\nelastic_ephemeral_disk_premium：弹性临时盘-高级版。\nephemeral：（已停售）本地盘。\nephemeral_ssd：（已停售）本地SSD盘",
+                      "example": "cloud_ssd",
+                      "type": "string"
+                    },
+                    "CreationTime": {
+                      "description_en": "The creation time",
+                      "description_zh": "创建时间",
+                      "example": "2021-06-07T06:08:54Z",
+                      "type": "string"
+                    },
+                    "DataSource": {
+                      "properties": {
+                        "Id": {
+                          "type": "string"
+                        },
+                        "Type": {
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "DeleteAutoSnapshot": {
+                      "description_en": "Indicates whether automatic snapshots are deleted when the disk is released. Valid values:\n\ntrue: Automatic snapshots are deleted when the disk is released.\nfalse: Automatic snapshots are retained when the disk is released.\n\nSnapshots created by calling [CreateSnapshot]（https://help.aliyun.com/document_detail/25524.html） or by using the console are not affected by this parameter and are always retained",
+                      "description_zh": "是否同时删除自动快照。可能值：\n\ntrue：删除云盘上的快照。\nfalse：保留云盘上的快照。\n\n通过[CreateSnapshot]（https://help.aliyun.com/document_detail/25524.html）或者在控制台创建的快照，不受这个参数的影响，会始终保留",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "DeleteWithInstance": {
+                      "description_en": "Indicates whether the disk is released when the associated instance is released. Valid values:\n\ntrue: The disk is released when the associated instance is released.\nfalse: The disk is retained when the associated instance is released",
+                      "description_zh": "是否随实例释放。可能值：\n\ntrue：释放实例时，这块磁盘随实例一起释放。\nfalse：释放实例时，这块磁盘保留不释放",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "Description": {
+                      "description_en": "The description of the disk",
+                      "description_zh": "磁盘描述",
+                      "example": "testDescription",
+                      "type": "string"
+                    },
+                    "DetachedTime": {
+                      "description_en": "The time when the disk was last detached",
+                      "description_zh": "该磁盘最后一次卸载时间",
+                      "example": "2021-06-07T21:01:22Z",
+                      "type": "string"
+                    },
+                    "Device": {
+                      "description_en": "The device name of the disk on the instance to which the disk is attached, such as /dev/xvdb. Note:\n\nThis parameter has a value only when the Status parameter is set to In_use or Detaching. In other cases, this parameter is empty.\n\nFor a disk with the multi-attach feature enabled, this value is always empty. You can view all attachment information of the disk from the Attachment list in the response.\n\nThis parameter is being deprecated. To improve backward compatibility, do not use this parameter",
+                      "description_zh": "磁盘挂载的实例的设备名，例如/dev/xvdb。您需要注意：\n\n该参数仅在`Status`参数值为`In_use`或`Detaching`时才有值，其他状态时为空。\n\n对于开启多重挂载特性的云盘，该值始终为空。您可以通过返回的`Attachment`对象组成的列表，查看云盘所涉及的所有挂载信息。\n\n该参数即将停止使用，为提高代码兼容性，建议您尽量不要使用该参数",
+                      "example": "/dev/xvdb",
+                      "type": "string"
+                    },
+                    "DiskChargeType": {
+                      "description_en": "The billing method of the disk. Valid values:\n\nPrePaid: subscription.\nPostPaid: pay-as-you-go",
+                      "description_zh": "磁盘的计费方式。可能值：\n\nPrePaid：包年包月。\nPostPaid：按量付费",
+                      "example": "PrePaid",
+                      "type": "string"
+                    },
+                    "DiskId": {
+                      "description_en": "The ID of the disk",
+                      "description_zh": "磁盘ID",
+                      "example": "d-bp18um4r4f2fve24****",
+                      "type": "string"
+                    },
+                    "DiskName": {
+                      "description_en": "The name of the disk",
+                      "description_zh": "磁盘名称",
+                      "example": "testDiskName",
+                      "type": "string"
+                    },
+                    "EnableAutoSnapshot": {
+                      "description_en": "Indicates whether the automatic snapshot policy feature is enabled for the disk.\n\n\nThis parameter is deprecated. After a disk is created, the automatic snapshot policy feature is enabled by default. You only need to associate an automatic snapshot policy with the disk",
+                      "description_zh": "云盘是否启用自动快照策略功能。\n\n\n该参数已弃用。创建后的云盘默认启用自动快照策略功能，您只需要为云盘绑定自动快照策略即可正常使用",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "EnableAutomatedSnapshotPolicy": {
+                      "description_en": "Indicates whether an automatic snapshot policy is applied to the disk",
+                      "description_zh": "云盘是否设置了自动快照策略",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "Encrypted": {
+                      "description_en": "Indicates whether the disk is encrypted",
+                      "description_zh": "是否为加密云盘",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "ExpiredTime": {
+                      "description_en": "The expiration time of the subscription disk",
+                      "description_zh": "包年包月磁盘的过期时间",
+                      "example": "2021-07-07T16:00Z",
+                      "type": "string"
+                    },
+                    "IOPS": {
+                      "description_en": "The maximum number of read/write (I/O) operations per second. Unit: operations/s",
+                      "description_zh": "每秒读写（I/O）操作的次数上限，单位：次/s",
+                      "example": "4000",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "IOPSRead": {
+                      "description_en": "The maximum number of read operations per second. Unit: operations/s",
+                      "description_zh": "每秒读操作的次数上限，单位：次/s",
+                      "example": "2000",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "IOPSWrite": {
+                      "description_en": "The maximum number of write operations per second. Unit: operations/s",
+                      "description_zh": "每秒写操作的次数上限，单位：次/s",
+                      "example": "2000",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ImageId": {
+                      "description_en": "The ID of the image used to create the ECS instance. This parameter has a value only for disks created from an image. Otherwise, this parameter is empty. If the image used to create the disk is deleted, this parameter is empty",
+                      "description_zh": "创建ECS实例时使用的镜像ID，只有通过镜像创建的云盘才有值，否则为空。当创建磁盘的镜像被删除后，该值为空",
+                      "example": "m-bp13aqm171qynt3u***",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "The instance ID of the instance to which the disk is attached. Note:\n\nThis parameter has a value only when the Status parameter is set to In_use or Detaching. In other cases, this parameter is empty.\n\nFor a disk with the multi-attach attribute enabled, this value is always empty. You can view all attachment information of the disk from the Attachment list in the response",
+                      "description_zh": "磁盘挂载的实例ID。您需要注意：\n\n该参数值仅在`Status`参数值为`In_use`或`Detaching`时才有值，其他状态时为空。\n\n对于开启多重挂载特性的云盘，该值始终为空。您可以通过返回的`Attachment`对象组成的列表，查看云盘所涉及的所有挂载信息",
+                      "example": "i-bp67acfmxazb4q****",
+                      "type": "string"
+                    },
+                    "KMSKeyId": {
+                      "description_en": "The ID of the Key Management Service (KMS) key used by the disk",
+                      "description_zh": "云盘使用的KMS密钥ID",
+                      "example": "0e478b7a-4262-4802-b8cb-00d3fb408***",
+                      "type": "string"
+                    },
+                    "MountInstanceNum": {
+                      "description_en": "The number of instances to which the Shared Block Storage device is attached",
+                      "description_zh": "共享存储挂载的实例数量",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "MountInstances": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "MountInstance": {
+                          "description_en": "The collection of information about the instances to which the Shared Block Storage device is attached",
+                          "description_zh": "共享存储挂载到实例上的信息集合",
+                          "items": {
+                            "description_en": "The information about the instance to which the Shared Block Storage device is attached",
+                            "description_zh": "共享存储挂载到实例上的信息",
+                            "properties": {
+                              "AttachedTime": {
+                                "description_en": "The time when the disk was attached. The time follows the [ISO 8601]（https://help.aliyun.com/document_detail/25696.html） standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is displayed in UTC+0",
+                                "description_zh": "挂载时间。按照[ISO 8601]（https://help.aliyun.com/document_detail/25696.html）标准表示，使用UTC +0时间，格式为yyyy-MM-ddTHH:mm:ssZ。 ",
+                                "example": "2017-12-05T2340:00Z",
+                                "type": "string"
+                              },
+                              "Device": {
+                                "description_en": "The mount point of the disk",
+                                "description_zh": "磁盘的挂载点",
+                                "example": "/dev/xvda",
+                                "type": "string"
+                              },
+                              "InstanceId": {
+                                "description_en": "The instance ID of the instance to which the disk is attached",
+                                "description_zh": "磁盘挂载的实例ID",
+                                "example": "i-bp1j4i2jdf3owlhe****",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "MultiAttach": {
+                      "description_en": "Indicates whether the multi-attach feature is enabled for the disk",
+                      "description_zh": "云盘是否开启了多重挂载特性",
+                      "example": "Disabled",
+                      "type": "string"
+                    },
+                    "OperationLocks": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "OperationLock": {
+                          "description_en": "The list of reasons why the disk is locked",
+                          "description_zh": "磁盘锁定原因列表",
+                          "items": {
+                            "description_en": "The reason why the disk is locked",
+                            "description_zh": "磁盘锁定原因",
+                            "properties": {
+                              "LockReason": {
+                                "description_en": "The reason why the disk is locked for security reasons",
+                                "description_zh": "磁盘被安全锁定的原因",
+                                "example": "security",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "PerformanceLevel": {
+                      "description_en": "The performance level (PL) of the ESSD. Valid values:\n\nPL0: A single disk can deliver up to 10,000 random read/write IOPS.\nPL1: A single disk can deliver up to 50,000 random read/write IOPS.\nPL2: A single disk can deliver up to 100,000 random read/write IOPS.\nPL3: A single disk can deliver up to 1,000,000 random read/write IOPS",
+                      "description_zh": "ESSD云盘的性能等级。可能值：\n\nPL0：单盘最高随机读写IOPS 1万。\nPL1：单盘最高随机读写IOPS 5万。\nPL2：单盘最高随机读写IOPS 10万。\nPL3：单盘最高随机读写IOPS 100万",
+                      "example": "PL0",
+                      "type": "string"
+                    },
+                    "Placement": {
+                      "description_en": "The collection of data storage locations.\n\nThis field is returned only when AdditionalAttributes.N is set to Placement in the request.\n\nOnly regional ESSD (cloud_regional_disk_auto) disks have valid values",
+                      "description_zh": "数据存放地集合。\n\n只有入参指定 `AdditionalAttributes.N = Placement` 时，才会返回该字段。\n\n当前仅有ESSD 同城冗余类型（cloud_regional_disk_auto）磁盘具有有效值",
+                      "properties": {
+                        "ZoneIds": {
+                          "description_en": "The list of zones where the data is stored",
+                          "description_zh": "实际数据存放的可用区列表",
+                          "example": "\"[\"cn-hangzhou-b\",\n\"cn-hangzhou-j\"]\"",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Portable": {
+                      "description_en": "Indicates whether the disk is removable",
+                      "description_zh": "磁盘是否可卸载",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "ProductCode": {
+                      "description_en": "The product code of the Alibaba Cloud Marketplace image",
+                      "description_zh": "云市场的商品标识",
+                      "example": "jxsc000204",
+                      "type": "string"
+                    },
+                    "ProvisionedIops": {
+                      "description_en": "The provisioned read/write IOPS of the ESSD AutoPL disk. Valid values: 0 to min{50000, 1000 × Capacity - Baseline performance}.\nBaseline performance = min{1800 + 50 × Capacity, 50000}.\n\nThis parameter is supported only when DiskCategory is set to cloud_auto. For more information, see [ESSD AutoPL disks]（https://help.aliyun.com/document_detail/368372.html）",
+                      "description_zh": "ESSD AutoPL云盘预配置的读写IOPS。可能值：0~min{50000, 1000*容量-基准性能}。\n基准性能=min{1,800+50*容量, 50,000}。\n\n当`DiskCategory`取值为`cloud_auto`时才支持设置该参数。更多信息，请参见[ESSD AutoPL云盘]（https://help.aliyun.com/document_detail/368372.html）",
+                      "example": "40000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID of the disk",
+                      "description_zh": "磁盘所属的地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "ResourceGroupId": {
+                      "description_en": "The ID of the resource group to which the disk belongs",
+                      "description_zh": "磁盘所在的企业资源组ID",
+                      "example": "rg-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "SerialNumber": {
+                      "description_en": "The serial number of the disk",
+                      "description_zh": "磁盘的序列号",
+                      "example": "bp18um4r4f2fve2****",
+                      "type": "string"
+                    },
+                    "Size": {
+                      "description_en": "The size of the disk. Unit: GiB",
+                      "description_zh": "磁盘大小，单位GiB",
+                      "example": "60",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "SourceDiskId": {
+                      "example": "d-123*********",
+                      "type": "string"
+                    },
+                    "SourceSnapshotId": {
+                      "description_en": "The ID of the snapshot used to create the disk.\n\nIf no snapshot was specified when the disk was created, this parameter is empty. If the snapshot used to create the disk is deleted, this parameter is empty",
+                      "description_zh": "创建云盘使用的快照ID。\n\n如果创建云盘时，没有指定快照，则该参数值为空。如果创建云盘的快照被删除，该参数值为空",
+                      "example": "s-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status of the disk. Valid values:\n\nIn_use: in use.\nAvailable: to be attached.\nAttaching: being attached.\nDetaching: being detached.\nCreating: being created.\nReIniting: being initialized",
+                      "description_zh": "磁盘状态。可能值：\n\nIn_use：使用中。\nAvailable：待挂载。\nAttaching：挂载中 。\nDetaching：卸载中。\nCreating：创建中。\nReIniting：初始化中",
+                      "example": "In_use",
+                      "type": "string"
+                    },
+                    "StorageClusterId": {
+                      "description_en": "The ID of the dedicated block storage cluster to which the disk belongs. If the disk belongs to a public block storage cluster, this value is empty",
+                      "description_zh": "云盘所属的专属块存储集群ID。如果您的云盘在公共云块存储集群中，则该返回值为空",
+                      "example": "dbsc-j5e1sf2vaf5he8m2****",
+                      "type": "string"
+                    },
+                    "StorageSetId": {
+                      "description_en": "The ID of the storage set",
+                      "description_zh": "存储集ID",
+                      "example": "ss-i-bp1j4i2jdf3owlhe****",
+                      "type": "string"
+                    },
+                    "StorageSetPartitionNumber": {
+                      "description_en": "The maximum number of partitions in the storage set",
+                      "description_zh": "存储集中的最大分区数量",
+                      "example": "11",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The collection of tags of the disk",
+                          "description_zh": "磁盘的标签集合",
+                          "items": {
+                            "description_en": "The tag of the disk",
+                            "description_zh": "磁盘的标签",
+                            "properties": {
+                              "TagKey": {
+                                "description_en": "The tag key",
+                                "description_zh": "标签键",
+                                "example": "TestKey",
+                                "type": "string"
+                              },
+                              "TagValue": {
+                                "description_en": "The tag value",
+                                "description_zh": "标签值",
+                                "example": "TestValue",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Throughput": {
+                      "description_en": "The amount of data that can be transferred per unit of time. Unit: MB/s",
+                      "description_zh": "单位时间内可以成功传输的数据数量，单位：MB/s",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ThroughputRead": {
+                      "description_en": "The amount of data that the system can read per unit of time. Unit: MB/s",
+                      "description_zh": "单位时间内系统可以成功读取的数据数量，单位：MB/s",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ThroughputWrite": {
+                      "description_en": "The amount of data that the system can write per unit of time. Unit: MB/s",
+                      "description_zh": "单位时间内系统可以成功写入的数据数量，单位：MB/s",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Type": {
+                      "description_en": "The type of the disk. Valid values:\n\nsystem: system disk.\ndata: data disk",
+                      "description_zh": "磁盘类型。可能值：\n\nsystem：系统盘。\ndata：数据盘",
+                      "example": "system",
+                      "type": "string"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID of the disk",
+                      "description_zh": "磁盘所属的可用区ID",
+                      "example": "cn-hangzhou-i",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          },
+          "NextToken": {
+            "description_en": "The pagination token returned in this call",
+            "description_zh": "本次调用返回的查询凭证值",
+            "example": "AAAAAdDWBF2****",
+            "type": "string"
+          },
+          "PageNumber": {
+            "description_en": "This parameter will be offline soon. Use NextToken and MaxResults for paging operations",
+            "description_zh": "该参数即将下线，推荐您使用参数 `NextToken `与 `MaxResults `完成分页查询操作",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "This parameter will be offline soon. Use NextToken and MaxResults for paging operations",
+            "description_zh": "该参数即将下线，推荐您使用参数 `NextToken `与 `MaxResults `完成分页查询操作",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
+            "type": "string"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries returned.\nWhen you use the MaxResults and NextToken parameters for paging, the returned TotalCount value is invalid",
+            "description_zh": "查询结果总条数。\n使用`MaxResults`和`NextToken`参数进行分页查询时，返回的`TotalCount`参数值无效",
+            "example": "15",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

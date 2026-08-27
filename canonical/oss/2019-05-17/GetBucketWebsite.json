@@ -2,6 +2,392 @@
   "camel_example": "aliyun ossutil api get-bucket-website --bucket examplebucket --region cn-hangzhou",
   "cmd_full_name": "oss get-bucket-website",
   "cmd_name": "get-bucket-website",
+  "components": {
+    "schemas": {
+      "ErrorDocument": {
+        "description_en": "The container for the 404 page",
+        "description_zh": "404页面的容器",
+        "properties": {
+          "HttpStatus": {
+            "description_en": "The HTTP status code returned with the error page",
+            "description_zh": "返回错误页面时的HTTP状态码",
+            "example": "404",
+            "format": "int64",
+            "title": "返回错误页面时的HTTP状态码。默认404。",
+            "type": "integer"
+          },
+          "Key": {
+            "description_en": "The error page",
+            "description_zh": "错误页面",
+            "example": "error.html",
+            "title": "错误页面文件，如果访问的Object不存在，则返回此错误页面。",
+            "type": "string"
+          }
+        },
+        "title": "保存错误页面配置信息的容器。",
+        "type": "object"
+      },
+      "IndexDocument": {
+        "description_en": "The container for the default homepage",
+        "description_zh": "默认主页的容器",
+        "properties": {
+          "Suffix": {
+            "description_en": "The default homepage",
+            "description_zh": "默认主页",
+            "example": "index.html",
+            "title": "默认主页。",
+            "type": "string"
+          },
+          "SupportSubDir": {
+            "description_en": "Specifies whether to redirect to the default homepage in the subdirectory when a subdirectory is accessed. Valid values:\ntrue: Redirects to the default homepage in the subdirectory.\nfalse (default): Does not redirect to the default homepage in the subdirectory. Instead, redirects to the default homepage in the root directory.\n\nFor example, assume the default homepage is index.html and you want to access `bucket.oss-ap-southeast-1.aliyuncs.com/subdir/`. If SupportSubDir is set to false, the request is redirected to `bucket.oss-ap-southeast-1.aliyuncs.com/index.html`. If SupportSubDir is set to true, the request is redirected to `bucket.oss-ap-southeast-1.aliyuncs.com/subdir/index.html`",
+            "description_zh": "访问子目录时，是否支持转到子目录下的默认主页。取值范围如下：\ntrue：转到子目录下的默认主页。\nfalse（默认）：不转到子目录下的默认主页，而是转到根目录下的默认主页。\n\n假设默认主页为index.html，要访问`bucket.oss-cn-hangzhou.aliyuncs.com/subdir/`，如果设置SupportSubDir为false，则转到`bucket.oss-cn-hangzhou.aliyuncs.com/index.html`；如果设置SupportSubDir为true，则转到`bucket.oss-cn-hangzhou.aliyuncs.com/subdir/index.html`",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "访问子目录时，是否支持跳转到子目录下的默认主页。",
+            "type": "boolean"
+          },
+          "Type": {
+            "description_en": "The behavior when the default homepage is set, the accessed object does not end with a forward slash (/), and the object does not exist. This parameter takes effect only when SupportSubDir is set to true. This parameter takes effect after RoutingRule but before ErrorFile.\nFor example, assume the default homepage is index.html, the file path to access is `bucket.oss-ap-southeast-1.aliyuncs.com/abc`, and the object abc does not exist. The behaviors for different values of Type are as follows:\n0 (default): Checks whether abc/index.html exists (in the format of `Object + forward slash (/) + homepage`). If it exists, a 302 response is returned with the Location header set to the URL-encoded form of `/abc/` (in the format of `forward slash (/) + Object + forward slash (/)`). If it does not exist, a 404 response is returned, and ErrorFile is checked.\n1: Directly returns a 404 response with the NoSuchKey error, and ErrorFile is checked.\n2: Checks whether abc/index.html exists. If it exists, the content of the object is returned. If it does not exist, a 404 response is returned, and ErrorFile is checked",
+            "description_zh": "设置默认主页后，访问以非正斜线（/）结尾的Object，且该Object不存在时的行为。 只有设置SupportSubDir为true时才生效，且生效的顺序在RoutingRule之后、ErrorFile之前。\n假设默认主页为index.html，要访问的文件路径为`bucket.oss-cn-hangzhou.aliyuncs.com/abc`，且abc这个Object不存在，此时Type的不同取值对应的行为如下：\n0（默认）：检查abc/index.html是否存在（即`Object + 正斜线（/）+ 主页`的形式），如果存在则返回302，Location头为`/abc/`的URL编码（即`正斜线（/） + Object + 正斜线（/）`的形式），如果不存在则返回404，继续检查ErrorFile。\n1：直接返回404，报错NoSuchKey，继续检查ErrorFile。\n2：检查abc/index.html是否存在，如果存在则返回该Object的内容；如果不存在则返回404，继续检查ErrorFile",
+            "example": "0",
+            "format": "int64",
+            "title": "设置默认主页后，访问以非正斜线（/）结尾的Object，且该Object不存在时的行为。",
+            "type": "integer"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "RoutingRule": {
+        "description_en": "Specifies redirection rules or mirroring-based back-to-origin rules. You can specify up to 20 RoutingRules",
+        "description_zh": "指定跳转规则或者镜像回源规则，最多指定20个RoutingRule",
+        "properties": {
+          "Condition": {
+            "$ref": "#/components/schemas/RoutingRuleCondition",
+            "description_en": "The matching condition.\nIf all specified items are met, the rule is executed. All conditions under this container must be satisfied for a match to occur.\nIf the parent node RoutingRule is specified, this parameter is required",
+            "description_zh": "匹配的条件。\n如果指定的项都满足，则执行此规则。只有满足此容器下的各个节点的所有条件才算匹配。\n如果指定了父节点RoutingRule，则必须指定此项",
+            "title": "description"
+          },
+          "Redirect": {
+            "$ref": "#/components/schemas/RoutingRuleRedirect",
+            "description_en": "The action to perform after the rule is matched.\nIf the parent node RoutingRule is specified, this parameter is required",
+            "description_zh": "指定匹配此规则后执行的动作。\n如果指定了父节点RoutingRule，则必须指定此项",
+            "title": "description"
+          },
+          "RuleNumber": {
+            "description_en": "The ordinal number used to match and execute the RoutingRule. OSS matches rules sequentially based on this number. If a match is found, the rule is executed and subsequent rules are skipped.\n\nIf the parent node RoutingRule is specified, this parameter is required",
+            "description_zh": "匹配和执行RoutingRule的序号，OSS将按照此序号依次匹配规则。如果匹配成功，则执行此规则，后续的规则不再执行。\n\n如果指定了父节点RoutingRule，则必须指定此项",
+            "example": "1",
+            "format": "int64",
+            "title": "description",
+            "type": "integer"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "RoutingRuleCondition": {
+        "description_en": "The matching conditions.\nIf all specified conditions are met, the rule is applied. All conditions under this container must be satisfied for a match.\nIf the parent node RoutingRule is specified, this parameter is required",
+        "description_zh": "匹配的条件。\n如果指定的项都满足，则执行此规则。只有满足此容器下的各个节点的所有条件才算匹配。\n如果指定了父节点RoutingRule，则必须指定此项",
+        "properties": {
+          "HttpErrorCodeReturnedEquals": {
+            "description_en": "The HTTP status code that must be returned when the specified object is accessed for the rule to match. When the redirection rule type is mirroring-based back-to-origin, this field must be 404",
+            "description_zh": "访问指定Object时，返回此status才能匹配此规则。当跳转规则是镜像回源类型时，此字段必须为404",
+            "example": "404",
+            "format": "int64",
+            "title": "访问指定Object时，返回此status才能匹配此规则。当跳转规则是镜像回源类型时，此字段必须为404。",
+            "type": "integer"
+          },
+          "IncludeHeader": {
+            "description_en": "The rule is matched only when the request contains the specified header with the specified value. You can specify up to 10 headers in this container",
+            "description_zh": "只有请求中包含了指定Header且值为指定值时，才能匹配此规则。该容器最多可指定10个",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "Equals": {
+                  "description_en": "只有请求中包含了Key指定的Header且值为指定值时，才能匹配此规则",
+                  "description_zh": "只有请求中包含了Key指定的Header且值为指定值时，才能匹配此规则",
+                  "example": "test-value",
+                  "title": "只有请求中包含了Key指定的Header且值为指定值时，才能匹配此规则。",
+                  "type": "string"
+                },
+                "Key": {
+                  "description_en": "只有请求中包含了此Header且值满足条件，才能匹配此规则",
+                  "description_zh": "只有请求中包含了此Header且值满足条件，才能匹配此规则",
+                  "example": "test-header",
+                  "title": "只有请求中包含了此Header且值为Equals的指定值时，才能匹配此规则。",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "title": "只有请求中包含了指定Header且值为指定值时，才能匹配此规则。该容器最多可指定10个。",
+            "type": "array"
+          },
+          "KeyPrefixEquals": {
+            "description_en": "Only objects that match this prefix can match the rule",
+            "description_zh": "只有匹配此前缀的Object才能匹配此规则",
+            "example": "abc",
+            "title": "只有匹配此前缀的Object才能匹配此规则。",
+            "type": "string"
+          },
+          "KeySuffixEquals": {
+            "description_en": "Only objects that match this suffix can match the rule",
+            "description_zh": "只有匹配此后缀的Object才能匹配此规则",
+            "example": ".txt",
+            "title": "只有匹配此后缀的Object才能匹配此规则。",
+            "type": "string"
+          }
+        },
+        "title": "保存该规则需要匹配的条件。",
+        "type": "object"
+      },
+      "RoutingRuleRedirect": {
+        "description_en": "Specifies the action to perform after a rule is matched.\nIf the parent node RoutingRule is specified, this parameter is required",
+        "description_zh": "指定匹配此规则后执行的动作。\n如果指定了父节点RoutingRule，则必须指定此项",
+        "properties": {
+          "EnableReplacePrefix": {
+            "description_en": "If this parameter is set to true, the prefix of the object is replaced with the value specified by ReplaceKeyPrefixWith. If this parameter is not specified or is empty, the object prefix is truncated.\nThis parameter cannot be set to true when the ReplaceKeyWith parameter is not empty.\n\nDefault value: false",
+            "description_zh": "如果设置此字段为true，则Object的前缀将被替换为ReplaceKeyPrefixWith指定的值。如果未指定此字段或为空，则表示截断Object前缀。\n当ReplaceKeyWith字段不为空时，不能设置此字段为true。\n\n默认值：false",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "如果设置此字段为true，则Object的前缀将被替换为ReplaceKeyPrefixWith指定的值。如果未指定此字段或为空，则表示截断Object前缀。",
+            "type": "boolean"
+          },
+          "HostName": {
+            "description_en": "The domain name used for the redirect. The domain name must comply with domain name specifications.\nFor example, if the object to access is test, Protocol is set to https, and Hostname is set to `example.com`, the Location header is `https://example.com/test`",
+            "description_zh": "跳转时的域名，域名需符合域名规范。\n如果要访问的文件为test，设置Protocol为https，并且设置Hostname为`example.com`，则Location头为`https://example.com/test`",
+            "example": "example.com",
+            "title": "跳转时的域名，域名需符合域名规范。",
+            "type": "string"
+          },
+          "HttpRedirectCode": {
+            "description_en": "The HTTP redirect code returned during the redirect. This parameter takes effect only when RedirectType is set to External or AliCDN.\nValid values: 301 (default), 302, 307",
+            "description_zh": "跳转时返回的状态码。只有设置RedirectType为External或者AliCDN时才生效。\n取值：301（默认）、302、307",
+            "example": "301",
+            "format": "int64",
+            "title": "跳转时返回的状态码。只有设置RedirectType为External或者AliCDN时才生效。",
+            "type": "integer"
+          },
+          "MirrorCheckMd5": {
+            "description_en": "Specifies whether to check the MD5 hash of the back-to-origin response body. This parameter takes effect only when RedirectType is set to Mirror.\nIf MirrorCheckMd5 is set to true and the response from the origin server contains the Content-Md5 header, OSS checks whether the MD5 hash of the retrieved data matches this header value. If the values do not match, the data is not stored in OSS.\nDefault value: false",
+            "description_zh": "是否检查回源body的MD5。 只有设置RedirectType为Mirror时才生效。\n当设置MirrorCheckMd5为true，并且源站返回的response中含有Content-Md5头时，OSS检查拉取的数据MD5是否与此Header匹配，如果不匹配，则不保存在OSS上。\n默认值：false",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "是否检查回源body的MD5。 只有设置RedirectType为Mirror时才生效。",
+            "type": "boolean"
+          },
+          "MirrorFollowRedirect": {
+            "description_en": "Specifies whether to follow the redirect to the URL specified in the Location header if the mirroring-based back-to-origin response is 3xx. This parameter takes effect only when RedirectType is set to Mirror.\nFor example, when a mirroring-based back-to-origin request is initiated, the origin server returns 302 with a specified Location.\nIf this parameter is set to true, OSS continues to request the URL specified in the Location header.\nA maximum of 10 redirects are allowed. If the number of redirects exceeds 10, a mirroring-based back-to-origin failure is returned.\nIf this parameter is set to false, OSS returns 302 and passes through the Location header.\n\nDefault value: true",
+            "description_zh": "如果镜像回源获取的结果为3xx，是否继续跳转到指定的Location获取数据。 只有设置RedirectType为Mirror时才生效。\n例如发起镜像回源请求时，源站返回了302，并且指定了Location。\n如果设置此项为true，则OSS会继续请求Location对应的地址。\n最多能跳转10次，如果跳转超过10次，则返回镜像回源失败。\n如果设置此项为false，则OSS会返回302，并透传Location。\n\n默认值：true",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "title": "如果镜像回源获取的结果为3xx，是否继续跳转到指定的Location获取数据。 只有设置RedirectType为Mirror时才生效。",
+            "type": "boolean"
+          },
+          "MirrorHeaders": {
+            "description_en": "The headers to include in the mirroring-based back-to-origin request. This parameter takes effect only when RedirectType is set to Mirror",
+            "description_zh": "指定镜像回源时携带的Header。只有设置RedirectType为Mirror时才生效",
+            "properties": {
+              "Pass": {
+                "description_en": "透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集为0~9、A~Z、a~z以及短划线（-）。\n此字段最多可指定10个",
+                "description_zh": "透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集为0~9、A~Z、a~z以及短划线（-）。\n此字段最多可指定10个",
+                "items": {
+                  "description_en": "透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集为0~9、A~Z、a~z以及短划线（-）。\n此字段最多可指定10个",
+                  "description_zh": "透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集为0~9、A~Z、a~z以及短划线（-）。\n此字段最多可指定10个",
+                  "example": "myheader-key1",
+                  "type": "string"
+                },
+                "title": "透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。每个Header长度最多为1024个字节，字符集为0~9、A~Z、a~z以及短划线（-）。",
+                "type": "array"
+              },
+              "PassAll": {
+                "description_en": " 是否透传除以下Header之外的其他Header到源站。只有设置RedirectType为Mirror时才生效。\ncontent-length、authorization2、authorization、range、date等Header\n以oss-/x-oss-/x-drs-开头的Header\n\n默认值：false",
+                "description_zh": " 是否透传除以下Header之外的其他Header到源站。只有设置RedirectType为Mirror时才生效。\ncontent-length、authorization2、authorization、range、date等Header\n以oss-/x-oss-/x-drs-开头的Header\n\n默认值：false",
+                "enumValueTitles": {
+                  "false": "false",
+                  "true": "true"
+                },
+                "example": "false",
+                "title": "是否透传除以下Header之外的其他Header到源站。只有设置RedirectType为Mirror时才生效。  content-length、authorization2、authorization、range、date等Header  以oss-/x-oss-/x-drs-开头的Header",
+                "type": "boolean"
+              },
+              "Remove": {
+                "description_en": "禁止透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集与Pass相同。\n此字段最多可指定10个，通常与PassAll一起使用",
+                "description_zh": "禁止透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集与Pass相同。\n此字段最多可指定10个，通常与PassAll一起使用",
+                "items": {
+                  "description_en": "禁止透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集与Pass相同。\n此字段最多可指定10个，通常与PassAll一起使用",
+                  "description_zh": "禁止透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。\n每个Header长度最多为1024个字节，字符集与Pass相同。\n此字段最多可指定10个，通常与PassAll一起使用",
+                  "example": "myheader-key3",
+                  "type": "string"
+                },
+                "title": "禁止透传指定的Header到源站。只有设置RedirectType为Mirror时才生效。每个Header长度最多为1024个字节，字符集为0~9、A~Z、a~z以及短划线（-）。",
+                "type": "array"
+              },
+              "Set": {
+                "description_en": "设置一个Header传到源站，不管请求中是否携带这些指定的Header，回源时都会设置这些Header。只有设置RedirectType为Mirror时才生效。\n此容器最多可指定10组",
+                "description_zh": "设置一个Header传到源站，不管请求中是否携带这些指定的Header，回源时都会设置这些Header。只有设置RedirectType为Mirror时才生效。\n此容器最多可指定10组",
+                "items": {
+                  "description_en": "设置一个Header传到源站，不管请求中是否携带这些指定的Header，回源时都会设置这些Header。只有设置RedirectType为Mirror时才生效。\n此容器最多可指定10组",
+                  "description_zh": "设置一个Header传到源站，不管请求中是否携带这些指定的Header，回源时都会设置这些Header。只有设置RedirectType为Mirror时才生效。\n此容器最多可指定10组",
+                  "properties": {
+                    "Key": {
+                      "description_en": "设置Header的key，最多1024个字节，字符集与Pass相同。只有设置RedirectType为Mirror时才生效。\n若指定了父节点Set，则必须指定此项",
+                      "description_zh": "设置Header的key，最多1024个字节，字符集与Pass相同。只有设置RedirectType为Mirror时才生效。\n若指定了父节点Set，则必须指定此项",
+                      "example": "myheader-key5",
+                      "title": "设置Header的key，最多1024个字节，字符集与Pass相同。只有设置RedirectType为Mirror时才生效。",
+                      "type": "string"
+                    },
+                    "Value": {
+                      "description_en": "设置Header的value，最多1024个字节，不能出现`\n`。只有设置RedirectType为Mirror时才生效。\n若指定了父节点Set，则必须指定此项",
+                      "description_zh": "设置Header的value，最多1024个字节，不能出现`\\r\\n`。只有设置RedirectType为Mirror时才生效。\n若指定了父节点Set，则必须指定此项",
+                      "example": "myheader-value5",
+                      "title": "设置Header的value，最多1024个字节，不能出现\\r\\n。只有设置RedirectType为Mirror时才生效。",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title": "设置一个Header传到源站，不管请求中是否携带这些指定的Header，回源时都会设置这些Header。只有设置RedirectType为Mirror时才生效。",
+                "type": "array"
+              }
+            },
+            "title": "指定镜像回源时携带的Header。只有设置RedirectType为Mirror时才生效。",
+            "type": "object"
+          },
+          "MirrorPassOriginalSlashes": {
+            "description_en": "Specifies whether to pass through forward slashes (/) to the origin server",
+            "description_zh": "是否透传/到源站",
+            "example": "false",
+            "title": "是否透传/到源站",
+            "type": "boolean"
+          },
+          "MirrorPassQueryString": {
+            "description_en": "Has the same function as PassQueryString but takes higher priority than PassQueryString. This parameter takes effect only when RedirectType is set to Mirror.\nDefault value: false",
+            "description_zh": "与PassQueryString作用相同，优先级高于PassQueryString。只有设置RedirectType为Mirror时才生效。\n默认值：false",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "false",
+            "title": "与PassQueryString作用相同，优先级高于PassQueryString。只有设置RedirectType为Mirror时才生效。",
+            "type": "boolean"
+          },
+          "MirrorSNI": {
+            "description_en": "Specifies whether to pass through the Server Name Indication (SNI)",
+            "description_zh": "是否透传SNI",
+            "example": "true",
+            "title": "是否透传SNI",
+            "type": "boolean"
+          },
+          "MirrorURL": {
+            "description_en": "The address of the origin server for mirroring-based back-to-origin. This parameter takes effect only when RedirectType is set to Mirror.\nThe address of the origin server must start with **http://** or **https://** and end with a forward slash (/). OSS appends the object name to this URL to form the back-to-origin URL.\nFor example, if the object to access is myobject and this parameter is set to `http://example.com/`, the back-to-origin URL is `http://example.com/myobject`. If this parameter is set to `http://example.com/dir1/`, the back-to-origin URL is `http://example.com/dir1/myobject`.\nIf RedirectType is set to Mirror, this parameter is required",
+            "description_zh": "镜像回源的源站地址。只有设置RedirectType为Mirror时才生效。\n源站地址必须以**http://**或者**https://**开头，并且以正斜线（/）结尾，OSS会在此地址后带上Object名称组成回源URL。\n例如要访问的Object名称为myobject，如果指定此项为`http://example.com/`，则回源URL为`http://example.com/myobject`，如果指定此项为`http://example.com/dir1/`，则回源URL为`http://example.com/dir1/myobject`。\n如果RedirectType指定为Mirror，则必须指定此项",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "http://example.com",
+            "title": "镜像回源的源站地址。只有设置RedirectType为Mirror时才生效。  源站地址必须以http://或者https://开头，并且以正斜线（/）结尾，OSS会在此地址后带上Object名称组成回源URL。",
+            "type": "string"
+          },
+          "PassQueryString": {
+            "description_en": "Specifies whether to include the request parameters of the original request in the redirect or mirroring-based back-to-origin request.\nIf a request to OSS includes the request parameter `?a=b&c=d` and PassQueryString is set to true, the request parameters are appended to the Location header for a 302 redirect. For example, `Location:example.com?a=b&c=d`. If the redirect type is mirroring-based back-to-origin, the request parameters are also included in the back-to-origin request.\nValid values: true, false (default)",
+            "description_zh": "执行跳转或者镜像回源规则时，是否携带请求参数。\n用户请求OSS时携带了请求参数`?a=b&c=d`，并且设置PassQueryString为true，如果规则为302跳转，则跳转的Location头中会添加此请求参数。例如`Location:example.com?a=b&c=d`，跳转类型为镜像回源，则在发起的回源请求中也会携带此请求参数。\n取值：true、false（默认）",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
+            "example": "true",
+            "title": "执行跳转或者镜像回源规则时，是否携带请求参数。",
+            "type": "boolean"
+          },
+          "Protocol": {
+            "description_en": "The protocol used for the redirect. This parameter takes effect only when RedirectType is set to External or AliCDN.\nFor example, if the object to access is test, the redirect destination is `example.com`, and Protocol is set to https, the Location header is `https://example.com/test`.\nValid values: http, https",
+            "description_zh": "跳转时的协议。只有设置RedirectType为External或者AliCDN时才生效。\n如果要访问的文件为test，设置跳转到`example.com`，并且设置Protocol为https，则Location头为`https://example.com/test`。\n取值：http、https",
+            "example": "http",
+            "title": "跳转时的协议。只有设置RedirectType为External或者AliCDN时才生效。",
+            "type": "string"
+          },
+          "RedirectType": {
+            "description_en": "The type of the redirect. Valid values:\nMirror: mirroring-based back-to-origin.\nExternal: external redirect. OSS returns a 3xx response that redirects the request to another URL.\nAliCDN: Content Delivery Network (CDN) redirect. This value is mainly used for Alibaba Cloud CDN. Unlike External, OSS adds an additional header. After Content Delivery Network (CDN) identifies this header, it proactively redirects to the specified URL, retrieves the data, and returns the data to the user instead of returning the 3xx redirect response to the user.\n\nIf the parent node Redirect is specified, this parameter is required",
+            "description_zh": "指定跳转的类型。取值范围如下：\nMirror：镜像回源。\nExternal：外部跳转，即OSS会返回一个3xx请求，指定跳转到另外一个地址。\nAliCDN：阿里云CDN跳转，主要用于阿里云的CDN。与External不同的是，OSS会额外添加一个Header。阿里云CDN识别到此Header后会主动跳转到指定的地址，返回给用户获取到的数据，而不是将3xx跳转请求返回给用户。\n\n如果指定了父节点Redirect，则必须指定此项",
+            "example": "Mirror",
+            "title": "指定跳转的类型。",
+            "type": "string"
+          },
+          "ReplaceKeyPrefixWith": {
+            "description_en": "The string that replaces the prefix of the object name during the redirect. If the prefix is empty, this string is prepended to the object name.\nOnly one of ReplaceKeyWith or ReplaceKeyPrefixWith can be specified.\nFor example, if the object to access is abc/test.txt, KeyPrefixEquals is set to abc/, and ReplaceKeyPrefixWith is set to def/, the Location header is `http://example.com/def/test.txt`",
+            "description_zh": "Redirect时Object名称的前缀将替换成该值。如果前缀为空，则将这个字符串插入Object名称的前面。\n仅允许存在ReplaceKeyWith或ReplaceKeyPrefixWith节点。\n假设要访问的Object为abc/test.txt，如果设置KeyPrefixEquals为abc/，ReplaceKeyPrefixWith为def/，则Location头为`http://example.com/def/test.txt`",
+            "example": "def/",
+            "title": "Redirect时Object名称的前缀将替换成该值。如果前缀为空，则将这个字符串插入Object名称的前面。",
+            "type": "string"
+          },
+          "ReplaceKeyWith": {
+            "description_en": "The string that replaces the object name during the redirect. ReplaceKeyWith supports variables. The supported variable is ${key}, which represents the object name in the request.\nFor example, if the object to access is test and ReplaceKeyWith is set to `prefix/${key}.suffix`, the Location header is `http://example.com/prefix/test.suffix`",
+            "description_zh": "Redirect时Object名称将替换成ReplaceKeyWith指定的值，ReplaceKeyWith支持设置变量。目前支持的变量为${key}，表示该请求中的Object名称。\n假设要访问的Object为test，如果设置ReplaceKeyWith为`prefix/${key}.suffix`，则Location头为`http://example.com/prefix/test.suffix`",
+            "example": "prefix/${key}.suffix",
+            "title": "Redirect时Object名称将替换成ReplaceKeyWith指定的值，ReplaceKeyWith支持设置变量。目前支持的变量为${key}，表示该请求中的Object名称。",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "WebsiteConfiguration": {
+        "description_en": "The root node",
+        "description_zh": "根节点",
+        "properties": {
+          "ErrorDocument": {
+            "$ref": "#/components/schemas/ErrorDocument",
+            "description_en": "The container for the 404 page.\n\nSpecify at least one of the following three containers: IndexDocument, ErrorDocument, or RoutingRules",
+            "description_zh": "404页面的容器。\n\n至少指定IndexDocument、ErrorDocument、RoutingRules三个容器中的一个",
+            "title": "保存错误页面配置的容器。"
+          },
+          "IndexDocument": {
+            "$ref": "#/components/schemas/IndexDocument",
+            "description_en": "The container for the default homepage.\n\nSpecify at least one of the following three containers: IndexDocument, ErrorDocument, or RoutingRules",
+            "description_zh": "默认主页的容器。\n\n至少指定IndexDocument、ErrorDocument、RoutingRules三个容器中的一个",
+            "title": "保存默认主页配置的容器。"
+          },
+          "RoutingRules": {
+            "description_en": "The container for RoutingRule.\n\nSpecify at least one of the following three containers: IndexDocument, ErrorDocument, or RoutingRules",
+            "description_zh": "RoutingRule的容器。\n\n至少指定IndexDocument、ErrorDocument、RoutingRules三个容器中的一个",
+            "properties": {
+              "RoutingRule": {
+                "description_en": "指定跳转规则或者镜像回源规则，最多指定20个RoutingRule",
+                "description_zh": "指定跳转规则或者镜像回源规则，最多指定20个RoutingRule",
+                "items": {
+                  "$ref": "#/components/schemas/RoutingRule",
+                  "description_en": "指定跳转规则或者镜像回源规则，最多指定20个RoutingRule",
+                  "description_zh": "指定跳转规则或者镜像回源规则，最多指定20个RoutingRule"
+                },
+                "title": "指定跳转规则或者镜像回源规则，最多指定20个RoutingRule。",
+                "type": "array"
+              }
+            },
+            "title": "保存跳转规则或镜像回源规则的容器。",
+            "type": "object"
+          }
+        },
+        "title": "静态网站托管配置与跳转规则。",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Queries the static website hosting status and redirection rules of a bucket",
   "description_zh": "查看存储空间（Bucket）的静态网站托管状态以及跳转规则",
@@ -36,5 +422,22 @@
   ],
   "pathPattern": "/?website",
   "product_code": "Oss",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "WebsiteConfiguration": {
+            "$ref": "#/components/schemas/WebsiteConfiguration",
+            "description_en": "The container that stores the static website configuration",
+            "description_zh": "保存静态网站配置信息的容器"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "5XX": {}
+  }
 }

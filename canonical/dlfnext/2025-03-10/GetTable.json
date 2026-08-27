@@ -2,6 +2,451 @@
   "camel_example": "",
   "cmd_full_name": "dlfnext get-table",
   "cmd_name": "get-table",
+  "components": {
+    "schemas": {
+      "DataField": {
+        "description_en": "The column definition",
+        "description_zh": "表的字段定义",
+        "properties": {
+          "description": {
+            "description_en": "The column description",
+            "description_zh": "表字段描述",
+            "example": "description",
+            "type": "string"
+          },
+          "id": {
+            "description_en": "The column ID",
+            "description_zh": "表字段号",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "description_en": "The column name",
+            "description_zh": "表字段名",
+            "example": "order_id",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/FullDataType",
+            "description_en": "The column type",
+            "description_zh": "表字段类型"
+          }
+        },
+        "type": "object"
+      },
+      "FullDataType": {
+        "description_en": "A comprehensive definition for column data types",
+        "description_zh": "表字段数据类型定义",
+        "properties": {
+          "element": {
+            "$ref": "#/components/schemas/FullDataType",
+            "description_en": "The data type",
+            "description_zh": "数据类型"
+          },
+          "fields": {
+            "description_en": "The list of field definitions. This parameter is required when `type` is `ROW`",
+            "description_zh": "字段定义列表，type是ROW时必传",
+            "items": {
+              "$ref": "#/components/schemas/DataField",
+              "description_en": "The field definition",
+              "description_zh": "字段定义"
+            },
+            "type": "array"
+          },
+          "key": {
+            "$ref": "#/components/schemas/FullDataType",
+            "description_en": "The data type of the key. This parameter is required when `type` is `MAP`",
+            "description_zh": "键数据类型，type是MAP时必传"
+          },
+          "type": {
+            "description_en": "The data type. This parameter is required when `type` is `ARRAY` or `MULTISET`",
+            "description_zh": "元素数据类型，type是ARRAY和MULTISET时必传",
+            "enumValueTitles": {
+              "ARRAY": "ARRAY",
+              "BIGINT": "BIGINT",
+              "BINARY": "BINARY",
+              "BOOLEAN": "BOOLEAN",
+              "BYTES": "BYTES",
+              "CHAR": "CHAR",
+              "DATE": "DATE",
+              "DECIMAL": "DECIMAL",
+              "DOUBLE": "DOUBLE",
+              "FLOAT\t": "FLOAT\t",
+              "INT": "INT",
+              "MAP": "MAP",
+              "MULTISET": "MULTISET",
+              "ROW": "ROW",
+              "SMALLINT": "SMALLINT",
+              "STRING": "STRING",
+              "TIME": "TIME",
+              "TIMESTAMP": "TIMESTAMP",
+              "TINYINT": "TINYINT",
+              "VARBINARY": "VARBINARY",
+              "VARCHAR": "VARCHAR"
+            },
+            "example": "STRING",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/FullDataType",
+            "description_en": "The data type of the value. This parameter is required when `type` is `MAP`",
+            "description_zh": "值数据类型，type是MAP时必传"
+          }
+        },
+        "type": "object"
+      },
+      "IcebergNestedField": {
+        "description_en": "The Iceberg nested field",
+        "description_zh": "iceberg嵌套数据类型",
+        "properties": {
+          "doc": {
+            "description_en": "The comment for the field",
+            "description_zh": "注释",
+            "example": "desc1",
+            "type": "string"
+          },
+          "id": {
+            "description_en": "The field ID",
+            "description_zh": "id",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "description_en": "The field name",
+            "description_zh": "列名称",
+            "example": "col1",
+            "type": "string"
+          },
+          "optional": {
+            "description_en": "Indicates whether the field is optional",
+            "description_zh": "是否可选",
+            "example": "true",
+            "type": "boolean"
+          },
+          "type": {
+            "description_en": "The field type",
+            "description_zh": "类型",
+            "example": "string",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "IcebergPartitionField": {
+        "description_en": "The Iceberg partition field",
+        "description_zh": "Iceberg分区",
+        "properties": {
+          "fieldId": {
+            "description_en": "The partition ID",
+            "description_zh": "分区id",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "description_en": "The partition name",
+            "description_zh": "分区名",
+            "example": "ts_day",
+            "type": "string"
+          },
+          "sourceId": {
+            "description_en": "The source ID",
+            "description_zh": "对应列id",
+            "example": "0",
+            "format": "int64",
+            "type": "integer"
+          },
+          "transform": {
+            "description_en": "The transformation rule",
+            "description_zh": "转换规则",
+            "example": "day",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "IcebergSnapshot": {
+        "description_en": "The Iceberg snapshot",
+        "description_zh": "iceberg 快照",
+        "properties": {
+          "addedRows": {
+            "description_en": "Number of added rows",
+            "description_zh": "增加行数",
+            "example": "20",
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "description_en": "The snapshot ID",
+            "description_zh": "id",
+            "example": "2443368274334000657",
+            "format": "int64",
+            "type": "integer"
+          },
+          "idString": {
+            "type": "string"
+          },
+          "operation": {
+            "description_en": "The operation",
+            "description_zh": "操作",
+            "example": "append",
+            "type": "string"
+          },
+          "parentId": {
+            "description_en": "Parent ID",
+            "description_zh": "父id",
+            "example": "0",
+            "format": "int64",
+            "type": "integer"
+          },
+          "parentIdString": {
+            "type": "string"
+          },
+          "schemaId": {
+            "description_en": "The schema ID",
+            "description_zh": "schema序号",
+            "example": "0",
+            "format": "int64",
+            "type": "integer"
+          },
+          "sequenceNumber": {
+            "description_en": "The sequence number",
+            "description_zh": "次序编号",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          },
+          "summary": {
+            "additionalProperties": {
+              "description_en": "The summary",
+              "description_zh": "概况",
+              "example": "total-records:3",
+              "type": "string"
+            },
+            "description_en": "The summary",
+            "description_zh": "概况",
+            "type": "object"
+          },
+          "timestampMillis": {
+            "description_en": "The timestamp",
+            "description_zh": "时间戳",
+            "example": "1750313724369",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "IcebergTableMetadata": {
+        "description_en": "The metadata of the Iceberg table",
+        "description_zh": "iceberg表元数据",
+        "properties": {
+          "currentSnapshot": {
+            "$ref": "#/components/schemas/IcebergSnapshot",
+            "description_en": "The latest snapshot of the Iceberg table",
+            "description_zh": "iceberg 最新snapshot"
+          },
+          "fields": {
+            "description_en": "The fields",
+            "description_zh": "列字段",
+            "items": {
+              "$ref": "#/components/schemas/IcebergNestedField",
+              "description_en": "The nested field",
+              "description_zh": "列字段"
+            },
+            "type": "array"
+          },
+          "identifierFieldIds": {
+            "items": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "partitionFields": {
+            "description_en": "The partition fields",
+            "description_zh": "分区字段列表",
+            "items": {
+              "$ref": "#/components/schemas/IcebergPartitionField",
+              "description_en": "The partition field",
+              "description_zh": "分区字段"
+            },
+            "type": "array"
+          },
+          "properties": {
+            "additionalProperties": {
+              "description_en": "The property",
+              "description_zh": "属性",
+              "example": "write.format.default:parquet",
+              "type": "string"
+            },
+            "description_en": "The properties",
+            "description_zh": "属性",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "Schema": {
+        "description_en": "The table schema",
+        "description_zh": "表结构",
+        "properties": {
+          "comment": {
+            "description_en": "The comment for the table",
+            "description_zh": "表的注释信息",
+            "example": "description",
+            "type": "string"
+          },
+          "fields": {
+            "description_en": "A list of table column definitions",
+            "description_zh": "表的字段定义列表",
+            "items": {
+              "$ref": "#/components/schemas/DataField",
+              "description_en": "The definition of a table column",
+              "description_zh": "表的字段定义"
+            },
+            "type": "array"
+          },
+          "options": {
+            "additionalProperties": {
+              "description_en": "A configuration option",
+              "description_zh": "配置参数",
+              "example": "bucket : 5",
+              "type": "string"
+            },
+            "description_en": "A list of table configuration options",
+            "description_zh": "表配置参数列表",
+            "type": "object"
+          },
+          "partitionKeys": {
+            "description_en": "A list of partition column names",
+            "description_zh": "表的分区字段名称列表",
+            "items": {
+              "description_en": "The name of a partition column",
+              "description_zh": "表的分区字段名称",
+              "example": "pt",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "primaryKeys": {
+            "description_en": "A list of primary key column names",
+            "description_zh": "表主键字段名称列表",
+            "items": {
+              "description_en": "The name of a primary key column",
+              "description_zh": "表主键字段名称",
+              "example": "order_id",
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "Table": {
+        "description_en": "The table schema",
+        "description_zh": "表结构",
+        "properties": {
+          "createdAt": {
+            "description_en": "The time when the table was created",
+            "description_zh": "创建时间",
+            "example": "1741266704867",
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdBy": {
+            "description_en": "The creator of the table",
+            "description_zh": "创建者",
+            "example": "acs:ram::[accountId]:root",
+            "type": "string"
+          },
+          "icebergTableMetadata": {
+            "$ref": "#/components/schemas/IcebergTableMetadata"
+          },
+          "id": {
+            "description_en": "The UUID of the table",
+            "description_zh": "表UUID",
+            "example": "1",
+            "type": "string"
+          },
+          "isExternal": {
+            "description_en": "Indicates whether the table is an external table",
+            "description_zh": "是否外表",
+            "example": "true",
+            "type": "boolean"
+          },
+          "name": {
+            "description_en": "The name of the table",
+            "description_zh": "表名称",
+            "example": "table_test",
+            "type": "string"
+          },
+          "owner": {
+            "description_en": "The owner of the table",
+            "description_zh": "表所有者",
+            "example": "acs:ram::[accountId]:root",
+            "type": "string"
+          },
+          "path": {
+            "description_en": "The path of the table",
+            "description_zh": "表路径",
+            "example": "oss://clg-paimon-xxx/db-xxx/tbl-xxxx",
+            "type": "string"
+          },
+          "schema": {
+            "$ref": "#/components/schemas/Schema",
+            "description_en": "The table schema information",
+            "description_zh": "表结构信息"
+          },
+          "schemaId": {
+            "description_en": "The ID of the table schema",
+            "description_zh": "表结构信息ID",
+            "example": "1",
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "storageAction": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "storageActionTimestamp": {
+            "description_en": "",
+            "description_zh": "",
+            "format": "int64",
+            "type": "integer"
+          },
+          "storageClass": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "description_en": "The time when the table was last updated",
+            "description_zh": "更新时间",
+            "example": "1741266704867",
+            "format": "int64",
+            "type": "integer"
+          },
+          "updatedBy": {
+            "description_en": "The user who last updated the table",
+            "description_zh": "更新者",
+            "example": "acs:ram::[accountId]:root",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Retrieves the details of a table in a data lake",
   "description_zh": "获取数据湖中数据表的详细信息",
@@ -63,6 +508,102 @@
   "pathPattern": "/dlf/v1/[catalogId]/databases/[database]/tables/[table]",
   "product_code": "DlfNext",
   "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "$ref": "#/components/schemas/Table",
+        "description_en": "The table",
+        "description_zh": "数据表"
+      }
+    },
+    "401": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "404": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "500": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "code": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "message": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceName": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "resourceType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
   "v1_parameters": [
     {
       "help_en": "The ID of the data catalog",

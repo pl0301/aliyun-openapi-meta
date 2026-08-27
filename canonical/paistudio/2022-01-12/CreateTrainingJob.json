@@ -2,6 +2,767 @@
   "camel_example": "aliyun paistudio POST /api/v1/trainingjobs --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"OutputChannels\":[{\"VersionName\":\"example-string\",\"OutputUri\":\"oss://pai-quickstart-cn-hangzhou.oss-cn-hangzhou-internal.aliyuncs.com/modelscope/models/qwen2-0.5b/main/\",\"RoleArn\":\"example-string\",\"DatasetId\":\"d-475megosidivjfgfq6\",\"Name\":\"model\"}],\"HyperParameters\":[{\"Value\":\"0.0001\",\"Name\":\"learning_rate\"}],\"TrainingJobName\":\"qwen_llm\",\"CredentialConfig\":\"example-string\",\"Scheduler\":{\"MaxRunningTimeInSeconds\":0,\"MaxRunningTimeInMinutes\":0},\"Priority\":1,\"WorkspaceId\":\"12345\",\"ComputeResource\":{\"EcsCount\":1,\"InstanceCount\":1,\"UseSpotInstance\":true,\"SpotSpec\":{\"SpotDiscountLimit\":9.0,\"SpotStrategy\":\"SpotWithPriceLimit\"},\"InstanceSpec\":{\"GPUType\":\"V100\",\"Memory\":\"32\",\"CPU\":\"8\",\"SharedMemory\":\"32\",\"GPU\":\"1\"},\"ResourceId\":\"quotam670lixikcs\",\"EcsSpec\":\"ecs.gn5-c8g1.2xlarge\"},\"AssignNodeSpec\":\"example-string\",\"Labels\":[{\"Value\":\"QuickStart\",\"Key\":\"CreatedBy\"}],\"AlgorithmProvider\":\"pai\",\"InputChannels\":[{\"Options\":\"appendable_:_true\",\"VersionName\":\"example-string\",\"InputUri\":\"oss://pai-quickstart-cn-hangzhou.oss-cn-hangzhou-internal.aliyuncs.com/modelscope/models/qwen2-0.5b/main/\",\"RoleArn\":\"example-string\",\"Name\":\"model\",\"DatasetId\":\"d-475megosidivjfgfq6\"}],\"AlgorithmName\":\"ev_classification\",\"UserVpc\":{\"VpcId\":\"vpc-dxiflssjx978sl\",\"SecurityGroupId\":\"sg-qdfasd13sdasf\",\"DefaultRoute\":\"eth0\",\"SwitchId\":\"vs-icrc813vdsfol\",\"ExtendedCIDRs\":[\"192.168.0.1/24\"]},\"RoleArn\":\"acs:ram::1157703270994901:role/aliyunserviceroleforpaiworkspace\",\"Environments\":{\"key\":\"example-string\"},\"AlgorithmSpec\":\"example-string\",\"ExperimentConfig\":{\"ExperimentId\":\"exp-ds9aefia90v\"},\"TrainingJobDescription\":\"qwen_large_language_model_training\",\"AlgorithmVersion\":\"v1.0.0\",\"CodeDir\":\"example-string\",\"PythonRequirements\":[\"numpy\"],\"Settings\":\"example-string\"}",
   "cmd_full_name": "paistudio create-training-job",
   "cmd_name": "create-training-job",
+  "components": {
+    "schemas": {
+      "AlgorithmSpec": {
+        "description_en": "The algorithm definition",
+        "description_zh": "算法定义",
+        "properties": {
+          "CodeDir": {
+            "$ref": "#/components/schemas/Location",
+            "description_en": "The custom code configuration",
+            "description_zh": "自定义代码配置"
+          },
+          "Command": {
+            "description_en": "The list of commands to run the training task",
+            "description_zh": "训练任务运行命令列表",
+            "items": {
+              "description_en": "A command to run the training task",
+              "description_zh": "训练任务运行命令",
+              "example": "python train.py",
+              "type": "string"
+            },
+            "required": true,
+            "title": "The command used for submit the job.",
+            "type": "array"
+          },
+          "ComputeResource": {
+            "description_en": "The compute resource definition",
+            "description_zh": "计算资源定义",
+            "properties": {
+              "Policy": {
+                "description_en": "Computing resource configuration policy for the algorithm.  ",
+                "description_zh": "算法的计算资源配置策略",
+                "properties": {
+                  "Value": {
+                    "description_en": "Policy content, serialized from a JSON array.  ",
+                    "description_zh": "策略内容，由json数组序列化而成",
+                    "example": "[{\\\"MinTotalCount\\\":1,\\\"MaxTotalCount\\\":4,\\\"RolePolicies\\\":{\\\"chief\\\":{\\\"Count\\\":1},\\\"ps\\\":{\\\"Count\\\":1},\\\"worker\\\":{\\\"Percentage\\\":100}}},{\\\"MinTotalCount\\\":5,\\\"MaxTotalCount\\\":10,\\\"RolePolicies\\\":{\\\"chief\\\":{\\\"Count\\\":1},\\\"ps\\\":{\\\"Percentage\\\":20},\\\"worker\\\":{\\\"Percentage\\\":80}}},{\\\"MinTotalCount\\\":11,\\\"RolePolicies\\\":{\\\"chief\\\":{\\\"Count\\\":1},\\\"ps\\\":{\\\"Percentage\\\":40},\\\"worker\\\":{\\\"Percentage\\\":60}}}]",
+                    "required": true,
+                    "title": "Policy Value",
+                    "type": "string"
+                  },
+                  "Version": {
+                    "description_en": "Policy version.  ",
+                    "description_zh": "配置策略版本",
+                    "example": "V1",
+                    "required": true,
+                    "title": "Policy Version",
+                    "type": "string"
+                  }
+                },
+                "required": true,
+                "title": "Policy",
+                "type": "object"
+              }
+            },
+            "title": "Compute resource",
+            "type": "object"
+          },
+          "Customization": {
+            "description_en": "The custom configuration",
+            "description_zh": "自定义配置",
+            "properties": {
+              "CodeDir": {
+                "description_en": "Indicates whether custom-mounted code is used.  ",
+                "description_zh": "是否使用自定义挂载的代码",
+                "example": "true",
+                "title": "CodeDir",
+                "type": "boolean"
+              }
+            },
+            "title": "Customization",
+            "type": "object"
+          },
+          "HyperParameters": {
+            "description_en": "The list of hyperparameter definitions",
+            "description_zh": "超参数定义列表",
+            "items": {
+              "$ref": "#/components/schemas/HyperParameterDefinition",
+              "description_en": "Hyperparameter definition.  ",
+              "description_zh": "超参数定义"
+            },
+            "title": "The hype parameter used by the algorithm.",
+            "type": "array"
+          },
+          "Image": {
+            "description_en": "The training runtime image",
+            "description_zh": "训练镜像",
+            "example": "registry.cn-shanghai.aliyuncs.com/pai-training/kmeans:v1.0.0",
+            "required": true,
+            "title": "The docker image used by the job of this algorithm.",
+            "type": "string"
+          },
+          "InputChannels": {
+            "description_en": "The list of input channels for the algorithm",
+            "description_zh": "算法输入通道列表",
+            "items": {
+              "$ref": "#/components/schemas/Channel",
+              "description_en": "Algorithm input channel.  ",
+              "description_zh": "算法输入通道"
+            },
+            "required": false,
+            "title": "The input for the algorithm.",
+            "type": "array"
+          },
+          "JobType": {
+            "description_en": "The job type",
+            "description_zh": "任务类型",
+            "enum": [
+              "TFJob",
+              "PyTorchJob",
+              "XGBoostJob",
+              "ElasticBatchJob"
+            ],
+            "example": "TFJob",
+            "required": true,
+            "title": "Job type of the training job while running the algorithm.",
+            "type": "string"
+          },
+          "MetricDefinitions": {
+            "description_en": "The list of metric definitions for the training task",
+            "description_zh": "训练任务指标采集定义列表",
+            "items": {
+              "$ref": "#/components/schemas/MetricDefinition",
+              "description_en": "A metric definition for the training task",
+              "description_zh": "训练任务指标采集定义"
+            },
+            "title": "The output metrics of the algorithm.",
+            "type": "array"
+          },
+          "OutputChannels": {
+            "description_en": "The list of output channels for the algorithm",
+            "description_zh": "算法输出通道列表",
+            "items": {
+              "$ref": "#/components/schemas/Channel",
+              "description_en": "An output channel for the algorithm",
+              "description_zh": "算法输出通道"
+            },
+            "title": "The outputs of the algorithm.",
+            "type": "array"
+          },
+          "ProgressDefinitions": {
+            "description_en": "You can use this feature to monitor the training progress",
+            "description_zh": "训练进度监控",
+            "properties": {
+              "OverallProgress": {
+                "description_en": "Monitors training progress",
+                "description_zh": "训练进度监控",
+                "properties": {
+                  "Description": {
+                    "description_en": "The description of the monitoring definition",
+                    "description_zh": "监控描述",
+                    "example": "training progress",
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "Regex": {
+                    "description_en": "The regular expression for monitoring",
+                    "description_zh": "监控正则表达式",
+                    "example": "^[0-9]+([.][0-9]+){0,1}$",
+                    "title": "Regex",
+                    "type": "string"
+                  }
+                },
+                "title": "OverallProgress",
+                "type": "object"
+              },
+              "RemainingTime": {
+                "description_en": "The definition for monitoring the remaining training time",
+                "description_zh": "训练剩余时间监控",
+                "properties": {
+                  "Description": {
+                    "description_en": "The description of the monitoring definition",
+                    "description_zh": "监控描述",
+                    "example": "training remaining time",
+                    "title": "Description",
+                    "type": "string"
+                  },
+                  "Regex": {
+                    "description_en": "The regular expression for monitoring",
+                    "description_zh": "监控正则表达式",
+                    "example": "^[0-9]+([.][0-9]+){0,1}$",
+                    "title": "Regex",
+                    "type": "string"
+                  }
+                },
+                "title": "RemainingTime",
+                "type": "object"
+              }
+            },
+            "title": "ProgressDefinitions",
+            "type": "object"
+          },
+          "ResourceRequirements": {
+            "description_en": "The resource requirements",
+            "description_zh": "资源需求",
+            "items": {
+              "$ref": "#/components/schemas/ConditionExpression",
+              "description_en": "Resource requirement expression.  ",
+              "description_zh": "资源需求表达式"
+            },
+            "title": "Resource requirements.",
+            "type": "array"
+          },
+          "SupportedInstanceTypes": {
+            "deprecated": false,
+            "description_en": "The list of supported elastic computing instance types for training",
+            "description_zh": "训练支持的弹性计算实例列表",
+            "items": {
+              "description_en": "A supported elastic computing instance type for training",
+              "description_zh": "训练支持的弹性计算实例",
+              "example": "ecs.g6.2xlarge",
+              "type": "string"
+            },
+            "title": "A list of ECS instances that the algorithm can use to submit training job.",
+            "type": "array"
+          },
+          "SupportsDistributedTraining": {
+            "description_en": "Indicates whether distributed training is supported",
+            "description_zh": "是否支持分布式训练",
+            "example": "true",
+            "title": "Indicates whether the algorithm support distributed training.",
+            "type": "boolean"
+          }
+        },
+        "title": "Defines how the training job of the algorithm run.",
+        "type": "object"
+      },
+      "AssignNodeSpec": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AntiAffinityNodeNames": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "EnableAssignNode": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          },
+          "NodeNames": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AssumeUserInfo": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AccessKeyId": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Id": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "SecurityToken": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Type": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Channel": {
+        "description_en": "Defines an input/output channel",
+        "description_zh": "输入/输出通道定义",
+        "properties": {
+          "Description": {
+            "description_en": "Channel description.  ",
+            "description_zh": "通道描述",
+            "example": "模型输出。",
+            "title": "A brief description for the channel.",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "Channel name.  ",
+            "description_zh": "通道名",
+            "example": "Model",
+            "required": true,
+            "title": "The name of channel.",
+            "type": "string"
+          },
+          "Properties": {
+            "description_en": "Storage configuration of the channel.  ",
+            "description_zh": "通道的存储配置",
+            "example": "{}",
+            "title": "The properties of channel.",
+            "type": "object"
+          },
+          "Required": {
+            "description_en": "Indicates whether the channel must be configured.  ",
+            "description_zh": "通道是否必须配置",
+            "example": "true",
+            "title": "Indicates whethe the channels is required.",
+            "type": "boolean"
+          },
+          "SupportedChannelTypes": {
+            "description_en": "List of storage classes supported by the channel.  ",
+            "description_zh": "通道支持的存储类型列表",
+            "items": {
+              "description_en": "Storage class.  ",
+              "description_zh": "存储类型",
+              "example": "oss",
+              "type": "string"
+            },
+            "required": false,
+            "title": "Supported Channel Types",
+            "type": "array"
+          }
+        },
+        "title": "A named input/output for the algorithm.",
+        "type": "object"
+      },
+      "ConditionExpression": {
+        "description_en": "Resource requirement configuration",
+        "description_zh": "资源需求配置",
+        "properties": {
+          "Key": {
+            "description_en": "The type of required resource",
+            "description_zh": "需要资源的种类",
+            "example": "SupportedMachineTypes",
+            "required": true,
+            "title": "The key of the conditional expression.",
+            "type": "string"
+          },
+          "Operator": {
+            "description_en": "The criterion for evaluation",
+            "description_zh": "判断标准",
+            "example": "in",
+            "required": true,
+            "title": "The operator of the conditional expression",
+            "type": "string"
+          },
+          "Values": {
+            "description_en": "List of resource values",
+            "description_zh": "资源值列表",
+            "items": {
+              "description_en": "Resource value",
+              "description_zh": "资源值",
+              "example": "ecs.gn5-c4g1.xlarge",
+              "type": "string"
+            },
+            "required": true,
+            "title": "The values of the conditional expression.",
+            "type": "array"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "CredentialConfig": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AliyunEnvRoleKey": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "CredentialConfigItems": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/CredentialConfigItem",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "type": "array"
+          },
+          "EnableCredentialInject": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CredentialConfigItem": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "Key": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "Roles": {
+            "description_en": "",
+            "description_zh": "",
+            "items": {
+              "$ref": "#/components/schemas/CredentialRole",
+              "description_en": "",
+              "description_zh": ""
+            },
+            "type": "array"
+          },
+          "Type": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CredentialRole": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "AssumeRoleFor": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "AssumeUserInfo": {
+            "$ref": "#/components/schemas/AssumeUserInfo",
+            "description_en": "",
+            "description_zh": ""
+          },
+          "Policy": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RoleArn": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          },
+          "RoleType": {
+            "description_en": "",
+            "description_zh": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HyperParameterDefinition": {
+        "description_en": "The hyperparameter definition",
+        "description_zh": "超参数定义",
+        "properties": {
+          "DefaultValue": {
+            "description_en": "The default value of the hyperparameter",
+            "description_zh": "超参数默认值",
+            "example": "0",
+            "title": "Default value for the parameter.",
+            "type": "string"
+          },
+          "Description": {
+            "description_en": "The description of the hyperparameter",
+            "description_zh": "超参数描述",
+            "example": "参数定义了训练的batch_size。",
+            "title": "Description for the parameter.",
+            "type": "string"
+          },
+          "DisplayName": {
+            "description_en": "The display name of the parameter",
+            "description_zh": "参数展示名",
+            "example": "Batch Size",
+            "title": "Display name of parameter.",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the parameter",
+            "description_zh": "参数名",
+            "example": "batch_size",
+            "required": true,
+            "title": "Name of the parameter.",
+            "type": "string"
+          },
+          "Range": {
+            "$ref": "#/components/schemas/HyperParameterRange",
+            "description_en": "The value range of the parameter",
+            "description_zh": "参数取值范围"
+          },
+          "Required": {
+            "description_en": "Specifies whether the parameter is required",
+            "description_zh": "参数是否为必须参数",
+            "example": "true",
+            "title": "Indicates whether the parameter is required",
+            "type": "boolean"
+          },
+          "Type": {
+            "description_en": "The type of the hyperparameter",
+            "description_zh": "超参数类型",
+            "example": "Integer",
+            "required": true,
+            "title": "Type of the parameter.",
+            "type": "string"
+          }
+        },
+        "title": "Definition of the input hyper parameter for the algorithm.",
+        "type": "object"
+      },
+      "HyperParameterRange": {
+        "description_en": "Hyperparameter value range",
+        "description_zh": "超参数取值范围",
+        "properties": {
+          "Enum": {
+            "description_en": "Hyperparameter enumeration list",
+            "description_zh": "超参数枚举列表",
+            "items": {
+              "description_en": "Enumeration value",
+              "description_zh": "枚举值",
+              "example": "0",
+              "type": "string"
+            },
+            "required": false,
+            "title": "Enumerated values for hyperparameters.",
+            "type": "array"
+          },
+          "ExclusiveMaximum": {
+            "description_en": "Whether the maximum value is exclusive",
+            "description_zh": "取值范围是否排除最大值",
+            "example": "true",
+            "title": "Whether to exclude maximum values",
+            "type": "boolean"
+          },
+          "ExclusiveMinimum": {
+            "description_en": "Whether the minimum value is exclusive",
+            "description_zh": "取值范围是否排除最小值",
+            "example": "true",
+            "title": "Whether to exclude minimum values.",
+            "type": "boolean"
+          },
+          "MaxLength": {
+            "description_en": "Maximum length",
+            "description_zh": "最大长度",
+            "example": "30",
+            "format": "int64",
+            "title": "Maximum length of string.",
+            "type": "integer"
+          },
+          "Maximum": {
+            "description_en": "Maximum value",
+            "description_zh": "最大值",
+            "example": "10",
+            "title": "Maximum value.",
+            "type": "string"
+          },
+          "MinLength": {
+            "description_en": "Minimum length",
+            "description_zh": "最小长度",
+            "example": "1",
+            "format": "int64",
+            "title": "Minimum length of string.",
+            "type": "integer"
+          },
+          "Minimum": {
+            "description_en": "Minimum value",
+            "description_zh": "最小值",
+            "example": "0",
+            "title": "Minimum value.",
+            "type": "string"
+          },
+          "Pattern": {
+            "description_en": "Regular expression",
+            "description_zh": "正则表达式",
+            "example": "^\\+?[1-9][0-9]*$",
+            "title": "Value Regex Pattern.",
+            "type": "string"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "JobSettings": {
+        "description_en": "Additional job parameter settings",
+        "description_zh": "作业额外参数配置",
+        "properties": {
+          "AdvancedSettings": {
+            "description_en": "Additional advanced parameter settings",
+            "description_zh": "额外高级参数配置",
+            "title": "额外高级参数配置",
+            "type": "object"
+          },
+          "BusinessUserId": {
+            "description_en": "User ID associated with the job",
+            "description_zh": "作业关联用户ID",
+            "example": "166924",
+            "title": "作业关联用户ID",
+            "type": "string"
+          },
+          "Caller": {
+            "description_en": "Caller",
+            "description_zh": "调用方",
+            "example": "SilkFlow",
+            "title": "调用方",
+            "type": "string"
+          },
+          "Driver": {
+            "description_en": "NVIDIA driver configuration",
+            "description_zh": "NVIDAI驱动配置",
+            "example": "535.54.03",
+            "title": "NVIDAI驱动配置",
+            "type": "string"
+          },
+          "EnableErrorMonitoringInAIMaster": {
+            "description_en": "Enable job fault tolerance monitoring",
+            "description_zh": "允许打开作业容错监控",
+            "example": "false",
+            "title": "允许打开作业容错监控",
+            "type": "boolean"
+          },
+          "EnableOssAppend": {
+            "description_en": "Enable OSS append writes",
+            "description_zh": "运行OSS追加写",
+            "example": "true",
+            "title": "运行oss追加写",
+            "type": "boolean"
+          },
+          "EnableRDMA": {
+            "description_en": "Enable the job to use RDMA",
+            "description_zh": "允许作业使用RDMA",
+            "example": "true",
+            "title": "允许作业使用RDMA",
+            "type": "boolean"
+          },
+          "EnableSanityCheck": {
+            "description_en": "Enable computing power health check for the job",
+            "description_zh": "允许作业开启算力健康检测",
+            "example": "true",
+            "title": "允许作业开启算力健康检测",
+            "type": "boolean"
+          },
+          "EnableTideResource": {
+            "description_en": "Enable the job to use tide resources",
+            "description_zh": "允许作业使用潮汐资源",
+            "example": "true",
+            "title": "允许作业使用潮汐资源",
+            "type": "boolean"
+          },
+          "ErrorMonitoringArgs": {
+            "description_en": "Specify configuration parameters for fault tolerance monitoring, such as whether to enable log hang-based detection",
+            "description_zh": "用户指定容错监控的配置参数，比如指定是否启动基于log hang的检测",
+            "example": "--enable-log-hang-detection true",
+            "title": "用户指定容错监控的配置参数，比如指定是否启动基于log hang的检测",
+            "type": "string"
+          },
+          "JobReservedMinutes": {
+            "description_en": "Duration in minutes to retain the job after completion",
+            "description_zh": "作业结束后保留的时长，单位分钟",
+            "example": "30",
+            "format": "int32",
+            "title": "作业结束后保留的时长，单位分钟",
+            "type": "integer"
+          },
+          "JobReservedPolicy": {
+            "description_en": "Policy for retaining the job after completion",
+            "description_zh": "作业结束后保留的策略",
+            "enum": [
+              "Always",
+              "OnFailure",
+              "OnSucceed"
+            ],
+            "example": "Always",
+            "title": "作业结束后保留的策略",
+            "type": "string"
+          },
+          "OversoldType": {
+            "description_en": "Job's oversold resource usage method (not accepted, accepted, or only accepted)",
+            "description_zh": "作业的超卖资源使用方式（不接受/可接受/只接受）",
+            "example": "AcceptQuotaOverSold",
+            "title": "作业的超卖资源使用方式（不接受/可接受/只接受）",
+            "type": "string"
+          },
+          "PipelineId": {
+            "description_en": "Workflow ID",
+            "description_zh": "工作流ID",
+            "example": "pid-123456",
+            "title": "工作流ID",
+            "type": "string"
+          },
+          "SanityCheckArgs": {
+            "description_en": "Configuration parameters for computing power health check",
+            "description_zh": "算力健康检测的配置参数",
+            "example": "--sanity-check-timing=AfterJobFaultTolerant --sanity-check-timeout-ops=MarkJobFai",
+            "title": "算力健康检测的配置参数",
+            "type": "string"
+          },
+          "Tags": {
+            "additionalProperties": {
+              "description_en": "Custom tags.  ",
+              "description_zh": "自定义标签",
+              "type": "string"
+            },
+            "description_en": "Custom tags",
+            "description_zh": "自定义标签",
+            "title": "自定义标签",
+            "type": "object"
+          }
+        },
+        "title": "作业额外参数配置",
+        "type": "object"
+      },
+      "Location": {
+        "description_en": "Code configuration",
+        "description_zh": "代码配置",
+        "properties": {
+          "LocationType": {
+            "description_en": "The code location type. Valid values: OSS and NAS",
+            "description_zh": "代码地址类型，可选：OSS，NAS",
+            "example": "OSS",
+            "title": "Location type, such as OSS,Git.",
+            "type": "string"
+          },
+          "LocationValue": {
+            "description_en": "The code path",
+            "description_zh": "代码路径",
+            "example": "oss://${bucket_name}.oss-${region}.aliyuncs.com/oss/location/path/",
+            "title": "Location value.",
+            "type": "object"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "MetricDefinition": {
+        "description_en": "The definition for collecting training metrics",
+        "description_zh": "训练指标采集定义",
+        "properties": {
+          "Description": {
+            "description_en": "The description of the metric",
+            "description_zh": "指标描述",
+            "example": "训练损失函数。",
+            "title": "A brief description for the metric.",
+            "type": "string"
+          },
+          "Name": {
+            "description_en": "The name of the metric",
+            "description_zh": "指标名",
+            "example": "loss",
+            "required": true,
+            "title": "The name of the metric.",
+            "type": "string"
+          },
+          "Regex": {
+            "description_en": "The regular expression to collect metrics from logs",
+            "description_zh": "日志中采集指标的正则表达式",
+            "example": ".*train:loss=([-+]?[0-9]*\\\\.?[0-9]+(?:[eE][-+]?[0-9]+)?).*",
+            "required": true,
+            "title": "Regex use to match the metrics from job log.",
+            "type": "string"
+          }
+        },
+        "title": "Describe the output metric of the algorithm.",
+        "type": "object"
+      }
+    }
+  },
   "deprecated": false,
   "description_en": "Creates a training job",
   "description_zh": "创建训练任务",
@@ -886,6 +1647,12 @@
           "type": "array"
         },
         {
+          "enum": [
+            "TFJob",
+            "PyTorchJob",
+            "XGBoostJob",
+            "ElasticBatchJob"
+          ],
           "example": "TFJob",
           "help_en": "The job type",
           "help_zh": "任务类型",
@@ -1671,6 +2438,11 @@
           "type": "int"
         },
         {
+          "enum": [
+            "Always",
+            "OnFailure",
+            "OnSucceed"
+          ],
           "example": "Always",
           "help_en": "Policy for retaining the job after completion",
           "help_zh": "作业结束后保留的策略",
@@ -2012,6 +2784,31 @@
   "pathPattern": "/api/v1/trainingjobs",
   "product_code": "PaiStudio",
   "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "Schema of Response",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "E7C42CC7-2E85-508A-84F4-923B605FD10F",
+            "type": "string"
+          },
+          "TrainingJobId": {
+            "description_en": "The training job ID",
+            "description_zh": "训练任务ID",
+            "example": "traineyfz0m2hsfv",
+            "type": "string"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
+    }
+  },
   "v1_body_parameters": [
     {
       "help_en": "The request body parameters",

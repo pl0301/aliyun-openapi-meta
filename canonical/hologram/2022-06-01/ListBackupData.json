@@ -34,6 +34,14 @@
       "type": "string"
     },
     {
+      "enum": [
+        "redundant_remote",
+        "remote",
+        "redundant",
+        "full_remote",
+        "local",
+        "full"
+      ],
       "example": "redundant",
       "help_en": "The backup type, used to filter snapshots. If you leave this parameter empty, all snapshots are returned",
       "help_zh": "备份类型。根据类型过滤特定的备份数据，为空则返回所有备份数据",
@@ -49,5 +57,160 @@
   ],
   "pathPattern": "/api/v1/backups",
   "product_code": "Hologram",
-  "protocol": "HTTP|HTTPS"
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "properties": {
+          "BackupDataList": {
+            "description_en": "The list of backups",
+            "description_zh": "备份列表",
+            "items": {
+              "properties": {
+                "BackupType": {
+                  "description_en": "The backup type.\n\nredundant: Stores instance snapshots across zones within the same region.\n\nredundant_remote: Stores instance snapshots across zones in a different region.\n\nfull: Stores an instance snapshot locally.\n\nfull_remote: Stores an instance snapshot remotely.\n\nlocal: It is a filter for local snapshots, not a backup type.\n\nremote: It is a filter for remote snapshots, not a backup type",
+                  "description_zh": "备份类型。备份类型总体上分两种：1）本地备份，快照与实例属于相同Region；2）远程备份，快照与实例属于不同Region。\n\nredundant: 本地备份，同城跨可用区多副本存储。\n\nredundant_remote: 远程备份，同城跨可用区多副本存储，redundant类型在异地的拷贝。\n\nfull: 本地备份，单副本存储。\n\nfull_remote: 远程备份，单副本存储，full类型在异地的拷贝。\n\nlocal: 不代表具体备份类型，只用于过滤本地备份数据。\n\nremote: 不代表具体备份类型，只用于过滤远程备份数据",
+                  "enumValueTitles": {},
+                  "example": "redundant",
+                  "type": "string"
+                },
+                "ColdDataSize": {
+                  "description_en": "The size of the cold data, in bytes",
+                  "description_zh": "冷存数据大小。单位：字节",
+                  "example": "32413521",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "DataDesc": {
+                  "description_en": "The description of the snapshot. It can be updated",
+                  "description_zh": "备份数据描述。可更新",
+                  "example": "demo",
+                  "type": "string"
+                },
+                "DataGran": {
+                  "description_en": "The backup granularity",
+                  "description_zh": "备份粒度",
+                  "enumValueTitles": {
+                    "instance": "实例级"
+                  },
+                  "example": "instance",
+                  "type": "string"
+                },
+                "DataSize": {
+                  "description_en": "The size of the snapshot, in bytes",
+                  "description_zh": "备份数据大小。单位：字节",
+                  "example": "76085723136",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "DataTime": {
+                  "description_en": "The time when the data snapshot was created. For the format, see StartTime",
+                  "description_zh": "数据快照时间。格式参考StartTime",
+                  "example": "2024-10-28T12:23:37.000+00:00",
+                  "type": "string"
+                },
+                "EndTime": {
+                  "description_en": "The time when the backup was completed. For the format, see StartTime",
+                  "description_zh": "备份结束时间。格式参考StartTime",
+                  "example": "2024-10-28T12:27:34.000+00:00",
+                  "type": "string"
+                },
+                "Id": {
+                  "description_en": "The unique snapshot ID",
+                  "description_zh": "备份唯一Id",
+                  "example": "1780805690994479105",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "InstanceId": {
+                  "description_en": "The instance ID",
+                  "description_zh": "实例id",
+                  "example": "hgpostcn-cn-pe33jdxxxxx",
+                  "type": "string"
+                },
+                "InstanceName": {
+                  "description_en": "The instance name",
+                  "description_zh": "实例名称",
+                  "example": "my-hologres-dw",
+                  "type": "string"
+                },
+                "InstanceRegion": {
+                  "description_en": "The region where the instance resides",
+                  "description_zh": "实例所在地域",
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "InstanceType": {
+                  "description_en": "The instance type",
+                  "description_zh": "实例类型",
+                  "enumValueTitles": {
+                    "Standard": "标准型",
+                    "Warehouse": "计算组型"
+                  },
+                  "example": "Warehouse",
+                  "type": "string"
+                },
+                "InstanceZoneId": {
+                  "description_en": "The zone where the instance resides",
+                  "description_zh": "实例所在可用区",
+                  "example": "cn-hangzhou-j",
+                  "type": "string"
+                },
+                "SnapshotRegion": {
+                  "description_en": "The region where the snapshot is stored",
+                  "description_zh": "备份数据所在地域",
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "SnapshotZoneId": {
+                  "description_en": "The zone where backup snapshot(s). If you use zone-redundant storage, the data is stored across multiple zones. This parameter returns one of those zones",
+                  "description_zh": "备份数据所在可用区。其中，同城冗余存储保存在多可用区，这里是其中一个",
+                  "example": "cn-hangzhou-j",
+                  "type": "string"
+                },
+                "StartTime": {
+                  "description_en": "The timestamp when the backup began. Format: `YYYY-MM-DDTHH:mm:ss.SSSTZ` (UTC+8). This format is used for all time-related parameters",
+                  "description_zh": "备份开始时间。北京时间，格式YYYY-MM-DDTHH:mm:ss.SSSTZ。下同",
+                  "example": "2024-10-28T11:19:56.000+00:00",
+                  "type": "string"
+                },
+                "Status": {
+                  "description_en": "The backup status",
+                  "description_zh": "备份状态",
+                  "enumValueTitles": {
+                    "completed": "已完成",
+                    "failed": "失败",
+                    "processing": "处理中"
+                  },
+                  "example": "completed",
+                  "type": "string"
+                },
+                "TriggerType": {
+                  "description_en": "The backup trigger type",
+                  "description_zh": "触发类型",
+                  "enumValueTitles": {
+                    "manual": "手动备份",
+                    "scheduled": "周期备份"
+                  },
+                  "example": "scheduled",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求Id",
+            "example": "4AA0C48F-B5BB-5FF9-A43B-6B91E0715D46",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
 }

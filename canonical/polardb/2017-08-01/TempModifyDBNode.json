@@ -34,6 +34,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "pc-xxxxxxxxxx",
       "help_en": "The cluster ID",
       "help_zh": "集群ID",
@@ -47,6 +48,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "Modify",
       "help_en": "The operation type. Valid values:\n\nModify: temporary upgrade\n\nAdd: temporarily add a node",
       "help_zh": "操作类型。取值：\n\nModify：临时升配\nAdd：临时加节点",
@@ -60,6 +62,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "example": "TempUpgrade",
       "help_en": "The modification type. The value is fixed to TempUpgrade",
       "help_zh": "变更类型。当前取值固定为TempUpgrade",
@@ -73,6 +76,7 @@
       "type": "string"
     },
     {
+      "doc_required": true,
       "element": {
         "fields": [
           {
@@ -115,6 +119,7 @@
       "type": "array"
     },
     {
+      "doc_required": true,
       "example": "2021-09-23 18:16:00",
       "help_en": "The time to revert the temporary upgrade. The format is YYYY-MM-DD hh:mm:ss.\n\nThe revert time must be at least 1 hour later than the current time. It must also be at least 1 day before the cluster expires",
       "help_zh": "临时升配还原时间。格式为YYYY-MM-DD hh:mm:ss。\n\n还原时间不能早于当前时间往后推1小时，不能晚于集群到期时间的前1天",
@@ -156,83 +161,44 @@
   "pathPattern": "",
   "product_code": "polardb",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_zh": "是否自动使用优惠券，取值：\ntrue（默认）：使用优惠券。\nfalse：不使用优惠券",
-      "name": "AutoUseCoupon",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "A client token to ensure the idempotence of the request. Generate a unique token for each request. The token is case-sensitive and can be up to 64 ASCII characters in length",
-      "help_zh": "该参数用于保证请求的幂等性。由客户端生成该参数值，保证在不同请求间该参数值的唯一性。该参数区分大小写、长度不超过64个ASCII字符",
-      "name": "ClientToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The cluster ID",
-      "help_zh": "集群ID",
-      "name": "DBClusterId",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The information about the nodes to upgrade or add",
-      "help_zh": "升配/新增节点的信息",
-      "name": "DBNode",
-      "param_style": "repeatList",
-      "position": "query",
-      "required": true,
-      "sub_parameters": [
-        {
-          "name": "TargetClass",
-          "position": "query",
-          "required": false,
-          "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "DBClusterId": {
+            "description_en": "The cluster ID",
+            "description_zh": "集群ID",
+            "example": "pc-xxxxxxxxxxxxxxxxx",
+            "type": "string"
+          },
+          "DBNodeIds": {
+            "description_en": "The list of nodes",
+            "description_zh": "节点列表",
+            "items": {
+              "description_en": "The list of nodes.\n\nThis parameter is returned only when OperationType is set to Add. If OperationType is set to Modify, an empty value is returned",
+              "description_zh": "节点列表。\n\n当OperationType取值为Add时，该参数返回值不为空；当OperationType取值为Modify时，该参数返回值为空",
+              "example": "pi-***************",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "OrderId": {
+            "description_en": "The order ID",
+            "description_zh": "订单ID",
+            "example": "2035638*******",
+            "type": "string"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "69A85BAF-1089-4CDF-A82F-0A140F******",
+            "type": "string"
+          }
         },
-        {
-          "name": "ZoneId",
-          "position": "query",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "type": "array"
-    },
-    {
-      "help_en": "The modification type. The value is fixed to TempUpgrade",
-      "help_zh": "变更类型。当前取值固定为TempUpgrade",
-      "name": "ModifyType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_en": "The operation type. Valid values:\n\nModify: temporary upgrade\n\nAdd: temporarily add a node",
-      "help_zh": "操作类型。取值：\n\nModify：临时升配\nAdd：临时加节点",
-      "name": "OperationType",
-      "position": "query",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "help_zh": "优惠券编号，不填时使用默认优惠券",
-      "name": "PromotionCode",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The time to revert the temporary upgrade. The format is YYYY-MM-DD hh:mm:ss.\n\nThe revert time must be at least 1 hour later than the current time. It must also be at least 1 day before the cluster expires",
-      "help_zh": "临时升配还原时间。格式为YYYY-MM-DD hh:mm:ss。\n\n还原时间不能早于当前时间往后推1小时，不能晚于集群到期时间的前1天",
-      "name": "RestoreTime",
-      "position": "query",
-      "required": true,
-      "type": "string"
+        "type": "object"
+      }
     }
-  ]
+  }
 }

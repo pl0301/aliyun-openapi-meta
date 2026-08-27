@@ -38,6 +38,7 @@
       "help_en": "The maximum number of entries to return per request.\n\nValid values: 10 to 100. Default value: 10",
       "help_zh": "每次查询结果的个数。\n\n取值范围：10~100。默认值：10",
       "location": "query",
+      "minimum": "0",
       "name": "max_results",
       "options": [
         "--max-results"
@@ -47,6 +48,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "BASIC"
+      ],
       "example": "BASIC",
       "help_en": "The product used to protect the resource. Valid value:\n\nBASIC: File Backup Essential Edition",
       "help_zh": "资源的保护产品，支持：\nBASIC：ECS文件备份基础版",
@@ -60,6 +64,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ECS_FILE"
+      ],
       "example": "ECS_FILE",
       "help_en": "The data source type. Valid value:\n\nECS_FILE: ECS File Backup",
       "help_zh": "数据源类型，支持：\nECS_FILE：ECS文件备份",
@@ -114,60 +121,129 @@
   "pathPattern": "",
   "product_code": "hbr",
   "protocol": "HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The product used to protect the resource. Valid value:\n\nBASIC: File Backup Essential Edition",
-      "help_zh": "资源的保护产品，支持：\nBASIC：ECS文件备份基础版",
-      "name": "CreatedByProduct",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "HasSnapshot",
-      "position": "query",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "help_en": "The maximum number of entries to return per request.\n\nValid values: 10 to 100. Default value: 10",
-      "help_zh": "每次查询结果的个数。\n\n取值范围：10~100。默认值：10",
-      "name": "MaxResults",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The token to retrieve the next page of results. An empty value indicates that all results have been returned",
-      "help_zh": "下一页开始的Token，NextToken为空说明没有下一页",
-      "name": "NextToken",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The resource ID.\n\nIf `SourceType` is set to ECS_FILE, this parameter specifies the ECS instance ID",
-      "help_zh": "资源ID。\nSourceType=ECS_FILE：表示ECS实例ID",
-      "name": "ResourceId",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The number of entries to skip in a paged query. If this value exceeds the total number of results, an empty list is returned. The value must be a multiple of `MaxResults`",
-      "help_zh": "分页查询时跳过的条目数。\n当跳过的条目数超过符合条件的条目总数时，会返回空列表。跳过的条目数需要是MaxResults的倍数",
-      "name": "Skip",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The data source type. Valid value:\n\nECS_FILE: ECS File Backup",
-      "help_zh": "数据源类型，支持：\nECS_FILE：ECS文件备份",
-      "name": "SourceType",
-      "position": "query",
-      "required": false,
-      "type": "string"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "Schema of Response",
+        "properties": {
+          "Code": {
+            "description_en": "The HTTP status code. A value of `200` indicates that the request was successful",
+            "description_zh": "返回码，200表示成功",
+            "example": "200",
+            "type": "string"
+          },
+          "MaxResults": {
+            "description_en": "The number of entries to return on each page.\n\nValid values: 10 to 100. Default value: 10",
+            "description_zh": "每次查询结果的个数。\n\n取值范围：10~100。默认值：10",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "Message": {
+            "description_en": "The response message. Returns `successful` if the request succeeds, or an error message if it fails",
+            "description_zh": "返回信息描述，成功一般返回successful，错误时会返回相应错误信息",
+            "example": "successful",
+            "type": "string"
+          },
+          "NextToken": {
+            "description_en": "The token to retrieve the next page of results. An empty value for this parameter indicates that all results have been returned",
+            "description_zh": "下一页开始的Token，NextToken为空说明没有下一页",
+            "example": "eyJJ************MX0=",
+            "type": "string"
+          },
+          "ProtectedResources": {
+            "description_en": "The list of protected resources",
+            "description_zh": "已保护的资源列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "BackupPlanCount": {
+                  "example": "1",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "CreatedByProduct": {
+                  "description_en": "The product that protects the resource. Valid value:\n\nBASIC: ECS File Backup Essential Edition",
+                  "description_zh": "资源的保护产品，支持：\nBASIC：ECS文件备份基础版",
+                  "example": "BASIC",
+                  "type": "string"
+                },
+                "ProtectedDataSize": {
+                  "description_en": "The size of the protected data, in bytes.\n\nSourceType=ECS_FILE: The size of the backed-up block storage",
+                  "description_zh": "已保护的数据量，单位Byte。\nSourceType=ECS_FILE：表示已备份的块存储容量",
+                  "example": "107374182400",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "ProtectedResourceId": {
+                  "description_en": "The ID of the protected resource",
+                  "description_zh": "已保护的资源ID",
+                  "example": "pr-0004************gs61",
+                  "type": "string"
+                },
+                "ResourceId": {
+                  "description_en": "The resource ID.\n\nSourceType=ECS_FILE: The ID of the ECS instance",
+                  "description_zh": "资源ID。\nSourceType=ECS_FILE：表示ECS实例ID",
+                  "example": "i-wz95************7zrd",
+                  "type": "string"
+                },
+                "ResourceOwnerId": {
+                  "description_en": "The user UID of the resource's owner",
+                  "description_zh": "资源所属的用户UID",
+                  "example": "1024********0703",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "ResourceRegionId": {
+                  "example": "cn-hangzhou",
+                  "type": "string"
+                },
+                "SnapshotCount": {
+                  "description_en": "The number of backups",
+                  "description_zh": "备份的个数",
+                  "example": "30",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "SourceType": {
+                  "description_en": "The type of the data source.\n\nSourceType=ECS_FILE: The data source is an ECS instance",
+                  "description_zh": "资源ID。\nSourceType=ECS_FILE：表示ECS实例ID",
+                  "example": "ECS_FILE",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "EB09****-****-****-****-********6C38",
+            "title_en": "",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "Success": {
+            "description_en": "Indicates whether the request was successful.\n\n`true`: The request was successful.\n\n`false`: The request failed",
+            "description_zh": "请求是否成功。\n\ntrue表示成功。\nfalse表示失败",
+            "example": "true",
+            "type": "boolean"
+          },
+          "TotalCount": {
+            "description_en": "The total number of protected resources",
+            "description_zh": "已保护的资源总数",
+            "example": "3",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "title_en": "",
+        "title_zh": "Schema of Response",
+        "type": "object"
+      }
     }
-  ]
+  }
 }

@@ -54,6 +54,8 @@
       "help_en": "The page size.\n\nDefault value: 10",
       "help_zh": "分页查询时设置的每页行数。\n\n默认值：10",
       "location": "query",
+      "maximum": "100",
+      "minimum": "1",
       "name": "page_size",
       "options": [
         "--page-size"
@@ -78,37 +80,223 @@
   "pathPattern": "",
   "product_code": "Ens",
   "protocol": "HTTP|HTTPS",
-  "v1_parameters": [
-    {
-      "help_en": "The page number to return",
-      "help_zh": "分页查询的页码",
-      "name": "PageNumber",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The page size.\n\nDefault value: 10",
-      "help_zh": "分页查询时设置的每页行数。\n\n默认值：10",
-      "name": "PageSize",
-      "position": "query",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The IDs of the SDGs. If omitted, all SDGs are queried",
-      "help_zh": "指定查询若干SDG，默认查询全部",
-      "name": "SDGIds",
-      "param_style": "json",
-      "position": "query",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "name": "SameDiskId",
-      "position": "query",
-      "required": false,
-      "type": "bool"
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "PageNumber": {
+            "description_en": "The page number",
+            "description_zh": "当前查询页码",
+            "example": "1",
+            "format": "int32",
+            "type": "integer"
+          },
+          "PageSize": {
+            "description_en": "The number of entries returned on each page",
+            "description_zh": "当前查询每页的行数",
+            "example": "10",
+            "format": "int32",
+            "type": "integer"
+          },
+          "RequestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求ID",
+            "example": "F3B261DD-3858-4D3C-877D-303ADF374600",
+            "title_en": "Id of the request",
+            "title_zh": "Id of the request",
+            "type": "string"
+          },
+          "SDGs": {
+            "description_en": "A list of SDGs",
+            "description_zh": "SDG信息列表",
+            "items": {
+              "description_en": "",
+              "description_zh": "",
+              "properties": {
+                "AvaliableRegionIds": {
+                  "description_en": "The nodes where snapshots of the SDG are available",
+                  "description_zh": "SDG存在快照的列表",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "CreationTime": {
+                        "description_en": "The time when the SDG was created on the node",
+                        "description_zh": "该节点内SDG的创建时间",
+                        "example": "2023-02-27 15:13:26",
+                        "type": "string"
+                      },
+                      "RegionId": {
+                        "description_en": "The node ID",
+                        "description_zh": "节点ID",
+                        "example": "cn-hangzhou-26",
+                        "type": "string"
+                      },
+                      "SnapshotId": {
+                        "description_en": "The snapshot ID",
+                        "description_zh": "快照ID",
+                        "example": "sp-517qu0tgznrg622he7nf4wd7n",
+                        "type": "string"
+                      },
+                      "Status": {
+                        "description_en": "The status of the SDG on the node. Valid values:\n\nsdg_making: Creating\n\nsdg_saving: Saving\n\nsdg_copying: Synchronizing across nodes\n\nfailed: Failed\n\nsuccess: Succeeded",
+                        "description_zh": "该节点SDG的状态，包括：\n\nsdg_making：制作中。\nsdg_saving：保存中。\nsdg_copying：跨节点同步中。\nfailed：制作失败。\nsuccess：制作成功",
+                        "example": "success",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "BillingCycle": {
+                  "description_en": "The billing cycle of the shared disk",
+                  "description_zh": "共享盘的计费周期",
+                  "example": "Day",
+                  "type": "string"
+                },
+                "BillingType": {
+                  "description_en": "The billing type",
+                  "description_zh": "计费类型",
+                  "example": "Open",
+                  "title_en": "Billing Type  ",
+                  "title_zh": "计费类型",
+                  "type": "string"
+                },
+                "CreationDiskType": {
+                  "description_en": "The disk type of the source disk from which the SDG was created",
+                  "description_zh": "创建SDG的母盘磁盘类型",
+                  "example": "standard",
+                  "type": "string"
+                },
+                "CreationInstanceId": {
+                  "description_en": "The ID of the instance from which the SDG was created",
+                  "description_zh": "创建SDG的实例ID",
+                  "example": "aic-5x20dyeos****",
+                  "type": "string"
+                },
+                "CreationRegionId": {
+                  "description_en": "The ID of the node where the SDG was created",
+                  "description_zh": "创建SDG的节点ID",
+                  "example": "cn-hangzhou-26",
+                  "type": "string"
+                },
+                "CreationTime": {
+                  "description_en": "The time when the SDG was first created",
+                  "description_zh": "SDG首次创建时间",
+                  "example": "2023-02-27 15:07:21",
+                  "type": "string"
+                },
+                "Description": {
+                  "description_en": "The description of the SDG",
+                  "description_zh": "SDG的描述信息",
+                  "example": "Test SDG",
+                  "type": "string"
+                },
+                "ParentSDGId": {
+                  "description_en": "The ID of the source SDG for incremental creation. This is the value of the FromSDGId that you pass when you call the [CreateSDG]（https://help.aliyun.com/document_detail/608128.html） operation",
+                  "description_zh": "增量制作时，来源SDG的ID，即[CreateSDG]（https://help.aliyun.com/document_detail/608128.html）时传入的**FromSDGId**",
+                  "example": "sdg-xxxxx",
+                  "type": "string"
+                },
+                "PerformanceLevel": {
+                  "description_en": "The sharing ratio of the SDG",
+                  "description_zh": "SDG的共享比",
+                  "example": "100",
+                  "type": "string"
+                },
+                "PreloadInfos": {
+                  "description_en": "The preloading configuration",
+                  "description_zh": "预加载配置信息",
+                  "items": {
+                    "description_en": "",
+                    "description_zh": "",
+                    "properties": {
+                      "CreationTime": {
+                        "description_en": "The time when the entry was created, displayed in UTC and in the ISO 8601 format: `yyyy-MM-ddTHH:mm:ssZ`",
+                        "description_zh": "创建时间。时间格式以ISO8601为标准，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ",
+                        "example": "2023-02-16T06:18:40Z",
+                        "type": "string"
+                      },
+                      "DiskType": {
+                        "description_en": "The disk type of the redundant shared disks",
+                        "description_zh": "冗余的共享盘磁盘类型",
+                        "example": "standard",
+                        "required": false,
+                        "type": "string"
+                      },
+                      "Namespace": {
+                        "description_en": "The namespace",
+                        "description_zh": "命名空间",
+                        "example": "test-20000",
+                        "type": "string"
+                      },
+                      "RedundantNum": {
+                        "description_en": "The number of redundant copies for faster responses from shared mounts",
+                        "description_zh": "冗余数量，以快速响应共享挂载",
+                        "example": "2",
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "RegionId": {
+                        "description_en": "The node ID",
+                        "description_zh": "节点ID",
+                        "example": "cn-hangzhou",
+                        "type": "string"
+                      },
+                      "UpdateTime": {
+                        "description_en": "The time when the status of the preload entry was last updated",
+                        "description_zh": "最新的状态更新时间",
+                        "example": "2021-01-22T08:17Z",
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "SDGId": {
+                  "description_en": "The ID of the SDG",
+                  "description_zh": "SDG的ID",
+                  "example": "sdg-30e1fdba7196bc****",
+                  "type": "string"
+                },
+                "Size": {
+                  "description_en": "The size of the SDG, in GB",
+                  "description_zh": "SDG大小，单位GB",
+                  "example": "20",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "Status": {
+                  "description_en": "The creation status of the SDG. Valid values:\n\nsdg_making: Creating\n\nsdg_saving: Saving\n\nfailed: Failed\n\nsuccess: Succeeded",
+                  "description_zh": "SDG制作状态，包括：\n\nsdg_making：制作中。\nsdg_saving：保存中。\nfailed：制作失败。\nsuccess：制作成功",
+                  "example": "success",
+                  "type": "string"
+                },
+                "UpdateTime": {
+                  "description_en": "The time when the SDG was last updated",
+                  "description_zh": "SDG最后更新时间",
+                  "example": "2023-02-27 16:04:39",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "TotalCount": {
+            "description_en": "The total number of entries that match the query",
+            "description_zh": "总数",
+            "example": "49",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
     }
-  ]
+  }
 }
