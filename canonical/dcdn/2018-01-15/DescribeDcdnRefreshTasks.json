@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 12000,
   "camel_example": "aliyun dcdn DescribeDcdnRefreshTasks --region cn-hangzhou --Status Complete --ObjectType file --ObjectPath 'http://example.com/examplefile.txt' --TaskId 704225667 --PageSize 20 --EndTime '2017-01-01T12:13:20Z' --PageNumber 2 --DomainName 'example.com' --StartTime '2017-01-01T12:12:20Z'",
   "cmd_full_name": "dcdn describe-dcdn-refresh-tasks",
   "cmd_name": "describe-dcdn-refresh-tasks",
   "deprecated": false,
-  "description_en": "Call DescribeDcdnRefreshTasks to query the completion status of refresh and preload tasks submitted within the last 3 days",
+  "description_en": "Queries the status of refresh and prefetch tasks to check whether they have taken effect across the entire network. This operation supports querying data within the last three days",
   "description_zh": "调用DescribeDcdnRefreshTasks查询刷新、预热状态是否在全网生效，支持查询3天内的数据",
   "kebab_example": "aliyun dcdn describe-dcdn-refresh-tasks --task-id 704225667 --object-path http://example.com/examplefile.txt --page-number 2 --object-type file --domain-name example.com --status Complete --page-size 20 --start-time 2017-01-01T12:12:20Z --end-time 2017-01-01T12:13:20Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "704225667",
-      "help_en": "The ID of the task. A task ID is returned after you create a refresh or preload task",
+      "help_en": "The task ID. The task ID is returned when you create a refresh or prefetch task",
       "help_zh": "任务ID，当您创建刷新或预热任务，会返回任务ID",
       "location": "query",
       "name": "task_id",
@@ -35,7 +36,7 @@
     },
     {
       "example": "http://example.com/examplefile.txt",
-      "help_en": "The path of the object to query. The path must be a full path",
+      "help_en": "The object path for exact match queries",
       "help_zh": "按路径查询，准确匹配",
       "location": "query",
       "name": "object_path",
@@ -48,7 +49,7 @@
     },
     {
       "example": "2",
-      "help_en": "The number of the page to return. Valid values: 1 to 100000",
+      "help_en": "The page number. Valid values: 1 to 100000",
       "help_zh": "取得页数。取值范围为：1~100000",
       "location": "query",
       "maximum": "42949672",
@@ -69,7 +70,7 @@
         "regex"
       ],
       "example": "file",
-      "help_en": "The type of the task. Valid values:\n\nfile: refreshes URLs.\n\ndirectory: refreshes directories.\n\nregex: refreshes content based on a regular expression.\n\npreload: preloads URLs.\n\nThis parameter is required if you specify DomainName or Status",
+      "help_en": "The task type. Valid values:\nfile: URL refresh.\ndirectory: directory refresh.\nregex: regular expression refresh.\npreload: URL prefetch.\n\nThis parameter is required when you specify DomainName or Status",
       "help_zh": "任务类型。\n\nfile：刷新URL。\ndirectory：刷新目录。\nregex：正则刷新。\npreload：预热URL。\n\n当指定DomainName或Status时，该参数必填",
       "location": "query",
       "name": "object_type",
@@ -82,7 +83,7 @@
     },
     {
       "example": "example.com",
-      "help_en": "The accelerated domain name. You can specify only one accelerated domain name. By default, this operation queries tasks for all accelerated domain names",
+      "help_en": "The accelerated domain name. Only a single domain name is supported. By default, all accelerated domain names are queried",
       "help_zh": "加速域名，仅支持单个查询，默认查询所有加速域名",
       "location": "query",
       "name": "domain_name",
@@ -100,7 +101,7 @@
         "Failed"
       ],
       "example": "Complete",
-      "help_en": "The status of the task. Valid values:\n\nComplete: The task is complete.\n\nRefreshing: The task is in progress.\n\nTimeout: The task timed out.\n\nCanceled: The task is canceled.\n\nFailed: The task failed",
+      "help_en": "The task status. Valid values:\nComplete: The task is complete.\nRefreshing: The task is in progress.\nTimeout: The task timed out and was not executed.\nCanceled: The task is canceled.\nFailed: The task failed",
       "help_zh": "任务状态。\n\nComplete：完成。\nRefreshing：处理中。\nTimeout：超时未执行。\nCanceled：取消。\nFailed：失败",
       "location": "query",
       "name": "status",
@@ -113,7 +114,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of entries to return on each page. Default value: 20. Maximum value: 50. Valid values: 1 to 50",
+      "help_en": "The number of entries per page. Default value: 20. Maximum value: 50. Valid values: 1 to 50",
       "help_zh": "分页大小。默认值：20，最大值：50，取值范围：1~50",
       "location": "query",
       "maximum": "100",
@@ -127,7 +128,7 @@
     },
     {
       "example": "2017-01-01T12:12:20Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time must be in UTC",
+      "help_en": "The start time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "开始时间。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "start_time",
@@ -140,7 +141,7 @@
     },
     {
       "example": "2017-01-01T12:13:20Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the `yyyy-MM-ddTHH:mm:ssZ` format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "结束时间。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -158,9 +159,10 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "2",
@@ -168,61 +170,81 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
-            "description_en": "The page size",
+            "description_en": "The number of entries per page",
             "description_zh": "整页大小",
             "example": "2",
             "format": "int64",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "174F6032-AA26-470D-B90E-36F0EB205BEE",
             "type": "string"
           },
           "Tasks": {
-            "backendName": "data.data",
-            "itemName": "Task",
-            "items": {
-              "properties": {
-                "CreationTime": {
-                  "backendName": "model.gmtCreatedStr",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Task": {
+                "description_en": "The list of tasks",
+                "description_zh": "任务列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CreationTime": {
+                      "description_en": "The creation time of the node task object. The time is displayed in UTC",
+                      "description_zh": "任务对象创建时间。为UTC时间",
+                      "example": "2014-11-27T08:23:22Z",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The error description returned when refresh and prefetch failed. Valid values:\nInternalError: An internal fault occurred.\nOriginTimeout: The origin server response timed out.\nOriginReturn StatusCode 5XX: The origin server returned a 5xx error code",
+                      "description_zh": "刷新预热失败返回错误描述。\n\nInternalError：内部错误。\n\nOriginTimeout：源站响应超时。\n\nOriginReturn StatusCode 5XX：源站响应5xx错误码",
+                      "example": "InternalError",
+                      "type": "string"
+                    },
+                    "ObjectPath": {
+                      "description_en": "The object path",
+                      "description_zh": "刷新对象路径",
+                      "example": "http://example.com/examplefile.txt",
+                      "type": "string"
+                    },
+                    "ObjectType": {
+                      "description_en": "The task type. Valid values:\nfile: URL refresh.\npath: directory refresh.\nregex: regular expression refresh.\npreload: URL prefetch",
+                      "description_zh": "任务类型。\nfile：刷新URL。\npath：刷新目录。\nregex：正则刷新。\npreload：预热URL",
+                      "example": "file",
+                      "type": "string"
+                    },
+                    "Process": {
+                      "description_en": "The progress percentage",
+                      "description_zh": "进度百分比",
+                      "example": "10",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status. Valid values:\nComplete: The task is complete.\nRefreshing: The task is in progress.\nFailed: The task failed",
+                      "description_zh": "状态。\n\nComplete：完成。\n\nRefreshing：刷新中。\n\nFailed：刷新失败",
+                      "example": "Complete",
+                      "type": "string"
+                    },
+                    "TaskId": {
+                      "description_en": "The task ID",
+                      "description_zh": "任务ID",
+                      "example": "123",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Description": {
-                  "backendName": "model.description",
-                  "type": "string"
-                },
-                "ObjectPath": {
-                  "backendName": "model.content",
-                  "type": "string"
-                },
-                "ObjectType": {
-                  "backendName": "model.taskType",
-                  "type": "string"
-                },
-                "Process": {
-                  "backendName": "model.process",
-                  "type": "string"
-                },
-                "Status": {
-                  "backendName": "statusStr",
-                  "type": "string"
-                },
-                "TaskId": {
-                  "backendName": "taskIdStr",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
             "description_en": "The total number of tasks",
             "description_zh": "任务数量",
             "example": "20",

@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun slb DescribeZones --region cn-hangzhou --AcceptLanguage 'example-string' --RegionId 'cn-hangzhou'",
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun slb DescribeZones --region cn-hangzhou --AcceptLanguage 'zh-CN' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "slb describe-zones",
   "cmd_name": "describe-zones",
   "deprecated": false,
-  "description_en": "Queries the zones in a region",
+  "description_en": "Queries the zones in a specified region",
   "description_zh": "查询指定地域的可用区信息",
-  "kebab_example": "aliyun slb describe-zones --biz-region-id cn-hangzhou --accept-language example-string --api-version 2014-05-15 --region cn-hangzhou",
+  "kebab_example": "aliyun slb describe-zones --biz-region-id cn-hangzhou --accept-language zh-CN --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": false,
   "name": "DescribeZones",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "cn-hangzhou",
-      "help_en": "The region ID of the Server Load Balancer (SLB) instance",
+      "help_en": "The region ID",
       "help_zh": "地域ID",
       "location": "query",
       "name": "region_id",
@@ -35,8 +36,9 @@
       "type": "string"
     },
     {
-      "help_en": "The AcceptLanguage",
-      "help_zh": "The AcceptLanguage",
+      "example": "zh-CN",
+      "help_en": "The language in which the response is returned. Valid values:\n\nzh-CN: Chinese.\nen-US: English.\nja: Japanese",
+      "help_zh": "返回结果使用的语言。取值：\n\nzh-CN：中文。\nen-US：英文。\nja：日文",
       "location": "query",
       "name": "accept_language",
       "options": [
@@ -53,58 +55,78 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "A48D35FF-440A-4BC0-A4A2-A9BF69B7E43A",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Zones": {
-            "backendName": "data",
-            "itemName": "Zone",
-            "items": {
-              "properties": {
-                "LocalName": {
-                  "backendName": "name",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SlaveZones": {
-                  "backendName": "childIds",
-                  "itemName": "SlaveZone",
-                  "items": {
-                    "properties": {
-                      "LocalName": {
-                        "backendName": "name",
-                        "type": "string",
-                        "visibility": "Public"
-                      },
-                      "ZoneId": {
-                        "backendName": "id",
-                        "type": "string",
-                        "visibility": "Public"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Zone": {
+                "description_en": "The list of zones",
+                "description_zh": "可用区列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "LocalName": {
+                      "description_en": "The zone name",
+                      "description_zh": "可用区名称",
+                      "example": "Hangzhou Zone B",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "SlaveZones": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "SlaveZone": {
+                          "description_en": "The list of secondary zones corresponding to the primary zone",
+                          "description_zh": "主可用区对应的备可用区列表",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "LocalName": {
+                                "description_en": "The secondary zone name",
+                                "description_zh": "备可用区名称",
+                                "example": "Hangzhou Zone G",
+                                "type": "string"
+                              },
+                              "ZoneId": {
+                                "description_en": "The secondary zone ID",
+                                "description_zh": "备可用区ID",
+                                "example": "cn-hangzhou-g",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID",
+                      "description_zh": "可用区ID",
+                      "example": "cn-hangzhou-b",
+                      "type": "string"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "type": "array",
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "ZoneId": {
-                  "backendName": "id",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

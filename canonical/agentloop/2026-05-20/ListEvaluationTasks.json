@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun agentloop GET /api/v1/evaluation-tasks --region cn-hangzhou --taskMode batch --nextToken 'eyJsYXN0SWQiOjEyMywib2Zmc2V0IjoyMH0=' --maxResults 20 --dataType trace --channel default --agentSpace 'prod-agentspace' --taskName trace_task_completion_eval --status Running --header \"Content-Type=application/json\" --version 2026-05-20 --force",
   "cmd_full_name": "agentloop list-evaluation-tasks",
   "cmd_name": "list-evaluation-tasks",
@@ -10,14 +11,16 @@
         "example": "{\"enabled\":true,\"startTime\":1782816000000,\"endTime\":1782902400000,\"immediate\":false}",
         "properties": {
           "enabled": {
-            "backendName": "enabled",
             "description_en": "Specifies whether the backfill policy is enabled. If this parameter is not specified or is set to true, the policy is enabled. If this parameter is set to false, the policy is disabled but the configuration is retained",
             "description_zh": "是否启用回填策略。不传或 true 表示启用；false 表示关闭但保留配置",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
             "example": "true",
             "type": "boolean"
           },
           "endTime": {
-            "backendName": "endTime",
             "description_en": "The end of the backfill time range, in UNIX millisecond timestamp. Provide a complete time range when you need to manually start a backfill",
             "description_zh": "回填时间范围终点，Unix 毫秒时间戳。需要手动启动回填时应提供完整时间范围",
             "example": "1782902400000",
@@ -25,7 +28,6 @@
             "type": "integer"
           },
           "startTime": {
-            "backendName": "startTime",
             "description_en": "The start of the backfill time range, in UNIX millisecond timestamp. Provide a complete time range when you need to manually start a backfill",
             "description_zh": "回填时间范围起点，Unix 毫秒时间戳。需要手动启动回填时应提供完整时间范围",
             "example": "1782816000000",
@@ -41,7 +43,6 @@
         "example": "{\"enabled\":true,\"intervalUnit\":\"HOUR\",\"intervalValue\":1,\"dataDelayMinutes\":5}",
         "properties": {
           "dataDelayMinutes": {
-            "backendName": "dataDelayMinutes",
             "description_en": "The data arrival delay in minutes. After a window ends, the system waits for this duration before creating a run to allow data to arrive completely. Default value: 0",
             "description_zh": "数据到达延迟时间，单位为分钟。窗口结束后延迟该时间再创建运行，用于等待数据完整到达；不传默认为 0",
             "example": "5",
@@ -49,21 +50,27 @@
             "type": "integer"
           },
           "enabled": {
-            "backendName": "enabled",
             "description_en": "Specifies whether to enable continuous evaluation. If this parameter is not specified or is set to true, continuous evaluation is enabled. If this parameter is set to false, continuous evaluation is disabled but the configuration is retained",
             "description_zh": "是否启用持续评估。不传或 true 表示启用；false 表示关闭但保留配置",
+            "enumValueTitles": {
+              "false": "false",
+              "true": "true"
+            },
             "example": "true",
             "type": "boolean"
           },
           "intervalUnit": {
-            "backendName": "intervalUnit",
             "description_en": "The unit of the continuous evaluation window interval. This field is required for the current polling implementation",
             "description_zh": "持续评估窗口间隔单位。当前轮询实现需要该字段",
+            "enumValueTitles": {
+              "DAY": "DAY",
+              "HOUR": "HOUR",
+              "MINUTE": "MINUTE"
+            },
             "example": "HOUR",
             "type": "string"
           },
           "intervalValue": {
-            "backendName": "intervalValue",
             "description_en": "The size of the continuous evaluation window interval. This parameter is used together with intervalUnit. The value must be greater than 0",
             "description_zh": "持续评估窗口间隔大小，需要与 intervalUnit 配合使用，取值应大于 0",
             "example": "1",
@@ -80,14 +87,12 @@
         "properties": {
           "backfill": {
             "$ref": "#/components/schemas/BackfillStrategy",
-            "backendName": "backfill",
             "description_en": "The historical batch backfill policy. Backfill is enabled when the object exists and enabled is not explicitly set to false",
             "description_zh": "历史批量回填策略。对象存在且 enabled 未显式为 false 时表示启用 backfill",
             "example": "{\"enabled\":true,\"startTime\":1782816000000,\"endTime\":1782902400000,\"immediate\":false}"
           },
           "continuous": {
             "$ref": "#/components/schemas/ContinuousStrategy",
-            "backendName": "continuous",
             "description_en": "The continuous evaluation policy. Continuous evaluation is enabled when the object exists and enabled is not explicitly set to false",
             "description_zh": "持续评估策略。对象存在且 enabled 未显式为 false 时表示启用 continuous",
             "example": "{\"enabled\":true,\"intervalUnit\":\"HOUR\",\"intervalValue\":1,\"dataDelayMinutes\":5}"
@@ -142,6 +147,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "batch"
+      ],
       "example": "batch",
       "help_en": "The evaluation task mode. If this parameter is not specified, the default value is `batch`",
       "help_zh": "评估任务模式。不传时后端默认设置为 `batch`",
@@ -155,6 +163,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "trace",
+        "log",
+        "atif",
+        "dataset"
+      ],
       "example": "trace",
       "help_en": "The data source type of the evaluation object. Set this parameter to `trace` for trace-based evaluation",
       "help_zh": "评估对象的数据来源类型。链路 Trace 评估使用 `trace`",
@@ -168,6 +182,15 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Failed",
+        "Running",
+        "Completed",
+        "Scheduling",
+        "Deleted",
+        "Terminated",
+        "Pending"
+      ],
       "example": "Running",
       "help_en": "The filter condition for the evaluation task status",
       "help_zh": "评估任务状态过滤条件",
@@ -207,6 +230,9 @@
       "type": "int"
     },
     {
+      "enum": [
+        "default"
+      ],
       "example": "default",
       "help_en": "The filter condition for the task source. If this parameter is not specified, tasks from the default source are queried",
       "help_zh": "任务来源过滤条件。不传时查询默认来源任务",
@@ -233,7 +259,6 @@
             "description_en": "The list of evaluation task summaries",
             "description_zh": "评估任务摘要列表",
             "example": "[{\"taskId\":\"eval-task-8b36f2e2b1f94f9c91ce7a4b0f6d9c25\",\"taskName\":\"trace_task_completion_eval\",\"taskMode\":\"batch\",\"dataType\":\"trace\",\"status\":\"Running\"}]",
-            "itemName": "evaluationTask",
             "items": {
               "description_en": "The evaluation task summary object",
               "description_zh": "单个评估任务摘要对象",
@@ -261,11 +286,17 @@
                 "dataType": {
                   "description_en": "The data source type of the evaluation object",
                   "description_zh": "评估对象的数据来源类型",
+                  "enumValueTitles": {
+                    "atif": "atif",
+                    "dataset": "dataset",
+                    "log": "log",
+                    "trace": "trace"
+                  },
                   "example": "trace",
                   "type": "string"
                 },
                 "description": {
-                  "description_en": "The evaluation task description",
+                  "description_en": "The description of the evaluation task",
                   "description_zh": "评估任务描述",
                   "example": "评估线上 Agent 链路任务完成度",
                   "type": "string"
@@ -285,12 +316,21 @@
                 "status": {
                   "description_en": "The evaluation task status",
                   "description_zh": "评估任务状态",
+                  "enumValueTitles": {
+                    "Completed": "Completed",
+                    "Deleted": "Deleted",
+                    "Failed": "Failed",
+                    "Pending": "Pending",
+                    "Running": "Running",
+                    "Scheduling": "Scheduling",
+                    "Terminated": "Terminated"
+                  },
                   "example": "Running",
                   "type": "string"
                 },
                 "tags": {
                   "additionalProperties": {
-                    "description_en": "The value of a task tag. The key name is customized based on business dimensions",
+                    "description_en": "The value of a task tag. The key name is customized based on the business dimension",
                     "description_zh": "单个任务标签值，键名按业务维度自定义",
                     "example": "prod",
                     "type": "string"
@@ -309,6 +349,9 @@
                 "taskMode": {
                   "description_en": "The evaluation task mode",
                   "description_zh": "评估任务模式",
+                  "enumValueTitles": {
+                    "batch": "batch"
+                  },
                   "example": "batch",
                   "type": "string"
                 },
@@ -347,19 +390,19 @@
             "description_en": "The request ID",
             "description_zh": "请求 ID",
             "example": "3FE4CD1E-FF41-56BE-B590-7A021D9C1524",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "totalCount": {
-            "description_en": "The total number of records. The total count is returned only on the first page. This value may be empty on subsequent pages",
+            "description_en": "The total number of records. The total count is calculated only on the first page. This value may be empty on subsequent pages",
             "description_zh": "总记录数。后端仅在第一页查询总数，后续页可能为空",
             "example": "126",
             "format": "int32",
             "type": "integer"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

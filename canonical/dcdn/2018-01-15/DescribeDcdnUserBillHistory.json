@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dcdn DescribeDcdnUserBillHistory --region cn-hangzhou --EndTime '2018-10-31T16:00:00Z' --StartTime '2018-09-30T16:00:00Z'",
   "cmd_full_name": "dcdn describe-dcdn-user-bill-history",
   "cmd_name": "describe-dcdn-user-bill-history",
   "deprecated": false,
-  "description_en": "You can call DescribeDcdnUserBillHistory to query historical bills for a period of up to one month",
+  "description_en": "Queries the historical bills of a user for up to one month",
   "description_zh": "调用DescribeDcdnUserBillHistory查询用户历史账单，最多查询一个月的数据",
   "kebab_example": "aliyun dcdn describe-dcdn-user-bill-history --start-time 2018-09-30T16:00:00Z --end-time 2018-10-31T16:00:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "2018-09-30T16:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe minimum data granularity is 5 minutes",
+      "help_en": "The start time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe minimum data granularity is 5 minutes",
       "help_zh": "获取数据起始时间点，日期格式按照ISO8601表示法，并使用UTC时间，格式为：yyyy-MM-ddTHH:mm:ssZ。\n\n最小数据粒度为5分钟",
       "location": "query",
       "name": "start_time",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2018-10-31T16:00:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取数据结束时间点。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -53,66 +54,101 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "BillHistoryData": {
-            "backendName": "data.content",
-            "itemName": "BillHistoryDataItem",
-            "items": {
-              "properties": {
-                "BillTime": {
-                  "backendName": "bill_time",
-                  "type": "string"
-                },
-                "BillType": {
-                  "backendName": "bill_type",
-                  "type": "string"
-                },
-                "BillingData": {
-                  "backendName": "billing_data",
-                  "itemName": "BillingDataItem",
-                  "items": {
-                    "properties": {
-                      "Bandwidth": {
-                        "backendName": "bandwidth",
-                        "format": "float",
-                        "type": "number"
-                      },
-                      "CdnRegion": {
-                        "backendName": "cdn_region",
-                        "type": "string"
-                      },
-                      "ChargeType": {
-                        "backendName": "charge_type",
-                        "type": "string"
-                      },
-                      "Count": {
-                        "backendName": "count",
-                        "format": "float",
-                        "type": "number"
-                      },
-                      "Flow": {
-                        "backendName": "flow",
-                        "format": "float",
-                        "type": "number"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "BillHistoryDataItem": {
+                "description_en": "The historical billing data",
+                "description_zh": "历史计费数据",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "BillTime": {
+                      "description_en": "The start time of the billing cycle.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+                      "description_zh": "计费周期起始时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
+                      "example": "2018-09-30T17:00:00Z",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "BillType": {
+                      "description_en": "The billing method",
+                      "description_zh": "计费模式",
+                      "example": "month_4th_day_bandwidth",
+                      "type": "string"
+                    },
+                    "BillingData": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "BillingDataItem": {
+                          "description_en": "The billing data",
+                          "description_zh": "计费数据",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "Bandwidth": {
+                                "description_en": "The bandwidth. Unit: Bps",
+                                "description_zh": "带宽，单位为Bps",
+                                "example": "4839",
+                                "format": "float",
+                                "type": "number"
+                              },
+                              "CdnRegion": {
+                                "description_en": "The billing region. Valid values: CN, OverSeas, AP1, AP2, AP3, NA, SA, EU, and MEAA",
+                                "description_zh": "计费大区，取值： CN、OverSeas、AP1、AP2、AP3、NA、SA 、EU、MEAA",
+                                "example": "AP1",
+                                "type": "string"
+                              },
+                              "ChargeType": {
+                                "description_en": "The billing type. Valid values: StaticHttp, DynamicHttp, and DynamicHttps",
+                                "description_zh": "计费类型。取值：StaticHttp、DynamicHttp、DynamicHttps",
+                                "example": "DynamicHttp",
+                                "type": "string"
+                              },
+                              "Count": {
+                                "description_en": "The count. Unit: count",
+                                "description_zh": "个数，单位为个",
+                                "example": "205624",
+                                "format": "float",
+                                "type": "number"
+                              },
+                              "Flow": {
+                                "description_en": "The traffic. Unit: bytes",
+                                "description_zh": "流量，单位为字节",
+                                "example": "2456",
+                                "format": "float",
+                                "type": "number"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Dimension": {
+                      "description_en": "The dimension",
+                      "description_zh": "维度",
+                      "example": "vas",
+                      "type": "string"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "type": "array"
+                  "type": "object"
                 },
-                "Dimension": {
-                  "backendName": "dimension",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "ED61C6C3-8241-4187-AAA7-5157AE175CEC",

@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun starops POST /digitalEmployee/test-agent/mcpService --region cn-hangzhou --header \"Content-Type=application/json\" --version 2026-04-28 --force",
   "cmd_full_name": "starops create-mcp-service",
   "cmd_name": "create-mcp-service",
@@ -46,145 +47,18 @@
       "type": "string"
     },
     {
-      "fields": [
-        {
-          "fields": [
-            {
-              "example": "{\"token\":\"example-token\"}",
-              "help_en": "The request body parameters",
-              "help_zh": "请求体参数",
-              "name": "key_info",
-              "options": [
-                "--key-info"
-              ],
-              "raw_name": "keyInfo",
-              "required": false,
-              "type": "map",
-              "value": {
-                "type": "string"
-              }
-            },
-            {
-              "enum": [
-                "bearer"
-              ],
-              "example": "bearer",
-              "help_en": "The authentication type. Currently, only bearer is supported",
-              "help_zh": "认证类型，目前支持 bearer",
-              "name": "type",
-              "options": [
-                "--type"
-              ],
-              "raw_name": "type",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "The request body parameters",
-          "help_zh": "请求体参数",
-          "name": "auth",
-          "options": [
-            "--auth"
-          ],
-          "raw_name": "auth",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "example": "https://example.com/mcp",
-          "help_en": "The access endpoint of the MCP service",
-          "help_zh": "MCP 服务访问地址",
-          "name": "endpoint",
-          "options": [
-            "--endpoint"
-          ],
-          "raw_name": "endpoint",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "help_en": "The custom headers",
-          "help_zh": "自定义header",
-          "name": "headers",
-          "options": [
-            "--headers"
-          ],
-          "raw_name": "headers",
-          "required": false,
-          "type": "map",
-          "value": {
-            "type": "string"
-          }
-        },
-        {
-          "enum": [
-            "AIGateway",
-            "Custom"
-          ],
-          "example": "Custom",
-          "help_en": "The platform type of the MCP service. Valid values: AIGateway and Custom",
-          "help_zh": "MCP 服务平台类型，支持 AIGateway 和 Custom",
-          "name": "platform",
-          "options": [
-            "--platform"
-          ],
-          "raw_name": "platform",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "example": "5000",
-          "help_en": "The timeout period for requests to the MCP service. Unit: milliseconds",
-          "help_zh": "请求 MCP 服务的超时时间，单位为毫秒",
-          "name": "timeout",
-          "options": [
-            "--timeout"
-          ],
-          "raw_name": "timeout",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "enum": [
-            "http",
-            "sse"
-          ],
-          "example": "http",
-          "help_en": "The transport protocol of the MCP service. Valid values: http and sse",
-          "help_zh": "MCP 服务传输协议，支持 http 和 sse",
-          "name": "transport",
-          "options": [
-            "--transport"
-          ],
-          "raw_name": "transport",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "help_en": "The request body parameters",
-      "help_zh": "请求体参数",
+      "example": "log-query",
+      "help_en": "The service name of the MCP service",
+      "help_zh": "MCP 服务名称",
       "location": "body",
-      "name": "connection",
+      "min_length": "1",
+      "name": "mcp_service_name",
       "options": [
-        "--connection"
+        "--mcp-service-name"
       ],
       "param_style": "json",
-      "raw_name": "connection",
+      "raw_name": "mcpServiceName",
       "required": true,
-      "type": "object"
-    },
-    {
-      "example": "通过 MCP 调用日志查询工具。",
-      "help_en": "The description of the MCP service",
-      "help_zh": "MCP 服务描述信息",
-      "location": "body",
-      "name": "description",
-      "options": [
-        "--description"
-      ],
-      "param_style": "json",
-      "raw_name": "description",
-      "required": false,
       "type": "string"
     },
     {
@@ -198,6 +72,20 @@
       ],
       "param_style": "json",
       "raw_name": "displayName",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "通过 MCP 调用日志查询工具。",
+      "help_en": "The description of the MCP service",
+      "help_zh": "MCP 服务描述信息",
+      "location": "body",
+      "name": "description",
+      "options": [
+        "--description"
+      ],
+      "param_style": "json",
+      "raw_name": "description",
       "required": false,
       "type": "string"
     },
@@ -216,22 +104,48 @@
       "type": "bool"
     },
     {
-      "example": "log-query",
-      "help_en": "The service name of the MCP service",
-      "help_zh": "MCP 服务名称",
-      "location": "body",
-      "min_length": "1",
-      "name": "mcp_service_name",
-      "options": [
-        "--mcp-service-name"
-      ],
-      "param_style": "json",
-      "raw_name": "mcpServiceName",
-      "required": true,
-      "type": "string"
-    },
-    {
       "fields": [
+        {
+          "enum": [
+            "public",
+            "vpc",
+            "inner"
+          ],
+          "example": "public",
+          "help_en": "The network access mode of the MCP service. Valid values: public and vpc",
+          "help_zh": "MCP 服务网络访问模式，支持 public 和 vpc",
+          "name": "mode",
+          "options": [
+            "--mode"
+          ],
+          "raw_name": "mode",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "example": "vpc-xxx",
+          "help_en": "The VPC ID",
+          "help_zh": "专有网络 VPC ID",
+          "name": "vpc_id",
+          "options": [
+            "--vpc-id"
+          ],
+          "raw_name": "vpcId",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "vsw-xxx",
+          "help_en": "The vSwitch ID",
+          "help_zh": "交换机 ID",
+          "name": "vsw_id",
+          "options": [
+            "--vsw-id"
+          ],
+          "raw_name": "vswId",
+          "required": false,
+          "type": "string"
+        },
         {
           "example": "10.0.0.12",
           "help_en": "The IP address used to access the MCP service over the VPC network",
@@ -255,6 +169,18 @@
           "raw_name": "accessPort",
           "required": false,
           "type": "int"
+        },
+        {
+          "example": "sg-xxx",
+          "help_en": "The security group ID",
+          "help_zh": "安全组 ID",
+          "name": "security_group_id",
+          "options": [
+            "--security-group-id"
+          ],
+          "raw_name": "securityGroupId",
+          "required": false,
+          "type": "string"
         },
         {
           "example": "gw-xxx",
@@ -281,23 +207,6 @@
           "type": "string"
         },
         {
-          "enum": [
-            "public",
-            "vpc",
-            "inner"
-          ],
-          "example": "public",
-          "help_en": "The network access mode of the MCP service. Valid values: public and vpc",
-          "help_zh": "MCP 服务网络访问模式，支持 public 和 vpc",
-          "name": "mode",
-          "options": [
-            "--mode"
-          ],
-          "raw_name": "mode",
-          "required": true,
-          "type": "string"
-        },
-        {
           "example": "cn-hangzhou",
           "help_en": "The region where the VPC network resides",
           "help_zh": "VPC 网络所在地域",
@@ -306,42 +215,6 @@
             "--region"
           ],
           "raw_name": "region",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "sg-xxx",
-          "help_en": "The security group ID",
-          "help_zh": "安全组 ID",
-          "name": "security_group_id",
-          "options": [
-            "--security-group-id"
-          ],
-          "raw_name": "securityGroupId",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "vpc-xxx",
-          "help_en": "The VPC ID",
-          "help_zh": "专有网络 VPC ID",
-          "name": "vpc_id",
-          "options": [
-            "--vpc-id"
-          ],
-          "raw_name": "vpcId",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "vsw-xxx",
-          "help_en": "The vSwitch ID",
-          "help_zh": "交换机 ID",
-          "name": "vsw_id",
-          "options": [
-            "--vsw-id"
-          ],
-          "raw_name": "vswId",
           "required": false,
           "type": "string"
         }
@@ -359,44 +232,158 @@
       "type": "object"
     },
     {
+      "fields": [
+        {
+          "enum": [
+            "AIGateway",
+            "Custom"
+          ],
+          "example": "Custom",
+          "help_en": "The MCP service platform type. Valid values: AIGateway and Custom",
+          "help_zh": "MCP 服务平台类型，支持 AIGateway 和 Custom",
+          "name": "platform",
+          "options": [
+            "--platform"
+          ],
+          "raw_name": "platform",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "enum": [
+            "http",
+            "sse"
+          ],
+          "example": "http",
+          "help_en": "The transport protocol of the MCP service. Valid values: http and sse",
+          "help_zh": "MCP 服务传输协议，支持 http 和 sse",
+          "name": "transport",
+          "options": [
+            "--transport"
+          ],
+          "raw_name": "transport",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "example": "https://example.com/mcp",
+          "help_en": "The access endpoint of the MCP service",
+          "help_zh": "MCP 服务访问地址",
+          "name": "endpoint",
+          "options": [
+            "--endpoint"
+          ],
+          "raw_name": "endpoint",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "example": "5000",
+          "help_en": "The timeout period for requests to the MCP service. Unit: milliseconds",
+          "help_zh": "请求 MCP 服务的超时时间，单位为毫秒",
+          "name": "timeout",
+          "options": [
+            "--timeout"
+          ],
+          "raw_name": "timeout",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "fields": [
+            {
+              "enum": [
+                "bearer"
+              ],
+              "example": "bearer",
+              "help_en": "The authentication type. Currently, bearer is supported",
+              "help_zh": "认证类型，目前支持 bearer",
+              "name": "type",
+              "options": [
+                "--type"
+              ],
+              "raw_name": "type",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "{\"token\":\"example-token\"}",
+              "help_en": "The request body parameters",
+              "help_zh": "请求体参数",
+              "name": "key_info",
+              "options": [
+                "--key-info"
+              ],
+              "raw_name": "keyInfo",
+              "required": false,
+              "type": "map",
+              "value": {
+                "type": "string"
+              }
+            }
+          ],
+          "help_en": "The request body parameters",
+          "help_zh": "请求体参数",
+          "name": "auth",
+          "options": [
+            "--auth"
+          ],
+          "raw_name": "auth",
+          "required": false,
+          "type": "object"
+        },
+        {
+          "help_en": "The custom HTTP request headers appended when calling the MCP service",
+          "help_zh": "调用 MCP 服务时附加的自定义 HTTP 请求头",
+          "name": "headers",
+          "options": [
+            "--headers"
+          ],
+          "raw_name": "headers",
+          "required": false,
+          "type": "map",
+          "value": {
+            "type": "string"
+          }
+        }
+      ],
+      "help_en": "The request body parameters",
+      "help_zh": "请求体参数",
+      "location": "body",
+      "name": "connection",
+      "options": [
+        "--connection"
+      ],
+      "param_style": "json",
+      "raw_name": "connection",
+      "required": true,
+      "type": "object"
+    },
+    {
       "element": {
         "fields": [
           {
-            "example": "{}",
-            "help_en": "The request body parameters",
-            "help_zh": "请求体参数",
-            "name": "annotations",
+            "example": "query_logs",
+            "help_en": "The name of the MCP tool",
+            "help_zh": "MCP 工具名称",
+            "min_length": "1",
+            "name": "name",
             "options": [
-              "--annotations"
+              "--name"
             ],
-            "raw_name": "annotations",
-            "required": false,
-            "type": "map",
-            "value": {
-              "type": "any"
-            }
+            "raw_name": "name",
+            "required": true,
+            "type": "string"
           },
           {
-            "example": "false",
-            "help_en": "Specifies whether user confirmation is required before calling the MCP tool",
-            "help_zh": "调用该 MCP 工具前是否需要用户确认",
-            "name": "confirm",
+            "example": "查询日志",
+            "help_en": "The title of the MCP tool",
+            "help_zh": "MCP 工具标题",
+            "name": "title",
             "options": [
-              "--confirm"
+              "--title"
             ],
-            "raw_name": "confirm",
-            "required": false,
-            "type": "bool"
-          },
-          {
-            "example": "查询指定日志库中的日志。",
-            "help_en": "The description of the MCP tool",
-            "help_zh": "MCP 工具描述信息",
-            "name": "description",
-            "options": [
-              "--description"
-            ],
-            "raw_name": "description",
+            "raw_name": "title",
             "required": false,
             "type": "string"
           },
@@ -413,26 +400,41 @@
             "type": "string"
           },
           {
-            "example": "true",
-            "help_en": "Specifies whether to enable the MCP tool",
-            "help_zh": "是否启用该 MCP 工具",
-            "name": "enable",
+            "example": "查询指定日志库中的日志。",
+            "help_en": "The description of the MCP tool",
+            "help_zh": "MCP 工具描述信息",
+            "name": "description",
             "options": [
-              "--enable"
+              "--description"
             ],
-            "raw_name": "enable",
+            "raw_name": "description",
             "required": false,
-            "type": "bool"
+            "type": "string"
           },
           {
-            "example": "{}",
+            "example": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}",
             "help_en": "The request body parameters",
             "help_zh": "请求体参数",
-            "name": "execution",
+            "name": "input_schema",
             "options": [
-              "--execution"
+              "--input-schema"
             ],
-            "raw_name": "execution",
+            "raw_name": "inputSchema",
+            "required": true,
+            "type": "map",
+            "value": {
+              "type": "any"
+            }
+          },
+          {
+            "example": "{\"type\":\"object\"}",
+            "help_en": "The request body parameters",
+            "help_zh": "请求体参数",
+            "name": "output_schema",
+            "options": [
+              "--output-schema"
+            ],
+            "raw_name": "outputSchema",
             "required": false,
             "type": "map",
             "value": {
@@ -458,42 +460,14 @@
             "type": "array"
           },
           {
-            "example": "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\"}},\"required\":[\"query\"]}",
+            "example": "{}",
             "help_en": "The request body parameters",
             "help_zh": "请求体参数",
-            "name": "input_schema",
+            "name": "execution",
             "options": [
-              "--input-schema"
+              "--execution"
             ],
-            "raw_name": "inputSchema",
-            "required": true,
-            "type": "map",
-            "value": {
-              "type": "any"
-            }
-          },
-          {
-            "example": "query_logs",
-            "help_en": "The name of the MCP tool",
-            "help_zh": "MCP 工具名称",
-            "min_length": "1",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "name",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "example": "{\"type\":\"object\"}",
-            "help_en": "The request body parameters",
-            "help_zh": "请求体参数",
-            "name": "output_schema",
-            "options": [
-              "--output-schema"
-            ],
-            "raw_name": "outputSchema",
+            "raw_name": "execution",
             "required": false,
             "type": "map",
             "value": {
@@ -501,16 +475,43 @@
             }
           },
           {
-            "example": "查询日志",
-            "help_en": "The title of the MCP tool",
-            "help_zh": "MCP 工具标题",
-            "name": "title",
+            "example": "{}",
+            "help_en": "The request body parameters",
+            "help_zh": "请求体参数",
+            "name": "annotations",
             "options": [
-              "--title"
+              "--annotations"
             ],
-            "raw_name": "title",
+            "raw_name": "annotations",
             "required": false,
-            "type": "string"
+            "type": "map",
+            "value": {
+              "type": "any"
+            }
+          },
+          {
+            "example": "true",
+            "help_en": "Specifies whether to enable the MCP tool",
+            "help_zh": "是否启用该 MCP 工具",
+            "name": "enable",
+            "options": [
+              "--enable"
+            ],
+            "raw_name": "enable",
+            "required": false,
+            "type": "bool"
+          },
+          {
+            "example": "false",
+            "help_en": "Specifies whether user confirmation is required before calling the MCP tool",
+            "help_zh": "调用该 MCP 工具前是否需要用户确认",
+            "name": "confirm",
+            "options": [
+              "--confirm"
+            ],
+            "raw_name": "confirm",
+            "required": false,
+            "type": "bool"
           }
         ],
         "type": "object"

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 60000,
   "camel_example": "aliyun dds DescribeAccounts --region cn-hangzhou --DBInstanceId 'dds-bp1fd530f2710000'",
   "cmd_full_name": "dds describe-accounts",
   "cmd_name": "describe-accounts",
   "deprecated": false,
-  "description_en": "Queries the database accounts of an ApsaraDB for MongoDB instance",
+  "description_en": "Queries the database account information of an ApsaraDB for MongoDB instance",
   "description_zh": "查询MongoDB实例的数据库账号信息",
   "kebab_example": "aliyun dds describe-accounts --db-instance-id dds-bp1fd530f2710000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -14,6 +15,7 @@
     "api_style": "RPC",
     "api_version": "2015-12-01",
     "method": "POST",
+    "operation_type": "read",
     "protocol": "HTTPS",
     "system_operation_type": "get",
     "url": ""
@@ -34,7 +36,7 @@
     },
     {
       "example": "root",
-      "help_en": "The name of the account. Set the value to root",
+      "help_en": "The account name",
       "help_zh": "账号名",
       "location": "query",
       "name": "account_name",
@@ -42,6 +44,32 @@
         "--account-name"
       ],
       "raw_name": "AccountName",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "normal",
+      "help_en": "The account type",
+      "help_zh": "账号类型",
+      "location": "query",
+      "name": "character_type",
+      "options": [
+        "--character-type"
+      ],
+      "raw_name": "CharacterType",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "admin",
+      "help_en": "The database to which the account belongs",
+      "help_zh": "账号所属库",
+      "location": "query",
+      "name": "db_name",
+      "options": [
+        "--db-name"
+      ],
+      "raw_name": "DBName",
       "required": false,
       "type": "string"
     }
@@ -52,72 +80,113 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Accounts": {
-            "backendName": "data.accounts",
-            "itemName": "Account",
-            "items": {
-              "properties": {
-                "AccountDescription": {
-                  "backendName": "accountDescription",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "AccountName": {
-                  "backendName": "accountName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "AccountStatus": {
-                  "backendName": "accountStatus",
-                  "default": "Unavailable",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Unavailable",
-                        "value": "0"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Account": {
+                "description_en": "The list of account information",
+                "description_zh": "账号信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AccountDescription": {
+                      "description_en": "The description of the account.\n\nThis parameter is returned only after you call the [ModifyAccountDescription]（https://help.aliyun.com/document_detail/468391.html） operation to set the account description",
+                      "description_zh": "账号备注信息。\n\n调用[ModifyAccountDescription]（https://help.aliyun.com/document_detail/468391.html）接口设置账号备注信息后才会返回该参数",
+                      "example": "管理员",
+                      "type": "string"
+                    },
+                    "AccountName": {
+                      "description_en": "The account name",
+                      "description_zh": "账号名",
+                      "example": "root",
+                      "type": "string"
+                    },
+                    "AccountStatus": {
+                      "default": "Unavailable",
+                      "description_en": "The status of the account. Valid values:\nUnavailable: The account is unavailable.\nAvailable: The account is available",
+                      "description_zh": "账号的状态，取值说明：\nUnavailable：不可用。\nAvailable：可用",
+                      "example": "Available",
+                      "type": "string"
+                    },
+                    "CharacterType": {
+                      "description_en": "The role type of the account. Valid values:\ndb: The shard role.\ncs: The config server role.\nmongos: The mongos role.\nlogic: The sharded cluster instance.\nnormal: The replica set instance",
+                      "description_zh": "账号的角色类型，取值说明：\ndb: shard角色。\ncs：config server角色。\nmongos：mongos角色。\nlogic：分片集群实例。\nnormal：副本集实例",
+                      "example": "mongos",
+                      "type": "string"
+                    },
+                    "DBInstanceId": {
+                      "description_en": "The instance ID to which the account belongs",
+                      "description_zh": "账号所属的实例ID",
+                      "example": "dds-bp1fd530f271****",
+                      "type": "string"
+                    },
+                    "DBName": {
+                      "description_en": "The database to which the account belongs",
+                      "description_zh": "账号所属数据库",
+                      "example": "admin",
+                      "title_en": "",
+                      "title_zh": "账号所属数据库",
+                      "type": "string"
+                    },
+                    "Roles": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Role": {
+                          "description_en": "The list of account permissions",
+                          "description_zh": "账号权限列表",
+                          "items": {
+                            "description_en": "The account permission",
+                            "description_zh": "账号权限",
+                            "properties": {
+                              "DBName": {
+                                "description_en": "The database authorized for the role",
+                                "description_zh": "角色授权库",
+                                "example": "admin",
+                                "title_en": "",
+                                "title_zh": "角色授权库",
+                                "type": "string"
+                              },
+                              "Role": {
+                                "description_en": "The role of the account",
+                                "description_zh": "账号角色",
+                                "example": "read",
+                                "title_en": "",
+                                "title_zh": "账号角色",
+                                "type": "string"
+                              }
+                            },
+                            "title_en": "",
+                            "title_zh": "账号权限",
+                            "type": "object"
+                          },
+                          "title_en": "",
+                          "title_zh": "账号权限列表",
+                          "type": "array"
+                        }
                       },
-                      {
-                        "targetValue": "Available",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "Unavailable",
-                        "value": "3"
-                      },
-                      {
-                        "targetValue": "Unavailable",
-                        "value": "4"
-                      }
-                    ]
+                      "type": "object"
+                    }
                   },
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "CharacterType": {
-                  "backendName": "characterType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBInstanceId": {
-                  "backendName": "dbInstanceId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "B562A65B-39AB-4EE8-8635-5A222054FB35",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

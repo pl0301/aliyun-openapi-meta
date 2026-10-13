@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dcdn DescribeDcdnTopDomainsByFlow --region cn-hangzhou --EndTime '2016-03-14T07:34:00Z' --StartTime '2016-03-01T04:00:00Z' --Limit 20",
   "cmd_full_name": "dcdn describe-dcdn-top-domains-by-flow",
   "cmd_name": "describe-dcdn-top-domains-by-flow",
   "deprecated": false,
-  "description_en": "Call the DescribeDcdnTopDomainsByFlow operation to query your domain names ranked by traffic. You can retrieve data from the last 90 days",
+  "description_en": "Queries the top domain names ranked by traffic for a user. You can retrieve data for the last 90 days",
   "description_zh": "调用DescribeDcdnTopDomainsByFlow查询用户按流量排名的域名，支持获取最近90天的数据",
   "kebab_example": "aliyun dcdn describe-dcdn-top-domains-by-flow --start-time 2016-03-01T04:00:00Z --end-time 2016-03-14T07:34:00Z --limit 20 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "2016-03-01T04:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "获取数据起始时间点。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "start_time",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2016-03-14T07:34:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取数据结束时间点。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -48,7 +49,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of domain names to return. Default value: 20. Valid values: 1 to 100",
+      "help_en": "The maximum number of domain names to return. Default value: 20. Valid values: 1 to 100",
       "help_zh": "域名获取数量限制，默认为20，取值支持1~100",
       "location": "query",
       "maximum": "100",
@@ -68,85 +69,105 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DomainCount": {
-            "backendName": "data.content.statisData.dm_cnt",
-            "description_en": "The total number of domain names under your account",
+            "description_en": "The total number of domain names under the account",
             "description_zh": "账户下域名总数",
             "example": "68",
             "format": "int64",
             "type": "integer"
           },
           "DomainOnlineCount": {
-            "backendName": "data.content.statisData.dm_online_cnt",
-            "description_en": "The total number of domain names that are in the Running state under your account",
+            "description_en": "The total number of running domain names under the account",
             "description_zh": "账户下正在运行域名总数",
             "example": "68",
             "format": "int64",
             "type": "integer"
           },
           "EndTime": {
-            "backendName": "data.content.endTime",
-            "description_en": "The end of the time range",
-            "description_zh": "结束时间",
+            "description_en": "The end time.\n\nThe time is displayed in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is in UTC",
+            "description_zh": "结束时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
             "example": "2016-03-14T07:34:00Z",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID",
+            "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "4E09C5D7-E1CF-4CAA-A45E-8727F4C8FD70",
             "type": "string"
           },
           "StartTime": {
-            "backendName": "data.content.startTime",
-            "description_en": "The start of the time range",
-            "description_zh": "开始时间",
+            "description_en": "The start time.\n\nThe time is displayed in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is in UTC",
+            "description_zh": "开始时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
             "example": "2016-03-14T06:34:00Z",
             "type": "string"
           },
           "TopDomains": {
-            "backendName": "data.content.data",
-            "itemName": "TopDomain",
-            "items": {
-              "properties": {
-                "DomainName": {
-                  "backendName": "dm_name",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "TopDomain": {
+                "description_en": "The list of top domain names",
+                "description_zh": "排名域名列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "DomainName": {
+                      "description_en": "The domain name",
+                      "description_zh": "域名",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "MaxBps": {
+                      "description_en": "The peak bandwidth",
+                      "description_zh": "带宽峰值",
+                      "example": "22139626",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxBpsTime": {
+                      "description_en": "The time when the peak bandwidth was reached. The time is displayed in the ISO 8601 standard and in UTC",
+                      "description_zh": "带宽峰值时刻，使用 ISO8601 表示法，并使用UTC时间",
+                      "example": "2018-11-01T08:10:00Z",
+                      "type": "string"
+                    },
+                    "Rank": {
+                      "description_en": "The ranking",
+                      "description_zh": "排名",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalAccess": {
+                      "description_en": "The total number of requests",
+                      "description_zh": "访问次数",
+                      "example": "3",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalTraffic": {
+                      "description_en": "The total traffic",
+                      "description_zh": "总流量",
+                      "example": "123",
+                      "type": "string"
+                    },
+                    "TrafficPercent": {
+                      "description_en": "The traffic proportion",
+                      "description_zh": "流量占比",
+                      "example": "21.686305274906182",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "MaxBps": {
-                  "backendName": "max_bps",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "MaxBpsTime": {
-                  "backendName": "max_bps_time",
-                  "type": "string"
-                },
-                "Rank": {
-                  "backendName": "rank",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "TotalAccess": {
-                  "backendName": "t_acc",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "TotalTraffic": {
-                  "backendName": "t_traf",
-                  "type": "string"
-                },
-                "TrafficPercent": {
-                  "backendName": "traf_per",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun apig PUT /v1/migration-tasks/mt-xxxx --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"slbId\":\"lb-bp1xxxx\",\"virtualServices\":[{\"protocol\":\"tcp\",\"port\":80,\"virtualServiceGroupId\":\"rsp-xxxx\",\"virtualServiceGroupName\":\"80-tcp\"}],\"switchType\":\"SLB\",\"clusterNamespace\":\"default\",\"weight\":50,\"description\":\"迁移测试\",\"serviceName\":\"nginx-ingress-lb\",\"target\":\"Task\"}'",
   "cmd_full_name": "apig update-migration-task",
   "cmd_name": "update-migration-task",
   "deprecated": false,
-  "description_en": "更新迁移任务",
+  "description_en": "Updates a migration task",
   "description_zh": "更新迁移任务",
   "kebab_example": "aliyun apig update-migration-task --task-id mt-xxxx --target Task --cluster-namespace default --slb-id lb-bp1xxxx --virtual-services protocol=tcp port=80 virtualServiceGroupId=rsp-xxxx virtualServiceGroupName=80-tcp --weight 50 --service-name nginx-ingress-lb --switch-type SLB --description '迁移测试' --region cn-hangzhou",
   "method": "PUT",
@@ -34,7 +35,7 @@
   "parameters": [
     {
       "example": "mt-xxxx",
-      "help_en": "The taskId",
+      "help_en": "The task ID (path parameter). The task must belong to the current user",
       "help_zh": "任务 ID（path 参数），须属于当前用户",
       "location": "path",
       "name": "task_id",
@@ -46,78 +47,12 @@
       "type": "string"
     },
     {
-      "example": "default",
-      "help_en": "The clusterNamespace",
-      "help_zh": "源集群命名空间（SLB 切流）",
-      "location": "body",
-      "name": "cluster_namespace",
-      "options": [
-        "--cluster-namespace"
+      "enum": [
+        "Task",
+        "Engine"
       ],
-      "param_style": "json",
-      "raw_name": "clusterNamespace",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "迁移测试",
-      "help_en": "The description",
-      "help_zh": "任务描述（DNS 的 Engine 更新仅改此字段）",
-      "location": "body",
-      "name": "description",
-      "options": [
-        "--description"
-      ],
-      "param_style": "json",
-      "raw_name": "description",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "nginx-ingress-lb",
-      "help_en": "The serviceName",
-      "help_zh": "SLB Service 名称",
-      "location": "body",
-      "name": "service_name",
-      "options": [
-        "--service-name"
-      ],
-      "param_style": "json",
-      "raw_name": "serviceName",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "lb-bp1xxxx",
-      "help_en": "The slbId",
-      "help_zh": "SLB 实例 ID；Initial+SLB 时必填（按前缀判型 lb-/nlb-）",
-      "location": "body",
-      "name": "slb_id",
-      "options": [
-        "--slb-id"
-      ],
-      "param_style": "json",
-      "raw_name": "slbId",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "SLB",
-      "help_en": "The switchType",
-      "help_zh": "切流方式；Initial 推进时必填",
-      "location": "body",
-      "name": "switch_type",
-      "options": [
-        "--switch-type"
-      ],
-      "param_style": "json",
-      "raw_name": "switchType",
-      "required": false,
-      "type": "string"
-    },
-    {
       "example": "Task",
-      "help_en": "The target",
+      "help_en": "Required. The update target. Determines whether to advance the task status or perform an engine operation",
       "help_zh": "必填。更新目标，决定走状态推进还是引擎操作",
       "location": "body",
       "name": "target",
@@ -130,35 +65,39 @@
       "type": "string"
     },
     {
+      "example": "default",
+      "help_en": "The namespace of the source cluster (for SLB traffic switching)",
+      "help_zh": "源集群命名空间（SLB 切流）",
+      "location": "body",
+      "name": "cluster_namespace",
+      "options": [
+        "--cluster-namespace"
+      ],
+      "param_style": "json",
+      "raw_name": "clusterNamespace",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "lb-bp1xxxx",
+      "help_en": "The SLB instance ID. Required when the task is in the Initial state with SLB traffic switching. The type is determined by the prefix (lb- or nlb-)",
+      "help_zh": "SLB 实例 ID；Initial+SLB 时必填（按前缀判型 lb-/nlb-）",
+      "location": "body",
+      "name": "slb_id",
+      "options": [
+        "--slb-id"
+      ],
+      "param_style": "json",
+      "raw_name": "slbId",
+      "required": false,
+      "type": "string"
+    },
+    {
       "element": {
         "fields": [
           {
-            "example": "80",
-            "help_en": "The port",
-            "help_zh": "端口（1-65535）",
-            "name": "port",
-            "options": [
-              "--port"
-            ],
-            "raw_name": "port",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "tcp",
-            "help_en": "The protocol",
-            "help_zh": "协议，CLB 必填",
-            "name": "protocol",
-            "options": [
-              "--protocol"
-            ],
-            "raw_name": "protocol",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "rsp-xxxx",
-            "help_en": "The virtualServiceGroupId",
+            "help_en": "CLB VServerGroupId / NLB ServerGroupId",
             "help_zh": "CLB VServerGroupId / NLB ServerGroupId",
             "name": "virtual_service_group_id",
             "options": [
@@ -170,7 +109,7 @@
           },
           {
             "example": "80-tcp",
-            "help_en": "The virtualServiceGroupName",
+            "help_en": "The group name",
             "help_zh": "组名称",
             "name": "virtual_service_group_name",
             "options": [
@@ -179,11 +118,35 @@
             "raw_name": "virtualServiceGroupName",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "80",
+            "help_en": "The port. Valid values: 1 to 65535",
+            "help_zh": "端口（1-65535）",
+            "name": "port",
+            "options": [
+              "--port"
+            ],
+            "raw_name": "port",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "tcp",
+            "help_en": "The protocol. Required for CLB",
+            "help_zh": "协议，CLB 必填",
+            "name": "protocol",
+            "options": [
+              "--protocol"
+            ],
+            "raw_name": "protocol",
+            "required": false,
+            "type": "string"
           }
         ],
         "type": "object"
       },
-      "help_en": "The virtualServices",
+      "help_en": "The list of backend server group bindings",
       "help_zh": "后端组绑定列表",
       "location": "body",
       "name": "virtual_services",
@@ -197,7 +160,7 @@
     },
     {
       "example": "50",
-      "help_en": "The weight",
+      "help_en": "The traffic switching weight for the legacy flow. Valid values: 0 to 100. Takes effect when the target is set to Engine",
       "help_zh": "旧流程切流权重（0-100），Engine 生效",
       "location": "body",
       "name": "weight",
@@ -208,6 +171,52 @@
       "raw_name": "weight",
       "required": false,
       "type": "int"
+    },
+    {
+      "example": "nginx-ingress-lb",
+      "help_en": "The SLB service name",
+      "help_zh": "SLB Service 名称",
+      "location": "body",
+      "name": "service_name",
+      "options": [
+        "--service-name"
+      ],
+      "param_style": "json",
+      "raw_name": "serviceName",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "DNS",
+        "SLB"
+      ],
+      "example": "SLB",
+      "help_en": "The traffic switching method. Required when advancing from the Initial state",
+      "help_zh": "切流方式；Initial 推进时必填",
+      "location": "body",
+      "name": "switch_type",
+      "options": [
+        "--switch-type"
+      ],
+      "param_style": "json",
+      "raw_name": "switchType",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "迁移测试",
+      "help_en": "The task description. For DNS-based Engine updates, only this field is modified",
+      "help_zh": "任务描述（DNS 的 Engine 更新仅改此字段）",
+      "location": "body",
+      "name": "description",
+      "options": [
+        "--description"
+      ],
+      "param_style": "json",
+      "raw_name": "description",
+      "required": false,
+      "type": "string"
     }
   ],
   "pathPattern": "/v1/migration-tasks/[taskId]",
@@ -220,11 +229,13 @@
         "description_zh": "Schema of Response",
         "properties": {
           "code": {
+            "description_en": "The response status code",
             "description_zh": "响应状态码",
             "example": "200",
             "type": "string"
           },
           "message": {
+            "description_en": "The response message",
             "description_zh": "响应信息",
             "example": "success",
             "type": "string"
@@ -233,12 +244,12 @@
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "E7357D40-2418-5D4B-AC2E-D0A3C5930C7F",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }
@@ -246,6 +257,7 @@
   },
   "v1_body_parameters": [
     {
+      "help_en": "The request body parameters",
       "help_zh": "请求体参数",
       "name": "body",
       "param_style": "json",
@@ -256,6 +268,7 @@
   ],
   "v1_parameters": [
     {
+      "help_en": "The request body parameters",
       "help_zh": "请求体参数",
       "name": "body",
       "param_style": "json",
@@ -264,6 +277,7 @@
       "type": "string"
     },
     {
+      "help_en": "The task ID (path parameter). The task must belong to the current user",
       "help_zh": "任务 ID（path 参数），须属于当前用户",
       "name": "taskId",
       "position": "path",

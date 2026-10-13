@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 60000,
   "camel_example": "aliyun quanmiaolightapp POST /llm-xx/quanmiao/lightapp/submitTagMiningAnalysisTask --region cn-hangzhou --header \"Content-Type=application/json\" --version 2024-08-01 --force",
   "cmd_full_name": "quanmiaolightapp submit-tag-mining-analysis-task",
   "cmd_name": "submit-tag-mining-analysis-task",
   "deprecated": false,
-  "description_en": "Performs tag mining for a lightweight application",
+  "description_en": "Submits a tag mining analysis task for the lightweight application",
   "description_zh": "轻应用-标签挖掘",
   "kebab_example": "aliyun quanmiaolightapp submit-tag-mining-analysis-task --workspace-id llm-xx --region cn-hangzhou",
   "method": "POST",
@@ -24,7 +25,7 @@
   "parameters": [
     {
       "example": "llm-xx",
-      "help_en": "The unique identifier of the Alibaba Cloud Model Studio workspace. For more information, see https://help.aliyun.com/document_detail/2782167.html",
+      "help_en": "The unique identifier of the Alibaba Cloud Bailian business workspace. For more information, see https://help.aliyun.com/document_detail/2782167.html",
       "help_zh": "阿里云百炼业务空间唯一标识：https://help.aliyun.com/document_detail/2782167.html",
       "location": "path",
       "name": "workspace_id",
@@ -79,18 +80,6 @@
         "fields": [
           {
             "example": "xxxx",
-            "help_en": "The prompt for the tag definition",
-            "help_zh": "标签定义提示词",
-            "name": "tag_define_prompt",
-            "options": [
-              "--tag-define-prompt"
-            ],
-            "raw_name": "tagDefinePrompt",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "xxxx",
             "help_en": "The tag name",
             "help_zh": "标签名称",
             "name": "tag_name",
@@ -100,11 +89,23 @@
             "raw_name": "tagName",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "xxxx",
+            "help_en": "The tag definition prompt",
+            "help_zh": "标签定义提示词",
+            "name": "tag_define_prompt",
+            "options": [
+              "--tag-define-prompt"
+            ],
+            "raw_name": "tagDefinePrompt",
+            "required": false,
+            "type": "string"
           }
         ],
         "type": "object"
       },
-      "help_en": "A list of tag systems",
+      "help_en": "The list of tag systems",
       "help_zh": "标签体系列表",
       "location": "formData",
       "name": "tags",
@@ -118,7 +119,7 @@
     },
     {
       "example": "额外信息",
-      "help_en": "Additional information",
+      "help_en": "The extra information",
       "help_zh": "额外信息",
       "location": "formData",
       "name": "extra_info",
@@ -144,7 +145,7 @@
     },
     {
       "example": "http://www.example.com/xxxx.txt",
-      "help_en": "The URL of the file to be analyzed. Each item in the file must be separated by a line feed. You must specify either the contents or url parameter",
+      "help_en": "The URL of the content file to be analyzed. Each content entry is separated by a line break. Specify either contents or url",
       "help_zh": "待分析的内容文件URl（每条内容通过换行符分隔，contents、url二选一）",
       "location": "formData",
       "max_length": "2000",
@@ -160,7 +161,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "A list of content items to be analyzed. You must specify either the contents or url parameter",
+      "help_en": "The list of content to be analyzed. Specify either contents or url",
       "help_zh": "待分析的内容列表（contents、url二选一）",
       "location": "formData",
       "name": "contents",
@@ -173,7 +174,8 @@
       "type": "array"
     },
     {
-      "help_en": "The API key for Alibaba Cloud Model Studio",
+      "example": "sk-xxxx",
+      "help_en": "The Alibaba Cloud Bailian API key",
       "help_zh": "阿里云百炼API KEY",
       "location": "formData",
       "name": "api_key",
@@ -185,7 +187,7 @@
       "type": "string"
     },
     {
-      "help_en": "是否走模型的BATCH API （费用减半、时效性24小时内）\n\n(支持batchAPI的模型有：通义千问 Max、Plus、Flash、Turbo、Long 的稳定版本及其部分 latest 版本，以及 QwQ 系列（qwq-plus、qwq-32b-preview）和部分第三方模型（deepseek-r1、deepseek-v3）。\n)",
+      "help_en": "Specifies whether to use the model's Batch API. Costs are reduced by half, and results are returned within 24 hours.\n\nModels that support the Batch API include: stable versions and some latest versions of Qwen-Max, Qwen-Plus, Qwen-Flash, Qwen-Turbo, and Qwen-Long, as well as the QwQ series (qwq-plus, qwq-32b-preview) and some third-party models (deepseek-r1, deepseek-v3)",
       "help_zh": "是否走模型的BATCH API （费用减半、时效性24小时内）\n\n(支持batchAPI的模型有：通义千问 Max、Plus、Flash、Turbo、Long 的稳定版本及其部分 latest 版本，以及 QwQ 系列（qwq-plus、qwq-32b-preview）和部分第三方模型（deepseek-r1、deepseek-v3）。\n)",
       "location": "formData",
       "name": "batch_task",
@@ -207,72 +209,65 @@
         "description_zh": "响应",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "successful",
-            "title_en": "错误码",
+            "title_en": "",
             "title_zh": "错误码",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
-            "description_en": "The response for the submitted task",
+            "description_en": "The task submission response",
             "description_zh": "任务提交响应",
             "properties": {
               "taskId": {
-                "backendName": "taskId",
                 "description_en": "The task ID",
                 "description_zh": "任务ID",
                 "example": "3feb69ed02d9b1a17d0f1a942675d300",
-                "title_en": "任务ID",
+                "title_en": "",
                 "title_zh": "任务ID",
                 "type": "string"
               }
             },
-            "title_en": "任务提交响应",
+            "title_en": "",
             "title_zh": "任务提交响应",
             "type": "object"
           },
           "httpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "http响应码",
             "example": "200",
             "format": "int32",
-            "title_en": "http响应码",
+            "title_en": "",
             "title_zh": "http响应码",
             "type": "integer"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误消息",
             "example": "ok",
-            "title_en": "错误消息",
+            "title_en": "",
             "title_zh": "错误消息",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "117F5ABE-CF02-5502-9A3F-E56BC9081A64",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "请求是否成功",
             "example": "true",
-            "title_en": "请求是否成功",
+            "title_en": "",
             "title_zh": "请求是否成功",
             "type": "boolean"
           }
         },
-        "title_en": "响应",
+        "title_en": "",
         "title_zh": "响应",
         "type": "object"
       }

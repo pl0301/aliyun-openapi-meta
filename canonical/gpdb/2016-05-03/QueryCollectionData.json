@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun gpdb QueryCollectionData --region cn-hangzhou --TopK 10 --Collection document --RegionId 'cn-hangzhou' --NamespacePassword testpassword",
   "cmd_full_name": "gpdb query-collection-data",
   "cmd_name": "query-collection-data",
@@ -316,18 +317,6 @@
           "type": "string"
         },
         {
-          "example": "tags @> ARRAY['art']",
-          "help_en": "The filter conditions for the relational table",
-          "help_zh": "关系表的过滤条件",
-          "name": "condition",
-          "options": [
-            "--condition"
-          ],
-          "raw_name": "Condition",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "id",
           "help_en": "The field of the relational table, which is used to associate with the metadata field of the vector collection",
           "help_zh": "关系表的字段，用来和向量集的Metadata的字段做关联",
@@ -348,6 +337,18 @@
             "--table-name"
           ],
           "raw_name": "TableName",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "tags @> ARRAY['art']",
+          "help_en": "The filter conditions for the relational table",
+          "help_zh": "关系表的过滤条件",
+          "name": "condition",
+          "options": [
+            "--condition"
+          ],
+          "raw_name": "Condition",
           "required": false,
           "type": "string"
         }
@@ -388,104 +389,156 @@
         "description_zh": "召回结果",
         "properties": {
           "Matches": {
-            "backendName": "matches",
-            "itemName": "match",
-            "items": {
-              "properties": {
-                "Id": {
-                  "backendName": "id",
-                  "type": "string"
-                },
-                "Metadata": {
-                  "additionalProperties": {
-                    "type": "string"
-                  },
-                  "backendName": "metadata",
-                  "type": "object"
-                },
-                "MetadataV2": {
-                  "additionalProperties": {
-                    "type": "any"
-                  },
-                  "backendName": "metadataV2",
-                  "type": "object"
-                },
-                "Score": {
-                  "backendName": "score",
-                  "format": "double",
-                  "type": "number"
-                },
-                "SparseValues": {
-                  "backendName": "SparseValues",
+            "description_en": "The matched results",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "match": {
+                "description_en": "An array of matched items",
+                "description_zh": "数据列表",
+                "items": {
+                  "description_en": "A single matched record",
+                  "description_zh": "单条记录",
                   "properties": {
-                    "Indices": {
-                      "backendName": "Indices",
-                      "itemName": "Indice",
-                      "items": {
-                        "format": "int32",
-                        "title_en": "稀疏向量索引值",
-                        "title_zh": "稀疏向量索引值",
-                        "type": "integer"
+                    "Id": {
+                      "description_en": "The unique ID of the vector data",
+                      "description_zh": "向量数据的唯一ID",
+                      "example": "doca-1234",
+                      "type": "string"
+                    },
+                    "Metadata": {
+                      "additionalProperties": {
+                        "description_en": "The value of a metadata key",
+                        "description_zh": "元数据内容",
+                        "example": "{\"title\":\"test title\", \"content\":  \"test content\"}",
+                        "type": "string"
                       },
-                      "title_en": "稀疏向量索引数组",
-                      "title_zh": "稀疏向量索引数组",
-                      "type": "array"
+                      "description_en": "The associated metadata",
+                      "description_zh": "元数据",
+                      "type": "object"
+                    },
+                    "MetadataV2": {
+                      "additionalProperties": {
+                        "description_en": "The SDK deserializes this field's value according to the following rules.\n\nDeserialization rules\n\n| ADBPG type                                     | Java SDK type                                                         | Python SDK type |\n| ---------------------------------------------- | --------------------------------------------------------------------- | --------------- |\n| Integer (integer, bigint)                      | Long                                                                  | int             |\n| Floating-point number (real, double precision) | Double                                                                | float           |\n| Boolean (boolean)                              | Boolean                                                               | bool            |\n| String (text, character varying)               | String                                                                | str             |\n| Array (for example, int[], text[])             | ArrayList<T>, where T is mapped according to the rules in this table. | list            |\n| json                                           | String                                                                | str             |",
+                        "description_zh": "该字段可容纳多种数据类型，由 SDK 按以下规则进行反序列化。\n\n反序列化规则\n\n|  ADBPG数据类型   | Java SDK反序列化类型  | Python SDK反序列化类型\n|  ----  | ----  | ----|\n| 整数(integer, bigint)  | Long | int|\n| 浮点数(real, double precision) | Double | float|\n| 布尔值(boolean)| Boolean | bool|\n| 字符串(text, character varying)| String | str|\n| 数组(如 int[], text[])|ArrayList\\<T>(T 类型按本表规则映射)| list|\n|json|String|String",
+                        "example": "{'array_field': [15.5, 25.5, 35.5], 'float_field': 128.45, 'long_field': 123456789017, 'bool_field': False, 'json_field': '{\"key1\":\"value1\",\"num\":999.0}', 'char_array_field': '[c, h, a, r, s, 5]', 'int_field': 128, 'source': 0, 'double_field': 12350.6789, 'string_field': 'test_string_5'}",
+                        "type": "any"
+                      },
+                      "description_en": "The metadata. This field has the same values as Metadata, but uses a different element type to allow the SDK to deserialize values into their native data types",
+                      "description_zh": "元数据。值与Metadata一致，元素类型区别于Metadata，用于在SDK端透出任意类型",
+                      "type": "object"
+                    },
+                    "Score": {
+                      "description_en": "The similarity score of the data record. The score is based on the algorithm `(l2/ip/cosine)` specified during index creation",
+                      "description_zh": "此条数据的相似度分数，其分数算法和创建索引时指定的算法`(l2/ip/cosine)`相关",
+                      "example": "0.12345",
+                      "format": "double",
+                      "type": "number"
+                    },
+                    "SparseValues": {
+                      "description_en": "The sparse vector data",
+                      "description_zh": "稀疏向量返回体",
+                      "properties": {
+                        "Indices": {
+                          "description_en": "The indices of the sparse vector",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Indice": {
+                              "description_en": "An array of indices for the sparse vector",
+                              "description_zh": "稀疏向量索引数组",
+                              "items": {
+                                "description_en": "A single index value",
+                                "description_zh": "稀疏向量索引值",
+                                "example": "20",
+                                "format": "int32",
+                                "title_en": "",
+                                "title_zh": "稀疏向量索引值",
+                                "type": "integer"
+                              },
+                              "title_en": "",
+                              "title_zh": "稀疏向量索引数组",
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Values": {
+                          "description_en": "The values of the sparse vector",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Value": {
+                              "description_en": "An array of values corresponding to the indices in the sparse vector",
+                              "description_zh": "稀疏向量值数组",
+                              "items": {
+                                "description_en": "A single value from the sparse vector",
+                                "description_zh": "稀疏向量值",
+                                "example": "0.222",
+                                "format": "float",
+                                "title_en": "",
+                                "title_zh": "稀疏向量值",
+                                "type": "number"
+                              },
+                              "title_en": "",
+                              "title_zh": "稀疏向量值数组",
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "稀疏向量返回体",
+                      "type": "object"
                     },
                     "Values": {
-                      "backendName": "Values",
-                      "itemName": "Value",
-                      "items": {
-                        "format": "float",
-                        "title_en": "稀疏向量值",
-                        "title_zh": "稀疏向量值",
-                        "type": "number"
+                      "description_en": "The Vector Data",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "value": {
+                          "description_en": "An array of floating-point numbers representing the dense vector",
+                          "description_zh": "向量数据列表",
+                          "items": {
+                            "description_en": "A value within the dense vector",
+                            "description_zh": "向量数据",
+                            "example": "1.234",
+                            "format": "double",
+                            "type": "number"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "title_en": "稀疏向量值数组",
-                      "title_zh": "稀疏向量值数组",
-                      "type": "array"
+                      "type": "object"
                     }
                   },
-                  "title_en": "稀疏向量返回体",
-                  "title_zh": "稀疏向量返回体",
                   "type": "object"
                 },
-                "Values": {
-                  "backendName": "values",
-                  "itemName": "value",
-                  "items": {
-                    "format": "double",
-                    "type": "number"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "Details about the error, returned if the request fails",
             "description_zh": "请求失败时的详细信息",
             "example": "0.1234",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "ABB39CC3-4488-4857-905D-2E4A051D0521",
             "type": "string"
           },
           "Status": {
-            "backendName": "status",
             "description_en": "The status of the request. Valid values:\n\nsuccess: The request was successful.\n\nfail: The request failed",
             "description_zh": "状态，取值说明：\nsuccess：成功。\nfail：失败",
             "example": "success",
             "type": "string"
           },
           "Total": {
-            "backendName": "total",
             "description_en": "The total number of hits for the search. This parameter is returned only when the Offset parameter in the request is not 0",
             "description_zh": "当请求Offset不为0时才返回，返回值为该检索条件的命中总数",
             "example": "100",

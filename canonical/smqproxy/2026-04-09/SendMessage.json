@@ -1,11 +1,11 @@
 {
-  "camel_example": "",
+  "camel_example": "aliyun smqproxy POST /queues/MyQueue/messages --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"UserProperties\":{\"key1\":\"value1\",\"key2\":\"value2\"},\"DelaySeconds\":0,\"Priority\":2,\"MessageGroupId\":\"group-123\",\"MessageBody\":\"Hello_MNS\"}' --version 2026-04-09 --force",
   "cmd_full_name": "smqproxy send-message",
   "cmd_name": "send-message",
   "deprecated": false,
   "description_en": "Sends a message to a specified queue with support for delay and priority settings",
   "description_zh": "向指定的队列发送一条消息，支持设置延迟和优先级",
-  "kebab_example": "aliyun smqproxy send-message --queue-name MyQueue --message-body Hello_MNS --delay-seconds 60 --priority 1 --region cn-hangzhou",
+  "kebab_example": "aliyun smqproxy send-message --queue-name MyQueue --message-body Hello_MNS --delay-seconds 0 --priority 2 --message-group-id group-123 --user-properties '{\"key1\":\"value1\",\"key2\":\"value2\"}' --region cn-hangzhou",
   "method": "POST",
   "multi_version": false,
   "name": "SendMessage",
@@ -43,20 +43,6 @@
       "type": "string"
     },
     {
-      "example": "0",
-      "help_en": "The delay period after which the message can be consumed. Unit: seconds. Maximum value: 7 days",
-      "help_zh": "消息发送后延迟可被消费的时间，单位：秒。最大 7 天",
-      "location": "body",
-      "name": "delay_seconds",
-      "options": [
-        "--delay-seconds"
-      ],
-      "param_style": "json",
-      "raw_name": "DelaySeconds",
-      "required": false,
-      "type": "int"
-    },
-    {
       "example": "\"Hello MNS\"",
       "help_en": "The message body. We recommend that you Base64-encode the message body in advance to avoid issues with special characters",
       "help_zh": "消息正文。建议事先进行 Base64 编码以避免特殊字符问题",
@@ -71,18 +57,18 @@
       "type": "string"
     },
     {
-      "example": "group-123",
-      "help_en": "The message group ID. Messages within the same group are delivered in order. This parameter is valid only for FIFO queues",
-      "help_zh": "消息分组 ID，同一分组内的消息保证顺序投递。仅 FIFO 队列有效",
+      "example": "0",
+      "help_en": "The delay period after which the message can be consumed. Unit: seconds. Maximum value: 7 days",
+      "help_zh": "消息发送后延迟可被消费的时间，单位：秒。最大 7 天",
       "location": "body",
-      "name": "message_group_id",
+      "name": "delay_seconds",
       "options": [
-        "--message-group-id"
+        "--delay-seconds"
       ],
       "param_style": "json",
-      "raw_name": "MessageGroupId",
+      "raw_name": "DelaySeconds",
       "required": false,
-      "type": "string"
+      "type": "int"
     },
     {
       "example": "2",
@@ -99,6 +85,20 @@
       "type": "int"
     },
     {
+      "example": "group-123",
+      "help_en": "The message group ID. Messages within the same group are delivered in order. This parameter is valid only for FIFO queues",
+      "help_zh": "消息分组 ID，同一分组内的消息保证顺序投递。仅 FIFO 队列有效",
+      "location": "body",
+      "name": "message_group_id",
+      "options": [
+        "--message-group-id"
+      ],
+      "param_style": "json",
+      "raw_name": "MessageGroupId",
+      "required": false,
+      "type": "string"
+    },
+    {
       "example": "{\"key1\":\"value1\", \"key2\":\"value2\"}",
       "help_en": "The user-defined properties",
       "help_zh": "用户自定义属性",
@@ -113,17 +113,6 @@
       "type": "map",
       "value": {
         "fields": [
-          {
-            "help_en": "The BinaryValue",
-            "help_zh": "The BinaryValue",
-            "name": "binary_value",
-            "options": [
-              "--binary-value"
-            ],
-            "raw_name": "BinaryValue",
-            "required": false,
-            "type": "string"
-          },
           {
             "help_en": "The DataType",
             "help_zh": "The DataType",
@@ -145,6 +134,17 @@
             "raw_name": "StringValue",
             "required": false,
             "type": "string"
+          },
+          {
+            "help_en": "The BinaryValue",
+            "help_zh": "The BinaryValue",
+            "name": "binary_value",
+            "options": [
+              "--binary-value"
+            ],
+            "raw_name": "BinaryValue",
+            "required": false,
+            "type": "string"
           }
         ],
         "type": "object"
@@ -159,15 +159,12 @@
       "schema": {
         "properties": {
           "MessageBodyMD5": {
-            "backendName": "MessageBodyMD5",
             "type": "string"
           },
           "MessageId": {
-            "backendName": "MessageId",
             "type": "string"
           },
           "ReceiptHandle": {
-            "backendName": "ReceiptHandle",
             "type": "string"
           }
         },

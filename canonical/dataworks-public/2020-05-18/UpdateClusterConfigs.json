@@ -1,10 +1,11 @@
 {
+  "backend_timeout_ms": 58000,
   "cmd_full_name": "dataworks-public update-cluster-configs",
   "cmd_name": "update-cluster-configs",
   "deprecated": false,
   "description_en": "Updates the submodule configurations of a cluster in a workspace. Currently, only Spark parameters are supported",
   "description_zh": "更新集群在某个工作空间下分模块的配置信息，目前支持更新 SPARK 参数",
-  "kebab_example": "aliyun dataworks-public update-cluster-configs --cluster-id 12345 --project-id 5678 --config-type SPARK_CONF --config-values example-string --api-version 2020-05-18 --region cn-hangzhou",
+  "kebab_example": "aliyun dataworks-public update-cluster-configs --cluster-id 12345 --project-id 5678 --config-type SPARK_CONF --config-values ConfigValue={\"spark.driver.memory\":\"1g\"} ModuleName=ide EnableOverwrite=false --api-version 2020-05-18 --region cn-hangzhou",
   "method": "POST",
   "multi_version": true,
   "name": "UpdateClusterConfigs",
@@ -63,6 +64,18 @@
       "element": {
         "fields": [
           {
+            "example": "ide",
+            "help_en": "The module in which the cluster is configured. Valid values:\n\n\n\n\nide: Data Studio.\nda: DataAnalysis.\nscheduler.auto: Operation Center - auto triggered instances.\nscheduler.backfill: Operation Center - data backfill instances.\nscheduler.test: Operation Center - test instances.\nscheduler.manual: Operation Center - manually triggered instances",
+            "help_zh": "配置在哪个模块生效，支持的模块如下：\nscheduler.test：运维中心 - 测试实例。\nscheduler.manual：运维中心 - 手动实例。\nide：DataStudio（数据开发）。\nscheduler.backfill：运维中心 - 补数据实例。\nda：数据分析。\nscheduler.auto：运维中心 - 周期实例",
+            "name": "module_name",
+            "options": [
+              "--module-name"
+            ],
+            "raw_name": "ModuleName",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "{\"spark.driver.memory\":\"1g\"}",
             "help_en": "The configuration value",
             "help_zh": "配置值",
@@ -76,7 +89,7 @@
           },
           {
             "example": "false",
-            "help_en": "Specifies whether to overwrite the advanced settings of nodes in DataStudio. Valid values:\n\ntrue\nfalse",
+            "help_en": "Specifies whether to overwrite the advanced settings of nodes in Data Studio. Valid values:\n\n\n\n\ntrue: overwrite.\nfalse: do not overwrite",
             "help_zh": "是否覆盖数据开发中节点的高级设置：\ntrue（覆盖）\nfalse（不覆盖）",
             "name": "enable_overwrite",
             "options": [
@@ -85,23 +98,11 @@
             "raw_name": "EnableOverwrite",
             "required": false,
             "type": "bool"
-          },
-          {
-            "example": "ide",
-            "help_en": "The module in which the cluster is configured. Valid values:\n\nide: DataStudio.\nda: DataAnalysis.\nscheduler.auto: Operation Center - auto triggered instances.\nscheduler.backfill: Operation Center - data backfill instances.\nscheduler.test: Operation Center - test instances.\nscheduler.manual: Operation Center - manually triggered instances",
-            "help_zh": "配置在哪个模块生效，支持的模块如下：\nscheduler.test：运维中心 - 测试实例。\nscheduler.manual：运维中心 - 手动实例。\nide：DataStudio（数据开发）。\nscheduler.backfill：运维中心 - 补数据实例。\nda：数据分析。\nscheduler.auto：运维中心 - 周期实例",
-            "name": "module_name",
-            "options": [
-              "--module-name"
-            ],
-            "raw_name": "ModuleName",
-            "required": false,
-            "type": "string"
           }
         ],
         "type": "object"
       },
-      "help_en": "The configuration information of the cluster submodule",
+      "help_en": "The list of configuration information of the cluster submodule",
       "help_zh": "集群分模块的配置信息列表",
       "location": "formData",
       "name": "config_values",
@@ -124,28 +125,25 @@
         "description_zh": "返回结构",
         "properties": {
           "Data": {
-            "backendName": "data",
-            "description_en": "Indicates whether the update was successful. Valid values:\n\ntrue\n\nfalse",
+            "description_en": "Indicates whether the update was successful. Valid values:\n\n\n\n\ntrue: successful\nfalse: failed",
             "description_zh": "是否修改成功：\ntrue（成功）\nfalse（失败）",
+            "enumValueTitles": {},
             "example": "true",
             "type": "boolean"
           },
           "ErrorCode": {
-            "backendName": "code",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "101011005",
             "type": "string"
           },
           "ErrorMessage": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "Invalid.Cluster.ClusterNotFound",
             "type": "string"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatus",
             "description_en": "The HTTP status code",
             "description_zh": "HTTP 状态码",
             "example": "200",
@@ -153,21 +151,20 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request. It is used to locate logs and troubleshoot problems",
             "description_zh": "请求的ID。用于定位日志，排查问题",
             "example": "0000-ABCD-E****",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue\n\nfalse",
+            "description_en": "Indicates whether the request was successful. Valid values:\n\n\n\n\ntrue: successful\nfalse: failed",
             "description_zh": "请求是否成功：\ntrue（成功）\nfalse（失败）",
+            "enumValueTitles": {},
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "OpenApiMetaResultModel",
+        "title_en": "",
         "title_zh": "OpenApiMetaResultModel",
         "type": "object"
       }

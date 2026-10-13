@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun btripopen POST /sub_corps/v1/users --region cn-hangzhou --header \"Content-Type=application/x-www-form-urlencoded\" --body user_id=123&user_name=测试&sub_corp_id_list=[{leave_status=0,position_level=10,depart_ids=[001],sub_corp_id=btrip123,manager_user_id=123,email=btrip@alibaba-inc.com}] --version 2022-05-20 --force",
   "cmd_full_name": "btripopen group-user-save",
   "cmd_name": "group-user-save",
@@ -89,6 +90,18 @@
       "element": {
         "fields": [
           {
+            "example": "btrip123",
+            "help_en": "The enterprise ID. This can be a parent or subsidiary enterprise ID",
+            "help_zh": "企业id（主、子企业都可）",
+            "name": "sub_corp_id",
+            "options": [
+              "--sub-corp-id"
+            ],
+            "raw_name": "sub_corp_id",
+            "required": true,
+            "type": "string"
+          },
+          {
             "element": {
               "type": "string"
             },
@@ -103,14 +116,14 @@
             "type": "array"
           },
           {
-            "example": "btrip@alibaba-inc.com",
-            "help_en": "The email address",
-            "help_zh": "邮箱",
-            "name": "email",
+            "example": "123",
+            "help_en": "The ID of the direct manager",
+            "help_zh": "直属主管id",
+            "name": "manager_user_id",
             "options": [
-              "--email"
+              "--manager-user-id"
             ],
-            "raw_name": "email",
+            "raw_name": "manager_user_id",
             "required": false,
             "type": "string"
           },
@@ -127,18 +140,6 @@
             "type": "int"
           },
           {
-            "example": "123",
-            "help_en": "The ID of the direct manager",
-            "help_zh": "直属主管id",
-            "name": "manager_user_id",
-            "options": [
-              "--manager-user-id"
-            ],
-            "raw_name": "manager_user_id",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "10",
             "help_en": "The position level",
             "help_zh": "职级",
@@ -151,15 +152,15 @@
             "type": "string"
           },
           {
-            "example": "btrip123",
-            "help_en": "The enterprise ID. This can be a parent or subsidiary enterprise ID",
-            "help_zh": "企业id（主、子企业都可）",
-            "name": "sub_corp_id",
+            "example": "btrip@alibaba-inc.com",
+            "help_en": "The email address",
+            "help_zh": "邮箱",
+            "name": "email",
             "options": [
-              "--sub-corp-id"
+              "--email"
             ],
-            "raw_name": "sub_corp_id",
-            "required": true,
+            "raw_name": "email",
+            "required": false,
             "type": "string"
           }
         ],
@@ -204,6 +205,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "F",
+        "M"
+      ],
       "example": "M",
       "help_en": "The gender. Valid values:\nF: female.\nM: male",
       "help_zh": "性别（F/M）",
@@ -220,42 +225,18 @@
       "element": {
         "fields": [
           {
-            "example": "2099-03-12\n",
-            "help_en": "The certificate expiration date in the format yyyy-MM-dd",
-            "help_zh": "证件有效期 yyyy-MM-dd",
-            "name": "cert_expired_time",
-            "options": [
-              "--cert-expired-time"
+            "enum": [
+              "0",
+              "1",
+              "3",
+              "4",
+              "5",
+              "6",
+              "8",
+              "12",
+              "17",
+              "18"
             ],
-            "raw_name": "cert_expired_time",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "CN",
-            "help_en": "The two-letter code of the certificate issuing country",
-            "help_zh": "证件签发国二字码",
-            "name": "cert_nation",
-            "options": [
-              "--cert-nation"
-            ],
-            "raw_name": "cert_nation",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "123456",
-            "help_en": "The certificate number",
-            "help_zh": "证件号码",
-            "name": "cert_no",
-            "options": [
-              "--cert-no"
-            ],
-            "raw_name": "cert_no",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "0",
             "help_en": "The certificate type",
             "help_zh": "证件类型",
@@ -276,6 +257,42 @@
               "--nationality"
             ],
             "raw_name": "nationality",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "123456",
+            "help_en": "The certificate number",
+            "help_zh": "证件号码",
+            "name": "cert_no",
+            "options": [
+              "--cert-no"
+            ],
+            "raw_name": "cert_no",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "CN",
+            "help_en": "The two-letter code of the certificate issuing country",
+            "help_zh": "证件签发国二字码",
+            "name": "cert_nation",
+            "options": [
+              "--cert-nation"
+            ],
+            "raw_name": "cert_nation",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "2099-03-12\n",
+            "help_en": "The certificate expiration date in the format yyyy-MM-dd",
+            "help_zh": "证件有效期 yyyy-MM-dd",
+            "name": "cert_expired_time",
+            "options": [
+              "--cert-expired-time"
+            ],
+            "raw_name": "cert_expired_time",
             "required": false,
             "type": "string"
           }
@@ -318,42 +335,36 @@
         "description_zh": "BtmsResult<Void>",
         "properties": {
           "code": {
-            "backendName": "resultCode",
             "description_en": "The result code",
             "description_zh": "结果代码",
             "example": "0",
             "type": "string"
           },
           "message": {
-            "backendName": "resultMsg",
             "description_en": "The remarks about the result, such as a description of the result",
             "description_zh": "备注，结果的备注，如对结果的说明",
             "example": "成功",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The unique ID of the request",
             "description_zh": "唯一标识一次请求",
             "example": "C61ECFF6-606B-5F66-B81D-D77369043A5F",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful. Set by the server. The value is false when an exception occurs or the result is null",
             "description_zh": "成功标识，由服务端设置，发生异常时为false。结果为null设置为false",
             "example": "true",
             "type": "boolean"
           },
           "traceId": {
-            "backendName": "traceId",
             "description_en": "The log trace ID",
             "description_zh": "日志轨迹ID",
             "example": "21041ce316577904808056433edbb2",
             "type": "string"
           }
         },
-        "title_en": "BtmsResult<Void>",
         "title_zh": "BtmsResult<Void>",
         "type": "object"
       }

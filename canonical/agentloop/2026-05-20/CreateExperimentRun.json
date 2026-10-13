@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun agentloop POST /api/v1/experimentruns/al-playground-cn-hongkong/execute --region cn-hangzhou --clientToken 'a1b2c3d4-1234-5678-90ab-cdef12345678' --header \"Content-Type=application/json\" --body {\"experimentPlanId\":\"exp-plan-0242d983f5d340fd8479cf2c19eb279e\"} --version 2026-05-20 --force",
+  "backend_timeout_ms": 3000,
+  "camel_example": "aliyun agentloop POST /api/v1/experimentruns/al-playground-cn-hongkong/execute --region cn-hangzhou --clientToken 'a1b2c3d4-1234-5678-90ab-cdef12345678' --header \"Content-Type=application/json\" --body '{\"completedAt\":1784721811392,\"completedTasks\":0,\"executedAt\":1784721775379,\"experimentPlanId\":\"exp-plan-0242d983f5d340fd8479cf2c19eb279e\",\"recordName\":\"arms_agent_experiment_2026/07/22_20:02:55\",\"offlineExperiments\":[{\"name\":\"baseline\",\"label\":\"A\",\"desc\":\"基线实验\"}],\"failedTasks\":0,\"totalTasks\":40,\"status\":\"pending\"}' --version 2026-05-20 --force",
   "cmd_full_name": "agentloop create-experiment-run",
   "cmd_name": "create-experiment-run",
   "deprecated": false,
   "description_en": "Executes an experiment",
   "description_zh": "执行实验",
-  "kebab_example": "aliyun agentloop create-experiment-run --agent-space al-playground-cn-hongkong --client-token a1b2c3d4-1234-5678-90ab-cdef12345678 --experiment-plan-id exp-plan-0242d983f5d340fd8479cf2c19eb279e --region cn-hangzhou",
+  "kebab_example": "aliyun agentloop create-experiment-run --agent-space al-playground-cn-hongkong --client-token a1b2c3d4-1234-5678-90ab-cdef12345678 --completed-at 1784721811392 --completed-tasks 0 --executed-at 1784721775379 --experiment-plan-id exp-plan-0242d983f5d340fd8479cf2c19eb279e --failed-tasks 0 --offline-experiments name=baseline label=A desc=基线实验 --record-name arms_agent_experiment_2026/07/22_20:02:55 --status pending --total-tasks 40 --region cn-hangzhou",
   "method": "POST",
   "multi_version": false,
   "name": "CreateExperimentRun",
@@ -61,7 +62,7 @@
     },
     {
       "example": "1784721811392",
-      "help_en": "The completion time, in millisecond-level UNIX timestamp",
+      "help_en": "The completion time. The value is a millisecond-level UNIX timestamp",
       "help_zh": "完成时间，毫秒级 Unix 时间戳",
       "location": "body",
       "name": "completed_at",
@@ -75,7 +76,7 @@
     },
     {
       "example": "0",
-      "help_en": "The number of completed tasks. If not specified, the default value is 0",
+      "help_en": "The number of completed tasks. Default value: 0",
       "help_zh": "已完成任务数。不传时默认 0",
       "location": "body",
       "name": "completed_tasks",
@@ -89,7 +90,7 @@
     },
     {
       "example": "1784721775379",
-      "help_en": "The execution time, in millisecond-level UNIX timestamp",
+      "help_en": "The execution time. The value is a millisecond-level UNIX timestamp",
       "help_zh": "执行时间，毫秒级 Unix 时间戳",
       "location": "body",
       "name": "executed_at",
@@ -117,7 +118,7 @@
     },
     {
       "example": "0",
-      "help_en": "The number of failed tasks. If not specified, the default value is 0",
+      "help_en": "The number of failed tasks. Default value: 0",
       "help_zh": "失败任务数。不传时默认 0",
       "location": "body",
       "name": "failed_tasks",
@@ -133,18 +134,8 @@
       "element": {
         "fields": [
           {
-            "help_en": "实验描述",
-            "help_zh": "实验描述",
-            "name": "desc",
-            "options": [
-              "--desc"
-            ],
-            "raw_name": "desc",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "help_en": "实验标签",
+            "example": "A",
+            "help_en": "The experiment label",
             "help_zh": "实验标签",
             "name": "label",
             "options": [
@@ -155,7 +146,8 @@
             "type": "string"
           },
           {
-            "help_en": "实验名称",
+            "example": "baseline",
+            "help_en": "The experiment name",
             "help_zh": "实验名称",
             "name": "name",
             "options": [
@@ -164,12 +156,24 @@
             "raw_name": "name",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "基线实验",
+            "help_en": "The experiment description",
+            "help_zh": "实验描述",
+            "name": "desc",
+            "options": [
+              "--desc"
+            ],
+            "raw_name": "desc",
+            "required": false,
+            "type": "string"
           }
         ],
         "type": "object"
       },
       "example": "[{\"label\": \"experimentA\", \"name\": \"experimentA\"}]",
-      "help_en": "The list of offline experiment configurations. Required when the plan type is offline. The number of items ranges from 1 to 5",
+      "help_en": "The list of offline experiment configurations. This parameter is required when the plan type is offline. You can specify 1 to 5 configurations",
       "help_zh": "离线实验配置列表。计划类型为 offline 时必填，数量 1-5",
       "location": "body",
       "name": "offline_experiments",
@@ -183,7 +187,7 @@
     },
     {
       "example": "arms_agent_experiment 2026/07/22 20:02:55",
-      "help_en": "The experiment record name. If not specified, the default value is the plan name plus a timestamp",
+      "help_en": "The experiment record name. If not specified, the default value is the plan name followed by a timestamp",
       "help_zh": "实验记录名称。不传时默认使用「计划名 + 时间戳」",
       "location": "body",
       "name": "record_name",
@@ -196,8 +200,14 @@
       "type": "string"
     },
     {
+      "enum": [
+        "running",
+        "pending",
+        "completed",
+        "failed"
+      ],
       "example": "pending",
-      "help_en": "The initial status. If not specified, the default value is `pending`",
+      "help_en": "The initial status. Default value: `pending`",
       "help_zh": "初始状态。不传时默认为 `pending`",
       "location": "body",
       "name": "status",
@@ -237,15 +247,15 @@
             "description_en": "The message",
             "description_zh": "提示信息",
             "example": "实验已创建，开始执行",
-            "title_en": "提示信息",
+            "title_en": "",
             "title_zh": "提示信息",
             "type": "string"
           },
           "recordId": {
-            "description_en": "The experiment record ID. For online experiments, the format is typically exp-run-{uuid32}. For offline experiments, the format may also be a standard UUID",
+            "description_en": "The experiment record ID. For online experiments, the ID is typically in the format exp-run-{uuid32}. For offline experiments, the ID may also be a standard UUID",
             "description_zh": "实验记录 ID。在线实验多为 exp-run-{uuid32}；离线实验也可能为标准 UUID",
             "example": "exp-run-f6d419b0ed3d43a7b585948a55efc07b",
-            "title_en": "实验记录ID",
+            "title_en": "",
             "title_zh": "实验记录ID",
             "type": "string"
           },
@@ -253,20 +263,26 @@
             "description_en": "The request ID",
             "description_zh": "请求 ID",
             "example": "019F89B5-1B07-3BB3-A32E-F5B007029E9C",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "status": {
-            "description_en": "The experiment record status. After creation, the status is typically pending",
+            "description_en": "The experiment record status. The value is typically pending after creation",
             "description_zh": "实验记录状态。创建后通常为 pending",
+            "enumValueTitles": {
+              "completed": "completed",
+              "failed": "failed",
+              "pending": "pending",
+              "running": "running"
+            },
             "example": "pending",
-            "title_en": "状态",
+            "title_en": "",
             "title_zh": "状态",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

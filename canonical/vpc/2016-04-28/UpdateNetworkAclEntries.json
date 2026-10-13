@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun vpc UpdateNetworkAclEntries --region cn-hangzhou --NetworkAclId 'nacl-bp1lhl0taikrzxsc0000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "vpc update-network-acl-entries",
   "cmd_name": "update-network-acl-entries",
@@ -24,14 +25,14 @@
       "element": {
         "fields": [
           {
-            "example": "This is IngressAclEntries.",
-            "help_en": "The description of the inbound rule.\n\nThe description must be 1 to 256 characters in length and cannot start with `http://` or `https://`",
-            "help_zh": "入方向规则的描述信息。\n\n描述长度为1～256个字符，不能以`http://`或`https://`开头",
-            "name": "description",
+            "example": "nae-2zepn32de59j8m4****",
+            "help_en": "The ID of the inbound rule entry.\n\nValid values of N: 0 to 99. You can update up to 100 inbound rule entries",
+            "help_zh": "入方向规则条目的ID。\n\nN的取值为0~99，即最多可以更新100条入方向规则的信息",
+            "name": "network_acl_entry_id",
             "options": [
-              "--description"
+              "--network-acl-entry-id"
             ],
-            "raw_name": "Description",
+            "raw_name": "NetworkAclEntryId",
             "required": false,
             "type": "string"
           },
@@ -48,30 +49,6 @@
             "type": "string"
           },
           {
-            "example": "IPv4",
-            "help_en": "The IP version. Valid values:\nIPv4\nIPv6",
-            "help_zh": "IP版本：\nIPv4\nIPv6",
-            "name": "ip_version",
-            "options": [
-              "--ip-version"
-            ],
-            "raw_name": "IpVersion",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "nae-2zepn32de59j8m4****",
-            "help_en": "The ID of the inbound rule entry.\n\nValid values of N: 0 to 99. You can update up to 100 inbound rule entries",
-            "help_zh": "入方向规则条目的ID。\n\nN的取值为0~99，即最多可以更新100条入方向规则的信息",
-            "name": "network_acl_entry_id",
-            "options": [
-              "--network-acl-entry-id"
-            ],
-            "raw_name": "NetworkAclEntryId",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "acl-3",
             "help_en": "The name of the inbound rule entries.\n\nThe name must be 1 to 128 characters in length and cannot start with `http://` or `https://`",
             "help_zh": "入方向规则条目的名称。\n\n名称长度为1～128个字符，不能以`http://`或`https://`开头",
@@ -84,6 +61,10 @@
             "type": "string"
           },
           {
+            "enum": [
+              "drop",
+              "accept"
+            ],
             "example": "accept",
             "help_en": "The authorization policy. Valid values:\n\naccept: allows access.\n\ndrop: denies access",
             "help_zh": "授权策略。取值：\n\naccept：允许。\n\ndrop：拒绝",
@@ -96,18 +77,54 @@
             "type": "string"
           },
           {
-            "example": "-1/-1",
-            "help_en": "The source port range of the inbound rule.\n\nIf Protocol (Protocol Type) is set to all, icmp, or gre, the port range is -1/-1, which indicates all ports.\nIf Protocol (Protocol Type) is set to tcp or udp, the port range is 1 to 65535. The format is 1/200 or 80/80, which indicates port 1 to port 200 or port 80",
-            "help_zh": "入方向规则的源端口范围。\n\n当入方向规则的Protocol（协议类型）为all、icmp或gre时，端口范围为-1/-1，表示不限制端口。\n当入方向规则的Protocol（协议类型）为tcp或udp时，端口范围为1~65535，格式为1/200或80/80，表示端口1到端口200或端口80",
-            "name": "port",
+            "example": "10.0.0.0/24\npl-xxxxxx",
+            "help_en": "The source CIDR block. You can also specify a prefix list",
+            "help_zh": "源地址网段。也支持传入前缀列表",
+            "name": "source_cidr_ip",
             "options": [
-              "--port"
+              "--source-cidr-ip"
             ],
-            "raw_name": "Port",
+            "raw_name": "SourceCidrIp",
             "required": false,
             "type": "string"
           },
           {
+            "enum": [
+              "IPv6",
+              "IPv4"
+            ],
+            "example": "IPv4",
+            "help_en": "The IP version. Valid values:\nIPv4\nIPv6",
+            "help_zh": "IP版本：\nIPv4\nIPv6",
+            "name": "ip_version",
+            "options": [
+              "--ip-version"
+            ],
+            "raw_name": "IpVersion",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "This is IngressAclEntries.",
+            "help_en": "The description of the inbound rule.\n\nThe description must be 1 to 256 characters in length and cannot start with `http://` or `https://`",
+            "help_zh": "入方向规则的描述信息。\n\n描述长度为1～256个字符，不能以`http://`或`https://`开头",
+            "name": "description",
+            "options": [
+              "--description"
+            ],
+            "raw_name": "Description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "enum": [
+              "all",
+              "tcp",
+              "udp",
+              "gre",
+              "icmp",
+              "icmpv6"
+            ],
             "example": "all",
             "help_en": "The protocol type. Valid values:\n\nicmp: Internet Control Message Protocol.\n\ngre: Generic Routing Encapsulation.\n\ntcp: Transmission Control Protocol.\n\nudp: User Datagram Protocol.\n\nall: all protocols.\n\nicmpv6: Internet Control Message Protocol for IPv6",
             "help_zh": "协议类型。取值：\n\nicmp：网络控制报文协议。\n\ngre：通用路由封装协议。\n\ntcp：传输控制协议。\n\nudp：用户数据报协议。\n\nall：支持所有协议。\n\nicmpv6: ipv6网络控制报文协议",
@@ -120,14 +137,14 @@
             "type": "string"
           },
           {
-            "example": "10.0.0.0/24\npl-xxxxxx",
-            "help_en": "The source CIDR block. You can also specify a prefix list",
-            "help_zh": "源地址网段。也支持传入前缀列表",
-            "name": "source_cidr_ip",
+            "example": "-1/-1",
+            "help_en": "The source port range of the inbound rule.\n\nIf Protocol (Protocol Type) is set to all, icmp, or gre, the port range is -1/-1, which indicates all ports.\nIf Protocol (Protocol Type) is set to tcp or udp, the port range is 1 to 65535. The format is 1/200 or 80/80, which indicates port 1 to port 200 or port 80",
+            "help_zh": "入方向规则的源端口范围。\n\n当入方向规则的Protocol（协议类型）为all、icmp或gre时，端口范围为-1/-1，表示不限制端口。\n当入方向规则的Protocol（协议类型）为tcp或udp时，端口范围为1~65535，格式为1/200或80/80，表示端口1到端口200或端口80",
+            "name": "port",
             "options": [
-              "--source-cidr-ip"
+              "--port"
             ],
-            "raw_name": "SourceCidrIp",
+            "raw_name": "Port",
             "required": false,
             "type": "string"
           }
@@ -150,26 +167,14 @@
       "element": {
         "fields": [
           {
-            "example": "This is EgressAclEntries.",
-            "help_en": "The description of the outbound rule.\n\nThe description must be 1 to 256 characters in length and cannot start with `http://` or `https://`",
-            "help_zh": "出方向规则的描述信息。\n\n描述长度为1～256个字符，不能以`http://`或`https://`开头",
-            "name": "description",
+            "example": "nae-2zecs97e0brcge46****",
+            "help_en": "The ID of the outbound rule entry.\n\nValid values of N: 0 to 99. You can update up to 100 outbound rule entries",
+            "help_zh": "出方向规则条目的ID。\n\nN的取值为0~99，即最多可以更新100条出方向规则的信息",
+            "name": "network_acl_entry_id",
             "options": [
-              "--description"
+              "--network-acl-entry-id"
             ],
-            "raw_name": "Description",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "10.0.0.0/24\npl-xxxxxx",
-            "help_en": "The destination CIDR block. You can also specify a prefix list",
-            "help_zh": "目标地址网段。也支持传入前缀列表",
-            "name": "destination_cidr_ip",
-            "options": [
-              "--destination-cidr-ip"
-            ],
-            "raw_name": "DestinationCidrIp",
+            "raw_name": "NetworkAclEntryId",
             "required": false,
             "type": "string"
           },
@@ -186,30 +191,6 @@
             "type": "string"
           },
           {
-            "example": "IPv4",
-            "help_en": "The IP version. Valid values:\n\nIPv4\nIPv6",
-            "help_zh": "IP版本：\n\nIPv4\nIPv6",
-            "name": "ip_version",
-            "options": [
-              "--ip-version"
-            ],
-            "raw_name": "IpVersion",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "nae-2zecs97e0brcge46****",
-            "help_en": "The ID of the outbound rule entry.\n\nValid values of N: 0 to 99. You can update up to 100 outbound rule entries",
-            "help_zh": "出方向规则条目的ID。\n\nN的取值为0~99，即最多可以更新100条出方向规则的信息",
-            "name": "network_acl_entry_id",
-            "options": [
-              "--network-acl-entry-id"
-            ],
-            "raw_name": "NetworkAclEntryId",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "acl-2",
             "help_en": "The name of the outbound rule entries.\n\nThe name must be 1 to 128 characters in length and cannot start with `http://` or `https://`",
             "help_zh": "出方向规则条目的名称。\n\n名称长度为1～128个字符，不能以`http://`或`https://`开头",
@@ -222,6 +203,10 @@
             "type": "string"
           },
           {
+            "enum": [
+              "drop",
+              "accept"
+            ],
             "example": "accept",
             "help_en": "The authorization policy. Valid values:\n\naccept: allows access.\n\ndrop: denies access",
             "help_zh": "授权策略。取值：\n\naccept：允许。\n\ndrop：拒绝",
@@ -234,18 +219,26 @@
             "type": "string"
           },
           {
-            "example": "-1/-1",
-            "help_en": "The destination port range of the outbound rule.\n\nIf Protocol (Protocol Type) is set to all, icmp, or gre, the port range is -1/-1, which indicates all ports.\nIf Protocol (Protocol Type) is set to tcp or udp, the port range is 1 to 65535. The format is 1/200 or 80/80, which indicates port 1 to port 200 or port 80",
-            "help_zh": "出方向规则的目的端口范围。\n\n当出方向规则的Protocol（协议类型）为all、icmp或gre时，端口范围为-1/-1，表示不限制端口。\n当出方向规则的Protocol（协议类型）为tcp或udp时，端口范围为1~65535，格式为1/200或80/80，表示端口1到端口200或端口80",
-            "name": "port",
+            "example": "This is EgressAclEntries.",
+            "help_en": "The description of the outbound rule.\n\nThe description must be 1 to 256 characters in length and cannot start with `http://` or `https://`",
+            "help_zh": "出方向规则的描述信息。\n\n描述长度为1～256个字符，不能以`http://`或`https://`开头",
+            "name": "description",
             "options": [
-              "--port"
+              "--description"
             ],
-            "raw_name": "Port",
+            "raw_name": "Description",
             "required": false,
             "type": "string"
           },
           {
+            "enum": [
+              "all",
+              "tcp",
+              "udp",
+              "gre",
+              "icmp",
+              "icmpv6"
+            ],
             "example": "all",
             "help_en": "The protocol type. Valid values:\n\nicmp: Internet Control Message Protocol.\n\ngre: Generic Routing Encapsulation.\n\ntcp: Transmission Control Protocol.\n\nudp: User Datagram Protocol.\n\nall: all protocols.\n\nicmpv6: Internet Control Message Protocol for IPv6",
             "help_zh": "协议类型。取值：\n\nicmp：网络控制报文协议。\n\ngre：通用路由封装协议。\n\ntcp：传输控制协议。\n\nudp：用户数据报协议。\n\nall：支持所有协议。\n\nicmpv6：ipv6网络控制报文协议",
@@ -254,6 +247,46 @@
               "--protocol"
             ],
             "raw_name": "Protocol",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "10.0.0.0/24\npl-xxxxxx",
+            "help_en": "The destination CIDR block. You can also specify a prefix list",
+            "help_zh": "目标地址网段。也支持传入前缀列表",
+            "name": "destination_cidr_ip",
+            "options": [
+              "--destination-cidr-ip"
+            ],
+            "raw_name": "DestinationCidrIp",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "enum": [
+              "IPv6",
+              "IPv4"
+            ],
+            "example": "IPv4",
+            "help_en": "The IP version. Valid values:\n\nIPv4\nIPv6",
+            "help_zh": "IP版本：\n\nIPv4\nIPv6",
+            "name": "ip_version",
+            "options": [
+              "--ip-version"
+            ],
+            "raw_name": "IpVersion",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "-1/-1",
+            "help_en": "The destination port range of the outbound rule.\n\nIf Protocol (Protocol Type) is set to all, icmp, or gre, the port range is -1/-1, which indicates all ports.\nIf Protocol (Protocol Type) is set to tcp or udp, the port range is 1 to 65535. The format is 1/200 or 80/80, which indicates port 1 to port 200 or port 80",
+            "help_zh": "出方向规则的目的端口范围。\n\n当出方向规则的Protocol（协议类型）为all、icmp或gre时，端口范围为-1/-1，表示不限制端口。\n当出方向规则的Protocol（协议类型）为tcp或udp时，端口范围为1~65535，格式为1/200或80/80，表示端口1到端口200或端口80",
+            "name": "port",
+            "options": [
+              "--port"
+            ],
+            "raw_name": "Port",
             "required": false,
             "type": "string"
           }
@@ -359,14 +392,14 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1170A5A0-E760-4331-9133-A7D38D973215",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

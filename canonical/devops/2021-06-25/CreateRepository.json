@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun devops POST /repository/create --region cn-hangzhou --organizationId 60de7a6852743a5162b5f957 --header \"Content-Type=application/json\" --body '{\"initStandardService\":true,\"importRepoType\":\"GIT\",\"readmeType\":\"USER_GUIDE\",\"localImportUrl\":\"example-string\",\"importToken\":\"xxxxx\",\"avatarUrl\":\"https://tcs-devops.aliyuncs.com/thumbnail/112afcb7a6a35c3f67f1bea827c4/w/100/h/100\",\"description\":\"测试内容\",\"gitignoreType\":\"Java\",\"path\":\"Demo库（与name保持同层级，name与path的值可以不同，若带上了父路径，那么需要设置createParentPath字段为true，且父路径前面不加斜杠，如_parentPath/demo）\",\"namespaceId\":2022,\"visibilityLevel\":0,\"name\":\"Demo库\",\"importTokenEncrypted\":\"text\",\"importUrl\":\"https://github.com/a/b.git\",\"isCryptoEnabled\":false,\"importAccount\":\"codeup-test\",\"importDemoProject\":true}'",
   "cmd_full_name": "devops create-repository",
   "cmd_name": "create-repository",
@@ -94,18 +95,46 @@
       "type": "string"
     },
     {
-      "example": "https://tcs-devops.aliyuncs.com/thumbnail/112afcb7a6a35c3f67f1bea827c4/w/100/h/100",
-      "help_en": "URL of the repository profile picture",
-      "help_zh": "代码库头像地址",
+      "example": "Demo库",
+      "help_en": "Name of the repository",
+      "help_zh": "代码库名称",
       "location": "body",
-      "name": "avatar_url",
+      "name": "name",
       "options": [
-        "--avatar-url"
+        "--name"
       ],
       "param_style": "json",
-      "raw_name": "avatarUrl",
+      "raw_name": "name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "Demo库（与name保持同层级，name与path的值可以不同，若带上了父路径，那么需要设置createParentPath字段为true，且父路径前面不加斜杠，如 parentPath/demo）",
+      "help_en": "Path of the repository",
+      "help_zh": "代码库路径",
+      "location": "body",
+      "name": "path",
+      "options": [
+        "--path"
+      ],
+      "param_style": "json",
+      "raw_name": "path",
       "required": false,
       "type": "string"
+    },
+    {
+      "example": "2022（需要保证当前用户在父路径下有创建代码库的权限；若需要创建父路径，那么namespaceId需要设置为企业的空间ID）",
+      "help_en": "ID of the parent path of the repository",
+      "help_zh": "代码库父路径id",
+      "location": "body",
+      "name": "namespace_id",
+      "options": [
+        "--namespace-id"
+      ],
+      "param_style": "json",
+      "raw_name": "namespaceId",
+      "required": false,
+      "type": "int"
     },
     {
       "example": "测试内容",
@@ -122,16 +151,30 @@
       "type": "string"
     },
     {
-      "example": "Java",
-      "help_en": "Type of gitignore template",
-      "help_zh": "gitignore模板类型",
+      "example": "0",
+      "help_en": "Visibility level of the code repository  \n0 – private, visible only to repository members  \n10 – internal to the enterprise, visible to enterprise members",
+      "help_zh": "代码仓库可见性\n0 - 私有，仅代码库成员可见\n10 - 企业内公开，企业成员可见",
       "location": "body",
-      "name": "gitignore_type",
+      "name": "visibility_level",
       "options": [
-        "--gitignore-type"
+        "--visibility-level"
       ],
       "param_style": "json",
-      "raw_name": "gitignoreType",
+      "raw_name": "visibilityLevel",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "https://github.com/a/b.git",
+      "help_en": "URL of the repository to be imported (HTTP protocol), such as a GitHub repository URL",
+      "help_zh": "待导入代码库地址（http协议），例如github平台上的代码库地址",
+      "location": "body",
+      "name": "import_url",
+      "options": [
+        "--import-url"
+      ],
+      "param_style": "json",
+      "raw_name": "importUrl",
       "required": false,
       "type": "string"
     },
@@ -146,34 +189,6 @@
       ],
       "param_style": "json",
       "raw_name": "importAccount",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "true",
-      "help_en": "Whether to import a Sample project  \nValid values: true / false",
-      "help_zh": "是否导入示例项目\n可选值：true / false",
-      "location": "body",
-      "name": "import_demo_project",
-      "options": [
-        "--import-demo-project"
-      ],
-      "param_style": "json",
-      "raw_name": "importDemoProject",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "example": "GIT",
-      "help_en": "Type of repository to import:  \nGIT – Git repository  \nSVN – SVN repository",
-      "help_zh": "导入代码库类型\nGIT - Git库\nSVN - SVN库",
-      "location": "body",
-      "name": "import_repo_type",
-      "options": [
-        "--import-repo-type"
-      ],
-      "param_style": "json",
-      "raw_name": "importRepoType",
       "required": false,
       "type": "string"
     },
@@ -206,16 +221,62 @@
       "type": "string"
     },
     {
-      "example": "https://github.com/a/b.git",
-      "help_en": "URL of the repository to be imported (HTTP protocol), such as a GitHub repository URL",
-      "help_zh": "待导入代码库地址（http协议），例如github平台上的代码库地址",
+      "example": "true",
+      "help_en": "Whether to import a Sample project  \nValid values: true / false",
+      "help_zh": "是否导入示例项目\n可选值：true / false",
       "location": "body",
-      "name": "import_url",
+      "name": "import_demo_project",
       "options": [
-        "--import-url"
+        "--import-demo-project"
       ],
       "param_style": "json",
-      "raw_name": "importUrl",
+      "raw_name": "importDemoProject",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "https://tcs-devops.aliyuncs.com/thumbnail/112afcb7a6a35c3f67f1bea827c4/w/100/h/100",
+      "help_en": "URL of the repository profile picture",
+      "help_zh": "代码库头像地址",
+      "location": "body",
+      "name": "avatar_url",
+      "options": [
+        "--avatar-url"
+      ],
+      "param_style": "json",
+      "raw_name": "avatarUrl",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "USER_GUIDE",
+        "EMPTY"
+      ],
+      "example": "USER_GUIDE",
+      "help_en": "Type of automatically created README file:  \nEMPTY – Create only README.md  \nUSER_GUIDE – Include beginner guidance",
+      "help_zh": "自动创建readme类型 \nEMPTY - 仅创建README.md\nUSER_GUIDE - 包含新手引导",
+      "location": "body",
+      "name": "readme_type",
+      "options": [
+        "--readme-type"
+      ],
+      "param_style": "json",
+      "raw_name": "readmeType",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "GIT",
+      "help_en": "Type of repository to import:  \nGIT – Git repository  \nSVN – SVN repository",
+      "help_zh": "导入代码库类型\nGIT - Git库\nSVN - SVN库",
+      "location": "body",
+      "name": "import_repo_type",
+      "options": [
+        "--import-repo-type"
+      ],
+      "param_style": "json",
+      "raw_name": "importRepoType",
       "required": false,
       "type": "string"
     },
@@ -232,6 +293,20 @@
       "raw_name": "initStandardService",
       "required": false,
       "type": "bool"
+    },
+    {
+      "example": "Java",
+      "help_en": "Type of gitignore template",
+      "help_zh": "gitignore模板类型",
+      "location": "body",
+      "name": "gitignore_type",
+      "options": [
+        "--gitignore-type"
+      ],
+      "param_style": "json",
+      "raw_name": "gitignoreType",
+      "required": false,
+      "type": "string"
     },
     {
       "example": "false",
@@ -260,76 +335,6 @@
       "raw_name": "localImportUrl",
       "required": false,
       "type": "string"
-    },
-    {
-      "example": "Demo库",
-      "help_en": "Name of the repository",
-      "help_zh": "代码库名称",
-      "location": "body",
-      "name": "name",
-      "options": [
-        "--name"
-      ],
-      "param_style": "json",
-      "raw_name": "name",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "2022（需要保证当前用户在父路径下有创建代码库的权限；若需要创建父路径，那么namespaceId需要设置为企业的空间ID）",
-      "help_en": "ID of the parent path of the repository",
-      "help_zh": "代码库父路径id",
-      "location": "body",
-      "name": "namespace_id",
-      "options": [
-        "--namespace-id"
-      ],
-      "param_style": "json",
-      "raw_name": "namespaceId",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "example": "Demo库（与name保持同层级，name与path的值可以不同，若带上了父路径，那么需要设置createParentPath字段为true，且父路径前面不加斜杠，如 parentPath/demo）",
-      "help_en": "Path of the repository",
-      "help_zh": "代码库路径",
-      "location": "body",
-      "name": "path",
-      "options": [
-        "--path"
-      ],
-      "param_style": "json",
-      "raw_name": "path",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "USER_GUIDE",
-      "help_en": "Type of automatically created README file:  \nEMPTY – Create only README.md  \nUSER_GUIDE – Include beginner guidance",
-      "help_zh": "自动创建readme类型 \nEMPTY - 仅创建README.md\nUSER_GUIDE - 包含新手引导",
-      "location": "body",
-      "name": "readme_type",
-      "options": [
-        "--readme-type"
-      ],
-      "param_style": "json",
-      "raw_name": "readmeType",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "0",
-      "help_en": "Visibility level of the code repository  \n0 – private, visible only to repository members  \n10 – internal to the enterprise, visible to enterprise members",
-      "help_zh": "代码仓库可见性\n0 - 私有，仅代码库成员可见\n10 - 企业内公开，企业成员可见",
-      "location": "body",
-      "name": "visibility_level",
-      "options": [
-        "--visibility-level"
-      ],
-      "param_style": "json",
-      "raw_name": "visibilityLevel",
-      "required": false,
-      "type": "int"
     }
   ],
   "pathPattern": "/repository/create",
@@ -342,125 +347,107 @@
         "description_zh": "返回结果",
         "properties": {
           "errorCode": {
-            "backendName": "errorCode",
             "description_en": "Error code",
             "description_zh": "错误码",
             "example": "401",
-            "title_en": "错误码",
+            "title_en": "",
             "title_zh": "错误码",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "errorMessage": {
-            "backendName": "errorMsg",
             "description_en": "Error message",
             "description_zh": "错误信息",
             "example": "SYSTEM_UNAUTHORIZED_ERROR",
-            "nullToEmpty": false,
-            "title_en": "错误信息",
+            "title_en": "",
             "title_zh": "错误信息",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "Request ID",
             "description_zh": "请求ID",
             "example": "F590C9D8-E908-5B6C-95AC-56B7E8011FFA",
-            "title_en": "请求ID",
+            "title_en": "",
             "title_zh": "请求ID",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "result": {
-            "backendName": "result",
             "description_en": "Return detailed result  ",
             "description_zh": "返回详情结果",
             "properties": {
               "Import_from_svn": {
-                "backendName": "import_from_svn",
                 "description_en": "Import from SVN  ",
                 "description_zh": "从SVN导入",
                 "example": "false",
-                "title_en": "从SVN导入",
+                "title_en": "",
                 "title_zh": "从SVN导入",
                 "type": "boolean"
               },
               "archived": {
-                "backendName": "archived",
                 "description_en": "data archiving identity",
                 "description_zh": "归档标识",
                 "example": "false",
-                "title_en": "归档标识",
+                "title_en": "",
                 "title_zh": "归档标识",
                 "type": "boolean"
               },
               "avatar_url": {
-                "backendName": "avatar_url",
                 "description_en": "Code repository profile picture URL",
                 "description_zh": "代码库头像地址",
                 "example": "\"\"",
-                "title_en": "代码库头像地址",
+                "title_en": "",
                 "title_zh": "代码库头像地址",
                 "type": "string"
               },
               "createdAt": {
-                "backendName": "created_at",
                 "description_en": "Creation Time",
                 "description_zh": "创建时间",
                 "example": "2022-01-14T21:08:26+08:00",
-                "title_en": "创建时间",
+                "title_en": "",
                 "title_zh": "创建时间",
                 "type": "string"
               },
               "creatorId": {
-                "backendName": "creator_id",
                 "description_en": "Creator ID  ",
                 "description_zh": "创建者id",
                 "example": "1233",
                 "format": "int64",
-                "title_en": "创建者id",
+                "title_en": "",
                 "title_zh": "创建者id",
                 "type": "integer"
               },
               "defaultBranch": {
-                "backendName": "default_branch",
                 "description_en": "Default branch  ",
                 "description_zh": "默认分支",
                 "example": "master",
-                "title_en": "默认分支",
+                "title_en": "",
                 "title_zh": "默认分支",
                 "type": "string"
               },
               "demoProject": {
-                "backendName": "demo_project",
                 "description_en": "Demo repository identity  ",
                 "description_zh": "demo库标识",
                 "example": "false",
-                "title_en": "demo库标识",
+                "title_en": "",
                 "title_zh": "demo库标识",
                 "type": "boolean"
               },
               "description": {
-                "backendName": "description",
                 "description_en": "Description  ",
                 "description_zh": "描述",
                 "example": "线下测试",
-                "title_en": "描述",
+                "title_en": "",
                 "title_zh": "描述",
                 "type": "string"
               },
               "httpUrlToRepo": {
-                "backendName": "http_url_to_repo",
                 "description_en": "HTTP URL  ",
                 "description_zh": "http地址",
                 "example": "\"\"",
-                "title_en": "http地址",
+                "title_en": "",
                 "title_zh": "http地址",
                 "type": "string"
               },
               "id": {
-                "backendName": "id",
                 "description_en": "id",
                 "description_zh": "id",
                 "example": "2959",
@@ -470,66 +457,58 @@
                 "type": "integer"
               },
               "lastActivityAt": {
-                "backendName": "last_activity_at",
                 "description_en": "Last activity time  ",
                 "description_zh": "最后活跃时间",
                 "example": "2022-01-14T21:08:26+08:00",
-                "title_en": "最后活跃时间",
+                "title_en": "",
                 "title_zh": "最后活跃时间",
                 "type": "string"
               },
               "name": {
-                "backendName": "name",
                 "description_en": "Name",
                 "description_zh": "名称",
                 "example": "codeupTest",
-                "title_en": "名称",
+                "title_en": "",
                 "title_zh": "名称",
                 "type": "string"
               },
               "nameWithNamespace": {
-                "backendName": "name_with_namespace",
                 "description_en": "Name (including parent path)",
                 "description_zh": "名称（含父路径）",
                 "example": "codeup-test-org / test-codeup",
-                "title_en": "名称（含父路径）",
+                "title_en": "",
                 "title_zh": "名称（含父路径）",
                 "type": "string"
               },
               "namespace": {
-                "backendName": "namespace",
                 "description_en": "Parent path information",
                 "description_zh": "父路径信息",
                 "properties": {
                   "avatar": {
-                    "backendName": "avatar",
                     "description_en": "Profile picture URL",
                     "description_zh": "头像地址",
                     "example": "\"\"",
-                    "title_en": "头像地址",
+                    "title_en": "",
                     "title_zh": "头像地址",
                     "type": "string"
                   },
                   "createdAt": {
-                    "backendName": "created_at",
                     "description_en": "Creation Time  ",
                     "description_zh": "创建时间",
                     "example": "2022-01-14T21:08:26+08:00",
-                    "title_en": "创建时间",
+                    "title_en": "",
                     "title_zh": "创建时间",
                     "type": "string"
                   },
                   "description": {
-                    "backendName": "description",
                     "description_en": "Description  ",
                     "description_zh": "描述",
                     "example": "codeup repo description",
-                    "title_en": "描述",
+                    "title_en": "",
                     "title_zh": "描述",
                     "type": "string"
                   },
                   "id": {
-                    "backendName": "id",
                     "description_en": "id",
                     "description_zh": "id",
                     "example": "3194",
@@ -539,103 +518,92 @@
                     "type": "integer"
                   },
                   "name": {
-                    "backendName": "name",
                     "description_en": "Name  ",
                     "description_zh": "名称",
                     "example": "codeup",
-                    "title_en": "名称",
+                    "title_en": "",
                     "title_zh": "名称",
                     "type": "string"
                   },
                   "ownerId": {
-                    "backendName": "owner_id",
                     "description_en": "Owner ID",
                     "description_zh": "归属者id",
                     "example": "123",
                     "format": "int64",
-                    "title_en": "归属者id",
+                    "title_en": "",
                     "title_zh": "归属者id",
                     "type": "integer"
                   },
                   "path": {
-                    "backendName": "path",
                     "description_en": "path  ",
                     "description_zh": "路径",
                     "example": "codeup",
-                    "title_en": "路径",
+                    "title_en": "",
                     "title_zh": "路径",
                     "type": "string"
                   },
                   "public": {
-                    "backendName": "public",
                     "description_en": "Public visibility  ",
                     "description_zh": "公开性",
                     "example": "true",
-                    "title_en": "公开性",
+                    "title_en": "",
                     "title_zh": "公开性",
                     "type": "boolean"
                   },
                   "updatedAt": {
-                    "backendName": "updated_at",
                     "description_en": "Update Time",
                     "description_zh": "更新时间",
                     "example": "2022-01-14T21:08:26+08:00",
-                    "title_en": "更新时间",
+                    "title_en": "",
                     "title_zh": "更新时间",
                     "type": "string"
                   },
                   "visibilityLevel": {
-                    "backendName": "visibility_level",
                     "description_en": "Visibility. 0: private, 10: internally public  ",
                     "description_zh": "可见性。0：私有，10：内部公开",
                     "example": "0",
-                    "title_en": "可见性。0：私有，10：内部公开",
+                    "title_en": "",
                     "title_zh": "可见性。0：私有，10：内部公开",
                     "type": "string"
                   }
                 },
-                "title_en": "父路径信息",
+                "title_en": "",
                 "title_zh": "父路径信息",
                 "type": "object"
               },
               "path": {
-                "backendName": "path",
                 "description_en": "path",
                 "description_zh": "路径",
                 "example": "test-codeup",
-                "title_en": "路径",
+                "title_en": "",
                 "title_zh": "路径",
                 "type": "string"
               },
               "pathWithNamespace": {
-                "backendName": "path_with_namespace",
                 "description_en": "Path (including parent path)",
                 "description_zh": "路径（含父路径）",
                 "example": "codeup-test-org/test-codeup",
-                "title_en": "路径（含父路径）",
+                "title_en": "",
                 "title_zh": "路径（含父路径）",
                 "type": "string"
               },
               "sshUrlToRepo": {
-                "backendName": "ssh_url_to_repo",
                 "description_en": "SSH URL  ",
                 "description_zh": "ssh地址",
                 "example": "\"\"",
-                "title_en": "ssh地址",
+                "title_en": "",
                 "title_zh": "ssh地址",
                 "type": "string"
               },
               "visibilityLevel": {
-                "backendName": "visibility_level",
                 "description_en": "Visibility. 0: private, 10: internal public",
                 "description_zh": "可见性。0：私有，10：内部公开",
                 "example": "0",
-                "title_en": "可见性。0：私有，10：内部公开",
+                "title_en": "",
                 "title_zh": "可见性。0：私有，10：内部公开",
                 "type": "string"
               },
               "webUrl": {
-                "backendName": "web_url",
                 "description_en": "web url",
                 "description_zh": "web url",
                 "example": "\"\"",
@@ -644,18 +612,15 @@
                 "type": "string"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the invocation succeeded",
             "description_zh": "调用是否成功",
             "example": "true",
-            "title_en": "调用是否成功",
+            "title_en": "",
             "title_zh": "调用是否成功",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

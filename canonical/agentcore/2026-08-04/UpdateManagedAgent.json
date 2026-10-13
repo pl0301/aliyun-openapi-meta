@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun agentcore PATCH /workspaces/ws-1/managed-agents/agent-1 --region cn-hangzhou --header \"Content-Type=application/json\" --version 2026-08-04 --force",
   "cmd_full_name": "agentcore update-managed-agent",
   "cmd_name": "update-managed-agent",
@@ -50,6 +51,70 @@
     },
     {
       "fields": [
+        {
+          "element": {
+            "fields": [
+              {
+                "example": "/mnt/agenticfs/data",
+                "help_en": "The subdirectory under /mnt/agenticfs/ in the container. Required for each mount item as validated by the backend. Mount targets must not be duplicated or have parent-child overlaps",
+                "help_zh": "容器内 /mnt/agenticfs/ 下的子目录，每个挂载项由后端校验必填；挂载目标不得重复或父子覆盖",
+                "name": "mount_path",
+                "options": [
+                  "--mount-path"
+                ],
+                "raw_name": "mountPath",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "workspace/data",
+                "help_en": "A non-empty relative directory that exists under the AccessPoint. Required for each mount item as validated by the backend. Root directories, absolute paths, and parent directory segments are not allowed",
+                "help_zh": "AccessPoint 下已存在的非空相对目录，每个挂载项由后端校验必填；不允许根目录、绝对路径或上级目录段",
+                "name": "path",
+                "options": [
+                  "--path"
+                ],
+                "raw_name": "path",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "false",
+                "help_en": "Specifies whether to mount in read-only mode. Default value: false. This is not a RAM role read-only policy",
+                "help_zh": "是否只读挂载，省略默认 false；不是 RAM 角色只读策略",
+                "name": "read_only",
+                "options": [
+                  "--read-only"
+                ],
+                "raw_name": "readOnly",
+                "required": false,
+                "type": "bool"
+              },
+              {
+                "example": "ap-0123456789abcdef0.0123456789-vlm36.cn-hangzhou.nas.aliyuncs.com",
+                "help_en": "The AccessPoint domain name. Required for each mount item as validated by the backend. Do not include the protocol, port, or path. Use the DomainName value from the NAS ListAccessPoints response",
+                "help_zh": "AccessPoint 域名，每个挂载项由后端校验必填；不含协议、端口或路径，取 NAS ListAccessPoints 响应的 DomainName",
+                "name": "server",
+                "options": [
+                  "--server"
+                ],
+                "raw_name": "server",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          },
+          "help_en": "Omit to retain existing values, pass [] to clear, or pass a non-empty array for full replacement. null is rejected. Combined with OSS mounts, a maximum of 10 items are allowed",
+          "help_zh": "更新时省略保留，[] 清空，非空数组全量替换；null 拒绝；与 OSS 合计最多 10 项",
+          "name": "agentic_fs_mounts",
+          "options": [
+            "--agentic-fs-mounts"
+          ],
+          "raw_name": "agenticFsMounts",
+          "required": false,
+          "type": "array"
+        },
         {
           "example": "用于代码评审的智能体",
           "help_en": "The description of the managed agent",
@@ -149,7 +214,7 @@
               "fields": [
                 {
                   "example": "key-xxxx",
-                  "help_en": "The connector service account key",
+                  "help_en": "The Connector Service Account Key",
                   "help_zh": "连接器服务账号密钥（Connector Service Account Key）",
                   "name": "connector_service_account_key",
                   "options": [
@@ -161,7 +226,7 @@
                 },
                 {
                   "example": "my-connector-key",
-                  "help_en": "The connector service account name",
+                  "help_en": "The Connector Service Account Name",
                   "help_zh": "连接器服务账号名称（Connector Service Account Name）",
                   "name": "connector_service_account_name",
                   "options": [
@@ -172,7 +237,7 @@
                   "type": "string"
                 }
               ],
-              "help_en": "The harness configuration",
+              "help_en": "The runtime harness configuration",
               "help_zh": "运行框架配置",
               "name": "configuration",
               "options": [
@@ -188,7 +253,7 @@
                 "qodercli"
               ],
               "example": "qodercli",
-              "help_en": "The harness type",
+              "help_en": "The runtime harness type",
               "help_zh": "运行框架类型",
               "name": "type",
               "options": [
@@ -199,7 +264,7 @@
               "type": "string"
             }
           ],
-          "help_en": "The agent harness configuration",
+          "help_en": "The agent runtime harness",
           "help_zh": "智能体运行框架",
           "name": "harness",
           "options": [
@@ -251,7 +316,7 @@
               "fields": [
                 {
                   "example": "true",
-                  "help_en": "Specifies whether to enable the token quota. Default value: true. If you set this parameter to false, the token quota is disabled and existing quota rules are deleted",
+                  "help_en": "Specifies whether to enable the token quota. Default value: true. Set to false to disable and delete existing quota rules",
                   "help_zh": "是否启用 Token 配额；不填时默认为 true，传 false 表示关闭并删除已有配额规则",
                   "name": "enabled",
                   "options": [
@@ -266,7 +331,7 @@
                     "token"
                   ],
                   "example": "token",
-                  "help_en": "The quota limit type. This parameter is required by backend validation when the quota is enabled. Fixed value: token",
+                  "help_en": "The quota limit type. Required when the quota is enabled, as validated by the backend. Fixed value: token",
                   "help_zh": "配额限制类型；开启配额时由后端校验必填，固定值：token",
                   "name": "limit_type",
                   "options": [
@@ -282,7 +347,7 @@
                     "month"
                   ],
                   "example": "day",
-                  "help_en": "The quota statistical period. This parameter is required by backend validation when the quota is enabled. Valid values:\nday: daily.\nmonth: monthly",
+                  "help_en": "The statistical period for the quota. Required when the quota is enabled, as validated by the backend. Valid values: day (daily) and month (monthly)",
                   "help_zh": "配额统计周期；开启配额时由后端校验必填，取值：day（按天）、month（按月）",
                   "name": "period_type",
                   "options": [
@@ -294,7 +359,7 @@
                 },
                 {
                   "example": "1000000",
-                  "help_en": "The maximum number of tokens that can be consumed within a single period. This parameter is required by backend validation when the quota is enabled. The value must be greater than 0",
+                  "help_en": "The maximum number of tokens that can be consumed within a single period. Required when the quota is enabled, as validated by the backend. The value must be greater than 0",
                   "help_zh": "单个周期内允许消耗的 Token 上限；开启配额时由后端校验必填，必须大于 0",
                   "minimum": "1",
                   "name": "usage_limit",
@@ -306,7 +371,7 @@
                   "type": "int"
                 }
               ],
-              "help_en": "The model token quota configuration. If this parameter is not specified, no quota is configured",
+              "help_en": "The model token quota configuration. If not specified, no quota is configured",
               "help_zh": "模型 Token 配额配置；不传则不配置配额",
               "name": "quota",
               "options": [
@@ -407,7 +472,7 @@
             "fields": [
               {
                 "example": "bucket-001",
-                "help_en": "The OSS bucket name. This parameter is required by backend validation for each mount entry",
+                "help_en": "The OSS bucket name. Required for each mount item as validated by the backend",
                 "help_zh": "OSS Bucket 名称；每个挂载项由后端校验必填",
                 "name": "bucket_name",
                 "options": [
@@ -419,7 +484,7 @@
               },
               {
                 "example": "/mnt/oss/datasets",
-                "help_en": "The absolute mount path in the container. This parameter is required by backend validation for each mount entry",
+                "help_en": "The absolute mount path in the container. Required for each mount item as validated by the backend",
                 "help_zh": "容器内的绝对挂载路径；每个挂载项由后端校验必填",
                 "name": "mount_path",
                 "options": [
@@ -431,7 +496,7 @@
               },
               {
                 "example": "datasets",
-                "help_en": "The relative object prefix within the bucket. If this parameter is not specified, the entire bucket is mounted",
+                "help_en": "The relative object prefix within the bucket. If not specified, the entire bucket is mounted",
                 "help_zh": "Bucket 内的相对对象前缀；不填时挂载整个 Bucket",
                 "name": "path",
                 "options": [
@@ -455,7 +520,7 @@
             ],
             "type": "object"
           },
-          "help_en": "The list of OSS mounts. A maximum of 10 entries are supported. Pass an empty array to clear existing mounts",
+          "help_en": "The list of OSS mounts. A maximum of 10 items are allowed. Pass an empty array to clear existing mounts",
           "help_zh": "OSS 挂载列表，最多 10 项；传空数组可清空已有挂载",
           "name": "oss_mounts",
           "options": [
@@ -476,7 +541,7 @@
                     "HEAVY"
                   ],
                   "example": "STANDARD",
-                  "help_en": "The compute specification",
+                  "help_en": "The compute class",
                   "help_zh": "计算规格",
                   "name": "compute_class",
                   "options": [
@@ -500,7 +565,7 @@
             {
               "fields": [
                 {
-                  "help_en": "Specifies whether to enable auto scaling. This parameter is required by backend validation when hpa is specified",
+                  "help_en": "Specifies whether to enable auto scaling. Required when hpa is present, as validated by the backend",
                   "help_zh": "是否启用自动扩缩容；hpa 出现时由后端校验必填",
                   "name": "enabled",
                   "options": [
@@ -512,7 +577,7 @@
                 },
                 {
                   "example": "5",
-                  "help_en": "The maximum number of active sessions per sandbox. This parameter is required by backend validation when hpa is specified",
+                  "help_en": "The maximum number of active sessions per Sandbox. Required when hpa is present, as validated by the backend",
                   "help_zh": "单个 Sandbox 的活动 Session 上限；hpa 出现时由后端校验必填",
                   "maximum": "2147483647",
                   "minimum": "1",
@@ -526,7 +591,7 @@
                 },
                 {
                   "example": "3",
-                  "help_en": "The maximum number of sandboxes. This parameter is required when HPA is enabled and the value must be no less than the minimum value",
+                  "help_en": "The maximum number of Sandboxes. Required when HPA is enabled and must be greater than or equal to the minimum value",
                   "help_zh": "最大 Sandbox 数；启用 HPA 时必填且不小于最小值",
                   "name": "max_sandbox_count",
                   "options": [
@@ -538,7 +603,7 @@
                 },
                 {
                   "example": "1",
-                  "help_en": "The minimum number of sandboxes. This parameter is required when HPA is enabled",
+                  "help_en": "The minimum number of Sandboxes. Required when HPA is enabled",
                   "help_zh": "最小 Sandbox 数；启用 HPA 时必填",
                   "name": "min_sandbox_count",
                   "options": [
@@ -550,7 +615,7 @@
                 },
                 {
                   "example": "3600",
-                  "help_en": "The session reclamation time after inactivity, in seconds. This parameter is required by backend validation when hpa is specified",
+                  "help_en": "The time-to-live (TTL) for a session after inactivity, in seconds. Required when hpa is present, as validated by the backend",
                   "help_zh": "Session 无活动后的回收时长，单位为秒；hpa 出现时由后端校验必填",
                   "maximum": "2147483647",
                   "minimum": "1",
@@ -563,7 +628,7 @@
                   "type": "int"
                 }
               ],
-              "help_en": "The sandbox auto scaling and session configuration",
+              "help_en": "The Sandbox auto scaling and session configuration",
               "help_zh": "Sandbox 自动扩缩容及 Session 配置",
               "name": "hpa",
               "options": [
@@ -577,7 +642,7 @@
               "fields": [
                 {
                   "example": "X-Session-Id",
-                  "help_en": "The name of the HTTP header used for session affinity. This parameter takes effect when sessionPolicy.type is set to ISOLATED_HEADER_FIELD",
+                  "help_en": "The name of the HTTP header used for session affinity. This parameter takes effect only when sessionPolicy.type is set to ISOLATED_HEADER_FIELD",
                   "help_zh": "会话亲和性使用的 HTTP 头名称。当 sessionPolicy.type 为 ISOLATED_HEADER_FIELD 时生效",
                   "name": "header_name",
                   "options": [
@@ -643,6 +708,22 @@
                 "type": "string"
               },
               {
+                "enum": [
+                  "REFERENCE",
+                  "STATIC"
+                ],
+                "example": "REFERENCE",
+                "help_en": "The skill source type. Valid values:\nREFERENCE: referenced from AI Registry.\nSTATIC: statically bundled with the package",
+                "help_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
+                "name": "source_type",
+                "options": [
+                  "--source-type"
+                ],
+                "raw_name": "sourceType",
+                "required": false,
+                "type": "string"
+              },
+              {
                 "example": "1.0.0",
                 "help_en": "The skill version",
                 "help_zh": "技能版本",
@@ -653,6 +734,47 @@
                 "raw_name": "version",
                 "required": false,
                 "type": "string"
+              },
+              {
+                "fields": [
+                  {
+                    "enum": [
+                      "LABEL",
+                      "VERSION"
+                    ],
+                    "example": "LABEL",
+                    "help_en": "The version selector type. Valid values:\nLABEL: select by label.\nVERSION: select by specific version",
+                    "help_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                    "name": "type",
+                    "options": [
+                      "--type"
+                    ],
+                    "raw_name": "type",
+                    "required": false,
+                    "type": "string"
+                  },
+                  {
+                    "example": "latest",
+                    "help_en": "The selector value. If the type is LABEL, specify a label name such as latest. If the type is VERSION, specify a specific version number",
+                    "help_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                    "name": "value",
+                    "options": [
+                      "--value"
+                    ],
+                    "raw_name": "value",
+                    "required": false,
+                    "type": "string"
+                  }
+                ],
+                "help_en": "The version selector for the reference. Defaults to LABEL/latest if omitted. Currently supports LABEL/latest",
+                "help_zh": "引用的版本选择器，省略时为 LABEL/latest；本期支持 LABEL/latest",
+                "name": "version_selector",
+                "options": [
+                  "--version-selector"
+                ],
+                "raw_name": "versionSelector",
+                "required": false,
+                "type": "object"
               }
             ],
             "type": "object"
@@ -693,6 +815,46 @@
                 "raw_name": "name",
                 "required": true,
                 "type": "string"
+              },
+              {
+                "element": {
+                  "fields": [
+                    {
+                      "example": "web-search",
+                      "help_en": "The skill name used by the sub-agent. Declared as optional for compatibility, but the backend validates that each entry is required",
+                      "help_zh": "子智能体使用的技能名称；按兼容性要求声明为可选，由后端校验每项必填",
+                      "name": "name",
+                      "options": [
+                        "--name"
+                      ],
+                      "raw_name": "name",
+                      "required": false,
+                      "type": "string"
+                    },
+                    {
+                      "example": "1.0.0",
+                      "help_en": "The optional version number. If omitted, set to null, or left blank, the latest version is resolved",
+                      "help_zh": "可选版本号；省略、null 或空白时解析最新版本",
+                      "name": "version",
+                      "options": [
+                        "--version"
+                      ],
+                      "raw_name": "version",
+                      "required": false,
+                      "type": "string"
+                    }
+                  ],
+                  "type": "object"
+                },
+                "help_en": "The skills exclusively used by this sub-agent. Skill names must be unique within the same sub-agent. If this parameter is not specified or an empty array is passed, no skills are configured",
+                "help_zh": "该子智能体独立使用的技能；同一子智能体内技能名称唯一，不传或传空数组时不配置技能",
+                "name": "skills",
+                "options": [
+                  "--skills"
+                ],
+                "raw_name": "skills",
+                "required": false,
+                "type": "array"
               }
             ],
             "type": "object"
@@ -713,7 +875,7 @@
               "fields": [
                 {
                   "example": "code-review-template",
-                  "help_en": "The name of the template in the AI registry",
+                  "help_en": "The name of the template in AI Registry",
                   "help_zh": "AI 注册表中模板的名称",
                   "name": "name",
                   "options": [
@@ -725,7 +887,7 @@
                 },
                 {
                   "example": "1.0.0",
-                  "help_en": "The version of the template in the AI registry",
+                  "help_en": "The version of the template in AI Registry",
                   "help_zh": "AI 注册表中模板的版本",
                   "name": "version",
                   "options": [
@@ -736,7 +898,7 @@
                   "type": "string"
                 }
               ],
-              "help_en": "The AI registry template configuration",
+              "help_en": "The AI Registry template configuration",
               "help_zh": "AI 注册表模板配置",
               "name": "ai_registry",
               "options": [
@@ -815,7 +977,7 @@
     },
     {
       "example": "client-token-1",
-      "help_en": "The reserved idempotency token. The backend does not provide idempotency guarantees in the current version",
+      "help_en": "The reserved idempotency token. The backend does not provide idempotency guarantees in the current release",
       "help_zh": "预留幂等令牌，本期后端不提供幂等保证",
       "location": "query",
       "name": "client_token",
@@ -833,68 +995,180 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The business status code. The value is SUCCESS when the operation succeeds",
             "description_zh": "业务状态码。成功时为 SUCCESS",
             "example": "SUCCESS",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
             "description_en": "The details of the managed agent",
             "description_zh": "托管智能体详情信息",
             "properties": {
               "agentId": {
-                "backendName": "agentId",
                 "description_en": "The managed agent ID",
                 "description_zh": "托管智能体 ID",
                 "example": "agent-1",
                 "type": "string"
               },
+              "agenticFsMounts": {
+                "description_en": "The AgenticFS additional mount list. The total number of items combined with ossMounts cannot exceed 10",
+                "description_zh": "AgenticFS 额外挂载列表，与 ossMounts 合计最多 10 项",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "mountPath": {
+                      "description_en": "The subdirectory under /mnt/agenticfs/ in the container. Required for each mount item as validated by the backend. Mount targets must not be duplicated or have parent-child overlaps",
+                      "description_zh": "容器内 /mnt/agenticfs/ 下的子目录，每个挂载项由后端校验必填；挂载目标不得重复或父子覆盖",
+                      "example": "/mnt/agenticfs/data",
+                      "title_en": "",
+                      "title_zh": "容器内 /mnt/agenticfs/ 下的子目录，每个挂载项由后端校验必填；挂载目标不得重复或父子覆盖",
+                      "type": "string"
+                    },
+                    "path": {
+                      "description_en": "A non-empty relative directory that exists under the AccessPoint. Required for each mount item as validated by the backend. Root directories, absolute paths, and parent directory segments are not allowed",
+                      "description_zh": "AccessPoint 下已存在的非空相对目录，每个挂载项由后端校验必填；不允许根目录、绝对路径或上级目录段",
+                      "example": "workspace/data",
+                      "title_en": "",
+                      "title_zh": "AccessPoint 下已存在的非空相对目录，每个挂载项由后端校验必填；不允许根目录、绝对路径或上级目录段",
+                      "type": "string"
+                    },
+                    "readOnly": {
+                      "description_en": "Specifies whether to mount in read-only mode. Default value: false. This is not a RAM role read-only policy",
+                      "description_zh": "是否只读挂载，省略默认 false；不是 RAM 角色只读策略",
+                      "example": "false",
+                      "title_en": "",
+                      "title_zh": "是否只读挂载，省略默认 false；不是 RAM 角色只读策略",
+                      "type": "boolean"
+                    },
+                    "server": {
+                      "description_en": "The AccessPoint domain name. Required for each mount item as validated by the backend. Do not include the protocol, port, or path. Use the DomainName value from the NAS ListAccessPoints response",
+                      "description_zh": "AccessPoint 域名，每个挂载项由后端校验必填；不含协议、端口或路径，取 NAS ListAccessPoints 响应的 DomainName",
+                      "example": "ap-0123456789abcdef0.0123456789-vlm36.cn-hangzhou.nas.aliyuncs.com",
+                      "title_en": "",
+                      "title_zh": "AccessPoint 域名，每个挂载项由后端校验必填；不含协议、端口或路径，取 NAS ListAccessPoints 响应的 DomainName",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "maxItems": 10,
+                "title_en": "",
+                "title_zh": "AgenticFS 额外挂载列表，与 ossMounts 合计最多 10 项",
+                "type": "array"
+              },
+              "configuredSkills": {
+                "description_en": "The skills that are explicitly configured. This field contains only skills that the user appended or overrode, excluding skills inherited from templates. The resource model reads this field to preserve update semantics. The skills field in the request is still used for creation and update operations",
+                "description_zh": "仅包含用户追加或覆盖的 Skill，不包含模板继承项。资源模型读取此字段以保留更新语义；创建和更新仍使用请求中的 skills",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "name": {
+                      "description_en": "The skill name in the Workspace AI Registry",
+                      "description_zh": "Workspace AI Registry 中的 Skill 名称",
+                      "example": "web-search",
+                      "required": true,
+                      "title_en": "",
+                      "title_zh": "Workspace AI Registry 中的 Skill 名称",
+                      "type": "string"
+                    },
+                    "sourceType": {
+                      "description_en": "The skill source type. Valid values:\nREFERENCE: referenced from AI Registry.\nSTATIC: statically bundled with the package",
+                      "description_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
+                      "enum": [
+                        "REFERENCE",
+                        "STATIC"
+                      ],
+                      "example": "REFERENCE",
+                      "title_en": "",
+                      "title_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
+                      "type": "string"
+                    },
+                    "version": {
+                      "description_en": "A legacy compatibility field. Use sourceType and versionSelector for new requests",
+                      "description_zh": "旧版兼容字段，新请求使用 sourceType 和 versionSelector",
+                      "example": "1.0.0",
+                      "title_en": "",
+                      "title_zh": "旧版兼容字段，新请求使用 sourceType 和 versionSelector",
+                      "type": "string"
+                    },
+                    "versionSelector": {
+                      "description_en": "The version selector for the reference. Defaults to LABEL/latest if omitted. Currently supports LABEL/latest",
+                      "description_zh": "引用的版本选择器，省略时为 LABEL/latest；本期支持 LABEL/latest",
+                      "properties": {
+                        "type": {
+                          "description_en": "The version selector type. Valid values:\nLABEL: select by label.\nVERSION: select by specific version",
+                          "description_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                          "enum": [
+                            "LABEL",
+                            "VERSION"
+                          ],
+                          "example": "LABEL",
+                          "title_en": "",
+                          "title_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                          "type": "string"
+                        },
+                        "value": {
+                          "description_en": "The selector value. If the type is LABEL, specify a label name such as latest. If the type is VERSION, specify a specific version number",
+                          "description_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                          "example": "latest",
+                          "title_en": "",
+                          "title_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "引用的版本选择器，省略时为 LABEL/latest；本期支持 LABEL/latest",
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
+                },
+                "title_en": "",
+                "title_zh": "显式配置的 Skill",
+                "type": "array"
+              },
               "createMode": {
-                "backendName": "createMode",
                 "description_en": "The creation mode",
                 "description_zh": "创建模式",
                 "example": "Managed",
                 "type": "string"
               },
               "createdAt": {
-                "backendName": "createdAt",
                 "description_en": "The creation time in RFC 3339 format",
                 "description_zh": "创建时间，RFC 3339 格式",
                 "example": "2026-01-01T00:00:00Z",
                 "type": "string"
               },
               "deployType": {
-                "backendName": "deployType",
                 "description_en": "The deployment type",
                 "description_zh": "部署类型",
                 "example": "Managed",
                 "type": "string"
               },
               "description": {
-                "backendName": "description",
                 "description_en": "The description of the managed agent",
                 "description_zh": "托管智能体描述",
                 "example": "用于代码评审的智能体",
                 "type": "string"
               },
               "environment": {
-                "backendName": "environment",
-                "description_en": "The environment configuration information",
+                "description_en": "The environment configuration",
                 "description_zh": "环境配置信息",
                 "properties": {
                   "credentialReferences": {
-                    "backendName": "credentialReferences",
                     "description_en": "The list of credential references",
                     "description_zh": "凭据引用列表",
-                    "itemName": "credentialReferences",
                     "items": {
+                      "description_en": "",
+                      "description_zh": "",
                       "properties": {
                         "credentialId": {
-                          "backendName": "credentialId",
                           "description_en": "The credential ID",
                           "description_zh": "凭据 ID",
                           "example": "cred-1",
@@ -907,14 +1181,13 @@
                     "type": "array"
                   },
                   "variables": {
-                    "backendName": "variables",
                     "description_en": "The list of environment variables",
                     "description_zh": "环境变量列表",
-                    "itemName": "variables",
                     "items": {
+                      "description_en": "",
+                      "description_zh": "",
                       "properties": {
                         "name": {
-                          "backendName": "name",
                           "description_en": "The name of the environment variable",
                           "description_zh": "环境变量名称",
                           "example": "API_KEY",
@@ -922,7 +1195,6 @@
                           "type": "string"
                         },
                         "value": {
-                          "backendName": "value",
                           "description_en": "The value of the environment variable",
                           "description_zh": "环境变量值",
                           "example": "sk-xxxx",
@@ -938,65 +1210,58 @@
                 "type": "object"
               },
               "harness": {
-                "backendName": "harness",
-                "description_en": "The agent harness configuration",
+                "description_en": "The agent runtime harness",
                 "description_zh": "智能体运行框架",
                 "properties": {
                   "configuration": {
-                    "backendName": "configuration",
-                    "description_en": "The harness configuration",
+                    "description_en": "The runtime harness configuration",
                     "description_zh": "运行框架配置",
                     "properties": {
                       "connectorServiceAccountKey": {
-                        "backendName": "connectorServiceAccountKey",
-                        "description_en": "The connector service account key",
+                        "description_en": "The Connector Service Account Key",
                         "description_zh": "连接器服务账号密钥（Connector Service Account Key）",
                         "example": "key-xxxx",
-                        "title_en": "Connector Service Account Key",
+                        "title_en": "",
                         "title_zh": "Connector Service Account Key",
                         "type": "string"
                       },
                       "connectorServiceAccountName": {
-                        "backendName": "connectorServiceAccountName",
-                        "description_en": "The connector service account name",
+                        "description_en": "The Connector Service Account Name",
                         "description_zh": "连接器服务账号名称（Connector Service Account Name）",
                         "example": "my-connector-key",
-                        "title_en": "Connector Service Account Name",
+                        "title_en": "",
                         "title_zh": "Connector Service Account Name",
                         "type": "string"
                       }
                     },
-                    "title_en": "运行框架配置",
+                    "title_en": "",
                     "title_zh": "运行框架配置",
                     "type": "object"
                   },
                   "type": {
-                    "backendName": "type",
-                    "description_en": "The harness type",
+                    "description_en": "The runtime harness type",
                     "description_zh": "运行框架类型",
                     "enum": [
                       "qwenpaw",
                       "qodercli"
                     ],
                     "example": "qodercli",
-                    "title_en": "运行框架类型",
+                    "title_en": "",
                     "title_zh": "运行框架类型",
                     "type": "string"
                   }
                 },
-                "title_en": "智能体运行框架",
+                "title_en": "",
                 "title_zh": "智能体运行框架",
                 "type": "object"
               },
               "instruction": {
-                "backendName": "instruction",
                 "description_en": "The agent instruction that guides the behavior of the agent",
                 "description_zh": "智能体指令，用于指导智能体的行为",
                 "example": "你是一个代码评审助手",
                 "type": "string"
               },
               "latestSpecVersion": {
-                "backendName": "latestSpecVersion",
                 "description_en": "The latest specification version number",
                 "description_zh": "最新规格版本号",
                 "example": "1",
@@ -1004,7 +1269,6 @@
                 "type": "integer"
               },
               "latestVersionStatus": {
-                "backendName": "latestVersionStatus",
                 "description_en": "The latest version status",
                 "description_zh": "最新版本状态",
                 "enum": [
@@ -1019,103 +1283,92 @@
                 "type": "string"
               },
               "model": {
-                "backendName": "model",
-                "description_en": "The model configuration information",
+                "description_en": "The model configuration",
                 "description_zh": "模型配置信息",
                 "properties": {
                   "modelConnectionId": {
-                    "backendName": "modelConnectionId",
                     "description_en": "The model connection ID",
                     "description_zh": "模型连接 ID",
                     "example": "mc-1",
                     "type": "string"
                   },
                   "modelName": {
-                    "backendName": "modelName",
                     "description_en": "The upstream model name",
                     "description_zh": "上游模型名称",
                     "example": "qwen-max",
                     "type": "string"
                   },
                   "quota": {
-                    "backendName": "quota",
                     "description_en": "The model token quota configuration and the quota usage status for the current period. This field is empty if no quota is configured",
                     "description_zh": "模型 Token 配额配置及当前周期的配额使用状态；未配置配额时为空",
                     "properties": {
                       "enabled": {
-                        "backendName": "enabled",
                         "description_en": "Indicates whether the quota is enabled. This field is not returned if no quota is configured",
                         "description_zh": "配额是否处于启用状态；未配置配额时不返回",
                         "example": "true",
-                        "title_en": "配额是否处于启用状态；未配置配额时不返回",
+                        "title_en": "",
                         "title_zh": "配额是否处于启用状态；未配置配额时不返回",
                         "type": "boolean"
                       },
                       "limitType": {
-                        "backendName": "limitType",
                         "description_en": "The quota limit type. Currently, only token is supported",
                         "description_zh": "配额限制类型；当前仅支持 token",
                         "enum": [
                           "token"
                         ],
                         "example": "token",
-                        "title_en": "配额限制类型；当前仅支持 token",
+                        "title_en": "",
                         "title_zh": "配额限制类型；当前仅支持 token",
                         "type": "string"
                       },
                       "overLimit": {
-                        "backendName": "overLimit",
-                        "description_en": "Indicates whether the quota has been exceeded in the current period. This is a read-only field returned by the backend",
+                        "description_en": "Indicates whether the quota has been exceeded in the current period. This field is read-only and returned by the backend",
                         "description_zh": "当前周期是否已超出配额；只读，由后端返回",
                         "example": "false",
-                        "title_en": "当前周期是否已超出配额；只读，由后端返回",
+                        "title_en": "",
                         "title_zh": "当前周期是否已超出配额；只读，由后端返回",
                         "type": "boolean"
                       },
                       "periodType": {
-                        "backendName": "periodType",
-                        "description_en": "The quota statistical period. The value day indicates a daily period, and the value month indicates a monthly period",
+                        "description_en": "The quota statistical period. Valid values: day (daily) and month (monthly)",
                         "description_zh": "配额统计周期；day 表示按天，month 表示按月",
                         "enum": [
                           "day",
                           "month"
                         ],
                         "example": "day",
-                        "title_en": "配额统计周期；day 表示按天，month 表示按月",
+                        "title_en": "",
                         "title_zh": "配额统计周期；day 表示按天，month 表示按月",
                         "type": "string"
                       },
                       "ruleStatus": {
-                        "backendName": "ruleStatus",
-                        "description_en": "The gateway quota rule status. This is a read-only field returned by the backend",
+                        "description_en": "The gateway quota rule status. This field is read-only and returned by the backend",
                         "description_zh": "网关配额规则状态；只读，由后端返回",
                         "example": "ACTIVE",
-                        "title_en": "网关配额规则状态；只读，由后端返回",
+                        "title_en": "",
                         "title_zh": "网关配额规则状态；只读，由后端返回",
                         "type": "string"
                       },
                       "usageLimit": {
-                        "backendName": "usageLimit",
-                        "description_en": "The maximum number of tokens that can be consumed within a single period",
+                        "description_en": "The maximum number of tokens that can be consumed in a single period",
                         "description_zh": "单个周期内允许消耗的 Token 上限",
                         "example": "1000000",
                         "format": "int64",
-                        "title_en": "单个周期内允许消耗的 Token 上限",
+                        "title_en": "",
                         "title_zh": "单个周期内允许消耗的 Token 上限",
                         "type": "integer"
                       },
                       "usedAmount": {
-                        "backendName": "usedAmount",
-                        "description_en": "The number of tokens consumed in the current period. This is a read-only field returned by the backend",
+                        "description_en": "The number of tokens consumed in the current period. This field is read-only and returned by the backend",
                         "description_zh": "当前周期已消耗的 Token 数；只读，由后端返回",
                         "example": "12345",
                         "format": "int64",
-                        "title_en": "当前周期已消耗的 Token 数；只读，由后端返回",
+                        "title_en": "",
                         "title_zh": "当前周期已消耗的 Token 数；只读，由后端返回",
                         "type": "integer"
                       }
                     },
-                    "title_en": "模型 Token 配额配置及当前周期的配额使用状态；未配置配额时为空",
+                    "title_en": "",
                     "title_zh": "模型 Token 配额配置及当前周期的配额使用状态；未配置配额时为空",
                     "type": "object"
                   }
@@ -1123,24 +1376,20 @@
                 "type": "object"
               },
               "name": {
-                "backendName": "name",
                 "description_en": "The name of the managed agent",
                 "description_zh": "托管智能体名称",
                 "example": "my-agent",
                 "type": "string"
               },
               "network": {
-                "backendName": "network",
-                "description_en": "The network configuration information",
+                "description_en": "The network configuration",
                 "description_zh": "网络配置信息",
                 "properties": {
                   "accessInternet": {
-                    "backendName": "accessInternet",
                     "description_en": "The public network access configuration",
                     "description_zh": "公网访问配置",
                     "properties": {
                       "enabled": {
-                        "backendName": "enabled",
                         "description_en": "Specifies whether to allow public network access",
                         "description_zh": "是否允许访问公网",
                         "example": "false",
@@ -1150,12 +1399,10 @@
                     "type": "object"
                   },
                   "accessVpc": {
-                    "backendName": "accessVpc",
                     "description_en": "The VPC access configuration",
                     "description_zh": "VPC 访问配置",
                     "properties": {
                       "enabled": {
-                        "backendName": "enabled",
                         "description_en": "Specifies whether to allow VPC access",
                         "description_zh": "是否允许访问 VPC",
                         "example": "true",
@@ -1168,44 +1415,40 @@
                 "type": "object"
               },
               "ossMounts": {
-                "backendName": "ossMounts",
-                "description_en": "The list of OSS mounts. A maximum of 10 entries are supported",
+                "description_en": "The OSS mount list. A maximum of 10 items are supported",
                 "description_zh": "OSS 挂载列表，最多 10 项",
-                "itemName": "ossMounts",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "bucketName": {
-                      "backendName": "bucketName",
-                      "description_en": "The OSS bucket name. This parameter is required by backend validation for each mount entry",
+                      "description_en": "The OSS bucket name. Required for each mount item as validated by the backend",
                       "description_zh": "OSS Bucket 名称；每个挂载项由后端校验必填",
                       "example": "bucket-001",
-                      "title_en": "OSS Bucket 名称；每个挂载项由后端校验必填",
+                      "title_en": "",
                       "title_zh": "OSS Bucket 名称；每个挂载项由后端校验必填",
                       "type": "string"
                     },
                     "mountPath": {
-                      "backendName": "mountPath",
-                      "description_en": "The absolute mount path in the container. This parameter is required by backend validation for each mount entry",
+                      "description_en": "The absolute mount path in the container. Required for each mount item as validated by the backend",
                       "description_zh": "容器内的绝对挂载路径；每个挂载项由后端校验必填",
                       "example": "/mnt/oss/datasets",
-                      "title_en": "容器内的绝对挂载路径；每个挂载项由后端校验必填",
-                      "title_zh": "容器内的绝对挂载路径；每个挂载项由后端校验必填",
+                      "title_en": "",
+                      "title_zh": "容器内 /mnt/oss/ 下的子目录；每个挂载项必填",
                       "type": "string"
                     },
                     "path": {
-                      "backendName": "path",
-                      "description_en": "The relative object prefix within the bucket. If this parameter is not specified, the entire bucket is mounted",
+                      "description_en": "The relative object prefix within the bucket. If not specified, the entire bucket is mounted",
                       "description_zh": "Bucket 内的相对对象前缀；不填时挂载整个 Bucket",
                       "example": "datasets",
-                      "title_en": "Bucket 内的相对对象前缀；不填时挂载整个 Bucket",
-                      "title_zh": "Bucket 内的相对对象前缀；不填时挂载整个 Bucket",
+                      "title_en": "",
+                      "title_zh": "Bucket 内非空相对对象前缀；不允许挂载整个 Bucket 或上级目录跳转",
                       "type": "string"
                     },
                     "readOnly": {
-                      "backendName": "readOnly",
                       "description_en": "Specifies whether to mount in read-only mode. Default value: false",
                       "description_zh": "是否只读挂载；不填时默认为 false",
-                      "title_en": "是否只读挂载；不填时默认为 false",
+                      "title_en": "",
                       "title_zh": "是否只读挂载；不填时默认为 false",
                       "type": "boolean"
                     }
@@ -1213,30 +1456,26 @@
                   "type": "object"
                 },
                 "maxItems": 10,
-                "title_en": "OSS 挂载列表，最多 10 项",
-                "title_zh": "OSS 挂载列表，最多 10 项",
+                "title_en": "",
+                "title_zh": "OSS 挂载列表，与 AgenticFS 合计最多 10 项",
                 "type": "array"
               },
               "regionId": {
-                "backendName": "regionId",
                 "description_en": "The region ID",
                 "description_zh": "地域 ID",
                 "example": "cn-hangzhou",
                 "type": "string"
               },
               "runtime": {
-                "backendName": "runtime",
                 "description_en": "The runtime configuration information",
                 "description_zh": "运行时配置信息",
                 "properties": {
                   "compute": {
-                    "backendName": "compute",
                     "description_en": "The compute configuration",
                     "description_zh": "计算配置",
                     "properties": {
                       "computeClass": {
-                        "backendName": "computeClass",
-                        "description_en": "The compute specification",
+                        "description_en": "The compute class",
                         "description_zh": "计算规格",
                         "enum": [
                           "INTERACTIVE",
@@ -1252,81 +1491,72 @@
                     "type": "object"
                   },
                   "hpa": {
-                    "backendName": "hpa",
-                    "description_en": "The sandbox auto scaling and session configuration",
+                    "description_en": "The Sandbox auto scaling and session configuration",
                     "description_zh": "Sandbox 自动扩缩容及 Session 配置",
                     "properties": {
                       "enabled": {
-                        "backendName": "enabled",
-                        "description_en": "Specifies whether to enable auto scaling. This parameter is required by backend validation when hpa is specified",
+                        "description_en": "Specifies whether to enable auto scaling. Required when hpa is present, as validated by the backend",
                         "description_zh": "是否启用自动扩缩容；hpa 出现时由后端校验必填",
-                        "title_en": "是否启用自动扩缩容；hpa 出现时由后端校验必填",
+                        "title_en": "",
                         "title_zh": "是否启用自动扩缩容；hpa 出现时由后端校验必填",
                         "type": "boolean"
                       },
                       "maxConcurrentSessionsPerSandbox": {
-                        "backendName": "maxConcurrentSessionsPerSandbox",
-                        "description_en": "The maximum number of active sessions per sandbox. This parameter is required by backend validation when hpa is specified",
+                        "description_en": "The maximum number of active sessions per Sandbox. Required when hpa is present, as validated by the backend",
                         "description_zh": "单个 Sandbox 的活动 Session 上限；hpa 出现时由后端校验必填",
                         "example": "5",
                         "format": "int32",
                         "maximum": "2147483647",
                         "minimum": "1",
-                        "title_en": "单个 Sandbox 的活动 Session 上限；hpa 出现时由后端校验必填",
+                        "title_en": "",
                         "title_zh": "单个 Sandbox 的活动 Session 上限；hpa 出现时由后端校验必填",
                         "type": "integer"
                       },
                       "maxSandboxCount": {
-                        "backendName": "maxSandboxCount",
-                        "description_en": "The maximum number of sandboxes. This parameter is required when HPA is enabled and the value must be no less than the minimum value",
+                        "description_en": "The maximum number of Sandboxes. Required when HPA is enabled and must be greater than or equal to the minimum value",
                         "description_zh": "最大 Sandbox 数；启用 HPA 时必填且不小于最小值",
                         "example": "3",
                         "format": "int32",
-                        "title_en": "最大 Sandbox 数；启用 HPA 时必填且不小于最小值",
+                        "title_en": "",
                         "title_zh": "最大 Sandbox 数；启用 HPA 时必填且不小于最小值",
                         "type": "integer"
                       },
                       "minSandboxCount": {
-                        "backendName": "minSandboxCount",
-                        "description_en": "The minimum number of sandboxes. This parameter is required when HPA is enabled",
+                        "description_en": "The minimum number of Sandboxes. Required when HPA is enabled",
                         "description_zh": "最小 Sandbox 数；启用 HPA 时必填",
                         "example": "1",
                         "format": "int32",
-                        "title_en": "最小 Sandbox 数；启用 HPA 时必填",
+                        "title_en": "",
                         "title_zh": "最小 Sandbox 数；启用 HPA 时必填",
                         "type": "integer"
                       },
                       "sessionTtlSeconds": {
-                        "backendName": "sessionTtlSeconds",
-                        "description_en": "The session reclamation time after inactivity, in seconds. This parameter is required by backend validation when hpa is specified",
+                        "description_en": "The time-to-live (TTL) for a session after inactivity, in seconds. Required when hpa is present, as validated by the backend",
                         "description_zh": "Session 无活动后的回收时长，单位为秒；hpa 出现时由后端校验必填",
                         "example": "3600",
                         "format": "int32",
                         "maximum": "2147483647",
                         "minimum": "1",
-                        "title_en": "Session 无活动后的回收时间，单位秒；hpa 出现时由后端校验必填",
+                        "title_en": "",
                         "title_zh": "Session 无活动后的回收时间，单位秒；hpa 出现时由后端校验必填",
                         "type": "integer"
                       }
                     },
-                    "title_en": "Sandbox 自动扩缩容及 Session 配置",
+                    "title_en": "",
                     "title_zh": "Sandbox 自动扩缩容及 Session 配置",
                     "type": "object"
                   },
                   "sessionPolicy": {
-                    "backendName": "sessionPolicy",
                     "description_en": "The session policy configuration",
                     "description_zh": "会话策略配置",
                     "properties": {
                       "headerName": {
-                        "backendName": "headerName",
-                        "description_en": "The name of the HTTP header used for session affinity. This parameter takes effect when sessionPolicy.type is set to ISOLATED_HEADER_FIELD",
+                        "description_en": "The name of the HTTP header used for session affinity. This parameter takes effect only when sessionPolicy.type is set to ISOLATED_HEADER_FIELD",
                         "description_zh": "会话亲和性使用的 HTTP 头名称。当 sessionPolicy.type 为 ISOLATED_HEADER_FIELD 时生效",
                         "example": "X-Session-Id",
                         "type": "string"
                       },
                       "type": {
-                        "backendName": "type",
                         "description_en": "The session policy type",
                         "description_zh": "会话策略类型",
                         "enum": [
@@ -1354,34 +1584,100 @@
                   "format": "int64",
                   "type": "integer"
                 },
-                "backendName": "sandboxPhaseCounts",
-                "description_en": "The number of managed agent instances grouped by sandbox phase. Current keys: PENDING (being created or initialized), RUNNING (running), HIBERNATING (entering hibernation), HIBERNATED (hibernated), RESUMING (resuming), TERMINATING (being terminated), FAILED (runtime failure). Only phases that actually occur are returned. Missing keys should be treated as 0. This field is a dynamic mapping, and new keys may be added in the future. You can use FAILED > 0 to determine whether any abnormal instances exist",
+                "description_en": "The instance counts of the managed agent grouped by sandbox phase. Current keys: PENDING (being created or initialized), RUNNING (running), HIBERNATING (entering hibernation), HIBERNATED (hibernated), RESUMING (resuming), TERMINATING (being terminated), and FAILED (runtime failure). Only phases that actually occur are returned. Missing keys are treated as 0. This field is a dynamic map and new keys may be added in the future. You can use FAILED > 0 to determine whether abnormal instances exist",
                 "description_zh": "按 Sandbox Phase 统计托管智能体的实例数量。当前 Key：PENDING（创建或初始化中）、RUNNING（运行中）、HIBERNATING（休眠中）、HIBERNATED（已休眠）、RESUMING（恢复中）、TERMINATING（销毁中）、FAILED（运行时失败）。仅返回实际出现的 Phase，缺失 Key 按 0 处理。该字段为动态映射，后续可能新增 Key，前端可用 FAILED > 0 判断是否存在异常实例",
-                "title_en": "按 Sandbox Phase 统计托管智能体的实例数量。当前 Key：PENDING（创建或初始化中）、RUNNING（运行中）、HIBERNATING（休眠中）、HIBERNATED（已休眠）、RESUMING（恢复中）、TERMINATING（销毁中）、FAILED（运行时失败）。仅返回实际出现的 Phase，缺失 Key 按 0 处理。该字段为动态映射，后续可能新增 Key，前端可用 FAILED > 0 判断是否存在异常实例。",
+                "title_en": "",
                 "title_zh": "按 Sandbox Phase 统计托管智能体的实例数量。当前 Key：PENDING（创建或初始化中）、RUNNING（运行中）、HIBERNATING（休眠中）、HIBERNATED（已休眠）、RESUMING（恢复中）、TERMINATING（销毁中）、FAILED（运行时失败）。仅返回实际出现的 Phase，缺失 Key 按 0 处理。该字段为动态映射，后续可能新增 Key，前端可用 FAILED > 0 判断是否存在异常实例。",
                 "type": "object"
               },
               "skills": {
-                "backendName": "skills",
                 "description_en": "The list of skill configurations",
                 "description_zh": "技能配置列表",
-                "itemName": "skills",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
+                    "appliedVersion": {
+                      "description_en": "The version that has taken effect at runtime. This field is read-only",
+                      "description_zh": "运行时已生效版本，只读",
+                      "example": "1.0.0",
+                      "title_en": "",
+                      "title_zh": "运行时已生效版本，只读",
+                      "type": "string"
+                    },
+                    "fromTemplate": {
+                      "description_en": "Indicates whether the skill originates from a fixed template. This field is read-only. Template items cannot be removed",
+                      "description_zh": "是否来自固定模板，只读；模板项不可移除",
+                      "example": "false",
+                      "title_en": "",
+                      "title_zh": "是否来自固定模板，只读；模板项不可移除",
+                      "type": "boolean"
+                    },
                     "name": {
-                      "backendName": "name",
                       "description_en": "The skill name",
                       "description_zh": "技能名称",
                       "example": "code-analysis",
                       "required": true,
+                      "title_en": "",
+                      "title_zh": "Workspace AI Registry 中的 Skill 名称",
+                      "type": "string"
+                    },
+                    "resolvedVersion": {
+                      "description_en": "The current target version. This field is read-only",
+                      "description_zh": "当前目标版本，只读",
+                      "example": "1.0.0",
+                      "title_en": "",
+                      "title_zh": "当前目标版本，只读",
+                      "type": "string"
+                    },
+                    "sourceType": {
+                      "description_en": "The skill source type. Valid values:\nREFERENCE: referenced from AI Registry.\nSTATIC: statically bundled with the package",
+                      "description_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
+                      "enum": [
+                        "REFERENCE",
+                        "STATIC"
+                      ],
+                      "example": "REFERENCE",
+                      "title_en": "",
+                      "title_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
                       "type": "string"
                     },
                     "version": {
-                      "backendName": "version",
                       "description_en": "The skill version",
                       "description_zh": "技能版本",
                       "example": "1.0.0",
+                      "title_en": "",
+                      "title_zh": "旧版兼容的当前目标版本，新客户端使用 resolvedVersion",
                       "type": "string"
+                    },
+                    "versionSelector": {
+                      "description_en": "The referenced version selector. Defaults to LABEL/latest if omitted",
+                      "description_zh": "引用的版本选择器，省略时为 LABEL/latest",
+                      "properties": {
+                        "type": {
+                          "description_en": "The version selector type. Valid values:\nLABEL: select by label.\nVERSION: select by specific version",
+                          "description_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                          "enum": [
+                            "LABEL",
+                            "VERSION"
+                          ],
+                          "example": "LABEL",
+                          "title_en": "",
+                          "title_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                          "type": "string"
+                        },
+                        "value": {
+                          "description_en": "The selector value. If the type is LABEL, specify a label name such as latest. If the type is VERSION, specify a specific version number",
+                          "description_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                          "example": "latest",
+                          "title_en": "",
+                          "title_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "引用的版本选择器，省略时为 LABEL/latest",
+                      "type": "object"
                     }
                   },
                   "type": "object"
@@ -1389,7 +1685,6 @@
                 "type": "array"
               },
               "status": {
-                "backendName": "status",
                 "description_en": "The status of the managed agent",
                 "description_zh": "托管智能体状态",
                 "enum": [
@@ -1404,14 +1699,13 @@
                 "type": "string"
               },
               "subAgents": {
-                "backendName": "subAgents",
                 "description_en": "The list of sub-agent configurations",
                 "description_zh": "子智能体配置列表",
-                "itemName": "subAgents",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "instruction": {
-                      "backendName": "instruction",
                       "description_en": "The sub-agent instruction",
                       "description_zh": "子智能体指令",
                       "example": "请对代码进行评审",
@@ -1419,12 +1713,41 @@
                       "type": "string"
                     },
                     "name": {
-                      "backendName": "name",
                       "description_en": "The sub-agent name",
                       "description_zh": "子智能体名称",
                       "example": "reviewer-agent",
                       "required": true,
                       "type": "string"
+                    },
+                    "skills": {
+                      "description_en": "The skills used by the child agent and their actual versions. The version field is not returned if the template package does not contain version information",
+                      "description_zh": "子智能体使用的技能及实际版本；模板包中无版本信息时不返回 version",
+                      "items": {
+                        "description_en": "",
+                        "description_zh": "",
+                        "properties": {
+                          "name": {
+                            "description_en": "The skill name used by the sub-agent. Declared as optional for compatibility, but the backend validates that each entry is required",
+                            "description_zh": "子智能体使用的技能名称；按兼容性要求声明为可选，由后端校验每项必填",
+                            "example": "web-search",
+                            "title_en": "",
+                            "title_zh": "技能名称",
+                            "type": "string"
+                          },
+                          "version": {
+                            "description_en": "The optional version number. If omitted, set to null, or left blank, the latest version is resolved",
+                            "description_zh": "可选版本号；省略、null 或空白时解析最新版本",
+                            "example": "1.0.0",
+                            "title_en": "",
+                            "title_zh": "技能版本",
+                            "type": "string"
+                          }
+                        },
+                        "type": "object"
+                      },
+                      "title_en": "",
+                      "title_zh": "子智能体技能列表",
+                      "type": "array"
                     }
                   },
                   "type": "object"
@@ -1432,29 +1755,27 @@
                 "type": "array"
               },
               "template": {
-                "backendName": "template",
-                "description_en": "The template configuration",
+                "description_en": "The template configuration information",
                 "description_zh": "模板配置信息",
                 "properties": {
                   "aiRegistry": {
-                    "backendName": "aiRegistry",
-                    "description_en": "The AI registry template configuration",
+                    "description_en": "The AI Registry template configuration",
                     "description_zh": "AI 注册表模板配置",
                     "properties": {
                       "name": {
-                        "backendName": "name",
-                        "description_en": "The name of the template in the AI registry",
+                        "description_en": "The name of the template in AI Registry",
                         "description_zh": "AI 注册表中模板的名称",
                         "example": "code-review-template",
                         "required": true,
                         "type": "string"
                       },
                       "version": {
-                        "backendName": "version",
-                        "description_en": "The version of the template in the AI registry",
+                        "description_en": "The version of the template in AI Registry",
                         "description_zh": "AI 注册表中模板的版本",
                         "example": "1.0.0",
                         "required": true,
+                        "title_en": "",
+                        "title_zh": "模板版本，创建时省略则解析并固定 latest，更新时保持原版本",
                         "type": "string"
                       }
                     },
@@ -1464,14 +1785,13 @@
                 "type": "object"
               },
               "tools": {
-                "backendName": "tools",
                 "description_en": "The list of tool configurations",
                 "description_zh": "工具配置列表",
-                "itemName": "tools",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "name": {
-                      "backendName": "name",
                       "description_en": "The tool name",
                       "description_zh": "工具名称",
                       "example": "code-reviewer",
@@ -1479,7 +1799,6 @@
                       "type": "string"
                     },
                     "type": {
-                      "backendName": "type",
                       "description_en": "The tool type",
                       "description_zh": "工具类型",
                       "enum": [
@@ -1495,14 +1814,12 @@
                 "type": "array"
               },
               "updatedAt": {
-                "backendName": "updatedAt",
                 "description_en": "The time when the managed agent was last updated, in RFC 3339 format",
                 "description_zh": "更新时间，RFC 3339 格式",
                 "example": "2026-01-01T00:00:00Z",
                 "type": "string"
               },
               "workspaceId": {
-                "backendName": "workspaceId",
                 "description_en": "The workspace ID",
                 "description_zh": "工作空间 ID",
                 "example": "ws-1",
@@ -1512,7 +1829,6 @@
             "type": "object"
           },
           "httpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code. The value 200 indicates success",
             "description_zh": "HTTP 状态码。成功时为 200",
             "example": "200",
@@ -1520,21 +1836,18 @@
             "type": "integer"
           },
           "message": {
-            "backendName": "message",
-            "description_en": "The result message of the request",
+            "description_en": "The message returned for the request",
             "description_zh": "请求处理结果消息",
             "example": "success",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求 ID",
             "example": "1a2b3c4d-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "请求是否成功",
             "example": "true",

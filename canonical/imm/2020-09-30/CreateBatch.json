@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun imm CreateBatch --region cn-hangzhou --Input '{\"OSS\":{}}' --ServiceRole AliyunIMMBatchTriggerRole --ProjectName 'test-project' --Actions '[{\"Parameters\":[\"pages=3\"],\"FastFailPolicy\":{},\"Name\":\"doc/convert\"}]'",
   "cmd_full_name": "imm create-batch",
   "cmd_name": "create-batch",
@@ -52,6 +53,18 @@
               "type": "string"
             },
             {
+              "example": "test-object",
+              "help_en": "The object key prefix",
+              "help_zh": "对象Key的前缀",
+              "name": "prefix",
+              "options": [
+                "--prefix"
+              ],
+              "raw_name": "Prefix",
+              "required": false,
+              "type": "string"
+            },
+            {
               "element": {
                 "type": "string"
               },
@@ -64,18 +77,6 @@
               "raw_name": "MatchExpressions",
               "required": false,
               "type": "array"
-            },
-            {
-              "example": "test-object",
-              "help_en": "The object key prefix",
-              "help_zh": "对象Key的前缀",
-              "name": "prefix",
-              "options": [
-                "--prefix"
-              ],
-              "raw_name": "Prefix",
-              "required": false,
-              "type": "string"
             }
           ],
           "help_en": "The input settings for data access to Object Storage Service (OSS)",
@@ -105,31 +106,6 @@
       "element": {
         "fields": [
           {
-            "fields": [
-              {
-                "example": "abort",
-                "help_en": "The action when the batch processor or trigger encounters an error.\n\nEnumerated values:\n\nabort: stops running.\nignore: ignores the error and keeps running",
-                "help_zh": "快速失败执行策略，批处理或触发器中根据该策略配置可以选择遇到错误停止运行或继续运行",
-                "name": "action",
-                "options": [
-                  "--action"
-                ],
-                "raw_name": "Action",
-                "required": false,
-                "type": "string"
-              }
-            ],
-            "help_en": "The on-error policy",
-            "help_zh": "快速失败策略结构体",
-            "name": "fast_fail_policy",
-            "options": [
-              "--fast-fail-policy"
-            ],
-            "raw_name": "FastFailPolicy",
-            "required": false,
-            "type": "object"
-          },
-          {
             "example": "doc/convert",
             "help_en": "The template name",
             "help_zh": "模板名字",
@@ -154,6 +130,35 @@
             "raw_name": "Parameters",
             "required": false,
             "type": "array"
+          },
+          {
+            "fields": [
+              {
+                "enum": [
+                  "abort",
+                  "ignore"
+                ],
+                "example": "abort",
+                "help_en": "The action when the batch processor or trigger encounters an error.\n\nEnumerated values:\n\nabort: stops running.\nignore: ignores the error and keeps running",
+                "help_zh": "快速失败执行策略，批处理或触发器中根据该策略配置可以选择遇到错误停止运行或继续运行",
+                "name": "action",
+                "options": [
+                  "--action"
+                ],
+                "raw_name": "Action",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "help_en": "The on-error policy",
+            "help_zh": "快速失败策略结构体",
+            "name": "fast_fail_policy",
+            "options": [
+              "--fast-fail-policy"
+            ],
+            "raw_name": "FastFailPolicy",
+            "required": false,
+            "type": "object"
           }
         ],
         "type": "object"
@@ -251,14 +256,12 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Id": {
-            "backendName": "Id",
             "description_en": "The batch processing task ID",
             "description_zh": "批处理任务ID",
             "example": "batch-4eb9223f-3e88-42d3-a578-3f2852******",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "EC564A9A-BA5C-4499-A087-D9B9E76E*****",

@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun vpc DescribeVpnRouteEntries --region cn-hangzhou --VpnGatewayId 'vpn-bp1cmw7jh1nfe43m90000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "vpc describe-vpn-route-entries",
   "cmd_name": "describe-vpn-route-entries",
@@ -98,131 +99,158 @@
         "description_zh": "返回结果",
         "properties": {
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number of the list",
             "description_zh": "列表的页码",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page for paging queries",
             "description_zh": "分页查询时每页的行数",
             "example": "10",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "BF3995A6-FA4F-4C74-B90F-89ECF4BFF4D5",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
             "description_en": "The total number of entries in the list",
             "description_zh": "列表总条目数",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "VpnRouteCounts": {
-            "backendName": "data.vpnRouteCounts",
-            "itemName": "VpnRouteCount",
-            "items": {
-              "properties": {
-                "RouteCount": {
-                  "backendName": "routeCount",
-                  "format": "int32",
-                  "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "VpnRouteCount": {
+                "description_en": "The route statistics of the dual-tunnel mode VPN gateway instance.\n\nThis information is returned only for VPN gateway instances that support dual-tunnel mode IPsec-VPN connections",
+                "description_zh": "双隧道模式VPN网关实例的路由条目统计信息。\n\n仅支持双隧道模式IPsec-VPN连接的VPN网关实例会返回该组信息",
+                "items": {
+                  "description_en": "The route statistics",
+                  "description_zh": "路由条目的统计信息",
+                  "properties": {
+                    "RouteCount": {
+                      "description_en": "The number of route entries",
+                      "description_zh": "路由条目数量",
+                      "example": "3",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "RouteEntryType": {
+                      "description_en": "The type of the route entry.\n\ncustom: destination route entry.\nbgp: BGP route entry",
+                      "description_zh": "路由条目类型。\n\ncustom：目的路由条目。\nbgp：BGP路由条目",
+                      "example": "bgp",
+                      "type": "string"
+                    },
+                    "Source": {
+                      "description_en": "The source of the BGP route.\n\nCLOUD: the route is propagated from an Alibaba Cloud service associated with the VPN gateway.\nVPN_BGP: the route is learned through the BGP routing protocol of the VPN gateway, such as routes learned from an on-premises data center through BGP",
+                      "description_zh": "BGP路由条目的来源。\n\nCLOUD：表示当前路由是通过VPN网关关联的阿里云产品传播过来的。\nVPN_BGP：表示当前路由是通过VPN网关BGP路由协议学习到的，例如通过BGP路由协议学习本地数据中心的路由",
+                      "example": "VPN_BGP",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "RouteEntryType": {
-                  "backendName": "routeEntryType",
-                  "type": "string"
-                },
-                "Source": {
-                  "backendName": "source",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "VpnRouteEntries": {
-            "backendName": "data.vpnRouteEntries",
-            "itemName": "VpnRouteEntry",
-            "items": {
-              "properties": {
-                "AsPath": {
-                  "backendName": "asPath",
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "VpnRouteEntry": {
+                "description_en": "The list of route entries",
+                "description_zh": "路由条目信息列表",
+                "items": {
+                  "description_en": "The details of the route entry",
+                  "description_zh": "路由条目详细信息",
+                  "properties": {
+                    "AsPath": {
+                      "description_en": "The AS path of the route entry",
+                      "description_zh": "路由条目经过的AS路径",
+                      "example": "65501,65001,60011",
+                      "type": "string"
+                    },
+                    "Community": {
+                      "description_en": "The community attribute value of the route entry",
+                      "description_zh": "路由条目的Community属性值",
+                      "example": "65001:1000,65501:2000",
+                      "type": "string"
+                    },
+                    "CreateTime": {
+                      "description_en": "The timestamp when the route entry was created.\n\nThe timestamp is in the UNIX format and represents the total number of milliseconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+                      "description_zh": "创建路由条目的时间戳。\n\n时间戳的格式采用Unix时间戳，表示从格林威治时间1970年01月01日00时00分00秒至创建路由条目时的总时长",
+                      "example": "1563874074000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "NextHop": {
+                      "description_en": "The next hop of the route entry",
+                      "description_zh": "路由条目的下一跳",
+                      "example": "vco-bp1tui07ob10fmuro****",
+                      "type": "string"
+                    },
+                    "NextHopTunnelId": {
+                      "description_en": "The tunnel ID associated with the next hop of the route entry.\n\nThis parameter is returned only for VPN gateway instances that support dual-tunnel mode IPsec-VPN connections",
+                      "description_zh": "路由条目下一跳关联的隧道ID。\n\n仅支持双隧道模式IPsec-VPN连接的VPN网关实例会返回当前参数",
+                      "example": "tun-36cfgpwjn58axj****",
+                      "type": "string"
+                    },
+                    "RouteDest": {
+                      "description_en": "The destination CIDR block of the route entry",
+                      "description_zh": "路由条目的目标网段",
+                      "example": "10.0.0.0/24",
+                      "type": "string"
+                    },
+                    "RouteEntryType": {
+                      "description_en": "The type of the route entry.\n\ncustom: a destination route of the VPN gateway instance.\nbgp: a BGP route of the VPN gateway instance",
+                      "description_zh": "路由条目的类型。\n\ncustom：表示VPN网关实例的目的路由。\nbgp：表示VPN网关实例的BGP路由",
+                      "example": "custom",
+                      "type": "string"
+                    },
+                    "Source": {
+                      "description_en": "The source of the BGP route.\n\nCLOUD: the route is propagated from an Alibaba Cloud service associated with the VPN gateway.\nVPN_BGP: the route is learned through the BGP routing protocol of the VPN gateway, such as routes learned from an on-premises data center through BGP",
+                      "description_zh": "BGP路由条目的来源。\n\nCLOUD：表示当前路由是通过VPN网关关联的阿里云产品传播过来的。\nVPN_BGP：表示当前路由是通过VPN网关BGP路由协议学习到的，例如通过BGP路由协议学习本地数据中心的路由",
+                      "example": "CLOUD",
+                      "type": "string"
+                    },
+                    "State": {
+                      "description_en": "The status of the route entry. Valid values:\n\npublished: published.\nnormal: not published",
+                      "description_zh": "路由条目的状态。取值：\n\npublished：已发布。\nnormal：未发布",
+                      "example": "normal",
+                      "type": "string"
+                    },
+                    "VpnInstanceId": {
+                      "description_en": "The instance ID of the VPN gateway",
+                      "description_zh": "VPN网关实例ID",
+                      "example": "vpn-bp1cmw7jh1nfe43m9****",
+                      "type": "string"
+                    },
+                    "Weight": {
+                      "description_en": "The weight of the destination route.\n\nFor VPN gateway instances that support dual-tunnel mode IPsec-VPN connections, the weight of the destination route defaults to 100 and has no practical significance.\nFor VPN gateway instances that support single-tunnel mode IPsec-VPN connections, the weight represents the priority of the destination route:\n    - 100: high priority. When multiple destination routes with the same destination CIDR block exist, the IPsec-VPN connection associated with this destination route serves as the active link.\n    - 0: low priority. When multiple destination routes with the same destination CIDR block exist, the IPsec-VPN connection associated with this destination route serves as the standby link",
+                      "description_zh": "目的路由的权重值。\n\n对于支持IPsec-VPN连接双隧道模式的VPN网关实例，目的路由的权重值默认为100，且无实际意义。\n对于支持IPsec-VPN连接单隧道模式的VPN网关实例，目的路由权重值代表目的路由的优先级：\n    - 100：表示高优先级。存在目标网段相同的多条目的路由时，该目的路由关联的IPsec连接为主链路。\n    - 0：表示低优先级。存在目标网段相同的多条目的路由时，该目的路由关联的IPsec连接为备链路",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Community": {
-                  "backendName": "community",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CreateTime": {
-                  "backendName": "createTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "NextHop": {
-                  "backendName": "nextHop",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "NextHopTunnelId": {
-                  "backendName": "nextHopTunnelId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RouteDest": {
-                  "backendName": "routeDest",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RouteEntryType": {
-                  "backendName": "type",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Source": {
-                  "backendName": "source",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "State": {
-                  "backendName": "state",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VpnInstanceId": {
-                  "backendName": "vpnInstanceId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Weight": {
-                  "backendName": "weight",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

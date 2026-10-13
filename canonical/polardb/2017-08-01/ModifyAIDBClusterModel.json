@@ -1,11 +1,12 @@
 {
-  "camel_example": "",
+  "backend_timeout_ms": 20000,
+  "camel_example": "aliyun polardb ModifyAIDBClusterModel --region cn-hangzhou --ModelName 'Qwen3-32B' --DBClusterId 'pm-2ze4x2mwo81knj08a' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "polardb modify-aidb-cluster-model",
   "cmd_name": "modify-aidb-cluster-model",
   "deprecated": false,
-  "description_en": "Changes the model or the customer-facing invocation name of an AI cluster",
+  "description_en": "Changes the model or the client-facing invocation name of an AI cluster",
   "description_zh": "变更 AI 集群模型或对客调用名",
-  "kebab_example": "",
+  "kebab_example": "aliyun polardb modify-aidb-cluster-model --biz-region-id cn-hangzhou --db-cluster-id pm-2ze4x2mwo81knj08a --model-name Qwen3-32B --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": false,
   "name": "ModifyAIDBClusterModel",
@@ -61,7 +62,7 @@
     },
     {
       "example": "my-flagship-chat",
-      "help_en": "The new customer-facing invocation name. If this parameter is not specified, the existing invocation name is retained",
+      "help_en": "The new client-facing invocation name. If this parameter is not specified, the existing invocation name is retained",
       "help_zh": "新的对客调用名。不传则保持现有调用名",
       "location": "query",
       "max_length": "128",
@@ -74,8 +75,34 @@
       "type": "string"
     },
     {
+      "example": "8",
+      "help_en": "The maximum number of workers to restart per batch within a single MSD. Valid values: 1 to 30. This parameter takes effect only when RestartMode is set to inPlace",
+      "help_zh": "单个 MSD 内每批最多重启的 worker 数量，范围为 1～30。仅在 RestartMode=inPlace 时生效",
+      "location": "query",
+      "name": "worker_batch_size",
+      "options": [
+        "--worker-batch-size"
+      ],
+      "raw_name": "WorkerBatchSize",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "inPlace",
+      "help_en": "The restart mode for workers. Valid values:\ninPlace\nrecreate",
+      "help_zh": "worker 重启方式，仅允许 inPlace 或 recreate",
+      "location": "query",
+      "name": "restart_mode",
+      "options": [
+        "--restart-mode"
+      ],
+      "raw_name": "RestartMode",
+      "required": false,
+      "type": "string"
+    },
+    {
       "example": "true",
-      "help_en": "Specifies whether to only preview the change",
+      "help_en": "Specifies whether to only preview the change without actually performing it",
       "help_zh": "是否仅预览变更",
       "location": "query",
       "name": "dry_run",
@@ -97,109 +124,98 @@
         "description_zh": "Schema of Response",
         "properties": {
           "DryRun": {
-            "backendName": "data.dryRun",
             "default": "false",
-            "description_en": "Indicates whether the request is a dry run",
+            "description_en": "Indicates whether the request is a dry-run request",
             "description_zh": "是否为预览请求",
             "example": "true",
-            "title_en": "是否为预览请求。",
+            "title_en": "",
             "title_zh": "是否为预览请求。",
             "type": "boolean"
           },
           "ModelType": {
-            "backendName": "data.modelType",
             "default": "",
             "description_en": "The model type of the instance",
             "description_zh": "实例模型形态",
             "example": "custom",
-            "title_en": "实例模型形态。",
+            "title_en": "",
             "title_zh": "实例模型形态。",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "default": "",
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "3AA6E0E4-1234-5678-90AB-1234567890AB",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "TargetModelName": {
-            "backendName": "data.targetModelName",
             "default": "",
             "description_en": "The resolved target model name",
             "description_zh": "解析后的目标模型名称",
             "example": "Qwen3-32B",
-            "title_en": "解析后的目标模型名称。",
+            "title_en": "",
             "title_zh": "解析后的目标模型名称。",
             "type": "string"
           },
           "TargetOssPath": {
-            "backendName": "data.targetOssPath",
             "default": "",
             "description_en": "The resolved target OSS path",
             "description_zh": "解析后的目标 OSS 路径",
             "example": "/my-model-bucket/models/qwen3",
-            "title_en": "解析后的目标 OSS 路径。",
+            "title_en": "",
             "title_zh": "解析后的目标 OSS 路径。",
             "type": "string"
           },
           "TaskId": {
-            "backendName": "data.taskId",
             "default": "0",
             "description_en": "The ID of the asynchronous task. This parameter is empty when DryRun is set to true",
             "description_zh": "异步任务 ID，DryRun=true 时为空",
             "example": "123456",
             "format": "int32",
-            "title_en": "异步任务 ID，DryRun=true 时为空。",
+            "title_en": "",
             "title_zh": "异步任务 ID，DryRun=true 时为空。",
             "type": "integer"
           },
           "TotalBatches": {
-            "backendName": "data.totalBatches",
             "default": "0",
             "description_en": "The number of change batches",
             "description_zh": "变更批次数量",
             "example": "1",
             "format": "int64",
-            "title_en": "变更批次数量。",
+            "title_en": "",
             "title_zh": "变更批次数量。",
             "type": "integer"
           },
           "TotalMsds": {
-            "backendName": "data.totalMsds",
             "default": "0",
-            "description_en": "The number of affected model service instances",
+            "description_en": "The number of affected model serving instances",
             "description_zh": "受影响的模型服务实例数量",
             "example": "2",
             "format": "int64",
-            "title_en": "受影响的模型服务实例数量。",
+            "title_en": "",
             "title_zh": "受影响的模型服务实例数量。",
             "type": "integer"
           },
           "Warnings": {
-            "backendName": "data.warnings",
-            "description_en": "The change warnings returned by the upstream service. The caller must display these warnings",
+            "description_en": "The change warnings returned by the upstream. The caller must display these warnings",
             "description_zh": "上游返回的变更告警，调用方必须展示",
             "example": "",
-            "itemName": "Warning",
             "items": {
               "description_en": "The warning content",
               "description_zh": "告警内容",
               "example": "The change will restart model workers.",
-              "title_en": "告警内容。",
+              "title_en": "",
               "title_zh": "告警内容。",
               "type": "string"
             },
-            "nullToEmpty": true,
-            "title_en": "上游返回的变更告警，调用方必须展示。",
+            "title_en": "",
             "title_zh": "上游返回的变更告警，调用方必须展示。",
             "type": "array"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

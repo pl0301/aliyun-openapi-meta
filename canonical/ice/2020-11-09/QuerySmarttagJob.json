@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun ice QuerySmarttagJob --region cn-hangzhou --JobId 88c6ca184c0e47098a5b665e20000 --version 2020-11-09 --method POST --force",
   "cmd_full_name": "ice query-smarttag-job",
   "cmd_name": "query-smarttag-job",
   "deprecated": false,
-  "description_en": "Querying a smart tag task",
+  "description_en": "Queries smart tagging jobs",
   "description_zh": "查询智能标签任务",
   "kebab_example": "aliyun ice query-smarttag-job --job-id 88c6ca184c0e47098a5b665e20000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "88c6ca184c0e47098a5b665e2****",
-      "help_en": "The ID of the smart tagging job. You can obtain this ID from the response to the https://help.aliyun.com/document_detail/478786.html call",
+      "help_en": "The ID of the smart tagging job to query. You can obtain the ID from the response parameters of the https://help.aliyun.com/document_detail/478786.html operation",
       "help_zh": "需要查询的智能标签作业ID。可以从https://help.aliyun.com/document_detail/478786.html的返回参数中获取",
       "location": "query",
       "name": "job_id",
@@ -36,7 +37,7 @@
     },
     {
       "example": "{\"labelResultType\":\"auto\"}\t\n",
-      "help_en": "Additional request parameters, formatted as a JSON string. For example: `{\"labelResultType\":\"auto\"}`. The `labelResultType` parameter supports the following values:\n\n`auto`: machine-generated tagging results\n\n`hmi`: human-in-the-loop tagging results",
+      "help_en": "The additional request parameters, represented as a JSON string. Example: {\"labelResultType\":\"auto\"}. The labelResultType parameter is of the String type. Valid values:\n\nauto: machine tagging results\n\nhmi: human-machine collaboration results",
       "help_zh": "额外的请求参数，使用JSON字符串表示，例如：{\"labelResultType\":\"auto\"}。其中，labelResultType为String类型，可取值：\n\nauto：机器打标结果\n\nhmi：人机协同结果",
       "location": "query",
       "name": "params",
@@ -54,71 +55,89 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "JobStatus": {
-            "backendName": "data.JobStatus",
-            "description_en": "The job status. Valid values:\n\nSuccess: The job was successful.\n\nFail: The job failed.\n\nProcessing: The job is in progress.\n\nSubmitted: The job is queued for processing",
+            "description_en": "The job status. Valid values:\n\nSuccess: The job is processed successfully.\n\nFail: The job fails to be processed.\n\nProcessing: The job is being processed.\n\nSubmitted: The job is submitted and waiting to be processed",
             "description_zh": "任务状态，可取值：\n\nSuccess：处理成功。\n\nFail：处理失败。\n\nProcessing：处理中。\n\nSubmitted：已提交等待处理",
             "example": "Success",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "******11-DB8D-4A9A-875B-275798******",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Results": {
-            "backendName": "data.Results",
-            "itemName": "Result",
-            "items": {
-              "properties": {
-                "Data": {
-                  "backendName": "Data",
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Result": {
+                "description_en": "The array of analysis result objects",
+                "description_zh": "分析结果对象数组",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Data": {
+                      "description_en": "The specific data of the analysis result, represented as a JSON character string. For the data structures of different types, see the Result parameter description below",
+                      "description_zh": "分析结果的具体数据，以JSON字符串表示。不同Type的数据结构见下文Result参数说明",
+                      "example": "{\"title\":\"example-title-****\"}\t\n",
+                      "type": "string"
+                    },
+                    "Type": {
+                      "description_en": "The type of the analysis result.\n\n[ ] - Smart Tagging 1.0 analysis result types:\n\n\nTextLabel: text tags\nVideoLabel: video tags\nASR: original automatic speech recognition (ASR) results (not returned by default)\nOCR: original optical character recognition (OCR) results (not returned by default)\nNLP: natural language processing (NLP) results (not returned by default)\n\n\n[ ] - Smart Tagging 2.0 analysis result types:\n\nCPVLabel\nMeta: information such as video titles (not returned by default)\n\n[ ] - Smart Tagging 2.0-custom analysis result types:\n\nCPVLabel\nMeta: information such as video titles (not returned by default)",
+                      "description_zh": "分析结果的类型。\n\n[ ] - 标签1.0分析结果类型：\n\n\nTextLabel：文本标签\nVideoLabel：视频标签\nASR：语音识别原始结果（默认不返回）\nOCR：文字识别原始结果（默认不返回）\nNLP：NLP处理结果（默认不返回）\n\n\n[ ] - 标签2.0分析结果类型：\n\nCPVLabel\nMeta：视频标题等信息（默认不返回）\n\n[ ] - 标签2.0-custom分析结果类型：\n\nCPVLabel\nMeta：视频标题等信息（默认不返回）",
+                      "example": "Meta",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Type": {
-                  "backendName": "Type",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "Usages": {
-            "backendName": "data.Usages",
-            "itemName": "Usage",
-            "items": {
-              "properties": {
-                "Quota": {
-                  "backendName": "Quota",
-                  "format": "int64",
-                  "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Usage": {
+                "description_en": "",
+                "description_zh": "",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Quota": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Type": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Type": {
-                  "backendName": "Type",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "UserData": {
-            "backendName": "data.UserData",
-            "description_en": "The custom data passed through the MNS callback. For details on the message format, see the callback message format definitions below",
+            "description_en": "The information passed through during an MNS callback. For the message format, see the callback message format definition below",
             "description_zh": "通过MNS回调时透传回来的信息。消息格式请参见下文回调消息格式定义",
             "example": "{\"userId\":\"123432412831\"}",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

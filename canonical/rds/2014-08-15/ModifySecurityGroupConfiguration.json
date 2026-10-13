@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 50000,
   "camel_example": "aliyun rds ModifySecurityGroupConfiguration --region cn-hangzhou --DBInstanceId 'rm-uf6wjk50000' --SecurityGroupId 'sg-0000'",
   "cmd_full_name": "rds modify-security-group-configuration",
   "cmd_name": "modify-security-group-configuration",
   "deprecated": false,
-  "description_en": "Changes the ECS security groups to which an instance is added",
+  "description_en": "Modifies the association between a specified ApsaraDB RDS instance and ECS security groups",
   "description_zh": "该接口用于修改指定RDS实例和ECS安全组的关联信息",
   "kebab_example": "aliyun rds modify-security-group-configuration --db-instance-id rm-uf6wjk50000 --security-group-id sg-0000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "rm-uf6wjk5****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -37,7 +38,7 @@
     {
       "doc_required": true,
       "example": "sg-****",
-      "help_en": "The ID of the ECS security group. Each instance can be added to up to 10 security groups. Separate multiple security groups with commas (,). To delete an ECS security group, leave this parameter empty. You can call the DescribeSecurityGroups operation to query the ID of the ECS security group",
+      "help_en": "The ECS security group ID. You can associate up to 10 security groups with an instance. Separate multiple security group IDs with commas (,). To disassociate all ECS security groups, pass an empty string. You can call DescribeSecurityGroups to query ECS security group IDs",
       "help_zh": "ECS安全组ID。最多支持关联10个安全组，多个安全组用英文逗号（,）隔开。清空ECS安全组请传入空字符串。您可以通过DescribeSecurityGroups查询ECS安全组ID",
       "location": "query",
       "name": "security_group_id",
@@ -59,63 +60,54 @@
         "description_zh": "返回参数详情",
         "properties": {
           "DBInstanceName": {
-            "backendName": "data.dbInstanceName",
             "description_en": "The instance ID",
             "description_zh": "实例ID",
             "example": "rm-uf6wjk5****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Items": {
-            "backendName": "data.rdsEcsSecurityGroupRel",
-            "itemName": "EcsSecurityGroupRelation",
-            "items": {
-              "properties": {
-                "NetworkType": {
-                  "backendName": "netType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Classic",
-                        "value": "classic"
-                      },
-                      {
-                        "targetValue": "VPC",
-                        "value": "vpc"
-                      },
-                      {
-                        "targetValue": "MIX",
-                        "value": "mix"
-                      }
-                    ]
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "EcsSecurityGroupRelation": {
+                "description_en": "The list of associated security group information",
+                "description_zh": "关联的安全组信息列表",
+                "items": {
+                  "description_en": "The details of the associated security group",
+                  "description_zh": "关联的安全组信息详情",
+                  "properties": {
+                    "NetworkType": {
+                      "description_en": "The network type of the ECS security group. Valid values:\nClassic: classic network.\nVPC: virtual private cloud (VPC)",
+                      "description_zh": "ECS安全组的网络类型。取值：\nClassic：经典网络\nVPC：专有网络",
+                      "example": "VPC",
+                      "type": "string"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID",
+                      "description_zh": "地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "SecurityGroupId": {
+                      "description_en": "The ECS security group ID",
+                      "description_zh": "ECS安全组ID",
+                      "example": "sg-****",
+                      "type": "string"
+                    }
                   },
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "RegionId": {
-                  "backendName": "regionId",
-                  "mappingResourcePropertyName": "$.RegionId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SecurityGroupId": {
-                  "backendName": "securityGroupId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "8585861B-8F0D-4D17-9460-C42255EB10C0",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

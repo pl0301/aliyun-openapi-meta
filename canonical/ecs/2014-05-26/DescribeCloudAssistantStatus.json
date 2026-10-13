@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ecs DescribeCloudAssistantStatus --region cn-hangzhou --PageSize 10 --NextToken AAAAAdDWBF2 --PageNumber 1 --OSType Windows --MaxResults 10 --RegionId 'cn-hangzhou' --InstanceId.1 'i-bp1iudwa5b1tqa0000'",
   "cmd_full_name": "ecs describe-cloud-assistant-status",
   "cmd_name": "describe-cloud-assistant-status",
   "deprecated": false,
-  "description_en": "Queries whether Cloud Assistant Agent is installed on one or more instances. If Cloud Assistant is installed, the response also includes the total number of command executions, the number of ongoing executions, and the time of the most recent command execution",
+  "description_en": "Calls DescribeCloudAssistantStatus to query whether Cloud Assistant Agent is installed on one or more instances. If Cloud Assistant is installed, the operation also returns the total number of Cloud Assistant command executions, the number of ongoing executions, and the time of the most recent command execution",
   "description_zh": "调用DescribeCloudAssistantStatus查询一台或者多台实例是否安装了云助手Agent。如果已安装了云助手，还将查询云助手命令执行的总数量、正在执行的数量以及最近一次命令执行的时间",
   "kebab_example": "aliyun ecs describe-cloud-assistant-status --biz-region-id cn-hangzhou --os-type Windows --page-number 1 --page-size 10 --max-results 10 --next-token AAAAAdDWBF2 --instance-id i-bp1iudwa5b1tqa0000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -74,7 +75,7 @@
     },
     {
       "example": "10",
-      "help_en": "The maximum number of entries per page for a paged query. If InstanceId is specified, this parameter is ignored.\n\nMaximum value: 50.\n\nDefault value: 10",
+      "help_en": "The maximum number of entries per page for a paged query. If InstanceId is set, this parameter is ignored.\n\nMaximum value: 50.\n\nDefault value: 10",
       "help_zh": "分页查询时每页的最大条目数。若已设置InstanceId参数，则该参数无效。\n\n最大值为50。\n\n默认值为10",
       "location": "query",
       "name": "max_results",
@@ -122,106 +123,116 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "InstanceCloudAssistantStatusSet": {
-            "backendName": "data.instanceCloudAssistantStatusSet",
-            "itemName": "InstanceCloudAssistantStatus",
-            "items": {
-              "properties": {
-                "ActiveTaskCount": {
-                  "backendName": "activeTaskCount",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "InstanceCloudAssistantStatus": {
+                "description_en": "The collection of Cloud Assistant installation status results for the instances",
+                "description_zh": "实例云助手安装状态结果集合",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "ActiveTaskCount": {
+                      "description_en": "The number of running Cloud Assistant tasks on the instance",
+                      "description_zh": "实例内的云助手运行中的任务数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CloudAssistantStatus": {
+                      "description_en": "Indicates whether Cloud Assistant is running on the instance. Valid values:\n\ntrue: A heartbeat was detected within the last 2 minutes.\n\nfalse: No heartbeat was detected within the last 2 minutes",
+                      "description_zh": "实例内的云助手是否在运行中。可能值：\n\ntrue：2分钟内有心跳。\n\nfalse：2分钟内无心跳",
+                      "example": "true",
+                      "type": "string"
+                    },
+                    "CloudAssistantVersion": {
+                      "description_en": "The version number of Cloud Assistant Agent. This value is empty if Cloud Assistant Agent is not installed or not running",
+                      "description_zh": "云助手Agent版本号，若未安装或未运行云助手Agent，则该值为空",
+                      "example": "2.2.0.106",
+                      "type": "string"
+                    },
+                    "InstanceId": {
+                      "description_en": "The instance ID",
+                      "description_zh": "实例ID",
+                      "example": "i-bp1iudwa5b1tqa****",
+                      "type": "string"
+                    },
+                    "InvocationCount": {
+                      "description_en": "The number of completed Cloud Assistant tasks on the instance",
+                      "description_zh": "实例内的云助手已完成的任务数",
+                      "example": "2",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "LastHeartbeatTime": {
+                      "description_en": "The time of the most recent Cloud Assistant heartbeat. This value is updated approximately every minute with a random fluctuation of up to 5 seconds (minimum 55 seconds, maximum 65 seconds). The time is in ISO 8601 format in UTC",
+                      "description_zh": "云助手最近一次心跳时间。该值平均每分钟（有上下5秒的随机浮动，最短55秒，最长65秒）更新一次。格式为 ISO 8601，时区为 UTC",
+                      "example": "2021-03-15T09:00:00Z",
+                      "type": "string"
+                    },
+                    "LastInvokedTime": {
+                      "description_en": "The time of the most recent command execution. The time is in ISO 8601 format in UTC",
+                      "description_zh": "最近一次命令执行的时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2021-03-15T08:00:00Z",
+                      "type": "string"
+                    },
+                    "OSType": {
+                      "description_en": "The operating system type of the instance. Valid values:\n\nWindows\nLinux\nFreeBSD",
+                      "description_zh": "实例操作系统类型。可能值：\n\nWindows。\nLinux。\nFreeBSD",
+                      "example": "Linux",
+                      "type": "string"
+                    },
+                    "SupportSessionManager": {
+                      "description_en": "Indicates whether Cloud Assistant on the instance supports the session management feature. If not supported, the Cloud Assistant version is outdated. Update the client to the latest version.\n\nThe minimum Cloud Assistant versions that support session management are:\nLinux: 2.2.3.189\nWindows: 2.1.3.189",
+                      "description_zh": "实例内的云助手是否支持会话管理功能。若不支持，表示云助手版本较低，请将客户端更新至最新版本。\n\n云助手支持会话管理功能的最低版本如下：\nLinux：2.2.3.189\nWindows：2.1.3.189",
+                      "example": "true",
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
                 },
-                "CloudAssistantStatus": {
-                  "backendName": "cloudAssistantStatus",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CloudAssistantVersion": {
-                  "backendName": "cloudAssistantVersion",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "InstanceId": {
-                  "backendName": "instanceId",
-                  "mappingResourcePropertyName": "$.InstanceId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "InvocationCount": {
-                  "backendName": "invocationCount",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer"
-                },
-                "LastHeartbeatTime": {
-                  "backendName": "lastHeartbeatTime",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "LastInvokedTime": {
-                  "backendName": "lastInvokedTime",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "OSType": {
-                  "backendName": "instanceOsType",
-                  "mappingResourcePropertyName": "$.OsType",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "SupportSessionManager": {
-                  "backendName": "supportSessionManager",
-                  "type": "boolean"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "NextToken": {
-            "backendName": "data.nextToken",
             "description_en": "The pagination token returned in this call",
             "description_zh": "本次调用返回的查询凭证值",
             "example": "AAAAAdDWBF2",
-            "nullToEmpty": true,
             "type": "string"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The current page number",
             "description_zh": "当前页码",
             "example": "1",
             "format": "int64",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页行数",
             "example": "1",
             "format": "int64",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
             "description_en": "The total number of instances",
             "description_zh": "实例总个数",
             "example": "1",
             "format": "int64",
-            "nullToEmpty": true,
             "type": "integer"
           }
         },

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ens PushApplicationData --region cn-hangzhou --AppId 'e76f8985-7965-41fc-925b-9648bb6bf650' --Data 'name_:_app01_,_version_:_1.0_,_size_:100,_archiveType_:_tar.gz_,_md5_:_,_url_:_http://xxxx_,_timeout_:_1000_,_name_:_app02_,_version_:_1.1_,_size_:10,_archiveType_:_zip_,_md5_:_xxxx_,_url_:_http://xxxxxx_,_timeout_:_1000'",
   "cmd_full_name": "ens push-application-data",
   "cmd_name": "push-application-data",
   "deprecated": false,
-  "description_en": "Pushes the business or service data of an application to file servers",
+  "description_en": "Pre-pushes the business or service data of an application to a file server",
   "description_zh": "调用PushApplicationData预推应用的业务/服务类数据到文件服务器",
   "kebab_example": "aliyun ens push-application-data --data name_:_app01_,_version_:_1.0_,_size_:100,_archiveType_:_tar.gz_,_md5_:_,_url_:_http://xxxx_,_timeout_:_1000_,_name_:_app02_,_version_:_1.1_,_size_:10,_archiveType_:_zip_,_md5_:_xxxx_,_url_:_http://xxxxxx_,_timeout_:_1000 --app-id e76f8985-7965-41fc-925b-9648bb6bf650 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "[{\\\"name\\\":\\\"app01\\\",       \\\"version\\\":\\\"1.0\\\",       \\\"size\\\":100,\\\"archiveType\\\":\\\"tar.gz\\\",       \\\"md5\\\":\\\"\\\",       \\\"url\\\":\\\"http://xxxx\\\",\\\"timeout\\\": 1000   },    {       \\\"name\\\":\\\"app02\\\",       \\\"version\\\":\\\"1.1\\\",       \\\"size\\\":10,\\\"archiveType\\\":\\\"zip\\\",       \\\"md5\\\":\\\"xxxx\\\",       \\\"url\\\":\\\"http://xxxxxx\\\",\\\"timeout\\\": 1000   }]",
-      "help_en": "The data files that you want to push. The value must be a JSON string",
+      "help_en": "The list of data files to be pre-pushed, in the string format of a JSON array",
       "help_zh": "预推的数据文件列表，Json数组的字符串格式",
       "location": "query",
       "name": "data",
@@ -34,8 +35,8 @@
     },
     {
       "example": "e76f8985-7965-41fc-925b-9648bb6bf650",
-      "help_en": "The ID of the application",
-      "help_zh": "应用ID",
+      "help_en": "The application ID.\n\nBefore calling this operation, activate the Edge Application Hosting service and create an application by calling CreateApplication. Obtain the AppId from the response of the CreateApplication operation",
+      "help_zh": "应用ID。\n\n调用前需开通边缘应用托管服务，并通过 CreateApplication 创建应用；AppId 从创建应用的返回值中获取",
       "location": "query",
       "name": "app_id",
       "options": [
@@ -47,7 +48,7 @@
     },
     {
       "example": "1800",
-      "help_en": "This parameter does not take effect",
+      "help_en": "This parameter is invalid",
       "help_zh": "无效参数",
       "location": "query",
       "name": "timeout",
@@ -60,7 +61,7 @@
     },
     {
       "example": "{\\\"name\\\": \\\"ScheduleToRegionId\\\",  \\\"parameters\\\":{      \\\"operator\\\": \\\"In\\\",       \\\"values\\\": [\\\"cn-chegndu-telecom-4\\\", \\\"cn-shanghai-cmcc-4\\\"]  }}",
-      "help_en": "The push policy in the canary release environment. The value must be a JSON string. You can specify multiple push policies. By default, all data files are pushed",
+      "help_en": "The canary pre-push policy in JSON string format. Multiple distribution policies are supported. By default, all data is pre-pushed",
       "help_zh": "灰度预推策略，Json格式的字符串，支持多种分发策略，默认全量预推",
       "location": "query",
       "name": "push_strategy",
@@ -78,41 +79,56 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "PushResults": {
-            "backendName": "data.PushResult",
-            "itemName": "PushResult",
-            "items": {
-              "properties": {
-                "Name": {
-                  "backendName": "Name",
-                  "nullToEmpty": true,
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "PushResult": {
+                "description_en": "The execution results of the pre-push operations for each data file",
+                "description_zh": "各个数据文件的预推操作执行结果",
+                "items": {
+                  "description_en": "The execution result of the pre-push operation for a data file",
+                  "description_zh": "数据文件的预推操作执行结果",
+                  "properties": {
+                    "Name": {
+                      "description_en": "The name of the data file",
+                      "description_zh": "数据文件名",
+                      "example": "gcs-pre-websocket-eip-telecom",
+                      "type": "string"
+                    },
+                    "ResultCode": {
+                      "description_en": "The pre-push error code. Valid values:\n0: The pre-push operation succeeded.\n100: The pre-push operation was already executed, and the current pre-push status is Pre-push Successful.\n200: The pre-push operation was already executed, and the current pre-push status is Pre-pushing (some file servers are in the pre-pushing state).\n300: The pre-push operation failed and must be triggered again. For the specific error description, refer to ResultDescrip",
+                      "description_zh": "预推错误码。枚举类型，取值范围：\n\n0：预推操作成功\n100：已执行过预推操作，且当前预推状态处于\"已预推成功\"\n200：已执行过预推操作，且当前预推状态处于\"预推中\"（部分文件服务器处于预推中）\n300：预推操作失败，需要重新触发预推操作；具体错误描述参考ResultDescrip",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ResultDescrip": {
+                      "description_en": "The description of the status result",
+                      "description_zh": "状态结果描述信息",
+                      "example": "成功",
+                      "type": "string"
+                    },
+                    "Version": {
+                      "description_en": "The version number of the data file",
+                      "description_zh": "数据文件版本号",
+                      "example": "standard",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "ResultCode": {
-                  "backendName": "ResultCode",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer"
-                },
-                "ResultDescrip": {
-                  "backendName": "ResultDescrip",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Version": {
-                  "backendName": "Version",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
             "type": "string"

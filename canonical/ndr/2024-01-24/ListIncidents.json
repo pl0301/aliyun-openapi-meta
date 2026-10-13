@@ -1,9 +1,9 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ndr ListIncidents --region cn-hangzhou --PageSize 10 --SortBy last_time --AIAnalysisResult.1 real_attack --SortOrder desc --Page 1 --Lang zh --AttackerIp '192.0.2.10' --IncidentName '异常访问关联事件' --EntityKey '192.0.2.10' --ToTime 1788393600000 --EntityUuid 'f4b34c92-6f18-4b67-b5ea-68ff18ad3291' --HandleStatus.1 unhandled --FromTime 1788307200000 --IncidentUuid 'f4b34c92-6f18-4b67-b5ea-68ff18ad3291' --ThreatLevel.1 2 --version 2024-01-24 --method POST --force",
   "cmd_full_name": "ndr list-incidents",
   "cmd_name": "list-incidents",
   "deprecated": false,
-  "description_en": "查询威胁事件列表",
   "description_zh": "分页查询安全事件，可按事件名称、ID、威胁等级、处理状态、AI 分析结果及关联实体筛选",
   "kebab_example": "aliyun ndr list-incidents --from-time 1788307200000 --to-time 1788393600000 --page 1 --page-size 10 --incident-name '异常访问关联事件' --incident-uuid f4b34c92-6f18-4b67-b5ea-68ff18ad3291 --threat-level 2 --handle-status unhandled --ai-analysis-result real_attack --attacker-ip 192.0.2.10 --entity-uuid f4b34c92-6f18-4b67-b5ea-68ff18ad3291 --entity-key 192.0.2.10 --lang zh --sort-by last_time --sort-order desc --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +22,7 @@
   "parameters": [
     {
       "example": "1788307200000",
-      "help_en": "如果不指定 IncidentUuid，则必填",
+      "help_en": "The FromTime",
       "help_zh": "查询开始时间，Unix 毫秒时间戳，按事件最近发生时间筛选。未指定 IncidentUuid 时必须与 ToTime 同时提供；指定 IncidentUuid 时可同时省略",
       "location": "query",
       "name": "from_time",
@@ -35,7 +35,7 @@
     },
     {
       "example": "1788393600000",
-      "help_en": "如果不指定 IncidentUuid，则必填",
+      "help_en": "The ToTime",
       "help_zh": "查询结束时间，Unix 毫秒时间戳。必须与 FromTime 同时提供或同时省略，不能只传一个时间",
       "location": "query",
       "name": "to_time",
@@ -74,7 +74,7 @@
     },
     {
       "example": "异常访问关联事件",
-      "help_en": "事件名称",
+      "help_en": "The IncidentName",
       "help_zh": "安全事件名称，支持模糊匹配",
       "location": "query",
       "name": "incident_name",
@@ -87,7 +87,7 @@
     },
     {
       "example": "f4b34c92-6f18-4b67-b5ea-68ff18ad3291",
-      "help_en": "事件UUID",
+      "help_en": "The IncidentUuid",
       "help_zh": "安全事件 ID，可从 ListIncidents 获取",
       "location": "query",
       "name": "incident_uuid",
@@ -102,7 +102,7 @@
       "element": {
         "type": "int"
       },
-      "help_en": "威胁等级",
+      "help_en": "The ThreatLevel",
       "help_zh": "事件威胁等级列表。0 表示信息，1 表示低危，2 表示中危，3 表示高危，4 表示严重",
       "location": "query",
       "name": "threat_level",
@@ -118,7 +118,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "处理状态",
+      "help_en": "The HandleStatus",
       "help_zh": "安全事件的处理状态标识列表",
       "location": "query",
       "name": "handle_status",
@@ -134,7 +134,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "AI分析结果",
+      "help_en": "The AIAnalysisResult",
       "help_zh": "AI 分析结果列表。real_attack 表示真实攻击，attempt_attack 表示攻击尝试",
       "location": "query",
       "name": "ai_analysis_result",
@@ -148,7 +148,7 @@
     },
     {
       "example": "192.0.2.10",
-      "help_en": "攻击者IP",
+      "help_en": "The AttackerIp",
       "help_zh": "攻击者 IP 地址筛选条件，支持模糊匹配",
       "location": "query",
       "name": "attacker_ip",
@@ -161,7 +161,7 @@
     },
     {
       "example": "f4b34c92-6f18-4b67-b5ea-68ff18ad3291",
-      "help_en": "实体UUID",
+      "help_en": "The EntityUuid",
       "help_zh": "实体 ID，可从 ListEntities 获取。查询与该实体关联的事件；与 EntityKey 同时提供时，以 EntityUuid 为准",
       "location": "query",
       "name": "entity_uuid",
@@ -174,7 +174,7 @@
     },
     {
       "example": "192.0.2.10",
-      "help_en": "实体值",
+      "help_en": "The EntityKey",
       "help_zh": "实体的业务值，例如 IP 地址、域名或云实例 ID，采用精确匹配。仅在未提供 EntityUuid 时生效",
       "location": "query",
       "name": "entity_key",
@@ -187,7 +187,7 @@
     },
     {
       "example": "zh",
-      "help_en": "语言",
+      "help_en": "The Lang",
       "help_zh": "返回内容的语言。zh 表示中文，en 表示英文，默认中文",
       "location": "query",
       "name": "lang",
@@ -240,93 +240,85 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
         "description_zh": "请求返回结果",
         "properties": {
           "Data": {
-            "backendName": "data",
+            "description_en": "",
             "description_zh": "查询结果或操作返回数据",
             "properties": {
               "List": {
-                "backendName": "list",
+                "description_en": "",
                 "description_zh": "当前页结果列表",
-                "itemName": "ListItem",
                 "items": {
+                  "description_en": "",
                   "description_zh": "一条安全事件记录",
                   "properties": {
                     "AIAnalysisResult": {
-                      "backendName": "AIAnalysisResult",
+                      "description_en": "",
                       "description_zh": "AI 分析结果。real_attack 表示真实攻击，attempt_attack 表示攻击尝试",
                       "example": "real_attack",
-                      "title_en": "AI分析结果",
                       "title_zh": "AI分析结果",
                       "type": "string"
                     },
                     "ExternalIpEntityCount": {
-                      "backendName": "ExternalIpEntityCount",
+                      "description_en": "",
                       "description_zh": "事件关联的外部 IP 实体数量",
                       "example": "10",
                       "format": "int32",
-                      "title_en": "外部IP实体数",
                       "title_zh": "外部IP实体数",
                       "type": "integer"
                     },
                     "FirstTime": {
-                      "backendName": "FirstTime",
+                      "description_en": "",
                       "description_zh": "事件首次发生时间，Unix 毫秒时间戳",
                       "example": "1788307200000",
                       "format": "int64",
-                      "title_en": "初见时间",
                       "title_zh": "初见时间",
                       "type": "integer"
                     },
                     "HandleStatus": {
-                      "backendName": "HandleStatus",
+                      "description_en": "",
                       "description_zh": "安全事件的处理状态标识",
                       "example": "unhandled",
-                      "title_en": "处理状态",
                       "title_zh": "处理状态",
                       "type": "string"
                     },
                     "IncidentName": {
-                      "backendName": "IncidentName",
+                      "description_en": "",
                       "description_zh": "安全事件名称",
                       "example": "异常访问关联事件",
-                      "title_en": "事件名称",
                       "title_zh": "事件名称",
                       "type": "string"
                     },
                     "IncidentUuid": {
-                      "backendName": "IncidentUuid",
+                      "description_en": "",
                       "description_zh": "安全事件 ID，可从 ListIncidents 获取",
                       "example": "f4b34c92-6f18-4b67-b5ea-68ff18ad3291",
-                      "title_en": "事件UUID",
                       "title_zh": "事件UUID",
                       "type": "string"
                     },
                     "LastTime": {
-                      "backendName": "LastTime",
+                      "description_en": "",
                       "description_zh": "事件最近发生时间，Unix 毫秒时间戳",
                       "example": "1788310800000",
                       "format": "int64",
-                      "title_en": "最后看到时间",
                       "title_zh": "最后看到时间",
                       "type": "integer"
                     },
                     "RelateAlertCount": {
-                      "backendName": "RelateAlertCount",
+                      "description_en": "",
                       "description_zh": "关联的原始告警数量",
                       "example": "10",
                       "format": "int32",
-                      "title_en": "关联告警数",
                       "title_zh": "关联告警数",
                       "type": "integer"
                     },
                     "ThreatLevel": {
-                      "backendName": "ThreatLevel",
+                      "description_en": "",
                       "description_zh": "事件威胁等级。0 表示信息，1 表示低危，2 表示中危，3 表示高危，4 表示严重",
                       "example": "2",
                       "format": "int32",
-                      "title_en": "威胁等级",
                       "title_zh": "威胁等级",
                       "type": "integer"
                     }
@@ -336,21 +328,21 @@
                 "type": "array"
               },
               "PageNumber": {
-                "backendName": "startIndex",
+                "description_en": "",
                 "description_zh": "当前页码，从 1 开始",
                 "example": "1",
                 "format": "int64",
                 "type": "integer"
               },
               "PageSize": {
-                "backendName": "showSize",
+                "description_en": "",
                 "description_zh": "每页记录数，默认 10，最多 100 条",
                 "example": "10",
                 "format": "int64",
                 "type": "integer"
               },
               "TotalCount": {
-                "backendName": "totalCount",
+                "description_en": "",
                 "description_zh": "符合查询条件的记录总数",
                 "example": "10",
                 "format": "int64",
@@ -360,32 +352,30 @@
             "type": "object"
           },
           "ErrorCode": {
-            "backendName": "errorCode",
+            "description_en": "",
             "description_zh": "请求失败时的错误码",
             "example": "InvalidParam",
             "type": "string"
           },
           "Message": {
-            "backendName": "message",
+            "description_en": "",
             "description_zh": "请求结果说明或失败原因",
             "example": "请求参数无效。",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
+            "description_en": "",
             "description_zh": "请求 ID，用于排查请求问题",
             "example": "f4b34c92-6f18-4b67-b5ea-68ff18ad3291",
-            "title_en": "Id of the request",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
+            "description_en": "",
             "description_zh": "请求是否成功。true 表示成功，false 表示失败",
             "type": "boolean"
           }
         },
-        "title_en": "Schema of Response",
         "title_zh": "Schema of Response",
         "type": "object"
       }

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun sas GetServerlessAppAuthDetail --region cn-hangzhou --AppId '3de9f2ac-f000769226df' --VendorType SAE --MachineType RunD --AppRegionId 'cn-hangzhou'",
   "cmd_full_name": "sas get-serverless-app-auth-detail",
   "cmd_name": "get-serverless-app-auth-detail",
   "deprecated": false,
-  "description_en": "Retrieves the authorization details of a Serverless application",
+  "description_en": "Retrieves the authorization details of a serverless application",
   "description_zh": "获取Serverless应用授权详情",
   "kebab_example": "aliyun sas get-serverless-app-auth-detail --vendor-type SAE --machine-type RunD --app-id 3de9f2ac-f000769226df --app-region-id cn-hangzhou --api-version 2018-12-03 --region cn-hangzhou",
   "method": "GET|POST",
@@ -48,8 +49,8 @@
     },
     {
       "example": "3de9f2ac-f***769226df\n",
-      "help_en": "The SAE application ID.\n\nYou can call the [ListMachineApps](~~ListMachineApps~~) operation to obtain this value",
-      "help_zh": "SAE应用ID。\n\n通过[ListMachineApps](~~ListMachineApps~~)接口获取",
+      "help_en": "The ID of the Serverless App Engine (SAE) application. You can obtain the ID by calling the [ListMachineApps](~~ListMachineApps~~) operation. This parameter is required. If you do not specify this parameter, the API returns an HTTP 400 error with the error code missingParams",
+      "help_zh": "SAE 应用 ID，可通过 [ListMachineApps](~~ListMachineApps~~) 获取。本参数必填；未提供时，API 返回 HTTP 400，错误码为 missingParams",
       "location": "query",
       "name": "app_id",
       "options": [
@@ -61,8 +62,8 @@
     },
     {
       "example": "cn-hangzhou",
-      "help_en": "The region ID of the application",
-      "help_zh": "应用地域ID",
+      "help_en": "The region ID of the application. This parameter is required. If you do not specify this parameter, the API returns an HTTP 400 error with the error code missingParams",
+      "help_zh": "应用地域ID。\n\n本参数实际为必填项；未提供时 API 返回 missingParams（HTTP 400）",
       "location": "query",
       "name": "app_region_id",
       "options": [
@@ -83,19 +84,16 @@
         "description_zh": "PlainResult<ServerlessAppAuthDetailResponse>",
         "properties": {
           "Data": {
-            "backendName": "data",
             "description_en": "The data details",
             "description_zh": "数据详情",
             "properties": {
               "AppId": {
-                "backendName": "appId",
-                "description_en": "The application ID",
+                "description_en": "The ID of the application",
                 "description_zh": "应用ID",
                 "example": "c932b7a0***",
                 "type": "string"
               },
               "CoreCount": {
-                "backendName": "coreCount",
                 "description_en": "The number of CPU cores",
                 "description_zh": "CPU核心数",
                 "example": "2",
@@ -103,7 +101,6 @@
                 "type": "integer"
               },
               "InstanceCount": {
-                "backendName": "instanceCount",
                 "description_en": "The number of instances",
                 "description_zh": "实例数量",
                 "example": "1",
@@ -111,65 +108,58 @@
                 "type": "integer"
               },
               "IsBind": {
-                "backendName": "bind",
                 "description_en": "Indicates whether the authorization is bound. Valid values:\n\ntrue: Yes.\nfalse: No",
                 "description_zh": "是否已绑定授权。取值：\n\ntrue：是\nfalse：否",
                 "example": "true",
                 "type": "boolean"
               },
               "IsPostPaid": {
-                "backendName": "postPaid",
-                "description_en": "Indicates whether the instance uses pay-as-you-go billing. Valid values:\n\ntrue: Yes.\nfalse: No",
+                "description_en": "Indicates whether the instance uses the pay-as-you-go billing method. Valid values:\n\ntrue: Yes.\nfalse: No",
                 "description_zh": "是否后支付实例。取值：\n\ntrue：是\nfalse：否",
                 "example": "true",
-                "title_en": "是后支付",
+                "title_en": "",
                 "title_zh": "是后支付",
                 "type": "boolean"
               },
               "IsServerlessPostPaidValid": {
-                "backendName": "serverlessPostPaidValid",
-                "description_en": "The Serverless pay-as-you-go status. Valid values:\ntrue: Active.\nfalse: Expired",
+                "description_en": "The pay-as-you-go status of the serverless application. Valid values:\ntrue: Active.\nfalse: Expired",
                 "description_zh": "serverless后付费状态。取值：\ntrue：生效中\nfalse：已失效",
                 "example": "true",
-                "title_en": "serverless后支付状态",
+                "title_en": "",
                 "title_zh": "serverless后支付状态",
                 "type": "boolean"
               },
               "PostPaidModuleSwitch": {
-                "backendName": "postPaidModuleSwitch",
-                "description_en": "The pay-as-you-go module switch. Valid values:\n\nVUL: Vulnerability fix module.\nCSPM: Cloud Security Posture Management (CSPM) module.\nAGENTLESS: Agentless detection module.\nSERVERLESS: Serverless security module.\nCTDR: Cloud Threat Detection and Response (CTDR) module",
-                "description_zh": "按量付费模块开关。取值：\n\nVUL：漏洞修复模块\nCSPM：云安全态势管理模块\nAGENTLESS：无代理检测模块\nSERVERLESS：Serverless安全模块\nCTDR：威胁分析与响应模块",
-                "example": "SERVERLESS",
-                "title_en": "后支付单元转换",
+                "description_en": "The switch configuration for pay-as-you-go modules. This field returns a JSON-encoded string. Each property name represents a module, and the property value 0 indicates that the module is disabled, whereas 1 indicates that the module is enabled",
+                "description_zh": "按量付费模块开关配置。该字段返回 JSON 编码的字符串，各属性名称表示模块，属性值 0 表示关闭、1 表示开启",
+                "example": "{\"AGENTLESS\":1,\"CTDR\":1,\"VUL\":0,\"SERVERLESS\":1}",
+                "title_en": "",
                 "title_zh": "后支付单元转换",
                 "type": "string"
               },
               "PostPaidOpenTime": {
-                "backendName": "postPaidOpenTime",
-                "description_en": "The time when pay-as-you-go billing was activated. The value is a UNIX timestamp in milliseconds",
+                "description_en": "The time when the pay-as-you-go billing method was activated. The value is a UNIX timestamp in milliseconds",
                 "description_zh": "后付费开启时间。采用 Unix 时间戳，单位为毫秒",
                 "example": "1655432638000",
                 "format": "int64",
-                "title_en": "后支付开启时间",
+                "title_en": "",
                 "title_zh": "后支付开启时间",
                 "type": "integer"
               },
               "PostPaidStatus": {
-                "backendName": "postPaidStatus",
-                "description_en": "The pay-as-you-go instance status. Valid values:\n1: Active.\n2: Suspended due to overdue payment",
+                "description_en": "The pay-as-you-go instance status. Valid values:\n1: Active.\n2: Stopped due to overdue payment",
                 "description_zh": "后付费实例状态。取值：\n1：生效中\n2：欠费停机",
                 "example": "1",
                 "format": "int32",
-                "title_en": "后支付状态",
+                "title_en": "",
                 "title_zh": "后支付状态",
                 "type": "integer"
               },
               "PostpaidInstanceId": {
-                "backendName": "postpaidInstanceId",
                 "description_en": "The pay-as-you-go instance ID",
                 "description_zh": "后付费实例ID",
                 "example": "101",
-                "title_en": "后付费实例id",
+                "title_en": "",
                 "title_zh": "后付费实例id",
                 "type": "string"
               }
@@ -177,21 +167,19 @@
             "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID, which is a unique identifier generated by Alibaba Cloud for this request. You can use it to troubleshoot issues",
+            "description_en": "The ID of the request. The ID is generated by Alibaba Cloud for the request and can be used to troubleshoot issues",
             "description_zh": "本次调用请求的ID，是由阿里云为该请求生成的唯一标识符，可用于排查和定位问题",
             "example": "30CBF632-109F-596F-97F2-451C8B2A****",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the call was successful. Valid values:\ntrue: Successful.\nfalse: Failed",
+            "description_en": "Indicates whether the API call was successful. Valid values:\ntrue: Successful.\nfalse: Failed",
             "description_zh": "接口调用是否成功。取值：\ntrue：成功\nfalse：失败",
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "PlainResult<ServerlessAppAuthDetailResponse>",
+        "title_en": "",
         "title_zh": "PlainResult<ServerlessAppAuthDetailResponse>",
         "type": "object"
       }

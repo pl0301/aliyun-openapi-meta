@@ -64,46 +64,46 @@
       "type": "string"
     },
     {
-      "example": "false",
-      "help_en": "Specifies whether to record the public IP address and log arrival time. Default value: false.\n\ntrue: enables the feature. After this feature is enabled, Simple Log Service automatically adds the public IP address of the log source device and the time when the log arrives at the server to the Tag field of the log.\nfalse: disables the feature",
-      "help_zh": "是否记录外网 IP 地址和日志接收时间。默认值为 false。\n\ntrue：开启记录外网 IP 和日志接收时间功能，开启后日志服务自动把日志来源设备的公网 IP 地址和日志到达服务端的时间添加到日志的 Tag 字段中。\nfalse：不开启记录外网 IP 和日志接收时间功能",
+      "example": "test-logstore",
+      "help_en": "The name of the Logstore",
+      "help_zh": "Logstore名称",
       "location": "body",
-      "name": "append_meta",
+      "name": "logstore_name",
       "options": [
-        "--append-meta"
+        "--logstore-name"
       ],
       "param_style": "json",
-      "raw_name": "appendMeta",
-      "required": false,
-      "type": "bool"
+      "raw_name": "logstoreName",
+      "required": true,
+      "type": "string"
     },
     {
-      "example": "true",
-      "help_en": "Specifies whether to enable automatic sharding. After this feature is enabled, a shard is automatically split when the write traffic continuously exceeds the limit, which improves write capacity. You must set maxSplitShard (the maximum number of shards after splitting) when you enable automatic sharding",
-      "help_zh": "是否自动分裂 Shard。开启后，当日志写入流量持续超限，会触发 Shard 自动分裂，提升写入能力。开启自动分裂时必须设置 maxSplitShard （最大分裂 Shard 数）",
+      "example": "2",
+      "help_en": "The number of shards.\n\nThis operation does not support updating the number of shards. You can modify the number of shards only by calling the SplitShard or MergeShards operation",
+      "help_zh": "Shard分区个数。\n\n该接口不支持更新分区个数。只能通过SplitShard或MergeShards接口修改分区个数",
       "location": "body",
-      "name": "auto_split",
+      "name": "shard_count",
       "options": [
-        "--auto-split"
+        "--shard-count"
       ],
       "param_style": "json",
-      "raw_name": "autoSplit",
+      "raw_name": "shardCount",
       "required": false,
-      "type": "bool"
+      "type": "int"
     },
     {
-      "example": "false",
-      "help_en": "Specifies whether to enable the WebTracking feature. Default value: false. You can use the WebTracking feature to collect and analyze user behavior data in browsers or mini programs, such as page views, purchase records, and time on site.\n\ntrue: enables WebTracking.\nfalse: disables WebTracking",
-      "help_zh": "是否开启WebTracking功能。默认值为false。当需要收集和分析用户在浏览器或小程序中的行为数据（如页面浏览、购买记录、停留时长等）时，可以使用 WebTracking 功能。\n\ntrue：开启WebTracking。\nfalse：不开启WebTracking",
+      "example": "30",
+      "help_en": "The data retention period. Unit: days. Valid values: 1 to 3650. A value of 3650 indicates permanent retention",
+      "help_zh": "数据的保存时间，单位为天。取值范围为1~3650。如果配置为3650，表示永久保存",
       "location": "body",
-      "name": "enable_tracking",
+      "name": "ttl",
       "options": [
-        "--enable-tracking"
+        "--ttl"
       ],
       "param_style": "json",
-      "raw_name": "enable_tracking",
-      "required": false,
-      "type": "bool"
+      "raw_name": "ttl",
+      "required": true,
+      "type": "int"
     },
     {
       "fields": [
@@ -121,16 +121,16 @@
         },
         {
           "enum": [
-            "aes_cbc",
-            "aes_cfb",
-            "aes_ecb",
-            "aes_gcm",
-            "aes_ofb",
             "default",
+            "aes_ecb",
+            "aes_cbc",
+            "aes_gcm",
             "m4",
-            "sm4_cbc",
+            "aes_cfb",
             "sm4_ecb",
-            "sm4_gcm"
+            "sm4_cbc",
+            "sm4_gcm",
+            "aes_ofb"
           ],
           "example": "default",
           "help_en": "The encryption algorithm. Valid values: default and sm4. If enable is set to true, you must configure this parameter",
@@ -146,18 +146,6 @@
         {
           "fields": [
             {
-              "example": "acs:ram::13234:role/logsource",
-              "help_en": "The Alibaba Cloud Resource Name (ARN) of the Resource Access Management (RAM) role",
-              "help_zh": "RAM角色的ARN",
-              "name": "arn",
-              "options": [
-                "--arn"
-              ],
-              "raw_name": "arn",
-              "required": true,
-              "type": "string"
-            },
-            {
               "example": "f5136b95-2420-ab31-xxxxxxxxx",
               "help_en": "The ID of the customer master key (CMK) if you use the bring-your-own-key (BYOK) key",
               "help_zh": "BYOK的主密钥ID",
@@ -166,6 +154,18 @@
                 "--cmk-key-id"
               ],
               "raw_name": "cmk_key_id",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "example": "acs:ram::13234:role/logsource",
+              "help_en": "The Alibaba Cloud Resource Name (ARN) of the Resource Access Management (RAM) role",
+              "help_zh": "RAM角色的ARN",
+              "name": "arn",
+              "options": [
+                "--arn"
+              ],
+              "raw_name": "arn",
               "required": true,
               "type": "string"
             },
@@ -206,46 +206,46 @@
       "type": "object"
     },
     {
-      "example": "60",
-      "help_en": "The retention period of data in the hot tier of the Logstore. Unit: days. Minimum value: 7. The value cannot exceed the value of ttl. By default, all data within the retention period is stored in the hot tier.\n\nAfter the data storage time exceeds the configured hot data retention period, the data is moved to the infrequent access (IA) tier. When you enable the IA tier, the hot data retention period must be at least 7 days. For more information, see https://help.aliyun.com/document_detail/308645.html.\n\nExamples:\nScenario 1 (hot tier only, 30 days): `{\"ttl\": 30}` or `{\"ttl\": 30, \"hot_ttl\": 30}`\nScenario 2 (hot tier 7 days, IA tier 23 days): `{\"ttl\": 30, \"hot_ttl\": 7}`",
-      "help_zh": "数据在Logstore热存储层中的存储时间。单位：天，最小为7，最大不能超过ttl的值，默认保存时间ttl内全是热存储。\n\n当数据的存储时间超过您所配置的热存储层数据保存时间后，数据将转为低频存储（开启低频存储时，要求热存储时间至少为 7 天）。更多信息，请参见https://help.aliyun.com/document_detail/308645.html。\n\n示例：\n场景1 （只开启热存储 30天）：`{\"ttl\": 30}` 或者  `{\"ttl\": 30, \"hot_ttl\": 30}`\n场景2 （开启热存储7天，低频存储 23 天）: `{\"ttl\": 30, \"hot_ttl\": 7}`",
+      "example": "true",
+      "help_en": "Specifies whether to enable automatic sharding. After this feature is enabled, a shard is automatically split when the write traffic continuously exceeds the limit, which improves write capacity. You must set maxSplitShard (the maximum number of shards after splitting) when you enable automatic sharding",
+      "help_zh": "是否自动分裂 Shard。开启后，当日志写入流量持续超限，会触发 Shard 自动分裂，提升写入能力。开启自动分裂时必须设置 maxSplitShard （最大分裂 Shard 数）",
       "location": "body",
-      "name": "hot_ttl",
+      "name": "auto_split",
       "options": [
-        "--hot-ttl"
+        "--auto-split"
       ],
       "param_style": "json",
-      "raw_name": "hot_ttl",
+      "raw_name": "autoSplit",
       "required": false,
-      "type": "int"
+      "type": "bool"
     },
     {
-      "example": "30",
-      "help_en": "Infrequent access (IA) tier. No minimum storage time is required. Data must be stored for at least 30 days before being moved to the archive tier.\n\nWhen the log retention period exceeds the sum of the hot tier retention period and the IA tier retention period, the remaining storage time is converted to archive tier storage.\n\nExamples:\nScenario 1 (hot tier 7 days, IA tier 23 days): `{\"ttl\": 30, \"hot_ttl\": 7}`\nScenario 2 (hot tier 7 days, IA tier 30 days, archive tier 60 days): `{\"ttl\": 97, \"hot_ttl\": 7, \"infrequentAccessTTL\": 30}`\nScenario 3 (hot tier 60 days, IA tier 0 days, archive tier 60 days): `{\"ttl\": 120, \"hot_ttl\": 60, \"infrequentAccessTTL\": 0}`",
-      "help_zh": "低频存储。没有最少存储时间要求，至少保存30天转归档存储。\n\n当日志存储时间大于热存储时间与低频存储时间之和时，剩余的存储时间将转化为归档存储。\n\n示例：\n场景 1 （开启热存 7 天，低频存储 23 天）：`{\"ttl\": 30, \"hot_ttl\": 7}`\n场景 2  （开启热存 7天，低频存储 30 天，归档 60 天）: `{\"ttl\": 97, \"hot_ttl\": 7, \"infrequentAccessTTL\": 30}`\n场景 3 （开启热存 60 天，低频存储 0 天，归档 60 天）: `{\"ttl\": 120, \"hot_ttl\": 60, \"infrequentAccessTTL\": 0}`",
+      "example": "false",
+      "help_en": "Specifies whether to enable the WebTracking feature. Default value: false. You can use the WebTracking feature to collect and analyze user behavior data in browsers or mini programs, such as page views, purchase records, and time on site.\n\ntrue: enables WebTracking.\nfalse: disables WebTracking",
+      "help_zh": "是否开启WebTracking功能。默认值为false。当需要收集和分析用户在浏览器或小程序中的行为数据（如页面浏览、购买记录、停留时长等）时，可以使用 WebTracking 功能。\n\ntrue：开启WebTracking。\nfalse：不开启WebTracking",
       "location": "body",
-      "name": "infrequent_access_ttl",
+      "name": "enable_tracking",
       "options": [
-        "--infrequent-access-ttl"
+        "--enable-tracking"
       ],
       "param_style": "json",
-      "raw_name": "infrequentAccessTTL",
+      "raw_name": "enable_tracking",
       "required": false,
-      "type": "int"
+      "type": "bool"
     },
     {
-      "example": "test-logstore",
-      "help_en": "The name of the Logstore",
-      "help_zh": "Logstore名称",
+      "example": "false",
+      "help_en": "Specifies whether to record the public IP address and log arrival time. Default value: false.\n\ntrue: enables the feature. After this feature is enabled, Simple Log Service automatically adds the public IP address of the log source device and the time when the log arrives at the server to the Tag field of the log.\nfalse: disables the feature",
+      "help_zh": "是否记录外网 IP 地址和日志接收时间。默认值为 false。\n\ntrue：开启记录外网 IP 和日志接收时间功能，开启后日志服务自动把日志来源设备的公网 IP 地址和日志到达服务端的时间添加到日志的 Tag 字段中。\nfalse：不开启记录外网 IP 和日志接收时间功能",
       "location": "body",
-      "name": "logstore_name",
+      "name": "append_meta",
       "options": [
-        "--logstore-name"
+        "--append-meta"
       ],
       "param_style": "json",
-      "raw_name": "logstoreName",
-      "required": true,
-      "type": "string"
+      "raw_name": "appendMeta",
+      "required": false,
+      "type": "bool"
     },
     {
       "example": "64",
@@ -258,6 +258,34 @@
       ],
       "param_style": "json",
       "raw_name": "maxSplitShard",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "None",
+      "help_en": "The type of observable data. The default value is log data. Valid values:\n\nNone: log data. This is the default value.\nMetrics: time series data",
+      "help_zh": "可观测数据类型。默认为日志数据，可选取值包括：\n\nNone：日志数据。默认为日志数据。\nMetrics：时序数据",
+      "location": "body",
+      "name": "telemetry_type",
+      "options": [
+        "--telemetry-type"
+      ],
+      "param_style": "json",
+      "raw_name": "telemetryType",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "60",
+      "help_en": "The retention period of data in the hot tier of the Logstore. Unit: days. Minimum value: 7. The value cannot exceed the value of ttl. By default, all data within the retention period is stored in the hot tier.\n\nAfter the data storage time exceeds the configured hot data retention period, the data is moved to the infrequent access (IA) tier. When you enable the IA tier, the hot data retention period must be at least 7 days. For more information, see https://help.aliyun.com/document_detail/308645.html.\n\nExamples:\nScenario 1 (hot tier only, 30 days): `{\"ttl\": 30}` or `{\"ttl\": 30, \"hot_ttl\": 30}`\nScenario 2 (hot tier 7 days, IA tier 23 days): `{\"ttl\": 30, \"hot_ttl\": 7}`",
+      "help_zh": "数据在Logstore热存储层中的存储时间。单位：天，最小为7，最大不能超过ttl的值，默认保存时间ttl内全是热存储。\n\n当数据的存储时间超过您所配置的热存储层数据保存时间后，数据将转为低频存储（开启低频存储时，要求热存储时间至少为 7 天）。更多信息，请参见https://help.aliyun.com/document_detail/308645.html。\n\n示例：\n场景1 （只开启热存储 30天）：`{\"ttl\": 30}` 或者  `{\"ttl\": 30, \"hot_ttl\": 30}`\n场景2 （开启热存储7天，低频存储 23 天）: `{\"ttl\": 30, \"hot_ttl\": 7}`",
+      "location": "body",
+      "name": "hot_ttl",
+      "options": [
+        "--hot-ttl"
+      ],
+      "param_style": "json",
+      "raw_name": "hot_ttl",
       "required": false,
       "type": "int"
     },
@@ -276,58 +304,23 @@
       "type": "string"
     },
     {
-      "example": "2",
-      "help_en": "The number of shards.\n\nThis operation does not support updating the number of shards. You can modify the number of shards only by calling the SplitShard or MergeShards operation",
-      "help_zh": "Shard分区个数。\n\n该接口不支持更新分区个数。只能通过SplitShard或MergeShards接口修改分区个数",
+      "example": "30",
+      "help_en": "Infrequent access (IA) tier. No minimum storage time is required. Data must be stored for at least 30 days before being moved to the archive tier.\n\nWhen the log retention period exceeds the sum of the hot tier retention period and the IA tier retention period, the remaining storage time is converted to archive tier storage.\n\nExamples:\nScenario 1 (hot tier 7 days, IA tier 23 days): `{\"ttl\": 30, \"hot_ttl\": 7}`\nScenario 2 (hot tier 7 days, IA tier 30 days, archive tier 60 days): `{\"ttl\": 97, \"hot_ttl\": 7, \"infrequentAccessTTL\": 30}`\nScenario 3 (hot tier 60 days, IA tier 0 days, archive tier 60 days): `{\"ttl\": 120, \"hot_ttl\": 60, \"infrequentAccessTTL\": 0}`",
+      "help_zh": "低频存储。没有最少存储时间要求，至少保存30天转归档存储。\n\n当日志存储时间大于热存储时间与低频存储时间之和时，剩余的存储时间将转化为归档存储。\n\n示例：\n场景 1 （开启热存 7 天，低频存储 23 天）：`{\"ttl\": 30, \"hot_ttl\": 7}`\n场景 2  （开启热存 7天，低频存储 30 天，归档 60 天）: `{\"ttl\": 97, \"hot_ttl\": 7, \"infrequentAccessTTL\": 30}`\n场景 3 （开启热存 60 天，低频存储 0 天，归档 60 天）: `{\"ttl\": 120, \"hot_ttl\": 60, \"infrequentAccessTTL\": 0}`",
       "location": "body",
-      "name": "shard_count",
+      "name": "infrequent_access_ttl",
       "options": [
-        "--shard-count"
+        "--infrequent-access-ttl"
       ],
       "param_style": "json",
-      "raw_name": "shardCount",
+      "raw_name": "infrequentAccessTTL",
       "required": false,
       "type": "int"
     },
     {
       "fields": [
         {
-          "help_en": "The enabled",
-          "help_zh": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
-          "name": "enabled",
-          "options": [
-            "--enabled"
-          ],
-          "raw_name": "enabled",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "1764659409",
-          "help_en": "The queryActiveTime",
-          "help_zh": "查询生效时间，Unix Timestamp",
-          "name": "query_active_time",
-          "options": [
-            "--query-active-time"
-          ],
-          "raw_name": "queryActiveTime",
-          "required": false,
-          "type": "int"
-        },
-        {
           "fields": [
-            {
-              "example": "8",
-              "help_en": "The groupCount",
-              "help_zh": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个",
-              "name": "group_count",
-              "options": [
-                "--group-count"
-              ],
-              "raw_name": "groupCount",
-              "required": true,
-              "type": "int"
-            },
             {
               "element": {
                 "type": "string"
@@ -341,6 +334,18 @@
               "raw_name": "keys",
               "required": true,
               "type": "array"
+            },
+            {
+              "example": "8",
+              "help_en": "The groupCount",
+              "help_zh": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个",
+              "name": "group_count",
+              "options": [
+                "--group-count"
+              ],
+              "raw_name": "groupCount",
+              "required": true,
+              "type": "int"
             }
           ],
           "help_en": "The shardGroup",
@@ -396,6 +401,29 @@
           "raw_name": "shardHash",
           "required": false,
           "type": "object"
+        },
+        {
+          "example": "1764659409",
+          "help_en": "The queryActiveTime",
+          "help_zh": "查询生效时间，Unix Timestamp",
+          "name": "query_active_time",
+          "options": [
+            "--query-active-time"
+          ],
+          "raw_name": "queryActiveTime",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "help_en": "The enabled",
+          "help_zh": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
+          "name": "enabled",
+          "options": [
+            "--enabled"
+          ],
+          "raw_name": "enabled",
+          "required": false,
+          "type": "bool"
         }
       ],
       "help_en": "The hash-based write configuration. When data is written, logs are routed to shards based on the configured hash policy. Before configuring this parameter, ensure that the hash ranges of shards are evenly distributed. This configuration may affect write capacity. Proceed with caution",
@@ -409,34 +437,6 @@
       "raw_name": "shardingPolicy",
       "required": false,
       "type": "object"
-    },
-    {
-      "example": "None",
-      "help_en": "The type of observable data. The default value is log data. Valid values:\n\nNone: log data. This is the default value.\nMetrics: time series data",
-      "help_zh": "可观测数据类型。默认为日志数据，可选取值包括：\n\nNone：日志数据。默认为日志数据。\nMetrics：时序数据",
-      "location": "body",
-      "name": "telemetry_type",
-      "options": [
-        "--telemetry-type"
-      ],
-      "param_style": "json",
-      "raw_name": "telemetryType",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "30",
-      "help_en": "The data retention period. Unit: days. Valid values: 1 to 3650. A value of 3650 indicates permanent retention",
-      "help_zh": "数据的保存时间，单位为天。取值范围为1~3650。如果配置为3650，表示永久保存",
-      "location": "body",
-      "name": "ttl",
-      "options": [
-        "--ttl"
-      ],
-      "param_style": "json",
-      "raw_name": "ttl",
-      "required": true,
-      "type": "int"
     }
   ],
   "pathPattern": "/logstores/[logstore]",

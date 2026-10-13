@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "cmd_full_name": "dataworks-public create-table",
   "cmd_name": "create-table",
   "deprecated": true,
@@ -240,7 +241,7 @@
     },
     {
       "example": "default",
-      "help_en": "The schema information of the table. You need to enter the schema information of the table if you enable the table schema in MaxCompute",
+      "help_en": "The schema information of the table. You need to enter the schema information of the table if you enable the three-layer model in MaxCompute",
       "help_zh": "表Schema信息。在ODPS，当您启动了三层模型时需要填写Schema信息",
       "location": "query",
       "name": "schema",
@@ -255,20 +256,8 @@
       "element": {
         "fields": [
           {
-            "example": "columnName1",
-            "help_en": "The name of the field. You can configure a maximum of 1,000 fields when you call the CreateTable operation to create a table",
-            "help_zh": "字段的名称。\nCreateTable API当前最多支持配置1000个字段",
-            "name": "column_name",
-            "options": [
-              "--column-name"
-            ],
-            "raw_name": "ColumnName",
-            "required": true,
-            "type": "string"
-          },
-          {
             "example": "中文名",
-            "help_en": "The display name of the field",
+            "help_en": "The Chinese name of the field",
             "help_zh": "字段的中文名称",
             "name": "column_name_cn",
             "options": [
@@ -279,14 +268,14 @@
             "type": "string"
           },
           {
-            "example": "string",
-            "help_en": "The data type of the field. For information about supported data types, see https://help.aliyun.com/document_detail/27821.html in MaxCompute documentation",
-            "help_zh": "字段的类型。此处支持的字段类型，取决于您MaxCompute项目使用的数据类型版本，各版本支持的数据类型请参见https://help.aliyun.com/document_detail/27821.html",
-            "name": "column_type",
+            "example": "columnName1",
+            "help_en": "The name of the field. You can configure a maximum of 1,000 fields when you call the CreateTable operation to create a table",
+            "help_zh": "字段的名称。\nCreateTable API当前最多支持配置1000个字段",
+            "name": "column_name",
             "options": [
-              "--column-type"
+              "--column-name"
             ],
-            "raw_name": "ColumnType",
+            "raw_name": "ColumnName",
             "required": true,
             "type": "string"
           },
@@ -303,16 +292,28 @@
             "type": "string"
           },
           {
-            "example": "true",
-            "help_en": "Specifies whether the field is a partition field",
-            "help_zh": "当前字段是否为分区字段",
-            "name": "is_partition_col",
+            "example": "string",
+            "help_en": "The data type of the field. Supported field types depend on the data type edition used by your MaxCompute project. For information about the data types supported by each edition, see https://help.aliyun.com/document_detail/27821.html in MaxCompute documentation",
+            "help_zh": "字段的类型。此处支持的字段类型，取决于您MaxCompute项目使用的数据类型版本，各版本支持的数据类型请参见https://help.aliyun.com/document_detail/27821.html",
+            "name": "column_type",
             "options": [
-              "--is-partition-col"
+              "--column-type"
             ],
-            "raw_name": "IsPartitionCol",
+            "raw_name": "ColumnType",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "example": "1",
+            "help_en": "The sequence number of the field. You can use this parameter to specify how fields are sorted in a table. By default, fields are sorted based on the order specified in the creation request. If the field is a partition field, this parameter is not supported",
+            "help_zh": "字段的序列号。您可以指定字段在表中的排序，默认按照创建请求的顺序排序。\n如果字段为分区字段，则不支持配置Columns.N.SeqNumber",
+            "name": "seq_number",
+            "options": [
+              "--seq-number"
+            ],
+            "raw_name": "SeqNumber",
             "required": false,
-            "type": "bool"
+            "type": "int"
           },
           {
             "example": "10",
@@ -327,16 +328,16 @@
             "type": "int"
           },
           {
-            "example": "1",
-            "help_en": "The sequence number of the field. You can use this parameter to specify how fields are sorted in a table. By default, fields are sorted based on the order in which requests are created. If the field is a partition field, this parameter is not supported",
-            "help_zh": "字段的序列号。您可以指定字段在表中的排序，默认按照创建请求的顺序排序。\n如果字段为分区字段，则不支持配置Columns.N.SeqNumber",
-            "name": "seq_number",
+            "example": "true",
+            "help_en": "Specifies whether the field is a partition field",
+            "help_zh": "当前字段是否为分区字段",
+            "name": "is_partition_col",
             "options": [
-              "--seq-number"
+              "--is-partition-col"
             ],
-            "raw_name": "SeqNumber",
+            "raw_name": "IsPartitionCol",
             "required": false,
-            "type": "int"
+            "type": "bool"
           }
         ],
         "type": "object"
@@ -408,59 +409,41 @@
         "description_zh": "返回对象",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "abcdef",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TaskInfo": {
-            "backendName": "data",
-            "description_en": "The information about the request task. After a request task is submitted, it is divided into multiple subtasks that are run in sequence. After the current subtask is complete, the next subtask starts to run. After all subtasks are complete, the request task is complete.\n\nIf a request task is aborted due to one of the following issues, address the issue based on the error code and initiate the request task again:\n\nThe request task fails to be submitted.\n\nAfter the request task is submitted, a subtask fails to run",
+            "description_en": "The information about the request task. After a request task is submitted, it is divided into multiple subtasks that are run in sequence. After the current subtask is successfully completed, the next subtask starts to run. After all subtasks are complete, the request task is complete.\n\n\n\n\nIf a request task is aborted due to one of the following issues, address the issue based on the error code and initiate the request task again:\n\n\n\n\nThe request task fails to be submitted.\nAfter the request task is submitted, a subtask fails to run",
             "description_zh": "请求任务的信息。\n请求任务提交成功后，会被分为多个子任务有序执行。当前子任务执行成功后，才会继续执行下一个子任务，所有子任务执行完毕，该请求任务结束。\n\n如下情况，请求任务会终止，您需要根据错误码信息解决问题后重新发起请求任务：\n请求任务提交失败。\n请求任务提交成功后，任意子任务执行失败",
-            "nullToEmpty": false,
             "properties": {
               "Content": {
-                "backendName": "content",
                 "description_en": "The details about the status of the current subtask.\n\nIf the current subtask is successful, success is returned.\n\nIf the current subtask fails, the error details are displayed",
                 "description_zh": "当前子任务的执行状态详细信息。具体如下：\n执行成功，则显示success。\n执行失败则显示对应的报错详情",
                 "example": "success",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "NextTaskId": {
-                "backendName": "nextTaskId",
-                "description_en": "The ID of the subtask that you want to run. If this parameter is left empty, all subtasks are complete",
+                "description_en": "The ID of the next subtask to run. If this field is empty, all subtasks have finished",
                 "description_zh": "即将执行的子任务ID。如果该字段为空，则表示所有子任务均已结束",
                 "example": "abc1",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "Status": {
-                "backendName": "status",
                 "description_en": "The status of the current subtask. Valid values:\n\noperating: The subtask is running.\n\nsuccess: The subtask succeeds.\n\nfailure: The subtask fails to run. For more information about the error details, see the Content parameter",
                 "description_zh": "当前执行的子任务的状态信息。取值如下：\noperating表示子任务正在执行中。\nsuccess表示子任务执行成功。\nfailure表示子任务执行失败。详细的报错信息请参见Content参数",
                 "example": "success",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "TaskId": {
-                "backendName": "taskId",
                 "description_en": "The ID of the current subtask",
                 "description_zh": "当前执行的子任务ID",
                 "example": "abc",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

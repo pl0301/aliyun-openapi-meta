@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun alidns DescribeDnsProductInstances --region cn-hangzhou --OrderBy createDate --VersionCode version1 --DomainType PUBLIC --PageSize 20 --PageNumber 1 --UserClientIp '192.0.2.0' --Lang en --Direction DESC",
   "cmd_full_name": "alidns describe-dns-product-instances",
   "cmd_name": "describe-dns-product-instances",
   "deprecated": false,
-  "description_en": "Retrieves a list of paid DNS product instances that match the specified parameters",
+  "description_en": "Queries paid DNS product instances based on the specified parameters",
   "description_zh": "根据传入参数获取付费版DNS产品实例列表",
   "kebab_example": "aliyun alidns describe-dns-product-instances --lang en --user-client-ip 192.0.2.0 --page-number 1 --page-size 20 --version-code version1 --domain-type PUBLIC --order-by createDate --direction DESC --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "en",
-      "help_en": "The language of the response. Valid values:\n\nzh: Chinese\n\nen: English\n\nDefault value: en",
+      "help_en": "The language of the response. Valid values:\nzh: Chinese.\nen: English.\n\nDefault value: en",
       "help_zh": "返回值语言，取值：\nzh：中文\nen：英文\n\n默认：en",
       "location": "query",
       "name": "lang",
@@ -35,7 +36,7 @@
     },
     {
       "example": "192.0.2.0",
-      "help_en": "The client's IP address",
+      "help_en": "The IP address of the client",
       "help_zh": "用户端IP",
       "location": "query",
       "name": "user_client_ip",
@@ -62,7 +63,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of entries to return on each page. Maximum value: 100. Default value: 20",
+      "help_en": "The paging Settings for the number of entries to return on each page in a paged query. Maximum value: 100. Default value: 20",
       "help_zh": "分页查询时设置的每页行数，最大值100，默认为20",
       "location": "query",
       "maximum": "1000",
@@ -77,7 +78,7 @@
     },
     {
       "example": "version1",
-      "help_en": "The edition code of the Alibaba Cloud DNS instance",
+      "help_en": "The code of the Alibaba Cloud DNS product",
       "help_zh": "云解析产品code",
       "location": "query",
       "name": "version_code",
@@ -90,7 +91,7 @@
     },
     {
       "example": "PUBLIC",
-      "help_en": "The type of the domain name. This parameter is not case-sensitive. Valid values:\n\nPUBLIC: authoritative domain name (default)\n\nCACHE: authoritative proxy domain name",
+      "help_en": "The domain name type. This parameter is not case-sensitive. Valid values:\n\nPUBLIC: authoritative hosted domain name. Default value.\n\nCACHE: authoritative proxy domain name",
       "help_zh": "域名类型，大小写不敏感。取值：\n\nPUBLIC：权威托管域名（默认值）\n\nCACHE：权威代理域名",
       "location": "query",
       "name": "domain_type",
@@ -103,7 +104,7 @@
     },
     {
       "example": "createDate",
-      "help_en": "The field to sort the results by. Valid values:\n\ncreateDate: Sorts the results by creation time. This is the default value.\n\nexpireDate: Sorts the results by expiration time",
+      "help_en": "The sorting parameter. Valid values:\ncreateDate: sorts by creation time. If this parameter is left empty, the instances are sorted by creation time by default.\nexpireDate: sorts by expiration time",
       "help_zh": "排序参数。取值：\ncreateDate：按创建时间排序（为空时默认按创建时间排序）\nexpireDate：按过期时间排序",
       "location": "query",
       "name": "order_by",
@@ -116,7 +117,7 @@
     },
     {
       "example": "DESC",
-      "help_en": "The sorting order. Valid values:\n\nDESC: Descending order. This is the default value.\n\nASC: Ascending order",
+      "help_en": "The sorting order. Valid values:\nDESC: descending order. If this parameter is left empty, the instances are sorted in descending order by default. \nASC: ascending order",
       "help_zh": "排序方向。取值：\nDESC：递减（为空时默认递减排序） \nASC: 递增",
       "location": "query",
       "name": "direction",
@@ -134,242 +135,275 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DnsProducts": {
-            "backendName": "module.data",
-            "itemName": "DnsProduct",
-            "items": {
-              "properties": {
-                "AutoRenewal": {
-                  "backendName": "autoRenewal",
-                  "type": "boolean"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DnsProduct": {
+                "description_en": "The list of paid DNS product instances returned by the query",
+                "description_zh": "本次获取的付费版DNS产品实例列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AutoRenewal": {
+                      "description_en": "The renewal status. Valid values:\ntrue: Auto-renewal is enabled.\nfalse: Auto-renewal is disabled",
+                      "description_zh": "续费状态。\ntrue：自动续费类型。\nfalse：非自动续费类型",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "BindCount": {
+                      "description_en": "The maximum number of times the domain name bound to the paid DNS instance can be changed. This parameter is applicable to users of the Custom Edition",
+                      "description_zh": "适用于定制版用户调用，指付费版DNS实例可支持更换域名次数",
+                      "example": "3",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BindDomainCount": {
+                      "description_en": "The maximum number of domain names that can be bound to the paid DNS instance. This parameter is applicable to users of the Personal Edition and Enterprise Ultimate Edition",
+                      "description_zh": "适用于个人版、企业旗舰版用户调用，指付费版DNS实例可以绑定的域名个数",
+                      "example": "5",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BindDomainUsedCount": {
+                      "description_en": "The number of domain names that are bound to the paid DNS instance. This parameter is applicable to users of the Personal Edition and Enterprise Ultimate Edition",
+                      "description_zh": "适用于个人版、企业旗舰版用户调用，指付费版DNS实例已绑定使用的域名个数",
+                      "example": "3",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BindUsedCount": {
+                      "description_en": "The number of times the domain name bound to the paid DNS instance has been changed. This parameter is applicable to users of the Custom Edition",
+                      "description_zh": "适用于定制版用户调用，指付费版DNS实例已使用的更换域名次数",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DDosDefendFlow": {
+                      "description_en": "The DNS protection traffic, in Gbit/s",
+                      "description_zh": "DNS防护流量（G）",
+                      "example": "50",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DDosDefendQuery": {
+                      "description_en": "The DNS protection QPS, in ten thousand QPS. This parameter is applicable to users of the Custom Edition",
+                      "description_zh": "适用于定制版用户调用，DNS防护QPS（万qps）",
+                      "example": "50",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DnsSLBCount": {
+                      "description_en": "The load balancing capacity, which is the maximum number of IP addresses that can be configured for a single domain name on a single line",
+                      "description_zh": "负载均衡（单域名、单线路的IP地址容量）",
+                      "example": "15",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DnsSecurity": {
+                      "description_en": "The DNS security level. Valid values:\nno: No security protection is required.\nbasic: basic protection against DNS attacks.\nadvanced: best-effort protection against DNS attacks",
+                      "description_zh": "DNS安全。取值：\nno：不需要\nbasic：dns攻击基础防御\nadvanced：dns攻击全力防御",
+                      "example": "no",
+                      "type": "string"
+                    },
+                    "Domain": {
+                      "description_en": "The bound domain name",
+                      "description_zh": "绑定域名",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The time when the instance expires. The time is displayed in UTC. Format: YYYY-MM-DDTHH:mmZ",
+                      "description_zh": "实例到期时间，采用 UTC 时间，格式为 YYYY-MM-DDTHH:mmZ",
+                      "example": "2015-12-12T00:00Z",
+                      "type": "string"
+                    },
+                    "EndTimestamp": {
+                      "description_en": "The time when the instance expires. The value is a UNIX timestamp",
+                      "description_zh": "实例到期时间（时间戳）",
+                      "example": "1474335170000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Gslb": {
+                      "description_en": "Indicates whether Global Server Load Balancing (GSLB) is enabled. Valid values:\ntrue: GSLB is enabled.\nfalse: GSLB is disabled",
+                      "description_zh": "是否允许GSLB。\ntrue：允许\nfalse：不允许",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ISPLines": {
+                      "description_en": "The list of ISP DNS resolution request source lines:\nChina Telecom\nChina Mobile\nChina Unicom\nChina Education and Research Network\nChina Broadnet\nDr. Peng",
+                      "description_zh": "运营商解析请求来源线路列表。\n中国电信\n中国移动\n中国联通\n中国教育网\n中国广电网\n中国鹏博士",
+                      "example": "中国电信",
+                      "type": "string"
+                    },
+                    "ISPRegionLines": {
+                      "description_en": "The list of ISP DNS resolution request source lines:\nChina Telecom (province)\nChina Mobile (province)\nChina Unicom (province)\nChina Education and Research Network (province)",
+                      "description_zh": "运营商解析请求来源线路列表。\n电信（省份）\n移动（省份）\n联通（省份）\n教育网（省份）",
+                      "example": "电信_浙江",
+                      "type": "string"
+                    },
+                    "InBlackHole": {
+                      "description_en": "Indicates whether the domain name is in a blackhole filtering status. Valid values:\n\ntrue: The domain name is in a blackhole filtering status.\n\nfalse: The domain name is not in a blackhole filtering status",
+                      "description_zh": "域名是否处于黑洞状态。\n\ntrue：处于黑洞状态\n\nfalse：非黑洞状态",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "InClean": {
+                      "description_en": "Indicates whether the domain name is in a traffic scrubbing status",
+                      "description_zh": "域名是否处于清洗状态",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "InstanceId": {
+                      "description_en": "The ID of the Alibaba Cloud DNS product",
+                      "description_zh": "云解析产品ID",
+                      "example": "i-8fj",
+                      "type": "string"
+                    },
+                    "MonitorFrequency": {
+                      "description_en": "The monitoring frequency, in minutes",
+                      "description_zh": "监控频率（单位:分钟）",
+                      "example": "50",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MonitorNodeCount": {
+                      "description_en": "The number of monitoring nodes",
+                      "description_zh": "监控节点个数（个）",
+                      "example": "5",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MonitorTaskCount": {
+                      "description_en": "The number of monitoring tasks",
+                      "description_zh": "监控任务数（个）",
+                      "example": "2",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "OverseaDDosDefendFlow": {
+                      "description_en": "The overseas DNS protection traffic, in Gbit/s",
+                      "description_zh": "海外DNS防护（G）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "OverseaLine": {
+                      "description_en": "The overseas DNS resolution request source lines",
+                      "description_zh": "海外解析请求来源线路",
+                      "example": "海外大洲",
+                      "type": "string"
+                    },
+                    "PaymentType": {
+                      "description_en": "The billing method",
+                      "description_zh": "付费类型",
+                      "example": "Subscription",
+                      "type": "string"
+                    },
+                    "RegionLines": {
+                      "description_en": "Indicates whether regional lines are supported. Valid values:\ntrue: Regional lines are supported.\nfalse: Regional lines are not supported",
+                      "description_zh": "是否是地域线路。\ntrue：地域线路\nfalse：非地域线路",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "SearchEngineLines": {
+                      "description_en": "The list of search engine DNS resolution request source lines:\nGoogle\nBaidu\nBing\nYoudao",
+                      "description_zh": "搜索引擎解析请求来源线路列表。\n谷歌\n百度\n必应\n有道",
+                      "example": "谷歌",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The purchase time of the instance. The time is displayed in UTC. Format: YYYY-MM-DDTHH:mmZ",
+                      "description_zh": "实例购买时间，采用 UTC 时间，格式为 YYYY-MM-DDTHH:mmZ",
+                      "example": "2015-11-12T09:23Z",
+                      "type": "string"
+                    },
+                    "StartTimestamp": {
+                      "description_en": "The purchase time of the instance. The value is a UNIX timestamp",
+                      "description_zh": "实例购买时间（时间戳）",
+                      "example": "1474335170000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SubDomainLevel": {
+                      "description_en": "The subdomain name level",
+                      "description_zh": "子域名级别（个）",
+                      "example": "6",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TTLMinValue": {
+                      "description_en": "The minimum TTL value, in seconds",
+                      "description_zh": "最小TTL值（秒）",
+                      "example": "10",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "URLForwardCount": {
+                      "description_en": "The number of URL forwarding rules",
+                      "description_zh": "URL转发数量（个）",
+                      "example": "20",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "VersionCode": {
+                      "description_en": "The code of the Alibaba Cloud DNS product",
+                      "description_zh": "云解析产品code",
+                      "example": "version1",
+                      "type": "string"
+                    },
+                    "VersionName": {
+                      "description_en": "The Edition name of the Alibaba Cloud DNS parse product",
+                      "description_zh": "云解析产品版本名称",
+                      "example": "企业旗舰版",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "BindCount": {
-                  "backendName": "bindCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "BindDomainCount": {
-                  "backendName": "bindDomainCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "BindDomainUsedCount": {
-                  "backendName": "bindDomainUsedCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "BindUsedCount": {
-                  "backendName": "bindUsedCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "DDosDefendFlow": {
-                  "backendName": "ddosDefendFlow",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "DDosDefendQuery": {
-                  "backendName": "ddosDefendQuery",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "DnsSLBCount": {
-                  "backendName": "dnsSLBCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "DnsSecurity": {
-                  "backendName": "dnsSecurity",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Domain": {
-                  "backendName": "domain",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EndTime": {
-                  "backendName": "endTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EndTimestamp": {
-                  "backendName": "endTimestamp",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Gslb": {
-                  "backendName": "gslb",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "ISPLines": {
-                  "backendName": "ispLines",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ISPRegionLines": {
-                  "backendName": "ispRegionLines",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "InBlackHole": {
-                  "backendName": "inBlackHole",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "InClean": {
-                  "backendName": "inClean",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "InstanceId": {
-                  "backendName": "instanceId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "MonitorFrequency": {
-                  "backendName": "monitorFrequency",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MonitorNodeCount": {
-                  "backendName": "monitorNodeCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MonitorTaskCount": {
-                  "backendName": "monitorTaskCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "OverseaDDosDefendFlow": {
-                  "backendName": "overseaDDosDefendFlow",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "OverseaLine": {
-                  "backendName": "overseaLine",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "PaymentType": {
-                  "backendName": "paymentType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RegionLines": {
-                  "backendName": "regionLines",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "SearchEngineLines": {
-                  "backendName": "searchEngineLines",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StartTime": {
-                  "backendName": "startTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StartTimestamp": {
-                  "backendName": "startTimestamp",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SubDomainLevel": {
-                  "backendName": "subDomainLevel",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TTLMinValue": {
-                  "backendName": "ttlMinValue",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "URLForwardCount": {
-                  "backendName": "urlForwardCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "VersionCode": {
-                  "backendName": "versionCode",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VersionName": {
-                  "backendName": "versionName",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "DomainType": {
-            "backendName": "domainType",
-            "description_en": "The type of the domain name. Valid values:\n\nPUBLIC: authoritative domain name (default)\n\nCACHE: authoritative proxy domain name",
+            "description_en": "The domain name type. Valid values:\n\nPUBLIC: authoritative hosted domain name. Default value.\n\nCACHE: authoritative proxy domain name",
             "description_zh": "域名类型，取值：\n\nPUBLIC：权威托管域名（默认值）\n\nCACHE：权威代理域名",
             "example": "PUBLIC",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "PageNumber": {
-            "backendName": "module.pageNumber",
-            "description_en": "The page number",
+            "description_en": "The page number. Pages start from 1. Default value: 1",
             "description_zh": "当前页数，起始值为1，默认为1",
             "example": "1",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "module.pageSize",
-            "description_en": "The number of entries on the current page",
+            "description_en": "The number of domain names returned by this query",
             "description_zh": "本次查询获取的域名数量",
             "example": "2",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID",
+            "description_en": "The unique ID of the request",
             "description_zh": "唯一请求识别码",
             "example": "536E9CAD-DB30-4647-AC87-AA5CC38xxxxx",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalCount": {
-            "backendName": "module.totalItems",
-            "description_en": "The total number of instances that match the query",
+            "description_en": "The number of paid DNS product instances returned by the query",
             "description_zh": "本次查询获取的付费版DNS产品实例数量",
             "example": "2",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

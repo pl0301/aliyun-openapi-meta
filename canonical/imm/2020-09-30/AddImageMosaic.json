@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun imm AddImageMosaic --region cn-hangzhou --ProjectName 'test-project' --SourceURI 'oss://examplebucket/sampleobject.jpg' --Targets '[{\"Type\":\"square\",\"MosaicRadius\":5,\"Sigma\":5,\"Color\":\"#FFFFFF\",\"BlurRadius\":3,\"Boundary\":{}}]' --TargetURI 'oss://examplebucket/outputImage.jpg'",
   "cmd_full_name": "imm add-image-mosaic",
   "cmd_name": "add-image-mosaic",
@@ -60,6 +61,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "jpg",
+        "png",
+        "webp"
+      ],
       "example": "jpg",
       "help_en": "The encoding of the output image. By default, the output image uses the same encoding as the input image. Valid values: jpg, png, and webp",
       "help_zh": "图片保存时的编码格式。可取值为jpg、png、webp，默认与输入图片编码格式相同",
@@ -89,31 +95,19 @@
       "element": {
         "fields": [
           {
-            "example": "3",
-            "help_en": "The radius of the Gaussian blur. Valid values: 1 to 50. Default value: 3. Unit: pixels.\n\nThis parameter takes effect only for a Gaussian blur",
-            "help_zh": "高斯模糊的模糊半径，取值范围为1~50，默认值为3，单位为px。\n该参数仅在添加高斯模糊时生效",
-            "name": "blur_radius",
+            "example": "square",
+            "help_en": "The type of the mosaic effect. Valid values:\n\nsquare: squares.\ndiamond: diamonds.\nhexagon: hexagons.\nblur: Gaussian blurs.\npure: solid color shapes",
+            "help_zh": "添加的马赛克类型。可取值如下：\nsquare：方形的马赛克\ndiamond：菱形的马赛克\nhexagon：正六边形的马赛克\nblur：高斯模糊\npure：纯色块",
+            "name": "type",
             "options": [
-              "--blur-radius"
+              "--type"
             ],
-            "raw_name": "BlurRadius",
-            "required": false,
-            "type": "int"
+            "raw_name": "Type",
+            "required": true,
+            "type": "string"
           },
           {
             "fields": [
-              {
-                "example": "200",
-                "help_en": "The height of the bounding box. The value can be an integer greater than or equal to 0 or a decimal within the range of [0,1):\n\nAn integer value greater than or equal to 0 indicates the height of the bounding box in pixels.\nA decimal value within the range of [0,1) indicates the height of the bounding box as a ratio of its height to the image height",
-                "help_zh": "处理框的高，不同取值的含义如下：\n取值为大于等于0的整数：表示处理框高度，单位为px。\n取值为小数：表示框纵向长度像素值与图片整体高度的比值，取值范围为[0,1)",
-                "name": "height",
-                "options": [
-                  "--height"
-                ],
-                "raw_name": "Height",
-                "required": true,
-                "type": "float"
-              },
               {
                 "example": "topleft",
                 "help_en": "The reference position of the bounding box on the image. Valid values:\n\ntopright: the upper-right corner.\ntopleft: the upper-left corner. This is the default value.\nbottomright: the lower-right corner.\nbottomleft: the lower-left corner",
@@ -125,18 +119,6 @@
                 "raw_name": "ReferPos",
                 "required": false,
                 "type": "string"
-              },
-              {
-                "example": "200",
-                "help_en": "The width of the bounding box. The value can be an integer greater than or equal to 0 or a decimal within the range of [0,1):\n\nAn integer value greater than or equal to 0 indicates the width of the bounding box in pixels.\nA decimal value within the range of [0,1) indicates the width of the bounding box as a ratio of its width to the image width",
-                "help_zh": "处理框的宽，不同取值的含义如下：\n取值为大于等于0的整数：表示处理框宽度，单位为px。\n取值为小数：表示框横向长度像素值与图片整体宽度的比值，取值范围为[0,1)",
-                "name": "width",
-                "options": [
-                  "--width"
-                ],
-                "raw_name": "Width",
-                "required": true,
-                "type": "float"
               },
               {
                 "example": "0",
@@ -161,6 +143,30 @@
                 "raw_name": "Y",
                 "required": true,
                 "type": "float"
+              },
+              {
+                "example": "200",
+                "help_en": "The height of the bounding box. The value can be an integer greater than or equal to 0 or a decimal within the range of [0,1):\n\nAn integer value greater than or equal to 0 indicates the height of the bounding box in pixels.\nA decimal value within the range of [0,1) indicates the height of the bounding box as a ratio of its height to the image height",
+                "help_zh": "处理框的高，不同取值的含义如下：\n取值为大于等于0的整数：表示处理框高度，单位为px。\n取值为小数：表示框纵向长度像素值与图片整体高度的比值，取值范围为[0,1)",
+                "name": "height",
+                "options": [
+                  "--height"
+                ],
+                "raw_name": "Height",
+                "required": true,
+                "type": "float"
+              },
+              {
+                "example": "200",
+                "help_en": "The width of the bounding box. The value can be an integer greater than or equal to 0 or a decimal within the range of [0,1):\n\nAn integer value greater than or equal to 0 indicates the width of the bounding box in pixels.\nA decimal value within the range of [0,1) indicates the width of the bounding box as a ratio of its width to the image width",
+                "help_zh": "处理框的宽，不同取值的含义如下：\n取值为大于等于0的整数：表示处理框宽度，单位为px。\n取值为小数：表示框横向长度像素值与图片整体宽度的比值，取值范围为[0,1)",
+                "name": "width",
+                "options": [
+                  "--width"
+                ],
+                "raw_name": "Width",
+                "required": true,
+                "type": "float"
               }
             ],
             "help_en": "The position of the bounding box",
@@ -174,18 +180,6 @@
             "type": "object"
           },
           {
-            "example": "#FFFFFF",
-            "help_en": "The color of the color shape. You can specify a color by using a color code such as`#RRGGBB` or preset color names such as `red` and `white`. The default value is #FFFFFF, which is white.\n\nThis parameter takes effect only for solid color shapes",
-            "help_zh": "纯色块的颜色，支持`#FFFFFF`形式与预设的`red`、`white`等关键字。默认值为#FFFFFF，即白色。\n该参数仅在添加纯色块时生效",
-            "name": "color",
-            "options": [
-              "--color"
-            ],
-            "raw_name": "Color",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "5",
             "help_en": "The radius of the mosaic. Default value: 5. Unit: pixels.\n\nThis parameter does not take effect for Gaussian blurs and solid color shapes",
             "help_zh": "马赛克小块的半径大小。默认值为5，单位为px。\n该参数对于添加高斯模糊与纯色块不生效",
@@ -194,6 +188,18 @@
               "--mosaic-radius"
             ],
             "raw_name": "MosaicRadius",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "3",
+            "help_en": "The radius of the Gaussian blur. Valid values: 1 to 50. Default value: 3. Unit: pixels.\n\nThis parameter takes effect only for a Gaussian blur",
+            "help_zh": "高斯模糊的模糊半径，取值范围为1~50，默认值为3，单位为px。\n该参数仅在添加高斯模糊时生效",
+            "name": "blur_radius",
+            "options": [
+              "--blur-radius"
+            ],
+            "raw_name": "BlurRadius",
             "required": false,
             "type": "int"
           },
@@ -210,15 +216,15 @@
             "type": "int"
           },
           {
-            "example": "square",
-            "help_en": "The type of the mosaic effect. Valid values:\n\nsquare: squares.\ndiamond: diamonds.\nhexagon: hexagons.\nblur: Gaussian blurs.\npure: solid color shapes",
-            "help_zh": "添加的马赛克类型。可取值如下：\nsquare：方形的马赛克\ndiamond：菱形的马赛克\nhexagon：正六边形的马赛克\nblur：高斯模糊\npure：纯色块",
-            "name": "type",
+            "example": "#FFFFFF",
+            "help_en": "The color of the color shape. You can specify a color by using a color code such as`#RRGGBB` or preset color names such as `red` and `white`. The default value is #FFFFFF, which is white.\n\nThis parameter takes effect only for solid color shapes",
+            "help_zh": "纯色块的颜色，支持`#FFFFFF`形式与预设的`red`、`white`等关键字。默认值为#FFFFFF，即白色。\n该参数仅在添加纯色块时生效",
+            "name": "color",
             "options": [
-              "--type"
+              "--color"
             ],
-            "raw_name": "Type",
-            "required": true,
+            "raw_name": "Color",
+            "required": false,
             "type": "string"
           }
         ],
@@ -238,6 +244,30 @@
     },
     {
       "fields": [
+        {
+          "example": "AliyunSTSAssumeForIMMServiceRole",
+          "help_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+          "help_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+          "name": "service_role",
+          "options": [
+            "--service-role"
+          ],
+          "raw_name": "ServiceRole",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+          "help_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+          "help_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+          "name": "policy",
+          "options": [
+            "--policy"
+          ],
+          "raw_name": "Policy",
+          "required": false,
+          "type": "string"
+        },
         {
           "element": {
             "fields": [
@@ -289,30 +319,6 @@
           "raw_name": "Chain",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
-          "help_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
-          "help_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
-          "name": "policy",
-          "options": [
-            "--policy"
-          ],
-          "raw_name": "Policy",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "AliyunSTSAssumeForIMMServiceRole",
-          "help_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
-          "help_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
-          "name": "service_role",
-          "options": [
-            "--service-role"
-          ],
-          "raw_name": "ServiceRole",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "If you do not have special requirements, leave this parameter empty.\n\nThe authorization chain settings. For more information, see https://help.aliyun.com/document_detail/465340.html",
@@ -338,7 +344,6 @@
         "description_zh": "Schema of Response",
         "properties": {
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "CA995EFD-083D-4F40-BE8A-BDF75FF*****",

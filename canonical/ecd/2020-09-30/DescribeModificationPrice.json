@@ -1,4 +1,6 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun ecd DescribeModificationPrice --region cn-hangzhou --PromotionId youhuiquan_promotion_option_id_for_blank --InstanceId 'ecd-0gfv2z3sf95zvt0000' --ResourceType Desktop --ResourceSpecs.1.DesktopId 'ecd-6ghhzivgmnzgeyXXX' --UserDiskSizeGib 50 --RootDiskSizeGib 80 --RootDiskPerformanceLevel PL0 --ResellerOwnerUid 1422724566551 --Bandwidth 20 --ResourceSpecs.1.RootDiskSizeGib 80 --ResourceSpecs.1.UserDiskSizeGib 100 --UserDiskPerformanceLevel PL0 --RegionId 'cn-hangzhou' --InstanceType 'eds.enterprise_office.8c16g' --version 2020-09-30 --method POST --force",
   "cmd_full_name": "ecd describe-modification-price",
   "cmd_name": "describe-modification-price",
   "deprecated": false,
@@ -21,6 +23,9 @@
   "parameters": [
     {
       "doc_required": true,
+      "enum": [
+        "cn-hangzhou"
+      ],
       "example": "cn-hangzhou",
       "help_en": "The region ID. You can call [DescribeRegions](~~DescribeRegions~~) to query the list of regions supported by Elastic Desktop Service",
       "help_zh": "地域ID。可以调用[DescribeRegions](~~DescribeRegions~~)获取无影云电脑支持的地域列表",
@@ -117,6 +122,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Desktop",
+        "NetworkPackage"
+      ],
       "example": "Desktop",
       "help_en": "The resource type. The required parameters vary based on the resource type for which you want to query the upgrade/downgrade price:\n\nIf ResourceType is set to Desktop, you must specify the InstanceType, RootDiskSizeGib, and UserDiskSizeGib parameters.\nIf ResourceType is set to NetworkPackage, you must specify the Bandwidth parameter",
       "help_zh": "资源类型。要查询变配价格的资源类型不同时，必需参数也有所不同：\n\n当`ResourceType`=`Desktop`时，必须传入参数`InstanceType`、`RootDiskSizeGib`、`UserDiskSizeGib`。\n当`ResourceType`=`NetworkPackage`时，必须传入参数`Bandwidth`",
@@ -231,34 +240,28 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "PriceInfo": {
-            "backendName": "data",
             "description_en": "The price details",
             "description_zh": "价格详细信息",
-            "nullToEmpty": true,
             "properties": {
               "Price": {
-                "backendName": "price",
                 "description_en": "The price information",
                 "description_zh": "价格信息",
-                "nullToEmpty": true,
                 "properties": {
                   "Currency": {
-                    "backendName": "currency",
                     "description_en": "<props=\"china\">The currency unit (CNY).</props>\n<props=\"intl\">The currency unit (USD).</props>",
                     "description_zh": "<props=\"china\">货币单位（CNY）。</props>\n<props=\"intl\">货币单位（USD）。</props>",
                     "example": "CNY",
-                    "nullToEmpty": true,
                     "type": "string"
                   },
                   "DiscountPrice": {
-                    "backendName": "discountPrice",
                     "description_en": "The discount amount",
                     "description_zh": "折减的价格",
                     "example": "15.8",
                     "format": "float",
-                    "nullToEmpty": true,
                     "type": "number"
                   },
                   "OrderLines": {
@@ -268,69 +271,54 @@
                       "example": "5376483****",
                       "type": "string"
                     },
-                    "backendName": "orderLines",
                     "description_en": "The order information",
                     "description_zh": "订单信息",
                     "type": "object"
                   },
                   "OriginalPrice": {
-                    "backendName": "originalPrice",
                     "description_en": "The original price",
                     "description_zh": "原价",
                     "example": "79.0",
                     "format": "float",
-                    "nullToEmpty": true,
                     "type": "number"
                   },
                   "Promotions": {
-                    "backendName": "promotions",
                     "description_en": "The list of promotion information",
                     "description_zh": "促销活动信息列表",
-                    "itemName": "Promotion",
                     "items": {
                       "description_en": "The promotion information",
                       "description_zh": "促销活动信息",
                       "properties": {
                         "OptionCode": {
-                          "backendName": "optionCode",
                           "description_en": "The promotion rule description",
                           "description_zh": "促销活动规则描述",
                           "example": "test",
-                          "nullToEmpty": true,
                           "type": "string"
                         },
                         "PromotionDesc": {
-                          "backendName": "promotionDesc",
                           "description_en": "The promotion description",
                           "description_zh": "促销信息描述",
                           "example": "新品上市，立享优惠",
-                          "nullToEmpty": true,
                           "type": "string"
                         },
                         "PromotionId": {
-                          "backendName": "promotionId",
                           "description_en": "The promotion ID",
                           "description_zh": "促销活动ID",
                           "example": "promo_option",
-                          "nullToEmpty": true,
-                          "title_en": "优惠ID。",
+                          "title_en": "",
                           "title_zh": "优惠ID。",
                           "type": "string"
                         },
                         "PromotionName": {
-                          "backendName": "promotionName",
                           "description_en": "The promotion name",
                           "description_zh": "促销活动名称",
                           "example": "Featured deals",
-                          "nullToEmpty": true,
                           "type": "string"
                         },
                         "Selected": {
-                          "backendName": "selected",
                           "description_en": "Indicates whether the promotion is selected",
                           "description_zh": "是否被选中",
                           "example": "false",
-                          "nullToEmpty": true,
                           "type": "boolean"
                         }
                       },
@@ -339,41 +327,33 @@
                     "type": "array"
                   },
                   "TradePrice": {
-                    "backendName": "tradePrice",
                     "description_en": "The actual payment price. The value is the original price minus the discount amount",
                     "description_zh": "实际付款价格。取值为原价减去折减的价格",
                     "example": "63.2",
                     "format": "float",
-                    "nullToEmpty": true,
                     "type": "number"
                   }
                 },
                 "type": "object"
               },
               "Rules": {
-                "backendName": "rules",
                 "description_en": "The promotion rule information",
                 "description_zh": "活动规则信息",
-                "itemName": "Rule",
                 "items": {
                   "description_en": "The promotion rule information",
                   "description_zh": "活动规则信息",
                   "properties": {
                     "Description": {
-                      "backendName": "description",
                       "description_en": "The rule description",
                       "description_zh": "规则描述",
                       "example": "买满1年，立享官网价格8.5折优惠。",
-                      "nullToEmpty": true,
                       "type": "string"
                     },
                     "RuleId": {
-                      "backendName": "ruleId",
                       "description_en": "The rule ID",
                       "description_zh": "规则ID",
                       "example": "14806",
                       "format": "int64",
-                      "nullToEmpty": true,
                       "type": "integer"
                     }
                   },
@@ -385,11 +365,9 @@
             "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "48174475-5EB2-5F99-A9E9-6F892D645****",
-            "nullToEmpty": false,
             "type": "string"
           }
         },

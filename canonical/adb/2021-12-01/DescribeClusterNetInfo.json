@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "adb describe-cluster-net-info",
   "cmd_name": "describe-cluster-net-info",
   "deprecated": false,
@@ -47,8 +48,8 @@
       "type": "string"
     },
     {
-      "help_en": "资源组名称",
-      "help_zh": "资源组名称",
+      "help_en": "The ResourceGroupName",
+      "help_zh": "The ResourceGroupName",
       "location": "query",
       "name": "resource_group_name",
       "options": [
@@ -65,110 +66,114 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "ClusterNetworkType": {
-            "backendName": "data.instanceNetworkType",
             "description_en": "The network type of the cluster. The value is always VPC, as this is the only supported network type",
             "description_zh": "集群网络类型，当前仅支持专有网络，取值固定为VPC",
             "example": "VPC",
-            "type": "string",
-            "valueMapping": {
-              "cases": [
-                {
-                  "targetValue": "VPC",
-                  "value": "vpc"
-                },
-                {
-                  "targetValue": "Classic",
-                  "value": "classic"
-                }
-              ]
-            },
-            "visibility": "Public"
+            "type": "string"
           },
           "Items": {
-            "backendName": "data.netInfoItems",
-            "itemName": "Address",
-            "items": {
-              "properties": {
-                "ConnectionString": {
-                  "backendName": "connectionString",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ConnectionStringPrefix": {
-                  "backendName": "connectionStringType",
-                  "type": "string"
-                },
-                "IPAddress": {
-                  "backendName": "ipAddress",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "NetType": {
-                  "backendName": "netType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Public",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "VPC",
-                        "value": "2"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "Port": {
-                  "backendName": "port",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Ports": {
-                  "backendName": "ports",
-                  "itemName": "ports",
-                  "items": {
-                    "properties": {
-                      "Port": {
-                        "backendName": "port",
-                        "type": "string"
-                      },
-                      "Protocol": {
-                        "backendName": "protocol",
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Address": {
+                "description_en": "The network connection details",
+                "description_zh": "详情",
+                "items": {
+                  "description_en": "Details for a single network connection",
+                  "description_zh": "集群列表",
+                  "properties": {
+                    "ConnectionString": {
+                      "description_en": "The connection string of the cluster.\n\nIf the network type is VPC, `ConnectionString` is the VPC connection string.\n\nIf the network type is Public, `ConnectionString` is the public network connection string",
+                      "description_zh": "集群的网络连接地址。\n当网络类型为VPC时，ConnectionString为VPC地址。\n当网络类型为Public时，ConnectionString为公网地址",
+                      "example": "amv-wz9dqvn0o7****.ads.aliyuncs.com",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "ConnectionStringPrefix": {
+                      "description_en": "The prefix of the connection string.\n\nIf the network type is VPC, `ConnectionStringPrefix` is the prefix of the VPC connection string.\n\nIf the network type is Public, `ConnectionStringPrefix` is the prefix of the public network connection string",
+                      "description_zh": "网络地址的前缀。\n当网络类型为VPC时，ConnectionStringPrefix为VPC地址的前辍。\n当网络类型为Public时，ConnectionStringPrefix为数据库公网连接地址的前缀",
+                      "example": "amv-wz9dqvn0o7****",
+                      "type": "string"
+                    },
+                    "IPAddress": {
+                      "description_en": "The IP address.\n\nIf the network type is VPC, `IPAddress` is the private IP address.\n\nIf the network type is Public, `IPAddress` is the public IP address for connecting to the database",
+                      "description_zh": "IP地址。\n当网络类型为VPC时，IPAddress为私网IP地址。\n当网络类型为Public时，IPAddress为连接数据库的客户端IP地址",
+                      "example": "192.168.xx.xx",
+                      "type": "string"
+                    },
+                    "NetType": {
+                      "description_en": "The network type. Valid values:\n\nPublic: the public network.\n\nVPC: the VPC network",
+                      "description_zh": "网络类型。取值说明：\nPublic：公网。\nVPC：VPC网络",
+                      "example": "VPC",
+                      "type": "string"
+                    },
+                    "Port": {
+                      "description_en": "The port number. The value is always 3306",
+                      "description_zh": "端口号。固定为3306",
+                      "example": "3306",
+                      "type": "string"
+                    },
+                    "Ports": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ports": {
+                          "description_en": "A list of ports",
+                          "description_zh": "端口列表",
+                          "items": {
+                            "description_en": "The port details",
+                            "description_zh": "端口详情",
+                            "properties": {
+                              "Port": {
+                                "description_en": "The service port",
+                                "description_zh": "对外服务端口",
+                                "example": "3306",
+                                "type": "string"
+                              },
+                              "Protocol": {
+                                "description_en": "The protocol. Valid values:\n\ntcp: Transmission Control Protocol (TCP).\n\nhttp: Hypertext Transfer Protocol.\n\nhttps: Hypertext Transfer Protocol Secure.\n\nmysql: MySQL protocol",
+                                "description_zh": "协议类型。取值：\n\ntcp：传输控制协议。\nhttp：超文本传输协议。\nhttps：超文本传输安全协议。\nmysql：MySQL协议",
+                                "example": "mysql",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "VPCId": {
+                      "description_en": "The VPC ID.\n\nIf the value of `NetType` is `Public`, this parameter is empty",
+                      "description_zh": "VPC ID。\n当NetType取值为Public时，VPC ID返回为空",
+                      "example": "vpc-8vbhucmd5b****",
+                      "type": "string"
+                    },
+                    "VSwitchId": {
+                      "description_en": "The vSwitch ID.\n\nIf the value of `NetType` is `Public`, this parameter is empty",
+                      "description_zh": "交换机ID。\n当NetType取值为Public时，交换机ID返回为空",
+                      "example": "vsw-bp1syh8vvw8yec****",
+                      "type": "string"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "VPCId": {
-                  "backendName": "vpcId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VSwitchId": {
-                  "backendName": "vswitchId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "69A29B65-CD0C-52B1-BE42-8B454569747F",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

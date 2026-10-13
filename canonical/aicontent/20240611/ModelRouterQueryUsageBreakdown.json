@@ -1,0 +1,419 @@
+{
+  "backend_timeout_ms": 6000,
+  "camel_example": "aliyun aicontent GET /api/v1/modelRouter/open/usage/breakdown --region cn-hangzhou --granularity hourly --startTime 1700000000 --endTime 1700086400 --header \"Content-Type=application/json\" --version 20240611 --force",
+  "cmd_full_name": "aicontent model-router-query-usage-breakdown",
+  "cmd_name": "model-router-query-usage-breakdown",
+  "components": {
+    "schemas": {
+      "MetricKVPairDTO": {
+        "description_en": "Metric  ",
+        "description_zh": "指标",
+        "properties": {
+          "key": {
+            "description_en": "Metric Name.  \n\nChat  \n`total_calls`: Number Of Calls, integer, Count  \n`input_tokens`: Total input tokens, integer  \n`output_tokens`: Total output tokens, integer  \n`reasoning_tokens`: Reasoning tokens, integer  \n`cached_tokens`: Cached input tokens (hit), integer  \n\nVision  \n`total_calls`: Number Of Calls, integer, Count  \n`image_count`: Number of generated images, integer  \n`video_duration`: Generated video duration, rounded to 3 decimal places, seconds  \n\nEmbedding  \n`total_calls`: Number Of Calls, integer, Count  \n`embedding_output_tokens`: Embedding output tokens, integer  \n`billing_tokens`: Total billing tokens, integer  \n`image_tokens`: Image tokens (multimodal embedding), integer  \n\nOmni-modal (ChatFullmodal / ChatMultimodal)  \n`total_calls`: Number Of Calls, integer, Count  \n`input_text_tokens`: Input text tokens, integer  \n`input_audio_tokens`: Input audio tokens, integer  \n`input_image_tokens`: Input image tokens, integer  \n`input_video_tokens`: Input video tokens, integer  \n`output_text_tokens`: Output text tokens, integer  \n`output_audio_tokens`: Output audio tokens, integer  \n\nSpeech (TTS / ASR)  \n`total_calls`: Number Of Calls, integer, Count  \n`characters`: Characters converted to speech, integer  \n`asr_duration`: Speech recognition duration, rounded to 3 decimal places, seconds  ",
+            "description_zh": "指标名称。\n\nChat\n`total_calls`：调用次数，整数，次\n`input_tokens`：输入 Token 总量，整数\n`output_tokens`：输出 Token 总量，整数\n`reasoning_tokens`：推理过程 Token，整数\n`cached_tokens`：命中缓存的输入 Token，整数\n\n视觉\n`total_calls`：调用次数，整数，次\n`image_count`：生成图片张数，整数\n`video_duration`：生成视频时长，保留 3 位小数，秒\n\n向量\n`total_calls`：调用次数，整数，次\n`embedding_output_tokens`：向量化输出 Token，整数\n`billing_tokens`：总计费 Token 数，整数\n`image_tokens`：图片 Token（多模态 Embedding），整数\n\n全模态（ChatFullmodal / ChatMultimodal）\n`total_calls`：调用次数，整数，次\n`input_text_tokens`：输入文本 Token，整数\n`input_audio_tokens`：输入音频 Token，整数\n`input_image_tokens`：输入图片 Token，整数\n`input_video_tokens`：输入视频 Token，整数\n`output_text_tokens`：输出文本 Token，整数\n`output_audio_tokens`：输出音频 Token，整数\n\n语音（TTS / ASR）\n`total_calls`：调用次数，整数，次\n`characters`：转语音字符数，整数\n`asr_duration`：语音识别时长，保留 3 位小数，秒",
+            "example": "total_calls",
+            "title": "指标名称",
+            "type": "string"
+          },
+          "value": {
+            "description_en": "Metric value  ",
+            "description_zh": "指标数值",
+            "example": "100",
+            "format": "float",
+            "title": "指标数值",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "UsageBreakdownRespDTO": {
+        "description_en": "The data structure for the usage breakdown",
+        "description_zh": "用量明细结构",
+        "properties": {
+          "granularity": {
+            "description_en": "Aggregation granularity: hourly or daily  ",
+            "description_zh": "聚合粒度：hourly 或 daily",
+            "example": "hourly",
+            "title": "聚合粒度：hourly 或 daily",
+            "type": "string"
+          },
+          "page": {
+            "description_en": "Current page number  ",
+            "description_zh": "当前页码",
+            "example": "1",
+            "format": "int32",
+            "title": "当前页码",
+            "type": "integer"
+          },
+          "pageSize": {
+            "description_en": "Number of entries per page  ",
+            "description_zh": "每页条数",
+            "example": "20",
+            "format": "int32",
+            "title": "每页条数",
+            "type": "integer"
+          },
+          "rows": {
+            "description_en": "List of detailed data entries  ",
+            "description_zh": "明细数据列表",
+            "example": "[]",
+            "items": {
+              "$ref": "#/components/schemas/UsageBreakdownRowDTO",
+              "description_en": "Single entry of usage details  ",
+              "description_zh": "用量明细单条数据"
+            },
+            "title": "明细数据列表",
+            "type": "array"
+          },
+          "total": {
+            "description_en": "Total number of entries  ",
+            "description_zh": "总条数",
+            "example": "100",
+            "format": "int64",
+            "title": "总条数",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UsageBreakdownRowDTO": {
+        "description_en": "The data structure of a single usage record",
+        "description_zh": "用量单条数据结构",
+        "properties": {
+          "apiKeyId": {
+            "description_en": "The API key ID. A value of 0 indicates that historical data is not broken down by API key",
+            "description_zh": "API Key ID，0 表示历史数据未细分到 ApiKey",
+            "example": "0",
+            "format": "int64",
+            "title": "API Key ID，0 表示历史数据未细分到 ApiKey",
+            "type": "integer"
+          },
+          "apiKeyName": {
+            "description_en": "The API key name, corresponding to api_key_id",
+            "description_zh": "API Key 名称，对应 api_key_id",
+            "example": "默认密钥",
+            "title": "API Key 名称，对应 api_key_id",
+            "type": "string"
+          },
+          "clientId": {
+            "description_en": "The department ID. A value of 0 indicates no affiliated department",
+            "description_zh": "部门ID，0表示无归属部门",
+            "example": "0",
+            "format": "int64",
+            "title": "部门ID，0表示无归属部门",
+            "type": "integer"
+          },
+          "clientName": {
+            "description_en": "The department name",
+            "description_zh": "部门名称",
+            "example": "研发部",
+            "title": "部门名称",
+            "type": "string"
+          },
+          "memberUserId": {
+            "description_en": "The member ID for a member row. The value is 0 for a department row",
+            "description_zh": "成员行：成员ID；部门行为 0",
+            "example": "30001",
+            "format": "int64",
+            "title": "成员行：成员ID；部门行为 0",
+            "type": "integer"
+          },
+          "memberUserName": {
+            "description_en": "The member name for a member row. The value is empty for a department row",
+            "description_zh": "成员行：成员名；部门行为空",
+            "example": "张三",
+            "title": "成员行：成员名；部门行为空",
+            "type": "string"
+          },
+          "metrics": {
+            "description_en": "The usage metric array. Only entries with non-zero values are included",
+            "description_zh": "用量指标数组，仅包含值不为0的条目",
+            "example": "[{\"key\": \"total_calls\", \"value\": 100}]",
+            "items": {
+              "$ref": "#/components/schemas/MetricKVPairDTO",
+              "description_en": "The metric",
+              "description_zh": "指标"
+            },
+            "title": "用量指标数组，仅包含值不为0的条目",
+            "type": "array"
+          },
+          "modelCode": {
+            "description_en": "The model identifier",
+            "description_zh": "模型标识符",
+            "example": "qwen-plus",
+            "title": "模型标识符",
+            "type": "string"
+          },
+          "modelId": {
+            "description_en": "The model ID",
+            "description_zh": "模型ID",
+            "example": "1",
+            "format": "int64",
+            "title": "模型ID",
+            "type": "integer"
+          },
+          "modelName": {
+            "description_en": "The model name",
+            "description_zh": "模型名称",
+            "example": "通义千问-Plus",
+            "title": "模型名称",
+            "type": "string"
+          },
+          "modelType": {
+            "description_en": "The statistical dimension",
+            "description_zh": "统计口径",
+            "example": "llm",
+            "title": "统计口径",
+            "type": "string"
+          },
+          "summaryTime": {
+            "description_en": "The statistical time point, in UNIX timestamp (seconds)",
+            "description_zh": "统计时间点，Unix时间戳（秒）",
+            "example": "1700000000",
+            "format": "int64",
+            "title": "统计时间点，Unix时间戳（秒）",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "deprecated": false,
+  "description_en": "Queries usage details in batches for usage management",
+  "description_zh": "用量管理/批量查询用量明细",
+  "kebab_example": "",
+  "method": "GET",
+  "multi_version": false,
+  "name": "ModelRouterQueryUsageBreakdown",
+  "operation": {
+    "action": "ModelRouterQueryUsageBreakdown",
+    "api_style": "ROA",
+    "api_version": "20240611",
+    "method": "GET",
+    "operation_type": "read",
+    "protocol": "HTTPS",
+    "system_operation_type": "list",
+    "url": "/api/v1/modelRouter/open/usage/breakdown"
+  },
+  "parameters": [
+    {
+      "example": "1700000000",
+      "help_en": "The query start time, in UNIX timestamp (seconds)",
+      "help_zh": "查询开始时间，Unix时间戳（秒）",
+      "location": "query",
+      "name": "start_time",
+      "options": [
+        "--start-time"
+      ],
+      "raw_name": "startTime",
+      "required": true,
+      "type": "int"
+    },
+    {
+      "example": "1700086400",
+      "help_en": "The query end time, in UNIX timestamp (seconds)",
+      "help_zh": "查询结束时间，Unix时间戳（秒）",
+      "location": "query",
+      "name": "end_time",
+      "options": [
+        "--end-time"
+      ],
+      "raw_name": "endTime",
+      "required": true,
+      "type": "int"
+    },
+    {
+      "example": "hourly",
+      "help_en": "The aggregation granularity. Valid values: hourly and daily",
+      "help_zh": "聚合粒度：hourly 或 daily",
+      "location": "query",
+      "name": "granularity",
+      "options": [
+        "--granularity"
+      ],
+      "raw_name": "granularity",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "1",
+      "help_en": "Optional. Filters results by department ID",
+      "help_zh": "可选，按部门ID过滤",
+      "location": "query",
+      "name": "client_id",
+      "options": [
+        "--client-id"
+      ],
+      "raw_name": "clientId",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "1,2,3",
+      "help_en": "The list of department IDs, separated by commas. Supports querying data for multiple departments. This parameter is mutually exclusive with clientId",
+      "help_zh": "部门ID列表(逗号分隔，支持查询多个部门数据，与clientId互斥)",
+      "location": "query",
+      "name": "client_ids",
+      "options": [
+        "--client-ids"
+      ],
+      "raw_name": "clientIds",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "100",
+      "help_en": "Optional. Filters results by API key ID. This parameter is linked to the department and requires clientId to be specified first",
+      "help_zh": "可选，按 API Key ID 过滤（与部门联动，需先指定 clientId）",
+      "location": "query",
+      "name": "api_key_id",
+      "options": [
+        "--api-key-id"
+      ],
+      "raw_name": "apiKeyId",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "1",
+      "help_en": "The page number. Default value: 1",
+      "help_zh": "页码，默认1",
+      "location": "query",
+      "name": "page",
+      "options": [
+        "--page"
+      ],
+      "raw_name": "page",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "20",
+      "help_en": "The number of entries per page. Default value: 20. Maximum value: 500",
+      "help_zh": "每页条数，默认20，最大500",
+      "location": "query",
+      "name": "page_size",
+      "options": [
+        "--page-size"
+      ],
+      "raw_name": "pageSize",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "30001,30002",
+      "help_en": "Optional. Filters results by member IDs, separated by commas. If not specified, the department and all its members are included. If an empty value is passed, only the department is included without members",
+      "help_zh": "可选，按成员过滤（成员ID，多个用逗号分隔）。不传=部门及其全部成员；传空值=仅部门不含成员",
+      "location": "query",
+      "name": "member_user_ids",
+      "options": [
+        "--member-user-ids"
+      ],
+      "raw_name": "memberUserIds",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "20",
+      "help_en": "The maximum number of results to return",
+      "help_zh": "最大返回数量",
+      "location": "query",
+      "name": "max_results",
+      "options": [
+        "--max-results"
+      ],
+      "raw_name": "maxResults",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "xxxx-xxx-xxxxx\n",
+      "help_en": "The pagination token",
+      "help_zh": "翻页标识",
+      "location": "query",
+      "name": "next_token",
+      "options": [
+        "--next-token"
+      ],
+      "raw_name": "nextToken",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "/api/v1/modelRouter/open/usage/breakdown",
+  "product_code": "AiContent",
+  "protocol": "HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "OpenApiSingleResponse<UsageBreakdownRespDTO>",
+        "description_zh": "OpenApiSingleResponse<UsageBreakdownRespDTO>",
+        "example": "{\n    \"success\": true,\n    \"data\": {\"granularity\": \"hourly\", \"total\": 100, \"page\": 1, \"page_size\": 20, \"rows\": []},\n    \"requestId\": \"592A27EF-26D3-1434-98C1-97AD63337852\"\n}",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UsageBreakdownRespDTO",
+            "description_en": "The data object",
+            "description_zh": "数据对象",
+            "example": "{}",
+            "title_zh": "数据对象"
+          },
+          "errCode": {
+            "description_en": "The error message code",
+            "description_zh": "错误信息编码",
+            "example": "UNKNOWN_ERROR",
+            "title_zh": "错误信息编码",
+            "type": "string"
+          },
+          "errMessage": {
+            "description_en": "The error message",
+            "description_zh": "错误信息",
+            "example": "未知错误",
+            "title_zh": "错误信息",
+            "type": "string"
+          },
+          "httpStatusCode": {
+            "description_en": "The HTTP status code",
+            "description_zh": "http状态码",
+            "example": "200",
+            "format": "int32",
+            "title_zh": "http状态码",
+            "type": "integer"
+          },
+          "maxResults": {
+            "description_en": "The maximum number of results to return",
+            "description_zh": "最大返回数量",
+            "example": "20",
+            "format": "int32",
+            "title_zh": "最大返回数量",
+            "type": "integer"
+          },
+          "nextToken": {
+            "description_en": "The pagination token",
+            "description_zh": "翻页标识",
+            "example": "xxxx-xxx-xxxxx",
+            "title_zh": "翻页标识",
+            "type": "string"
+          },
+          "requestId": {
+            "description_en": "The request ID",
+            "description_zh": "请求编号",
+            "example": "xxxx-xxxx-xxxx-xxxxxxxx",
+            "title_zh": "请求编号",
+            "type": "string"
+          },
+          "success": {
+            "description_en": "Indicates whether the request was successful",
+            "description_zh": "是否成功",
+            "example": "true",
+            "title_zh": "是否成功",
+            "type": "boolean"
+          }
+        },
+        "title_zh": "OpenApiSingleResponse<UsageBreakdownRespDTO>",
+        "type": "object"
+      }
+    }
+  }
+}

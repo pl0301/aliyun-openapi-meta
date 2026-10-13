@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "ess modify-scaling-group",
   "cmd_name": "modify-scaling-group",
   "deprecated": false,
@@ -291,18 +292,6 @@
             "type": "string"
           },
           {
-            "example": "0.025",
-            "help_en": "The maximum hourly price for the instance type specified by `LaunchTemplateOverride.N.InstanceType`. You can specify N values for this parameter. The extended launch template supports N instance types. Valid values of N: 1 to 20.\nThis parameter takes effect only when the `LaunchTemplateId` parameter specifies a launch template",
-            "help_zh": "本参数用于指定实例启动模板覆盖规格（即`LaunchTemplateOverride.N.InstanceType`）的竞价价格上限。您可以指定N个该参数，扩展启动模板支持N个实例规格。N的取值范围：1~20。\n仅当`LaunchTemplateId`参数指定了启动模板时，该参数才生效",
-            "name": "spot_price_limit",
-            "options": [
-              "--spot-price-limit"
-            ],
-            "raw_name": "SpotPriceLimit",
-            "required": false,
-            "type": "float"
-          },
-          {
             "example": "4",
             "help_en": "To enable the scaling group to scale based on the capacity of instance types, specify this parameter after you specify LaunchTemplateOverrides.InstanceType. The two parameters have a one-to-one correspondence.\n\nThis parameter specifies the weight of the instance type, which represents the capacity of a single instance of this type in the scaling group.\n\nA larger weight means that fewer instances of this type are required to meet the expected capacity.\n\nBecause instance types differ in performance metrics such as the number of vCPUs and memory size, you can assign different weights to different instance types based on your requirements.\n\nExample:\n\nCurrent capacity: 0.\n\nExpected capacity: 6.\n\nCapacity of ecs.c5.xlarge: 4.\n\nTo meet the expected capacity, the scaling group scales out two ecs.c5.xlarge instances.\n\nDuring a scale-out event, the capacity of the scaling group cannot exceed the sum of MaxSize and the maximum weight of the instance types.\n\nValid values of WeightedCapacity: 1 to 500",
             "help_zh": "当您需要伸缩组按照实例规格容量进行伸缩时，在指定LaunchTemplateOverrides.InstanceType后，再指定本参数。两个参数一一对应。\n\n本参数用于指定实例规格的权重，即实例规格的单台实例在伸缩组中表示的容量大小。\n\n权重越大，满足期望容量所需的本实例规格的实例数量越少。\n\n由于每个实例规格的vCPU个数、内存大小等性能指标会有差异，您可以根据自身需求，给不同的实例规格配置不同的权重。\n\n例如：\n\n当前容量：0。\n\n期望容量：6。\n\necs.c5.xlarge规格容量：4。\n\n为满足期望容量，伸缩组将为用户扩容2台ecs.c5.xlarge实例。\n\n扩容时伸缩组的容量不得超过最大容量（MaxSize）与实例规格的最大权重之和。\n\nWeightedCapacity的取值范围：1~500",
@@ -313,6 +302,18 @@
             "raw_name": "WeightedCapacity",
             "required": false,
             "type": "int"
+          },
+          {
+            "example": "0.025",
+            "help_en": "The maximum hourly price for the instance type specified by `LaunchTemplateOverride.N.InstanceType`. You can specify N values for this parameter. The extended launch template supports N instance types. Valid values of N: 1 to 20.\nThis parameter takes effect only when the `LaunchTemplateId` parameter specifies a launch template",
+            "help_zh": "本参数用于指定实例启动模板覆盖规格（即`LaunchTemplateOverride.N.InstanceType`）的竞价价格上限。您可以指定N个该参数，扩展启动模板支持N个实例规格。N的取值范围：1~20。\n仅当`LaunchTemplateId`参数指定了启动模板时，该参数才生效",
+            "name": "spot_price_limit",
+            "options": [
+              "--spot-price-limit"
+            ],
+            "raw_name": "SpotPriceLimit",
+            "required": false,
+            "type": "float"
           }
         ],
         "type": "object"
@@ -452,18 +453,6 @@
     {
       "fields": [
         {
-          "example": "true",
-          "help_en": "Specifies whether to automatically create pay-as-you-go instances to meet the required number of ECS instances when spot instances cannot be created due to reasons such as cost or insufficient inventory. This parameter takes effect only when the `MultiAZPolicy` parameter of the `CreateScalingGroup` operation is set to `COST_OPTIMIZED`. Valid values:\n\ntrue: Pay-as-you-go instances are allowed.\nfalse: Pay-as-you-go instances are not allowed",
-          "help_zh": "当`CreateScalingGroup`接口的`MultiAZPolicy`取值为`COST_OPTIMIZED`时，如果因价格、库存等原因无法创建足够的抢占式实例，是否允许自动尝试创建按量实例满足ECS实例数量要求。取值范围：\n\ntrue：允许。\nfalse：不允许",
-          "name": "compensate_with_on_demand",
-          "options": [
-            "--compensate-with-on-demand"
-          ],
-          "raw_name": "CompensateWithOnDemand",
-          "required": false,
-          "type": "bool"
-        },
-        {
           "example": "30",
           "help_en": "The minimum number of pay-as-you-go instances required in the scaling group. When the number of pay-as-you-go instances in the scaling group is less than this value, the system preferentially creates pay-as-you-go instances. Valid values: 0 to 1000.\n\nWhen the `MultiAZPolicy` parameter is set to `COMPOSABLE`, the default value is 0",
           "help_zh": "已有伸缩组内所需要的按量实例数的最小值，当伸缩组内按量实例个数少于该值时，系统将优先创建按量实例。取值范围：0~1000。\n\n当`MultiAZPolicy`参数取值为`COMPOSABLE`策略时，默认值为0",
@@ -488,16 +477,16 @@
           "type": "int"
         },
         {
-          "example": "PricePerUnit",
-          "help_en": "The price comparison mode for the cost optimization strategy of the scaling group. Valid values:\nPricePerUnit: Prices are compared based on the price per unit of capacity.\n\n  The capacity of an instance in the scaling group equals the weight assigned to the instance type. The default weight is 1, meaning one ECS instance occupies a capacity of 1.\n\nPricePerVCpu: Prices are compared based on the price per vCPU.\n\nDefault value: PricePerUnit",
-          "help_zh": "伸缩组成本优化策略的比价模式。取值范围：\nPricePerUnit：使用每单位容量价格比价。\n\n  实例在伸缩组中容量大小等于为实例规格设置的权重，默认为1，即一台ECS所占容量为1。\n\nPricePerVCpu：使用每单位vCpu价格进行比价。\n\n默认值：PricePerUnit",
-          "name": "price_comparison_mode",
+          "example": "true",
+          "help_en": "Specifies whether to automatically create pay-as-you-go instances to meet the required number of ECS instances when spot instances cannot be created due to reasons such as cost or insufficient inventory. This parameter takes effect only when the `MultiAZPolicy` parameter of the `CreateScalingGroup` operation is set to `COST_OPTIMIZED`. Valid values:\n\ntrue: Pay-as-you-go instances are allowed.\nfalse: Pay-as-you-go instances are not allowed",
+          "help_zh": "当`CreateScalingGroup`接口的`MultiAZPolicy`取值为`COST_OPTIMIZED`时，如果因价格、库存等原因无法创建足够的抢占式实例，是否允许自动尝试创建按量实例满足ECS实例数量要求。取值范围：\n\ntrue：允许。\nfalse：不允许",
+          "name": "compensate_with_on_demand",
           "options": [
-            "--price-comparison-mode"
+            "--compensate-with-on-demand"
           ],
-          "raw_name": "PriceComparisonMode",
+          "raw_name": "CompensateWithOnDemand",
           "required": false,
-          "type": "string"
+          "type": "bool"
         },
         {
           "example": "true",
@@ -510,6 +499,18 @@
           "raw_name": "SpotAutoReplaceOnDemand",
           "required": false,
           "type": "bool"
+        },
+        {
+          "example": "PricePerUnit",
+          "help_en": "The price comparison mode for the cost optimization strategy of the scaling group. Valid values:\nPricePerUnit: Prices are compared based on the price per unit of capacity.\n\n  The capacity of an instance in the scaling group equals the weight assigned to the instance type. The default weight is 1, meaning one ECS instance occupies a capacity of 1.\n\nPricePerVCpu: Prices are compared based on the price per vCPU.\n\nDefault value: PricePerUnit",
+          "help_zh": "伸缩组成本优化策略的比价模式。取值范围：\nPricePerUnit：使用每单位容量价格比价。\n\n  实例在伸缩组中容量大小等于为实例规格设置的权重，默认为1，即一台ECS所占容量为1。\n\nPricePerVCpu：使用每单位vCpu价格进行比价。\n\n默认值：PricePerUnit",
+          "name": "price_comparison_mode",
+          "options": [
+            "--price-comparison-mode"
+          ],
+          "raw_name": "PriceComparisonMode",
+          "required": false,
+          "type": "string"
         }
       ],
       "help_en": "The capacity options",
@@ -557,14 +558,14 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

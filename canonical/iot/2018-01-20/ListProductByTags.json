@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun iot ListProductByTags --region cn-hangzhou --ProductTag.1.TagValue 102 --ProductTag.1.TagKey room",
   "cmd_full_name": "iot list-product-by-tags",
   "cmd_name": "list-product-by-tags",
   "deprecated": false,
-  "description_en": "Queries products by tag with paging",
+  "description_en": "Queries the list of products by tag with paging",
   "description_zh": "调用该接口根据标签分页查询产品列表",
   "kebab_example": "aliyun iot list-product-by-tags --product-tag TagKey=room TagValue=102 --api-version 2018-01-20 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "iot-v64***",
-      "help_en": "The instance ID. You can view the ID of the instance on the Overview page in the IoT Platform console.\n\n<notice>\nIf this value exists, you must specify it. Otherwise, the call fails.\nIf <props=\"intl\"><ph>the Overview page or </ph></props>this value does not exist, you do not need to specify it.\n\n</notice>\n\nFor more information about instances, see https://help.aliyun.com/document_detail/356505.html",
+      "help_en": "The instance ID. On the Overview page in the IoT Platform console, you can view the ID of the current instance.\n\n<notice>\nIf this parameter is available, you must specify this parameter. Otherwise, the call fails.\nIf <props=\"intl\"><ph>the Overview page or </ph></props>this parameter is not available, you do not need to specify this parameter.\n\n</notice>\n\nFor more information about instances, see https://help.aliyun.com/document_detail/356505.html",
       "help_zh": "实例ID。您可在物联网平台控制台的实例概览页面，查看当前实例的ID。\n\n<notice>\n若有ID值，必须传入该ID值，否则调用会失败。\n若无<props=\"intl\"><ph>实例概览页面或</ph></props>ID值，则无需传入。\n\n</notice>\n\n实例的更多信息，请参见https://help.aliyun.com/document_detail/356505.html",
       "location": "query",
       "name": "iot_instance_id",
@@ -62,18 +63,6 @@
       "element": {
         "fields": [
           {
-            "example": "room",
-            "help_en": "The key of the product tag",
-            "help_zh": "产品标签键",
-            "name": "tag_key",
-            "options": [
-              "--tag-key"
-            ],
-            "raw_name": "TagKey",
-            "required": true,
-            "type": "string"
-          },
-          {
             "example": "102",
             "help_en": "The value of the product tag",
             "help_zh": "产品标签值",
@@ -83,6 +72,18 @@
             ],
             "raw_name": "TagValue",
             "required": false,
+            "type": "string"
+          },
+          {
+            "example": "room",
+            "help_en": "The key of the product tag",
+            "help_zh": "产品标签键",
+            "name": "tag_key",
+            "options": [
+              "--tag-key"
+            ],
+            "raw_name": "TagKey",
+            "required": true,
             "type": "string"
           }
         ],
@@ -107,77 +108,84 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The error code returned if the call fails. For more information, see [Error codes]（https://help.aliyun.com/document_detail/87387.html）",
             "description_zh": "调用失败时，返回的错误码。更多信息，请参见[错误码]（https://help.aliyun.com/document_detail/87387.html）",
             "example": "iot.system.SystemException",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "ErrorMessage": {
-            "backendName": "errorMessage",
             "description_en": "The error message returned if the call fails",
             "description_zh": "调用失败时，返回的出错信息",
             "example": "系统异常",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "ProductInfos": {
-            "backendName": "productInfoList",
-            "itemName": "ProductInfo",
-            "items": {
-              "properties": {
-                "CreateTime": {
-                  "backendName": "createTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "ProductInfo": {
+                "description_en": "The list of product information (ProductInfo) returned if the call was successful.\n\nThe returned products are sorted in reverse chronological order by creation time",
+                "description_zh": "调用成功时，返回产品信息列表（ProductInfo）。\n\n返回的产品信息按照产品创建时间倒序排列",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CreateTime": {
+                      "description_en": "The time when the product was created. The value is a UNIX timestamp in milliseconds",
+                      "description_zh": "产品创建时间。使用 Unix 时间戳，单位为毫秒",
+                      "example": "1545355537000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Description": {
+                      "description_en": "The product description",
+                      "description_zh": "产品描述",
+                      "example": "This is a test product.",
+                      "type": "string"
+                    },
+                    "NodeType": {
+                      "description_en": "The node type of the product. Valid values:\n0: Device. A device cannot have sub-devices. It can connect to IoT Platform directly or as a sub-device of a gateway.\n1: Gateway. A gateway can have sub-devices. It has a sub-device management module, maintains the topology of sub-devices, and synchronizes the topology to IoT Platform",
+                      "description_zh": "产品的节点类型，取值：\n0：设备。设备不能挂载子设备。可以直连物联网平台，也可以作为网关的子设备连接物联网平台。\n1：网关。网关可以挂载子设备，具有子设备管理模块，维持子设备的拓扑关系，和将拓扑关系同步到物联网平台",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ProductKey": {
+                      "description_en": "The ProductKey of the product. This is a globally unique identifier issued by IoT Platform for a newly created product",
+                      "description_zh": "产品的ProductKey。是物联网平台为新建产品颁发的全局唯一标识符",
+                      "example": "a1BwAGV****",
+                      "type": "string"
+                    },
+                    "ProductName": {
+                      "description_en": "The product name",
+                      "description_zh": "产品名称",
+                      "example": "路灯",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Description": {
-                  "backendName": "description",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "NodeType": {
-                  "backendName": "nodeType",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ProductKey": {
-                  "backendName": "productKey",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ProductName": {
-                  "backendName": "productName",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": false,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The unique identifier generated by Alibaba Cloud for the request",
             "description_zh": "阿里云为该请求生成的唯一标识符",
             "example": "E55E50B7-40EE-4B6B-8BBE-D3ED55CCF565",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the call was successful.\ntrue: The call was successful.\nfalse: The call failed",
             "description_zh": "表示是否调用成功。\ntrue：调用成功。\nfalse：调用失败",
             "example": "true",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

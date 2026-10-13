@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun sae POST /pop/v1/sam/app/deployApplication --region cn-hangzhou --AppId '7171a6ca-d1cd-4928-8642-7d5cfe690000' --header \"Content-Type=application/json\"",
   "cmd_full_name": "sae deploy-application",
   "cmd_name": "deploy-application",
@@ -873,14 +874,50 @@
       "element": {
         "fields": [
           {
-            "example": "cri-xxxxxx",
-            "help_en": "The instance ID of the ACR Enterprise Edition. This parameter is required if the `ImageUrl` is from an ACR Enterprise Edition repository",
-            "help_zh": "容器镜像服务 ACR 企业版实例 ID。当 ImageUrl 为容器镜像服务企业版时必填",
-            "name": "acr_instance_id",
+            "example": "name",
+            "help_en": "The name of the container",
+            "help_zh": "容器名称",
+            "name": "name",
             "options": [
-              "--acr-instance-id"
+              "--name"
             ],
-            "raw_name": "AcrInstanceId",
+            "raw_name": "Name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "1000",
+            "help_en": "The CPU resources allocated to the container, measured in millicores. For example, a value of 1000 represents 1 vCPU",
+            "help_zh": "Cpu",
+            "name": "cpu",
+            "options": [
+              "--cpu"
+            ],
+            "raw_name": "Cpu",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "1024",
+            "help_en": "The amount of memory allocated to the container, measured in MB",
+            "help_zh": "Memory",
+            "name": "memory",
+            "options": [
+              "--memory"
+            ],
+            "raw_name": "Memory",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "registry-vpc.cn-hangzhou.aliyuncs.com/demo/nginx:latest",
+            "help_en": "The container image URL",
+            "help_zh": "镜像地址",
+            "name": "image_url",
+            "options": [
+              "--image-url"
+            ],
+            "raw_name": "ImageUrl",
             "required": false,
             "type": "string"
           },
@@ -909,6 +946,18 @@
             "type": "string"
           },
           {
+            "example": "[{\"name\":\"TEST_ENV_KEY\",\"value\":\"TEST_ENV_VAR\"}]",
+            "help_en": "The environment variables to set in the container. Specify the variables as a JSON array of key-value pairs",
+            "help_zh": "容器环境变量参数",
+            "name": "envs",
+            "options": [
+              "--envs"
+            ],
+            "raw_name": "Envs",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "[{\"configMapId\":16,\"key\":\"test\",\"mountPath\":\"/tmp\"}]",
             "help_en": "The settings for mounting a ConfigMap. Use this to inject configuration data into the container as files",
             "help_zh": "ConfigMap 挂载描述",
@@ -919,18 +968,6 @@
             "raw_name": "ConfigMapMountDesc",
             "required": false,
             "type": "string"
-          },
-          {
-            "example": "1000",
-            "help_en": "The CPU resources allocated to the container, measured in millicores. For example, a value of 1000 represents 1 vCPU",
-            "help_zh": "Cpu",
-            "name": "cpu",
-            "options": [
-              "--cpu"
-            ],
-            "raw_name": "Cpu",
-            "required": false,
-            "type": "int"
           },
           {
             "example": "[{\\\"name\\\":\\\"workdir\\\",\\\"mountPath\\\":\\\"/usr/local/tomcat/webapps\\\"}]",
@@ -945,26 +982,25 @@
             "type": "string"
           },
           {
-            "example": "[{\"name\":\"TEST_ENV_KEY\",\"value\":\"TEST_ENV_VAR\"}]",
-            "help_en": "The environment variables to set in the container. Specify the variables as a JSON array of key-value pairs",
-            "help_zh": "容器环境变量参数",
-            "name": "envs",
+            "example": "cri-xxxxxx",
+            "help_en": "The instance ID of the ACR Enterprise Edition. This parameter is required if the `ImageUrl` is from an ACR Enterprise Edition repository",
+            "help_zh": "容器镜像服务 ACR 企业版实例 ID。当 ImageUrl 为容器镜像服务企业版时必填",
+            "name": "acr_instance_id",
             "options": [
-              "--envs"
+              "--acr-instance-id"
             ],
-            "raw_name": "Envs",
+            "raw_name": "AcrInstanceId",
             "required": false,
             "type": "string"
           },
           {
-            "example": "registry-vpc.cn-hangzhou.aliyuncs.com/demo/nginx:latest",
-            "help_en": "The container image URL",
-            "help_zh": "镜像地址",
-            "name": "image_url",
+            "help_en": "Specifies how to mount a Secret. This lets you securely use sensitive data, such as credentials or keys, in your application",
+            "help_zh": "Secret 挂载描述",
+            "name": "secret_mount_desc",
             "options": [
-              "--image-url"
+              "--secret-mount-desc"
             ],
-            "raw_name": "ImageUrl",
+            "raw_name": "SecretMountDesc",
             "required": false,
             "type": "string"
           },
@@ -980,37 +1016,13 @@
             "type": "string"
           },
           {
-            "example": "1024",
-            "help_en": "The amount of memory allocated to the container, measured in MB",
-            "help_zh": "Memory",
-            "name": "memory",
+            "help_en": "The configuration for the readiness probe. The readiness probe checks if the container is ready to handle requests. The system will not direct traffic to a container until its readiness probe succeeds",
+            "help_zh": "业务就绪检查(Readiness配置)",
+            "name": "readiness",
             "options": [
-              "--memory"
+              "--readiness"
             ],
-            "raw_name": "Memory",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "name",
-            "help_en": "The name of the container",
-            "help_zh": "容器名称",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "Name",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "help_en": "The configuration for the postStart hook. This hook runs immediately after the container starts to perform initialization tasks",
-            "help_zh": "PostStart配置",
-            "name": "post_start",
-            "options": [
-              "--post-start"
-            ],
-            "raw_name": "PostStart",
+            "raw_name": "Readiness",
             "required": false,
             "type": "string"
           },
@@ -1026,24 +1038,13 @@
             "type": "string"
           },
           {
-            "help_en": "The configuration for the readiness probe. The readiness probe checks if the container is ready to handle requests. The system will not direct traffic to a container until its readiness probe succeeds",
-            "help_zh": "业务就绪检查(Readiness配置)",
-            "name": "readiness",
+            "help_en": "The configuration for the postStart hook. This hook runs immediately after the container starts to perform initialization tasks",
+            "help_zh": "PostStart配置",
+            "name": "post_start",
             "options": [
-              "--readiness"
+              "--post-start"
             ],
-            "raw_name": "Readiness",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "help_en": "Specifies how to mount a Secret. This lets you securely use sensitive data, such as credentials or keys, in your application",
-            "help_zh": "Secret 挂载描述",
-            "name": "secret_mount_desc",
-            "options": [
-              "--secret-mount-desc"
-            ],
-            "raw_name": "SecretMountDesc",
+            "raw_name": "PostStart",
             "required": false,
             "type": "string"
           }
@@ -1131,6 +1132,30 @@
       "element": {
         "fields": [
           {
+            "example": "name",
+            "help_en": "Container name",
+            "help_zh": "容器名称",
+            "name": "name",
+            "options": [
+              "--name"
+            ],
+            "raw_name": "Name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "registry.cn-hangzhou.aliyuncs.com/sae_test/ali_sae_test:0.0.1",
+            "help_en": "The address of the image registry",
+            "help_zh": "镜像地址",
+            "name": "image_url",
+            "options": [
+              "--image-url"
+            ],
+            "raw_name": "ImageUrl",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "echo",
             "help_en": "Start command for the image",
             "help_zh": "镜像启动命令",
@@ -1155,6 +1180,18 @@
             "type": "string"
           },
           {
+            "example": "[{\"name\":\"TEST_ENV_KEY\",\"value\":\"TEST_ENV_VAR\"}]",
+            "help_en": "Environment variable parameters for the container",
+            "help_zh": "容器环境变量参数",
+            "name": "envs",
+            "options": [
+              "--envs"
+            ],
+            "raw_name": "Envs",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "[{\"configMapId\":16,\"key\":\"test\",\"mountPath\":\"/tmp\"}]",
             "help_en": "ConfigMap mount description",
             "help_zh": "ConfigMap 挂载描述",
@@ -1175,42 +1212,6 @@
               "--empty-dir-desc"
             ],
             "raw_name": "EmptyDirDesc",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "[{\"name\":\"TEST_ENV_KEY\",\"value\":\"TEST_ENV_VAR\"}]",
-            "help_en": "Environment variable parameters for the container",
-            "help_zh": "容器环境变量参数",
-            "name": "envs",
-            "options": [
-              "--envs"
-            ],
-            "raw_name": "Envs",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "registry.cn-hangzhou.aliyuncs.com/sae_test/ali_sae_test:0.0.1",
-            "help_en": "The address of the image registry",
-            "help_zh": "镜像地址",
-            "name": "image_url",
-            "options": [
-              "--image-url"
-            ],
-            "raw_name": "ImageUrl",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "name",
-            "help_en": "Container name",
-            "help_zh": "容器名称",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "Name",
             "required": false,
             "type": "string"
           },
@@ -1423,17 +1424,6 @@
           "type": "bool"
         },
         {
-          "help_en": "The RaspAppKey",
-          "help_zh": "The RaspAppKey",
-          "name": "rasp_app_key",
-          "options": [
-            "--rasp-app-key"
-          ],
-          "raw_name": "RaspAppKey",
-          "required": false,
-          "type": "string"
-        },
-        {
           "help_en": "The RaspAppName",
           "help_zh": "The RaspAppName",
           "name": "rasp_app_name",
@@ -1441,6 +1431,17 @@
             "--rasp-app-name"
           ],
           "raw_name": "RaspAppName",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "help_en": "The RaspAppKey",
+          "help_zh": "The RaspAppKey",
+          "name": "rasp_app_key",
+          "options": [
+            "--rasp-app-key"
+          ],
+          "raw_name": "RaspAppKey",
           "required": false,
           "type": "string"
         }

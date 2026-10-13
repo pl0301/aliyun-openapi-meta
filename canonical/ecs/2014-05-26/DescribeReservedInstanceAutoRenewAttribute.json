@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 8000,
   "camel_example": "aliyun ecs DescribeReservedInstanceAutoRenewAttribute --region cn-hangzhou --ReservedInstanceId.1 'ecsri-ajdfaj0000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs describe-reserved-instance-auto-renew-attribute",
   "cmd_name": "describe-reserved-instance-auto-renew-attribute",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "cn-hangzhou",
-      "help_en": "The region ID of the reserved instances.\n\nYou can call https://help.aliyun.com/document_detail/25609.html to query the most recent region list",
+      "help_en": "The region ID of the reserved instance.\n\nYou can call https://help.aliyun.com/document_detail/25609.html to obtain the latest list of Alibaba Cloud regions",
       "help_zh": "预留实例券所属的地域ID。\n\n您可以调用https://help.aliyun.com/document_detail/25609.html获取最新的阿里云地域列表",
       "location": "query",
       "name": "region_id",
@@ -36,8 +37,8 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The IDs of the reserved instances",
-      "help_zh": "预留实例券ID数组",
+      "help_en": "The IDs of the reserved instances. This parameter is required. If you do not specify this parameter, the MissingParamter.InstanceId error is returned",
+      "help_zh": "预留实例券ID数组。此参数为必填项，未提供时接口返回 MissingParamter.InstanceId",
       "location": "query",
       "name": "reserved_instance_id",
       "options": [
@@ -55,44 +56,59 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "04F0F334-1335-436C-A1D7-6C044FE7****",
             "type": "string"
           },
           "ReservedInstanceRenewAttributes": {
-            "backendName": "data",
-            "itemName": "ReservedInstanceRenewAttribute",
-            "items": {
-              "properties": {
-                "Duration": {
-                  "backendName": "duration",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "ReservedInstanceRenewAttribute": {
+                "description_en": "The auto-renewal settings of the reserved instances. The value is an array of ReservedInstanceRenewAttribute objects",
+                "description_zh": "由ReservedInstanceRenewAttribute组成的数组格式，返回预留实例券的自动续费设置信息",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Duration": {
+                      "description_en": "The auto-renewal duration",
+                      "description_zh": "自动续费时长",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "PeriodUnit": {
+                      "description_en": "The unit of the renewal period.\n\n<props=\"intl\">Valid values: Year.</props>\n\n<props=\"china\">Valid values: Year and Month.</props>",
+                      "description_zh": "续费单位。\n\n<props=\"intl\">可能值：Year。</props>\n\n<props=\"china\">可能值：Year、Month。</props>",
+                      "example": "Month",
+                      "type": "string"
+                    },
+                    "RenewalStatus": {
+                      "description_en": "The auto-renewal status of the reserved instance. Valid values:\n\nAutoRenewal: Auto-renewal.\nNormal: Manual renewal",
+                      "description_zh": "预留实例券自动续费状态。可能值：\n\nAutoRenewal：自动续费。\nNormal：手动续费",
+                      "example": "AutoRenewal",
+                      "type": "string"
+                    },
+                    "ReservedInstanceId": {
+                      "description_en": "The ID of the reserved instance",
+                      "description_zh": "预留实例券ID",
+                      "example": "ecsri-ajdfaj****",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "PeriodUnit": {
-                  "backendName": "periodUnit",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "RenewalStatus": {
-                  "backendName": "renewalStatus",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ReservedInstanceId": {
-                  "backendName": "instanceId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

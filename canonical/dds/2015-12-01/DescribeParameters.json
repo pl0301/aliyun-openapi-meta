@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dds DescribeParameters --region cn-hangzhou --DBInstanceId 'dds-bpxxxxxxxx'",
   "cmd_full_name": "dds describe-parameters",
   "cmd_name": "describe-parameters",
   "deprecated": false,
-  "description_en": "Queries the parameter settings of an ApsaraDB for MongoDB instance",
+  "description_en": "Queries the parameter settings of a MongoDB instance",
   "description_zh": "查询MongoDB实例的参数配置信息",
   "kebab_example": "aliyun dds describe-parameters --db-instance-id dds-bpxxxxxxxx --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "dds-bpxxxxxxxx",
-      "help_en": "The instance ID.\n\nIf you set this parameter to the ID of a sharded cluster instance, you must also specify the NodeId parameter",
+      "help_en": "The instance ID.\n\nIf you specify the ID of a sharded cluster instance for this parameter, you must also specify the NodeId parameter",
       "help_zh": "实例ID。\n\n当本参数传入的是分片集群实例ID时，还需要传入NodeId参数",
       "location": "query",
       "name": "db_instance_id",
@@ -34,7 +35,7 @@
     },
     {
       "example": "d-bpxxxxxxxx",
-      "help_en": "The ID of the mongos or shard node in the specified sharded cluster instance.\n\nThis parameter is valid when the DBInstanceId parameter is set to the ID of a sharded cluster instance",
+      "help_en": "Instance ID of the mongos or shard node in the sharded cluster instance.\n\nThis parameter is available only when the DBInstanceId parameter is set to instance ID of a sharded cluster instance",
       "help_zh": "分片集群实例中的Mongos节点ID或Shard节点ID。\n\n当DBInstanceId参数传入的是分片集群实例ID时，本参数才可用",
       "location": "query",
       "name": "node_id",
@@ -47,7 +48,7 @@
     },
     {
       "example": "mongos",
-      "help_en": "The role of the instance. Valid values:\n\ndb: a shard node.\n\ncs: a Configserver node.\n\nmongos: a mongos node",
+      "help_en": "The role type of the instance. Valid values:\n\ndb: shard role\ncs: config server role\nmongos: mongos role",
       "help_zh": "实例的角色类型，取值说明：\n\ndb：shard角色。\ncs：config server角色。\nmongos：mongos角色",
       "location": "query",
       "name": "character_type",
@@ -60,7 +61,7 @@
     },
     {
       "example": "terrform",
-      "help_en": "The parameter that is available in the future",
+      "help_en": "The extended parameter",
       "help_zh": "扩展参数",
       "location": "query",
       "name": "extra_param",
@@ -78,153 +79,144 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "ConfigParameters": {
-            "backendName": "data.configParameters",
-            "itemName": "Parameter",
-            "items": {
-              "properties": {
-                "CheckingCode": {
-                  "backendName": "checkingCode",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Parameter": {
+                "description_en": "The list of parameter settings in the configuration",
+                "description_zh": "配置中的参数配置信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CheckingCode": {
+                      "description_en": "The value range of the parameter",
+                      "description_zh": "参数取值范围",
+                      "example": "[0-65536]",
+                      "type": "string"
+                    },
+                    "ForceRestart": {
+                      "description_en": "Specifies whether a restart is required for the parameter modification to take effect. Valid values:\nfalse: A restart is not required. The modification takes effect immediately after submission.\ntrue: A restart is required",
+                      "description_zh": "修改参数后是否需要重启生效。\nfalse：无需重启，提交后即生效。\ntrue：需要重启生效",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ModifiableStatus": {
+                      "description_en": "Specifies whether the parameter can be modified. Valid values:\nfalse: The parameter cannot be modified.\ntrue: The parameter can be modified",
+                      "description_zh": "参数是否处于可修改的状态。\nfalse：不可修改。\ntrue：可修改。 ",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ParameterDescription": {
+                      "description_en": "The parameter description",
+                      "description_zh": "参数描述",
+                      "example": "The threshold in milliseconds at which the database profiler considers a query slow, default is 100.",
+                      "type": "string"
+                    },
+                    "ParameterName": {
+                      "description_en": "The parameter name",
+                      "description_zh": "参数名",
+                      "example": "operationProfiling.slowOpThresholdMs",
+                      "type": "string"
+                    },
+                    "ParameterValue": {
+                      "description_en": "The parameter value",
+                      "description_zh": "参数值",
+                      "example": "200",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "ForceRestart": {
-                  "backendName": "effective",
-                  "type": "boolean",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "true",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "false",
-                        "value": "1"
-                      }
-                    ]
-                  }
-                },
-                "ModifiableStatus": {
-                  "backendName": "revisable",
-                  "type": "boolean",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "false",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "true",
-                        "value": "1"
-                      }
-                    ]
-                  }
-                },
-                "ParameterDescription": {
-                  "backendName": "parameterDescription",
-                  "type": "string"
-                },
-                "ParameterName": {
-                  "backendName": "parameterName",
-                  "type": "string"
-                },
-                "ParameterValue": {
-                  "backendName": "parameterValue",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "Engine": {
-            "backendName": "data.engine",
-            "description_en": "The database engine of the instance. Default value: mongodb",
+            "description_en": "The database engine. Default value: mongodb",
             "description_zh": "数据库引擎，默认返回mongodb",
             "example": "mongodb",
             "type": "string"
           },
           "EngineVersion": {
-            "backendName": "data.engineVersion",
-            "description_en": "The database engine version of the instance",
+            "description_en": "The database engine version",
             "description_zh": "数据库版本号",
             "example": "4.0",
-            "mappingResourcePropertyName": "$.EngineVersion",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "3ADD0C7D-2D2A-4F15-88FF-E7AC9B9FDCC8",
             "type": "string"
           },
           "RunningParameters": {
-            "backendName": "data.runningParameters",
-            "itemName": "Parameter",
-            "items": {
-              "mappingResourcePropertyName": "$.Parameters[*]",
-              "properties": {
-                "CharacterType": {
-                  "backendName": "characterType",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Parameter": {
+                "description_en": "The list of parameter settings that are currently in effect",
+                "description_zh": "当前运行的参数配置信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CharacterType": {
+                      "description_en": "The role type of the instance. Valid values:\n\ndb: shard role\ncs: config server role\nmongos: mongos role",
+                      "description_zh": "实例的角色类型，取值说明：\n\ndb：shard角色。\ncs：config server角色。\nmongos：mongos角色",
+                      "example": "db",
+                      "type": "string"
+                    },
+                    "CheckingCode": {
+                      "description_en": "The value range of the parameter",
+                      "description_zh": "参数取值范围",
+                      "example": "[33554432-268435456]",
+                      "type": "string"
+                    },
+                    "ForceRestart": {
+                      "description_en": "Specifies whether a restart is required for the parameter modification to take effect. Valid values:\nfalse: A restart is not required. The modification takes effect immediately after submission.\ntrue: A restart is required",
+                      "description_zh": "修改参数后是否需要重启生效。\nfalse：无需重启，提交后即生效。\ntrue：需要重启生效",
+                      "example": "false",
+                      "type": "string"
+                    },
+                    "ModifiableStatus": {
+                      "description_en": "Specifies whether the parameter can be modified. Valid values:\nfalse: The parameter cannot be modified.\ntrue: The parameter can be modified",
+                      "description_zh": "参数是否处于可修改的状态。\nfalse：不可修改。\ntrue：可修改。 ",
+                      "example": "true",
+                      "type": "string"
+                    },
+                    "ParameterDescription": {
+                      "description_en": "The parameter description",
+                      "description_zh": "参数描述",
+                      "example": "The maximum memory bytes that sort stage may use, default is 33554432(i.e. 32MB)",
+                      "type": "string"
+                    },
+                    "ParameterName": {
+                      "description_en": "The parameter name",
+                      "description_zh": "参数名",
+                      "example": "setParameter.internalQueryExecMaxBlockingSortBytes",
+                      "type": "string"
+                    },
+                    "ParameterValue": {
+                      "description_en": "The parameter value",
+                      "description_zh": "参数值",
+                      "example": "33554432",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "CheckingCode": {
-                  "backendName": "checkingCode",
-                  "type": "string"
-                },
-                "ForceRestart": {
-                  "backendName": "effective",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "true",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "false",
-                        "value": "1"
-                      }
-                    ]
-                  }
-                },
-                "ModifiableStatus": {
-                  "backendName": "revisable",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "false",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "true",
-                        "value": "1"
-                      }
-                    ]
-                  }
-                },
-                "ParameterDescription": {
-                  "backendName": "parameterDescription",
-                  "type": "string"
-                },
-                "ParameterName": {
-                  "backendName": "parameterName",
-                  "mappingResourcePropertyName": "$.Parameters[*].ParameterName",
-                  "type": "string"
-                },
-                "ParameterValue": {
-                  "backendName": "parameterValue",
-                  "mappingResourcePropertyName": "$.Parameters[*].ParameterValue",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

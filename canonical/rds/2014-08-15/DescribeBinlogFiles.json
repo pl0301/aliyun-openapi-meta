@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun rds DescribeBinlogFiles --region cn-hangzhou --EndTime '2011-06-20T15:00:00Z' --DBInstanceId 'rm-uf6wjk50000' --StartTime '2011-06-01T15:00:00Z'",
   "cmd_full_name": "rds describe-binlog-files",
   "cmd_name": "describe-binlog-files",
   "deprecated": false,
-  "description_en": "Queries the binary log files of an instance that runs MySQL or MariaDB or the write-ahead logging (WAL) files of an instance that runs PostgreSQL",
+  "description_en": "Queries the binary logs of an ApsaraDB RDS for MySQL or ApsaraDB RDS for MariaDB instance, or the WAL logs of an ApsaraDB RDS for PostgreSQL instance",
   "description_zh": "该接口用于查询RDS MySQL/RDS MariaDB实例的Binlog日志或RDS PostgreSQL实例的Wal日志",
   "kebab_example": "aliyun rds describe-binlog-files --db-instance-id rm-uf6wjk50000 --start-time 2011-06-01T15:00:00Z --end-time 2011-06-20T15:00:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "rm-uf6wjk5****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -37,7 +38,7 @@
     {
       "doc_required": true,
       "example": "2011-06-01T15:00:00Z",
-      "help_en": "The beginning of the time range to query.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the query.\n\nFormat: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
       "help_zh": "查询开始时间。\n\n格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
       "location": "query",
       "name": "start_time",
@@ -51,7 +52,7 @@
     {
       "doc_required": true,
       "example": "2011-06-20T15:00:00Z",
-      "help_en": "The end of the time range to query. The end time must be later than the start time.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The end time of the query. The end time must be later than the start time.\n\nFormat: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
       "help_zh": "查询结束时间，大于查询开始时间。\n\n格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
       "location": "query",
       "name": "end_time",
@@ -79,7 +80,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Pages start from 1.\n\nDefault value: 1",
+      "help_en": "The page number. Valid values: any integer greater than 0 that does not exceed the maximum value of Integer.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
       "maximum": "2147483647",
@@ -103,124 +104,123 @@
         "description_zh": "返回参数详情",
         "properties": {
           "Items": {
-            "backendName": "data.items",
-            "itemName": "BinLogFile",
-            "items": {
-              "properties": {
-                "Checksum": {
-                  "backendName": "checksum",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DownloadLink": {
-                  "backendName": "downloadLink",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "FileSize": {
-                  "backendName": "fileSize",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "HostInstanceID": {
-                  "backendName": "instanceID",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "IntranetDownloadLink": {
-                  "backendName": "intranetDownloadLink",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LinkExpiredTime": {
-                  "backendName": "linkExpiredTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LogBeginTime": {
-                  "backendName": "logBeginTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LogEndTime": {
-                  "backendName": "logEndTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LogFileName": {
-                  "backendName": "logname",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RemoteStatus": {
-                  "backendName": "remoteStatus",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Uploading",
-                        "value": "1"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "BinLogFile": {
+                "description_en": "The details of the log files",
+                "description_zh": "日志文件明细列表",
+                "items": {
+                  "description_en": "The details of a log file",
+                  "description_zh": "日志文件详情",
+                  "properties": {
+                    "Checksum": {
+                      "description_en": "The checksum. The CRC64 algorithm is used",
+                      "description_zh": "校验和，采用CRC64算法",
+                      "example": "18358304393468701857",
+                      "type": "string"
+                    },
+                    "DownloadLink": {
+                      "description_en": "The download URL over HTTP. A value of NULL indicates that no download URL is available",
+                      "description_zh": "支持HTTP协议的下载链接URL，NULL表示没有下载链接",
+                      "example": "http://****.oss.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "FileSize": {
+                      "description_en": "The size of the log file.\n\nUnit: bytes",
+                      "description_zh": "日志文件大小。\n\n单位：Byte",
+                      "example": "2269410",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "HostInstanceID": {
+                      "description_en": "The ID of the instance to which the log file belongs. This parameter is used to determine whether the logs in the file are generated on the primary instance or the secondary instance.\nIn the ApsaraDB RDS console, go to the instance details page and click Service Availability in the left-side navigation pane to view the Primary Instance No. and Secondary Instance No",
+                      "description_zh": "日志文件所在实例编号，用户区分该日志文件中日志产生于主实例或备实例。\n您可以前往RDS管理控制台，进入实例详情页，然后在左侧导航栏单击服务可用性，查看主库编号和备库编号",
+                      "example": "584****",
+                      "type": "string"
+                    },
+                    "IntranetDownloadLink": {
+                      "description_en": "The internal download URL",
+                      "description_zh": "内网下载链接URL",
+                      "example": "http://****.oss-cn-hangzhou-internal.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "LinkExpiredTime": {
+                      "description_en": "The expiration time of the URL.\n\nFormat: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
+                      "description_zh": "URL过期时间。\n\n格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2013-06-09T18:00:00Z",
+                      "type": "string"
+                    },
+                    "LogBeginTime": {
+                      "description_en": "The start time of the logs recorded in the log file.\n\nFormat: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
+                      "description_zh": "日志文件记录的开始时间。\n\n格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2019-02-09T17:45:21Z",
+                      "type": "string"
+                    },
+                    "LogEndTime": {
+                      "description_en": "The end time of the logs recorded in the log file.\n\nFormat: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
+                      "description_zh": "日志文件记录的结束时间。\n\n格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2019-02-15T13:10:28Z",
+                      "type": "string"
+                    },
+                    "LogFileName": {
+                      "description_en": "The name of the log file",
+                      "description_zh": "日志文件名称",
+                      "example": "000000040000000000000019",
+                      "type": "string"
+                    },
+                    "RemoteStatus": {
+                      "description_en": "The storage status in OSS.\n\nValid values:\nUploading: uploading\nCompleted: upload complete",
+                      "description_zh": "OSS的存储状态。\n\n返回值：\nUploading：上传中\nCompleted：上传完成",
+                      "enumValueTitles": {
+                        "Completed": "上传完成",
+                        "Uploading": "上传中"
                       },
-                      {
-                        "targetValue": "Completed",
-                        "value": "2"
-                      }
-                    ]
+                      "example": "Completed",
+                      "type": "string"
+                    }
                   },
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumbers",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "mappingResourcePropertyName": "$.PageNumber",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageRecordCount": {
-            "backendName": "data.itemsNumbers",
             "description_en": "The number of log files on the current page",
             "description_zh": "当前页日志文件个数",
             "example": "30",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "ED169A3E-1657-4104-82AB-24EA8CD0DB75",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalFileSize": {
-            "backendName": "data.totalFileSize",
-            "description_en": "The total size of the log file",
+            "description_en": "The total size of the log files",
             "description_zh": "日志文件总大小",
             "example": "2269410",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecords",
             "description_en": "The total number of log files",
             "description_zh": "日志文件总数",
             "example": "100",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

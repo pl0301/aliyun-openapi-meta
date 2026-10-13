@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun paistudio POST /api/v1/nodes/lingjunxxxx-mgxxx-xxxx --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"ResourceGroupId\":\"rgaekzbrflewn6jjq\",\"OperationParameters\":\"example-string\",\"Operation\":\"Cordon\"}",
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun paistudio POST /api/v1/nodes/lingjunxxxx-mgxxx-xxxx --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "paistudio operate-node",
   "cmd_name": "operate-node",
   "deprecated": false,
-  "description_en": "Operates on a specified node",
+  "description_en": "Performs operations on a node using OperateNode",
   "description_zh": "您可以通过OperateNode对节点进行操作",
-  "kebab_example": "aliyun paistudio operate-node --node-id lingjunxxxx-mgxxx-xxxx --resource-group-id rgaekzbrflewn6jjq --operation Cordon --operation-parameters example-string --api-version 2022-01-12 --region cn-hangzhou",
+  "kebab_example": "aliyun paistudio operate-node --node-id lingjunxxxx-mgxxx-xxxx --api-version 2022-01-12 --region cn-hangzhou",
   "method": "POST",
   "multi_version": true,
   "name": "OperateNode",
@@ -41,6 +42,20 @@
       "type": "string"
     },
     {
+      "example": "rgaekzbrflewn6jjq",
+      "help_en": "The ID of the resource group to which the resource node belongs",
+      "help_zh": "资源节点所属资源组Id",
+      "location": "body",
+      "name": "resource_group_id",
+      "options": [
+        "--resource-group-id"
+      ],
+      "param_style": "json",
+      "raw_name": "ResourceGroupId",
+      "required": false,
+      "type": "string"
+    },
+    {
       "enum": [
         "Cordon",
         "Uncordon",
@@ -48,7 +63,7 @@
         "ResizeDisk"
       ],
       "example": "Cordon",
-      "help_en": "The operation. Valid values:\nCordon: disables scheduling\nUncordon: enables scheduling\nDrain: evicts pods",
+      "help_en": "The operation to perform. Valid values:\nCordon: disables scheduling\nUncordon: enables scheduling\nDrain: evicts pods",
       "help_zh": "操作\nCordon：禁止调度\nUncordon：启动调度\nDrain：驱逐Pod",
       "location": "body",
       "name": "operation",
@@ -64,18 +79,6 @@
       "fields": [
         {
           "fields": [
-            {
-              "example": "this is a comment",
-              "help_en": "User-configurable reason for disabling scheduling  ",
-              "help_zh": "用户可配置禁止调度原因",
-              "name": "comment",
-              "options": [
-                "--comment"
-              ],
-              "raw_name": "Comment",
-              "required": false,
-              "type": "string"
-            },
             {
               "example": "quota1dkoutl3tj1",
               "help_en": "Quota ID, used when disabling edge zone scheduling in a workspace  ",
@@ -99,6 +102,18 @@
               "raw_name": "WorkspaceId",
               "required": false,
               "type": "string"
+            },
+            {
+              "example": "this is a comment",
+              "help_en": "User-configurable reason for disabling scheduling  ",
+              "help_zh": "用户可配置禁止调度原因",
+              "name": "comment",
+              "options": [
+                "--comment"
+              ],
+              "raw_name": "Comment",
+              "required": false,
+              "type": "string"
             }
           ],
           "help_en": "Parameter settings for cordoning a node",
@@ -108,82 +123,6 @@
             "--cordon-parameters"
           ],
           "raw_name": "CordonParameters",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "fields": [
-            {
-              "help_en": "The Force",
-              "help_zh": "The Force",
-              "name": "force",
-              "options": [
-                "--force"
-              ],
-              "raw_name": "Force",
-              "required": false,
-              "type": "bool"
-            },
-            {
-              "element": {
-                "type": "string"
-              },
-              "help_en": "Delete pods of the specified job types  ",
-              "help_zh": "清空指定任务类型的Pod",
-              "name": "pod_from_sub_products",
-              "options": [
-                "--pod-from-sub-products"
-              ],
-              "raw_name": "PodFromSubProducts",
-              "required": false,
-              "type": "array"
-            },
-            {
-              "element": {
-                "type": "string"
-              },
-              "help_en": "Delete specified pods  ",
-              "help_zh": "清空指定Pod",
-              "name": "pod_names",
-              "options": [
-                "--pod-names"
-              ],
-              "raw_name": "PodNames",
-              "required": false,
-              "type": "array"
-            }
-          ],
-          "help_en": "Parameters for the node drain operation",
-          "help_zh": "清空节点操作参数",
-          "name": "drain_parameters",
-          "options": [
-            "--drain-parameters"
-          ],
-          "raw_name": "DrainParameters",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "fields": [
-            {
-              "help_en": "The target disk capacity after the change",
-              "help_zh": "变更磁盘容量目标",
-              "name": "new_disk_size",
-              "options": [
-                "--new-disk-size"
-              ],
-              "raw_name": "NewDiskSize",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "The ResizeDiskParameters",
-          "help_zh": "The ResizeDiskParameters",
-          "name": "resize_disk_parameters",
-          "options": [
-            "--resize-disk-parameters"
-          ],
-          "raw_name": "ResizeDiskParameters",
           "required": false,
           "type": "object"
         },
@@ -223,6 +162,82 @@
           "raw_name": "UncordonParameters",
           "required": false,
           "type": "object"
+        },
+        {
+          "fields": [
+            {
+              "element": {
+                "type": "string"
+              },
+              "help_en": "Delete specified pods  ",
+              "help_zh": "清空指定Pod",
+              "name": "pod_names",
+              "options": [
+                "--pod-names"
+              ],
+              "raw_name": "PodNames",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "element": {
+                "type": "string"
+              },
+              "help_en": "Delete pods of the specified job types  ",
+              "help_zh": "清空指定任务类型的Pod",
+              "name": "pod_from_sub_products",
+              "options": [
+                "--pod-from-sub-products"
+              ],
+              "raw_name": "PodFromSubProducts",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "help_en": "The Force",
+              "help_zh": "The Force",
+              "name": "force",
+              "options": [
+                "--force"
+              ],
+              "raw_name": "Force",
+              "required": false,
+              "type": "bool"
+            }
+          ],
+          "help_en": "Parameters for the node drain operation",
+          "help_zh": "清空节点操作参数",
+          "name": "drain_parameters",
+          "options": [
+            "--drain-parameters"
+          ],
+          "raw_name": "DrainParameters",
+          "required": false,
+          "type": "object"
+        },
+        {
+          "fields": [
+            {
+              "help_en": "The target disk capacity",
+              "help_zh": "变更磁盘容量目标",
+              "name": "new_disk_size",
+              "options": [
+                "--new-disk-size"
+              ],
+              "raw_name": "NewDiskSize",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "help_en": "The disk expansion parameters",
+          "help_zh": "磁盘扩容参数",
+          "name": "resize_disk_parameters",
+          "options": [
+            "--resize-disk-parameters"
+          ],
+          "raw_name": "ResizeDiskParameters",
+          "required": false,
+          "type": "object"
         }
       ],
       "help_en": "The node operation parameter settings",
@@ -236,20 +251,6 @@
       "raw_name": "OperationParameters",
       "required": false,
       "type": "object"
-    },
-    {
-      "example": "rgaekzbrflewn6jjq",
-      "help_en": "The ID of the resource group to which the resource node belongs",
-      "help_zh": "资源节点所属资源组Id",
-      "location": "body",
-      "name": "resource_group_id",
-      "options": [
-        "--resource-group-id"
-      ],
-      "param_style": "json",
-      "raw_name": "ResourceGroupId",
-      "required": false,
-      "type": "string"
     }
   ],
   "pathPattern": "/api/v1/nodes/[NodeId]",
@@ -271,12 +272,12 @@
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "96496E6E-00B4-5F55-80F6-1844FA9E92DC",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

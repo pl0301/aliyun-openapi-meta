@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun mse ListListenersByConfig --region cn-hangzhou --Group prod --DataId 'zeekr-clueboss.yml' --InstanceId 'mse-cn-m7r1yurp00e'",
   "cmd_full_name": "mse list-listeners-by-config",
   "cmd_name": "list-listeners-by-config",
@@ -92,14 +93,18 @@
       "element": {
         "fields": [
           {
-            "example": "127.0.0.1",
-            "help_en": "The canary release rule. If it is a Beta canary release, this field contains the IP addresses of the canary release clients, separated by commas. If it is a tag-based canary release, this field contains tag_name=tag_value, with multiple tag values separated by commas",
-            "help_zh": "灰度规则，如果是Beta灰度，此处是灰度的客户端的ip，使用逗号分隔；如果是标签灰度，此处是 标签名=标签值，多个标签值使用逗号分隔",
-            "name": "gray_rule",
-            "options": [
-              "--gray-rule"
+            "enum": [
+              "Tags",
+              "Beta"
             ],
-            "raw_name": "GrayRule",
+            "example": "Tags",
+            "help_en": "The type of the canary release rule",
+            "help_zh": "灰度规则类型",
+            "name": "gray_rule_type",
+            "options": [
+              "--gray-rule-type"
+            ],
+            "raw_name": "GrayRuleType",
             "required": false,
             "type": "string"
           },
@@ -116,6 +121,18 @@
             "type": "string"
           },
           {
+            "example": "127.0.0.1",
+            "help_en": "The canary release rule. If it is a Beta canary release, this field contains the IP addresses of the canary release clients, separated by commas. If it is a tag-based canary release, this field contains tag_name=tag_value, with multiple tag values separated by commas",
+            "help_zh": "灰度规则，如果是Beta灰度，此处是灰度的客户端的ip，使用逗号分隔；如果是标签灰度，此处是 标签名=标签值，多个标签值使用逗号分隔",
+            "name": "gray_rule",
+            "options": [
+              "--gray-rule"
+            ],
+            "raw_name": "GrayRule",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "100",
             "help_en": "The priority of the canary release version",
             "help_zh": "灰度版本优先级",
@@ -126,22 +143,6 @@
             "raw_name": "GrayRulePriority",
             "required": false,
             "type": "int"
-          },
-          {
-            "enum": [
-              "Tags",
-              "Beta"
-            ],
-            "example": "Tags",
-            "help_en": "The type of the canary release rule",
-            "help_zh": "灰度规则类型",
-            "name": "gray_rule_type",
-            "options": [
-              "--gray-rule-type"
-            ],
-            "raw_name": "GrayRuleType",
-            "required": false,
-            "type": "string"
           }
         ],
         "type": "object"
@@ -182,40 +183,29 @@
         "description_zh": "数据结构",
         "properties": {
           "ErrorCode": {
-            "backendName": "errorCode",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "mse-100-000",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "HttpCode": {
-            "backendName": "httpCode",
             "description_en": "The HTTP status code",
             "description_zh": "HTTP状态码",
             "example": "202",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Listeners": {
-            "backendName": "data",
             "description_en": "The listener information",
             "description_zh": "监听者信息",
-            "itemName": "Listener",
             "items": {
               "description_en": "The data structure",
               "description_zh": "数据结构",
               "properties": {
                 "Ip": {
-                  "backendName": "ip",
                   "description_en": "IP",
                   "description_zh": "IP",
                   "example": "1.1.1.1",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "Labels": {
                   "additionalProperties": {
@@ -224,45 +214,37 @@
                     "example": "a=b",
                     "type": "string"
                   },
-                  "backendName": "labels",
                   "description_en": "The labels of the listener",
                   "description_zh": "监听者所带的标签",
                   "type": "object"
                 },
                 "MatchRuleName": {
-                  "backendName": "matchRuleName",
                   "description_en": "The name of the canary release rule matched by the current listener",
                   "description_zh": "当前Listener匹配的灰度规则名称",
                   "example": "Matched canary rule name",
-                  "title_en": "当前Listener匹配的灰度规则名称",
+                  "title_en": "",
                   "title_zh": "当前Listener匹配的灰度规则名称",
                   "type": "string"
                 },
                 "MatchRuleType": {
-                  "backendName": "matchRuleType",
                   "description_en": "The type of the matched canary release rule",
                   "description_zh": "匹配到的灰度规则的类型",
                   "example": "Beta",
                   "type": "string"
                 },
                 "Md5": {
-                  "backendName": "md5",
                   "description_en": "The checksum string",
                   "description_zh": "校验串",
                   "example": "23sdfdf",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "Status": {
-                  "backendName": "status",
                   "description_en": "Indicates whether the push is successful",
                   "description_zh": "是否推送成功",
                   "example": "true",
                   "type": "string"
                 },
                 "Version": {
-                  "backendName": "version",
                   "description_en": "The current version of the listener. Valid values: gray (canary release version) or normal (production version)",
                   "description_zh": "监听者当前的版本，gray（灰度版本）或者nromal（正式版本）",
                   "example": "gray",
@@ -271,66 +253,46 @@
               },
               "type": "object"
             },
-            "nullToEmpty": false,
-            "type": "array",
-            "visibility": "Public"
+            "type": "array"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The response message",
             "description_zh": "响应信息",
             "example": "success",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "PageNumber": {
-            "backendName": "pageNumber",
             "description_en": "The current page number",
             "description_zh": "当前页码",
             "example": "2",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "The size of the current page",
             "description_zh": "当前页的大小",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "75E1442F-11EC-567A-9CF0-5A36F7904F39",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "The request result. Valid values:\n`true`: The request was successful.\n`false`: The request failed",
             "description_zh": "请求结果，取值如下：\n`true`：请求成功。\n`false`：请求失败",
             "example": "true",
-            "nullToEmpty": false,
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           },
           "TotalCount": {
-            "backendName": "totalCount",
             "description_en": "The total count",
             "description_zh": "数量",
             "example": "7",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

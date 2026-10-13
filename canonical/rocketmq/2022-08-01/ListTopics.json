@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun rocketmq GET /instances/rmq-cn-7e22ody0000/topics --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "rocketmq list-topics",
   "cmd_name": "list-topics",
   "deprecated": false,
-  "description_en": "Queries the topics in a specified instance",
+  "description_en": "Queries the list of topics in a specified instance",
   "description_zh": "查询指定实例下的主题列表信息",
   "kebab_example": "aliyun rocketmq list-topics --instance-id rmq-cn-7e22ody0000 --region cn-hangzhou",
   "method": "GET",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "rmq-cn-7e22ody****",
-      "help_en": "The ID of the instance whose topics you want to query",
+      "help_en": "The instance whose topic list you want to retrieve",
       "help_zh": "指定需要获取哪个实例下的主题列表",
       "location": "path",
       "name": "instance_id",
@@ -35,7 +36,7 @@
     },
     {
       "example": "topic_test",
-      "help_en": "The filter condition. If you leave this parameter empty, all topics in the instance are queried",
+      "help_en": "The filter condition for the query. If not specified, all topics in the instance are returned",
       "help_zh": "查询的过滤条件，若不输入则查询该实例下所有的主题",
       "location": "query",
       "name": "filter",
@@ -48,7 +49,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number of the page to return",
+      "help_en": "The page number of the results to return",
       "help_zh": "分页页码，查询第几页的返回结果",
       "location": "query",
       "maximum": "100000000",
@@ -63,7 +64,7 @@
     },
     {
       "example": "3",
-      "help_en": "The number of entries to return on each page",
+      "help_en": "The maximum number of results to display per page",
       "help_zh": "分页大小，每页最多显示的返回结果数量",
       "location": "query",
       "maximum": "10000",
@@ -80,7 +81,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The message types of the topics",
+      "help_en": "The message type of the topic",
       "help_zh": "主题的消息类型",
       "location": "query",
       "name": "message_types",
@@ -99,68 +100,61 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "Result\\<MyPage>",
+        "description_en": "Result<MyPage<TopicDTO>>",
         "description_zh": "Result<MyPage<TopicDTO>>",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "Topic.NotFound",
-            "title_en": "错误码",
+            "title_en": "",
             "title_zh": "错误码",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
-            "description_en": "The returned data",
+            "description_en": "The return result",
             "description_zh": "返回结果",
             "properties": {
               "list": {
-                "backendName": "list",
-                "description_en": "The paginated data",
+                "description_en": "The paged data",
                 "description_zh": "分页数据",
-                "itemName": "list",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "createTime": {
-                      "backendName": "createTime",
-                      "description_en": "The time when the topic was created",
-                      "description_zh": "创建时间",
+                      "description_en": "The creation time in YYYY-MM-DD HH:mm:ss format",
+                      "description_zh": "创建时间，格式为 YYYY-MM-DD HH:mm:ss",
                       "example": "2022-08-01 20:05:50",
-                      "title_en": "创建时间",
+                      "title_en": "",
                       "title_zh": "创建时间",
                       "type": "string"
                     },
                     "instanceId": {
-                      "backendName": "instanceId",
                       "description_en": "The instance ID",
                       "description_zh": "实例ID",
                       "example": "rmq-cn-7e22ody****",
-                      "title_en": "实例ID",
+                      "title_en": "",
                       "title_zh": "实例ID",
                       "type": "string"
                     },
                     "liteTopicExpiration": {
-                      "backendName": "liteTopicExpiration",
-                      "description_en": "The expiration time of the lightweight topic. Unit: minutes",
+                      "description_en": "The expiration time of a lite topic, in minutes",
                       "description_zh": "lite类型Topic过期时间，单位：分钟",
                       "example": "20",
                       "format": "int64",
-                      "title_en": "liteTopic过期时间，单位：分钟",
+                      "title_en": "",
                       "title_zh": "liteTopic过期时间，单位：分钟",
                       "type": "integer"
                     },
                     "maxSendTps": {
-                      "backendName": "maxSendTps",
-                      "description_en": "The maximum number of messages that can be sent per second",
+                      "description_en": "The maximum TPS for sending messages",
                       "description_zh": "发送消息tps上限",
                       "example": "1000",
                       "format": "int64",
                       "type": "integer"
                     },
                     "messageType": {
-                      "backendName": "messageType",
                       "description_en": "The message type of the topic",
                       "description_zh": "主题的消息类型",
                       "enum": [
@@ -169,159 +163,155 @@
                         "DELAY",
                         "TRANSACTION"
                       ],
+                      "enumValueTitles": {
+                        "DELAY": "定时/延时消息",
+                        "FIFO": "顺序消息",
+                        "NORMAL": "普通消息",
+                        "TRANSACTION": "事务消息"
+                      },
                       "example": "NORMAL",
-                      "title_en": "消息类型,MessageTypeEnum[UNSPECIFIED,NORMAL(普通),FIFO(顺序),DELAY(延迟),TRANSACTION(事务),UNRECOGNIZED(无法识别),code,desc]",
+                      "title_en": "",
                       "title_zh": "消息类型,MessageTypeEnum[UNSPECIFIED,NORMAL(普通),FIFO(顺序),DELAY(延迟),TRANSACTION(事务),UNRECOGNIZED(无法识别),code,desc]",
                       "type": "string"
                     },
                     "regionId": {
-                      "backendName": "regionId",
-                      "description_en": "The ID of the region where the instance resides",
+                      "description_en": "The ID of the region to which the instance belongs",
                       "description_zh": "实例所属的地域ID",
                       "example": "cn-hangzhou",
-                      "title_en": "区域ID",
+                      "title_en": "",
                       "title_zh": "区域ID",
                       "type": "string"
                     },
                     "remark": {
-                      "backendName": "remark",
-                      "description_en": "The remarks on the topic",
+                      "description_en": "The remarks for the topic",
                       "description_zh": "主题的备注信息",
                       "example": "This is the remark for test.",
-                      "title_en": "备注",
+                      "title_en": "",
                       "title_zh": "备注",
                       "type": "string"
                     },
                     "status": {
-                      "backendName": "status",
                       "description_en": "The status of the topic",
                       "description_zh": "主题的状态",
                       "enum": [
                         "CREATING",
                         "RUNNING"
                       ],
+                      "enumValueTitles": {
+                        "CREATING": "创建中",
+                        "RUNNING": "运行中"
+                      },
                       "example": "RUNNING",
-                      "title_en": "Topic状态,TopicStatusEnum[CREATING(创建中),RUNNING(运行中),code,desc]",
+                      "title_en": "",
                       "title_zh": "Topic状态,TopicStatusEnum[CREATING(创建中),RUNNING(运行中),code,desc]",
                       "type": "string"
                     },
                     "topicName": {
-                      "backendName": "topicName",
                       "description_en": "The topic name",
                       "description_zh": "主题名称",
                       "example": "topic_test",
-                      "title_en": "Topic编码",
+                      "title_en": "",
                       "title_zh": "Topic编码",
                       "type": "string"
                     },
                     "updateTime": {
-                      "backendName": "updateTime",
-                      "description_en": "The time when the topic was last modified",
-                      "description_zh": "主题的最后修改时间",
+                      "description_en": "The last modification time of the topic in YYYY-MM-DD HH:mm:ss format",
+                      "description_zh": "主题的最后修改时间，格式为 YYYY-MM-DD HH:mm:ss",
                       "example": "2022-08-01 20:05:50",
-                      "title_en": "修改时间",
+                      "title_en": "",
                       "title_zh": "修改时间",
                       "type": "string"
                     }
                   },
                   "type": "object"
                 },
-                "title_en": "分页数据",
+                "title_en": "",
                 "title_zh": "分页数据",
                 "type": "array"
               },
               "pageNumber": {
-                "backendName": "pageNumber",
-                "description_en": "The page number of the returned page",
+                "description_en": "The current page number",
                 "description_zh": "当前页码",
                 "example": "1",
                 "format": "int64",
-                "title_en": "当前页码",
+                "title_en": "",
                 "title_zh": "当前页码",
                 "type": "integer"
               },
               "pageSize": {
-                "backendName": "pageSize",
-                "description_en": "The number of entries returned per page",
+                "description_en": "The page size",
                 "description_zh": "分页大小",
                 "example": "3",
                 "format": "int64",
-                "title_en": "分页大小",
+                "title_en": "",
                 "title_zh": "分页大小",
                 "type": "integer"
               },
               "totalCount": {
-                "backendName": "totalCount",
-                "description_en": "The total number of returned entries",
+                "description_en": "The total number of returned results",
                 "description_zh": "返回结果的总数量",
                 "example": "1",
                 "format": "int64",
-                "title_en": "总记录数",
+                "title_en": "",
                 "title_zh": "总记录数",
                 "type": "integer"
               }
             },
-            "title_en": "返回结果",
+            "title_en": "",
             "title_zh": "返回结果",
             "type": "object"
           },
           "dynamicCode": {
-            "backendName": "dynamicCode",
             "description_en": "The dynamic error code",
             "description_zh": "动态错误码",
             "example": "TopicName",
-            "title_en": "动态错误码",
+            "title_en": "",
             "title_zh": "动态错误码",
             "type": "string"
           },
           "dynamicMessage": {
-            "backendName": "dynamicMessage",
             "description_en": "The dynamic error message",
             "description_zh": "动态错误信息",
             "example": "topicName",
-            "title_en": "动态错误信息",
+            "title_en": "",
             "title_zh": "动态错误信息",
             "type": "string"
           },
           "httpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "HTTP状态码",
             "example": "400",
             "format": "int32",
-            "title_en": "HTTP状态码",
+            "title_en": "",
             "title_zh": "HTTP状态码",
             "type": "integer"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "The topic cannot be found.",
-            "title_en": "错误信息",
+            "title_en": "",
             "title_zh": "错误信息",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID. This ID is unique to each request and can be used to troubleshoot issues",
+            "description_en": "The request ID. Each request has a unique ID that can be used to troubleshoot and locate issues",
             "description_zh": "请求ID，每个请求的ID都是唯一的，可用于排查和定位问题",
             "example": "AF9A8B10-C426-530F-A0DD-96320B39****",
-            "title_en": "请求ID",
+            "title_en": "",
             "title_zh": "请求ID",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful",
+            "description_en": "Indicates whether the operation was successful",
             "description_zh": "执行结果是否成功",
             "example": "true",
-            "title_en": "是否成功",
+            "title_en": "",
             "title_zh": "是否成功",
             "type": "boolean"
           }
         },
-        "title_en": "Result<MyPage<TopicDTO>>",
+        "title_en": "",
         "title_zh": "Result<MyPage<TopicDTO>>",
         "type": "object"
       }

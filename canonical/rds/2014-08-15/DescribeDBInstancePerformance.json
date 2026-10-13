@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun rds DescribeDBInstancePerformance --region cn-hangzhou --EndTime '2012-06-18T15:00Z' --DBInstanceId 'rm-uf6wjk50000' --StartTime '2012-06-08T15:00Z' --Key MySQL_NetworkTraffic",
   "cmd_full_name": "rds describe-db-instance-performance",
   "cmd_name": "describe-db-instance-performance",
   "deprecated": false,
-  "description_en": "Queries the performance metrics of an instance",
+  "description_en": "Queries the performance data of an instance",
   "description_zh": "该接口用于查询实例性能数据",
   "kebab_example": "aliyun rds describe-db-instance-performance --db-instance-id rm-uf6wjk50000 --key MySQL_NetworkTraffic --start-time 2012-06-08T15:00Z --end-time 2012-06-18T15:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": " rm-uf6wjk5****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to obtain the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -37,7 +38,7 @@
     {
       "doc_required": true,
       "example": "MySQL_NetworkTraffic",
-      "help_en": "The performance metrics that you want to query. Separate multiple values with commas (,). You can specify up to 30 values. For more information, see https://help.aliyun.com/document_detail/26316.html.\n\nIf you set Key to MySQL_SpaceUsage or SQLServer_SpaceUsage, you can query the monitoring data within only one day",
+      "help_en": "The performance metrics that you want to query. Separate multiple values with commas (,). You can specify up to 30 metrics. For more information, see https://help.aliyun.com/document_detail/26316.html.\nIf Key is set to MySQL_SpaceUsage or SQLServer_SpaceUsage, only monitoring data within the last day can be queried",
       "help_zh": "想要查询的性能指标，多个值用半角逗号（,）分隔，最多传入30个。详细参数请参见https://help.aliyun.com/document_detail/26316.html。\nKey为MySQL_SpaceUsage或SQLServer_SpaceUsage时，仅支持查询1天内的监控数据",
       "location": "query",
       "name": "key",
@@ -51,7 +52,7 @@
     {
       "doc_required": true,
       "example": "2012-06-08T15:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC.\n\nThe time span between the beginning time and the end time must be longer than the monitoring frequency. Otherwise, this operation may return an empty array",
+      "help_en": "The start time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC).\nThe interval between the start time and end time must be greater than the monitoring frequency of your instance. Otherwise, an empty list may be returned",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）。\n开始和结束时间间隔需要大于您实例的监控频率，否则可能返回空列表",
       "location": "query",
       "name": "start_time",
@@ -65,7 +66,7 @@
     {
       "doc_required": true,
       "example": "2012-06-18T15:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC.\n\nThe time span between the beginning time and the end time must be longer than the monitoring frequency. Otherwise, this operation may return an empty array",
+      "help_en": "The end time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC).\nThe interval between the start time and end time must be greater than the monitoring frequency of your instance. Otherwise, an empty list may be returned",
       "help_zh": "查询结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）。\n开始和结束时间间隔需要大于您实例的监控频率，否则可能返回空列表",
       "location": "query",
       "name": "end_time",
@@ -78,7 +79,7 @@
     },
     {
       "example": "339****",
-      "help_en": "The ID of the instance",
+      "help_en": "The unique identifier of the instance",
       "help_zh": "实例的唯一标识",
       "location": "query",
       "name": "node_id",
@@ -100,96 +101,104 @@
         "description_zh": "返回参数详情",
         "properties": {
           "DBInstanceId": {
-            "backendName": "data.dbInstanceName",
             "description_en": "The instance ID",
             "description_zh": "实例ID",
             "example": "rm-uf6wjk5****",
-            "mappingResourcePropertyName": "$.DbInstanceId",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "EndTime": {
-            "backendName": "data.endTime",
-            "description_en": "The end time of the query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
+            "description_en": "The end time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
             "description_zh": "查询结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
             "example": "2012-06-19T15:00Z",
-            "mappingResourcePropertyName": "$.EndTime",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Engine": {
-            "backendName": "data.engine",
-            "description_en": "The database engine of the instance",
+            "description_en": "The database engine type",
             "description_zh": "数据库类型",
             "example": "MySQL",
-            "mappingResourcePropertyName": "$.Engine",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "PerformanceKeys": {
-            "backendName": "data.performanceKeys",
-            "itemName": "PerformanceKey",
-            "items": {
-              "properties": {
-                "Key": {
-                  "backendName": "key",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Unit": {
-                  "backendName": "unit",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ValueFormat": {
-                  "backendName": "valueFormat",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Values": {
-                  "backendName": "values",
-                  "itemName": "PerformanceValue",
-                  "items": {
-                    "properties": {
-                      "Date": {
-                        "backendName": "date",
-                        "type": "string",
-                        "visibility": "Public"
-                      },
-                      "Value": {
-                        "backendName": "value",
-                        "type": "string",
-                        "visibility": "Public"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "PerformanceKey": {
+                "description_en": "The list of instance performance metrics",
+                "description_zh": "实例性能参数列表",
+                "items": {
+                  "description_en": "The details of an instance performance metric",
+                  "description_zh": "实例性能参数详情",
+                  "properties": {
+                    "Key": {
+                      "description_en": "The performance metric",
+                      "description_zh": "性能参数",
+                      "example": "MySQL_NetworkTraffic",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "Unit": {
+                      "description_en": "The unit of the data",
+                      "description_zh": "数据单位",
+                      "example": "KB",
+                      "type": "string"
+                    },
+                    "ValueFormat": {
+                      "description_en": "The format of the performance value.\n\nIf the performance value consists of multiple parameters, the parameters are separated by ampersands (&), such as com_delete&com_insert&com_insert_select&com_replace",
+                      "description_zh": "性能值的格式。\n\n如果性能值由多个参数构成，以“&amp;”分隔，例如com_delete&amp;com_insert&amp;com_insert_select&amp;com_replace",
+                      "example": "recv_k&sent_k",
+                      "type": "string"
+                    },
+                    "Values": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "PerformanceValue": {
+                          "description_en": "The list of performance metric values",
+                          "description_zh": "性能参数值列表",
+                          "items": {
+                            "description_en": "The details of a performance metric value.\n\nArray format: {value1, value2, ...}",
+                            "description_zh": "性能参数值详情。\n\n数组格式：{value1, value2, …}",
+                            "properties": {
+                              "Date": {
+                                "description_en": "The date of the record. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
+                                "description_zh": "记录日期。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                                "example": "2011-05-30T03:29:00Z",
+                                "type": "string"
+                              },
+                              "Value": {
+                                "description_en": "The performance value",
+                                "description_zh": "性能值",
+                                "example": "5.35&6.74",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    }
                   },
-                  "type": "array",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "A5409D02-D661-4BF3-8F3D-0A814D0574E7",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "StartTime": {
-            "backendName": "data.startTime",
-            "description_en": "The start time of the query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
+            "description_en": "The start time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
             "description_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
             "example": "2012-06-10T15:00Z",
-            "mappingResourcePropertyName": "$.StartTime",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

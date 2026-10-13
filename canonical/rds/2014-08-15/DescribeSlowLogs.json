@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun rds DescribeSlowLogs --region cn-hangzhou --EndTime '2011-05-30Z' --DBInstanceId 'rm-uf6wjk50000' --StartTime '2011-05-01Z'",
   "cmd_full_name": "rds describe-slow-logs",
   "cmd_name": "describe-slow-logs",
   "deprecated": false,
-  "description_en": "Queries the statistics on slow query logs",
+  "description_en": "Queries slow query log statistics",
   "description_zh": "该接口用于查询慢日志统计情况",
   "kebab_example": "aliyun rds describe-slow-logs --db-instance-id rm-uf6wjk50000 --start-time 2011-05-01Z --end-time 2011-05-30Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "rm-uf6wjk5****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -37,7 +38,7 @@
     {
       "doc_required": true,
       "example": "2011-05-01Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddZ format. The time must be in UTC",
+      "help_en": "The start date of the query. Format: <i>yyyy-MM-dd</i>Z (UTC)",
       "help_zh": "查询开始日期，格式：<i>yyyy-MM-dd</i>Z（UTC时间）",
       "location": "query",
       "name": "start_time",
@@ -51,7 +52,7 @@
     {
       "doc_required": true,
       "example": "2011-05-30Z",
-      "help_en": "The end of the time range to query. The end time must be later than the start time. The time span between the start time and the end time cannot exceed 31 days. Specify the time in the ISO 8601 standard in the yyyy-MM-ddZ format. The time must be in UTC.\n\nIf the end date of the query is the same as the start date of the query, you can query the logs that are generated at 08:00 on the start date of the query. You can query the slow logs within a maximum time range of 24 hours",
+      "help_en": "The end date of the query. The end date must be later than or equal to the start date, and the interval between the start date and the end date cannot exceed 31 days. Format: <i>yyyy-MM-dd</i>Z (UTC).\n\nIf the end date is the same as the start date, the query starts from 08:00 on the start date and covers up to 24 hours of slow query log statistics",
       "help_zh": "查询结束日期，不能小于查询开始日期，与查询开始日期间隔不超过31天。格式：<i>yyyy-MM-dd</i>Z（UTC时间）。\n\n当查询结束日期与查询开始日期相同时，默认从查询开始日期的08:00开始，最多查询24小时的慢日志统计情况",
       "location": "query",
       "name": "end_time",
@@ -77,7 +78,7 @@
     },
     {
       "example": "TotalExecutionCounts",
-      "help_en": "The dimension based on which the system sorts the entries to return. Valid values:\n\nTotalExecutionCounts: The system sorts the entries to return based on the number of times that SQL statements are executed.\nTotalQueryTimes: The system sorts the entries to return based on the total execution duration.\nTotalLogicalReads: The system sorts the entries to return based on the total number of logical reads.\nTotalPhysicalReads: The system sorts the entries to return based on the total number of physical reads.\n\nThis parameter is supported only for instances that run SQL Server 2008 R2",
+      "help_en": "The sorting criterion. Valid values:\nTotalExecutionCounts: sorted by total number of executions in descending order.\nTotalQueryTimes: sorted by total execution duration in descending order.\nTotalLogicalReads: sorted by total number of logical reads in descending order.\nTotalPhysicalReads: sorted by total number of physical reads in descending order.\n\nThis parameter is supported only for SQL Server 2008 R2 instances",
       "help_zh": "排序依据，取值：\nTotalExecutionCounts：总执行次数最多\nTotalQueryTimes：总执行时间最多\nTotalLogicalReads：总逻辑读最多\nTotalPhysicalReads：总物理读最多\n\n仅SQL Server 2008 R2实例支持本参数",
       "location": "query",
       "name": "sort_key",
@@ -105,7 +106,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Pages start from 1.\n\nDefault value: 1",
+      "help_en": "The page number. The value must be a positive integer that does not exceed the maximum value of the Integer data type.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
       "maximum": "65535",
@@ -129,359 +130,398 @@
         "description_zh": "返回参数详情",
         "properties": {
           "DBInstanceId": {
-            "backendName": "data.dbInstanceName",
-            "description_en": "The ID of the instance",
+            "description_en": "The instance ID",
             "description_zh": "实例ID",
             "example": "rm-uf6wjk5****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "EndTime": {
-            "backendName": "data.endTime",
             "description_en": "The end date of the query",
             "description_zh": "查询结束日期",
             "example": "2011-05-30Z",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Engine": {
-            "backendName": "data.engine",
-            "description_en": "The database engine of the instance",
+            "description_en": "The database engine type",
             "description_zh": "数据库类型",
             "example": "SQLServer",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Items": {
-            "backendName": "data.sqls",
-            "itemName": "SQLSlowLog",
-            "items": {
-              "properties": {
-                "AvgExecutionTime": {
-                  "backendName": "avgExecutionTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "SQLSlowLog": {
+                "description_en": "The list of slow query log entries",
+                "description_zh": "慢日志信息列表",
+                "items": {
+                  "description_en": "The details of a slow query log entry",
+                  "description_zh": "慢日志信息详情",
+                  "properties": {
+                    "AvgExecutionTime": {
+                      "description_en": "The average execution duration. Unit: seconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "执行时间（平均值），单位：秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "AvgIOWriteCounts": {
+                      "description_en": "The average number of I/O writes.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "I/O写次数（平均值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "AvgLastRowsAffectedCounts": {
+                      "description_en": "The average number of rows affected by the last execution.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "最后一次受影响的行数（平均值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "AvgLogicalReadCounts": {
+                      "description_en": "The average number of logical reads.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "逻辑读次数（平均值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "AvgPhysicalReadCounts": {
+                      "description_en": "The average number of physical reads.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "物理读次数（平均值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "AvgRowsAffectedCounts": {
+                      "description_en": "The average number of affected rows.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "受影响的行数（平均值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CreateTime": {
+                      "description_en": "The date when the data was generated",
+                      "description_zh": "数据生成日期",
+                      "example": "2011-05-30Z",
+                      "type": "string"
+                    },
+                    "DBName": {
+                      "description_en": "The name of the database",
+                      "description_zh": "数据库名称",
+                      "example": "ceshi",
+                      "type": "string"
+                    },
+                    "MaxExecutionTime": {
+                      "description_en": "The maximum execution duration. Unit: seconds",
+                      "description_zh": "执行时长（最大值），单位：秒",
+                      "example": "60",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxExecutionTimeMS": {
+                      "description_en": "The maximum execution duration. Unit: milliseconds",
+                      "description_zh": "执行时长（最大值），单位：毫秒",
+                      "example": "60000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxIOWriteCounts": {
+                      "description_en": "The maximum number of I/O writes.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "I/O写次数（最大值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxLastRowsAffectedCounts": {
+                      "description_en": "The maximum number of rows affected by the last execution.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "最后一次受影响的行数（最大值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxLockTime": {
+                      "description_en": "The maximum lock duration. Unit: seconds",
+                      "description_zh": "锁定时长（最大值），单位：秒",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxLockTimeMS": {
+                      "description_en": "The maximum lock duration. Unit: milliseconds",
+                      "description_zh": "锁定时长（最大值），单位：毫秒",
+                      "example": "1000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxLogicalReadCounts": {
+                      "description_en": "The maximum number of logical reads.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "逻辑读次数（最大值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxPhysicalReadCounts": {
+                      "description_en": "The maximum number of physical reads.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "物理读次数（最大值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxRowsAffectedCounts": {
+                      "description_en": "The maximum number of affected rows.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "受影响的行数（最大值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MinIOWriteCounts": {
+                      "description_en": "The minimum number of I/O writes.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "I/O写次数（最小值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MinLastRowsAffectedCounts": {
+                      "description_en": "The minimum number of rows affected by the last execution.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "最后一次受影响的行数（最小值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MinLogicalReadCounts": {
+                      "description_en": "The minimum number of logical reads.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "逻辑读次数（最小值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MinPhysicalReadCounts": {
+                      "description_en": "The minimum number of physical reads.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "物理读次数（最小值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MinRowsAffectedCounts": {
+                      "description_en": "The minimum number of affected rows.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "受影响的行数（最小值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MySQLTotalExecutionCounts": {
+                      "description_en": "The total number of MySQL executions",
+                      "description_zh": "MySQL执行次数（总值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MySQLTotalExecutionTimes": {
+                      "description_en": "The total MySQL execution duration. Unit: seconds",
+                      "description_zh": "MySQL执行时长（总值），单位：秒",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ParseMaxRowCount": {
+                      "description_en": "The maximum number of parsed SQL rows",
+                      "description_zh": "解析的SQL行数（最大值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ParseTotalRowCounts": {
+                      "description_en": "The total number of parsed SQL rows",
+                      "description_zh": "解析的SQL行数（总值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ReportTime": {
+                      "description_en": "The date when the data report was generated",
+                      "description_zh": "数据报表生成日期",
+                      "example": "2011-05-30Z",
+                      "type": "string"
+                    },
+                    "ReturnMaxRowCount": {
+                      "description_en": "The maximum number of returned SQL rows",
+                      "description_zh": "返回的SQL行数（最大值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ReturnTotalRowCounts": {
+                      "description_en": "The total number of returned SQL rows",
+                      "description_zh": "返回的SQL行数（总值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLHASH": {
+                      "description_en": "The unique identifier of the SQL statement in the slow query log statistics. You can use this identifier to query the slow query log details of the SQL statement",
+                      "description_zh": "慢日志统计里的SQL语句唯一标识符，可用于获取该SQL语句的慢日志明细",
+                      "example": "U2FsdGVk****",
+                      "type": "string"
+                    },
+                    "SQLIdStr": {
+                      "description_en": "The ID of the SQL template in the slow query log statistics. This parameter is deprecated. Use SQLHASH instead",
+                      "description_zh": "对应的是慢日志统计模版SQL的ID，现已废弃，请使用SQLHASH",
+                      "example": "521584",
+                      "type": "string"
+                    },
+                    "SQLServerAvgCpuTime": {
+                      "description_en": "The average CPU query time. Unit: milliseconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "CPU查询时间（平均值），单位：毫秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerAvgExecutionTime": {
+                      "description_en": "The average execution duration. Unit: milliseconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "执行时间（平均值），单位：毫秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerMaxCpuTime": {
+                      "description_en": "The maximum CPU query time. Unit: milliseconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "CPU查询时间（最大值），单位：毫秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerMinCpuTime": {
+                      "description_en": "The minimum CPU query time. Unit: milliseconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "CPU查询时间（最小值），单位：毫秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerMinExecutionTime": {
+                      "description_en": "The minimum execution duration. Unit: milliseconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "执行时间（最小值），单位：毫秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerTotalCpuTime": {
+                      "description_en": "The total CPU query time. Unit: milliseconds.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "CPU查询时间（总值），单位：毫秒。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerTotalExecutionCounts": {
+                      "description_en": "The total number of SQL Server executions",
+                      "description_zh": "SQL Server执行次数（总值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLServerTotalExecutionTimes": {
+                      "description_en": "The total SQL Server execution duration. Unit: milliseconds",
+                      "description_zh": "SQL Server执行时长（总值），单位：毫秒",
+                      "example": "1000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "SQLText": {
+                      "description_en": "The SQL statement",
+                      "description_zh": "SQL语句",
+                      "example": "select id,name from tb_table",
+                      "type": "string"
+                    },
+                    "SlowLogId": {
+                      "description_en": "The ID of the slow query log summary",
+                      "description_zh": "慢查询汇总标识ID",
+                      "example": "26584213",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalIOWriteCounts": {
+                      "description_en": "The total number of I/O writes.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "I/O写次数（总值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalLastRowsAffectedCounts": {
+                      "description_en": "The total number of rows affected by the last execution.\nThis parameter is returned only for SQL Server instances",
+                      "description_zh": "最后一次受影响的行数（总值）。\n仅SQL Server实例支持返回该参数",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalLockTimes": {
+                      "description_en": "The total lock duration. Unit: seconds",
+                      "description_zh": "锁定时长（总值），单位：秒",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalLogicalReadCounts": {
+                      "description_en": "The total number of logical reads",
+                      "description_zh": "逻辑读次数（总值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalPhysicalReadCounts": {
+                      "description_en": "The total number of physical reads",
+                      "description_zh": "物理读次数（总值）",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TotalRowsAffectedCounts": {
+                      "description_en": "The total number of affected rows",
+                      "description_zh": "影响的行数（总值）",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 },
-                "AvgIOWriteCounts": {
-                  "backendName": "avgIOWrites",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "AvgLastRowsAffectedCounts": {
-                  "backendName": "avgLastRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "AvgLogicalReadCounts": {
-                  "backendName": "avgLogicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "AvgPhysicalReadCounts": {
-                  "backendName": "avgPhysicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "AvgRowsAffectedCounts": {
-                  "backendName": "avgRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "CreateTime": {
-                  "backendName": "createTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBName": {
-                  "backendName": "dbName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "MaxExecutionTime": {
-                  "backendName": "maxQueryTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxExecutionTimeMS": {
-                  "backendName": "maxQueryTimeMS",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxIOWriteCounts": {
-                  "backendName": "maxIOWrites",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxLastRowsAffectedCounts": {
-                  "backendName": "maxLastRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxLockTime": {
-                  "backendName": "maxlockTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxLockTimeMS": {
-                  "backendName": "maxlockTimeMS",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxLogicalReadCounts": {
-                  "backendName": "maxLogicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxPhysicalReadCounts": {
-                  "backendName": "maxPhysicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxRowsAffectedCounts": {
-                  "backendName": "maxRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MinIOWriteCounts": {
-                  "backendName": "minIOWrites",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MinLastRowsAffectedCounts": {
-                  "backendName": "minLastRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MinLogicalReadCounts": {
-                  "backendName": "minLogicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MinPhysicalReadCounts": {
-                  "backendName": "minPhysicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MinRowsAffectedCounts": {
-                  "backendName": "minRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MySQLTotalExecutionCounts": {
-                  "backendName": "totalNumberOfExecution",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MySQLTotalExecutionTimes": {
-                  "backendName": "totalQueryTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ParseMaxRowCount": {
-                  "backendName": "parseMaxRowNumbers",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ParseTotalRowCounts": {
-                  "backendName": "parseTotalRowNumbers",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ReportTime": {
-                  "backendName": "reportTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ReturnMaxRowCount": {
-                  "backendName": "returnMaxItemNumbers",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ReturnTotalRowCounts": {
-                  "backendName": "returnTotalItemNumbers",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLHASH": {
-                  "backendName": "sqlhash",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SQLIdStr": {
-                  "backendName": "sqlIdStr",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SQLServerAvgCpuTime": {
-                  "backendName": "sqlServerAvgCpuTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerAvgExecutionTime": {
-                  "backendName": "sqlServerAvgExecutionTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerMaxCpuTime": {
-                  "backendName": "sqlServerMaxCpuTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerMinCpuTime": {
-                  "backendName": "sqlServerMinCpuTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerMinExecutionTime": {
-                  "backendName": "sqlServerMinExecutionTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerTotalCpuTime": {
-                  "backendName": "sqlServerTotalCpuTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerTotalExecutionCounts": {
-                  "backendName": "totalExecutionCount",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLServerTotalExecutionTimes": {
-                  "backendName": "totalExecutionTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "SQLText": {
-                  "backendName": "sqlText",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SlowLogId": {
-                  "backendName": "slowLogId",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TotalIOWriteCounts": {
-                  "backendName": "totalIOWrites",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TotalLastRowsAffectedCounts": {
-                  "backendName": "totalLastRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TotalLockTimes": {
-                  "backendName": "totalLockTime",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TotalLogicalReadCounts": {
-                  "backendName": "totalLogicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TotalPhysicalReadCounts": {
-                  "backendName": "totalPhysicalReads",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TotalRowsAffectedCounts": {
-                  "backendName": "totalRowsCountAffected",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumbers",
-            "description_en": "The number of the page returned",
+            "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageRecordCount": {
-            "backendName": "data.sqlItemsNumbers",
-            "description_en": "The number of SQL statements that are returned on the current page",
+            "description_en": "The number of SQL statements on the current page",
             "description_zh": "本页SQL语句个数",
             "example": "10",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "2553A660-E4EB-4AF4-A402-8AFF70A49143",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "StartTime": {
-            "backendName": "data.startTime",
             "description_en": "The start date of the query",
             "description_zh": "查询开始日期",
             "example": "2011-05-01Z",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecords",
-            "description_en": "The total number of entries that are returned",
+            "description_en": "The total number of entries",
             "description_zh": "总记录数",
             "example": "5",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

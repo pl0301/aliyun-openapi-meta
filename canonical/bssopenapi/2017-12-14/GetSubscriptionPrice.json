@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun bssopenapi GetSubscriptionPrice --region cn-hangzhou --SubscriptionType Subscription --OrderType NewOrder --ProductCode ecs --ModuleList.1.ModuleCode PackageCode --ModuleList.1.Config 'PackageCode:version_1' --ModuleList.1.ModuleStatus 1 --ModuleList.1.Tag 213213123",
   "cmd_full_name": "bssopenapi get-subscription-price",
   "cmd_name": "get-subscription-price",
@@ -144,16 +145,16 @@
       "element": {
         "fields": [
           {
-            "example": "PackageCode:version_1",
-            "help_en": "The configuration of the Nth pricing module. Valid values of N: 1 to 50. Format: \"AA:aa,BB:bb\", where AA and BB are the property codes of the pricing module, and aa and bb are the property values",
-            "help_zh": "第n个计价模块的配置，n的取值范围为（1~50），格式：“AA:aa,BB:bb”，其中AA,BB分别为计价模块属性标识，aa,bb分别为计价模块属性的属性值",
-            "name": "config",
+            "example": "1",
+            "help_en": "The change status of the pricing module. This parameter is required only when OrderType is set to Upgrade.\nValid values:\n1: new.\n2: changed. In upgrade scenarios, if the configuration of a pricing module changes, you must set this parameter to 2.\n\nDefault value: 1",
+            "help_zh": "仅在订单类型为Upgrade（升级）时需要，表示此次询价模块变更状态。\n取值范围：\n1：新增。\n2：变更，升级场景如果计价模块的配置发生变化需要显示指定此状态值。\n\n默认值：1",
+            "name": "module_status",
             "options": [
-              "--config"
+              "--module-status"
             ],
-            "raw_name": "Config",
-            "required": true,
-            "type": "string"
+            "raw_name": "ModuleStatus",
+            "required": false,
+            "type": "int"
           },
           {
             "example": "PackageCode",
@@ -168,18 +169,6 @@
             "type": "string"
           },
           {
-            "example": "1",
-            "help_en": "The change status of the pricing module. This parameter is required only when OrderType is set to Upgrade.\nValid values:\n1: new.\n2: changed. In upgrade scenarios, if the configuration of a pricing module changes, you must set this parameter to 2.\n\nDefault value: 1",
-            "help_zh": "仅在订单类型为Upgrade（升级）时需要，表示此次询价模块变更状态。\n取值范围：\n1：新增。\n2：变更，升级场景如果计价模块的配置发生变化需要显示指定此状态值。\n\n默认值：1",
-            "name": "module_status",
-            "options": [
-              "--module-status"
-            ],
-            "raw_name": "ModuleStatus",
-            "required": false,
-            "type": "int"
-          },
-          {
             "example": "213213123",
             "help_en": "The identifier of a specific resource. This parameter is required only for upgrade or specification change scenarios of certain products. For example, for cloud disk specification changes, Tag specifies the ID of the specific cloud disk",
             "help_zh": "仅在某些产品的升级变配中需要，代表指定资源的标识。例如：对于磁盘的变配，用Tag标识具体磁盘对应的Id",
@@ -189,6 +178,18 @@
             ],
             "raw_name": "Tag",
             "required": false,
+            "type": "string"
+          },
+          {
+            "example": "PackageCode:version_1",
+            "help_en": "The configuration of the Nth pricing module. Valid values of N: 1 to 50. Format: \"AA:aa,BB:bb\", where AA and BB are the property codes of the pricing module, and aa and bb are the property values",
+            "help_zh": "第n个计价模块的配置，n的取值范围为（1~50），格式：“AA:aa,BB:bb”，其中AA,BB分别为计价模块属性标识，aa,bb分别为计价模块属性的属性值",
+            "name": "config",
+            "options": [
+              "--config"
+            ],
+            "raw_name": "Config",
+            "required": true,
             "type": "string"
           }
         ],
@@ -213,160 +214,166 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The status code",
             "description_zh": "状态码",
             "example": "InvalidConfigCod",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Data": {
-            "backendName": "data",
             "description_en": "The product price information",
             "description_zh": "产品价格信息",
             "properties": {
               "Currency": {
-                "backendName": "currency",
                 "description_en": "The currency. Valid values:\nCNY: Chinese Yuan.\nUSD: US Dollar.\nJPY: Japanese Yen",
                 "description_zh": "币种。取值范围：\nCNY：人民币。\nUSD：美元。\nJPY：日元",
                 "example": "CNY",
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "DiscountPrice": {
-                "backendName": "discountPrice",
                 "description_en": "The discount amount",
                 "description_zh": "折扣",
                 "example": "100",
                 "format": "float",
-                "type": "number",
-                "visibility": "Public"
+                "type": "number"
               },
               "ModuleDetails": {
-                "backendName": "moduleDetails",
-                "itemName": "ModuleDetail",
-                "items": {
-                  "properties": {
-                    "CostAfterDiscount": {
-                      "backendName": "costAfterDiscount",
-                      "format": "float",
-                      "type": "number",
-                      "visibility": "Public"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "ModuleDetail": {
+                    "description_en": "The pricing module price details",
+                    "description_zh": "计价模块价格详情",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "CostAfterDiscount": {
+                          "description_en": "The discounted price",
+                          "description_zh": "优惠价",
+                          "example": "0",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "InvoiceDiscount": {
+                          "description_en": "The discount amount",
+                          "description_zh": "折扣",
+                          "example": "100",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "ModuleCode": {
+                          "description_en": "The pricing module code",
+                          "description_zh": "计价模块标识",
+                          "example": "PackageCode",
+                          "type": "string"
+                        },
+                        "OriginalCost": {
+                          "description_en": "The original price",
+                          "description_zh": "原价",
+                          "example": "200",
+                          "format": "float",
+                          "type": "number"
+                        },
+                        "UnitPrice": {
+                          "description_en": "[Deprecated] The unit price",
+                          "description_zh": "单价。（该字段已废弃）",
+                          "example": "0",
+                          "format": "float",
+                          "type": "number"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "InvoiceDiscount": {
-                      "backendName": "invoiceDiscount",
-                      "format": "float",
-                      "type": "number",
-                      "visibility": "Public"
-                    },
-                    "ModuleCode": {
-                      "backendName": "moduleCode",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "OriginalCost": {
-                      "backendName": "originalCost",
-                      "format": "float",
-                      "type": "number",
-                      "visibility": "Public"
-                    },
-                    "UnitPrice": {
-                      "backendName": "unitPrice",
-                      "format": "float",
-                      "type": "number",
-                      "visibility": "Public"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": true,
-                "type": "array",
-                "visibility": "Public"
+                "type": "object"
               },
               "OriginalPrice": {
-                "backendName": "originalPrice",
                 "description_en": "The original price",
                 "description_zh": "原价",
                 "example": "900",
                 "format": "float",
-                "type": "number",
-                "visibility": "Public"
+                "type": "number"
               },
               "PromotionDetails": {
-                "backendName": "promotionDetails",
-                "itemName": "PromotionDetail",
-                "items": {
-                  "properties": {
-                    "PromotionDesc": {
-                      "backendName": "promotionDesc",
-                      "type": "string",
-                      "visibility": "Public"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "PromotionDetail": {
+                    "description_en": "The promotion details",
+                    "description_zh": "优惠详情",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "PromotionDesc": {
+                          "description_en": "The promotion description",
+                          "description_zh": "优惠描述",
+                          "example": "test",
+                          "type": "string"
+                        },
+                        "PromotionId": {
+                          "description_en": "The promotion ID",
+                          "description_zh": "优惠标识",
+                          "example": "1021199213",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "PromotionName": {
+                          "description_en": "The promotion name",
+                          "description_zh": "优惠名称",
+                          "example": "test",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "PromotionId": {
-                      "backendName": "promotionId",
-                      "format": "int64",
-                      "type": "integer",
-                      "visibility": "Public"
-                    },
-                    "PromotionName": {
-                      "backendName": "promotionName",
-                      "type": "string",
-                      "visibility": "Public"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": true,
-                "type": "array",
-                "visibility": "Public"
+                "type": "object"
               },
               "Quantity": {
-                "backendName": "quantity",
                 "description_en": "The quantity",
                 "description_zh": "数量",
                 "example": "1",
                 "format": "int32",
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "TradePrice": {
-                "backendName": "tradePrice",
                 "description_en": "The discounted price",
                 "description_zh": "优惠价",
                 "example": "0",
                 "format": "float",
-                "type": "number",
-                "visibility": "Public"
+                "type": "number"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "Successful",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "30E7066E-AE6F-4E59-AFE6-11386CE3AFA7",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "是否成功",
             "example": "true",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

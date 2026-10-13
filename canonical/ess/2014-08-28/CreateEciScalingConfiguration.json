@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ess CreateEciScalingConfiguration --region cn-hangzhou --ScalingGroupId 'asg-bp14wlu85wrpchm00000'",
   "cmd_full_name": "ess create-eci-scaling-configuration",
   "cmd_name": "create-eci-scaling-configuration",
@@ -472,44 +473,118 @@
       "element": {
         "fields": [
           {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The arguments of the container startup command. A maximum of 10 arguments are supported",
-            "help_zh": "容器启动命令对应的参数。最多10个",
-            "name": "arg",
+            "example": "5",
+            "help_en": "检查超时的时间，默认值为1秒，最小值为1秒",
+            "help_zh": "检查超时的时间，默认值为1秒，最小值为1秒",
+            "name": "readiness_probe_timeout_seconds",
             "options": [
-              "--arg"
+              "--readiness-probe-timeout-seconds"
             ],
-            "raw_name": "Arg",
+            "raw_name": "ReadinessProbe.TimeoutSeconds",
             "required": false,
-            "type": "array"
+            "type": "int"
+          },
+          {
+            "example": "1",
+            "help_en": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
+            "help_zh": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
+            "name": "readiness_probe_success_threshold",
+            "options": [
+              "--readiness-probe-success-threshold"
+            ],
+            "raw_name": "ReadinessProbe.SuccessThreshold",
+            "required": false,
+            "type": "int"
           },
           {
             "element": {
               "type": "string"
             },
-            "help_en": "The container startup commands. A maximum of 20 commands are supported. Each command can contain up to 256 characters",
-            "help_zh": "容器启动命令。最多20个。每个命令最多包含256个字符",
-            "name": "command",
+            "help_en": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
+            "help_zh": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
+            "name": "security_context_capability_add",
             "options": [
-              "--command"
+              "--security-context-capability-add"
             ],
-            "raw_name": "Command",
+            "raw_name": "SecurityContext.Capability.Add",
             "required": false,
             "type": "array"
           },
           {
-            "example": "0.25",
-            "help_en": "The number of vCPUs of the container. Unit: cores",
-            "help_zh": "容器CPU核数",
-            "name": "cpu",
+            "example": "8000",
+            "help_en": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
+            "help_zh": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
+            "name": "readiness_probe_tcp_socket_port",
             "options": [
-              "--cpu"
+              "--readiness-probe-tcp-socket-port"
             ],
-            "raw_name": "Cpu",
+            "raw_name": "ReadinessProbe.TcpSocket.Port",
             "required": false,
-            "type": "float"
+            "type": "int"
+          },
+          {
+            "example": "HTTP",
+            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求对应的协议类型，取值范围：\nHTTP。\nHTTPS",
+            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求对应的协议类型，取值范围：\nHTTP。\nHTTPS",
+            "name": "readiness_probe_http_get_scheme",
+            "options": [
+              "--readiness-probe-http-get-scheme"
+            ],
+            "raw_name": "ReadinessProbe.HttpGet.Scheme",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "5",
+            "help_en": "检查执行的周期，默认值为10秒，最小值为1秒",
+            "help_zh": "检查执行的周期，默认值为10秒，最小值为1秒",
+            "name": "liveness_probe_period_seconds",
+            "options": [
+              "--liveness-probe-period-seconds"
+            ],
+            "raw_name": "LivenessProbe.PeriodSeconds",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "element": {
+              "fields": [
+                {
+                  "example": "TCP",
+                  "help_en": "The protocol type. Valid values:\n\nTCP\nUDP",
+                  "help_zh": "协议类型。取值范围：\n\nTCP。\nUDP",
+                  "name": "protocol",
+                  "options": [
+                    "--protocol"
+                  ],
+                  "raw_name": "Protocol",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "80",
+                  "help_en": "The port number. Valid values: 1 to 65535",
+                  "help_zh": "端口号。取值范围：1~65535",
+                  "name": "port",
+                  "options": [
+                    "--port"
+                  ],
+                  "raw_name": "Port",
+                  "required": false,
+                  "type": "int"
+                }
+              ],
+              "type": "object"
+            },
+            "help_en": "The exposed ports and protocols",
+            "help_zh": "暴露的端口和协议",
+            "name": "port",
+            "options": [
+              "--port"
+            ],
+            "raw_name": "Port",
+            "required": false,
+            "type": "array"
           },
           {
             "element": {
@@ -552,262 +627,40 @@
             "type": "array"
           },
           {
-            "example": "1",
-            "help_en": "The number of GPUs used by the container",
-            "help_zh": "指定容器使用的GPU个数",
-            "name": "gpu",
+            "example": "8000",
+            "help_en": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
+            "help_zh": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
+            "name": "liveness_probe_tcp_socket_port",
             "options": [
-              "--gpu"
+              "--liveness-probe-tcp-socket-port"
             ],
-            "raw_name": "Gpu",
+            "raw_name": "LivenessProbe.TcpSocket.Port",
             "required": false,
             "type": "int"
           },
           {
-            "example": "registry-vpc.cn-hangzhou.aliyuncs.com/eci_open/nginx:latest",
-            "help_en": "The container image",
-            "help_zh": "容器镜像",
-            "name": "image",
+            "example": "false",
+            "help_en": "Specifies whether to enable interaction. Valid values:\ntrue: enabled.\nfalse: disabled.\n\nDefault value: false.\n\nSet this parameter to true when Command is set to /bin/bash",
+            "help_zh": "是否开启交互。取值范围：\ntrue：开启。\nfalse：未开启。\n\n默认值：false。\n\n当Command为/bin/bash命令时，需要设置为true",
+            "name": "tty",
             "options": [
-              "--image"
+              "--tty"
             ],
-            "raw_name": "Image",
+            "raw_name": "Tty",
+            "required": false,
+            "type": "bool"
+          },
+          {
+            "example": "/usr/local/",
+            "help_en": "The working directory of the container",
+            "help_zh": "容器工作目录",
+            "name": "working_dir",
+            "options": [
+              "--working-dir"
+            ],
+            "raw_name": "WorkingDir",
             "required": false,
             "type": "string"
-          },
-          {
-            "example": "Always",
-            "help_en": "The image pull policy of the container. Valid values:\n\nAlways: always pulls the image.\nIfNotPresent: pulls the image only if it is not available locally.\nNever: never pulls the image. Only uses the local image",
-            "help_zh": "容器的镜像拉取策略。取值范围：\n\nAlways：总是拉取。每次都拉取镜像。\nIfNotPresent：按需拉取。优先使用本地镜像，本地没有镜像时则拉取镜像。\nNever：从不拉取。使用本地镜像，不拉取镜像",
-            "name": "image_pull_policy",
-            "options": [
-              "--image-pull-policy"
-            ],
-            "raw_name": "ImagePullPolicy",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The command executed in the container when the command-line method is used to set the PostStart callback function",
-            "help_zh": "使用命令行方式设置PostStart回调函数时，在容器内执行的命令",
-            "name": "lifecycle_post_start_handler_exec",
-            "options": [
-              "--lifecycle-post-start-handler-exec"
-            ],
-            "raw_name": "LifecyclePostStartHandlerExec",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "example": "10.0.XX.XX",
-            "help_en": "The host address that receives the HTTP Get request when the HTTP request method is used to set the PostStart callback function",
-            "help_zh": "使用HTTP请求方式设置PostStart回调函数时，接收HTTP Get请求的主机地址",
-            "name": "lifecycle_post_start_handler_http_get_host",
-            "options": [
-              "--lifecycle-post-start-handler-http-get-host"
-            ],
-            "raw_name": "LifecyclePostStartHandlerHttpGetHost",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "/healthyz",
-            "help_en": "The path for the HTTP Get request when the HTTP request method is used to set the PostStart callback function",
-            "help_zh": "使用HTTP请求方式设置PostStart回调函数时，HTTP Get请求检测的路径",
-            "name": "lifecycle_post_start_handler_http_get_path",
-            "options": [
-              "--lifecycle-post-start-handler-http-get-path"
-            ],
-            "raw_name": "LifecyclePostStartHandlerHttpGetPath",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "5050",
-            "help_en": "The port number for the HTTP Get request when the HTTP request method is used to set the PostStart callback function",
-            "help_zh": "使用HTTP请求方式设置PostStart回调函数时，HTTP Get请求检查的端口号",
-            "name": "lifecycle_post_start_handler_http_get_port",
-            "options": [
-              "--lifecycle-post-start-handler-http-get-port"
-            ],
-            "raw_name": "LifecyclePostStartHandlerHttpGetPort",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "HTTPS",
-            "help_en": "The protocol type of the HTTP Get request when the HTTP request method is used to set the PostStart callback function. Valid values:\n\nHTTP\nHTTPS",
-            "help_zh": "使用HTTP请求方式设置postStart回调函数时，HTTP Get请求对应的协议类型，取值范围：\n\nHTTP。\nHTTPS",
-            "name": "lifecycle_post_start_handler_http_get_scheme",
-            "options": [
-              "--lifecycle-post-start-handler-http-get-scheme"
-            ],
-            "raw_name": "LifecyclePostStartHandlerHttpGetScheme",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "10.0.XX.XX",
-            "help_en": "The host address for TCP Socket detection when the TCP Socket method is used to set the PostStart callback function",
-            "help_zh": "使用TCP Socket方式设置PostStart回调函数时，TCP Socket检测的主机地址",
-            "name": "lifecycle_post_start_handler_tcp_socket_host",
-            "options": [
-              "--lifecycle-post-start-handler-tcp-socket-host"
-            ],
-            "raw_name": "LifecyclePostStartHandlerTcpSocketHost",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "80",
-            "help_en": "The port for TCP Socket detection when the TCP Socket method is used to set the PostStart callback function",
-            "help_zh": "使用TCPSocket方式设置PostStart回调函数时，TCP Socket检测的端口",
-            "name": "lifecycle_post_start_handler_tcp_socket_port",
-            "options": [
-              "--lifecycle-post-start-handler-tcp-socket-port"
-            ],
-            "raw_name": "LifecyclePostStartHandlerTcpSocketPort",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The command executed in the container when the command-line method is used to set the PreStop callback function",
-            "help_zh": "使用命令行方式设置PreStop回调函数时，在容器内执行的命令",
-            "name": "lifecycle_pre_stop_handler_exec",
-            "options": [
-              "--lifecycle-pre-stop-handler-exec"
-            ],
-            "raw_name": "LifecyclePreStopHandlerExec",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "example": "10.0.XX.XX",
-            "help_en": "The host address that receives the HTTP Get request when the HTTP request method is used to set the PreStop callback function",
-            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，接收HTTP Get请求的主机地址",
-            "name": "lifecycle_pre_stop_handler_http_get_host",
-            "options": [
-              "--lifecycle-pre-stop-handler-http-get-host"
-            ],
-            "raw_name": "LifecyclePreStopHandlerHttpGetHost",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "/healthyz",
-            "help_en": "The path for the HTTP Get request when the HTTP request method is used to set the PreStop callback function",
-            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，HTTP Get请求检测的路径",
-            "name": "lifecycle_pre_stop_handler_http_get_path",
-            "options": [
-              "--lifecycle-pre-stop-handler-http-get-path"
-            ],
-            "raw_name": "LifecyclePreStopHandlerHttpGetPath",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "88",
-            "help_en": "The port number for the HTTP Get request when the HTTP request method is used to set the PreStop callback function",
-            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，HTTP Get请求检测的端口号",
-            "name": "lifecycle_pre_stop_handler_http_get_port",
-            "options": [
-              "--lifecycle-pre-stop-handler-http-get-port"
-            ],
-            "raw_name": "LifecyclePreStopHandlerHttpGetPort",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "HTTP",
-            "help_en": "The protocol type of the HTTP Get request when the HTTP request method is used to set the PreStop callback function. Valid values:\n\nHTTP\nHTTPS",
-            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，HTTP Get请求对应的协议类型，取值范围：\n\nHTTP。\nHTTPS",
-            "name": "lifecycle_pre_stop_handler_http_get_scheme",
-            "options": [
-              "--lifecycle-pre-stop-handler-http-get-scheme"
-            ],
-            "raw_name": "LifecyclePreStopHandlerHttpGetScheme",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "10.0.XX.XX",
-            "help_en": "The host address for TCP Socket detection when the TCP Socket method is used to set the PreStop callback function",
-            "help_zh": "使用TCP Socket方式设置PreStop回调函数时，TCP Socket检测的主机地址",
-            "name": "lifecycle_pre_stop_handler_tcp_socket_host",
-            "options": [
-              "--lifecycle-pre-stop-handler-tcp-socket-host"
-            ],
-            "raw_name": "LifecyclePreStopHandlerTcpSocketHost",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "90",
-            "help_en": "The port for TCP Socket detection when the TCP Socket method is used to set the PreStop callback function",
-            "help_zh": "使用TCPSocket方式设置PreStop回调函数时，TCP Socket检测的端口",
-            "name": "lifecycle_pre_stop_handler_tcp_socket_port",
-            "options": [
-              "--lifecycle-pre-stop-handler-tcp-socket-port"
-            ],
-            "raw_name": "LifecyclePreStopHandlerTcpSocketPort",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "使用命令行方式进行健康检查时，在容器内执行的命令",
-            "help_zh": "使用命令行方式进行健康检查时，在容器内执行的命令",
-            "name": "liveness_probe_exec_command",
-            "options": [
-              "--liveness-probe-exec-command"
-            ],
-            "raw_name": "LivenessProbe.Exec.Command",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "example": "3",
-            "help_en": "从上次检查成功后认定检查失败的检查次数阈值（必须是连续失败）。\n\n默认值：3",
-            "help_zh": "从上次检查成功后认定检查失败的检查次数阈值（必须是连续失败）。\n\n默认值：3",
-            "name": "liveness_probe_failure_threshold",
-            "options": [
-              "--liveness-probe-failure-threshold"
-            ],
-            "raw_name": "LivenessProbe.FailureThreshold",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "/healthyz",
-            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
-            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
-            "name": "liveness_probe_http_get_path",
-            "options": [
-              "--liveness-probe-http-get-path"
-            ],
-            "raw_name": "LivenessProbe.HttpGet.Path",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "8888",
-            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的端口号",
-            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的端口号",
-            "name": "liveness_probe_http_get_port",
-            "options": [
-              "--liveness-probe-http-get-port"
-            ],
-            "raw_name": "LivenessProbe.HttpGet.Port",
-            "required": false,
-            "type": "int"
           },
           {
             "example": "HTTP",
@@ -822,64 +675,66 @@
             "type": "string"
           },
           {
-            "example": "5",
+            "example": "8080",
+            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的端口号",
+            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的端口号",
+            "name": "readiness_probe_http_get_port",
+            "options": [
+              "--readiness-probe-http-get-port"
+            ],
+            "raw_name": "ReadinessProbe.HttpGet.Port",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The arguments of the container startup command. A maximum of 10 arguments are supported",
+            "help_zh": "容器启动命令对应的参数。最多10个",
+            "name": "arg",
+            "options": [
+              "--arg"
+            ],
+            "raw_name": "Arg",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "1",
+            "help_en": "The number of GPUs used by the container",
+            "help_zh": "指定容器使用的GPU个数",
+            "name": "gpu",
+            "options": [
+              "--gpu"
+            ],
+            "raw_name": "Gpu",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "3",
             "help_en": "检查开始执行的时间，以容器启动完成为起点计算。单位为秒",
             "help_zh": "检查开始执行的时间，以容器启动完成为起点计算。单位为秒",
-            "name": "liveness_probe_initial_delay_seconds",
+            "name": "readiness_probe_initial_delay_seconds",
             "options": [
-              "--liveness-probe-initial-delay-seconds"
+              "--readiness-probe-initial-delay-seconds"
             ],
-            "raw_name": "LivenessProbe.InitialDelaySeconds",
+            "raw_name": "ReadinessProbe.InitialDelaySeconds",
             "required": false,
             "type": "int"
           },
           {
-            "example": "5",
-            "help_en": "检查执行的周期，默认值为10秒，最小值为1秒",
-            "help_zh": "检查执行的周期，默认值为10秒，最小值为1秒",
-            "name": "liveness_probe_period_seconds",
+            "example": "false",
+            "help_en": "Specifies whether to allocate a buffer for standard input in the container runtime. If this parameter is not set, reads from standard input in the container result in EOF.\n\nDefault value: false",
+            "help_zh": "此容器是否应在容器运行时为标准输入分配缓冲区。如果未设置，则容器中标准输入的读取值将导致EOF。\n\n默认值：false",
+            "name": "stdin",
             "options": [
-              "--liveness-probe-period-seconds"
+              "--stdin"
             ],
-            "raw_name": "LivenessProbe.PeriodSeconds",
+            "raw_name": "Stdin",
             "required": false,
-            "type": "int"
-          },
-          {
-            "example": "1",
-            "help_en": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
-            "help_zh": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
-            "name": "liveness_probe_success_threshold",
-            "options": [
-              "--liveness-probe-success-threshold"
-            ],
-            "raw_name": "LivenessProbe.SuccessThreshold",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "8000",
-            "help_en": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
-            "help_zh": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
-            "name": "liveness_probe_tcp_socket_port",
-            "options": [
-              "--liveness-probe-tcp-socket-port"
-            ],
-            "raw_name": "LivenessProbe.TcpSocket.Port",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "1",
-            "help_en": "检查超时的时间，默认值为1秒，最小值为1秒",
-            "help_zh": "检查超时的时间，默认值为1秒，最小值为1秒",
-            "name": "liveness_probe_timeout_seconds",
-            "options": [
-              "--liveness-probe-timeout-seconds"
-            ],
-            "raw_name": "LivenessProbe.TimeoutSeconds",
-            "required": false,
-            "type": "int"
+            "type": "bool"
           },
           {
             "example": "0.5",
@@ -906,44 +761,116 @@
             "type": "string"
           },
           {
+            "example": "registry-vpc.cn-hangzhou.aliyuncs.com/eci_open/nginx:latest",
+            "help_en": "The container image",
+            "help_zh": "容器镜像",
+            "name": "image",
+            "options": [
+              "--image"
+            ],
+            "raw_name": "Image",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "5",
+            "help_en": "检查开始执行的时间，以容器启动完成为起点计算。单位为秒",
+            "help_zh": "检查开始执行的时间，以容器启动完成为起点计算。单位为秒",
+            "name": "liveness_probe_initial_delay_seconds",
+            "options": [
+              "--liveness-probe-initial-delay-seconds"
+            ],
+            "raw_name": "LivenessProbe.InitialDelaySeconds",
+            "required": false,
+            "type": "int"
+          },
+          {
             "element": {
               "fields": [
                 {
-                  "example": "80",
-                  "help_en": "The port number. Valid values: 1 to 65535",
-                  "help_zh": "端口号。取值范围：1~65535",
-                  "name": "port",
+                  "example": "None",
+                  "help_en": "The mount propagation setting of the volume. Mount propagation allows volumes mounted by a container to be shared with other containers in the same pod, or even with other pods on the same node. Valid values:\n\nNone: the volume does not detect any subsequent mounts on this volume or its subdirectories.\nHostToCotainer: the volume detects subsequent mounts on this volume or its subdirectories.\nBidirectional: similar to HostToCotainer, the volume detects mount operations. In addition, the volume is propagated back to the host and all containers of all pods that use the same volume.\n\nDefault value: None",
+                  "help_zh": "数据卷的挂载传播设置。挂载传播允许将Container挂载的卷共享到同一Pod中的其他Container，甚至可以共享到同一节点上的其他Pod。取值范围：\n\nNone：该卷不感知任何后续在此卷或其子目录上执行的挂载操作。\nHostToCotainer：该卷将会感知到后续在此卷或其子目录上的挂载操作。\nBidirectional：和HostToCotainer类似，能感知挂载操作。另外，该卷将被传播回主机和使用同一卷的所有Pod的所有容器。\n\n默认值：None",
+                  "name": "mount_propagation",
                   "options": [
-                    "--port"
+                    "--mount-propagation"
                   ],
-                  "raw_name": "Port",
+                  "raw_name": "MountPropagation",
                   "required": false,
-                  "type": "int"
+                  "type": "string"
                 },
                 {
-                  "example": "TCP",
-                  "help_en": "The protocol type. Valid values:\n\nTCP\nUDP",
-                  "help_zh": "协议类型。取值范围：\n\nTCP。\nUDP",
-                  "name": "protocol",
+                  "example": "/pod/data",
+                  "help_en": "The directory in the container where the volume is mounted.\n\nThe content in the mount directory of the container is overwritten by the volume content. Use caution when you configure this parameter",
+                  "help_zh": "容器挂载数据卷的目录。\n\n容器挂载目录下的内容会被Volume的内容直接覆盖，请谨慎使用",
+                  "name": "mount_path",
                   "options": [
-                    "--protocol"
+                    "--mount-path"
                   ],
-                  "raw_name": "Protocol",
+                  "raw_name": "MountPath",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "false",
+                  "help_en": "Specifies whether the volume is read-only. Valid values:\ntrue\nfalse\n\nDefault value: false",
+                  "help_zh": "数据卷是否只读。取值范围：\ntrue：是。\nfalse：否。\n\n默认值：false",
+                  "name": "read_only",
+                  "options": [
+                    "--read-only"
+                  ],
+                  "raw_name": "ReadOnly",
+                  "required": false,
+                  "type": "bool"
+                },
+                {
+                  "example": "default-volume1",
+                  "help_en": "The name of the volume. This value is the same as the Name value in Volume",
+                  "help_zh": "数据卷名称。同Volume中的Name",
+                  "name": "name",
+                  "options": [
+                    "--name"
+                  ],
+                  "raw_name": "Name",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "data2/",
+                  "help_en": "The subpath of the volume",
+                  "help_zh": "数据卷子路径",
+                  "name": "sub_path",
+                  "options": [
+                    "--sub-path"
+                  ],
+                  "raw_name": "SubPath",
                   "required": false,
                   "type": "string"
                 }
               ],
               "type": "object"
             },
-            "help_en": "The exposed ports and protocols",
-            "help_zh": "暴露的端口和协议",
-            "name": "port",
+            "help_en": "The volume mount information",
+            "help_zh": "数据卷挂载信息",
+            "name": "volume_mount",
             "options": [
-              "--port"
+              "--volume-mount"
             ],
-            "raw_name": "Port",
+            "raw_name": "VolumeMount",
             "required": false,
             "type": "array"
+          },
+          {
+            "example": "3",
+            "help_en": "从上次检查成功后认定检查失败的检查次数阈值（必须是连续失败）。\n\n默认值：3",
+            "help_zh": "从上次检查成功后认定检查失败的检查次数阈值（必须是连续失败）。\n\n默认值：3",
+            "name": "liveness_probe_failure_threshold",
+            "options": [
+              "--liveness-probe-failure-threshold"
+            ],
+            "raw_name": "LivenessProbe.FailureThreshold",
+            "required": false,
+            "type": "int"
           },
           {
             "element": {
@@ -972,50 +899,74 @@
             "type": "int"
           },
           {
-            "example": "/healthz",
-            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
-            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
-            "name": "readiness_probe_http_get_path",
+            "example": "Always",
+            "help_en": "The image pull policy of the container. Valid values:\n\nAlways: always pulls the image.\nIfNotPresent: pulls the image only if it is not available locally.\nNever: never pulls the image. Only uses the local image",
+            "help_zh": "容器的镜像拉取策略。取值范围：\n\nAlways：总是拉取。每次都拉取镜像。\nIfNotPresent：按需拉取。优先使用本地镜像，本地没有镜像时则拉取镜像。\nNever：从不拉取。使用本地镜像，不拉取镜像",
+            "name": "image_pull_policy",
             "options": [
-              "--readiness-probe-http-get-path"
+              "--image-pull-policy"
             ],
-            "raw_name": "ReadinessProbe.HttpGet.Path",
+            "raw_name": "ImagePullPolicy",
             "required": false,
             "type": "string"
           },
           {
-            "example": "8080",
+            "example": "false",
+            "help_en": "当标准输入为true时，标准输入流将在多个附加会话中是否保持开启状态。\n\n如果StdinOnce设为true，标准输入在容器开启时被打开，在首个客户端附加到标准输入之前都为空，然后会一直保持开启状态，接收数据，直到客户端连接断开，此时标准输入被关闭，在容器重启前一直保持关闭状态",
+            "help_zh": "当标准输入为true时，标准输入流将在多个附加会话中是否保持开启状态。\n\n如果StdinOnce设为true，标准输入在容器开启时被打开，在首个客户端附加到标准输入之前都为空，然后会一直保持开启状态，接收数据，直到客户端连接断开，此时标准输入被关闭，在容器重启前一直保持关闭状态",
+            "name": "stdin_once",
+            "options": [
+              "--stdin-once"
+            ],
+            "raw_name": "StdinOnce",
+            "required": false,
+            "type": "bool"
+          },
+          {
+            "example": "0.25",
+            "help_en": "The number of vCPUs of the container. Unit: cores",
+            "help_zh": "容器CPU核数",
+            "name": "cpu",
+            "options": [
+              "--cpu"
+            ],
+            "raw_name": "Cpu",
+            "required": false,
+            "type": "float"
+          },
+          {
+            "example": "8888",
             "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的端口号",
             "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的端口号",
-            "name": "readiness_probe_http_get_port",
+            "name": "liveness_probe_http_get_port",
             "options": [
-              "--readiness-probe-http-get-port"
+              "--liveness-probe-http-get-port"
             ],
-            "raw_name": "ReadinessProbe.HttpGet.Port",
+            "raw_name": "LivenessProbe.HttpGet.Port",
             "required": false,
             "type": "int"
           },
           {
-            "example": "HTTP",
-            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求对应的协议类型，取值范围：\nHTTP。\nHTTPS",
-            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求对应的协议类型，取值范围：\nHTTP。\nHTTPS",
-            "name": "readiness_probe_http_get_scheme",
+            "example": "/healthyz",
+            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
+            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
+            "name": "liveness_probe_http_get_path",
             "options": [
-              "--readiness-probe-http-get-scheme"
+              "--liveness-probe-http-get-path"
             ],
-            "raw_name": "ReadinessProbe.HttpGet.Scheme",
+            "raw_name": "LivenessProbe.HttpGet.Path",
             "required": false,
             "type": "string"
           },
           {
-            "example": "3",
-            "help_en": "检查开始执行的时间，以容器启动完成为起点计算。单位为秒",
-            "help_zh": "检查开始执行的时间，以容器启动完成为起点计算。单位为秒",
-            "name": "readiness_probe_initial_delay_seconds",
+            "example": "1",
+            "help_en": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
+            "help_zh": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
+            "name": "liveness_probe_success_threshold",
             "options": [
-              "--readiness-probe-initial-delay-seconds"
+              "--liveness-probe-success-threshold"
             ],
-            "raw_name": "ReadinessProbe.InitialDelaySeconds",
+            "raw_name": "LivenessProbe.SuccessThreshold",
             "required": false,
             "type": "int"
           },
@@ -1033,37 +984,13 @@
           },
           {
             "example": "1",
-            "help_en": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
-            "help_zh": "从上次检查失败后重新认定检查成功的检查次数阈值（必须是连续成功），默认值为1。当前值必须为1",
-            "name": "readiness_probe_success_threshold",
-            "options": [
-              "--readiness-probe-success-threshold"
-            ],
-            "raw_name": "ReadinessProbe.SuccessThreshold",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "8000",
-            "help_en": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
-            "help_zh": "使用TCP Socket方式进行健康检查时，TCP Socket检测的端口",
-            "name": "readiness_probe_tcp_socket_port",
-            "options": [
-              "--readiness-probe-tcp-socket-port"
-            ],
-            "raw_name": "ReadinessProbe.TcpSocket.Port",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "5",
             "help_en": "检查超时的时间，默认值为1秒，最小值为1秒",
             "help_zh": "检查超时的时间，默认值为1秒，最小值为1秒",
-            "name": "readiness_probe_timeout_seconds",
+            "name": "liveness_probe_timeout_seconds",
             "options": [
-              "--readiness-probe-timeout-seconds"
+              "--liveness-probe-timeout-seconds"
             ],
-            "raw_name": "ReadinessProbe.TimeoutSeconds",
+            "raw_name": "LivenessProbe.TimeoutSeconds",
             "required": false,
             "type": "int"
           },
@@ -1071,13 +998,13 @@
             "element": {
               "type": "string"
             },
-            "help_en": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
-            "help_zh": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
-            "name": "security_context_capability_add",
+            "help_en": "The container startup commands. A maximum of 20 commands are supported. Each command can contain up to 256 characters",
+            "help_zh": "容器启动命令。最多20个。每个命令最多包含256个字符",
+            "name": "command",
             "options": [
-              "--security-context-capability-add"
+              "--command"
             ],
-            "raw_name": "SecurityContext.Capability.Add",
+            "raw_name": "Command",
             "required": false,
             "type": "array"
           },
@@ -1094,128 +1021,202 @@
             "type": "int"
           },
           {
-            "example": "false",
-            "help_en": "Specifies whether to allocate a buffer for standard input in the container runtime. If this parameter is not set, reads from standard input in the container result in EOF.\n\nDefault value: false",
-            "help_zh": "此容器是否应在容器运行时为标准输入分配缓冲区。如果未设置，则容器中标准输入的读取值将导致EOF。\n\n默认值：false",
-            "name": "stdin",
+            "example": "/healthz",
+            "help_en": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
+            "help_zh": "使用HTTP请求方式进行健康检查时，HTTP Get请求检测的路径",
+            "name": "readiness_probe_http_get_path",
             "options": [
-              "--stdin"
+              "--readiness-probe-http-get-path"
             ],
-            "raw_name": "Stdin",
+            "raw_name": "ReadinessProbe.HttpGet.Path",
             "required": false,
-            "type": "bool"
-          },
-          {
-            "example": "false",
-            "help_en": "当标准输入为true时，标准输入流将在多个附加会话中是否保持开启状态。\n\n如果StdinOnce设为true，标准输入在容器开启时被打开，在首个客户端附加到标准输入之前都为空，然后会一直保持开启状态，接收数据，直到客户端连接断开，此时标准输入被关闭，在容器重启前一直保持关闭状态",
-            "help_zh": "当标准输入为true时，标准输入流将在多个附加会话中是否保持开启状态。\n\n如果StdinOnce设为true，标准输入在容器开启时被打开，在首个客户端附加到标准输入之前都为空，然后会一直保持开启状态，接收数据，直到客户端连接断开，此时标准输入被关闭，在容器重启前一直保持关闭状态",
-            "name": "stdin_once",
-            "options": [
-              "--stdin-once"
-            ],
-            "raw_name": "StdinOnce",
-            "required": false,
-            "type": "bool"
-          },
-          {
-            "example": "false",
-            "help_en": "Specifies whether to enable interaction. Valid values:\ntrue: enabled.\nfalse: disabled.\n\nDefault value: false.\n\nSet this parameter to true when Command is set to /bin/bash",
-            "help_zh": "是否开启交互。取值范围：\ntrue：开启。\nfalse：未开启。\n\n默认值：false。\n\n当Command为/bin/bash命令时，需要设置为true",
-            "name": "tty",
-            "options": [
-              "--tty"
-            ],
-            "raw_name": "Tty",
-            "required": false,
-            "type": "bool"
+            "type": "string"
           },
           {
             "element": {
-              "fields": [
-                {
-                  "example": "/pod/data",
-                  "help_en": "The directory in the container where the volume is mounted.\n\nThe content in the mount directory of the container is overwritten by the volume content. Use caution when you configure this parameter",
-                  "help_zh": "容器挂载数据卷的目录。\n\n容器挂载目录下的内容会被Volume的内容直接覆盖，请谨慎使用",
-                  "name": "mount_path",
-                  "options": [
-                    "--mount-path"
-                  ],
-                  "raw_name": "MountPath",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "None",
-                  "help_en": "The mount propagation setting of the volume. Mount propagation allows volumes mounted by a container to be shared with other containers in the same pod, or even with other pods on the same node. Valid values:\n\nNone: the volume does not detect any subsequent mounts on this volume or its subdirectories.\nHostToCotainer: the volume detects subsequent mounts on this volume or its subdirectories.\nBidirectional: similar to HostToCotainer, the volume detects mount operations. In addition, the volume is propagated back to the host and all containers of all pods that use the same volume.\n\nDefault value: None",
-                  "help_zh": "数据卷的挂载传播设置。挂载传播允许将Container挂载的卷共享到同一Pod中的其他Container，甚至可以共享到同一节点上的其他Pod。取值范围：\n\nNone：该卷不感知任何后续在此卷或其子目录上执行的挂载操作。\nHostToCotainer：该卷将会感知到后续在此卷或其子目录上的挂载操作。\nBidirectional：和HostToCotainer类似，能感知挂载操作。另外，该卷将被传播回主机和使用同一卷的所有Pod的所有容器。\n\n默认值：None",
-                  "name": "mount_propagation",
-                  "options": [
-                    "--mount-propagation"
-                  ],
-                  "raw_name": "MountPropagation",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "default-volume1",
-                  "help_en": "The name of the volume. This value is the same as the Name value in Volume",
-                  "help_zh": "数据卷名称。同Volume中的Name",
-                  "name": "name",
-                  "options": [
-                    "--name"
-                  ],
-                  "raw_name": "Name",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "false",
-                  "help_en": "Specifies whether the volume is read-only. Valid values:\ntrue\nfalse\n\nDefault value: false",
-                  "help_zh": "数据卷是否只读。取值范围：\ntrue：是。\nfalse：否。\n\n默认值：false",
-                  "name": "read_only",
-                  "options": [
-                    "--read-only"
-                  ],
-                  "raw_name": "ReadOnly",
-                  "required": false,
-                  "type": "bool"
-                },
-                {
-                  "example": "data2/",
-                  "help_en": "The subpath of the volume",
-                  "help_zh": "数据卷子路径",
-                  "name": "sub_path",
-                  "options": [
-                    "--sub-path"
-                  ],
-                  "raw_name": "SubPath",
-                  "required": false,
-                  "type": "string"
-                }
-              ],
-              "type": "object"
+              "type": "string"
             },
-            "help_en": "The volume mount information",
-            "help_zh": "数据卷挂载信息",
-            "name": "volume_mount",
+            "help_en": "使用命令行方式进行健康检查时，在容器内执行的命令",
+            "help_zh": "使用命令行方式进行健康检查时，在容器内执行的命令",
+            "name": "liveness_probe_exec_command",
             "options": [
-              "--volume-mount"
+              "--liveness-probe-exec-command"
             ],
-            "raw_name": "VolumeMount",
+            "raw_name": "LivenessProbe.Exec.Command",
             "required": false,
             "type": "array"
           },
           {
-            "example": "/usr/local/",
-            "help_en": "The working directory of the container",
-            "help_zh": "容器工作目录",
-            "name": "working_dir",
+            "example": "10.0.XX.XX",
+            "help_en": "The host address that receives the HTTP Get request when the HTTP request method is used to set the PostStart callback function",
+            "help_zh": "使用HTTP请求方式设置PostStart回调函数时，接收HTTP Get请求的主机地址",
+            "name": "lifecycle_post_start_handler_http_get_host",
             "options": [
-              "--working-dir"
+              "--lifecycle-post-start-handler-http-get-host"
             ],
-            "raw_name": "WorkingDir",
+            "raw_name": "LifecyclePostStartHandlerHttpGetHost",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "5050",
+            "help_en": "The port number for the HTTP Get request when the HTTP request method is used to set the PostStart callback function",
+            "help_zh": "使用HTTP请求方式设置PostStart回调函数时，HTTP Get请求检查的端口号",
+            "name": "lifecycle_post_start_handler_http_get_port",
+            "options": [
+              "--lifecycle-post-start-handler-http-get-port"
+            ],
+            "raw_name": "LifecyclePostStartHandlerHttpGetPort",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "/healthyz",
+            "help_en": "The path for the HTTP Get request when the HTTP request method is used to set the PostStart callback function",
+            "help_zh": "使用HTTP请求方式设置PostStart回调函数时，HTTP Get请求检测的路径",
+            "name": "lifecycle_post_start_handler_http_get_path",
+            "options": [
+              "--lifecycle-post-start-handler-http-get-path"
+            ],
+            "raw_name": "LifecyclePostStartHandlerHttpGetPath",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "HTTPS",
+            "help_en": "The protocol type of the HTTP Get request when the HTTP request method is used to set the PostStart callback function. Valid values:\n\nHTTP\nHTTPS",
+            "help_zh": "使用HTTP请求方式设置postStart回调函数时，HTTP Get请求对应的协议类型，取值范围：\n\nHTTP。\nHTTPS",
+            "name": "lifecycle_post_start_handler_http_get_scheme",
+            "options": [
+              "--lifecycle-post-start-handler-http-get-scheme"
+            ],
+            "raw_name": "LifecyclePostStartHandlerHttpGetScheme",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The command executed in the container when the command-line method is used to set the PostStart callback function",
+            "help_zh": "使用命令行方式设置PostStart回调函数时，在容器内执行的命令",
+            "name": "lifecycle_post_start_handler_exec",
+            "options": [
+              "--lifecycle-post-start-handler-exec"
+            ],
+            "raw_name": "LifecyclePostStartHandlerExec",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "10.0.XX.XX",
+            "help_en": "The host address for TCP Socket detection when the TCP Socket method is used to set the PostStart callback function",
+            "help_zh": "使用TCP Socket方式设置PostStart回调函数时，TCP Socket检测的主机地址",
+            "name": "lifecycle_post_start_handler_tcp_socket_host",
+            "options": [
+              "--lifecycle-post-start-handler-tcp-socket-host"
+            ],
+            "raw_name": "LifecyclePostStartHandlerTcpSocketHost",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "80",
+            "help_en": "The port for TCP Socket detection when the TCP Socket method is used to set the PostStart callback function",
+            "help_zh": "使用TCPSocket方式设置PostStart回调函数时，TCP Socket检测的端口",
+            "name": "lifecycle_post_start_handler_tcp_socket_port",
+            "options": [
+              "--lifecycle-post-start-handler-tcp-socket-port"
+            ],
+            "raw_name": "LifecyclePostStartHandlerTcpSocketPort",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "10.0.XX.XX",
+            "help_en": "The host address that receives the HTTP Get request when the HTTP request method is used to set the PreStop callback function",
+            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，接收HTTP Get请求的主机地址",
+            "name": "lifecycle_pre_stop_handler_http_get_host",
+            "options": [
+              "--lifecycle-pre-stop-handler-http-get-host"
+            ],
+            "raw_name": "LifecyclePreStopHandlerHttpGetHost",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "88",
+            "help_en": "The port number for the HTTP Get request when the HTTP request method is used to set the PreStop callback function",
+            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，HTTP Get请求检测的端口号",
+            "name": "lifecycle_pre_stop_handler_http_get_port",
+            "options": [
+              "--lifecycle-pre-stop-handler-http-get-port"
+            ],
+            "raw_name": "LifecyclePreStopHandlerHttpGetPort",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "/healthyz",
+            "help_en": "The path for the HTTP Get request when the HTTP request method is used to set the PreStop callback function",
+            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，HTTP Get请求检测的路径",
+            "name": "lifecycle_pre_stop_handler_http_get_path",
+            "options": [
+              "--lifecycle-pre-stop-handler-http-get-path"
+            ],
+            "raw_name": "LifecyclePreStopHandlerHttpGetPath",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "HTTP",
+            "help_en": "The protocol type of the HTTP Get request when the HTTP request method is used to set the PreStop callback function. Valid values:\n\nHTTP\nHTTPS",
+            "help_zh": "使用HTTP请求方式设置PreStop回调函数时，HTTP Get请求对应的协议类型，取值范围：\n\nHTTP。\nHTTPS",
+            "name": "lifecycle_pre_stop_handler_http_get_scheme",
+            "options": [
+              "--lifecycle-pre-stop-handler-http-get-scheme"
+            ],
+            "raw_name": "LifecyclePreStopHandlerHttpGetScheme",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The command executed in the container when the command-line method is used to set the PreStop callback function",
+            "help_zh": "使用命令行方式设置PreStop回调函数时，在容器内执行的命令",
+            "name": "lifecycle_pre_stop_handler_exec",
+            "options": [
+              "--lifecycle-pre-stop-handler-exec"
+            ],
+            "raw_name": "LifecyclePreStopHandlerExec",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "10.0.XX.XX",
+            "help_en": "The host address for TCP Socket detection when the TCP Socket method is used to set the PreStop callback function",
+            "help_zh": "使用TCP Socket方式设置PreStop回调函数时，TCP Socket检测的主机地址",
+            "name": "lifecycle_pre_stop_handler_tcp_socket_host",
+            "options": [
+              "--lifecycle-pre-stop-handler-tcp-socket-host"
+            ],
+            "raw_name": "LifecyclePreStopHandlerTcpSocketHost",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "90",
+            "help_en": "The port for TCP Socket detection when the TCP Socket method is used to set the PreStop callback function",
+            "help_zh": "使用TCPSocket方式设置PreStop回调函数时，TCP Socket检测的端口",
+            "name": "lifecycle_pre_stop_handler_tcp_socket_port",
+            "options": [
+              "--lifecycle-pre-stop-handler-tcp-socket-port"
+            ],
+            "raw_name": "LifecyclePreStopHandlerTcpSocketPort",
+            "required": false,
+            "type": "int"
           }
         ],
         "type": "object"
@@ -1236,17 +1237,197 @@
       "element": {
         "fields": [
           {
+            "example": "ConfigFileVolume",
+            "help_en": "The type of the volume. Valid values:\n\nEmptyDirVolume: an EmptyDir volume that represents an empty directory.\nNFSVolume: an NFS volume that represents a Network File System.\nConfigFileVolume: a ConfigFile volume that represents a configuration file.\nFlexVolume: a FlexVolume that uses the FlexVolume plugin to extend storage types and supports mounting cloud disks.\nHostPathVolume: a HostPath volume that represents a file or directory on the host node.\nDiskVolume (not recommended): a cloud disk volume. We recommend that you use FlexVolume to mount cloud disks",
+            "help_zh": "数据卷类型。取值范围：\n\nEmptyDirVolume：EmptyDir类型的数据卷，表示空目录。\nNFSVolume：NFS类型的数据卷，表示网络文件系统。\nConfigFileVolume：ConfigFile类型的数据卷，表示配置文件。\nFlexVolume：使用FlexVolume插件扩展存储类型，支持挂载云盘。\nHostPathVolume：HostPath类型的数据卷，表示主机节点的文件或目录。\nDiskVolume（不推荐）：云盘数据卷。建议使用FlexVolume挂载云盘",
+            "name": "type",
+            "options": [
+              "--type"
+            ],
+            "raw_name": "Type",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "15",
+            "help_en": "DiskVolume的大小。单位：GiB",
+            "help_zh": "DiskVolume的大小。单位：GiB",
+            "name": "disk_volume_disk_size",
+            "options": [
+              "--disk-volume-disk-size"
+            ],
+            "raw_name": "DiskVolume.DiskSize",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "/share",
+            "help_en": "NFS数据卷路径",
+            "help_zh": "NFS数据卷路径",
+            "name": "nfs_volume_path",
+            "options": [
+              "--nfs-volume-path"
+            ],
+            "raw_name": "NFSVolume.Path",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "ext4",
+            "help_en": "挂载的文件系统类型，默认取决于FlexVolume的script",
+            "help_zh": "挂载的文件系统类型，默认取决于FlexVolume的script",
+            "name": "flex_volume_fs_type",
+            "options": [
+              "--flex-volume-fs-type"
+            ],
+            "raw_name": "FlexVolume.FsType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "xfs",
+            "help_en": "该系统类型不推荐使用，建议您使用`FlexVolume.FsType`参数",
+            "help_zh": "该系统类型不推荐使用，建议您使用`FlexVolume.FsType`参数",
+            "name": "disk_volume_fs_type",
+            "options": [
+              "--disk-volume-fs-type"
+            ],
+            "raw_name": "DiskVolume.FsType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "Directory",
+            "help_en": "Host目录的类型。例如：File、Directory、Socket等",
+            "help_zh": "Host目录的类型。例如：File、Directory、Socket等",
+            "name": "host_path_volume_type",
+            "options": [
+              "--host-path-volume-type"
+            ],
+            "raw_name": "HostPathVolume.Type",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "false",
+            "help_en": "NFS数据卷是否只读。取值范围：\ntrue：是。\nfalse：否。\n\n默认值：false",
+            "help_zh": "NFS数据卷是否只读。取值范围：\ntrue：是。\nfalse：否。\n\n默认值：false",
+            "name": "nfs_volume_read_only",
+            "options": [
+              "--nfs-volume-read-only"
+            ],
+            "raw_name": "NFSVolume.ReadOnly",
+            "required": false,
+            "type": "bool"
+          },
+          {
+            "example": "/xx/xx/path",
+            "help_en": "Host上的绝对路径",
+            "help_zh": "Host上的绝对路径",
+            "name": "host_path_volume_path",
+            "options": [
+              "--host-path-volume-path"
+            ],
+            "raw_name": "HostPathVolume.Path",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "{\"volumeId\":\"d-2zehdahrwoa7srg****\",\"performanceLevel\": \"PL2\"}",
+            "help_en": "FlexVolume对象选项列表。为KV形式，采用JSON传递。\n\n例如：通过FlexVolume挂载云盘时，Options的格式为`{\"volumeId\":\"d-2zehdahrwoa7srg****\",\"performanceLevel\": \"PL2\"}`",
+            "help_zh": "FlexVolume对象选项列表。为KV形式，采用JSON传递。\n\n例如：通过FlexVolume挂载云盘时，Options的格式为`{\"volumeId\":\"d-2zehdahrwoa7srg****\",\"performanceLevel\": \"PL2\"}`",
+            "name": "flex_volume_options",
+            "options": [
+              "--flex-volume-options"
+            ],
+            "raw_name": "FlexVolume.Options",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "flexvolume",
+            "help_en": "用于FlexVolume的驱动程序名称",
+            "help_zh": "用于FlexVolume的驱动程序名称",
+            "name": "flex_volume_driver",
+            "options": [
+              "--flex-volume-driver"
+            ],
+            "raw_name": "FlexVolume.Driver",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "0644",
+            "help_en": "The default permissions of the ConfigFileVolume",
+            "help_zh": "ConfigFileVolume默认的权限",
+            "name": "config_file_volume_default_mode",
+            "options": [
+              "--config-file-volume-default-mode"
+            ],
+            "raw_name": "ConfigFileVolumeDefaultMode",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "3f9cd4a596-naw76.cn-shanghai.nas.aliyuncs.com",
+            "help_en": "NFS服务器地址",
+            "help_zh": "NFS服务器地址",
+            "name": "nfs_volume_server",
+            "options": [
+              "--nfs-volume-server"
+            ],
+            "raw_name": "NFSVolume.Server",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "d-xx",
+            "help_en": "DiskVolume的ID",
+            "help_zh": "DiskVolume的ID",
+            "name": "disk_volume_disk_id",
+            "options": [
+              "--disk-volume-disk-id"
+            ],
+            "raw_name": "DiskVolume.DiskId",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "default-volume1",
+            "help_en": "The name of the volume",
+            "help_zh": "数据卷名称",
+            "name": "name",
+            "options": [
+              "--name"
+            ],
+            "raw_name": "Name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "memory",
+            "help_en": "EmptyDirVolume的存储媒介，默认为空，使用node文件系统；支持memory，表示使用内存",
+            "help_zh": "EmptyDirVolume的存储媒介，默认为空，使用node文件系统；支持memory，表示使用内存",
+            "name": "empty_dir_volume_medium",
+            "options": [
+              "--empty-dir-volume-medium"
+            ],
+            "raw_name": "EmptyDirVolume.Medium",
+            "required": false,
+            "type": "string"
+          },
+          {
             "element": {
               "fields": [
                 {
-                  "example": "bGl1bWk=",
-                  "help_en": "The content of the configuration file (32 KB)",
-                  "help_zh": "配置文件内容（32 KB）",
-                  "name": "content",
+                  "example": "PATH",
+                  "help_en": "The relative file path of the configuration file",
+                  "help_zh": "配置文件所在的相对文件路径",
+                  "name": "path",
                   "options": [
-                    "--content"
+                    "--path"
                   ],
-                  "raw_name": "Content",
+                  "raw_name": "Path",
                   "required": false,
                   "type": "string"
                 },
@@ -1263,14 +1444,14 @@
                   "type": "int"
                 },
                 {
-                  "example": "PATH",
-                  "help_en": "The relative file path of the configuration file",
-                  "help_zh": "配置文件所在的相对文件路径",
-                  "name": "path",
+                  "example": "bGl1bWk=",
+                  "help_en": "The content of the configuration file (32 KB)",
+                  "help_zh": "配置文件内容（32 KB）",
+                  "name": "content",
                   "options": [
-                    "--path"
+                    "--content"
                   ],
-                  "raw_name": "Path",
+                  "raw_name": "Content",
                   "required": false,
                   "type": "string"
                 }
@@ -1288,66 +1469,6 @@
             "type": "array"
           },
           {
-            "example": "0644",
-            "help_en": "The default permissions of the ConfigFileVolume",
-            "help_zh": "ConfigFileVolume默认的权限",
-            "name": "config_file_volume_default_mode",
-            "options": [
-              "--config-file-volume-default-mode"
-            ],
-            "raw_name": "ConfigFileVolumeDefaultMode",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "d-xx",
-            "help_en": "DiskVolume的ID",
-            "help_zh": "DiskVolume的ID",
-            "name": "disk_volume_disk_id",
-            "options": [
-              "--disk-volume-disk-id"
-            ],
-            "raw_name": "DiskVolume.DiskId",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "15",
-            "help_en": "DiskVolume的大小。单位：GiB",
-            "help_zh": "DiskVolume的大小。单位：GiB",
-            "name": "disk_volume_disk_size",
-            "options": [
-              "--disk-volume-disk-size"
-            ],
-            "raw_name": "DiskVolume.DiskSize",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "xfs",
-            "help_en": "该系统类型不推荐使用，建议您使用`FlexVolume.FsType`参数",
-            "help_zh": "该系统类型不推荐使用，建议您使用`FlexVolume.FsType`参数",
-            "name": "disk_volume_fs_type",
-            "options": [
-              "--disk-volume-fs-type"
-            ],
-            "raw_name": "DiskVolume.FsType",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "memory",
-            "help_en": "EmptyDirVolume的存储媒介，默认为空，使用node文件系统；支持memory，表示使用内存",
-            "help_zh": "EmptyDirVolume的存储媒介，默认为空，使用node文件系统；支持memory，表示使用内存",
-            "name": "empty_dir_volume_medium",
-            "options": [
-              "--empty-dir-volume-medium"
-            ],
-            "raw_name": "EmptyDirVolume.Medium",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "256 Mi",
             "help_en": "EmptyDir数据卷的大小。取值时请带上单位，建议使用Gi或Mi",
             "help_zh": "EmptyDir数据卷的大小。取值时请带上单位，建议使用Gi或Mi",
@@ -1356,126 +1477,6 @@
               "--empty-dir-volume-size-limit"
             ],
             "raw_name": "EmptyDirVolume.SizeLimit",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "flexvolume",
-            "help_en": "用于FlexVolume的驱动程序名称",
-            "help_zh": "用于FlexVolume的驱动程序名称",
-            "name": "flex_volume_driver",
-            "options": [
-              "--flex-volume-driver"
-            ],
-            "raw_name": "FlexVolume.Driver",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "ext4",
-            "help_en": "挂载的文件系统类型，默认取决于FlexVolume的script",
-            "help_zh": "挂载的文件系统类型，默认取决于FlexVolume的script",
-            "name": "flex_volume_fs_type",
-            "options": [
-              "--flex-volume-fs-type"
-            ],
-            "raw_name": "FlexVolume.FsType",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "{\"volumeId\":\"d-2zehdahrwoa7srg****\",\"performanceLevel\": \"PL2\"}",
-            "help_en": "FlexVolume对象选项列表。为KV形式，采用JSON传递。\n\n例如：通过FlexVolume挂载云盘时，Options的格式为`{\"volumeId\":\"d-2zehdahrwoa7srg****\",\"performanceLevel\": \"PL2\"}`",
-            "help_zh": "FlexVolume对象选项列表。为KV形式，采用JSON传递。\n\n例如：通过FlexVolume挂载云盘时，Options的格式为`{\"volumeId\":\"d-2zehdahrwoa7srg****\",\"performanceLevel\": \"PL2\"}`",
-            "name": "flex_volume_options",
-            "options": [
-              "--flex-volume-options"
-            ],
-            "raw_name": "FlexVolume.Options",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "/xx/xx/path",
-            "help_en": "Host上的绝对路径",
-            "help_zh": "Host上的绝对路径",
-            "name": "host_path_volume_path",
-            "options": [
-              "--host-path-volume-path"
-            ],
-            "raw_name": "HostPathVolume.Path",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "Directory",
-            "help_en": "Host目录的类型。例如：File、Directory、Socket等",
-            "help_zh": "Host目录的类型。例如：File、Directory、Socket等",
-            "name": "host_path_volume_type",
-            "options": [
-              "--host-path-volume-type"
-            ],
-            "raw_name": "HostPathVolume.Type",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "/share",
-            "help_en": "NFS数据卷路径",
-            "help_zh": "NFS数据卷路径",
-            "name": "nfs_volume_path",
-            "options": [
-              "--nfs-volume-path"
-            ],
-            "raw_name": "NFSVolume.Path",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "false",
-            "help_en": "NFS数据卷是否只读。取值范围：\ntrue：是。\nfalse：否。\n\n默认值：false",
-            "help_zh": "NFS数据卷是否只读。取值范围：\ntrue：是。\nfalse：否。\n\n默认值：false",
-            "name": "nfs_volume_read_only",
-            "options": [
-              "--nfs-volume-read-only"
-            ],
-            "raw_name": "NFSVolume.ReadOnly",
-            "required": false,
-            "type": "bool"
-          },
-          {
-            "example": "3f9cd4a596-naw76.cn-shanghai.nas.aliyuncs.com",
-            "help_en": "NFS服务器地址",
-            "help_zh": "NFS服务器地址",
-            "name": "nfs_volume_server",
-            "options": [
-              "--nfs-volume-server"
-            ],
-            "raw_name": "NFSVolume.Server",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "default-volume1",
-            "help_en": "The name of the volume",
-            "help_zh": "数据卷名称",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "Name",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "ConfigFileVolume",
-            "help_en": "The type of the volume. Valid values:\n\nEmptyDirVolume: an EmptyDir volume that represents an empty directory.\nNFSVolume: an NFS volume that represents a Network File System.\nConfigFileVolume: a ConfigFile volume that represents a configuration file.\nFlexVolume: a FlexVolume that uses the FlexVolume plugin to extend storage types and supports mounting cloud disks.\nHostPathVolume: a HostPath volume that represents a file or directory on the host node.\nDiskVolume (not recommended): a cloud disk volume. We recommend that you use FlexVolume to mount cloud disks",
-            "help_zh": "数据卷类型。取值范围：\n\nEmptyDirVolume：EmptyDir类型的数据卷，表示空目录。\nNFSVolume：NFS类型的数据卷，表示网络文件系统。\nConfigFileVolume：ConfigFile类型的数据卷，表示配置文件。\nFlexVolume：使用FlexVolume插件扩展存储类型，支持挂载云盘。\nHostPathVolume：HostPath类型的数据卷，表示主机节点的文件或目录。\nDiskVolume（不推荐）：云盘数据卷。建议使用FlexVolume挂载云盘",
-            "name": "type",
-            "options": [
-              "--type"
-            ],
-            "raw_name": "Type",
             "required": false,
             "type": "string"
           }
@@ -1497,82 +1498,6 @@
     {
       "element": {
         "fields": [
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The container startup arguments",
-            "help_zh": "容器启动参数",
-            "name": "arg",
-            "options": [
-              "--arg"
-            ],
-            "raw_name": "Arg",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The container startup command",
-            "help_zh": "容器启动指令",
-            "name": "command",
-            "options": [
-              "--command"
-            ],
-            "raw_name": "Command",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "example": "0.5",
-            "help_en": "The number of vCPUs of the container. Unit: cores",
-            "help_zh": "容器的vCPU大小。单位：核",
-            "name": "cpu",
-            "options": [
-              "--cpu"
-            ],
-            "raw_name": "Cpu",
-            "required": false,
-            "type": "float"
-          },
-          {
-            "example": "1",
-            "help_en": "The number of GPUs used by the container",
-            "help_zh": "指定容器使用的GPU个数",
-            "name": "gpu",
-            "options": [
-              "--gpu"
-            ],
-            "raw_name": "Gpu",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "nginx",
-            "help_en": "The image used by the container",
-            "help_zh": "容器使用的镜像",
-            "name": "image",
-            "options": [
-              "--image"
-            ],
-            "raw_name": "Image",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "Always",
-            "help_en": "The image pull policy",
-            "help_zh": "镜像拉取策略",
-            "name": "image_pull_policy",
-            "options": [
-              "--image-pull-policy"
-            ],
-            "raw_name": "ImagePullPolicy",
-            "required": false,
-            "type": "string"
-          },
           {
             "element": {
               "fields": [
@@ -1615,19 +1540,33 @@
           },
           {
             "element": {
+              "type": "string"
+            },
+            "help_en": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
+            "help_zh": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
+            "name": "security_context_capability_add",
+            "options": [
+              "--security-context-capability-add"
+            ],
+            "raw_name": "SecurityContext.Capability.Add",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "nginx",
+            "help_en": "The image used by the container",
+            "help_zh": "容器使用的镜像",
+            "name": "image",
+            "options": [
+              "--image"
+            ],
+            "raw_name": "Image",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "element": {
               "fields": [
-                {
-                  "example": "/usr/share/",
-                  "help_en": "The mount directory. The content in the mount directory of the container is overwritten by the volume content",
-                  "help_zh": "挂载目录，容器的挂载目录下的内容被Volume的内容直接覆盖",
-                  "name": "mount_path",
-                  "options": [
-                    "--mount-path"
-                  ],
-                  "raw_name": "MountPath",
-                  "required": false,
-                  "type": "string"
-                },
                 {
                   "example": "None",
                   "help_en": "The mount propagation setting of the volume. Mount propagation allows volumes mounted by a container to be shared with other containers in the same pod, or even with other pods on the same node. Valid values:\n\nNone: the volume does not detect any subsequent mounts on this volume or its subdirectories.\nHostToCotainer: the volume detects subsequent mounts on this volume or its subdirectories.\nBidirectional: similar to HostToCotainer, the volume detects mount operations. In addition, the volume is propagated back to the host and all containers of all pods that use the same volume",
@@ -1641,14 +1580,14 @@
                   "type": "string"
                 },
                 {
-                  "example": "test-empty",
-                  "help_en": "The name of the mounted volume",
-                  "help_zh": "挂载数据卷的名称",
-                  "name": "name",
+                  "example": "/usr/share/",
+                  "help_en": "The mount directory. The content in the mount directory of the container is overwritten by the volume content",
+                  "help_zh": "挂载目录，容器的挂载目录下的内容被Volume的内容直接覆盖",
+                  "name": "mount_path",
                   "options": [
-                    "--name"
+                    "--mount-path"
                   ],
-                  "raw_name": "Name",
+                  "raw_name": "MountPath",
                   "required": false,
                   "type": "string"
                 },
@@ -1663,6 +1602,18 @@
                   "raw_name": "ReadOnly",
                   "required": false,
                   "type": "bool"
+                },
+                {
+                  "example": "test-empty",
+                  "help_en": "The name of the mounted volume",
+                  "help_zh": "挂载数据卷的名称",
+                  "name": "name",
+                  "options": [
+                    "--name"
+                  ],
+                  "raw_name": "Name",
+                  "required": false,
+                  "type": "string"
                 },
                 {
                   "example": "/usr/sub/",
@@ -1690,6 +1641,94 @@
             "type": "array"
           },
           {
+            "example": "Always",
+            "help_en": "The image pull policy",
+            "help_zh": "镜像拉取策略",
+            "name": "image_pull_policy",
+            "options": [
+              "--image-pull-policy"
+            ],
+            "raw_name": "ImagePullPolicy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "0.5",
+            "help_en": "The number of vCPUs of the container. Unit: cores",
+            "help_zh": "容器的vCPU大小。单位：核",
+            "name": "cpu",
+            "options": [
+              "--cpu"
+            ],
+            "raw_name": "Cpu",
+            "required": false,
+            "type": "float"
+          },
+          {
+            "example": "/usr/local",
+            "help_en": "The working directory",
+            "help_zh": "工作目录",
+            "name": "working_dir",
+            "options": [
+              "--working-dir"
+            ],
+            "raw_name": "WorkingDir",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The container startup command",
+            "help_zh": "容器启动指令",
+            "name": "command",
+            "options": [
+              "--command"
+            ],
+            "raw_name": "Command",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The container startup arguments",
+            "help_zh": "容器启动参数",
+            "name": "arg",
+            "options": [
+              "--arg"
+            ],
+            "raw_name": "Arg",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "587",
+            "help_en": "设置运行容器的用户ID",
+            "help_zh": "设置运行容器的用户ID",
+            "name": "security_context_run_as_user",
+            "options": [
+              "--security-context-run-as-user"
+            ],
+            "raw_name": "SecurityContext.RunAsUser",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "1",
+            "help_en": "The number of GPUs used by the container",
+            "help_zh": "指定容器使用的GPU个数",
+            "name": "gpu",
+            "options": [
+              "--gpu"
+            ],
+            "raw_name": "Gpu",
+            "required": false,
+            "type": "int"
+          },
+          {
             "example": "1.0",
             "help_en": "The memory size. Unit: GiB",
             "help_zh": "内存大小。单位：GiB",
@@ -1710,44 +1749,6 @@
               "--name"
             ],
             "raw_name": "Name",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
-            "help_zh": "为容器内的进程授予某些特定的权限。目前仅支持配置为NET_ADMIN和NET_RAW。\n\nNET_RAW默认不支持，需提交工单申请",
-            "name": "security_context_capability_add",
-            "options": [
-              "--security-context-capability-add"
-            ],
-            "raw_name": "SecurityContext.Capability.Add",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "example": "587",
-            "help_en": "设置运行容器的用户ID",
-            "help_zh": "设置运行容器的用户ID",
-            "name": "security_context_run_as_user",
-            "options": [
-              "--security-context-run-as-user"
-            ],
-            "raw_name": "SecurityContext.RunAsUser",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "/usr/local",
-            "help_en": "The working directory",
-            "help_zh": "工作目录",
-            "name": "working_dir",
-            "options": [
-              "--working-dir"
-            ],
-            "raw_name": "WorkingDir",
             "required": false,
             "type": "string"
           }
@@ -1802,18 +1803,6 @@
       "element": {
         "fields": [
           {
-            "example": "name",
-            "help_en": "The name of the object variable",
-            "help_zh": "对象变量名",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "Name",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "value",
             "help_en": "The value of the object variable",
             "help_zh": "对象变量值",
@@ -1822,6 +1811,18 @@
               "--value"
             ],
             "raw_name": "Value",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "name",
+            "help_en": "The name of the object variable",
+            "help_zh": "对象变量名",
+            "name": "name",
+            "options": [
+              "--name"
+            ],
+            "raw_name": "Name",
             "required": false,
             "type": "string"
           }
@@ -1844,6 +1845,18 @@
       "element": {
         "fields": [
           {
+            "example": "1.1.1.1",
+            "help_en": "The IP address to add",
+            "help_zh": "添加IP",
+            "name": "ip",
+            "options": [
+              "--ip"
+            ],
+            "raw_name": "Ip",
+            "required": false,
+            "type": "string"
+          },
+          {
             "element": {
               "type": "string"
             },
@@ -1856,18 +1869,6 @@
             "raw_name": "Hostname",
             "required": false,
             "type": "array"
-          },
-          {
-            "example": "1.1.1.1",
-            "help_en": "The IP address to add",
-            "help_zh": "添加IP",
-            "name": "ip",
-            "options": [
-              "--ip"
-            ],
-            "raw_name": "Ip",
-            "required": false,
-            "type": "string"
           }
         ],
         "type": "object"
@@ -1888,18 +1889,6 @@
       "element": {
         "fields": [
           {
-            "example": "kernel.msgmax",
-            "help_en": "The system name of the security context in which the instance runs",
-            "help_zh": "实例运行的安全上下文系统名称",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "Name",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "65536",
             "help_en": "实例运行的安全上下文的变量值",
             "help_zh": "实例运行的安全上下文的变量值",
@@ -1908,6 +1897,18 @@
               "--value"
             ],
             "raw_name": "Value",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "kernel.msgmax",
+            "help_en": "The system name of the security context in which the instance runs",
+            "help_zh": "实例运行的安全上下文系统名称",
+            "name": "name",
+            "options": [
+              "--name"
+            ],
+            "raw_name": "Name",
             "required": false,
             "type": "string"
           }
@@ -1960,18 +1961,6 @@
             "type": "array"
           },
           {
-            "example": "cri-nwj395hgf6f3****",
-            "help_en": "ACR企业版实例ID",
-            "help_zh": "ACR企业版实例ID",
-            "name": "instance_id",
-            "options": [
-              "--instance-id"
-            ],
-            "raw_name": "InstanceId",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "acr-test",
             "help_en": "ACR企业版实例的名称",
             "help_zh": "ACR企业版实例的名称",
@@ -1980,6 +1969,18 @@
               "--instance-name"
             ],
             "raw_name": "InstanceName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "cri-nwj395hgf6f3****",
+            "help_en": "ACR企业版实例ID",
+            "help_zh": "ACR企业版实例ID",
+            "name": "instance_id",
+            "options": [
+              "--instance-id"
+            ],
+            "raw_name": "InstanceId",
             "required": false,
             "type": "string"
           },
@@ -2126,21 +2127,16 @@
       "schema": {
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID，唯一标识",
             "example": "89945DD3-9072-47D0-A318-353284CF****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "ScalingConfigurationId": {
-            "backendName": "data.scalingConfigurationId",
             "description_en": "The ID of the scaling configuration",
             "description_zh": "伸缩配置ID",
             "example": "asc-uf6fonnghi50u374****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

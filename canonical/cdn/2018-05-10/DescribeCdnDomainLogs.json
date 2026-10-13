@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun cdn DescribeCdnDomainLogs --region cn-hangzhou --DomainName 'example.com'",
   "cmd_full_name": "cdn describe-cdn-domain-logs",
   "cmd_name": "describe-cdn-domain-logs",
   "deprecated": false,
-  "description_en": "Queries the address where you can download the log data of a specific domain name",
+  "description_en": "Queries the download URLs of offline logs for a domain name",
   "description_zh": "调用DescribeCdnDomainLogs查询域名的离线日志下载地址",
   "kebab_example": "aliyun cdn describe-cdn-domain-logs --domain-name example.com --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "example.com",
-      "help_en": "The domain name. You can specify only one domain name",
+      "help_en": "The domain name. Only a single domain name is supported",
       "help_zh": "域名，只支持单个查询",
       "location": "query",
       "name": "domain_name",
@@ -35,7 +36,7 @@
     },
     {
       "example": "300",
-      "help_en": "The number of entries to return on each page. Default value: 300. Maximum value: 1000. Valid values: 1 to 1000",
+      "help_en": "The number of entries per page. Default value: 300. Maximum value: 1000. Valid values: 1 to 1000",
       "help_zh": "分页大小，默认300，最大1000，取值：1~1000",
       "location": "query",
       "maximum": "1000",
@@ -49,7 +50,7 @@
     },
     {
       "example": "2",
-      "help_en": "The number of the page to return. Pages start from page 1",
+      "help_en": "The page number. Valid values: any integer greater than 1",
       "help_zh": "取得第几页，取值范围：大于1的任意整数",
       "location": "query",
       "name": "page_number",
@@ -62,7 +63,7 @@
     },
     {
       "example": "2017-12-21T08:00:00Z",
-      "help_en": "The beginning of the time range to query.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the logs to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "获取日志起始时间。\n\n日期格式按照ISO8601表示法，并使用UTC+0时间，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "start_time",
@@ -75,7 +76,7 @@
     },
     {
       "example": "2017-12-22T08:00:00Z",
-      "help_en": "The end of the time range to query.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the logs to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取日志结束时间。\n\n日期格式按照ISO8601表示法，并使用UTC+0时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n结束时间需晚于起始时间",
       "location": "query",
       "name": "end_time",
@@ -93,83 +94,123 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DomainLogDetails": {
-            "backendName": "data.content",
-            "itemName": "DomainLogDetail",
-            "items": {
-              "properties": {
-                "DomainName": {
-                  "backendName": "domainName",
-                  "type": "string"
-                },
-                "LogCount": {
-                  "backendName": "logCount",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "LogInfos": {
-                  "backendName": "logInfo",
-                  "itemName": "LogInfoDetail",
-                  "items": {
-                    "properties": {
-                      "EndTime": {
-                        "backendName": "logEndDate",
-                        "type": "string"
-                      },
-                      "LogName": {
-                        "backendName": "logName",
-                        "type": "string"
-                      },
-                      "LogPath": {
-                        "backendName": "logPath",
-                        "type": "string"
-                      },
-                      "LogSize": {
-                        "backendName": "logSize",
-                        "format": "int64",
-                        "type": "integer"
-                      },
-                      "StartTime": {
-                        "backendName": "logDate",
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "PageInfos": {
-                  "backendName": "pageInfo",
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DomainLogDetail": {
+                "description_en": "The list of DomainLogDetail objects",
+                "description_zh": "DomainLogDetail组成的数据列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
-                    "PageIndex": {
-                      "backendName": "pageIndex",
+                    "DomainName": {
+                      "description_en": "The accelerated domain name",
+                      "description_zh": "加速域名",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "LogCount": {
+                      "description_en": "The total number of entries returned on the current page",
+                      "description_zh": "本页返回的总条数",
+                      "example": "10",
                       "format": "int64",
                       "type": "integer"
                     },
-                    "PageSize": {
-                      "backendName": "pageSize",
-                      "format": "int64",
-                      "type": "integer"
+                    "LogInfos": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "LogInfoDetail": {
+                          "description_en": "The list of LogInfoDetail objects",
+                          "description_zh": "LogInfoDetail组成的数据列表",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "EndTime": {
+                                "description_en": "The end time. The time is in the ISO 8601 standard and in UTC",
+                                "description_zh": "结束时间。时间格式为 ISO 8601，使用 UTC 时间",
+                                "example": "2015-05-23T14:00:00Z",
+                                "type": "string"
+                              },
+                              "LogName": {
+                                "description_en": "The log name",
+                                "description_zh": "日志名称",
+                                "example": "demo.aliyundoc.com_2015_05_23_2100_2200.gz",
+                                "type": "string"
+                              },
+                              "LogPath": {
+                                "description_en": "The log path",
+                                "description_zh": "日志路径",
+                                "example": "guide.aliyundoc.com-hangzhou.xxx",
+                                "type": "string"
+                              },
+                              "LogSize": {
+                                "description_en": "The log size",
+                                "description_zh": "日志大小",
+                                "example": "258",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "StartTime": {
+                                "description_en": "The start time. The time is in the ISO 8601 standard and in UTC",
+                                "description_zh": "开始时间。时间格式为 ISO 8601，使用 UTC 时间",
+                                "example": "2015-05-23T13:00:00Z",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "Total": {
-                      "backendName": "total",
-                      "format": "int64",
-                      "type": "integer"
+                    "PageInfos": {
+                      "description_en": "The PageInfoDetail data",
+                      "description_zh": "PageInfoDetail组成的数据",
+                      "properties": {
+                        "PageIndex": {
+                          "description_en": "The page number of the returned data",
+                          "description_zh": "返回数据的页码",
+                          "example": "1",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "PageSize": {
+                          "description_en": "The page size",
+                          "description_zh": "整页大小",
+                          "example": "20",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "Total": {
+                          "description_en": "The total number of entries",
+                          "description_zh": "总条数",
+                          "example": "20",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "type": "object"
-                }
-              },
-              "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "16A96B9A-F203-4EC5-8E43-CB92E68F4CD8",
             "type": "string"

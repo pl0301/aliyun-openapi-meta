@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun live DescribeShowList --region cn-hangzhou --RegionId 'cn-hangzhou' --CasterId 'LIVEPRODUCER_POST-cn-0pp1czt0000'",
   "cmd_full_name": "live describe-show-list",
   "cmd_name": "describe-show-list",
@@ -57,106 +58,124 @@
         "description_zh": "查询节目单",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "16A96B9A-F203-4EC5-8E43-CB92E68F4CD8",
             "type": "string"
           },
           "ShowList": {
-            "backendName": "data.content.showList",
             "description_en": "The details of the playlist. `Show` contains the details of a show in the playlist",
             "description_zh": "ShowList为播放列表的详细信息。\nShow为节目单中的节目详细信息，具体内容，请参见下表Show",
             "example": "ShowList[Show1, Show2, Show3...]",
             "type": "string"
           },
           "ShowListInfo": {
-            "backendName": "data.content.showListInfo",
             "description_en": "The playlist",
             "description_zh": "查询节目单",
             "properties": {
               "Background": {
-                "backendName": "background",
                 "description_en": "The background of the playlist",
                 "description_zh": "播单背景",
                 "example": "{\\\"MaterialId\\\":\\\"a2b8e671-2fe5-4642-a2ec-bf93880e****\\\",\\\"resourceType\\\":\\\"VOD\\\"}",
                 "type": "string"
               },
               "CurrentShowId": {
-                "backendName": "CurrentShowId",
                 "description_en": "The ID of the show that is being played",
                 "description_zh": "当前正在播放的节目ID",
                 "example": "a2b8e671-2fe5-4642-a2ec-bf93880e****",
                 "type": "string"
               },
               "HighPriorityShowId": {
-                "backendName": "HighPriorityShowId",
                 "description_en": "The highest-priority show.\n\nYou can configure this parameter only before the playlist starts",
                 "description_zh": "最高优先级节目。\n\n此配置只能在节目单未开始启动前设置",
                 "example": "a2b8e671-2fe5-4642-a2ec-bf93880e****",
                 "type": "string"
               },
               "HighPriorityShowStartTime": {
-                "backendName": "HighPriorityShowStartTime",
                 "description_en": "The time when the highest-priority show is played. The format is yyyy-MM-dd'T'HH:mm:ss.\n\nYou can configure this parameter only before the playlist starts. After the configuration is complete, the system switches to the highest-priority show at the specified time",
                 "description_zh": "最高优先级节目播放时间，格式为：yyyy-MM-dd'T'HH:mm:ss。\n\n此配置只能在节目单未开始启动前设置。配置完成，节目单会在最高优先级播放时间进行切播，开始播放最高优先级节目（从当前正在播放的节目切播到最高级优先节目）",
                 "example": "2021-11-23T12:30:00",
                 "type": "string"
               },
               "ShowList": {
-                "backendName": "ShowList",
-                "itemName": "Show",
-                "items": {
-                  "properties": {
-                    "Duration": {
-                      "backendName": "Duration",
-                      "format": "int64",
-                      "type": "integer"
-                    },
-                    "RepeatTimes": {
-                      "backendName": "RepeatTimes",
-                      "format": "int32",
-                      "type": "integer"
-                    },
-                    "ResourceInfo": {
-                      "backendName": "ResourceInfo",
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Show": {
+                    "description_en": "The list of shows in the playlist",
+                    "description_zh": "播放列表的详细信息",
+                    "items": {
+                      "description_en": "The details of the show",
+                      "description_zh": "播放列表的详细信息",
                       "properties": {
-                        "LiveInputType": {
-                          "backendName": "liveInputType",
+                        "Duration": {
+                          "description_en": "The duration of a single show, in seconds",
+                          "description_zh": "单个节目播放时间长度。单位：秒",
+                          "example": "20",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "RepeatTimes": {
+                          "description_en": "The number of times a single show is looped.\n\nFor example, a value of 0 indicates that the show is played once. A value of 1 indicates that the show is played twice",
+                          "description_zh": "单个节目播放的循环次数。\n\nRepeatTimes为重复次数，示例：0表示重复0次（实际播放1次），1表示重复1次（实际播放2次），以此类推",
+                          "example": "5",
                           "format": "int32",
                           "type": "integer"
                         },
-                        "ResourceId": {
-                          "backendName": "resourceId",
+                        "ResourceInfo": {
+                          "description_en": "The resource information",
+                          "description_zh": "资源信息",
+                          "properties": {
+                            "LiveInputType": {
+                              "description_en": "The custom type identifier",
+                              "description_zh": "自定义的类型标记",
+                              "example": "1",
+                              "format": "int32",
+                              "type": "integer"
+                            },
+                            "ResourceId": {
+                              "description_en": "The ID of the video-on-demand (VOD) file",
+                              "description_zh": "点播文件ID",
+                              "example": "a2b8e671-2fe5-4642-a2ec-bf93880e****",
+                              "type": "string"
+                            },
+                            "ResourceType": {
+                              "description_en": "The type of the resource material",
+                              "description_zh": "资源素材类型",
+                              "example": "vod",
+                              "type": "string"
+                            },
+                            "ResourceUrl": {
+                              "description_en": "The URL of the resource",
+                              "description_zh": "资源URL",
+                              "example": "http://**/atestObject**.m3u8",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "ShowId": {
+                          "description_en": "The ID of the show",
+                          "description_zh": "节目ID",
+                          "example": "a2b8e671-2fe5-4642-a2ec-bf93880e****",
                           "type": "string"
                         },
-                        "ResourceType": {
-                          "backendName": "resourceType",
-                          "type": "string"
-                        },
-                        "ResourceUrl": {
-                          "backendName": "resourceUrl",
+                        "ShowName": {
+                          "description_en": "The name of the show",
+                          "description_zh": "播放节目名称",
+                          "example": "liveShow****",
                           "type": "string"
                         }
                       },
                       "type": "object"
                     },
-                    "ShowId": {
-                      "backendName": "ShowId",
-                      "type": "string"
-                    },
-                    "ShowName": {
-                      "backendName": "ShowName",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": false,
-                "type": "array"
+                "type": "object"
               },
               "ShowListRepeatTimes": {
-                "backendName": "ShowListRepeatTimes",
                 "description_en": "The default number of loops for the playlist. This value is always 0",
                 "description_zh": "播单默认循环次数。始终为0",
                 "example": "0",
@@ -164,7 +183,6 @@
                 "type": "integer"
               },
               "TotalShowListRepeatTimes": {
-                "backendName": "TotalShowListRepeatTimes",
                 "description_en": "The number of times the entire playlist is looped",
                 "description_zh": "整个节目单播放的循环次数",
                 "example": "1",
@@ -172,8 +190,7 @@
                 "type": "integer"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

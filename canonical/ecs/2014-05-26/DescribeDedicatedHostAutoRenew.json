@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 8000,
   "camel_example": "aliyun ecs DescribeDedicatedHostAutoRenew --region cn-hangzhou --RegionId 'cn-hangzhou' --DedicatedHostIds 'dh-bp165p6xk2tlw61e0000,dh-bp1f9vxmno0000'",
   "cmd_full_name": "ecs describe-dedicated-host-auto-renew",
   "cmd_name": "describe-dedicated-host-auto-renew",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "dh-bp165p6xk2tlw61e****,dh-bp1f9vxmno****",
-      "help_en": "The IDs of dedicated hosts. You can specify up to 100 subscription dedicated host IDs. Separate multiple IDs with commas (,)",
+      "help_en": "The ID of the dedicated host. You can specify up to 100 subscription dedicated host IDs. Separate multiple IDs with commas (,)",
       "help_zh": "专有宿主机ID。最多可以输入100个包年包月专有宿主机ID，ID之间用半角逗号（,）隔开",
       "location": "query",
       "name": "dedicated_host_ids",
@@ -34,7 +35,7 @@
     },
     {
       "example": "cn-hangzhou",
-      "help_en": "The region ID of the dedicated host",
+      "help_en": "The ID of the region where the dedicated host resides",
       "help_zh": "专有宿主机所属的地域ID",
       "location": "query",
       "name": "region_id",
@@ -52,49 +53,67 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DedicatedHostRenewAttributes": {
-            "backendName": "data",
-            "itemName": "DedicatedHostRenewAttribute",
-            "items": {
-              "properties": {
-                "AutoRenewEnabled": {
-                  "backendName": "autoRenewEnabled",
-                  "nullToEmpty": true,
-                  "type": "boolean"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DedicatedHostRenewAttribute": {
+                "description_en": "The array that consists of dedicated host auto-renewal attributes",
+                "description_zh": "专有宿主机自动续费属性组成的数组",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AutoRenewEnabled": {
+                      "description_en": "Indicates whether auto-renewal is enabled. Valid values:\n\ntrue\nfalse",
+                      "description_zh": "是否自动续费。可能值：\ntrue：自动续费\nfalse：不自动续费",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "AutoRenewWithEcs": {
+                      "description_en": "Indicates whether the dedicated host is automatically renewed if a subscription ECS instance it hosts, after being automatically renewed, has a new expiration time that is later than that of the dedicated host. Valid values:\n\nAutoRenewWithEcs: The dedicated host is automatically renewed along with the ECS instance.\nStopRenewWithEcs: The dedicated host is not automatically renewed along with the ECS instance",
+                      "description_zh": "包年包月专有宿主机内的包年包月ECS实例自动续费时，如果ECS实例续费后的到期时间比专有宿主机的到期时间晚，则该专有宿主机是否随ECS实例自动续费。可能值：\n\nAutoRenewWithEcs：跟随ECS实例自动续费。\nStopRenewWithEcs：不跟随ECS实例自动续费",
+                      "example": "StopRenewWithEcs",
+                      "type": "string"
+                    },
+                    "DedicatedHostId": {
+                      "description_en": "The ID of the dedicated host",
+                      "description_zh": "专有宿主机ID",
+                      "example": "dh-bp165p6xk2tlw61e****",
+                      "type": "string"
+                    },
+                    "Duration": {
+                      "description_en": "The auto-renewal period",
+                      "description_zh": "自动续费时长",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "PeriodUnit": {
+                      "description_en": "The unit of the auto-renewal duration. Valid values:\n\nWeek\nMonth",
+                      "description_zh": "续费单位。可能值：\n\nWeek\nMonth",
+                      "example": "Month",
+                      "type": "string"
+                    },
+                    "RenewalStatus": {
+                      "description_en": "Indicates whether the subscription dedicated host is automatically renewed. Valid values:\n\nAutoRenewal: The dedicated host is automatically renewed.\nNormal: The dedicated host is not automatically renewed, but renewal notifications are sent.\nNotRenewal: The dedicated host is not automatically renewed, and no expiration notification is sent. Alibaba Cloud sends only a non-renewal notice three days before the host expires. If the renewal status of a dedicated host is NotRenewal, you can change the value to Normal and then call [RenewDedicatedHosts]（https://help.aliyun.com/document_detail/93287.html） to manually renew the dedicated host, or directly change the value to AutoRenewal",
+                      "description_zh": "是否自动续费包年包月专有宿主机。取值范围：\n\nAutoRenewal：自动续费。\nNormal：待续费。\nNotRenewal：不续费，也不发送到期提醒。到期前第三天阿里云会发送不续费提醒。不续费的专有宿主机可以设置成待续费（Normal），再自行续费[RenewDedicatedHosts]（https://help.aliyun.com/document_detail/93287.html）或设置为自动续费（AutoRenewal）",
+                      "example": "Normal",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "AutoRenewWithEcs": {
-                  "backendName": "autoRenewWithEcs",
-                  "type": "string"
-                },
-                "DedicatedHostId": {
-                  "backendName": "instanceId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Duration": {
-                  "backendName": "duration",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer"
-                },
-                "PeriodUnit": {
-                  "backendName": "periodUnit",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "RenewalStatus": {
-                  "backendName": "renewalStatus",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "04F0F334-1335-436C-A1D7-6C044FE73368",

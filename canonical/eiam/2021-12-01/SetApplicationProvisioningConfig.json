@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun eiam SetApplicationProvisioningConfig --region cn-hangzhou --InstanceId idaas_ue2jvisn35ea5lmthk267xxxxx --ApplicationId app_mkv7rgt4d7i4u7zqtzev2mxxxx --ProvisionProtocolType idaas_callback",
   "cmd_full_name": "eiam set-application-provisioning-config",
   "cmd_name": "set-application-provisioning-config",
@@ -133,6 +134,18 @@
       "example": "",
       "fields": [
         {
+          "example": "https://example.com/scim",
+          "help_en": "The base URL where the application accepts IDaaS synchronization requests based on the System for Cross-domain Identity Management protocol",
+          "help_zh": "应用接受IDaaS同步SCIM协议的Base地址",
+          "name": "scim_base_url",
+          "options": [
+            "--scim-base-url"
+          ],
+          "raw_name": "ScimBaseUrl",
+          "required": false,
+          "type": "string"
+        },
+        {
           "example": "",
           "fields": [
             {
@@ -144,6 +157,18 @@
                 "--authn-mode"
               ],
               "raw_name": "AuthnMode",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "bearer_token",
+              "help_en": "The System for Cross-domain Identity Management protocol authorization pattern. Valid values:\nclient_credentials: Client credentials pattern.\nbearer_token: Bearer token pattern",
+              "help_zh": "SCIM协议授权模式。取值可选范围：\nclient_credentials：客户端模式。\nbearer_token：密钥模式",
+              "name": "grant_type",
+              "options": [
+                "--grant-type"
+              ],
+              "raw_name": "GrantType",
               "required": false,
               "type": "string"
             },
@@ -163,14 +188,14 @@
                   "type": "string"
                 },
                 {
-                  "example": "client_secret_basic",
-                  "help_en": "The System for Cross-domain Identity Management protocol authentication pattern. Valid values:\nclient_secret_basic: Passes the secret through the request header.\nclient_secret_post: Passes the secret through the request body",
-                  "help_zh": "SCIM协议认证模式， 返回值包括如下：\nclient_secret_basic：通过请求Header传递密钥。\nclient_secret_post：通过请求body传递密钥",
-                  "name": "authn_method",
+                  "example": "https://www.example.com/oauth/token",
+                  "help_en": "The token endpoint",
+                  "help_zh": "令牌端点",
+                  "name": "token_endpoint",
                   "options": [
-                    "--authn-method"
+                    "--token-endpoint"
                   ],
-                  "raw_name": "AuthnMethod",
+                  "raw_name": "TokenEndpoint",
                   "required": false,
                   "type": "string"
                 },
@@ -199,14 +224,14 @@
                   "type": "string"
                 },
                 {
-                  "example": "https://www.example.com/oauth/token",
-                  "help_en": "The token endpoint",
-                  "help_zh": "令牌端点",
-                  "name": "token_endpoint",
+                  "example": "client_secret_basic",
+                  "help_en": "The System for Cross-domain Identity Management protocol authentication pattern. Valid values:\nclient_secret_basic: Passes the secret through the request header.\nclient_secret_post: Passes the secret through the request body",
+                  "help_zh": "SCIM协议认证模式， 返回值包括如下：\nclient_secret_basic：通过请求Header传递密钥。\nclient_secret_post：通过请求body传递密钥",
+                  "name": "authn_method",
                   "options": [
-                    "--token-endpoint"
+                    "--authn-method"
                   ],
-                  "raw_name": "TokenEndpoint",
+                  "raw_name": "AuthnMethod",
                   "required": false,
                   "type": "string"
                 }
@@ -220,18 +245,6 @@
               "raw_name": "AuthnParam",
               "required": false,
               "type": "object"
-            },
-            {
-              "example": "bearer_token",
-              "help_en": "The System for Cross-domain Identity Management protocol authorization pattern. Valid values:\nclient_credentials: Client credentials pattern.\nbearer_token: Bearer token pattern",
-              "help_zh": "SCIM协议授权模式。取值可选范围：\nclient_credentials：客户端模式。\nbearer_token：密钥模式",
-              "name": "grant_type",
-              "options": [
-                "--grant-type"
-              ],
-              "raw_name": "GrantType",
-              "required": false,
-              "type": "string"
             }
           ],
           "help_en": "The System for Cross-domain Identity Management protocol synchronization configuration parameters",
@@ -249,21 +262,6 @@
             "type": "string"
           },
           "example": "",
-          "help_en": "The System for Cross-domain Identity Management protocol full push scope. Valid values:\nurn:alibaba:idaas:app:scim:User:PUSH: Full user synchronization",
-          "help_zh": "SCIM协议全量推送范围。取值可选范围：\nurn:alibaba:idaas:app:scim:User:PUSH 用户全量同步",
-          "name": "full_push_scopes",
-          "options": [
-            "--full-push-scopes"
-          ],
-          "raw_name": "FullPushScopes",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "element": {
-            "type": "string"
-          },
-          "example": "",
           "help_en": "The System for Cross-domain Identity Management protocol target resource operation actions. Valid values:\nurn:alibaba:idaas:app:scim:User:CREATE: Account creation.\nurn:alibaba:idaas:app:scim:User:UPDATE: Account update.\nurn:alibaba:idaas:app:scim:User:DELETE: Account deletion",
           "help_zh": "SCIM协议目标资源操作行为。取值可选范围：\nurn:alibaba:idaas:app:scim:User:CREATE 账户创建\nurn:alibaba:idaas:app:scim:User:UPDATE 账户更新\nurn:alibaba:idaas:app:scim:User:DELETE 账户删除",
           "name": "provisioning_actions",
@@ -275,16 +273,19 @@
           "type": "array"
         },
         {
-          "example": "https://example.com/scim",
-          "help_en": "The base URL where the application accepts IDaaS synchronization requests based on the System for Cross-domain Identity Management protocol",
-          "help_zh": "应用接受IDaaS同步SCIM协议的Base地址",
-          "name": "scim_base_url",
+          "element": {
+            "type": "string"
+          },
+          "example": "",
+          "help_en": "The System for Cross-domain Identity Management protocol full push scope. Valid values:\nurn:alibaba:idaas:app:scim:User:PUSH: Full user synchronization",
+          "help_zh": "SCIM协议全量推送范围。取值可选范围：\nurn:alibaba:idaas:app:scim:User:PUSH 用户全量同步",
+          "name": "full_push_scopes",
           "options": [
-            "--scim-base-url"
+            "--full-push-scopes"
           ],
-          "raw_name": "ScimBaseUrl",
+          "raw_name": "FullPushScopes",
           "required": false,
-          "type": "string"
+          "type": "array"
         }
       ],
       "help_en": "The IDaaS System for Cross-domain Identity Management protocol synchronization configuration parameters. This parameter is required when ProvisionProtocolType is set to scim2",
@@ -332,13 +333,14 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "0441BD79-92F3-53AA-8657-F8CE4A2B912A",
-            "title_en": "请求Id",
+            "title_en": "",
             "title_zh": "请求Id",
             "type": "string"
           }

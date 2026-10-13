@@ -1,11 +1,11 @@
 {
-  "camel_example": "aliyun sls POST /azureblobingestions --project example-string --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"schedule\":\"example-string\",\"configuration\":\"example-string\",\"displayName\":\"example-string\",\"name\":\"example-string\",\"description\":\"example-string\"}",
+  "camel_example": "aliyun sls POST /azureblobingestions --project example-string --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "sls create-azure-blob-ingestion",
   "cmd_name": "create-azure-blob-ingestion",
   "deprecated": false,
-  "description_en": "Creates an Azure BLOB ingestion task",
+  "description_en": "Creates an AzureBlob import task",
   "description_zh": "创建AzureBlob导入任务",
-  "kebab_example": "aliyun sls create-azure-blob-ingestion --project example-string --description example-string --display-name example-string --schedule example-string --configuration example-string --name example-string --region cn-hangzhou",
+  "kebab_example": "aliyun sls create-azure-blob-ingestion --project example-string --region cn-hangzhou",
   "method": "POST",
   "multi_version": false,
   "name": "CreateAzureBlobIngestion",
@@ -42,6 +42,123 @@
       "type": "string"
     },
     {
+      "help_en": "The description",
+      "help_zh": "The description",
+      "location": "body",
+      "name": "description",
+      "options": [
+        "--description"
+      ],
+      "param_style": "json",
+      "raw_name": "description",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "help_en": "The displayName",
+      "help_zh": "The displayName",
+      "location": "body",
+      "name": "display_name",
+      "options": [
+        "--display-name"
+      ],
+      "param_style": "json",
+      "raw_name": "displayName",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "fields": [
+        {
+          "example": "0/5 * * * *",
+          "help_en": "The cron expression when the scheduling type is Cron",
+          "help_zh": "Cron情况下：cron表达式",
+          "name": "cron_expression",
+          "options": [
+            "--cron-expression"
+          ],
+          "raw_name": "cronExpression",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "4",
+          "help_en": "The delayed execution time for scheduled tasks, in seconds",
+          "help_zh": "定时类任务延迟执行（单位是秒：s）",
+          "name": "delay",
+          "options": [
+            "--delay"
+          ],
+          "raw_name": "delay",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "60s",
+          "help_en": "The fixed interval when the scheduling type is FixedRate",
+          "help_zh": "FixedRate情况下：固定间隔",
+          "name": "interval",
+          "options": [
+            "--interval"
+          ],
+          "raw_name": "interval",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "false",
+          "help_en": "Specifies whether the scheduled task is executed immediately",
+          "help_zh": "定时任务是否立即执行",
+          "name": "run_immediately",
+          "options": [
+            "--run-immediately"
+          ],
+          "raw_name": "runImmediately",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "example": "+0800",
+          "help_en": "The time zone of the cron expression. Default value: empty, which indicates UTC+8",
+          "help_zh": "Cron表达式所在时区，默认为空，表示东八区",
+          "name": "time_zone",
+          "options": [
+            "--time-zone"
+          ],
+          "raw_name": "timeZone",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "enum": [
+            "FixedRate",
+            "Cron"
+          ],
+          "example": "FixedRate",
+          "help_en": "The scheduling type. Valid values: FixedRate and Cron",
+          "help_zh": "定时类型：FixedRate/Cron",
+          "name": "type",
+          "options": [
+            "--type"
+          ],
+          "raw_name": "type",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "help_en": "The scheduling structure",
+      "help_zh": "调度结构",
+      "location": "body",
+      "name": "schedule",
+      "options": [
+        "--schedule"
+      ],
+      "param_style": "json",
+      "raw_name": "schedule",
+      "required": false,
+      "type": "object"
+    },
+    {
       "fields": [
         {
           "example": "myLogstore",
@@ -58,44 +175,6 @@
         {
           "fields": [
             {
-              "example": "dGVzdGtleQ==",
-              "help_en": "The access key for the Azure Blob Storage account",
-              "help_zh": "账户密钥",
-              "name": "account_key",
-              "options": [
-                "--account-key"
-              ],
-              "raw_name": "accountKey",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "example": "test001",
-              "help_en": "The name of the Azure Blob Storage account",
-              "help_zh": "账户名",
-              "name": "account_name",
-              "options": [
-                "--account-name"
-              ],
-              "raw_name": "accountName",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "help_en": "Advanced configuration options",
-              "help_zh": "The advancedParameters",
-              "name": "advanced_parameters",
-              "options": [
-                "--advanced-parameters"
-              ],
-              "raw_name": "advancedParameters",
-              "required": false,
-              "type": "map",
-              "value": {
-                "type": "any"
-              }
-            },
-            {
               "example": "none",
               "help_en": "The compression codec for the source data. Valid values are `none`, `snappy`, and `gzip`",
               "help_zh": "压缩类型：none,snappy,gzip",
@@ -104,18 +183,6 @@
                 "--compression-codec"
               ],
               "raw_name": "compressionCodec",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "example": "test-container",
-              "help_en": "The name of the container in Azure Blob Storage",
-              "help_zh": "容器名",
-              "name": "container_name",
-              "options": [
-                "--container-name"
-              ],
-              "raw_name": "containerName",
               "required": true,
               "type": "string"
             },
@@ -130,44 +197,6 @@
               "raw_name": "encoding",
               "required": true,
               "type": "string"
-            },
-            {
-              "example": "1714360481",
-              "help_en": "Ingests only files modified before this time, specified as a Unix timestamp",
-              "help_zh": "某个时间点前修改过的文件",
-              "name": "end_time",
-              "options": [
-                "--end-time"
-              ],
-              "raw_name": "endTime",
-              "required": false,
-              "type": "int"
-            },
-            {
-              "example": "https://your-storage.blob.core.windows.net",
-              "help_en": "The service endpoint for Azure Blob Storage",
-              "help_zh": "服务入口Endpoint",
-              "name": "endpoint",
-              "options": [
-                "--endpoint"
-              ],
-              "raw_name": "endpoint",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "help_en": "The format of the source data",
-              "help_zh": "格式",
-              "name": "format",
-              "options": [
-                "--format"
-              ],
-              "raw_name": "format",
-              "required": true,
-              "type": "map",
-              "value": {
-                "type": "any"
-              }
             },
             {
               "example": "30m",
@@ -206,16 +235,16 @@
               "type": "string"
             },
             {
-              "example": "ingest-processor-1756802123-953901",
-              "help_en": "The ID of the processor that receives the data",
-              "help_zh": "写入处理器ID",
-              "name": "processor_id",
+              "example": "false",
+              "help_en": "Specifies whether to enable context query",
+              "help_zh": "支持上下文浏览",
+              "name": "tag_pack_id",
               "options": [
-                "--processor-id"
+                "--tag-pack-id"
               ],
-              "raw_name": "processorId",
+              "raw_name": "tagPackId",
               "required": false,
-              "type": "string"
+              "type": "bool"
             },
             {
               "example": "1714274081",
@@ -230,16 +259,16 @@
               "type": "int"
             },
             {
-              "example": "false",
-              "help_en": "Specifies whether to enable context query",
-              "help_zh": "支持上下文浏览",
-              "name": "tag_pack_id",
+              "example": "1714360481",
+              "help_en": "Ingests only files modified before this time, specified as a Unix timestamp",
+              "help_zh": "某个时间点前修改过的文件",
+              "name": "end_time",
               "options": [
-                "--tag-pack-id"
+                "--end-time"
               ],
-              "raw_name": "tagPackId",
+              "raw_name": "endTime",
               "required": false,
-              "type": "bool"
+              "type": "int"
             },
             {
               "example": "__time__",
@@ -288,6 +317,94 @@
               "raw_name": "timeZone",
               "required": false,
               "type": "string"
+            },
+            {
+              "example": "ingest-processor-1756802123-953901",
+              "help_en": "The ID of the processor that receives the data",
+              "help_zh": "写入处理器ID",
+              "name": "processor_id",
+              "options": [
+                "--processor-id"
+              ],
+              "raw_name": "processorId",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "test001",
+              "help_en": "The name of the Azure Blob Storage account",
+              "help_zh": "账户名",
+              "name": "account_name",
+              "options": [
+                "--account-name"
+              ],
+              "raw_name": "accountName",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "example": "dGVzdGtleQ==",
+              "help_en": "The access key for the Azure Blob Storage account",
+              "help_zh": "账户密钥",
+              "name": "account_key",
+              "options": [
+                "--account-key"
+              ],
+              "raw_name": "accountKey",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "example": "test-container",
+              "help_en": "The name of the container in Azure Blob Storage",
+              "help_zh": "容器名",
+              "name": "container_name",
+              "options": [
+                "--container-name"
+              ],
+              "raw_name": "containerName",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "example": "https://your-storage.blob.core.windows.net",
+              "help_en": "The service endpoint for Azure Blob Storage",
+              "help_zh": "服务入口Endpoint",
+              "name": "endpoint",
+              "options": [
+                "--endpoint"
+              ],
+              "raw_name": "endpoint",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "help_en": "The format of the source data",
+              "help_zh": "格式",
+              "name": "format",
+              "options": [
+                "--format"
+              ],
+              "raw_name": "format",
+              "required": true,
+              "type": "map",
+              "value": {
+                "type": "any"
+              }
+            },
+            {
+              "help_en": "Advanced configuration options",
+              "help_zh": "The advancedParameters",
+              "name": "advanced_parameters",
+              "options": [
+                "--advanced-parameters"
+              ],
+              "raw_name": "advancedParameters",
+              "required": false,
+              "type": "map",
+              "value": {
+                "type": "any"
+              }
             }
           ],
           "help_en": "Contains the configuration for ingesting data from Azure Blob Storage",
@@ -314,32 +431,6 @@
       "type": "object"
     },
     {
-      "help_en": "The description",
-      "help_zh": "The description",
-      "location": "body",
-      "name": "description",
-      "options": [
-        "--description"
-      ],
-      "param_style": "json",
-      "raw_name": "description",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "help_en": "The displayName",
-      "help_zh": "The displayName",
-      "location": "body",
-      "name": "display_name",
-      "options": [
-        "--display-name"
-      ],
-      "param_style": "json",
-      "raw_name": "displayName",
-      "required": true,
-      "type": "string"
-    },
-    {
       "help_en": "The name",
       "help_zh": "The name",
       "location": "body",
@@ -351,97 +442,6 @@
       "raw_name": "name",
       "required": true,
       "type": "string"
-    },
-    {
-      "fields": [
-        {
-          "example": "0/5 * * * *",
-          "help_en": "The cron expression",
-          "help_zh": "Cron情况下：cron表达式",
-          "name": "cron_expression",
-          "options": [
-            "--cron-expression"
-          ],
-          "raw_name": "cronExpression",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "4",
-          "help_en": "The delay before a scheduled task is executed, in seconds (s)",
-          "help_zh": "定时类任务延迟执行（单位是秒：s）",
-          "name": "delay",
-          "options": [
-            "--delay"
-          ],
-          "raw_name": "delay",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "60s",
-          "help_en": "The fixed interval",
-          "help_zh": "FixedRate情况下：固定间隔",
-          "name": "interval",
-          "options": [
-            "--interval"
-          ],
-          "raw_name": "interval",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "false",
-          "help_en": "Specifies whether to execute the scheduled task immediately",
-          "help_zh": "定时任务是否立即执行",
-          "name": "run_immediately",
-          "options": [
-            "--run-immediately"
-          ],
-          "raw_name": "runImmediately",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "+0800",
-          "help_en": "The time zone of the cron expression. If this parameter is left empty, the default time zone UTC+8 is used",
-          "help_zh": "Cron表达式所在时区，默认为空，表示东八区",
-          "name": "time_zone",
-          "options": [
-            "--time-zone"
-          ],
-          "raw_name": "timeZone",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "enum": [
-            "FixedRate",
-            "Cron"
-          ],
-          "example": "FixedRate",
-          "help_en": "schedule type",
-          "help_zh": "定时类型：FixedRate/Cron",
-          "name": "type",
-          "options": [
-            "--type"
-          ],
-          "raw_name": "type",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "help_en": "The schedule structure",
-      "help_zh": "调度结构",
-      "location": "body",
-      "name": "schedule",
-      "options": [
-        "--schedule"
-      ],
-      "param_style": "json",
-      "raw_name": "schedule",
-      "required": false,
-      "type": "object"
     }
   ],
   "pathPattern": "/azureblobingestions",

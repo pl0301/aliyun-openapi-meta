@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dms-enterprise CreateProcCorrectOrder --region cn-hangzhou --Comment test --Param '{\"Classify\":\"test\",\"DbItemList\":[{}],\"RollbackSqlType\":\"TEXT\",\"ExecMode\":\"COMMITOR\",\"ExecSQL\":\"DELIMITER_///_CREATE_PROCEDURE_GetAllProducts_BEGIN_SELECT_0_FROM_base_user_END_///\",\"RollbackAttachmentName\":\"test_rollback.sql\",\"RollbackSQL\":\"empty\"}'",
   "cmd_full_name": "dms-enterprise create-proc-correct-order",
   "cmd_name": "create-proc-correct-order",
@@ -104,32 +105,15 @@
           "type": "array"
         },
         {
-          "enum": [
-            "COMMITOR",
-            "AUTO",
-            "LAST_AUDITOR"
-          ],
-          "example": "COMMITOR",
-          "help_en": "The mode in which the data change ticket is executed after the ticket is approved. Valid values:\n\nCOMMITOR: The ticket is executed by the user who submits the ticket.\nAUTO: The ticket is automatically executed after the ticket is approved.\nLAST_AUDITOR: The ticket is executed by the last approver of the ticket",
-          "help_zh": "工单执行方式，取值如下：\n\nCOMMITOR : 审批通过后，提交者执行。\nAUTO : 审批通过后，自动执行。\nLAST_AUDITOR : 审批通过后，最后一个审批人执行",
-          "name": "exec_mode",
+          "example": "empty",
+          "help_en": "The SQL statements for rolling back the data change.\n\nThis parameter is required if you set the RollbackSqlType parameter to TEXT",
+          "help_zh": "回滚SQL语句。\n如果RollbackSqlType为TEXT，该参数必填",
+          "name": "rollback_sql",
           "options": [
-            "--exec-mode"
+            "--rollback-sql"
           ],
-          "raw_name": "ExecMode",
+          "raw_name": "RollbackSQL",
           "required": false,
-          "type": "string"
-        },
-        {
-          "example": "DELIMITER ///\nCREATE PROCEDURE GetAllProducts()\nBEGIN\nSELECT *  FROM base_user;\nEND ///",
-          "help_en": "The SQL statements for data change",
-          "help_zh": "变更SQL语句",
-          "name": "exec_sql",
-          "options": [
-            "--exec-sql"
-          ],
-          "raw_name": "ExecSQL",
-          "required": true,
           "type": "string"
         },
         {
@@ -141,18 +125,6 @@
             "--rollback-attachment-name"
           ],
           "raw_name": "RollbackAttachmentName",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "empty",
-          "help_en": "The SQL statements for rolling back the data change.\n\nThis parameter is required if you set the RollbackSqlType parameter to TEXT",
-          "help_zh": "回滚SQL语句。\n如果RollbackSqlType为TEXT，该参数必填",
-          "name": "rollback_sql",
-          "options": [
-            "--rollback-sql"
-          ],
-          "raw_name": "RollbackSQL",
           "required": false,
           "type": "string"
         },
@@ -169,6 +141,35 @@
             "--rollback-sql-type"
           ],
           "raw_name": "RollbackSqlType",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "DELIMITER ///\nCREATE PROCEDURE GetAllProducts()\nBEGIN\nSELECT *  FROM base_user;\nEND ///",
+          "help_en": "The SQL statements for data change",
+          "help_zh": "变更SQL语句",
+          "name": "exec_sql",
+          "options": [
+            "--exec-sql"
+          ],
+          "raw_name": "ExecSQL",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "enum": [
+            "COMMITOR",
+            "AUTO",
+            "LAST_AUDITOR"
+          ],
+          "example": "COMMITOR",
+          "help_en": "The mode in which the data change ticket is executed after the ticket is approved. Valid values:\n\nCOMMITOR: The ticket is executed by the user who submits the ticket.\nAUTO: The ticket is automatically executed after the ticket is approved.\nLAST_AUDITOR: The ticket is executed by the last approver of the ticket",
+          "help_zh": "工单执行方式，取值如下：\n\nCOMMITOR : 审批通过后，提交者执行。\nAUTO : 审批通过后，自动执行。\nLAST_AUDITOR : 审批通过后，最后一个审批人执行",
+          "name": "exec_mode",
+          "options": [
+            "--exec-mode"
+          ],
+          "raw_name": "ExecMode",
           "required": false,
           "type": "string"
         }
@@ -224,10 +225,8 @@
         "description_zh": "Schema of Response",
         "properties": {
           "CreateOrderResult": {
-            "backendName": "data",
             "description_en": "The ticket IDs",
             "description_zh": "工单ID",
-            "itemName": "OrderIds",
             "items": {
               "description_en": "The ticket ID",
               "description_zh": "工单ID",
@@ -238,21 +237,18 @@
             "type": "array"
           },
           "ErrorCode": {
-            "backendName": "errorCode",
             "description_en": "The error code that is returned if the request failed",
             "description_zh": "错误码。仅请求失败时返回错误码",
             "example": "UnknownError",
             "type": "string"
           },
           "ErrorMessage": {
-            "backendName": "message",
             "description_en": "The error message that is returned if the request failed",
             "description_zh": "调用失败时，返回的错误信息",
             "example": "UnknownError",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "427688B8-ADFB-4C4E-9D45-EF5C1FD6E23D",
@@ -261,7 +257,6 @@
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue: The request was successful.\nfalse: The request failed",
             "description_zh": "请求是否成功，返回值如下：\ntrue：请求成功。\nfalse：请求失败",
             "example": "true",

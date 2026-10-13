@@ -1,4 +1,6 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun outboundbot QueryJobs --region cn-hangzhou --PageSize 10 --InstanceId 'af81a389-91f0-4157-8d82-720edd02b66a' --PageNumber 1 --version 2019-12-26 --method POST --force",
   "cmd_full_name": "outboundbot query-jobs",
   "cmd_name": "query-jobs",
   "deprecated": false,
@@ -35,7 +37,7 @@
     },
     {
       "example": "b0f35dd1-0337-402e-9c4f-3a6c2426950a",
-      "help_en": "The scenario ID. This is a legacy parameter that has been deprecated",
+      "help_en": "The scenario ID. [Deprecated] Legacy parameter",
       "help_zh": "场景ID。历史参数【已废弃】",
       "location": "query",
       "name": "scenario_id",
@@ -61,8 +63,8 @@
     },
     {
       "example": "1579068424883",
-      "help_en": "The filter condition for the start time. The default value is 0, which indicates the start of the current day (00:00)",
-      "help_zh": "过滤条件，开始时间，缺省为0， 代表从今天0时开始",
+      "help_en": "The start time for filtering. Default value: 0, which indicates 00:00 today. Specify a UNIX timestamp in milliseconds",
+      "help_zh": "过滤条件，开始时间，缺省为0， 代表从今天0时开始。使用 Unix 时间戳，单位为毫秒",
       "location": "query",
       "name": "start_time",
       "options": [
@@ -74,8 +76,8 @@
     },
     {
       "example": "1579077794665",
-      "help_en": "The filter condition for the end time. The default value is 0, which indicates the current time",
-      "help_zh": "过滤条件，截止时间，缺省为0，代表截止到当前时间",
+      "help_en": "The end time for filtering. Default value: 0, which indicates the current time. Specify a UNIX timestamp in milliseconds",
+      "help_zh": "过滤条件，截止时间，缺省为0，代表截止到当前时间。使用 Unix 时间戳，单位为毫秒",
       "location": "query",
       "name": "end_time",
       "options": [
@@ -87,8 +89,8 @@
     },
     {
       "example": "start",
-      "help_en": "Specifies whether to query by start time, end time, or job creation time. Valid values: start, end, job_create",
-      "help_zh": "时间条件按照开始时间还是结束时间查询，有效值为：start、end、job_create",
+      "help_en": "The time basis for filtering. This parameter specifies the filtering criterion rather than a specific date or time. Valid values:\nstart: Filters by start time.\nend: Filters by end time.\njob_create: Filters by job creation time",
+      "help_zh": "时间筛选依据。start 表示按开始时间筛选，end 表示按结束时间筛选，job_create 表示按任务创建时间筛选。该参数用于选择筛选口径，不是具体的日期或时间值",
       "location": "query",
       "name": "time_alignment",
       "options": [
@@ -100,7 +102,7 @@
     },
     {
       "example": "张三",
-      "help_en": "The filter condition for the contact name",
+      "help_en": "The contact name for filtering",
       "help_zh": "过滤条件，联系人名字",
       "location": "query",
       "name": "contact_name",
@@ -113,7 +115,7 @@
     },
     {
       "example": "135****8888",
-      "help_en": "The filter condition for the contact phone number",
+      "help_en": "The contact phone number for filtering",
       "help_zh": "过滤条件，联系人电话号码",
       "location": "query",
       "name": "phone_number",
@@ -161,323 +163,251 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The HTTP status code",
             "description_zh": "HTTP状态码",
             "example": "OK",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The response code",
             "description_zh": "响应码",
             "example": "200",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "Jobs": {
-            "backendName": "jobs",
             "description_en": "The job data",
             "description_zh": "作业数据",
             "properties": {
               "List": {
-                "backendName": "list",
                 "description_en": "The job array",
                 "description_zh": "作业数组",
-                "itemName": "Job",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "CallingNumbers": {
-                      "backendName": "callingNumbers",
-                      "description_en": "The list of calling numbers",
+                      "description_en": "The calling number list",
                       "description_zh": "主叫号码列表",
-                      "itemName": "String",
                       "items": {
-                        "backendName": "callingNumbers",
-                        "description_en": "The list of calling numbers",
+                        "description_en": "The calling number list",
                         "description_zh": "主叫号码列表",
                         "example": "[\"0571****3106\"]",
-                        "nullToEmpty": true,
-                        "type": "string",
-                        "visibility": "Public"
+                        "type": "string"
                       },
-                      "nullToEmpty": true,
-                      "parseType": "null",
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "array"
                     },
                     "Contacts": {
-                      "backendName": "contacts",
-                      "description_en": "[Deprecated] The contact information. This parameter is deprecated.\n\nYou can obtain this information through the DescribeJob operation",
+                      "description_en": "[Deprecated] The contact information.\n\nYou can obtain this information by calling the DescribeJob operation",
                       "description_zh": "联系人信息。该参数已废弃。\n\n可以通过DescribeJob接口中获取",
-                      "itemName": "Contact",
                       "items": {
+                        "description_en": "",
+                        "description_zh": "",
                         "properties": {
                           "ContactId": {
-                            "backendName": "id",
                             "description_en": "The contact ID",
                             "description_zh": "联系人ID",
                             "example": "db3db762-e421-44c9-9a01-cb423470757c",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "ContactName": {
-                            "backendName": "name",
                             "description_en": "The contact name",
                             "description_zh": "联系人姓名",
                             "example": "张三",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "Honorific": {
-                            "backendName": "honorific",
-                            "description_en": "The honorific title",
+                            "description_en": "The honorific",
                             "description_zh": "尊称",
                             "example": "张先生",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "JobId": {
-                            "backendName": "jobId",
                             "description_en": "The job ID",
                             "description_zh": "作业ID",
                             "example": "fce6c599-8ede-40e3-9f78-0928eda7b4e8\n",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "PhoneNumber": {
-                            "backendName": "phoneNumber",
                             "description_en": "The phone number",
                             "description_zh": "电话号码",
                             "example": "135****8888",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "ReferenceId": {
-                            "backendName": "referenceId",
                             "description_en": "The associated business ID",
                             "description_zh": "关联业务ID",
                             "example": "2fa6bac3-06da-4315-82ab-72d6fd3a6f34",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "Role": {
-                            "backendName": "role",
                             "description_en": "The role",
                             "description_zh": "角色",
                             "example": "*",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "State": {
-                            "backendName": "state",
-                            "description_en": "The status. Valid values:\nAvailable: normal.\nWrongNumber: wrong number.\nDoesNotExist: nonexistent number.\nSuspended: call suspended",
+                            "description_en": "The status. Valid values:\nAvailable: Normal.\nWrongNumber: Wrong number.\nDoesNotExist: Nonexistent number.\nSuspended: Call suspended",
                             "description_zh": "状态。\nAvailable（正常），\nWrongNumber（号码错误），\nDoesNotExist（空号），\nSuspended（止呼）；",
                             "example": "Available",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           }
                         },
                         "type": "object"
                       },
-                      "nullToEmpty": true,
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "array"
                     },
                     "Extras": {
-                      "backendName": "extras",
-                      "description_en": "The business data. Displays tag collection information for large language model scenarios.\n\nKeys equal to TenantId or ServiceId are system parameters",
+                      "description_en": "The business data, which displays the tag collection status in large model scenarios.\n\nIf the key is TenantId or ServiceId, it is a system parameter",
                       "description_zh": "业务数据，大模型场景的标签收集情况展示。\n\nkey等于TenantId、ServiceId为系统参数",
-                      "itemName": "KeyValuePair",
                       "items": {
+                        "description_en": "",
+                        "description_zh": "",
                         "properties": {
                           "Key": {
-                            "backendName": "key",
-                            "description_en": "The business data key",
+                            "description_en": "The key of the business data",
                             "description_zh": "业务数据key",
                             "example": "djrq",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "Value": {
-                            "backendName": "value",
-                            "description_en": "The business data value",
+                            "description_en": "The value of the business data",
                             "description_zh": "业务数据value",
                             "example": "2019-08-21 09:49:59.0",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           }
                         },
                         "type": "object"
                       },
-                      "nullToEmpty": true,
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "array"
                     },
                     "FailureReason": {
-                      "backendName": "failureReason",
-                      "description_en": "The failure reason. Valid values:\nUnknown: unknown error.  \nNoAnswer: no answer.\nInvalidStrategy: invalid strategy. The strategy configuration is incorrect.\nTimeUp: timeout detected during scheduling.\nNoStrategy: strategy is empty or not found.\nCallFailed: call failed.\nPerDayCallCountLimit: daily call count limit for the number.\nContactBlockList: contact is on the block list.\nEmptyNumber: nonexistent number, no further outbound calls.\nJobPerDayCallCountLimit: daily call count limit for the number.\nVerificationCancelled: pre-call verification failed, call cancelled.\nContactSuspended: call suspended.\nInArrears: overdue payment.\nOutOfService: out of service",
+                      "description_en": "The reason for the failure. Valid values:\nUnknown: Unknown error.  \nNoAnswer: No answer.\nInvalidStrategy: Invalid strategy. The strategy configuration is incorrect.\nTimeUp: Timeout detected during scheduling.\nNoStrategy: The strategy is empty or not found.\nCallFailed: Call failed.\nPerDayCallCountLimit: The daily call count limit for the number is reached.\nContactBlockList: The number is on the outbound call blacklist.\nEmptyNumber: The number is a nonexistent number and will not be called.\nJobPerDayCallCountLimit: The daily call count limit for the number is reached.\nVerificationCancelled: Cancelled due to failed pre-call verification.\nContactSuspended: Call suspended.\nInArrears: Overdue payment.\nOutOfService: Service suspended",
                       "description_zh": "失败原因。\nUnknown（未知错误），  \nNoAnswer（无人接听），\nInvalidStrategy（无效的策略，策略配置不正确），\nTimeUp（调度时发现超时），\nNoStrategy（策略为空或没有找到），\nCallFailed（呼叫失败），\nPerDayCallCountLimit（号码每日呼叫次数限制），\nContactBlockList（禁止外呼名单），\nEmptyNumber（空号不再外呼），\nJobPerDayCallCountLimit（号码每日呼叫次数限制），\nVerificationCancelled（呼叫前验证不通过取消），\nContactSuspended（止呼），\nInArrears（欠费），\nOutOfService（停机）；",
                       "example": "NoAnswer",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "JobGroupId": {
-                      "backendName": "groupId",
-                      "description_en": "The task ID",
+                      "description_en": "The job group ID",
                       "description_zh": "任务ID",
                       "example": "fce6c599-8ede-40e3-9f78-0928eda7b4e8",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "JobId": {
-                      "backendName": "id",
                       "description_en": "The job ID",
                       "description_zh": "作业ID",
                       "example": "fce6c599-8ede-40e3-9f78-0928eda7b4e8",
-                      "mappingResourcePropertyName": "$.JobId",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "Priority": {
-                      "backendName": "priority",
                       "description_en": "The priority",
                       "description_zh": "优先级",
                       "example": "1",
                       "format": "int32",
-                      "type": "integer",
-                      "visibility": "Public"
+                      "type": "integer"
                     },
                     "ReferenceId": {
-                      "backendName": "referenceId",
                       "description_en": "The associated business ID",
                       "description_zh": "关联业务ID",
                       "example": "d5971d98-7312-4f0e-a918-a17d67133e28",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "ScenarioId": {
-                      "backendName": "scenarioId",
-                      "description_en": "[Deprecated] The scenario ID. This is a legacy parameter and is no longer used",
+                      "description_en": "[Deprecated] The scenario ID. This is a legacy parameter",
                       "description_zh": "场景ID。历史参数，【已废弃】",
                       "example": "ade80092-03d9-4f4d-ad4f-ab8a247d3150",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "Status": {
-                      "backendName": "status",
-                      "description_en": "The job status. Valid values:\nScheduling(0): scheduling in progress.\nExecuting(1): executing.\nSucceeded(2): ended - reached.\nPaused(3): paused.\nFailed(4): ended - not reached.\nCancelled(5): cancelled - manual intervention.\nDrafted(6): draft",
+                      "description_en": "The job status. Valid values:\nScheduling(0, \"Scheduling\")\nExecuting(1, \"Executing\")\nSucceeded(2, \"Finished - Reached\")\nPaused(3, \"Paused\")\nFailed(4, \"Finished - Not reached\")\nCancelled(5, \"Cancelled - Manual intervention\")\nDrafted(6, \"Draft\")",
                       "description_zh": "作业状态。\nScheduling(0, \"调度中\")\nExecuting(1, \"执行中\"),\nSucceeded(2, \"结束-已触达\"),\nPaused(3, \"暂停\"),\nFailed(4, \"结束-未触达\")\nCancelled(5, \"已取消-人工干预\")\nDrafted(6, \"草稿态\"),",
                       "example": "Succeeded",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "StrategyId": {
-                      "backendName": "strategyId",
                       "description_en": "The strategy ID",
                       "description_zh": "策略ID",
                       "example": "c8a2b7f2-ad1a-4865-b872-d0080d9802d9",
-                      "type": "string",
-                      "visibility": "Public"
+                      "type": "string"
                     },
                     "Summary": {
-                      "backendName": "summary",
                       "description_en": "[Deprecated] The conversation summary. This is a legacy field and is no longer used",
                       "description_zh": "对话小结。（历史字段，不再使用）【废弃】",
-                      "itemName": "Summary",
                       "items": {
+                        "description_en": "",
+                        "description_zh": "",
                         "properties": {
                           "Category": {
-                            "backendName": "category",
                             "description_en": "The category",
                             "description_zh": "类别",
                             "example": "{}",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "Content": {
-                            "backendName": "content",
                             "description_en": "The content",
                             "description_zh": "内容",
                             "example": "5",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "ConversationDetailId": {
-                            "backendName": "conversationDetailId",
                             "description_en": "The call record ID",
                             "description_zh": "通话记录ID",
                             "example": "098b9b09-9223-4a8b-a422-99726f0457f3",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "GroupId": {
-                            "backendName": "groupId",
-                            "description_en": "The task ID",
+                            "description_en": "The job group ID",
                             "description_zh": "任务ID",
                             "example": "ba1ba502-d044-48c0-b710-0f1f840a7c53",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "JobId": {
-                            "backendName": "jobId",
                             "description_en": "The job ID",
                             "description_zh": "作业ID",
                             "example": "b72425bd-7871-4050-838e-033d80d754b7\n",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "SummaryId": {
-                            "backendName": "id",
                             "description_en": "The summary ID",
                             "description_zh": "摘要ID",
                             "example": "dc67d544-df06-4625-ae48-13e3c9f72d8a",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "SummaryName": {
-                            "backendName": "name",
                             "description_en": "The summary name",
                             "description_zh": "小结名称",
                             "example": "score",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "TaskId": {
-                            "backendName": "taskId",
                             "description_en": "The call ID",
                             "description_zh": "通话ID",
                             "example": "9fdf7a81-6781-4ab8-92fb-1d4231ef365e",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           }
                         },
                         "type": "object"
                       },
-                      "nullToEmpty": true,
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "array"
                     },
                     "TagHits": {
-                      "backendName": "tagHits",
-                      "description_en": "The tag hit information in small model scenarios",
+                      "description_en": "The matched tag information in small model scenarios",
                       "description_zh": "小模型场景中命中标签信息",
-                      "itemName": "TagHit",
                       "items": {
+                        "description_en": "",
+                        "description_zh": "",
                         "properties": {
                           "TagGroup": {
-                            "backendName": "tagGroup",
                             "description_en": "The tag group name",
                             "description_zh": "标签组名称",
                             "example": "意向收集",
                             "type": "string"
                           },
                           "TagName": {
-                            "backendName": "tagName",
                             "description_en": "The tag name",
                             "description_zh": "标签名称",
                             "example": "有意向",
@@ -489,252 +419,193 @@
                       "type": "array"
                     },
                     "Tasks": {
-                      "backendName": "tasks",
-                      "description_en": "[Deprecated] The call list. This parameter is deprecated.\n\nYou can obtain this information through the searchTask operation",
+                      "description_en": "[Deprecated] The call list.\n\nYou can obtain this information by calling the searchTask operation",
                       "description_zh": "通话列表。该参数已废弃。\n\n可通过searchTask接口中获取",
-                      "itemName": "Task",
                       "items": {
+                        "description_en": "",
+                        "description_zh": "",
                         "properties": {
                           "ActualTime": {
-                            "backendName": "actualTime",
-                            "description_en": "The actual outbound call time",
-                            "description_zh": "实际呼出时间",
+                            "description_en": "The actual outbound call time. The value is a UNIX timestamp in milliseconds",
+                            "description_zh": "实际呼出时间。使用 Unix 时间戳，单位为毫秒",
                             "example": "1579068424883",
                             "format": "int64",
-                            "type": "integer",
-                            "visibility": "Public"
+                            "type": "integer"
                           },
                           "Brief": {
-                            "backendName": "brief",
-                            "description_en": "The summary. This is a legacy field and is no longer used",
+                            "description_en": "[Deprecated] The summary. This is a legacy field and is no longer used",
                             "description_zh": "总结（历史字段，不再使用）",
                             "example": "1",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "CallId": {
-                            "backendName": "callId",
-                            "description_en": "SIP call ID",
+                            "description_en": "The SIP call ID",
                             "description_zh": "SIP call ID",
                             "example": "1528189846043",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "CalledNumber": {
-                            "backendName": "calledNumber",
                             "description_en": "The called number",
                             "description_zh": "被叫号码",
                             "example": "135****8888",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "CallingNumber": {
-                            "backendName": "callingNumber",
                             "description_en": "The calling number",
                             "description_zh": "主叫号码",
                             "example": "0571****3106",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "ChatbotId": {
-                            "backendName": "chatbotId",
                             "description_en": "The robot ID",
                             "description_zh": "机器人ID",
                             "example": "1234",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "Contact": {
-                            "backendName": "contact",
                             "description_en": "The contact information",
                             "description_zh": "联系人信息",
                             "properties": {
                               "ContactId": {
-                                "backendName": "id",
                                 "description_en": "The contact ID",
                                 "description_zh": "联系人ID",
                                 "example": "db3db762-e421-44c9-9a01-cb423470757c",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "ContactName": {
-                                "backendName": "name",
                                 "description_en": "The contact name",
                                 "description_zh": "联系人名称",
                                 "example": "张三",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "Honorific": {
-                                "backendName": "honorific",
-                                "description_en": "The honorific title",
+                                "description_en": "The honorific",
                                 "description_zh": "尊称",
                                 "example": "张先生",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "JobId": {
-                                "backendName": "jobId",
                                 "description_en": "The job ID",
                                 "description_zh": "作业ID",
                                 "example": "b72425bd-7871-4050-838e-033d80d754b7",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "PhoneNumber": {
-                                "backendName": "phoneNumber",
                                 "description_en": "The phone number of the contact",
                                 "description_zh": "联系人电话号码",
                                 "example": "135****8888",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "ReferenceId": {
-                                "backendName": "referenceId",
                                 "description_en": "The associated business ID",
                                 "description_zh": "业务关联ID",
                                 "example": "2fa6bac3-06da-4315-82ab-72d6fd3a6f34",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "Role": {
-                                "backendName": "role",
                                 "description_en": "The role",
                                 "description_zh": "角色",
                                 "example": "*",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               },
                               "State": {
-                                "backendName": "state",
                                 "description_en": "The status",
                                 "description_zh": "状态",
                                 "example": "Available",
-                                "type": "string",
-                                "visibility": "Public"
+                                "type": "string"
                               }
                             },
-                            "type": "object",
-                            "visibility": "Public"
+                            "type": "object"
                           },
                           "Duration": {
-                            "backendName": "duration",
                             "description_en": "The call duration",
                             "description_zh": "通话时长",
                             "example": "120",
                             "format": "int32",
-                            "type": "integer",
-                            "visibility": "Public"
+                            "type": "integer"
                           },
                           "JobId": {
-                            "backendName": "jobId",
                             "description_en": "The job ID",
                             "description_zh": "作业ID",
                             "example": "b72425bd-7871-4050-838e-033d80d754b7",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "PlanedTime": {
-                            "backendName": "planedTime",
-                            "description_en": "The planned outbound call time",
-                            "description_zh": "计划呼出时间",
+                            "description_en": "The planned outbound call time. The value is a UNIX timestamp in milliseconds",
+                            "description_zh": "计划呼出时间。使用 Unix 时间戳，单位为毫秒",
                             "example": "1579068424883",
                             "format": "int64",
-                            "type": "integer",
-                            "visibility": "Public"
+                            "type": "integer"
                           },
                           "ScenarioId": {
-                            "backendName": "scenarioId",
                             "description_en": "The scenario ID",
                             "description_zh": "场景ID",
                             "example": "ade80092-03d9-4f4d-ad4f-ab8a247d3150",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "Status": {
-                            "backendName": "status",
-                            "description_en": "The task status. Note: The Succeeded status has been subdivided into specific reasons and will no longer be displayed as Succeeded: 1 (connected). Subsequent responses return the specific sub-reason type. Valid values:\n\nExecuting: 0 (dialing in progress).\nSucceeded: 1 (connected).\nNoAnswer: 2 (not connected - no answer).\nNotExist: 3 (not connected - nonexistent number).\nBusy: 4 (not connected - busy).\nCancelled: 5 (not dialed - task stopped).\nFailed: 6 (failed).\nNotConnected: 7 (not connected - unreachable).\nPoweredOff: 8 (not connected - powered off).\nOutOfService: 9 (not connected - callee out of service).\nInArrears: 10 (not connected - callee has overdue payment).\nEmptyNumber: 11 (not dialed - nonexistent number, no outbound call).\nPerDayCallCountLimit: 12 (not dialed - daily limit exceeded).\nContactBlockList: 13 (not dialed - blocked).\nCallerNotRegistered: 14 (not dialed - caller number not registered).\nTerminated: 15 (not dialed - terminated).\nVerificationCancelled: 16 (not dialed - pre-call verification failed, cancelled).\nOutOfServiceNoCall: 17 (not dialed - callee out of service, no outbound call).\nInArrearsNoCall: 18 (not dialed - callee has overdue payment, no outbound call).\nCallingNumberNotExist: 19 (not dialed - caller number does not exist).\nSucceededFinish: 20 (connected - normal completion).\nSucceededChatbotHangUpAfterNoAnswer: 21 (connected - robot hung up after no recognition).\nSucceededChatbotHangUpAfterSilence: 22 (connected - silence timeout, hung up).\nSucceededClientHangUpAfterNoAnswer: 23 (connected - user hung up after no recognition).\nSucceededClientHangUp: 24 (connected - user hung up without reason).\nSucceededTransferByIntent: 25 (connected - intent matched, transferred to agent).\nSucceededTransferAfterNoAnswer: 26 (connected - no recognition, transferred to agent).\nSucceededInoInterAction: 27 (connected - no interaction from user side).\nSucceededError: 28 (connected - system exception interrupted).\nSucceededSpecialInterceptVoiceAssistant: 29 (connected - special intercept - voice assistant).\nSucceededSpecialInterceptExtensionNumberTransfer: 30 (connected - special intercept - extension number transfer).\nSucceededSpecialInterceptCustomSpecialIntercept: 31 (connected - special intercept - custom intercept).\nHighRiskSipCode: 32 (not dialed - high risk, no outbound call)",
+                            "description_en": "The task status. Note: The Succeeded status is subdivided into specific reasons. The Succeeded: 1 (Connected) status is no longer returned. Instead, specific subdivided reason types are returned. Valid values:\nExecuting: 0 (Calling).\nSucceeded: 1 (Connected).\nNoAnswer: 2 (Not connected - No answer).\nNotExist: 3 (Not connected - Nonexistent number).\nBusy: 4 (Not connected - Busy).\nCancelled: 5 (Not called - Task stopped).\nFailed: 6 (Failed).\nNotConnected: 7 (Not connected - Unreachable).\nPoweredOff: 8 (Not connected - Powered off).\nOutOfService: 9 (Not connected - Callee service suspended).\nInArrears: 10 (Not connected - Callee overdue payment).\nEmptyNumber: 11 (Not called - Nonexistent number, no outbound call).\nPerDayCallCountLimit: 12 (Not called - Daily limit exceeded).\nContactBlockList: 13 (Not called - Blacklisted).\nCallerNotRegistered: 14 (Not called - Caller number not registered).\nTerminated: 15 (Not called - Terminated).\nVerificationCancelled: 16 (Not called - Cancelled due to failed pre-call verification).\nOutOfServiceNoCall: 17 (Not called - Callee service suspended, no outbound call).\nInArrearsNoCall: 18 (Not called - Callee overdue payment, no outbound call).\nCallingNumberNotExist: 19 (Not called - Caller number does not exist).\nSucceededFinish: 20 (Connected - Normally finished).\nSucceededChatbotHangUpAfterNoAnswer: 21 (Connected - Robot hung up after rejection).\nSucceededChatbotHangUpAfterSilence: 22 (Connected - Hung up due to silence timeout).\nSucceededClientHangUpAfterNoAnswer: 23 (Connected - User hung up after rejection).\nSucceededClientHangUp: 24 (Connected - User hung up without reason).\nSucceededTransferByIntent: 25 (Connected - Transferred to agent due to intent match).\nSucceededTransferAfterNoAnswer: 26 (Connected - Transferred to agent after rejection).\nSucceededInoInterAction: 27 (Connected - No interaction from the user side).\nSucceededError: 28 (Connected - Interrupted due to system exception).\nSucceededSpecialInterceptVoiceAssistant: 29 (Connected - Special interception - Voice assistant).\nSucceededSpecialInterceptExtensionNumberTransfer: 30 (Connected - Special interception - Extension number transfer).\nSucceededSpecialInterceptCustomSpecialIntercept: 31 (Connected - Special interception - Custom interception).\nHighRiskSipCode: 32 (Not called - High risk, no outbound call)",
                             "description_zh": "任务状态，取值范围 （注：Succeeded状态已细分原因，不会展示Succeeded：1（已接通）状态，之后返回均为具体细分原因类型。）\n\nExecuting：0（正在拨打）。\nSucceeded：1（已接通）。\nNoAnswer：2（未接通-无人接听）。\n\nNotExist：3（未接通-空号）。\n\nBusy：4（未接通-占线）。\n\nCancelled：5（未呼出-任务停止）。\n\nFailed：6（失败）。\n\nNotConnected：7（未接通-无法接通）。\n\nPoweredOff：8（未接通-关机）。\n\nOutOfService：9（未接通-被叫停机）。\n\nInArrears：10（未接通-被叫欠费）。\n\nEmptyNumber：11（未呼出-空号不外呼）。\n\nPerDayCallCountLimit：12（未呼出-超出每日上限）。\n\nContactBlockList：13（未呼出-黑名单）。\n\nCallerNotRegistered：14（未呼出-主叫号码未注册）。\n\nTerminated：15（未呼出-被终止）。\n\nVerificationCancelled：16（未呼出-呼叫前验证不通过取消）。\n\nOutOfServiceNoCall：17（未呼出-被叫停机不外呼）。\n\nInArrearsNoCall：18（未呼出-被叫欠费不外呼）。\n\nCallingNumberNotExist：19（未呼出-主叫号码不存在）。\nSucceededFinish：20（已接通-正常完结）。\n\nSucceededChatbotHangUpAfterNoAnswer：21（已接通-拒识后机器人挂机）。\n\nSucceededChatbotHangUpAfterSilence：22（已接通-静默超时挂机）。\n\nSucceededClientHangUpAfterNoAnswer：23（已接通-拒识后用户挂机）。\n\nSucceededClientHangUp：24（已接通-用户无理由挂机）。\n\nSucceededTransferByIntent：25（已接通-命中意图转人工）。\n\nSucceededTransferAfterNoAnswer：26（已接通-拒识转人工）。\n\nSucceededInoInterAction：27（已接通-用户侧无交互）。\n\nSucceededError：28（已接通-系统异常中断）。\n\nSucceededSpecialInterceptVoiceAssistant：29（已接通-特殊情况拦截-语音助手）。\n\nSucceededSpecialInterceptExtensionNumberTransfer：30（已接通-特殊情况拦截-分机号转接）。\nSucceededSpecialInterceptCustomSpecialIntercept：31（已接通-特殊情况拦截-自定义拦截）。\nHighRiskSipCode：32（未呼出-高风险不外呼）",
                             "example": "Succeeded",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           },
                           "TaskId": {
-                            "backendName": "id",
                             "description_en": "The call ID",
                             "description_zh": "通话ID",
                             "example": "ff44709e-39a6-43ba-959b-20fcabe3e496",
-                            "type": "string",
-                            "visibility": "Public"
+                            "type": "string"
                           }
                         },
                         "type": "object"
                       },
-                      "nullToEmpty": true,
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "array"
                     }
                   },
                   "type": "object"
                 },
-                "nullToEmpty": true,
-                "type": "array",
-                "visibility": "Public"
+                "type": "array"
               },
               "PageNumber": {
-                "backendName": "pageNumber",
                 "description_en": "The page number",
                 "description_zh": "分页序号",
                 "example": "1",
                 "format": "int32",
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "PageSize": {
-                "backendName": "pageSize",
                 "description_en": "The page size",
                 "description_zh": "分页大小",
                 "example": "10",
                 "format": "int32",
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "TotalCount": {
-                "backendName": "totalCount",
-                "description_en": "The total number of records",
+                "description_en": "The total number of entries",
                 "description_zh": "数据总数",
                 "example": "1",
                 "format": "int32",
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The response message",
             "description_zh": "响应信息",
             "example": "Success",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "254EB995-DEDF-48A4-9101-9CA5B72FFBCC",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful",
+            "description_en": "Indicates whether the request is successful",
             "description_zh": "是否成功",
             "example": "true",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

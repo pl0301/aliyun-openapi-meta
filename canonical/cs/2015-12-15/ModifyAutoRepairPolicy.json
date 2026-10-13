@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun cs PUT /clusters/c68deb844dc6d480eb775be611fdf0000/auto_repair_policies/r-xxxxxx --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"name\":\"test\",\"rules\":[{\"repair_procedure\":[{\"name\":\"QuarantineGPU\",\"intervention\":{\"enable\":true,\"inquiring_label\":{\"value\":\"inquiring\",\"key\":\"k8s.aliyun.com/incident\"},\"type\":\"label\",\"approved_label\":{\"value\":\"approved\",\"key\":\"k8s.aliyun.com/incident\"}},\"config\":{\"key\":\"example-string\"}}],\"incidents\":[{\"name\":\"Node.FaultNeedReboot.HOST\",\"type\":\"system\"}]}]}'",
   "cmd_full_name": "cs modify-auto-repair-policy",
   "cmd_name": "modify-auto-repair-policy",
@@ -113,58 +114,19 @@
             "element": {
               "fields": [
                 {
-                  "help_en": "The parameter settings of the flow",
-                  "help_zh": "流程的参数配置",
-                  "name": "config",
+                  "example": "QuarantineGPU",
+                  "help_en": "The name of the procedure",
+                  "help_zh": "流程的名称",
+                  "name": "name",
                   "options": [
-                    "--config"
+                    "--name"
                   ],
-                  "raw_name": "config",
+                  "raw_name": "name",
                   "required": false,
-                  "type": "map",
-                  "value": {
-                    "type": "any"
-                  }
+                  "type": "string"
                 },
                 {
                   "fields": [
-                    {
-                      "fields": [
-                        {
-                          "example": "k8s.aliyun.com/incident",
-                          "help_en": "The label key value",
-                          "help_zh": "标签`key`值",
-                          "name": "key",
-                          "options": [
-                            "--key"
-                          ],
-                          "raw_name": "key",
-                          "required": false,
-                          "type": "string"
-                        },
-                        {
-                          "example": "approved",
-                          "help_en": "The label value",
-                          "help_zh": "标签`value`值",
-                          "name": "value",
-                          "options": [
-                            "--value"
-                          ],
-                          "raw_name": "value",
-                          "required": false,
-                          "type": "string"
-                        }
-                      ],
-                      "help_en": "The label configuration for authorization confirmation. When you add the following labels to the node, you authorize ACK to perform the operations in this phase. After completing the phase operations, ACK automatically removes the authorization inquiry and authorization confirmation labels for this phase. If you do not promptly add the following labels for authorization, ACK does not perform the actions in this phase or subsequent phases, and the node may remain in a damaged state",
-                      "help_zh": "确认授权的 label 配置。当您为节点添加以下标签（Label）时，即表示授权 ACK 执行该阶段的操作。ACK 将在完成该阶段操作后，自动移除该阶段对应的授权问询与确认授权的标签（Label）。如您未及时添加以下标签（Label）授权，ACK 将不会执行该阶段动作和后续动作，节点可能停留在受损状态",
-                      "name": "approved_label",
-                      "options": [
-                        "--approved-label"
-                      ],
-                      "raw_name": "approved_label",
-                      "required": false,
-                      "type": "object"
-                    },
                     {
                       "example": "true",
                       "help_en": "Specifies whether to enable manual approval",
@@ -176,6 +138,18 @@
                       "raw_name": "enable",
                       "required": false,
                       "type": "bool"
+                    },
+                    {
+                      "example": "label",
+                      "help_en": "The type of approval",
+                      "help_zh": "审批的类型",
+                      "name": "type",
+                      "options": [
+                        "--type"
+                      ],
+                      "raw_name": "type",
+                      "required": false,
+                      "type": "string"
                     },
                     {
                       "fields": [
@@ -215,16 +189,41 @@
                       "type": "object"
                     },
                     {
-                      "example": "label",
-                      "help_en": "The type of approval",
-                      "help_zh": "审批的类型",
-                      "name": "type",
-                      "options": [
-                        "--type"
+                      "fields": [
+                        {
+                          "example": "k8s.aliyun.com/incident",
+                          "help_en": "The label key value",
+                          "help_zh": "标签`key`值",
+                          "name": "key",
+                          "options": [
+                            "--key"
+                          ],
+                          "raw_name": "key",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "approved",
+                          "help_en": "The label value",
+                          "help_zh": "标签`value`值",
+                          "name": "value",
+                          "options": [
+                            "--value"
+                          ],
+                          "raw_name": "value",
+                          "required": false,
+                          "type": "string"
+                        }
                       ],
-                      "raw_name": "type",
+                      "help_en": "The label configuration for authorization confirmation. When you add the following labels to the node, you authorize ACK to perform the operations in this phase. After completing the phase operations, ACK automatically removes the authorization inquiry and authorization confirmation labels for this phase. If you do not promptly add the following labels for authorization, ACK does not perform the actions in this phase or subsequent phases, and the node may remain in a damaged state",
+                      "help_zh": "确认授权的 label 配置。当您为节点添加以下标签（Label）时，即表示授权 ACK 执行该阶段的操作。ACK 将在完成该阶段操作后，自动移除该阶段对应的授权问询与确认授权的标签（Label）。如您未及时添加以下标签（Label）授权，ACK 将不会执行该阶段动作和后续动作，节点可能停留在受损状态",
+                      "name": "approved_label",
+                      "options": [
+                        "--approved-label"
+                      ],
+                      "raw_name": "approved_label",
                       "required": false,
-                      "type": "string"
+                      "type": "object"
                     }
                   ],
                   "help_en": "The configuration for manual intervention in the procedure",
@@ -238,16 +237,18 @@
                   "type": "object"
                 },
                 {
-                  "example": "QuarantineGPU",
-                  "help_en": "The name of the procedure",
-                  "help_zh": "流程的名称",
-                  "name": "name",
+                  "help_en": "The parameter settings of the flow",
+                  "help_zh": "流程的参数配置",
+                  "name": "config",
                   "options": [
-                    "--name"
+                    "--config"
                   ],
-                  "raw_name": "name",
+                  "raw_name": "config",
                   "required": false,
-                  "type": "string"
+                  "type": "map",
+                  "value": {
+                    "type": "any"
+                  }
                 }
               ],
               "type": "object"
@@ -291,12 +292,12 @@
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "db82195b-75a8-40e5-9be4-16f182******",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

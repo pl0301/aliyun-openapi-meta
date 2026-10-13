@@ -1,11 +1,11 @@
 {
-  "camel_example": "aliyun sls POST /gcsingestions --project ali-test-project --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"configuration\":\"example-string\",\"displayName\":\"test\",\"name\":\"test\",\"description\":\"test\"}",
+  "camel_example": "aliyun sls POST /gcsingestions --project ali-test-project --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "sls create-gcs-ingestion",
   "cmd_name": "create-gcs-ingestion",
   "deprecated": false,
-  "description_en": "Creates a GCS file import task",
+  "description_en": "Creates a GCP Cloud Storage file import task",
   "description_zh": "创建GCP Cloud Storage文件导入任务",
-  "kebab_example": "aliyun sls create-gcs-ingestion --project ali-test-project --description test --display-name test --configuration example-string --name test --region cn-hangzhou",
+  "kebab_example": "aliyun sls create-gcs-ingestion --project ali-test-project --region cn-hangzhou",
   "method": "POST",
   "multi_version": false,
   "name": "CreateGCSIngestion",
@@ -42,6 +42,34 @@
       "type": "string"
     },
     {
+      "example": "test",
+      "help_en": "The task description",
+      "help_zh": "任务描述",
+      "location": "body",
+      "name": "description",
+      "options": [
+        "--description"
+      ],
+      "param_style": "json",
+      "raw_name": "description",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "test",
+      "help_en": "The display name",
+      "help_zh": "显示名称",
+      "location": "body",
+      "name": "display_name",
+      "options": [
+        "--display-name"
+      ],
+      "param_style": "json",
+      "raw_name": "displayName",
+      "required": true,
+      "type": "string"
+    },
+    {
       "fields": [
         {
           "example": "myLogstore",
@@ -58,40 +86,16 @@
         {
           "fields": [
             {
-              "help_en": "The access key ID for authenticating with the GCS service. This parameter is required",
-              "help_zh": "The accessKeyId",
-              "name": "access_key_id",
+              "example": "oss-cn-hangzhou.aliyuncs.com",
+              "help_en": "The service endpoint for GCS. You can use a custom endpoint for private or accelerated connections",
+              "help_zh": "gcs endpoint",
+              "name": "endpoint",
               "options": [
-                "--access-key-id"
+                "--endpoint"
               ],
-              "raw_name": "accessKeyId",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "help_en": "The secret access key corresponding to the `accessKeyId`. This value is sensitive and must be managed securely",
-              "help_zh": "The accessKeySecret",
-              "name": "access_key_secret",
-              "options": [
-                "--access-key-secret"
-              ],
-              "raw_name": "accessKeySecret",
-              "required": true,
-              "type": "string"
-            },
-            {
-              "help_en": "A nested object for specifying advanced configuration options as key-value pairs",
-              "help_zh": "The advancedParameters",
-              "name": "advanced_parameters",
-              "options": [
-                "--advanced-parameters"
-              ],
-              "raw_name": "advancedParameters",
+              "raw_name": "endpoint",
               "required": false,
-              "type": "map",
-              "value": {
-                "type": "any"
-              }
+              "type": "string"
             },
             {
               "example": "gcsbucket",
@@ -130,44 +134,6 @@
               "type": "string"
             },
             {
-              "example": "1714360481",
-              "help_en": "The end of the time range for data ingestion, specified as a Unix timestamp (in seconds). Only objects modified before this time are ingested",
-              "help_zh": "某个时间点前修改过的文件",
-              "name": "end_time",
-              "options": [
-                "--end-time"
-              ],
-              "raw_name": "endTime",
-              "required": false,
-              "type": "int"
-            },
-            {
-              "example": "oss-cn-hangzhou.aliyuncs.com",
-              "help_en": "The service endpoint for GCS. You can use a custom endpoint for private or accelerated connections",
-              "help_zh": "gcs endpoint",
-              "name": "endpoint",
-              "options": [
-                "--endpoint"
-              ],
-              "raw_name": "endpoint",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "help_en": "A nested object that defines the format of the source data, such as CSV, JSON, or Parquet",
-              "help_zh": "格式",
-              "name": "format",
-              "options": [
-                "--format"
-              ],
-              "raw_name": "format",
-              "required": true,
-              "type": "map",
-              "value": {
-                "type": "any"
-              }
-            },
-            {
               "example": "never",
               "help_en": "The interval for checking for new data. Specify the value in a duration format, such as `15m` for 15 minutes. Set to `never` to perform a one-time ingestion",
               "help_zh": "检查新文件周期",
@@ -204,18 +170,6 @@
               "type": "string"
             },
             {
-              "example": "ingest-processor-1756802123-953901",
-              "help_en": "The unique ID of the processor or pipeline that handles the ingested data",
-              "help_zh": "写入处理器id",
-              "name": "processor_id",
-              "options": [
-                "--processor-id"
-              ],
-              "raw_name": "processorId",
-              "required": false,
-              "type": "string"
-            },
-            {
               "help_en": "Specifies whether to automatically restore objects from archival storage classes before ingestion. Set to `true` to enable this feature. The default is `false`",
               "help_zh": "导入归档文件",
               "name": "restore_object_enabled",
@@ -239,15 +193,16 @@
               "type": "int"
             },
             {
-              "help_en": "The ID of a predefined tag pack to apply to the ingested data. Tag packs contain rules for data enrichment and categorization",
-              "help_zh": "启动上下文检索",
-              "name": "tag_pack_id",
+              "example": "1714360481",
+              "help_en": "The end of the time range for data ingestion, specified as a Unix timestamp (in seconds). Only objects modified before this time are ingested",
+              "help_zh": "某个时间点前修改过的文件",
+              "name": "end_time",
               "options": [
-                "--tag-pack-id"
+                "--end-time"
               ],
-              "raw_name": "tagPackId",
+              "raw_name": "endTime",
               "required": false,
-              "type": "bool"
+              "type": "int"
             },
             {
               "example": "__time__",
@@ -296,6 +251,79 @@
               "raw_name": "timeZone",
               "required": false,
               "type": "string"
+            },
+            {
+              "help_en": "The ID of a predefined tag pack to apply to the ingested data. Tag packs contain rules for data enrichment and categorization",
+              "help_zh": "启动上下文检索",
+              "name": "tag_pack_id",
+              "options": [
+                "--tag-pack-id"
+              ],
+              "raw_name": "tagPackId",
+              "required": false,
+              "type": "bool"
+            },
+            {
+              "example": "ingest-processor-1756802123-953901",
+              "help_en": "The unique ID of the processor or pipeline that handles the ingested data",
+              "help_zh": "写入处理器id",
+              "name": "processor_id",
+              "options": [
+                "--processor-id"
+              ],
+              "raw_name": "processorId",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "help_en": "The access key ID for authenticating with the GCS service. This parameter is required",
+              "help_zh": "The accessKeyId",
+              "name": "access_key_id",
+              "options": [
+                "--access-key-id"
+              ],
+              "raw_name": "accessKeyId",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "help_en": "The secret access key corresponding to the `accessKeyId`. This value is sensitive and must be managed securely",
+              "help_zh": "The accessKeySecret",
+              "name": "access_key_secret",
+              "options": [
+                "--access-key-secret"
+              ],
+              "raw_name": "accessKeySecret",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "help_en": "A nested object that defines the format of the source data, such as CSV, JSON, or Parquet",
+              "help_zh": "格式",
+              "name": "format",
+              "options": [
+                "--format"
+              ],
+              "raw_name": "format",
+              "required": true,
+              "type": "map",
+              "value": {
+                "type": "any"
+              }
+            },
+            {
+              "help_en": "A nested object for specifying advanced configuration options as key-value pairs",
+              "help_zh": "The advancedParameters",
+              "name": "advanced_parameters",
+              "options": [
+                "--advanced-parameters"
+              ],
+              "raw_name": "advancedParameters",
+              "required": false,
+              "type": "map",
+              "value": {
+                "type": "any"
+              }
             }
           ],
           "help_en": "Specifies the configuration for ingesting data from a Google Cloud Storage (GCS) data source",
@@ -309,7 +337,7 @@
           "type": "object"
         }
       ],
-      "help_en": "The ingestion configuration",
+      "help_en": "The configuration",
       "help_zh": "配置",
       "location": "body",
       "name": "configuration",
@@ -323,35 +351,7 @@
     },
     {
       "example": "test",
-      "help_en": "The task description",
-      "help_zh": "任务描述",
-      "location": "body",
-      "name": "description",
-      "options": [
-        "--description"
-      ],
-      "param_style": "json",
-      "raw_name": "description",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "test",
-      "help_en": "The display name",
-      "help_zh": "显示名称",
-      "location": "body",
-      "name": "display_name",
-      "options": [
-        "--display-name"
-      ],
-      "param_style": "json",
-      "raw_name": "displayName",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "test",
-      "help_en": "The job name. Must be unique within the same project. Naming rules:\n\nCan contain only lowercase letters, digits, hyphens (-), and underscores (_).\n\nMust start and end with a lowercase letter or digit.\n\nMust be 2 to 64 characters in length",
+      "help_en": "The job name. The following naming rules apply:\n\nJob names must be unique within the same project.\n\nCan contain only lowercase letters, digits, hyphens (-), and underscores (_).\nMust start and end with a lowercase letter or digit.\nMust be 2 to 64 characters in length",
       "help_zh": "作业名称。其命名规则如下：\n\n同一个 Project 下，作业的名称不可重复。\n\n只能包括小写字母、数字、短划线（-）和下划线（_）。\n必须以小写字母或者数字开头和结尾。\n长度为 2-64 字符",
       "location": "body",
       "name": "name",

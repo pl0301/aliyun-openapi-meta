@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun rds DescribeLogBackupFiles --region cn-hangzhou --EndTime '2018-10-31T08:40Z' --DBInstanceId 'rm-uf6wjk50000' --StartTime '2018-10-01T08:40Z'",
   "cmd_full_name": "rds describe-log-backup-files",
   "cmd_name": "describe-log-backup-files",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "rm-uf6wjk5****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to obtain the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -37,7 +38,7 @@
     {
       "doc_required": true,
       "example": "2018-10-01T08:40Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
+      "help_en": "The start time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
       "location": "query",
       "name": "start_time",
@@ -51,7 +52,7 @@
     {
       "doc_required": true,
       "example": "2018-10-31T08:40Z",
-      "help_en": "The end of the time range to query. The end time must be later than the start time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
+      "help_en": "The end time of the query. The end time must be later than the start time. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
       "help_zh": "查询结束时间，必须晚于查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
       "location": "query",
       "name": "end_time",
@@ -64,7 +65,7 @@
     },
     {
       "example": "30",
-      "help_en": "The number of entries to return on each page. Valid values: 30 to 1000. Default value: 30",
+      "help_en": "The number of entries per page. Valid values: 30 to 1000. Default value: 30",
       "help_zh": "每页记录数，取值：30~1000。默认值：30",
       "location": "query",
       "maximum": "1000",
@@ -79,7 +80,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Valid values: any non-zero positive integer.\n\nDefault value: 1",
+      "help_en": "The page number. Valid values: any integer greater than 0 that does not exceed the maximum value of the Integer data type.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
       "maximum": "2147483647",
@@ -103,98 +104,95 @@
         "description_zh": "返回参数详情",
         "properties": {
           "Items": {
-            "backendName": "data.items",
-            "itemName": "BinLogFile",
-            "items": {
-              "properties": {
-                "DownloadLink": {
-                  "backendName": "downloadLink",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "BinLogFile": {
+                "description_en": "The list of log files",
+                "description_zh": "日志文件列表",
+                "items": {
+                  "description_en": "The details of a log file",
+                  "description_zh": "日志文件详情",
+                  "properties": {
+                    "DownloadLink": {
+                      "description_en": "The HTTP download URL. If the file is not available for download, an empty string is returned",
+                      "description_zh": "HTTP协议的下载链接。若当前不可下载，则为空串",
+                      "example": "http://rdsbak-hz-v3.oss-cn-hangzhou.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "FileSize": {
+                      "description_en": "The size of the log file. Unit: bytes",
+                      "description_zh": "日志文件大小。单位：Byte",
+                      "example": "788480",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "IntranetDownloadLink": {
+                      "description_en": "The internal download URL. If the file is not available for download, an empty string is returned. The URL is valid for 1 hour",
+                      "description_zh": "内网下载地址，若当前不可下载，则为空串。有效期1小时",
+                      "example": "http://rdsbak-hz-v3.oss-cn-hangzhou.aliyuncs.com/****",
+                      "type": "string"
+                    },
+                    "LinkExpiredTime": {
+                      "description_en": "The expiration time of the URL. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
+                      "description_zh": "链接过期时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2019-03-01T15:04:13Z",
+                      "type": "string"
+                    },
+                    "LogBeginTime": {
+                      "description_en": "The start time of the log file. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
+                      "description_zh": "日志文件记录的开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
+                      "example": "2018-10-31T08:40Z",
+                      "type": "string"
+                    },
+                    "LogEndTime": {
+                      "description_en": "The end time of the log file. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
+                      "description_zh": "日志文件记录的结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
+                      "example": "2018-10-31T08:40Z",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "FileSize": {
-                  "backendName": "fileSize",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "IntranetDownloadLink": {
-                  "backendName": "intranetDownloadLink",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LinkExpiredTime": {
-                  "backendName": "linkExpiredTime",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LogBeginTime": {
-                  "backendName": "logBeginTime",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LogEndTime": {
-                  "backendName": "logEndTime",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumbers",
-            "description_en": "The page number of the page returned",
+            "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "mappingResourcePropertyName": "$.PageNumber",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageRecordCount": {
-            "backendName": "data.itemsNumbers",
             "description_en": "The number of log files on the current page",
             "description_zh": "本页日志文件个数",
             "example": "100",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "F8EC669C-FC85-43D7-AF06-C3641626B37E",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalFileSize": {
-            "backendName": "data.totalFileSize",
-            "description_en": "The total size of log files. Unit: bytes",
+            "description_en": "The total size of all log files. Unit: bytes",
             "description_zh": "所有日志文件大小之和，单位：Byte",
             "example": "2300",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecords",
             "description_en": "The total number of log files",
             "description_zh": "日志文件总数",
             "example": "17",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

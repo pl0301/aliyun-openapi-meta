@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 5000,
   "camel_example": "aliyun resourcemanager ListDelegatedAdministrators --region cn-hangzhou --PageSize 10 --ServicePrincipal 'cloudfw.aliyuncs.com' --PageNumber 1",
   "cmd_full_name": "resourcemanager list-delegated-administrators",
   "cmd_name": "list-delegated-administrators",
   "deprecated": false,
-  "description_en": "Queries delegated administrator accounts",
+  "description_en": "Queries the list of delegated administrator accounts for a trusted service",
   "description_zh": "调用ListDelegatedAdministrators查询可信服务的委派管理员账号列表",
   "kebab_example": "aliyun resourcemanager list-delegated-administrators --service-principal cloudfw.aliyuncs.com --page-number 1 --page-size 10 --api-version 2020-03-31 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "cloudfw.aliyuncs.com",
-      "help_en": "The identifier of the trusted service.\n\nFor more information, see the `Trusted service identifier` column in https://help.aliyun.com/document_detail/208133.html",
+      "help_en": "The identifier of the trusted service.\n\nFor more information, see the `Trusted Service Identifier` column in https://help.aliyun.com/document_detail/208133.html",
       "help_zh": "可信服务的标识。\n\n具体信息，请参见https://help.aliyun.com/document_detail/208133.html中的0列",
       "location": "query",
       "name": "service_principal",
@@ -35,7 +36,7 @@
     },
     {
       "example": "1",
-      "help_en": "The number of the page to return.\n\nPages start from page 1. Default value: 1",
+      "help_en": "The page number.\n\nMinimum value: 1. Default value: 1",
       "help_zh": "页码。\n\n起始值：1。默认值：1",
       "location": "query",
       "name": "page_number",
@@ -48,7 +49,7 @@
     },
     {
       "example": "10",
-      "help_en": "The number of entries to return on each page.\n\nValid values: 1 to 100. Default value: 10",
+      "help_en": "The number of entries per page.\n\nValid values: 1 to 100. Default value: 10",
       "help_zh": "分页时每页显示的数据行数。\n\n取值范围：1~100。默认值：10",
       "location": "query",
       "name": "page_size",
@@ -66,66 +67,81 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "The response parameters",
         "description_zh": "返回结果",
         "properties": {
           "Accounts": {
-            "backendName": "data.rdDaInfoList",
-            "itemName": "Account",
-            "items": {
-              "properties": {
-                "AccountId": {
-                  "backendName": "accountId",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Account": {
+                "description_en": "The delegated administrator account information",
+                "description_zh": "委派管理员账号信息",
+                "items": {
+                  "description_en": "The account information",
+                  "description_zh": "账号信息",
+                  "properties": {
+                    "AccountId": {
+                      "description_en": "The UID of the member account",
+                      "description_zh": "成员UID",
+                      "example": "138660628348****",
+                      "type": "string"
+                    },
+                    "DelegationEnabledTime": {
+                      "description_en": "The timestamp when the account was set as a delegated administrator",
+                      "description_zh": "设置为委派管理员账号的时间戳",
+                      "example": "1616652684164",
+                      "type": "string"
+                    },
+                    "DisplayName": {
+                      "description_en": "The name of the member account",
+                      "description_zh": "成员名称",
+                      "example": "abc",
+                      "type": "string"
+                    },
+                    "JoinMethod": {
+                      "description_en": "The method used by the member account to join the resource directory. Valid values:\n\ninvited: The member account was invited to join.\ncreated: The member account was created within the resource directory",
+                      "description_zh": "成员加入方式。取值：\n\ninvited：邀请。\ncreated：创建",
+                      "example": "created",
+                      "type": "string"
+                    },
+                    "ServicePrincipal": {
+                      "description_en": "The identifier of the trusted service",
+                      "description_zh": "可信服务的标识",
+                      "example": "cloudfw.aliyuncs.com",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "DelegationEnabledTime": {
-                  "backendName": "delegationEnabledTime",
-                  "type": "string"
-                },
-                "DisplayName": {
-                  "backendName": "displayName",
-                  "type": "string"
-                },
-                "JoinMethod": {
-                  "backendName": "joinMethod",
-                  "type": "string"
-                },
-                "ServicePrincipal": {
-                  "backendName": "servicePrincipal",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
-            "description_en": "The page number of the returned page",
+            "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int64",
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
-            "description_en": "The number of entries returned per page",
+            "description_en": "The number of entries per page",
             "description_zh": "分页时每页显示的数据行数",
             "example": "10",
             "format": "int64",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "009C3A02-7D4B-416C-9CE7-548C91508F1E",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
-            "description_en": "The total number of entries returned",
+            "description_en": "The total number of entries",
             "description_zh": "数据总条数",
             "example": "2",
             "format": "int64",

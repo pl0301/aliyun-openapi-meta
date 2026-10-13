@@ -1,8 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun appstream-center ListAppInstances --region cn-hangzhou --AppInstanceGroupId 'aig-4p5f8tj16yb8b0000' --version 2021-09-01 --method POST --force",
   "cmd_full_name": "appstream-center list-app-instances",
   "cmd_name": "list-app-instances",
   "deprecated": false,
-  "description_en": "Queries the details of session instances in a delivery group, including instance ID, instance status, creation time, update time, session status, and public IP address of the primary network interface",
+  "description_en": "Queries the details of session instances in a delivery group, including instance IDs, instance statuses, creation time, update time, session statuses, and public IP addresses of primary network interface controllers (NICs)",
   "description_zh": "查询交付组内会话实例的详细信息，包括实例ID、实例状态、创建时间、更新时间、会话状态、主网卡公网IP等",
   "kebab_example": "aliyun appstream-center list-app-instances --app-instance-group-id aig-4p5f8tj16yb8b0000 --api-version 2021-09-01 --region cn-hangzhou",
   "method": "GET|POST",
@@ -67,7 +69,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The list of application instance IDs. Maximum length: 100",
+      "help_en": "The list of application instance IDs. The maximum length is 100",
       "help_zh": "应用实例ID列表，最大长度为100",
       "location": "formData",
       "name": "app_instance_id_list",
@@ -81,7 +83,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of query results per page. Maximum value: `100`. Default value: `20`. Specify this parameter",
+      "help_en": "The number of query results per page. Maximum value: `100`. Default value: `20`. We recommend that you specify this parameter",
       "help_zh": "每页的查询结果数量，不可超过`100`。默认值为`20`。建议填写该参数",
       "location": "query",
       "maximum": "100",
@@ -96,7 +98,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number of the query results to display. Default value: `1`. Specify this parameter",
+      "help_en": "The page number of the query results to display. Default value: `1`. We recommend that you specify this parameter",
       "help_zh": "需展示的查询结果页码。默认值为`1`。建议填写该参数",
       "location": "query",
       "minimum": "1",
@@ -109,6 +111,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "true",
+        "false"
+      ],
       "example": "true",
       "help_en": "Specifies whether to query information about deleted instances. If this parameter is set to true, the AppInstanceIdList parameter is required. Otherwise, a parameter error is returned",
       "help_zh": "是否查询已删除的实例信息。\n该参数为true时AppInstanceIdList的字段必填，否则会报参数错误",
@@ -125,7 +131,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The list of user IDs. Maximum length: 100",
+      "help_en": "The list of user IDs. The maximum length is 100",
       "help_zh": "用户ID列表，最大长度为100",
       "location": "query",
       "name": "user_id_list",
@@ -148,42 +154,35 @@
         "description_zh": "返回信息集合",
         "properties": {
           "AppInstanceModels": {
-            "backendName": "data",
             "description_en": "The list of queried application instances",
             "description_zh": "查询的应用实例列表",
-            "itemName": "data",
             "items": {
               "description_en": "The queried application instance",
               "description_zh": "查询的应用实例",
               "properties": {
                 "AppInstanceGroupId": {
-                  "backendName": "appInstanceGroupId",
                   "description_en": "The delivery group ID",
                   "description_zh": "交付组ID",
                   "example": "aig-dk8p95irqfst9****",
                   "type": "string"
                 },
                 "AppInstanceId": {
-                  "backendName": "appInstanceId",
                   "description_en": "The application instance ID",
                   "description_zh": "应用实例ID",
                   "example": "ai-8dl7dzchklmka****",
                   "type": "string"
                 },
                 "BindInfo": {
-                  "backendName": "bindInfo",
                   "description_en": "The binding information between the instance and the user",
                   "description_zh": "实例与用户绑定相关信息",
                   "properties": {
                     "EndUserId": {
-                      "backendName": "endUserId",
-                      "description_en": "The end user ID bound to the instance",
+                      "description_en": "The ID of the end user bound to the instance",
                       "description_zh": "实例绑定的最终用户ID",
                       "example": "app.test",
                       "type": "string"
                     },
                     "UsageDuration": {
-                      "backendName": "usageDuration",
                       "description_en": "The usage duration of the instance. Unit: seconds",
                       "description_zh": "实例使用时长。单位：秒",
                       "example": "2000",
@@ -194,61 +193,62 @@
                   "type": "object"
                 },
                 "ChargeType": {
-                  "backendName": "chargeType",
-                  "description_en": "The billing type of the instance. Valid values:\nPrePaid: subscription (prepaid).\nPostPaid: pay-as-you-go (postpaid).\nThis parameter is returned only when the billing mode of the delivery group to which this instance belongs is resource-based billing (ChargeResourceMode=Node)",
+                  "description_en": "The billing method of the instance. Valid values:\nPrePaid: subscription.\nPostPaid: pay-as-you-go.\nThis parameter is returned only when the billing mode of the delivery group to which this instance belongs is resource-based billing (ChargeResourceMode=Node)",
                   "description_zh": "实例的付费类型，返回值：\nPrePaid：包年包月（预付费）。\nPostPaid：按量付费（后付费）。\n只有本实例所属交付组的售卖模式为按资源售卖（ChargeResourceMode=Node）时，才会返回本参数",
+                  "enumValueTitles": {
+                    "PostPaid": "按量付费（后付费）",
+                    "PrePaid": "包年包月（预付费）"
+                  },
                   "example": "PostPaid",
                   "type": "string"
                 },
                 "GmtCreate": {
-                  "backendName": "gmtCreate",
                   "description_en": "The creation time",
                   "description_zh": "创建时间",
                   "example": "2023-03-07T20:29:19.000+08:00",
                   "type": "string"
                 },
                 "GmtModified": {
-                  "backendName": "gmtModified",
                   "description_en": "The update time",
                   "description_zh": "更新时间",
                   "example": "2023-03-07T20:29:19.000+08:00",
                   "type": "string"
                 },
                 "MainEthPublicIp": {
-                  "backendName": "mainEthPublicIp",
                   "description_en": "The public IP address of the primary network interface controller (NIC). This value is returned only when the network policy (`StrategyType`) of the delivery group is set to mixed mode pattern (`Mixed`). Otherwise, this value is empty",
                   "description_zh": "主网卡公网IP。交付组网络策略（`StrategyType`）为混合模式（`Mixed`）时才返回该值，否则为空",
                   "example": "10.13.13.211",
                   "type": "string"
                 },
                 "NetworkInterfaceId": {
-                  "backendName": "networkInterfaceId",
+                  "description_en": "The NIC ID of the instance",
                   "description_zh": "实例网卡ID",
                   "example": "eni-2ze1jetnxkm***qq7i",
                   "type": "string"
                 },
                 "NetworkInterfaceIp": {
-                  "backendName": "networkInterfaceIp",
+                  "description_en": "The private IP address of the egress traffic NIC",
                   "description_zh": "出口流量网卡私网IP",
                   "example": "192.168.12.32",
                   "type": "string"
                 },
                 "NodeId": {
-                  "backendName": "nodeId",
                   "description_en": "The ID of the node on which the instance runs.\nThis parameter is returned only when the billing mode of the delivery group to which this instance belongs is resource-based billing (ChargeResourceMode=Node)",
                   "description_zh": "运行实例的节点ID。\n只有本实例所属交付组的售卖模式为按资源售卖（ChargeResourceMode=Node）时，才会返回本参数",
                   "example": "i-bp13********",
                   "type": "string"
                 },
                 "SessionStatus": {
-                  "backendName": "sessionStatus",
                   "description_en": "The session connection status. This value is returned only when the instance status is running (`RUNNING`). Otherwise, this value is empty",
                   "description_zh": "会话连接状态。实例状态为应用运行中（`RUNNING`）时才返回该值，否则为空",
+                  "enumValueTitles": {
+                    "connect": "已连接",
+                    "disconnect": "已关闭"
+                  },
                   "example": "connect",
                   "type": "string"
                 },
                 "Status": {
-                  "backendName": "status",
                   "description_en": "The application instance status",
                   "description_zh": "应用实例状态",
                   "example": "BOUND",
@@ -260,32 +260,28 @@
             "type": "array"
           },
           "PageNumber": {
-            "backendName": "toPage",
-            "description_en": "The page number of the query results to display. Specify this parameter",
+            "description_en": "The page number of the query results to display. We recommend that you specify this parameter",
             "description_zh": "需展示的查询结果页码。建议填写该参数",
             "example": "1",
             "format": "int32",
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "perPageSize",
-            "description_en": "The number of query results per page. Maximum value: `100`. Specify this parameter",
+            "description_en": "The number of query results per page. Maximum value: `100`. We recommend that you specify this parameter",
             "description_zh": "每页的查询结果数量，不可超过`100`。建议填写该参数",
             "example": "10",
             "format": "int32",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1CBAFFAB-B697-4049-A9B1-67E1FC5F****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "count",
             "description_en": "The total number of query results",
             "description_zh": "查询结果的总数",
             "example": "18",
@@ -293,7 +289,7 @@
             "type": "integer"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

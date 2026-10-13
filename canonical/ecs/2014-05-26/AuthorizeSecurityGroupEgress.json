@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ecs AuthorizeSecurityGroupEgress --region cn-hangzhou --SecurityGroupId 'sg-bp67acfmxazb4p0000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs authorize-security-group-egress",
   "cmd_name": "authorize-security-group-egress",
@@ -65,14 +66,38 @@
       "element": {
         "fields": [
           {
-            "example": "This is description.",
-            "help_en": "The description of the security group rule. The description must be 1 to 512 characters in length",
-            "help_zh": "安全组规则的描述信息。长度为1~512个字符",
-            "name": "description",
+            "example": "accept",
+            "help_en": "The access permission. Valid values: \n         \naccept: Accepts access.\ndrop: Denies access without returning a deny response. The request appears to timeout or the connection cannot be established.\n\nDefault value: accept",
+            "help_zh": "设置访问权限。取值范围： \n         \naccept：接受访问。\ndrop：拒绝访问，不返回拒绝信息，表现为发起端请求超时或者无法建立连接的类似信息。\n\n默认值：accept",
+            "name": "policy",
             "options": [
-              "--description"
+              "--policy"
             ],
-            "raw_name": "Description",
+            "raw_name": "Policy",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "1",
+            "help_en": "The priority of the security group rule. A smaller number indicates a higher priority. Valid values: 1 to 100.\n\nDefault value: 1",
+            "help_zh": "安全组规则优先级。数字越小，代表优先级越高。取值范围：1~100。\n\n默认值：1",
+            "name": "priority",
+            "options": [
+              "--priority"
+            ],
+            "raw_name": "Priority",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "ALL",
+            "help_en": "The network-layer or transport-layer protocol. Two types of values are supported:\nCase-insensitive protocol names. Valid values:\nICMP\nGRE\nTCP\nUDP\nALL: All protocols are supported.\nProtocol numbers that comply with IANA specifications, which are integers from 0 to 255. The following regions currently support this feature:\nPhilippines\nUK\nMalaysia\nHohhot\nQingdao\nUS West\nSingapore",
+            "help_zh": "网络层/传输层协议。支持两类赋值：\n不区分大小写的协议名。取值范围：\nICMP\nGRE\nTCP\nUDP\nALL：支持所有协议。\n符合IANA规范的协议号取值，即0 到 255的整数。目前开放的地域列表：\n菲律宾\n英国\n马来西亚\n呼和浩特\n青岛\n美西\n新加坡",
+            "name": "ip_protocol",
+            "options": [
+              "--ip-protocol"
+            ],
+            "raw_name": "IpProtocol",
             "required": false,
             "type": "string"
           },
@@ -89,6 +114,18 @@
             "type": "string"
           },
           {
+            "example": "2001:db8:1233:1a00::***",
+            "help_en": "The destination IPv6 CIDR block for which you want to configure access permissions. CIDR format and IPv6 format IP address ranges are supported.\n\nThis parameter is valid only for VPC-type ECS instances that support IPv6. This parameter and `DestCidrIp` cannot be specified at the same time",
+            "help_zh": "需要设置访问权限的目的端IPv6 CIDR地址块。支持CIDR格式和IPv6格式的IP地址范围。\n\n仅在支持IPv6的VPC类型ECS实例上有效，且该参数与`DestCidrIp`参数不可同时设置",
+            "name": "ipv6_dest_cidr_ip",
+            "options": [
+              "--ipv6-dest-cidr-ip"
+            ],
+            "raw_name": "Ipv6DestCidrIp",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "sg-bp67acfmxazb4p****",
             "help_en": "The ID of the destination security group for which you want to configure access permissions.\n\nSpecify at least one of the following parameters: `DestGroupId`, `DestCidrIp`, `Ipv6DestCidrIp`, or `DestPrefixListId`.\n\nIf `DestGroupId` is specified but `DestCidrIp` is not, the `NicType` parameter can only be set to intranet.\n\nIf both `DestGroupId` and `DestCidrIp` are specified, `DestCidrIp` takes precedence",
             "help_zh": "需要设置访问权限的目的端安全组ID。\n\n至少设置`DestGroupId`、`DestCidrIp`、`Ipv6DestCidrIp`或`DestPrefixListId`参数中的一项。\n\n如果指定了`DestGroupId`没有指定参数`DestCidrIp`，则参数`NicType`取值默认只能为intranet。\n\n如果同时指定了`DestGroupId`和`DestCidrIp`，则默认以`DestCidrIp`为准",
@@ -97,6 +134,66 @@
               "--dest-group-id"
             ],
             "raw_name": "DestGroupId",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "pl-x1j1k5ykzqlixdcy****",
+            "help_en": "The ID of the destination prefix list for which you want to configure access permissions. You can call https://help.aliyun.com/document_detail/205046.html to query available prefix list IDs.\n\nNotes:\n\nIf you specify one of the `DestCidrIp`, `Ipv6DestCidrIp`, or `DestGroupId` parameters, this parameter is ignored.\n\nFor more information, see [Security group limits](~~25412#SecurityGroupQuota1~~)",
+            "help_zh": "需要设置访问权限的目的端前缀列表ID。您可以调用https://help.aliyun.com/document_detail/205046.html查询可以使用的前缀列表ID。\n\n注意事项：\n\n当您指定了`DestCidrIp`、`Ipv6DestCidrIp`或`DestGroupId`参数中的一个时，将忽略该参数。\n\n更多信息，请参见[安全组使用限制](~~25412#SecurityGroupQuota1~~)",
+            "name": "dest_prefix_list_id",
+            "options": [
+              "--dest-prefix-list-id"
+            ],
+            "raw_name": "DestPrefixListId",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "80/80",
+            "help_en": "The range of destination ports that correspond to the protocol. Valid values:\n         \nTCP/UDP: Valid values are 1 to 65535. Separate the start port and end port with a forward slash (/). Example: 1/200.\nICMP: -1/-1.\nGRE: -1/-1.\nALL: -1/-1",
+            "help_zh": "安全组开放的各协议相关的目的端口范围。取值范围：\n         \nTCP/UDP：取值范围为1~65535。使用正斜线（/）隔开起始端口和终止端口。例如：1/200。\nICMP：-1/-1。\nGRE：-1/-1。\nALL：-1/-1",
+            "name": "port_range",
+            "options": [
+              "--port-range"
+            ],
+            "raw_name": "PortRange",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "10.0.0.0/8",
+            "help_en": "The source IPv4 CIDR block. CIDR blocks and IPv4 address ranges are supported.\n\nThis parameter is used to support quintuple rules. For more information, see https://help.aliyun.com/document_detail/97439.html",
+            "help_zh": "源端IPv4 CIDR地址段。支持CIDR格式和IPv4格式的IP地址范围。\n\n用于支持五元组规则，请参见https://help.aliyun.com/document_detail/97439.html",
+            "name": "source_cidr_ip",
+            "options": [
+              "--source-cidr-ip"
+            ],
+            "raw_name": "SourceCidrIp",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "2001:db8:1234:1a00::***",
+            "help_en": "The source IPv6 CIDR block. CIDR blocks and IPv6 address ranges are supported. \n\nThis parameter is used to support quintuple rules. For more information, see https://help.aliyun.com/document_detail/97439.html.\n\nThis parameter is valid only for VPC-type ECS instances that support IPv6. This parameter and `DestCidrIp` cannot be specified at the same time",
+            "help_zh": "源端IPv6 CIDR地址段。支持CIDR格式和IPv6格式的IP地址范围。 \n\n用于支持五元组规则，请参见https://help.aliyun.com/document_detail/97439.html。\n\n仅在支持IPv6的VPC类型ECS实例上有效，且该参数与`DestCidrIp`参数不可同时设置",
+            "name": "ipv6_source_cidr_ip",
+            "options": [
+              "--ipv6-source-cidr-ip"
+            ],
+            "raw_name": "Ipv6SourceCidrIp",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "80/80",
+            "help_en": "The range of source ports that correspond to the protocol. Valid values:\n         \nTCP/UDP: Valid values are 1 to 65535. Separate the start port and end port with a forward slash (/). Example: 1/200.\nICMP: -1/-1.\nGRE: -1/-1.\nALL: -1/-1.\n\nThis parameter is used to support quintuple rules. For more information, see https://help.aliyun.com/document_detail/97439.html",
+            "help_zh": "安全组开放的各协议相关的源端端口范围。取值范围：\n         \nTCP/UDP协议：1~65535。使用正斜线（/）隔开起始端口和终止端口。例如：1/200。\nICMP协议：-1/-1。\nGRE协议：-1/-1。\nALL：-1/-1。\n\n用于支持五元组规则，请参见https://help.aliyun.com/document_detail/97439.html",
+            "name": "source_port_range",
+            "options": [
+              "--source-port-range"
+            ],
+            "raw_name": "SourcePortRange",
             "required": false,
             "type": "string"
           },
@@ -125,54 +222,6 @@
             "type": "int"
           },
           {
-            "example": "pl-x1j1k5ykzqlixdcy****",
-            "help_en": "The ID of the destination prefix list for which you want to configure access permissions. You can call https://help.aliyun.com/document_detail/205046.html to query available prefix list IDs.\n\nNotes:\n\nIf you specify one of the `DestCidrIp`, `Ipv6DestCidrIp`, or `DestGroupId` parameters, this parameter is ignored.\n\nFor more information, see [Security group limits](~~25412#SecurityGroupQuota1~~)",
-            "help_zh": "需要设置访问权限的目的端前缀列表ID。您可以调用https://help.aliyun.com/document_detail/205046.html查询可以使用的前缀列表ID。\n\n注意事项：\n\n当您指定了`DestCidrIp`、`Ipv6DestCidrIp`或`DestGroupId`参数中的一个时，将忽略该参数。\n\n更多信息，请参见[安全组使用限制](~~25412#SecurityGroupQuota1~~)",
-            "name": "dest_prefix_list_id",
-            "options": [
-              "--dest-prefix-list-id"
-            ],
-            "raw_name": "DestPrefixListId",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "ALL",
-            "help_en": "The network-layer or transport-layer protocol. Two types of values are supported:\nCase-insensitive protocol names. Valid values:\nICMP\nGRE\nTCP\nUDP\nALL: All protocols are supported.\nProtocol numbers that comply with IANA specifications, which are integers from 0 to 255. The following regions currently support this feature:\nPhilippines\nUK\nMalaysia\nHohhot\nQingdao\nUS West\nSingapore",
-            "help_zh": "网络层/传输层协议。支持两类赋值：\n不区分大小写的协议名。取值范围：\nICMP\nGRE\nTCP\nUDP\nALL：支持所有协议。\n符合IANA规范的协议号取值，即0 到 255的整数。目前开放的地域列表：\n菲律宾\n英国\n马来西亚\n呼和浩特\n青岛\n美西\n新加坡",
-            "name": "ip_protocol",
-            "options": [
-              "--ip-protocol"
-            ],
-            "raw_name": "IpProtocol",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "2001:db8:1233:1a00::***",
-            "help_en": "The destination IPv6 CIDR block for which you want to configure access permissions. CIDR format and IPv6 format IP address ranges are supported.\n\nThis parameter is valid only for VPC-type ECS instances that support IPv6. This parameter and `DestCidrIp` cannot be specified at the same time",
-            "help_zh": "需要设置访问权限的目的端IPv6 CIDR地址块。支持CIDR格式和IPv6格式的IP地址范围。\n\n仅在支持IPv6的VPC类型ECS实例上有效，且该参数与`DestCidrIp`参数不可同时设置",
-            "name": "ipv6_dest_cidr_ip",
-            "options": [
-              "--ipv6-dest-cidr-ip"
-            ],
-            "raw_name": "Ipv6DestCidrIp",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "2001:db8:1234:1a00::***",
-            "help_en": "The source IPv6 CIDR block. CIDR blocks and IPv6 address ranges are supported. \n\nThis parameter is used to support quintuple rules. For more information, see https://help.aliyun.com/document_detail/97439.html.\n\nThis parameter is valid only for VPC-type ECS instances that support IPv6. This parameter and `DestCidrIp` cannot be specified at the same time",
-            "help_zh": "源端IPv6 CIDR地址段。支持CIDR格式和IPv6格式的IP地址范围。 \n\n用于支持五元组规则，请参见https://help.aliyun.com/document_detail/97439.html。\n\n仅在支持IPv6的VPC类型ECS实例上有效，且该参数与`DestCidrIp`参数不可同时设置",
-            "name": "ipv6_source_cidr_ip",
-            "options": [
-              "--ipv6-source-cidr-ip"
-            ],
-            "raw_name": "Ipv6SourceCidrIp",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "intranet",
             "help_en": "The network interface controller (NIC) type of the security group rule for classic network type security groups. Valid values: \n         \ninternet: public NIC.\nintranet: internal network NIC.\n    - For VPC-type security group rules, the network interface controller (NIC) type does not need to be specified and the parameter can only be set to intranet.\n    - When configuring mutual access between security groups (only the DestGroupId parameter is specified), the value can only be intranet.\n\nDefault value: internet",
             "help_zh": "经典网络类型安全组规则的网卡类型。取值范围： \n         \ninternet：公网网卡。\nintranet：内网网卡。\n    - 专有网络VPC类型安全组规则无需设置网卡类型，默认只能为intranet。\n    - 设置安全组之间互相访问时，即仅指定了DestGroupId参数时，默认只能为intranet。\n\n默认值：internet",
@@ -185,26 +234,14 @@
             "type": "string"
           },
           {
-            "example": "accept",
-            "help_en": "The access permission. Valid values: \n         \naccept: Accepts access.\ndrop: Denies access without returning a deny response. The request appears to timeout or the connection cannot be established.\n\nDefault value: accept",
-            "help_zh": "设置访问权限。取值范围： \n         \naccept：接受访问。\ndrop：拒绝访问，不返回拒绝信息，表现为发起端请求超时或者无法建立连接的类似信息。\n\n默认值：accept",
-            "name": "policy",
+            "example": "This is description.",
+            "help_en": "The description of the security group rule. The description must be 1 to 512 characters in length",
+            "help_zh": "安全组规则的描述信息。长度为1~512个字符",
+            "name": "description",
             "options": [
-              "--policy"
+              "--description"
             ],
-            "raw_name": "Policy",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "80/80",
-            "help_en": "The range of destination ports that correspond to the protocol. Valid values:\n         \nTCP/UDP: Valid values are 1 to 65535. Separate the start port and end port with a forward slash (/). Example: 1/200.\nICMP: -1/-1.\nGRE: -1/-1.\nALL: -1/-1",
-            "help_zh": "安全组开放的各协议相关的目的端口范围。取值范围：\n         \nTCP/UDP：取值范围为1~65535。使用正斜线（/）隔开起始端口和终止端口。例如：1/200。\nICMP：-1/-1。\nGRE：-1/-1。\nALL：-1/-1",
-            "name": "port_range",
-            "options": [
-              "--port-range"
-            ],
-            "raw_name": "PortRange",
+            "raw_name": "Description",
             "required": false,
             "type": "string"
           },
@@ -217,42 +254,6 @@
               "--port-range-list-id"
             ],
             "raw_name": "PortRangeListId",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "1",
-            "help_en": "The priority of the security group rule. A smaller number indicates a higher priority. Valid values: 1 to 100.\n\nDefault value: 1",
-            "help_zh": "安全组规则优先级。数字越小，代表优先级越高。取值范围：1~100。\n\n默认值：1",
-            "name": "priority",
-            "options": [
-              "--priority"
-            ],
-            "raw_name": "Priority",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "10.0.0.0/8",
-            "help_en": "The source IPv4 CIDR block. CIDR blocks and IPv4 address ranges are supported.\n\nThis parameter is used to support quintuple rules. For more information, see https://help.aliyun.com/document_detail/97439.html",
-            "help_zh": "源端IPv4 CIDR地址段。支持CIDR格式和IPv4格式的IP地址范围。\n\n用于支持五元组规则，请参见https://help.aliyun.com/document_detail/97439.html",
-            "name": "source_cidr_ip",
-            "options": [
-              "--source-cidr-ip"
-            ],
-            "raw_name": "SourceCidrIp",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "80/80",
-            "help_en": "The range of source ports that correspond to the protocol. Valid values:\n         \nTCP/UDP: Valid values are 1 to 65535. Separate the start port and end port with a forward slash (/). Example: 1/200.\nICMP: -1/-1.\nGRE: -1/-1.\nALL: -1/-1.\n\nThis parameter is used to support quintuple rules. For more information, see https://help.aliyun.com/document_detail/97439.html",
-            "help_zh": "安全组开放的各协议相关的源端端口范围。取值范围：\n         \nTCP/UDP协议：1~65535。使用正斜线（/）隔开起始端口和终止端口。例如：1/200。\nICMP协议：-1/-1。\nGRE协议：-1/-1。\nALL：-1/-1。\n\n用于支持五元组规则，请参见https://help.aliyun.com/document_detail/97439.html",
-            "name": "source_port_range",
-            "options": [
-              "--source-port-range"
-            ],
-            "raw_name": "SourcePortRange",
             "required": false,
             "type": "string"
           }
@@ -473,14 +474,14 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

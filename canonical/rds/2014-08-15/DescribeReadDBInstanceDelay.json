@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun rds DescribeReadDBInstanceDelay --region cn-hangzhou --ReadInstanceId 'rr-bp0000' --DBInstanceId 'rm-bp0000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "rds describe-read-db-instance-delay",
   "cmd_name": "describe-read-db-instance-delay",
   "deprecated": false,
-  "description_en": "Queries the latency of data replication between a primary instance and its read-only instance",
+  "description_en": "Queries the latency information of an ApsaraDB RDS read-only instance",
   "description_zh": "该接口用于查询RDS只读实例的延迟信息",
   "kebab_example": "aliyun rds describe-read-db-instance-delay --biz-region-id cn-hangzhou --db-instance-id rm-bp0000 --read-instance-id rr-bp0000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "cn-hangzhou",
-      "help_en": "The region ID. You can call the DescribeRegions operation to query the most recent region list",
+      "help_en": "The region ID. You can call DescribeRegions to obtain this value",
       "help_zh": "地域ID。可调用DescribeRegions获取",
       "location": "query",
       "name": "region_id",
@@ -35,7 +36,7 @@
     },
     {
       "example": "rm-bp****",
-      "help_en": "The primary instance ID. You can call the DescribeDBInstances operation to query the primary instance ID",
+      "help_en": "The primary instance ID. You can invoke DescribeDBInstances to obtain this value",
       "help_zh": "主实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -48,7 +49,7 @@
     },
     {
       "example": "rr-bp****",
-      "help_en": "The read-only instance ID. You can call the DescribeDBInstances operation to query the read-only instance ID",
+      "help_en": "The read-only instance ID. You can invoke DescribeDBInstances to obtain this value",
       "help_zh": "只读实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "read_instance_id",
@@ -70,112 +71,157 @@
         "description_zh": "返回参数详情",
         "properties": {
           "DBInstanceId": {
-            "backendName": "data.dbInstanceName",
             "description_en": "The primary instance ID",
             "description_zh": "主实例ID",
             "example": "rm-bp****",
-            "mappingResourcePropertyName": "$.DbInstanceId",
             "type": "string"
           },
           "DelayTime": {
-            "backendName": "data.delayTime",
-            "description_en": "The latency of data replication. Unit: seconds",
+            "description_en": "The latency, in seconds",
             "description_zh": "延迟时间，单位为秒",
             "example": "0",
             "format": "int32",
             "type": "integer"
           },
           "Items": {
-            "backendName": "data.items",
-            "itemName": "Items",
-            "items": {
-              "properties": {
-                "DBInstanceId": {
-                  "backendName": "dbInstanceName",
-                  "type": "string"
-                },
-                "ReadDBInstanceNames": {
-                  "backendName": "readDBInstanceNames",
-                  "itemName": "ReadDBInstanceName",
-                  "items": {
-                    "backendName": "readDBInstanceNames",
-                    "nullToEmpty": false,
-                    "type": "string"
-                  },
-                  "nullToEmpty": false,
-                  "parseType": "null",
-                  "type": "array"
-                },
-                "ReadDelayTimes": {
-                  "backendName": "readDelayTimes",
-                  "itemName": "ReadDelayTime",
-                  "items": {
-                    "backendName": "readDelayTimes",
-                    "nullToEmpty": false,
-                    "type": "string"
-                  },
-                  "nullToEmpty": false,
-                  "parseType": "null",
-                  "type": "array"
-                },
-                "ReadonlyInstanceDelay": {
-                  "backendName": "readonlyInstanceDelay",
-                  "itemName": "ReadonlyInstanceDelay",
-                  "items": {
-                    "properties": {
-                      "FlushLag": {
-                        "backendName": "flushLag",
-                        "type": "string"
-                      },
-                      "FlushLatency": {
-                        "backendName": "flushLatency",
-                        "type": "string"
-                      },
-                      "ReadDBInstanceName": {
-                        "backendName": "readDBInstanceName",
-                        "type": "string"
-                      },
-                      "ReplayLag": {
-                        "backendName": "replayLag",
-                        "type": "string"
-                      },
-                      "ReplayLatency": {
-                        "backendName": "replayLatency",
-                        "type": "string"
-                      },
-                      "SendLatency": {
-                        "backendName": "sendLatency",
-                        "type": "string"
-                      },
-                      "WriteLag": {
-                        "backendName": "writeLag",
-                        "type": "string"
-                      },
-                      "WriteLatency": {
-                        "backendName": "writeLatency",
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Items": {
+                "description_en": "The list of latency information",
+                "description_zh": "延迟信息列表",
+                "items": {
+                  "description_en": "The latency details",
+                  "description_zh": "延迟信息详情",
+                  "properties": {
+                    "DBInstanceId": {
+                      "description_en": "The primary instance ID",
+                      "description_zh": "主实例ID",
+                      "example": "rm-bp****",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "ReadDBInstanceNames": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ReadDBInstanceName": {
+                          "description_en": "The list of read-only instance information",
+                          "description_zh": "只读实例的信息列表",
+                          "items": {
+                            "description_en": "The read-only instance information.\nThis parameter is returned only for MySQL instances",
+                            "description_zh": "只读实例的信息。\n仅MySQL返回此参数",
+                            "example": "\"ReadDBInstanceName\": [\"rr-bp****\"]",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ReadDelayTimes": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ReadDelayTime": {
+                          "description_en": "The list of latency values",
+                          "description_zh": "延迟时间列表",
+                          "items": {
+                            "description_en": "The latency value.\nThis parameter is returned only for MySQL instances",
+                            "description_zh": "延迟时间。\n仅MySQL返回此参数",
+                            "example": "\"ReadDelayTime\": [\"0\"]",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ReadonlyInstanceDelay": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ReadonlyInstanceDelay": {
+                          "description_en": "The list of write-ahead log (WAL) latency information.\nThis parameter is returned only for PostgreSQL instances",
+                          "description_zh": "预写式日志（WAL）延迟信息列表。\n仅PostgreSQL返回此参数",
+                          "items": {
+                            "description_en": "The details are as follows",
+                            "description_zh": "详情如下",
+                            "properties": {
+                              "FlushLag": {
+                                "description_en": "The write-ahead log (WAL) flush lag. Unit: seconds",
+                                "description_zh": "预写式日志（WAL）持久化延迟时间。单位：秒（s）",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "FlushLatency": {
+                                "description_en": "The write-ahead log (WAL) flush latency. Unit: MB",
+                                "description_zh": "预写式日志（WAL）持久化延迟空间。单位：MB",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "ReadDBInstanceName": {
+                                "description_en": "The read-only instance ID",
+                                "description_zh": "只读实例ID",
+                                "example": "rr-bp****",
+                                "type": "string"
+                              },
+                              "ReplayLag": {
+                                "description_en": "The write-ahead log (WAL) replay lag. Unit: seconds",
+                                "description_zh": "预写式日志（WAL）回放延迟时间。单位：秒（s）",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "ReplayLatency": {
+                                "description_en": "The write-ahead log (WAL) replay latency. Unit: MB",
+                                "description_zh": "预写式日志（WAL）回放延迟空间。单位：MB",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "SendLatency": {
+                                "description_en": "The write-ahead log (WAL) send latency. Unit: MB",
+                                "description_zh": "预写式日志（WAL）发送延迟空间。单位：MB",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "WriteLag": {
+                                "description_en": "The write-ahead log (WAL) write lag. Unit: seconds",
+                                "description_zh": "预写式日志（WAL）回写延迟时间。单位：秒（s）",
+                                "example": "0",
+                                "type": "string"
+                              },
+                              "WriteLatency": {
+                                "description_en": "The write-ahead log (WAL) write latency. Unit: MB",
+                                "description_zh": "预写式日志（WAL）回写延迟空间。单位：MB",
+                                "example": "0",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "type": "array"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "ReadDBInstanceId": {
-            "backendName": "data.readDBInstanceName",
             "description_en": "The read-only instance ID",
             "description_zh": "只读实例ID",
             "example": "rr-bp****",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "F1BDDEA8-452D-450B-AB10-CD5C5BAFC5DF",

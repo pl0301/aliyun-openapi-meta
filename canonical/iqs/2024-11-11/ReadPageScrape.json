@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 180000,
   "camel_example": "aliyun iqs POST /linked-retrieval/linked-retrieval-entry/v1/iqs/readpage/scrape --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"readability\":{\"excludeAllLinks\":false,\"readabilityMode\":\"none\",\"excludedTags\":[\"form\"],\"excludeAllImages\":false},\"formats\":[\"html\"],\"maxAge\":1296000,\"location\":\"example-string\",\"pageTimeout\":15000,\"url\":\"https://www.example.com\",\"timeout\":60000}'",
   "cmd_full_name": "iqs read-page-scrape",
   "cmd_name": "read-page-scrape",
@@ -9,39 +10,35 @@
         "description_zh": "post body (json 格式)",
         "properties": {
           "errorMessage": {
-            "backendName": "errorMessage",
             "description_en": "The error related to the target URL",
             "description_zh": "目标 url 相关的错误",
             "example": "null",
             "type": "string"
           },
           "html": {
-            "backendName": "html",
             "description_en": "The readable HTML of the target URL",
             "description_zh": "目标 url 的可读 html",
             "example": "<html>\\n<head><title>Example Domain</title></head>\\n<body><div>\\n<h1>Example Domain</h1>\\n<p>This domain is for use in documentation examples without needing permission. Avoid use in operations.</p>\\n<p><a href=\\\"https://iana.org/domains/example\\\">Learn more</a></p>\\n</div></body>\\n</html>",
             "type": "string"
           },
           "markdown": {
-            "backendName": "markdown",
             "description_en": "The Markdown content of the target URL",
             "description_zh": "目标 url 的 markdown 内容",
             "example": "# Example Domain\\nThis domain is for use in documentation examples without needing permission. Avoid use in operations.\\n[Learn more](https://iana.org/domains/example)\\n",
             "type": "string"
           },
           "rawHtml": {
-            "backendName": "rawHtml",
             "description_en": "The raw HTML of the target URL",
             "description_zh": "目标 url 的原始 html",
             "example": "<!doctype html><html lang=\\\"en\\\"><head><title>Example Domain</title><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1\\\"><style>body{background:#eee;width:60vw;margin:15vh auto;font-family:system-ui,sans-serif}h1{font-size:1.5em}div{opacity:0.8}a:link,a:visited{color:#348}</style><body><div><h1>Example Domain</h1><p>This domain is for use in documentation examples without needing permission. Avoid use in operations.<p><a href=\\\"https://iana.org/domains/example\\\">Learn more</a></div></body></html>\\n",
             "type": "string"
           },
           "screenshot": {
-            "backendName": "screenshot",
+            "description_en": "",
+            "description_zh": "",
             "type": "string"
           },
           "statusCode": {
-            "backendName": "statusCode",
             "description_en": "If the request to the target site succeeds, the HTTP status code of the target URL is returned.\n\nIf the request to the target site fails, a custom error code is returned:\n\n    2.1 4030: The target site has security restrictions, such as robots.txt or security policies.\n    \n    2.2 4080: The request timed out.\n    \n    2.3 4290: The rate limiting policy of the site was triggered.\n    \n    2.4 5010: An unknown exception occurred",
             "description_zh": "若目标站点请求成功，返回目标 url 的 HttpCode。\n\n若目标站点请求失败，返回 IQS 定制错误码：\n\n    2.1 4030：目标站点安全限制（robots.txt、安全策略等）\n    \n    2.2 4080：请求超时\n    \n    2.3 4290：触发站点限流策略\n    \n    2.4 5010：未知异常",
             "example": "200",
@@ -49,7 +46,6 @@
             "type": "integer"
           },
           "text": {
-            "backendName": "text",
             "description_en": "The text content of the target URL",
             "description_zh": "目标 url 的文本内容",
             "example": "# Example Domain\\nThis domain is for use in documentation examples without needing permission. Avoid use in operations.\\nLearn more\\n",
@@ -90,19 +86,43 @@
   },
   "parameters": [
     {
-      "element": {
-        "type": "string"
-      },
-      "help_en": "The format of the parsing result.\n\nrawHtml: the HTML of the target site.\nhtml: the page content processed based on readabilityMode.\nmarkdown: the Markdown content converted from the HTML.\ntext: the text content extracted from the HTML.\nscreenshot: a screenshot of the target site",
-      "help_zh": "解析结果格式\n\nrawHtml：目标站点的 html\nhtml: 根据 readabilityMode 处理后的页面内容\nmarkdown：根据 html 转换成的 markdown 内容\ntext：html 中的文本内容\nscreenshot: 目标站点截图",
+      "example": "https://www.example.com",
+      "help_en": "The target URL to parse. The URL must start with http:// or https://",
+      "help_zh": "解析的目标地址，必须以 http:// 或 https:// 开头",
       "location": "body",
-      "name": "formats",
+      "name": "url",
       "options": [
-        "--formats"
+        "--url"
       ],
-      "raw_name": "formats",
+      "raw_name": "url",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "60000",
+      "help_en": "The end-to-end processing timeout period. Unit: ms.\n\nValid values: [0, 180000].\n\nDefault value: 60000",
+      "help_zh": "全链路处理超时时间，单位：ms\n\n可选值：[0, 180000]\n\n默认值：60000",
+      "location": "body",
+      "name": "timeout",
+      "options": [
+        "--timeout"
+      ],
+      "raw_name": "timeout",
       "required": false,
-      "type": "array"
+      "type": "int"
+    },
+    {
+      "example": "15000",
+      "help_en": "The timeout period for waiting for the target site resources to fully load. The value of pageTimeout must be less than the value of timeout.\n\nDefault value: 15000",
+      "help_zh": "等待目标站点资源完全加载的超时时间，pageTimeout 应小于 timeout 时长\n\n默认值：15000",
+      "location": "body",
+      "name": "page_timeout",
+      "options": [
+        "--page-timeout"
+      ],
+      "raw_name": "pageTimeout",
+      "required": false,
+      "type": "int"
     },
     {
       "example": "null",
@@ -131,20 +151,19 @@
       "type": "int"
     },
     {
-      "example": "15000",
-      "help_en": "The timeout period for waiting for the target site resources to fully load. The value of pageTimeout must be less than the value of timeout.\n\nDefault value: 15000",
-      "help_zh": "等待目标站点资源完全加载的超时时间，pageTimeout 应小于 timeout 时长\n\n默认值：15000",
-      "location": "body",
-      "name": "page_timeout",
-      "options": [
-        "--page-timeout"
-      ],
-      "raw_name": "pageTimeout",
-      "required": false,
-      "type": "int"
-    },
-    {
       "fields": [
+        {
+          "example": "none",
+          "help_en": "none：不删除信息，默认为 none\n\nnormal: 基于自研算法，剔除目标页面无关信息（页头/页脚，导航等）\n\narticle: 基于自研算法，获取站点主要正文内容(适用于博客、新闻站点，不适用于目录页、导航页)",
+          "help_zh": "none：不删除信息，默认为 none\n\nnormal: 基于自研算法，剔除目标页面无关信息（页头/页脚，导航等）\n\narticle: 基于自研算法，获取站点主要正文内容(适用于博客、新闻站点，不适用于目录页、导航页)",
+          "name": "readability_mode",
+          "options": [
+            "--readability-mode"
+          ],
+          "raw_name": "readabilityMode",
+          "required": false,
+          "type": "string"
+        },
         {
           "example": "false",
           "help_en": "是否剔除所有图片\n\n默认值：false",
@@ -182,18 +201,6 @@
           "raw_name": "excludedTags",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "none",
-          "help_en": "none：不删除信息，默认为 none\n\nnormal: 基于自研算法，剔除目标页面无关信息（页头/页脚，导航等）\n\narticle: 基于自研算法，获取站点主要正文内容(适用于博客、新闻站点，不适用于目录页、导航页)",
-          "help_zh": "none：不删除信息，默认为 none\n\nnormal: 基于自研算法，剔除目标页面无关信息（页头/页脚，导航等）\n\narticle: 基于自研算法，获取站点主要正文内容(适用于博客、新闻站点，不适用于目录页、导航页)",
-          "name": "readability_mode",
-          "options": [
-            "--readability-mode"
-          ],
-          "raw_name": "readabilityMode",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The readability configuration for the parsing result",
@@ -208,30 +215,19 @@
       "type": "object"
     },
     {
-      "example": "60000",
-      "help_en": "The end-to-end processing timeout period. Unit: ms.\n\nValid values: [0, 180000].\n\nDefault value: 60000",
-      "help_zh": "全链路处理超时时间，单位：ms\n\n可选值：[0, 180000]\n\n默认值：60000",
+      "element": {
+        "type": "string"
+      },
+      "help_en": "The format of the parsing result.\n\nrawHtml: the HTML of the target site.\nhtml: the page content processed based on readabilityMode.\nmarkdown: the Markdown content converted from the HTML.\ntext: the text content extracted from the HTML.\nscreenshot: a screenshot of the target site",
+      "help_zh": "解析结果格式\n\nrawHtml：目标站点的 html\nhtml: 根据 readabilityMode 处理后的页面内容\nmarkdown：根据 html 转换成的 markdown 内容\ntext：html 中的文本内容\nscreenshot: 目标站点截图",
       "location": "body",
-      "name": "timeout",
+      "name": "formats",
       "options": [
-        "--timeout"
+        "--formats"
       ],
-      "raw_name": "timeout",
+      "raw_name": "formats",
       "required": false,
-      "type": "int"
-    },
-    {
-      "example": "https://www.example.com",
-      "help_en": "The target URL to parse. The URL must start with http:// or https://",
-      "help_zh": "解析的目标地址，必须以 http:// 或 https:// 开头",
-      "location": "body",
-      "name": "url",
-      "options": [
-        "--url"
-      ],
-      "raw_name": "url",
-      "required": true,
-      "type": "string"
+      "type": "array"
     }
   ],
   "pathPattern": "/linked-retrieval/linked-retrieval-entry/v1/iqs/readpage/scrape",
@@ -264,12 +260,12 @@
             "description_en": "The request ID. You can provide this ID for troubleshooting",
             "description_zh": "请求RequestId, 排查问题时可以提供此信息",
             "example": "7cd43c86-731a-4d4c-8385-d070cfc509a4\n",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

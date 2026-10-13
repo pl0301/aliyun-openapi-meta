@@ -1,10 +1,11 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun alidns DescribeRecursionZone --region cn-hangzhou --ZoneId 169783221000012",
   "cmd_full_name": "alidns describe-recursion-zone",
   "cmd_name": "describe-recursion-zone",
   "deprecated": false,
-  "description_en": "Queries the details of an authoritative zone for recursive resolution",
-  "description_zh": "查询递归解析内置权威域名zone详情",
+  "description_en": "Queries the details of a built-in authoritative zone in HTTPDNS",
+  "description_zh": "查询HTTPDNS内置权威域名zone详情",
   "kebab_example": "aliyun alidns describe-recursion-zone --zone-id 169783221000012 --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": false,
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "169783221000012",
-      "help_en": "The zone ID. This is the unique identifier of the zone",
+      "help_en": "The zone ID, which uniquely identifies the zone",
       "help_zh": "Zone ID，Zone的唯一识别码",
       "location": "query",
       "name": "zone_id",
@@ -41,86 +42,105 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "CreateTime": {
-            "backendName": "data.createTime",
-            "description_en": "The time when the zone was created",
-            "description_zh": "创建时间",
+            "description_en": "The creation time in UTC. The format is YYYY-MM-DDTHH:mmZ",
+            "description_zh": "创建时间，采用 UTC 时间，格式为 YYYY-MM-DDTHH:mmZ",
             "example": "2018-06-06T11:34Z",
-            "title_en": "创建时间",
+            "title_en": "",
             "title_zh": "创建时间",
             "type": "string"
           },
           "CreateTimestamp": {
-            "backendName": "data.createTimestamp",
-            "description_en": "The UNIX timestamp that indicates when the zone was created",
+            "description_en": "The creation timestamp",
             "description_zh": "创建时间（时间戳）",
             "example": "1533773400000",
             "format": "int64",
             "type": "integer"
           },
           "Creator": {
-            "backendName": "data.creatorId",
             "description_en": "The ID of the creator",
             "description_zh": "创建者 id",
             "example": "SOAR",
-            "title_en": "创建者 id",
+            "title_en": "",
             "title_zh": "创建者 id",
             "type": "string"
           },
           "CreatorSubType": {
-            "backendName": "data.creatorSubType",
             "description_en": "The subtype of the creator",
             "description_zh": "创建者子类型",
             "example": "SUB",
-            "title_en": "创建者子类型",
+            "title_en": "",
             "title_zh": "创建者子类型",
             "type": "string"
           },
           "CreatorType": {
-            "backendName": "data.creatorType",
             "description_en": "The type of the creator",
             "description_zh": "创建者类型",
             "example": "USER",
-            "title_en": "创建者类型",
+            "title_en": "",
             "title_zh": "创建者类型",
             "type": "string"
           },
           "EffectiveScopes": {
-            "backendName": "data.effectiveScopes",
-            "itemName": "EffectiveScope",
-            "items": {
-              "properties": {
-                "EffectiveType": {
-                  "backendName": "effectiveType",
-                  "type": "string"
-                },
-                "Scopes": {
-                  "backendName": "scope",
-                  "itemName": "Scope",
-                  "items": {
-                    "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "EffectiveScope": {
+                "description_en": "The effective scopes of the built-in authoritative zone",
+                "description_zh": "内置权威域名zone生效范围",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "EffectiveType": {
+                      "description_en": "The effective type of the built-in authoritative zone. Valid values:\naccount: The account ID assigned for recursive resolution",
+                      "description_zh": "内置权威域名zone生效类型\naccount：递归解析为用户分配的account id",
+                      "example": "account",
+                      "type": "string"
+                    },
+                    "Scopes": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Scope": {
+                          "description_en": "The effective scope. If the effective type is account, this parameter corresponds to a list of account IDs",
+                          "description_zh": "生效范围。\naccount生效类型则对应为account id列表",
+                          "example": "[20003]",
+                          "items": {
+                            "description_en": "The child element of the effective scope. If the effective type is account, this parameter corresponds to a single account ID",
+                            "description_zh": "生效范围子元素\n若生效类型为account则对应单个account id",
+                            "example": "20003",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    }
                   },
-                  "type": "array"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "title_en": "",
+                "title_zh": "生效范围数组",
+                "type": "array"
+              }
             },
-            "title_en": "生效范围数组",
-            "title_zh": "生效范围数组",
-            "type": "array"
+            "type": "object"
           },
           "ProxyPattern": {
-            "backendName": "data.proxyPattern",
-            "description_en": "Indicates whether recursive proxy for subdomains is enabled. Valid values:\n\nzone: Disabled. If a non-existent subdomain is requested, an NXDOMAIN response is returned to indicate that the subdomain does not exist.\nrecord: Enabled. If a non-existent subdomain is requested, the system queries the forwarding and recursion modules in sequence. The final query result is used to respond to the DNS request",
+            "description_en": "Specifies whether recursive proxy for subdomains is enabled. Valid values:\n\nzone: Disabled. When a query is made for a non-existent subdomain under this domain name, NXDOMAIN is returned directly to indicate that the subdomain does not exist.\nrecord: Enabled. When a query is made for a non-existent subdomain under this domain name, the system sequentially queries the forwarding and recursion modules, and responds to the DNS query with the final resolution result",
             "description_zh": "是否开启子域名递归代理。取值：\n\nzone: 关闭（当解析本域名下不存在的子域名时，直接返回NXDOMAIN，表示子域名不存在）\nrecord: 开启（当解析本域名下不存在的子域名时，会依次查询“转发”和“递归”模块，并以最终查询到的解析结果来应答解析请求）",
             "example": "record",
-            "title_en": "代理模式",
+            "title_en": "",
             "title_zh": "代理模式",
             "type": "string"
           },
           "RecordCount": {
-            "backendName": "data.recordCount",
             "description_en": "The number of DNS records in the zone",
             "description_zh": "域名Zone下的解析记录数量",
             "example": "8",
@@ -128,63 +148,55 @@
             "type": "integer"
           },
           "Remark": {
-            "backendName": "data.remark",
-            "description_en": "The remarks",
+            "description_en": "The remark",
             "description_zh": "备注",
             "example": "test",
-            "title_en": "备注",
+            "title_en": "",
             "title_zh": "备注",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The unique ID of the request",
+            "description_en": "The unique identifier of the request",
             "description_zh": "唯一请求识别码",
             "example": "6856BCF6-11D6-4D7E-AC53-FD579933522B",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "UpdateTime": {
-            "backendName": "data.updateTime",
-            "description_en": "The time when the zone was last updated",
-            "description_zh": "修改时间",
+            "description_en": "The update time in UTC. The format is YYYY-MM-DDTHH:mmZ",
+            "description_zh": "修改时间，采用 UTC 时间，格式为 YYYY-MM-DDTHH:mmZ",
             "example": "2018-01-03T08:57Z",
-            "title_en": "修改时间",
+            "title_en": "",
             "title_zh": "修改时间",
             "type": "string"
           },
           "UpdateTimestamp": {
-            "backendName": "data.updateTimestamp",
-            "description_en": "The UNIX timestamp that indicates when the zone was last updated",
+            "description_en": "The update timestamp",
             "description_zh": "更新时间（时间戳）",
             "example": "1527690629357",
             "format": "int64",
             "type": "integer"
           },
           "UserId": {
-            "backendName": "data.userId",
             "description_en": "The user ID",
             "description_zh": "用户ID",
             "example": "1527690629357",
-            "title_en": "user Id",
+            "title_en": "",
             "title_zh": "user Id",
             "type": "string"
           },
           "ZoneId": {
-            "backendName": "data.zoneId",
-            "description_en": "The zone ID. This is the unique identifier of the zone",
+            "description_en": "The zone ID, which uniquely identifies the zone",
             "description_zh": "Zone ID，Zone的唯一识别码",
             "example": "169438909000011",
-            "title_en": "zone ID",
+            "title_en": "",
             "title_zh": "zone ID",
             "type": "string"
           },
           "ZoneName": {
-            "backendName": "data.zoneName",
-            "description_en": "The name of the zone",
+            "description_en": "The zone name",
             "description_zh": "zone 名称",
             "example": "cheng.suow.cc",
-            "title_en": "zone 名称",
+            "title_en": "",
             "title_zh": "zone 名称",
             "type": "string"
           }

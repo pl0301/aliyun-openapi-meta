@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 6000,
   "camel_example": "aliyun mts QueryFpFileDeleteJobList --region cn-hangzhou --JobIds 'd98459323c024947a104f6a50cbf0000,c2dc694696f1441591c5012a73c10000'",
   "cmd_full_name": "mts query-fp-file-delete-job-list",
   "cmd_name": "query-fp-file-delete-job-list",
   "deprecated": false,
-  "description_en": "Queries the jobs of deleting media files from a media fingerprint library",
+  "description_en": "Queries DNA file deletion jobs",
   "description_zh": "查询删除DNA文件作业",
   "kebab_example": "aliyun mts query-fp-file-delete-job-list --job-ids d98459323c024947a104f6a50cbf0000,c2dc694696f1441591c5012a73c10000 --api-version 2014-06-18 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "d98459323c024947a104f6a50cbf****,c2dc694696f1441591c5012a73c1****",
-      "help_en": "The IDs of the jobs of deleting media files from a media fingerprint library. You can obtain the job IDs from the response parameters of the https://help.aliyun.com/document_detail/209274.html operation. Separate multiple job IDs with commas (,). If you leave this parameter empty, the system returns the latest 20 jobs that are submitted",
+      "help_en": "The IDs of the DNA deletion jobs. You can obtain the IDs from the response parameters of the https://help.aliyun.com/document_detail/209274.html operation. Separate multiple IDs with commas (,). If this parameter is left empty, a list of the 20 most recent jobs is returned",
       "help_zh": "DNA删除作业ID，可以从https://help.aliyun.com/document_detail/209274.html的返回参数中获取。以半角逗号（,）分隔，如果为空则返回最近20个作业列表",
       "location": "query",
       "name": "job_ids",
@@ -44,85 +45,109 @@
         "description_zh": "返回参数",
         "properties": {
           "FpFileDeleteJobList": {
-            "backendName": "data.fpFileDeleteJobList",
-            "itemName": "FpFileDeleteJob",
-            "items": {
-              "properties": {
-                "Code": {
-                  "backendName": "code",
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "FpFileDeleteJob": {
+                "description_en": "The list of DNA deletion jobs. For more information, see [FpFileDeleteJob data type]（https://help.aliyun.com/document_detail/93555.html）",
+                "description_zh": "删除的DNA作业列表。更多信息请参见[数据类型FpFileDeleteJob]（https://help.aliyun.com/document_detail/93555.html）",
+                "items": {
+                  "description_en": "The response parameters",
+                  "description_zh": "返回参数",
+                  "properties": {
+                    "Code": {
+                      "description_en": "The error code returned when the analysis fails. This parameter is not returned if the job succeeds",
+                      "description_zh": "分析失败时错误码。如果执行成功则不返回",
+                      "example": "ServiceUnavailable",
+                      "type": "string"
+                    },
+                    "CreationTime": {
+                      "description_en": "The time when the job was created. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "创建时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2020-06-30T00:33:18Z",
+                      "type": "string"
+                    },
+                    "FileIds": {
+                      "description_en": "The IDs of the files",
+                      "description_zh": "文件ID",
+                      "example": "41e6536e4f2250e2e9bf26cdea19****",
+                      "type": "string"
+                    },
+                    "FinishTime": {
+                      "description_en": "The time when the job was completed. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "完成时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2020-06-30T00:34:02Z",
+                      "type": "string"
+                    },
+                    "FpDBId": {
+                      "description_en": "The ID of the DNA library",
+                      "description_zh": "DNA库ID",
+                      "example": "88c6ca184c0e47098a5b665e2a12****",
+                      "type": "string"
+                    },
+                    "Id": {
+                      "description_en": "The ID of the job",
+                      "description_zh": "作业ID",
+                      "example": "25bacf2824614bcf9273dc0744db****",
+                      "type": "string"
+                    },
+                    "Message": {
+                      "description_en": "The error message returned when the analysis fails. This parameter is not returned if the job succeeds",
+                      "description_zh": "分析失败时错误信息。如果执行成功则不返回",
+                      "example": "The request has failed due to a temporary failure of the server.",
+                      "type": "string"
+                    },
+                    "PipelineId": {
+                      "description_en": "The ID of the MPS queue",
+                      "description_zh": "管道ID",
+                      "example": "fb712a6890464059b1b2ea7c8647****",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status of the job. Valid values:\n\nQueuing: The job is queued.\n\nAnalysing: The job is being analyzed.\n\nSuccess: The job succeeded.\n\nFail: The job failed",
+                      "description_zh": "作业状态。可取值：\n\nQueuing：排队中。\n\nAnalysing：分析中。\n\nSuccess：成功。\n\nFail：失败",
+                      "example": "Success",
+                      "type": "string"
+                    },
+                    "UserData": {
+                      "description_en": "The custom user data",
+                      "description_zh": "用户自定义数据",
+                      "example": "example data",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "CreationTime": {
-                  "backendName": "createTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "FileIds": {
-                  "backendName": "fileIds",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "FinishTime": {
-                  "backendName": "finishTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "FpDBId": {
-                  "backendName": "fpDBId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Id": {
-                  "backendName": "id",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Message": {
-                  "backendName": "message",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "PipelineId": {
-                  "backendName": "pipelineId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Status": {
-                  "backendName": "status",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "UserData": {
-                  "backendName": "userData",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "NonExistIds": {
-            "backendName": "data.nonExistIds",
-            "itemName": "String",
-            "items": {
-              "backendName": "data.nonExistIds",
-              "type": "string",
-              "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "String": {
+                "description_en": "The response parameters",
+                "description_zh": "返回参数",
+                "items": {
+                  "description_en": "The list of IDs of jobs that do not exist",
+                  "description_zh": "不存在的作业ID列表",
+                  "example": "c2dc694696f1441591c5012a73c1****",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "parseType": "null",
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "D127C68E-F1A1-4CE5-A874-8FF724881A12",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

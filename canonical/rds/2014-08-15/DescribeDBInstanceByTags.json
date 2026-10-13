@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun rds DescribeDBInstanceByTags --region cn-hangzhou --PageSize 10 --DBInstanceId 'rm-uf6w0000' --PageNumber 1 --RegionId 'cn-hangzhou' --ClientToken ETnLKlblzczshOTUbOCz0000 --proxyId None",
   "cmd_full_name": "rds describe-db-instance-by-tags",
   "cmd_name": "describe-db-instance-by-tags",
   "deprecated": false,
-  "description_en": "Queries information about the tags that are added to an instance",
+  "description_en": "Queries the tags that are bound to an instance",
   "description_zh": "该接口用于获取实例绑定的标签信息",
   "kebab_example": "aliyun rds describe-db-instance-by-tags --client-token ETnLKlblzczshOTUbOCz0000 --proxy-id None --biz-region-id cn-hangzhou --db-instance-id rm-uf6w0000 --page-size 10 --page-number 1 --region cn-hangzhou",
   "method": "GET|POST",
@@ -48,7 +49,7 @@
     },
     {
       "example": "cn-hangzhou",
-      "help_en": "The region ID. You can call the DescribeRegions operation to query the most recent region list",
+      "help_en": "The region ID. You can call DescribeRegions to query the most recent region list",
       "help_zh": "地域ID。可调用DescribeRegions获取",
       "location": "query",
       "name": "region_id",
@@ -61,7 +62,7 @@
     },
     {
       "example": "rm-uf6w****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -89,7 +90,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Pages start from page 1.\n\nDefault value: 1",
+      "help_en": "The page number. Valid values: any non-zero positive integer that does not exceed the maximum value of the Integer data type.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
       "maximum": "2147483647",
@@ -113,54 +114,71 @@
         "description_zh": "返回参数详情",
         "properties": {
           "Items": {
-            "backendName": "data.data",
-            "itemName": "DBInstanceTag",
-            "items": {
-              "properties": {
-                "DBInstanceId": {
-                  "backendName": "dbInstanceId",
-                  "mappingResourcePropertyName": "$.DbInstanceId",
-                  "type": "string"
-                },
-                "Tags": {
-                  "backendName": "tagInfo",
-                  "itemName": "Tag",
-                  "items": {
-                    "mappingResourcePropertyName": "$.Tags[*]",
-                    "properties": {
-                      "TagKey": {
-                        "backendName": "key",
-                        "mappingResourcePropertyName": "$.Tags[*].TagKey",
-                        "type": "string"
-                      },
-                      "TagValue": {
-                        "backendName": "value",
-                        "mappingResourcePropertyName": "$.Tags[*].TagValue",
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DBInstanceTag": {
+                "description_en": "The list of instance details",
+                "description_zh": "实例详情列表",
+                "items": {
+                  "description_en": "The instance details",
+                  "description_zh": "实例详情",
+                  "properties": {
+                    "DBInstanceId": {
+                      "description_en": "The instance ID",
+                      "description_zh": "实例ID",
+                      "example": "rm-uf6w****",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The list of tag details",
+                          "description_zh": "标签详情列表",
+                          "items": {
+                            "description_en": "The tag details",
+                            "description_zh": "标签详情",
+                            "properties": {
+                              "TagKey": {
+                                "description_en": "The tag key",
+                                "description_zh": "标签键",
+                                "example": "key1",
+                                "type": "string"
+                              },
+                              "TagValue": {
+                                "description_en": "The tag value",
+                                "description_zh": "标签值",
+                                "example": "value1",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "type": "array"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "mappingResourcePropertyName": "$.PageNumber",
             "type": "integer"
           },
           "PageRecordCount": {
-            "backendName": "data.count",
             "description_en": "The number of entries per page",
             "description_zh": "每页记录数",
             "example": "10",
@@ -168,14 +186,12 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1AD222E9-E606-4A42-BF6D-8A4442913CEF",
             "type": "string"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecordCount",
             "description_en": "The total number of entries returned",
             "description_zh": "总记录数",
             "example": "30",

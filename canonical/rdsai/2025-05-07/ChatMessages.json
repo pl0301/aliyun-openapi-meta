@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 120000,
   "camel_example": "aliyun rdsai ChatMessages --region cn-hangzhou --ConversationId 'fea7bdca-e848-44dd-b1ae-852472b80000' --EventMode inline --Query '实例rm-bp14as9914vd30000_磁盘使用率，是否需要进行扩容' --ParentMessageId '84dc9f9b-424a-404d-9c36-35e9d0000000' --Files '[{\"TransferMethod\":\"example-string\",\"Type\":\"example-string\",\"UploadFileId\":\"example-string\"}]' --Inputs '{\"EnableThinking\":\"true\",\"Timezone\":\"UTC\",\"Language\":\"zh-cn\",\"ThinkEffort\":\"default\",\"WorkspaceId\":\"00000000-0000-4000-8000-000000000001\",\"CustomAgentId\":\"d1b7d639-f34e-44c7-8231-987da14d0000\",\"RegionId\":\"cn-hangzhou\",\"ToolApprovalMode\":\"manual\",\"ModelId\":\"qwen3.7-max\",\"ResumeCallId\":\"call-example\"}' --version 2025-05-07 --method POST --force",
   "cmd_full_name": "rdsai chat-messages",
   "cmd_name": "chat-messages",
@@ -136,6 +137,11 @@
           "type": "string"
         },
         {
+          "enum": [
+            "default",
+            "high",
+            "low"
+          ],
           "example": "default",
           "help_en": "The thinking depth",
           "help_zh": "思考深度",
@@ -161,7 +167,7 @@
         },
         {
           "example": "manual",
-          "help_en": "The tool approval mode for the current conversation. Valid values: read_only (read-only, write tools are rejected), manual (write tools require manual approval), and auto (the approval sub-agent automatically determines the action. If the result is needs_human, the approval is escalated to manual review). When this parameter is passed, the approval mode of the current conversation is updated",
+          "help_en": "The tool approval mode for the current conversation. Valid values: read_only (read-only, write tools are rejected), manual (write tools require manual approval), and auto (the approval sub-agent automatically determines the action. If the result is needs_human, the request is escalated to manual approval). When this parameter is passed, the approval mode of the current conversation is updated",
           "help_zh": "本次 Conversation 的工具审批模式。可选值：read_only（只读，拒绝写工具）、manual（写工具需人工审批）、auto（由审批子智能体自动判断；needs_human 时转人工审批）。传入后更新当前 Conversation 的审批模式",
           "name": "tool_approval_mode",
           "options": [
@@ -271,39 +277,34 @@
         "description_zh": "对象",
         "properties": {
           "Answer": {
-            "backendName": "answer",
             "description_en": "The answer content",
             "description_zh": "回答内容",
             "example": "您询问的实例rm-bp14as9914vd3**** 磁盘使用率为23%，暂时不需要进行扩容。如果您需要进一步查看某个实例的详细配置、性能监控或进行其他操作，请告诉我你的具体需求！",
             "type": "string"
           },
           "ApprovalStatus": {
-            "backendName": "approval_status",
             "description_en": "The tool invocation approval status",
             "description_zh": "工具调用审批状态",
             "example": "pending",
-            "title_en": "工具调用审批状态",
+            "title_en": "",
             "title_zh": "工具调用审批状态",
             "type": "string"
           },
           "CallId": {
-            "backendName": "call_id",
             "description_en": "The tool invocation ID",
             "description_zh": "工具调用 ID",
             "example": "call-example",
-            "title_en": "工具调用 ID",
+            "title_en": "",
             "title_zh": "工具调用 ID",
             "type": "string"
           },
           "ConversationId": {
-            "backendName": "conversation_id",
             "description_en": "The conversation ID",
             "description_zh": "对话Id",
             "example": "9cbbe885-b240-4803-9d15-6781a3fd****",
             "type": "string"
           },
           "CreatedAt": {
-            "backendName": "created_at",
             "description_en": "The creation time",
             "description_zh": "创建时间",
             "example": "1763986004",
@@ -311,88 +312,78 @@
             "type": "integer"
           },
           "Description": {
-            "backendName": "description",
             "description_en": "The tool invocation description",
             "description_zh": "工具调用说明",
             "example": "Search ContextDB records",
-            "title_en": "工具调用说明",
+            "title_en": "",
             "title_zh": "工具调用说明",
             "type": "string"
           },
           "Event": {
-            "backendName": "event",
             "description_en": "The event",
             "description_zh": "事件",
             "example": "MysqlIOException",
-            "title_en": "包括：\nmessage：回复事件\nerror：失败事件\ntool_call：工具调用事件（仅在EventMode=separate存在） \ntool_approval：人工审批待处理事件；POP 仅转发事件名，审批详情通过 Conversation 工具权限查询接口获取\ntool_approval_processing：自动审批中事件，表示审批子智能体正在评估；POP 仅转发事件名，控制台携带 MessageId 查询最新审批轮次详情\ntool_approval_result：自动审批结果事件，结果为 approve、deny 或 needs_human；POP 仅转发事件名，控制台携带 MessageId 查询最新审批轮次详情\nsubtask：子任务事件（仅在EventMode=separate存在） \ndoc：文档召回事件（仅在EventMode=separate存在） ",
+            "title_en": "",
             "title_zh": "包括：\nmessage：回复事件\nerror：失败事件\ntool_call：工具调用事件（仅在EventMode=separate存在） \ntool_approval：人工审批待处理事件；POP 仅转发事件名，审批详情通过 Conversation 工具权限查询接口获取\ntool_approval_processing：自动审批中事件，表示审批子智能体正在评估；POP 仅转发事件名，控制台携带 MessageId 查询最新审批轮次详情\ntool_approval_result：自动审批结果事件，结果为 approve、deny 或 needs_human；POP 仅转发事件名，控制台携带 MessageId 查询最新审批轮次详情\nsubtask：子任务事件（仅在EventMode=separate存在） \ndoc：文档召回事件（仅在EventMode=separate存在） ",
             "type": "string"
           },
           "Id": {
-            "backendName": "id",
             "description_en": "The message ID",
             "description_zh": "消息Id",
             "example": "60b335ca-124d-4ee1-864b-de554987****",
             "type": "string"
           },
           "MessageId": {
-            "backendName": "message_id",
             "description_en": "The message ID",
             "description_zh": "消息ID",
             "example": "oas8pwy2-slxw-sf98-bx83-cb2hkktl****",
             "type": "string"
           },
           "Mode": {
-            "backendName": "mode",
             "description_en": "The query mode",
             "description_zh": "查询模式",
             "example": "以后会下线，不用关注。",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求Id",
             "example": "FE9C65D7-930F-57A5-A207-8C396329****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "RoundId": {
-            "backendName": "round_id",
             "description_en": "The tool approval round ID",
             "description_zh": "工具审批轮次 ID",
             "example": "round-example",
-            "title_en": "工具审批轮次 ID",
+            "title_en": "",
             "title_zh": "工具审批轮次 ID",
             "type": "string"
           },
           "TaskId": {
-            "backendName": "task_id",
             "description_en": "The asynchronous task ID",
             "description_zh": "异步任务ID",
             "example": "01c3d43d-9466-4bd5-8196-4cbbce08****",
             "type": "string"
           },
           "ToolArguments": {
-            "backendName": "tool_arguments",
             "description_en": "The tool invocation parameters",
             "description_zh": "工具调用参数",
-            "title_en": "工具调用参数",
+            "title_en": "",
             "title_zh": "工具调用参数",
             "type": "object"
           },
           "ToolName": {
-            "backendName": "tool_name",
             "description_en": "The tool name",
             "description_zh": "工具名称",
             "example": "contextdb.search",
-            "title_en": "工具名称",
+            "title_en": "",
             "title_zh": "工具名称",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

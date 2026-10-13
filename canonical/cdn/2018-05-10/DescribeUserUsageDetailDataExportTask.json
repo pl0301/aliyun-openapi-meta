@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun cdn DescribeUserUsageDetailDataExportTask --region cn-hangzhou --PageSize 10 --PageNumber 1",
   "cmd_full_name": "cdn describe-user-usage-detail-data-export-task",
   "cmd_name": "describe-user-usage-detail-data-export-task",
   "deprecated": false,
-  "description_en": "Queries tasks that were used to export resource usage details of one or more accelerated domain names that belong to your Alibaba Cloud account. Resource usage information is collected every five minutes",
+  "description_en": "Queries the export tasks of 5-minute usage details for one or more domain names under your account",
   "description_zh": "调用DescribeUserUsageDetailDataExportTask查询您账户下单个或多个域名5分钟明细数据的导出任务",
   "kebab_example": "aliyun cdn describe-user-usage-detail-data-export-task --page-size 10 --page-number 1 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "10",
-      "help_en": "The number of entries to return on each page. Default value: 20. Maximum value: 50.\n\nValid values: an integer from 1 to 50",
+      "help_en": "The number of entries per page. Default value: 20. Maximum value: 50.\n\nValid values: an integer from 1 to 50",
       "help_zh": "分页大小。默认值：20；最大值：50。\n\n取值：1~50之间的任意整数",
       "location": "query",
       "name": "page_size",
@@ -35,7 +36,7 @@
     },
     {
       "example": "1",
-      "help_en": "The number of the page to return. Valid values: 1 to 100000",
+      "help_en": "The page number. Valid values: 1 to 100000",
       "help_zh": "取得第几页，取值范围：1~100000",
       "location": "query",
       "name": "page_number",
@@ -53,87 +54,110 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "A91BE91F-0B34-4CBF-8E0F-A2977E15AA52",
             "type": "string"
           },
           "UsageDataPerPage": {
-            "backendName": "data.content",
-            "description_en": "The usage details returned per page",
+            "description_en": "The usage data on each page",
             "description_zh": "每页的用量数据",
-            "nullToEmpty": true,
             "properties": {
               "Data": {
-                "backendName": "data",
-                "itemName": "DataItem",
-                "items": {
-                  "properties": {
-                    "CreateTime": {
-                      "backendName": "create_time",
-                      "type": "string"
-                    },
-                    "DownloadUrl": {
-                      "backendName": "oss_url",
-                      "type": "string"
-                    },
-                    "Status": {
-                      "backendName": "task_status",
-                      "type": "string"
-                    },
-                    "TaskConfig": {
-                      "backendName": "task_config",
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "DataItem": {
+                    "description_en": "The task information",
+                    "description_zh": "任务信息",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
                       "properties": {
-                        "EndTime": {
-                          "backendName": "end_time",
+                        "CreateTime": {
+                          "description_en": "The time when the task was created. The time follows the ISO 8601 standard and is displayed in UTC",
+                          "description_zh": "任务创建时间。时间格式为 ISO 8601，使用 UTC 时间",
+                          "example": "2018-10-09T06:33:38Z",
                           "type": "string"
                         },
-                        "StartTime": {
-                          "backendName": "start_time",
+                        "DownloadUrl": {
+                          "description_en": "The download URL",
+                          "description_zh": "下载地址",
+                          "example": "https://test.oss-cn-beijing.aliyuncs.com/billing_data/xxx",
+                          "type": "string"
+                        },
+                        "Status": {
+                          "description_en": "The task status",
+                          "description_zh": "任务状态",
+                          "example": "success",
+                          "type": "string"
+                        },
+                        "TaskConfig": {
+                          "description_en": "The task configuration",
+                          "description_zh": "任务配置",
+                          "properties": {
+                            "EndTime": {
+                              "description_en": "The end time of the queried usage data. The time follows the ISO 8601 standard and is displayed in UTC",
+                              "description_zh": "查询用量数据的结束时间。时间格式为 ISO 8601，使用 UTC 时间",
+                              "example": "2018-08-31T15:59:59Z",
+                              "type": "string"
+                            },
+                            "StartTime": {
+                              "description_en": "The start time of the queried usage data. The time follows the ISO 8601 standard and is displayed in UTC",
+                              "description_zh": "查询用量数据的起始时间。时间格式为 ISO 8601，使用 UTC 时间",
+                              "example": "2018-07-31T16:00:00Z",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "TaskId": {
+                          "description_en": "The task ID",
+                          "description_zh": "任务ID",
+                          "example": "11",
+                          "type": "string"
+                        },
+                        "TaskName": {
+                          "description_en": "The task name",
+                          "description_zh": "任务名称",
+                          "example": "Refresh",
+                          "type": "string"
+                        },
+                        "UpdateTime": {
+                          "description_en": "The time when the task was last updated. The time follows the ISO 8601 standard and is displayed in UTC",
+                          "description_zh": "任务最后更新时间。时间格式为 ISO 8601，使用 UTC 时间",
+                          "example": "2018-10-09T06:35:46Z",
                           "type": "string"
                         }
                       },
                       "type": "object"
                     },
-                    "TaskId": {
-                      "backendName": "id",
-                      "type": "string"
-                    },
-                    "TaskName": {
-                      "backendName": "task_name",
-                      "type": "string"
-                    },
-                    "UpdateTime": {
-                      "backendName": "update_time",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "type": "array"
+                "type": "object"
               },
               "PageNumber": {
-                "backendName": "pageIndex",
-                "description_en": "The page number of the returned page",
+                "description_en": "The current page number",
                 "description_zh": "当前页",
                 "example": "1",
                 "format": "int32",
                 "type": "integer"
               },
               "PageSize": {
-                "backendName": "pageSize",
-                "description_en": "The number of entries returned per page",
+                "description_en": "The number of entries per page",
                 "description_zh": "每页记录数",
                 "example": "10",
                 "format": "int32",
                 "type": "integer"
               },
               "TotalCount": {
-                "backendName": "totalCount",
-                "description_en": "The total number of entries returned",
+                "description_en": "The total number of entries",
                 "description_zh": "总记录数",
                 "example": "1",
                 "format": "int32",

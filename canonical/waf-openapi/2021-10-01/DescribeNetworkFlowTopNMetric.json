@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun waf-openapi DescribeNetworkFlowTopNMetric --region cn-hangzhou --InstanceId waf_cdnsdf30000 --Filter '{\"DateRange\":{},\"Conditions\":[{}]}' --Metric matched_host_by_upstream_status --Limit 10 --RegionId 'cn-hangzhou'",
   "cmd_full_name": "waf-openapi describe-network-flow-topn-metric",
   "cmd_name": "describe-network-flow-topn-metric",
@@ -35,6 +36,43 @@
     },
     {
       "fields": [
+        {
+          "fields": [
+            {
+              "example": "1713888000\n",
+              "help_en": "The beginning of the time range to query. This value is a UNIX timestamp. Unit: seconds. The time range cannot exceed the last 30 days.\n\nThe start time must be later than 30 days before the current time",
+              "help_zh": "查询的数据范围不超过过去30天。查询数据时使用的开始时间，使用UNIX时间戳表示，单位：秒。\n\n开始时间必须晚于当前时间减去30天",
+              "name": "start_date",
+              "options": [
+                "--start-date"
+              ],
+              "raw_name": "StartDate",
+              "required": true,
+              "type": "int"
+            },
+            {
+              "example": "1713888600\n",
+              "help_en": "The end of the time range to query. This value is a UNIX timestamp. Unit: seconds",
+              "help_zh": "查询数据时使用的结束时间，使用UNIX时间戳表示，单位：秒",
+              "name": "end_date",
+              "options": [
+                "--end-date"
+              ],
+              "raw_name": "EndDate",
+              "required": true,
+              "type": "int"
+            }
+          ],
+          "help_en": "The time range to query",
+          "help_zh": "查询时间范围",
+          "name": "date_range",
+          "options": [
+            "--date-range"
+          ],
+          "raw_name": "DateRange",
+          "required": true,
+          "type": "object"
+        },
         {
           "element": {
             "fields": [
@@ -86,43 +124,6 @@
           "raw_name": "Conditions",
           "required": false,
           "type": "array"
-        },
-        {
-          "fields": [
-            {
-              "example": "1713888600\n",
-              "help_en": "The end of the time range to query. This value is a UNIX timestamp. Unit: seconds",
-              "help_zh": "查询数据时使用的结束时间，使用UNIX时间戳表示，单位：秒",
-              "name": "end_date",
-              "options": [
-                "--end-date"
-              ],
-              "raw_name": "EndDate",
-              "required": true,
-              "type": "int"
-            },
-            {
-              "example": "1713888000\n",
-              "help_en": "The beginning of the time range to query. This value is a UNIX timestamp. Unit: seconds. The time range cannot exceed the last 30 days.\n\nThe start time must be later than 30 days before the current time",
-              "help_zh": "查询的数据范围不超过过去30天。查询数据时使用的开始时间，使用UNIX时间戳表示，单位：秒。\n\n开始时间必须晚于当前时间减去30天",
-              "name": "start_date",
-              "options": [
-                "--start-date"
-              ],
-              "raw_name": "StartDate",
-              "required": true,
-              "type": "int"
-            }
-          ],
-          "help_en": "The time range to query",
-          "help_zh": "查询时间范围",
-          "name": "date_range",
-          "options": [
-            "--date-range"
-          ],
-          "raw_name": "DateRange",
-          "required": true,
-          "type": "object"
         }
       ],
       "help_en": "The filter conditions for the query. If you specify multiple filter conditions, all conditions must be met (logical AND)",
@@ -200,30 +201,25 @@
         "description_zh": "返回的数据结果，格式样例参见示例",
         "properties": {
           "NetworkFlowTopNValues": {
-            "backendName": "data.topNValues",
             "description_en": "An array of the top N statistics",
             "description_zh": "返回的top统计数据数组",
-            "itemName": "TopNValue",
             "items": {
               "description_en": "A single entry in the top N ranking results",
               "description_zh": "每一个点对应一条top统计数据",
               "properties": {
                 "Attribute": {
-                  "backendName": "attribute",
                   "description_en": "The additional attribute associated with the entry. For example, when the Metric is set to real_client_ip, this parameter indicates the country or region to which the IP address belongs",
                   "description_zh": "用于返回额外的信息，比如返回某个IP所属的国家和省市信息",
                   "example": " CN",
                   "type": "string"
                 },
                 "Name": {
-                  "backendName": "name",
                   "description_en": "The dimension value that corresponds to the specified Metric request parameter. For example, if the Metric is set to real_client_ip, this parameter indicates the source IP address",
                   "description_zh": "某个字段的值，根据查询的Metric不同，代表不同的含义",
                   "example": "127.0.0.1",
                   "type": "string"
                 },
                 "Value": {
-                  "backendName": "value",
                   "description_en": "The total number of requests or the QPS value, depending on the specified Metric. This value is used for top N ranking",
                   "description_zh": "用于top排序的统计计数",
                   "example": "1123",
@@ -236,24 +232,20 @@
             "type": "array"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "D827FCFE-90A7-4330-9326-******4C7726",
             "type": "string"
           },
           "TopNMetaData": {
-            "backendName": "data.meta",
             "description_en": "The metadata of the returned data",
             "description_zh": "返回数据的元信息",
             "properties": {
               "DateRange": {
-                "backendName": "dateRange",
                 "description_en": "The time range used for the query",
                 "description_zh": "查询时使用的时间范围",
                 "properties": {
                   "EndDate": {
-                    "backendName": "endDate",
                     "description_en": "The end of the time range. This value is a UNIX timestamp. Unit: seconds",
                     "description_zh": "查询数据时使用的结束时间，使用UNIX时间戳表示，单位：秒。该值和入参数重的EndDate一致",
                     "example": "1713888600\n",
@@ -261,7 +253,6 @@
                     "type": "integer"
                   },
                   "StartDate": {
-                    "backendName": "startDate",
                     "description_en": "The beginning of the time range. This value is a UNIX timestamp. Unit: seconds",
                     "description_zh": "查询数据时使用的开始时间，使用UNIX时间戳表示，单位：秒。该值和入参数重的StartDate一致",
                     "example": "1713888000\n",
@@ -272,7 +263,6 @@
                 "type": "object"
               },
               "Units": {
-                "backendName": "units",
                 "description_en": "The unit of the returned statistical data",
                 "description_zh": "返回的统计数据的单位",
                 "example": "requests\n",

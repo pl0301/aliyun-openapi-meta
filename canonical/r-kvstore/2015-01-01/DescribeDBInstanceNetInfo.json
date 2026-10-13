@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun r-kvstore DescribeDBInstanceNetInfo --region cn-hangzhou --InstanceId 'r-bp1zxszhcgatnx0000'",
   "cmd_full_name": "r-kvstore describe-db-instance-net-info",
   "cmd_name": "describe-db-instance-net-info",
   "deprecated": false,
-  "description_en": "Queries the network information of an ApsaraDB for Tair instance",
+  "description_en": "Queries the network information of an ApsaraDB for Tair (Redis® OSS-Compatible) database instance",
   "description_zh": "查看云数据库 Tair（兼容 Redis）实例的网络信息",
   "kebab_example": "aliyun r-kvstore describe-db-instance-net-info --instance-id r-bp1zxszhcgatnx0000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -39,7 +40,7 @@
         "Private",
         "Public"
       ],
-      "help_en": "The network type",
+      "help_en": "The NetType",
       "help_zh": "The NetType",
       "location": "query",
       "name": "net_type",
@@ -57,112 +58,114 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "InstanceNetworkType": {
-            "backendName": "data.instanceNetworkType",
-            "description_en": "The network type. Valid values:\n\nCLASSIC: Classic Network.\n\nVPC: VPC",
+            "description_en": "The network type. Valid values:\nCLASSIC: classic network.\nVPC: virtual private cloud (VPC)",
             "description_zh": "网络类型，返回值：\nCLASSIC：经典网络。\nVPC：专有网络",
             "example": "CLASSIC",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "NetInfoItems": {
-            "backendName": "data.netInfoItems",
-            "itemName": "InstanceNetInfo",
-            "items": {
-              "properties": {
-                "ConnectionString": {
-                  "backendName": "connectionString",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBInstanceNetType": {
-                  "backendName": "dbInstanceNetType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DirectConnection": {
-                  "backendName": "directConnection",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ExpiredTime": {
-                  "backendName": "expiredTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "IPAddress": {
-                  "backendName": "ipAddress",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "IPType": {
-                  "backendName": "dbInstanceNetType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Public",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "Inner",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "Private",
-                        "value": "2"
-                      }
-                    ]
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "InstanceNetInfo": {
+                "description_en": "The network information of the instance",
+                "description_zh": "实例的网络信息列表",
+                "items": {
+                  "description_en": "The network information of the instance",
+                  "description_zh": "实例的网络信息列表",
+                  "properties": {
+                    "ConnectionString": {
+                      "description_en": "The endpoint of the instance",
+                      "description_zh": "实例的连接地址",
+                      "example": "r-bp1zxszhcgatnx****.redis.rds.aliyuncs.com",
+                      "type": "string"
+                    },
+                    "DBInstanceNetType": {
+                      "description_en": "The network type to which the network information belongs. Valid values:\n0: Internet.\n1: classic network.\n2: VPC",
+                      "description_zh": "该网络信息所属的网络类型：\n0：公网。\n1：经典网络。\n2：专有网络",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "DirectConnection": {
+                      "description_en": "Indicates whether the address is a direct connection address. Valid values:\n0: The address is not a direct connection address.\n1: The address is a direct connection address",
+                      "description_zh": "是否为直连地址，返回值：\n0：非直连地址。\n1：直连地址",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ExpiredTime": {
+                      "description_en": "The validity period of the classic network endpoint of the instance. Unit: seconds",
+                      "description_zh": "实例经典网络地址的有效时间，单位：秒",
+                      "example": "5183778",
+                      "type": "string"
+                    },
+                    "IPAddress": {
+                      "description_en": "The IP address",
+                      "description_zh": "IP地址",
+                      "example": "172.16.49.***",
+                      "type": "string"
+                    },
+                    "IPType": {
+                      "description_en": "The network type of the IP address. Valid values: \nPublic: Internet.\nInner: classic network. \nPrivate: VPC",
+                      "description_zh": "IP地址的网络类型，返回值： \nPublic：公网。\nInner：经典网络。 \nPrivate：VPC网络",
+                      "example": "Inner",
+                      "type": "string"
+                    },
+                    "IsSlaveProxy": {
+                      "description_en": "Indicates that the address is the endpoint of the secondary zone. A value of 1 indicates the secondary zone.\nThis address is returned only after the multi-zone read/write splitting architecture is enabled",
+                      "description_zh": "表示该地址为备可用区的连接地址，取值为1，表示备可用区。\n该地址仅在开通多可用区读写分离架构后返回",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Port": {
+                      "description_en": "The service port of the instance",
+                      "description_zh": "实例的服务端口",
+                      "example": "6379",
+                      "type": "string"
+                    },
+                    "Upgradeable": {
+                      "description_en": "The expiration time of the classic network connectivity address, which indicates the remaining validity period. Unit: seconds.\nA value of 0 indicates that the endpoint does not expire",
+                      "description_zh": "经典网络连接地址的过期时间，即剩余有效时间，单位为秒。\n0表示不会过期。 ",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "VPCId": {
+                      "description_en": "The ID of the VPC to which the instance belongs",
+                      "description_zh": "实例所属的专有网络（VPC）的ID",
+                      "example": "vpc-bp1nme44gek34slfc****",
+                      "type": "string"
+                    },
+                    "VPCInstanceId": {
+                      "description_en": "The instance ID",
+                      "description_zh": "实例ID",
+                      "example": "r-bp1ky7j6qc7umk****",
+                      "type": "string"
+                    },
+                    "VSwitchId": {
+                      "description_en": "The vSwitch ID",
+                      "description_zh": "虚拟交换机的ID",
+                      "example": "vsw-bp1e7clcw529l773d****",
+                      "type": "string"
+                    }
                   },
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "IsSlaveProxy": {
-                  "backendName": "isSlaveProxy",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Port": {
-                  "backendName": "port",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Upgradeable": {
-                  "backendName": "upgradeable",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VPCId": {
-                  "backendName": "vpcId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VPCInstanceId": {
-                  "backendName": "vpcInstanceId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VSwitchId": {
-                  "backendName": "vSwitchId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "FC77D4E1-2A7C-4F0B-A4CC-CE0B9C314B9B",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

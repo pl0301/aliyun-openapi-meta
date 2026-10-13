@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ehpc AddNodes --region cn-hangzhou --ClusterId 'ehpc-hz-FYUr320000' --Count 10",
   "cmd_full_name": "ehpc add-nodes",
   "cmd_name": "add-nodes",
@@ -406,6 +407,18 @@
       "element": {
         "fields": [
           {
+            "example": "40",
+            "help_en": "The size of the data disk. Unit: GB.\n\nValid values: 40 to 500.\n\nDefault value: 40.\n\nValid values of N: 0 to 16",
+            "help_zh": "第N个随节点创建的数据盘容量大小。单位：GB\n\n取值范围：40~500\n\n默认值：40\n\nN的取值范围：0~16",
+            "name": "data_disk_size",
+            "options": [
+              "--data-disk-size"
+            ],
+            "raw_name": "DataDiskSize",
+            "required": false,
+            "type": "int"
+          },
+          {
             "example": "cloud_efficiency",
             "help_en": "The type of the data disk. Valid values:\n\ncloud_efficiency: ultra disk\ncloud_ssd: SSD\ncloud_essd: ESSD\ncloud: basic disk\n\nDefault value: cloud_efficiency.\n\nValid values of N: 0 to 16",
             "help_zh": "第N个随节点创建的数据盘类型。可能值：\n\ncloud_efficiency：高效云盘\n\ncloud_ssd：SSD云盘\n\ncloud_essd：ESSD云盘\n\ncloud：普通云盘\n\n默认值：cloud_efficiency\n\nN的取值范围：0~16",
@@ -430,6 +443,18 @@
             "type": "bool"
           },
           {
+            "example": "PL1",
+            "help_en": "The performance level of the ESSD used as the data disk. The parameter only takes effect only when the DataDisks.N.DataDiskCategory parameter is set to cloud_essd. Valid values:\n\nPL0: A single ESSD can deliver up to 10,000 random read/write IOPS.\nPL1: A single ESSD can deliver up to 50,000 random read/write IOPS.\nPL2: A single ESSD can deliver up to 100,000 random read/write IOPS.\nPL3: A single ESSD can deliver up to 1,000,000 random read/write IOPS.\n\nDefault value: PL1.\n\nValid values of N: 0 to 16",
+            "help_zh": "第N个随节点创建的数据盘类型为ESSD云盘时，区分性能等级。仅当DataDisks.N.DataDiskCategory=cloud_essd时该参数有效。取值范围：\nPL0：单盘最高随机读写IOPS 1万\nPL1：单盘最高随机读写IOPS 5万\nPL2：单盘最高随机读写IOPS 10万\nPL3：单盘最高随机读写IOPS 100万\n\n默认值：PL1\n\nN的取值范围：0~16",
+            "name": "data_disk_performance_level",
+            "options": [
+              "--data-disk-performance-level"
+            ],
+            "raw_name": "DataDiskPerformanceLevel",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "false",
             "help_en": "Specifies whether to encrypt the data disk. Valid values:\n\ntrue\nfalse\n\nDefault value: false.\n\nValid values of N: 0 to 16",
             "help_zh": "第N个随节点创建的数据盘是否加密。取值范围：\n\ntrue：是\n\nfalse：否\n\n默认值：false\n\nN的取值范围：0~16",
@@ -452,30 +477,6 @@
             "raw_name": "DataDiskKMSKeyId",
             "required": false,
             "type": "string"
-          },
-          {
-            "example": "PL1",
-            "help_en": "The performance level of the ESSD used as the data disk. The parameter only takes effect only when the DataDisks.N.DataDiskCategory parameter is set to cloud_essd. Valid values:\n\nPL0: A single ESSD can deliver up to 10,000 random read/write IOPS.\nPL1: A single ESSD can deliver up to 50,000 random read/write IOPS.\nPL2: A single ESSD can deliver up to 100,000 random read/write IOPS.\nPL3: A single ESSD can deliver up to 1,000,000 random read/write IOPS.\n\nDefault value: PL1.\n\nValid values of N: 0 to 16",
-            "help_zh": "第N个随节点创建的数据盘类型为ESSD云盘时，区分性能等级。仅当DataDisks.N.DataDiskCategory=cloud_essd时该参数有效。取值范围：\nPL0：单盘最高随机读写IOPS 1万\nPL1：单盘最高随机读写IOPS 5万\nPL2：单盘最高随机读写IOPS 10万\nPL3：单盘最高随机读写IOPS 100万\n\n默认值：PL1\n\nN的取值范围：0~16",
-            "name": "data_disk_performance_level",
-            "options": [
-              "--data-disk-performance-level"
-            ],
-            "raw_name": "DataDiskPerformanceLevel",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "40",
-            "help_en": "The size of the data disk. Unit: GB.\n\nValid values: 40 to 500.\n\nDefault value: 40.\n\nValid values of N: 0 to 16",
-            "help_zh": "第N个随节点创建的数据盘容量大小。单位：GB\n\n取值范围：40~500\n\n默认值：40\n\nN的取值范围：0~16",
-            "name": "data_disk_size",
-            "options": [
-              "--data-disk-size"
-            ],
-            "raw_name": "DataDiskSize",
-            "required": false,
-            "type": "int"
           }
         ],
         "type": "object"
@@ -555,35 +556,33 @@
       "schema": {
         "properties": {
           "InstanceIds": {
-            "backendName": "InstanceIds",
-            "itemName": "InstanceId",
-            "items": {
-              "backendName": "InstanceIds",
-              "nullToEmpty": true,
-              "type": "string",
-              "visibility": "Public"
+            "itemNode": true,
+            "properties": {
+              "InstanceId": {
+                "description_en": "The instance IDs",
+                "description_zh": "实例ID",
+                "items": {
+                  "description_en": "Instance ID. \nIf the AddNodes operation is asynchronous (the Sync parameter in the request is set to False), the result will be returned immediately upon a successful request, without waiting for the instance creation to complete. Therefore, the InstanceIds content will be empty. You can obtain the InstanceId through [ListNodes]（https://help.aliyun.com/document_detail/87161.html）",
+                  "description_zh": "实例ID。\n\n如果AddNodes是异步操作（请求参数Sync为False），请求成功就会立即返回结果，不会等待实例创建成功，因此InstanceIds内容为空。您可以通过[ListNodes]（https://help.aliyun.com/document_detail/87161.html）获取InstanceId",
+                  "example": "null",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "parseType": "null",
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "B745C159-3155-4B94-95D0-4B73D4D2****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TaskId": {
-            "backendName": "TaskId",
             "description_en": "The ID of the task",
             "description_zh": "任务ID",
             "example": "B745C159-3155-4B94-95D0-4B73D4D2****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

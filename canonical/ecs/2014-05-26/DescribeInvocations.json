@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ecs DescribeInvocations --region cn-hangzhou --Tag.1.Key TestKey --ResourceGroupId 'rg-bp67acfmxazb4p0000' --PageSize 10 --NextToken AAAAAdDWBF2 --InstanceId 'i-bp1i7gg30r52z2em0000' --Timed true --MaxResults 10 --ContentEncoding PlainText --IncludeOutput false --RepeatMode Once --InvokeStatus Finished --CommandType RunShellScript --PageNumber 1 --Tag.1.Value TestValue --RegionId 'cn-hangzhou' --CommandId 'c-hz0jdfwcsr0000' --CommandName CommandTestName --InvokeId 't-hz0jdfwd9f0000'",
   "cmd_full_name": "ecs describe-invocations",
   "cmd_name": "describe-invocations",
@@ -35,7 +36,7 @@
     },
     {
       "example": "rg-bp67acfmxazb4p****",
-      "help_en": "The resource group ID of the command execution. After you specify this parameter, you must also specify ResourceGroupId when running the command to filter the corresponding command execution results",
+      "help_en": "The resource group ID for command execution. After you specify this parameter, you must also specify ResourceGroupId when running the command. This parameter filters the corresponding command execution results",
       "help_zh": "命令执行的资源组ID。传入该参数后，需要在执行命令时指定ResourceGroupId，支持筛选出对应的命令执行结果",
       "location": "query",
       "name": "resource_group_id",
@@ -74,7 +75,7 @@
     },
     {
       "example": "CommandTestName",
-      "help_en": "The command name. If you also specify the `InstanceId` parameter, this parameter does not take effect",
+      "help_en": "The command name. This parameter does not take effect if the `InstanceId` parameter is also specified",
       "help_zh": "命令名称。如果同时设置了`InstanceId`参数，则该参数不生效",
       "location": "query",
       "name": "command_name",
@@ -100,7 +101,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether the command will be automatically run in the future. Valid values:\n\ntrue: The command is run with the `RepeatMode` parameter set to `Period`, `NextRebootOnly`, or `EveryReboot` when `RunCommand` or `InvokeCommand` is called.\nfalse: Queries commands in the following two states:\n    - The command is run with the `RepeatMode` parameter set to `Once` when `RunCommand` or `InvokeCommand` is called.\n    - The command has been canceled, stopped, or completed.\n\nDefault value: false",
+      "help_en": "Specifies whether the queried command is scheduled to run automatically in the future. Valid values:\n\ntrue: Queries commands for which the `RepeatMode` parameter is set to `Period`, `NextRebootOnly`, or `EveryReboot` when `RunCommand` or `InvokeCommand` is called.\nfalse: Queries commands in the following two states:\n    - Commands for which the `RepeatMode` parameter is set to `Once` when `RunCommand` or `InvokeCommand` is called.\n    - Commands that have been canceled, stopped, or completed.\n\nDefault value: false",
       "help_zh": "查询的命令是否在将来会自动执行。取值范围：\n\ntrue：查询在调用`RunCommand`或`InvokeCommand`执行命令时，`RepeatMode`参数取值为`Period`、`NextRebootOnly`或者`EveryReboot`。\nfalse：查询以下两种状态的命令。\n    - 在调用`RunCommand`或`InvokeCommand`执行命令时，`RepeatMode`参数取值为`Once`。\n    - 已被取消、被停止或者已完成执行的命令。\n\n默认值：false",
       "location": "query",
       "name": "timed",
@@ -113,7 +114,7 @@
     },
     {
       "example": "Finished",
-      "help_en": "The overall execution status of the command. The overall execution status depends on the common execution status across one or more instances in the execution. Valid values: \n         \nRunning:\n    - Scheduled execution: The execution status remains Running until you manually stop the scheduled command.\n    - One-time execution: The overall execution status is Running as long as the command process is running on any instance.\nFinished:\n    - Scheduled execution: The command process cannot have a status of Finished.\n    - One-time execution: The command process has finished running on all instances, or the command process was manually stopped on some instances and finished running on the remaining instances.\nSuccess: The command execution status on each instance is Stopped or Success, and the command execution status on at least one instance is Success. The overall execution status is Success.\n    - Immediate task: The command execution is complete and the exit code is 0.\n    - Scheduled task: The last execution was successful with an exit code of 0, and all specified execution times have elapsed.\nFailed:\n    - Scheduled execution: The command process cannot have a status of Failed.\n    - One-time execution: The command process failed on all instances.\nStopped: The command has been stopped.\nStopping: The command is being stopped.\nPartialFailed: The command succeeded on some instances but failed on others. This value does not take effect if you also specify the `InstanceId` parameter.\nPending: The system is verifying or sending the command. The overall execution status is Pending if the command execution status on at least one instance is Pending.\nScheduled: The scheduled command has been sent and is waiting to run. The overall execution status is Scheduled if the command execution status on at least one instance is Scheduled",
+      "help_en": "The overall execution status of the command. The overall execution status depends on the common execution status of one or more instances in the execution. Valid values: \n         \nRunning:\n    - Scheduled execution: The execution status remains Running until you manually stop the scheduled command.\n    - One-time execution: The overall execution status is Running as long as any command process is running.\nFinished:\n    - Scheduled execution: The command process never reaches the Finished state.\n    - One-time execution: All instances have completed execution, or you manually stopped the command process on some instances while the remaining instances completed execution.\nSuccess: The command execution status on each instance is Stopped or Success, and the command execution status on at least one instance is Success. The overall execution status is then Success.\n    - Immediate task: The command execution is complete and the exit code is 0.\n    - Scheduled task: The most recent execution succeeded with an exit code of 0, and all specified execution times have elapsed.\nFailed:\n    - Scheduled execution: The command process never reaches the Failed state.\n    - One-time execution: All instances failed to execute the command.\nStopped: The command is stopped.\nStopping: The command is being stopped.\nPartialFailed: Partial failure. This value does not take effect if the `InstanceId` parameter is also specified.\nPending: The system is validating or sending the command. The overall execution status is Pending if the command execution status on at least one instance is Pending.\nScheduled: The scheduled command has been sent and is waiting to run. The overall execution status is Scheduled if the command execution status on at least one instance is Scheduled",
       "help_zh": "命令执行的总执行状态。总执行状态取决于创建执行中的一台或多台实例的共同执行状态。取值范围： \n         \nRunning：\n    - 定时执行：未手动停止定时执行命令前，执行状态一直为进行中。\n    - 单次执行：一旦有进行中的命令进程，总的执行状态就为进行中。\nFinished：\n    - 定时执行：命令进程不可能为执行完成。\n    - 单次执行：所有实例全部完成执行。或者手动停止部分实例的命令进程，其余实例全部执行完成。\nSuccess：各个实例上的命令执行状态均为Stopped或Success，且至少一个实例的命令执行状态是Success，则总执行状态为Success。\n    - 立即运行的任务：命令执行完成，且退出码为0。\n    - 定时运行的任务：最近一次执行成功且退出码为0，且指定的时间已全部完成。\nFailed：\n    - 定时执行：命令进程不可能为执行失败。\n    - 单次执行：所有实例全部执行失败。\nStopped：停止命令。\nStopping：停止中。\nPartialFailed：部分失败；如果同时设置了`InstanceId`参数，则不生效。\nPending：系统正在校验或发送命令。存在至少一台实例的命令执行状态为Pending，则总执行状态为Pending。\nScheduled：定时执行的命令已发送，等待运行。存在至少一台实例的命令执行状态为Scheduled，则总执行状态为Scheduled",
       "location": "query",
       "name": "invoke_status",
@@ -152,7 +153,7 @@
     },
     {
       "example": "false",
-      "help_en": "Specifies whether to return the command output in the results.\n\ntrue: The output is returned. You must specify at least the `InvokeId` or `InstanceId` parameter.\nfalse: The output is not returned.\n\nDefault value: false",
+      "help_en": "Specifies whether to return the command output in the results.\n\ntrue: Returns the output. You must specify at least the `InvokeId` or `InstanceId` parameter.\nfalse: Does not return the output.\n\nDefault value: false",
       "help_zh": "是否在结果中返回命令运行的输出信息。\n\ntrue：返回。此时，您至少指定参数`InvokeId`或`InstanceId`。\nfalse：不返回。\n\n默认值：false",
       "location": "query",
       "name": "include_output",
@@ -165,7 +166,7 @@
     },
     {
       "example": "1",
-      "help_en": "This parameter is about to be deprecated. Use NextToken and MaxResults to complete paging query operations",
+      "help_en": "This parameter is about to be deprecated. Use NextToken and MaxResults to perform paging query operations",
       "help_zh": "该参数即将下线，推荐您使用NextToken与MaxResults完成分页查询操作",
       "location": "query",
       "name": "page_number",
@@ -178,7 +179,7 @@
     },
     {
       "example": "10",
-      "help_en": "This parameter is about to be deprecated. Use NextToken and MaxResults to complete paging query operations",
+      "help_en": "This parameter is about to be deprecated. Use NextToken and MaxResults to perform paging query operations",
       "help_zh": "该参数即将下线，推荐您使用NextToken与MaxResults完成分页查询操作",
       "location": "query",
       "name": "page_size",
@@ -217,7 +218,7 @@
     },
     {
       "example": "Once",
-      "help_en": "The execution mode of the command. This parameter does not take effect if you also specify the `InstanceId` parameter. Valid values:\n\nOnce: The command is immediately run.\nPeriod: The command is run on a schedule.\nNextRebootOnly: The command is automatically run the next time the instance starts.\nEveryReboot: The command is automatically run every time the instance starts.\n\nDefault value: empty, which indicates that all execution modes are queried",
+      "help_en": "The execution mode of the command. This parameter does not take effect if the `InstanceId` parameter is also specified. Valid values:\n\nOnce: Runs the command immediately.\nPeriod: Runs the command on a schedule.\nNextRebootOnly: Runs the command automatically the next time the instance starts.\nEveryReboot: Runs the command automatically every time the instance starts.\n\nDefault value: empty, which indicates that all execution modes are queried",
       "help_zh": "命令执行的方式。如果同时设置了`InstanceId`参数，则不生效。取值范围：\n\nOnce：立即执行命令。\nPeriod：定时执行命令。\nNextRebootOnly：当实例下一次启动时，自动执行命令。\nEveryReboot：实例每一次启动都将自动执行命令。\n\n默认值为空，表示查询全部",
       "location": "query",
       "name": "repeat_mode",
@@ -233,7 +234,7 @@
         "fields": [
           {
             "example": "TestKey",
-            "help_en": "The tag key of the command execution. Valid values of N: 1 to 20. The tag key cannot be an empty string.\n\nIf you use a single tag to filter resources, the resource count with the specified tag cannot exceed 1,000. If you use multiple tags to filter resources, the resource count that are attached to all specified tags cannot exceed 1,000. If the resource count exceeds 1,000, execute the https://help.aliyun.com/document_detail/110425.html operation to query the resources.\n\nThe tag key can be up to 64 characters in length and cannot start with `aliyun` or `acs:`, or contain `http://` or `https://`",
+            "help_en": "The tag key of the command execution. Valid values of N: 1 to 20. The tag key cannot be an empty string.\n\nIf you use a single tag to filter resources, the number of resources with this tag cannot exceed 1,000. If you use multiple tags to filter resources, the number of resources with all specified tags attached cannot exceed 1,000. If the resource count exceeds 1,000, call https://help.aliyun.com/document_detail/110425.html to execute the query.\n\nThe tag key can be up to 64 characters in length and cannot start with `aliyun` or `acs:`. It cannot contain `http://` or `https://`",
             "help_zh": "命令执行的标签键。N的取值范围为1~20。一旦传入该值，则不允许为空字符串。\n\n使用一个标签过滤资源，查询到该标签下的资源数量不能超过1000个；使用多个标签过滤资源，查询到同时绑定了多个标签的资源数量不能超过1000个。如果资源数量超过1000个，您需要使用https://help.aliyun.com/document_detail/110425.html接口进行查询。\n\n最多支持64个字符，不能以`aliyun`或`acs:`开头，不能包含`http://`或`https://`",
             "name": "key",
             "options": [
@@ -277,291 +278,356 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Invocations": {
-            "backendName": "data.taskList",
-            "itemName": "Invocation",
-            "items": {
-              "properties": {
-                "CommandContent": {
-                  "backendName": "commandContent",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CommandDescription": {
-                  "backendName": "commandDescription",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CommandId": {
-                  "backendName": "commandId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CommandName": {
-                  "backendName": "commandName",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CommandType": {
-                  "backendName": "commandType",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ContainerId": {
-                  "backendName": "containerId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ContainerName": {
-                  "backendName": "containerName",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CreationTime": {
-                  "backendName": "createTime",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Frequency": {
-                  "backendName": "frequency",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "InvocationStatus": {
-                  "backendName": "status2",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "InvokeId": {
-                  "backendName": "taskId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "InvokeInstances": {
-                  "backendName": "itemLists",
-                  "itemName": "InvokeInstance",
-                  "items": {
-                    "properties": {
-                      "CreationTime": {
-                        "backendName": "initTime",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Dropped": {
-                        "backendName": "dropped",
-                        "format": "int32",
-                        "nullToEmpty": true,
-                        "type": "integer"
-                      },
-                      "ErrorCode": {
-                        "backendName": "errorCode",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "ErrorInfo": {
-                        "backendName": "errorDesc",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "ExitCode": {
-                        "backendName": "exitCode",
-                        "format": "int64",
-                        "nullToEmpty": true,
-                        "type": "integer"
-                      },
-                      "FinishTime": {
-                        "backendName": "finishTime",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "InstanceId": {
-                        "backendName": "instanceId",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "InstanceInvokeStatus": {
-                        "backendName": "status",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "InvocationStatus": {
-                        "backendName": "outerStatus",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "OssOutputErrorCode": {
-                        "backendName": "ossOutputErrorCode",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "OssOutputErrorInfo": {
-                        "backendName": "ossOutputErrorInfo",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "OssOutputStatus": {
-                        "backendName": "ossOutputStatus",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "OssOutputUri": {
-                        "backendName": "ossOutputUrl",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Output": {
-                        "backendName": "output",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Repeats": {
-                        "backendName": "repeats",
-                        "format": "int32",
-                        "nullToEmpty": true,
-                        "type": "integer"
-                      },
-                      "StartTime": {
-                        "backendName": "startTime",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "StopTime": {
-                        "backendName": "stopTime",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Timed": {
-                        "backendName": "timed",
-                        "nullToEmpty": true,
-                        "type": "boolean"
-                      },
-                      "UpdateTime": {
-                        "backendName": "updateTime",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Invocation": {
+                "description_en": "The command execution records",
+                "description_zh": "命令执行记录组成的数组。 ",
+                "items": {
+                  "description_en": "The time when the task was created",
+                  "description_zh": "任务创建的时间",
+                  "properties": {
+                    "CommandContent": {
+                      "description_en": "The command content.\n\nIf ContentEncoding is set to PlainText, the original script content is returned.\nIf ContentEncoding is set to Base64, the Base64-encoded script content is returned",
+                      "description_zh": "命令内容。\n\n若ContentEncoding指定PlainText，返回原始脚本内容。\n若ContentEncoding指定Base64，返回Base64编码后的脚本内容",
+                      "example": "cnBtIC1xYSB8IGdyZXAgdnNm****",
+                      "type": "string"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "InvokeStatus": {
-                  "backendName": "status",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Launcher": {
-                  "backendName": "launcher",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "OssOutputDelivery": {
-                  "backendName": "ossOutputDelivery",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Parameters": {
-                  "backendName": "parameters",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "RepeatMode": {
-                  "backendName": "repeatMode",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Tags": {
-                  "backendName": "tags",
-                  "itemName": "Tag",
-                  "items": {
-                    "properties": {
-                      "TagKey": {
-                        "backendName": "tagKey",
-                        "type": "string"
-                      },
-                      "TagValue": {
-                        "backendName": "tagValue",
-                        "type": "string"
-                      }
+                    "CommandDescription": {
+                      "description_en": "The command description",
+                      "description_zh": "命令描述",
+                      "example": "testDescription",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "CommandId": {
+                      "description_en": "The command ID",
+                      "description_zh": "命令ID",
+                      "example": "c-hz0jdfwcsr****",
+                      "type": "string"
+                    },
+                    "CommandName": {
+                      "description_en": "The command name",
+                      "description_zh": "命令名称",
+                      "example": "CommandTestName",
+                      "type": "string"
+                    },
+                    "CommandType": {
+                      "description_en": "The command type",
+                      "description_zh": "命令类型",
+                      "example": "RunShellScript",
+                      "type": "string"
+                    },
+                    "ContainerId": {
+                      "description_en": "The container ID",
+                      "description_zh": "容器ID",
+                      "example": "ab141ddfbacfe02d9dbc25966ed971536124527097398d419a6746873fea****",
+                      "type": "string"
+                    },
+                    "ContainerName": {
+                      "description_en": "The container name",
+                      "description_zh": "容器名称",
+                      "example": "test-container",
+                      "type": "string"
+                    },
+                    "CreationTime": {
+                      "description_en": "The time when the task was created. The time is displayed in ISO 8601 format in UTC",
+                      "description_zh": "任务的创建时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2020-01-19T09:15:46Z",
+                      "type": "string"
+                    },
+                    "Frequency": {
+                      "description_en": "The schedule on which the command is run",
+                      "description_zh": "定时执行命令的执行时间",
+                      "example": "0 */20 * * * *",
+                      "type": "string"
+                    },
+                    "InvocationStatus": {
+                      "description_en": "The overall execution status of the command. The overall execution status depends on the common execution status of all instances in this invocation. Valid values:\nPending: The system is validating or sending the command. The overall execution status is Pending if the command execution status on at least one instance is Pending.\nScheduled: The scheduled command has been sent and is waiting to run. The overall execution status is Scheduled if the command execution status on at least one instance is Scheduled.\nRunning: The command is running on instances. The overall execution status is Running if the command execution status on at least one instance is Running.\nSuccess: The command execution status on each instance is Stopped or Success, and the command execution status on at least one instance is Success. The overall execution status is then Success.\n    - Immediate task: The command execution is complete and the exit code is 0.\n    - Scheduled task: The most recent execution succeeded with an exit code of 0, and all specified execution times have elapsed.\nFailed: The command execution status on each instance is Stopped or Failed. The overall execution status is then Failed. The overall execution status is Failed when the command execution status on one or more instances is one of the following:\n    - Command validation failed (Invalid).\n    - Command delivery failed (Aborted).\n    - Command execution completed with a non-zero exit code (Failed).\n    - Command execution timed out (Timeout).\n    - Command execution encountered an exception (Error).\nStopping: The task is being stopped. The overall execution status is Stopping if the command execution status on at least one instance is Stopping.\nStopped: The task is stopped. The overall execution status is Stopped when the command execution status on all instances is Stopped. The status is Stopped when the command execution status on an instance is one of the following:\n    - Task canceled (Cancelled).\n    - Task terminated (Terminated).\nPartialFailed: Some instances succeeded and some instances failed. The overall execution status is PartialFailed when the command execution status on each instance is Success, Failed, or Stopped.\n\nThe `InvokeStatus` response parameter has a similar meaning, but we recommend that you check this parameter instead",
+                      "description_zh": "命令执行的总执行状态，总执行状态取决于本次调用的全部实例的共同执行状态，可能值：\nPending：系统正在校验或发送命令。存在至少一台实例的命令执行状态为Pending，则总执行状态为Pending。\nScheduled：定时执行的命令已发送，等待运行。存在至少一台实例的命令执行状态为Scheduled，则总执行状态为Scheduled。\nRunning：命令正在实例上运行。存在至少一台实例的命令执行状态为Running，则总执行状态为Running。\nSuccess：各个实例上的命令执行状态均为Stopped或Success，且至少一个实例的命令执行状态是Success，则总执行状态为Success。\n    - 立即运行的任务：命令执行完成，且退出码为0。\n    - 定时运行的任务：最近一次执行成功且退出码为0，且指定的时间已全部完成。\nFailed：各个实例上的命令执行状态均为Stopped或Failed，则总执行状态为Failed。实例上的命令执行状态一项或多项为以下状态时，返回值均为Failed状态：\n    - 命令校验失败（Invalid）。\n    - 命令发送失败（Aborted）。\n    - 命令执行完成但退出码非0（Failed）。\n    - 命令执行超时（Timeout）。\n    - 命令执行异常（Error）。\nStopping：正在停止任务。存在至少一台实例的命令执行状态为Stopping，则总执行状态为Stopping。\nStopped：任务已停止。所有实例的命令执行状态是Stopped，则总执行状态为Stopped。实例上的命令执行状态为以下状态时，返回值均为Stopped状态：\n    - 任务已取消（Cancelled）。\n    - 任务已终止（Terminated）。\nPartialFailed：部分实例执行成功且部分实例执行失败。各个实例的命令执行状态均为Success、Failed或Stopped，则总执行状态为PartialFailed。\n\n返回参数中的`InvokeStatus`与该参数意义相似，但建议您查看该返回值",
+                      "example": "Running",
+                      "type": "string"
+                    },
+                    "InvokeId": {
+                      "description_en": "The command execution ID",
+                      "description_zh": "命令执行ID",
+                      "example": "t-hz0jdfwd9f****",
+                      "type": "string"
+                    },
+                    "InvokeInstances": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "InvokeInstance": {
+                          "description_en": "The target instance set type for the execution",
+                          "description_zh": "执行目标实例集类型。 ",
+                          "items": {
+                            "description_en": "The execution status list",
+                            "description_zh": "执行状态列表",
+                            "properties": {
+                              "CreationTime": {
+                                "description_en": "The time when the command execution started. The time is displayed in ISO 8601 format in UTC",
+                                "description_zh": "命令执行的开始时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2019-12-20T06:15:54Z",
+                                "type": "string"
+                              },
+                              "Dropped": {
+                                "description_en": "The length of the truncated and discarded text after the text in the Output field exceeds 24 KB",
+                                "description_zh": "Output字段中文字长度超出24 KB后，截断丢弃的文字长度",
+                                "example": "0",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "ErrorCode": {
+                                "description_en": "The error code for command delivery failure or execution failure. Valid values:\nEmpty: The command ran normally.\nInstanceNotExists: The specified instance does not exist or has been released.\nInstanceReleased: The instance was released during concurrent execution.\nInstanceNotRunning: The instance was not in the Running state when the command started to run.\nCommandNotApplicable: The command is not applicable to the specified instance.\nAccountNotExists: The specified username for running the command does not exist.\nDirectoryNotExists: The specified directory does not exist.\nBadCronExpression: The specified cron expression is invalid. \nClientNotRunning: Cloud Assistant Agent is not running.\nClientNotResponse: Cloud Assistant Agent is not responding.\nClientIsUpgrading: Cloud Assistant Agent is being upgraded.\nClientNeedUpgrade: Cloud Assistant Agent needs to be upgraded.\nDeliveryTimeout: Command delivery timed out.\nExecutionTimeout: Concurrent execution timed out.\nExecutionException: An exception occurred during concurrent execution.\nExecutionInterrupted: The concurrent execution task was interrupted.\nExitCodeNonzero: Concurrent execution completed with a non-zero exit code.\nSecurityGroupRuleDenied: A security group rule denied access to the Cloud Assistant service.\nTaskConcurrencyLimit: The number of concurrent task executions exceeded the maximum quota",
+                                "description_zh": "命令的下发失败或执行失败原因的代码，可能值：\n空：命令运行正常。\nInstanceNotExists：指定的实例不存在或已释放。\nInstanceReleased：执行命令期间，该实例被释放。\nInstanceNotRunning：开始执行命令时，该实例不在运行中。\nCommandNotApplicable：命令不适用于指定的实例。\nAccountNotExists：指定的执行命令的用户名不存在。\nDirectoryNotExists：指定的目录不存在。\nBadCronExpression：指定的执行时间表达式不合法。 \nClientNotRunning：云助手Agent未运行。\nClientNotResponse：云助手Agent无响应。\nClientIsUpgrading：云助手Agent正在升级中。\nClientNeedUpgrade：云助手Agent需要升级。\nDeliveryTimeout：发送命令超时。\nExecutionTimeout：命令执行超时。\nExecutionException：命令执行发生异常。\nExecutionInterrupted：命令执行任务中断。\nExitCodeNonzero：命令执行结束，退出码非0。\nSecurityGroupRuleDenied：安全组规则拒绝访问云助手服务。\nTaskConcurrencyLimit：任务并发执行数量超过最大额度",
+                                "example": "InstanceNotExists",
+                                "type": "string"
+                              },
+                              "ErrorInfo": {
+                                "description_en": "The detailed reason for command delivery failure or execution failure. Valid values:\nEmpty: The command ran normally.\nThe security group rules denied access to the aliyun service: A security group rule denied access to the Cloud Assistant service.\nThe specified instance does not exist: The specified instance does not exist or has been released.\nThe specified instance was released during task execution: The instance was released during command execution.\nThe specified instance was not running during task execution: The instance was not in the Running state when the command started to run.\nThe OS type of the instance does not support the specified command type: The command is not applicable to the specified instance.\nThe specified account does not exist: The specified account does not exist.\nThe specified directory does not exist: The specified directory does not exist.\nThe cron expression is invalid: The specified cron expression is invalid.\nThe aliyun service is not running on the instance: Cloud Assistant Agent is not running.\nThe aliyun service in the instance does not response: Cloud Assistant Agent is not responding.\nThe aliyun service in the instance is upgrading during task execution: Cloud Assistant Agent is being upgraded.\nThe aliyun service in the instance need to be upgraded to at least version <version> to support the <feature> feature: Cloud Assistant Agent needs to be upgraded. <version> indicates the minimum supported version for the feature, and <feature> indicates the specific feature.\nThe command delivery has been timeout: Command delivery timed out.\nThe command execution has been timeout: Command execution timed out.\nThe command execution got an exception: An exception occurred during command execution.\nThe command execution exit code is not zero: Command execution completed with a non-zero exit code.\nThe specified instance was released during task execution: The instance was released during file delivery",
+                                "description_zh": "命令的下发失败或执行失败原因的详情，可能值：\n空：命令运行正常。\nThe security group rules denied access to the aliyun service：安全组规则拒绝访问云助手服务。\nThe specified instance does not exist：指定的实例不存在或已释放。\nThe specified instance was released during task execution：执行命令期间，该实例被释放。\nThe specified instance was not running during task execution：开始执行命令时，该实例不在运行中。\nThe OS type of the instance does not support the specified command type：命令不适用于指定的实例。\nThe specified account does not exist：指定的账号不存在。\nThe specified directory does not exist：指定的目录不存在。\nThe cron expression is invalid：指定的执行时间表达式不合法。\nThe aliyun service is not running on the instance：云助手Agent未运行。\nThe aliyun service in the instance does not response：云助手Agent无响应。\nThe aliyun service in the instance is upgrading during task execution：云助手Agent正在升级中。\nThe aliyun service in the instance need to be upgraded to at least version <version> to support the <feature> feature：云助手Agent需要升级。<version>为该特性最低支持版本号，<feature>为具体特性。\nThe command delivery has been timeout：发送命令超时。\nThe command execution has been timeout：命令执行超时。\nThe command execution got an exception：命令执行发生异常。\nThe command execution exit code is not zero：命令执行结束，退出码非0。\nThe specified instance was released during task execution：下发文件期间，该实例被释放",
+                                "example": "the specified instance does not exists",
+                                "type": "string"
+                              },
+                              "ExitCode": {
+                                "description_en": "The exit code of the command process. Valid values:\n\nFor Linux instances, the exit code of the Shell process.\nFor Windows instances, the exit code of the Bat or PowerShell process",
+                                "description_zh": "命令进程的退出代码。可能值：\n\nLinux实例为Shell进程的退出码。\nWindows实例为Bat或者PowerShell进程的退出码",
+                                "example": "0",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "FinishTime": {
+                                "description_en": "The time when the command process ended. The time is displayed in ISO 8601 format in UTC",
+                                "description_zh": "命令进程的结束时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2019-12-20T06:15:56Z",
+                                "type": "string"
+                              },
+                              "InstanceId": {
+                                "description_en": "The instance ID",
+                                "description_zh": "实例ID",
+                                "example": "i-bp1i7gg30r52z2em****",
+                                "type": "string"
+                              },
+                              "InstanceInvokeStatus": {
+                                "description_en": "The command execution status on a single instance.\n\nWe recommend that you check the `InvocationStatus` response parameter instead of this parameter",
+                                "description_zh": "单台实例的命令进度状态。\n\n不推荐查看该返回值，推荐您查看`InvocationStatus`的返回值",
+                                "example": "Finished",
+                                "type": "string"
+                              },
+                              "InvocationStatus": {
+                                "description_en": "The command execution status on a single instance. Valid values:\nPending: The system is validating or sending the command.\nInvalid: The specified command type or parameters are invalid.\nAborted: Failed to send the command to the instance. The instance must be in the Running state, and the command must be deliverable within 1 minute.\nRunning: The command is running on the instance.\nSuccess:\n    - One-time execution: The command execution is complete and the exit code is 0.\n    - Scheduled execution: The most recent execution succeeded with an exit code of 0, and the specified schedule has ended.\nFailed:\n    - One-time execution: The command execution is complete and the exit code is non-zero.\n    - Scheduled execution: The most recent execution succeeded with a non-zero exit code, and the specified schedule will be aborted.\nError: An exception occurred during command execution and the command cannot continue.\nTimeout: The command execution timed out.\nCancelled: The command execution action has been canceled and the command was never started.\nStopping: The task is being stopped.\nTerminated: The command was terminated during execution.\nScheduled:\n    - One-time execution: Not applicable. This value does not appear.\n    - Scheduled execution: Waiting to run",
+                                "description_zh": "单台实例的命令进度状态，可能值：\nPending：系统正在校验或发送命令。\nInvalid：指定命令类型或参数有误。\nAborted：向实例发送命令失败。实例必须在运行中，且命令可以1分钟内发送完成。\nRunning：命令正在实例上运行。\nSuccess：\n    - 单次执行的命令：命令执行完成，且退出码为0。\n    - 定时执行的命令：上一次运行成功且退出码为0，且指定的时间已结束。\nFailed：\n    -  单次执行的命令：命令执行完成，且退出码非0。\n    -  定时执行的命令：上一次运行成功且退出码非0，且指定的时间将中止。\nError：命令执行时发生异常无法继续。\nTimeout：命令执行超时。\nCancelled：命令的执行动作已经取消，命令未曾启动。\nStopping：正在停止任务。\nTerminated：命令运行时被终止。\nScheduled：\n    - 单次执行的命令：不适用，不会出现。\n    - 定时执行的命令：等待运行",
+                                "example": "Success",
+                                "type": "string"
+                              },
+                              "OssOutputErrorCode": {
+                                "description_en": "The error code when delivery fails. This parameter is returned only when OssOutputStatus is Failed. Valid values:\nCloudAssistant.UnsupportedInvocationStatus: The task status does not support delivery.\nCloudAssistant.ClientNeedUpgrade: The Cloud Assistant Agent version does not support delivery. The Cloud Assistant Agent version on Linux instances must be later than 2.2.4.1007, and the version on Windows instances must be later than 2.1.4.1007.\nOSS.AccessDenied: The user does not have access permissions on the specified bucket.\nOSS.NoSuchBucket: The specified bucket does not exist.\nOSS.FileImmutable: The data in the bucket is in protection status.\nOSS.InvalidObjectName: The object name is invalid. This error code occurs when the object name is not specified, the object name exceeds the length limit, or the specified object name is invalid",
+                                "description_zh": "投递失败时的错误码，仅在OssOutputStatus为Failed时返回。\n取值范围：\nCloudAssistant.UnsupportedInvocationStatus：任务状态不支持投递。\nCloudAssistant.ClientNeedUpgrade：云助手版本不支持投递。Linux实例云助手版本需大于2.2.4.1007，Windows实例云助手版本需大于2.1.4.1007。\nOSS.AccessDenied：用户对设置的Bucket没有访问权限。\nOSS.NoSuchBucket：设置的Bucket不存在。\nOSS.FileImmutable：Bucket中的数据处于被保护状态。\nOSS.InvalidObjectName：Object名称不符合规范，包括未指定Object名称、Object名称超出长度限制、指定的Object名称无效",
+                                "example": "CloudAssistant.UnsupportedInvocationStatus",
+                                "type": "string"
+                              },
+                              "OssOutputErrorInfo": {
+                                "description_en": "The error details when delivery fails. This parameter is returned only when OssOutputStatus is Failed",
+                                "description_zh": "投递失败时的错误详情，仅在OssOutputStatus为Failed时返回",
+                                "example": "The invocation status does not support output delivery.",
+                                "type": "string"
+                              },
+                              "OssOutputStatus": {
+                                "description_en": "The delivery status of the command execution output to OSS. Valid values:\n\nInProgress: Delivery in progress.\n\nFinished: Delivery complete.\n\nFailed: Delivery failed",
+                                "description_zh": "命令执行Output投递状态。枚举值：\n\nInProgress：投递中。\n\nFinished：投递完成。\n\nFailed：投递失败",
+                                "example": "Finished",
+                                "type": "string"
+                              },
+                              "OssOutputUri": {
+                                "description_en": "The URI of the file in OSS to which the command execution output is delivered. This field is an empty string when delivery fails or is in progress",
+                                "description_zh": "命令执行Output投递到OSS的文件URI地址，当投递失败/投递中时该字段为空字符串",
+                                "example": "oss://testBucket/testPrefix/output.txt",
+                                "type": "string"
+                              },
+                              "Output": {
+                                "description_en": "The command output.\n\nIf ContentEncoding is set to PlainText, the original output is returned.\nIf ContentEncoding is set to Base64, the Base64-encoded output is returned",
+                                "description_zh": "命令的输出信息。\n\n若ContentEncoding指定PlainText，返回原始输出信息。\n若ContentEncoding指定Base64，返回Base64编码后的输出信息",
+                                "example": "OutPutTestmsg",
+                                "type": "string"
+                              },
+                              "Repeats": {
+                                "description_en": "The number of times the command was executed on the instance.\nFor one-time execution, the value is 0 or 1.\nFor scheduled execution, the value is the number of times the command has been executed",
+                                "description_zh": "命令在该实例上执行的次数。\n若执行方式为单次执行，则值为0或1。\n若执行方式为定时执行，则值为执行过多少次",
+                                "example": "0",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "StartTime": {
+                                "description_en": "The time when the command started to run on the instance. The time is displayed in ISO 8601 format in UTC",
+                                "description_zh": "命令在实例中开始执行的时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2019-12-20T06:15:55Z",
+                                "type": "string"
+                              },
+                              "StopTime": {
+                                "description_en": "The time when `StopInvocation` was called to stop the command execution. The time is displayed in ISO 8601 format in UTC",
+                                "description_zh": "若调用了`StopInvocation`以停止命令执行，表示调用的时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2020-01-19T09:15:47Z",
+                                "type": "string"
+                              },
+                              "Timed": {
+                                "description_en": "Indicates whether the queried command is scheduled to run automatically in the future",
+                                "description_zh": "查询的命令是否在将来会自动执行",
+                                "example": "false",
+                                "type": "boolean"
+                              },
+                              "UpdateTime": {
+                                "description_en": "The time when the command status was last updated. The time is displayed in ISO 8601 format in UTC",
+                                "description_zh": "命令状态的更新时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2020-01-19T09:15:47Z",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "InvokeStatus": {
+                      "description_en": "The overall execution status of the command.\nWe recommend that you check the `InvocationStatus` response parameter instead of this parameter",
+                      "description_zh": "命令总的执行状态。\n不推荐查看该返回值，推荐您查看`InvocationStatus`的返回值",
+                      "example": "Finished",
+                      "type": "string"
+                    },
+                    "Launcher": {
+                      "description_en": "The launcher used to run the script. The launcher can be up to 1 KB in length",
+                      "description_zh": "脚本执行的引导程序。长度不能超过 1 KB",
+                      "example": "python3 -u {{ACS::ScriptFileName|Ext(\".py\")}}",
+                      "type": "string"
+                    },
+                    "OssOutputDelivery": {
+                      "description_en": "The OSS delivery configuration for the command execution output",
+                      "description_zh": "命令执行Output OSS投递配置",
+                      "example": "oss://testBucket/testPrefix",
+                      "type": "string"
+                    },
+                    "Parameters": {
+                      "description_en": "The custom parameters in the command",
+                      "description_zh": "命令中的自定义参数",
+                      "example": "{}",
+                      "type": "string"
+                    },
+                    "RepeatMode": {
+                      "description_en": "The execution mode of the command. Valid values:\n\nOnce: Runs the command immediately.\nPeriod: Runs the command on a schedule.\nNextRebootOnly: Runs the command automatically the next time the instance starts.\nEveryReboot: Runs the command automatically every time the instance starts.\nDryRun: Only performs a dry run of the request. The command is not actually executed. The dry run checks request parameters, the instance execution environment, and Cloud Assistant Agent status",
+                      "description_zh": "命令执行的方式。可能值：\n\nOnce：立即执行命令。\nPeriod：定时执行命令。\nNextRebootOnly：当实例下一次启动时，自动执行命令。\nEveryReboot：实例每一次启动都将自动执行命令。\nDryRun：只预检此次请求，命令执行不会实际生效，检查项包括请求参数、实例执行环境、云助手Agent运行状态等",
+                      "example": "Once",
+                      "type": "string"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The tag information of the command execution",
+                          "description_zh": "命令执行的标签信息",
+                          "items": {
+                            "description_en": "The tag information of the command execution",
+                            "description_zh": "命令执行的标签信息",
+                            "properties": {
+                              "TagKey": {
+                                "description_en": "The tag key of the command execution",
+                                "description_zh": "命令执行的标签键",
+                                "example": "owner",
+                                "type": "string"
+                              },
+                              "TagValue": {
+                                "description_en": "The tag value of the command execution",
+                                "description_zh": "命令执行的标签值",
+                                "example": "zhangsan",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "TerminationMode": {
+                      "description_en": "The mode used when the task is stopped (manually stopped or interrupted due to timeout). Valid values:\nProcess: Stops the current script process.\nProcessTree: Stops the current process tree (the script process and all child processes it created)",
+                      "description_zh": "停止任务（手动停止或执行超时打断）时的模式。可能值：\nProcess：停止当前脚本进程。\nProcessTree：停止当前进程树（脚本进程以及它创建的所有子进程的集合）",
+                      "example": "ProcessTree",
+                      "type": "string"
+                    },
+                    "Timed": {
+                      "description_en": "Indicates whether the queried command is scheduled to run automatically in the future",
+                      "description_zh": "查询的命令是否在将来会自动执行",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "Timeout": {
+                      "description_en": "The maximum timeout period for the command to run on ECS instances. Unit: seconds.\n\nIf the command cannot run for some reason, a timeout occurs. When a timeout occurs, the command process is forcefully terminated by canceling the PID of the command",
+                      "description_zh": "您创建的命令在ECS实例中执行时最大的超时时间，单位：秒。\n\n当因为某种原因无法运行您创建的命令时，会出现超时现象。超时后，会强制终止命令进程，即取消命令的PID",
+                      "example": "60",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Username": {
+                      "description_en": "The username used to run the command on the ECS instance",
+                      "description_zh": "ECS实例中执行命令的用户名称",
+                      "example": "test",
+                      "type": "string"
+                    },
+                    "WorkingDir": {
+                      "description_en": "The working directory of the command",
+                      "description_zh": "命令执行路径",
+                      "example": "/home/",
+                      "type": "string"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "TerminationMode": {
-                  "backendName": "terminationMode",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Timed": {
-                  "backendName": "timed",
-                  "nullToEmpty": true,
-                  "type": "boolean"
-                },
-                "Timeout": {
-                  "backendName": "timeout",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer"
-                },
-                "Username": {
-                  "backendName": "username",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "WorkingDir": {
-                  "backendName": "workingDir",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "NextToken": {
-            "backendName": "data.nextToken",
             "description_en": "The pagination token returned in this call",
             "description_zh": "本次调用返回的查询凭证值",
             "example": "AAAAAdDWBF2",
-            "nullToEmpty": true,
             "type": "string"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number of the query results",
             "description_zh": "查询结果的页码",
             "example": "1",
             "format": "int64",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页行数",
             "example": "10",
             "format": "int64",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
             "description_en": "The total number of commands",
             "description_zh": "命令总个数",
             "example": "1",
             "format": "int64",
-            "nullToEmpty": true,
             "type": "integer"
           }
         },

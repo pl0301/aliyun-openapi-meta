@@ -1,0 +1,264 @@
+{
+  "camel_example": "aliyun ossutil api get-bucket-replication --bucket examplebucket --region cn-hangzhou",
+  "cmd_full_name": "oss get-bucket-replication",
+  "cmd_name": "get-bucket-replication",
+  "components": {
+    "schemas": {
+      "RTC": {
+        "description_en": "The status of the data replication time control (RTC) feature",
+        "description_zh": "数据复制时间控制功能的状态",
+        "properties": {
+          "Status": {
+            "description_en": "Indicates whether the replication time control (RTC) feature is enabled",
+            "description_zh": "是否开启复制时间控制（RTC）功能",
+            "enumValueTitles": {
+              "disabled": "关闭RTC功能",
+              "enabled": "开启RTC功能"
+            },
+            "example": "Enabled",
+            "title": "是否开启复制时间控制（RTC）功能",
+            "type": "string"
+          }
+        },
+        "title": "数据复制时间控制功能的状态",
+        "type": "object"
+      },
+      "ReplicationDestination": {
+        "description_en": "The container that stores the information about the destination bucket",
+        "description_zh": "保存目标Bucket信息的容器",
+        "properties": {
+          "Bucket": {
+            "description_en": "The destination bucket to which data is replicated",
+            "description_zh": "指定数据要复制到的目标Bucket",
+            "example": "target-bucket",
+            "title": "指定数据要复制到的目标Bucket。",
+            "type": "string"
+          },
+          "Location": {
+            "description_en": "The region in which the destination bucket is located",
+            "description_zh": "目标Bucket所处的地域",
+            "enumValueTitles": {},
+            "example": "oss-cn-beijing",
+            "title": "目标Bucket所处的地域。",
+            "type": "string"
+          },
+          "TransferType": {
+            "description_en": "The data transfer link used for data replication. Valid values:\ninternal (default): the default data transfer link of OSS.\noss_acc: the transfer acceleration link. You can use the transfer acceleration link only when you create a cross-region replication rule",
+            "description_zh": "指定数据复制时使用的数据传输链路。\n取值：\ninternal（默认值）：OSS默认传输链路。\noss_acc：传输加速链路。只有创建跨区域复制规则时才能使用传输加速链路",
+            "enum": [
+              "internal",
+              "oss_acc"
+            ],
+            "enumValueTitles": {},
+            "example": "oss_acc",
+            "title": "指定数据复制时使用的数据传输链路。  取值：  internal（默认值）：OSS默认传输链路。  oss_acc：传输加速链路。只有创建跨区域复制规则时才能使用传输加速链路。",
+            "type": "string"
+          }
+        },
+        "title": "保存目标Bucket信息的容器。",
+        "type": "object"
+      },
+      "ReplicationEncryptionConfiguration": {
+        "description_en": "The encryption configuration of the destination object",
+        "description_zh": "目标对象加密配置",
+        "properties": {
+          "ReplicaKmsKeyID": {
+            "description_en": "The SSE-KMS key ID. This element is required if you specify replication of objects created with SSE-KMS encryption",
+            "description_zh": "指定SSE-KMS密钥ID。如果指定复制通过SSE-KMS加密创建的对象，则必须指定该元素",
+            "example": "c4d49f85-ee30-426b-a5ed-95e9139dxxxxx",
+            "title": "指定SSE-KMS密钥ID。如果指定复制通过SSE-KMS加密创建的对象，则必须指定该元素。",
+            "type": "string"
+          }
+        },
+        "title": "目标对象加密配置。",
+        "type": "object"
+      },
+      "ReplicationPrefixSet": {
+        "description_en": "The container that stores prefixes. You can specify up to 10 prefixes in each replication rule",
+        "description_zh": "保存Prefix的容器，每个复制规则中，最多能指定10个Prefix",
+        "properties": {
+          "Prefix": {
+            "description_en": "The prefix of the objects to be replicated. Only objects that match the specified prefix are replicated to the destination bucket.\nThe maximum length of a prefix is 1,023 characters.\nIf a prefix is configured, both newly written data and historical data are synchronized according to the rules specified by the prefix",
+            "description_zh": "设置待复制Object的Prefix。只有匹配该Prefix的Object才被复制到目标Bucket。\nPrefix最大长度为1023个字符。\n如果配置了Prefix，则新写入的数据和历史数据的同步都会遵循Prefix指定的规则",
+            "items": {
+              "description_en": "The prefix of the objects to be replicated. Only objects that match the specified prefix are replicated to the destination bucket.\nThe maximum length of a prefix is 1,023 characters.\nIf a prefix is configured, both newly written data and historical data are synchronized according to the rules specified by the prefix",
+              "description_zh": "设置待复制Object的Prefix。只有匹配该Prefix的Object才被复制到目标Bucket。\nPrefix最大长度为1023个字符。\n如果配置了Prefix，则新写入的数据和历史数据的同步都会遵循Prefix指定的规则",
+              "example": "video",
+              "type": "string"
+            },
+            "title": "设置待复制Object的Prefix。只有匹配该Prefix的Object才被复制到目标Bucket。  Prefix最大长度为1023个字符。  如果配置了Prefix，则新写入的数据和历史数据的同步都会遵循Prefix指定的规则。",
+            "type": "array"
+          }
+        },
+        "title": "保存前缀（Prefix）的容器。每条数据复制规则中，最多可指定10条Prefix。",
+        "type": "object"
+      },
+      "ReplicationRule": {
+        "description_en": "The data replication rule",
+        "description_zh": "数据复制规则",
+        "properties": {
+          "Action": {
+            "description_en": "The operations that can be replicated to the destination bucket. If Action is configured, both newly written data and historical data are synchronized based on the replication operations specified by Action.\n\nAction allows the following operation types. You can specify one or more types.\n\nValid values:\nALL (default): PUT, DELETE, and ABORT operations are all replicated to the destination bucket.\nPUT: write operations that are replicated to the destination bucket, including PutObject, PostObject, AppendObject, CopyObject, PutObjectACL, InitiateMultipartUpload, UploadPart, UploadPartCopy, and CompleteMultipartUpload",
+            "description_zh": "指定可以被复制到目标Bucket的操作。如果配置了Action，则新写入的数据和历史数据的同步都会遵循Action指定的复制操作。\nAction允许以下操作类型，您可以指定一项或多项。\n取值：\nALL（默认值）：表示PUT、DELETE、ABORT操作均会被同步到目标Bucket。\nPUT：表示被同步到目标Bucket的写入操作，包括PutObject、PostObject、AppendObject、CopyObject、PutObjectACL、InitiateMultipartUpload、UploadPart、UploadPartCopy、CompleteMultipartUpload",
+            "example": "PUT",
+            "title": "指定可以被复制到目标Bucket的操作。如果配置了Action，则新写入的数据和历史数据的同步都会遵循Action指定的复制操作。  Action允许以下操作类型，您可以指定一项或多项。  取值：  ALL（默认值）：表示PUT、DELETE、ABORT操作均会被同步到目标Bucket。  PUT：表示被同步到目标Bucket的写入操作，包括PutObject、PostObject、AppendObject、CopyObject、PutObjectACL、InitiateMultipartUpload、UploadPart、UploadPartCopy、CompleteMultipartUpload。",
+            "type": "string"
+          },
+          "Destination": {
+            "$ref": "#/components/schemas/ReplicationDestination",
+            "description_en": "The container that stores the destination bucket information",
+            "description_zh": "保存目标Bucket信息的容器",
+            "title": "保存目的Bucket信息的容器"
+          },
+          "EncryptionConfiguration": {
+            "$ref": "#/components/schemas/ReplicationEncryptionConfiguration",
+            "description_en": "The encryption configuration for destination objects. If you set Status to Enabled, you must specify this element",
+            "description_zh": "目标对象加密配置。如果指定Status为Enabled，则必须指定该元素",
+            "title": "目标对象加密配置。"
+          },
+          "HistoricalObjectReplication": {
+            "description_en": "Specifies whether to replicate historical data. This parameter specifies whether to replicate the data in the source bucket to the destination bucket before data replication is enabled.\n\nValid values:\nenabled (default): Historical data is replicated.\ndisabled: Historical data is not replicated. Only data written after the data replication rule is created is replicated",
+            "description_zh": "指定是否复制历史数据。即开启数据复制前，是否将源Bucket中的数据复制到目标Bucket。\n取值：\nenabled（默认值）：表示复制历史数据。\ndisabled：表示不复制历史数据。即仅复制创建数据复制规则后新写入的数据",
+            "enum": [
+              "enabled",
+              "disabled"
+            ],
+            "example": "enabled",
+            "title": "是否复制历史数据",
+            "type": "string"
+          },
+          "ID": {
+            "description_en": "The ID of the request rule",
+            "description_zh": "请求规则对应的ID",
+            "example": "test_replication_1",
+            "title": "数据复制规则的唯一标识",
+            "type": "string"
+          },
+          "PrefixSet": {
+            "$ref": "#/components/schemas/ReplicationPrefixSet",
+            "description_en": "The container that stores prefixes. You can specify up to 10 prefixes in each data replication rule",
+            "description_zh": "保存前缀（Prefix）的容器。每条数据复制规则中，最多可指定10条Prefix",
+            "title": "要复制的目标Object名称前缀配置容器"
+          },
+          "RTC": {
+            "$ref": "#/components/schemas/RTC",
+            "description_en": "The container that stores the replication time control (RTC) configuration",
+            "description_zh": "保存RTC配置规则的容器"
+          },
+          "SourceSelectionCriteria": {
+            "$ref": "#/components/schemas/ReplicationSourceSelectionCriteria",
+            "description_en": "The container for additional filter conditions that identify the source objects to replicate. OSS currently supports filter conditions only for source objects encrypted by using SSE-KMS",
+            "description_zh": "用于标识要复制的源对象的其他筛选条件的容器。当前OSS仅支持针对SSE-KMS加密的源对象指定筛选条件",
+            "title": "用于标识要复制的源对象的其他筛选条件的容器。"
+          },
+          "Status": {
+            "description_en": "The replication status.\n\nValid values:\nstarting: After a data replication rule is configured, Object Storage Service (OSS) prepares replication tasks for the bucket. In this case, the replication status is starting.\ndoing: After the data replication rule takes effect and data is being synchronized, the replication status is doing.\nclosing: After the data replication rule is deleted, OSS automatically performs cleanup. In this case, the replication status is closing",
+            "description_zh": "表示复制状态。\n取值：\nstarting：设置数据复制规则后，OSS会为Bucket准备复制任务，此时的复制状态为starting。\ndoing：当数据复制规则生效后，即数据处于同步状态时，此时的复制状态为doing。\nclosing：删除数据复制规则后，OSS会自动完成清理工作，此时的复制状态为closing",
+            "example": "starting",
+            "title": "表示复制状态。  取值：  starting：设置数据复制规则后，OSS会为Bucket准备复制任务，此时的复制状态为starting。  doing：当数据复制规则生效后，即数据处于同步状态时，此时的复制状态为doing。  closing：删除数据复制规则后，OSS会自动完成清理工作，此时的复制状态为closing。",
+            "type": "string"
+          },
+          "SyncRole": {
+            "description_en": "The role that OSS is authorized to use for data replication. If you specify SSE-KMS to encrypt the destination objects, you must specify this element",
+            "description_zh": "授权OSS使用哪个角色来进行数据复制。如果指定使用SSE-KMS加密目标对象，则必须指定该元素",
+            "example": "aliyunramrole",
+            "title": "授权OSS使用哪个角色来进行数据复制。",
+            "type": "string"
+          }
+        },
+        "title": "保存数据复制规则的容器",
+        "type": "object"
+      },
+      "ReplicationSourceSelectionCriteria": {
+        "description_en": "The container for additional filter conditions that identify source objects to be replicated. Currently, OSS supports specifying filter conditions only for source objects encrypted with SSE-KMS",
+        "description_zh": "用于标识要复制的源对象的其他筛选条件的容器。当前OSS仅支持针对SSE-KMS加密的源对象指定筛选条件",
+        "properties": {
+          "SseKmsEncryptedObjects": {
+            "description_en": "The container for filtering objects encrypted with SSE-KMS. If SourceSelectionCriteria is specified in the data replication rule, this element is required",
+            "description_zh": "用于筛选使用SSE-KMS加密对象的容器。如果在数据复制规则中指定了SourceSelectionCriteria，则必须指定该元素",
+            "properties": {
+              "Status": {
+                "description_en": "指定OSS是否复制通过SSE-KMS加密创建的对象。取值范围如下：\nEnabled：表示复制通过SSE-KMS加密创建的对象。\nDisabled：表示不复制通过SSE-KMS加密创建的对象",
+                "description_zh": "指定OSS是否复制通过SSE-KMS加密创建的对象。取值范围如下：\nEnabled：表示复制通过SSE-KMS加密创建的对象。\nDisabled：表示不复制通过SSE-KMS加密创建的对象",
+                "enum": [
+                  "Enabled",
+                  "Disabled"
+                ],
+                "example": "Enabled",
+                "title": "指定OSS是否复制通过SSE-KMS加密创建的对象。取值范围如下：  Enabled：表示复制通过SSE-KMS加密创建的对象。  Disabled（默认值）：表示不复制通过SSE-KMS加密创建的对象。",
+                "type": "string"
+              }
+            },
+            "title": "用于筛选使用SSE-KMS加密对象的容器。如果在数据复制规则中指定了SourceSelectionCriteria，则必须指定该元素。",
+            "type": "object"
+          }
+        },
+        "title": "用于标识要复制的源对象的其他筛选条件的容器。当前OSS仅支持针对SSE-KMS加密的源对象指定筛选条件。",
+        "type": "object"
+      }
+    }
+  },
+  "deprecated": false,
+  "description_en": "Retrieves the data replication rules configured for a bucket",
+  "description_zh": "获取某个存储空间（Bucket）已设置的数据复制规则",
+  "kebab_example": "",
+  "method": "GET",
+  "multi_version": false,
+  "name": "GetBucketReplication",
+  "operation": {
+    "action": "GetBucketReplication",
+    "api_style": "ROA",
+    "api_version": "2019-05-17",
+    "method": "GET",
+    "operation_type": "read",
+    "protocol": "HTTPS",
+    "system_operation_type": "get",
+    "url": "/?replication"
+  },
+  "parameters": [
+    {
+      "example": "examplebucket",
+      "help_en": "The bucket name",
+      "help_zh": "Bucket名称",
+      "location": "host",
+      "name": "bucket",
+      "options": [
+        "--bucket"
+      ],
+      "raw_name": "bucket",
+      "required": true,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "/?replication",
+  "product_code": "Oss",
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "",
+        "description_zh": "",
+        "properties": {
+          "ReplicationConfiguration": {
+            "description_en": "The list of replication rules",
+            "description_zh": "保存复制规则的列表",
+            "properties": {
+              "Rule": {
+                "description_en": "The container that stores replication rules",
+                "description_zh": "保存复制规则的容器",
+                "items": {
+                  "$ref": "#/components/schemas/ReplicationRule",
+                  "description_en": "The replication rule information",
+                  "description_zh": "复制规则信息"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
+}

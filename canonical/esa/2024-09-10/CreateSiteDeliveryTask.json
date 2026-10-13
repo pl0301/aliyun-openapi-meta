@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun esa CreateSiteDeliveryTask --region cn-hangzhou --SiteId 12312312112000 --TaskName 'dcdn-test-task' --BusinessType dcdn_log_access_l1 --FieldName 'ClientIP,ClientRequestURI,EdgeResponseStatusCode' --DeliveryType sls",
   "cmd_full_name": "esa create-site-delivery-task",
   "cmd_name": "create-site-delivery-task",
@@ -116,14 +117,14 @@
     {
       "fields": [
         {
-          "example": "yourAccessKeyID",
-          "help_en": "The AccessKey ID of the Alibaba Cloud account or RAM user",
-          "help_zh": "阿里云账号或 RAM 用户的AccessKey ID",
-          "name": "access_key",
+          "example": "cn-beijing",
+          "help_en": "The region where the service resides",
+          "help_zh": "服务所在区域",
+          "name": "region",
           "options": [
-            "--access-key"
+            "--region"
           ],
-          "raw_name": "AccessKey",
+          "raw_name": "Region",
           "required": false,
           "type": "string"
         },
@@ -136,6 +137,30 @@
             "--bucket-path"
           ],
           "raw_name": "BucketPath",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "yourAccessKeyID",
+          "help_en": "The AccessKey ID of the Alibaba Cloud account or RAM user",
+          "help_zh": "阿里云账号或 RAM 用户的AccessKey ID",
+          "name": "access_key",
+          "options": [
+            "--access-key"
+          ],
+          "raw_name": "AccessKey",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "LDSIKh***",
+          "help_en": "The SecretKey ID used by the S3 account",
+          "help_zh": "S3账号使用的SecretKey ID",
+          "name": "secret_key",
+          "options": [
+            "--secret-key"
+          ],
+          "raw_name": "SecretKey",
           "required": false,
           "type": "string"
         },
@@ -164,18 +189,6 @@
           "type": "string"
         },
         {
-          "example": "cn-beijing",
-          "help_en": "The region where the service resides",
-          "help_zh": "服务所在区域",
-          "name": "region",
-          "options": [
-            "--region"
-          ],
-          "raw_name": "Region",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "true",
           "help_en": "Specifies whether the service is S3-compatible",
           "help_zh": "是否为S3兼容",
@@ -186,18 +199,6 @@
           "raw_name": "S3Cmpt",
           "required": false,
           "type": "bool"
-        },
-        {
-          "example": "LDSIKh***",
-          "help_en": "The SecretKey ID used by the S3 account",
-          "help_zh": "S3账号使用的SecretKey ID",
-          "name": "secret_key",
-          "options": [
-            "--secret-key"
-          ],
-          "raw_name": "SecretKey",
-          "required": false,
-          "type": "string"
         },
         {
           "example": "false",
@@ -212,6 +213,10 @@
           "type": "bool"
         },
         {
+          "enum": [
+            "console",
+            "sdk"
+          ],
           "example": "console ",
           "help_en": "The verification method for S3 delivery keys.\n\nThe key configuration comes from the console or SDK. Keys from the console are encrypted during transmission. Keys from the SDK do not require encryption",
           "help_zh": "S3投递密钥验证方式\n\n密钥配置来自控制台或者SDK\n来自控制参数会被加密传输，SDK不需要加密",
@@ -238,6 +243,18 @@
     },
     {
       "fields": [
+        {
+          "example": "cn-shanghai",
+          "help_en": "The OSS region",
+          "help_zh": "OSS区域",
+          "name": "region",
+          "options": [
+            "--region"
+          ],
+          "raw_name": "Region",
+          "required": false,
+          "type": "string"
+        },
         {
           "example": "1234***",
           "help_en": "The Alibaba Cloud account ID",
@@ -273,18 +290,6 @@
           "raw_name": "PrefixPath",
           "required": false,
           "type": "string"
-        },
-        {
-          "example": "cn-shanghai",
-          "help_en": "The OSS region",
-          "help_zh": "OSS区域",
-          "name": "region",
-          "options": [
-            "--region"
-          ],
-          "raw_name": "Region",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The OSS delivery configuration",
@@ -302,18 +307,6 @@
     {
       "fields": [
         {
-          "example": "gzip",
-          "help_en": "The compression method. By default, no compression is applied",
-          "help_zh": "压缩方式，默认不压缩",
-          "name": "compress",
-          "options": [
-            "--compress"
-          ],
-          "raw_name": "Compress",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "http://xxx.aliyun.com/v1/log/upload",
           "help_en": "The HTTP server delivery address",
           "help_zh": "HTTP服务器投递地址",
@@ -322,6 +315,151 @@
             "--dest-url"
           ],
           "raw_name": "DestUrl",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "true",
+          "help_en": "Specifies whether to use standard authentication",
+          "help_zh": "是否使用标态鉴权",
+          "name": "standard_auth_on",
+          "options": [
+            "--standard-auth-on"
+          ],
+          "raw_name": "StandardAuthOn",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "fields": [
+            {
+              "example": "***",
+              "help_en": "The private key",
+              "help_zh": "私钥",
+              "name": "private_key",
+              "options": [
+                "--private-key"
+              ],
+              "raw_name": "PrivateKey",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "300",
+              "help_en": "The encryption timeout period.\n\nThe value must be greater than 0. A value of 300 or greater is recommended. Unit: seconds",
+              "help_zh": "加密超时时间。\n\n\n大于0值，建议300以上，单位是秒",
+              "name": "expired_time",
+              "options": [
+                "--expired-time"
+              ],
+              "raw_name": "ExpiredTime",
+              "required": false,
+              "type": "int"
+            },
+            {
+              "example": "v1/log/upload",
+              "help_en": "The URI path for standard authentication",
+              "help_zh": "标态鉴权 uri 路径",
+              "name": "url_path",
+              "options": [
+                "--url-path"
+              ],
+              "raw_name": "UrlPath",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "help_en": "The standard authentication parameters",
+          "help_zh": "标态鉴权参数",
+          "name": "standard_auth_param",
+          "options": [
+            "--standard-auth-param"
+          ],
+          "raw_name": "StandardAuthParam",
+          "required": false,
+          "type": "object"
+        },
+        {
+          "example": "1000",
+          "help_en": "The maximum number of log entries per delivery",
+          "help_zh": "单次投递最大条数",
+          "name": "max_batch_size",
+          "options": [
+            "--max-batch-size"
+          ],
+          "raw_name": "MaxBatchSize",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "5",
+          "help_en": "The maximum size per delivery. Unit: MB",
+          "help_zh": "单次投递最大字节数，单位为MB",
+          "name": "max_batch_mb",
+          "options": [
+            "--max-batch-mb"
+          ],
+          "raw_name": "MaxBatchMB",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "3",
+          "help_en": "The maximum number of retries",
+          "help_zh": "最大重试次数",
+          "name": "max_retry",
+          "options": [
+            "--max-retry"
+          ],
+          "raw_name": "MaxRetry",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "10",
+          "help_en": "The timeout period. Unit: seconds",
+          "help_zh": "超时等待时间，单位为秒",
+          "name": "transform_timeout",
+          "options": [
+            "--transform-timeout"
+          ],
+          "raw_name": "TransformTimeout",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "cdnVersion:1.0",
+          "help_en": "The log delivery body prefix",
+          "help_zh": "日志投递包前缀",
+          "name": "log_body_prefix",
+          "options": [
+            "--log-body-prefix"
+          ],
+          "raw_name": "LogBodyPrefix",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "cdnVersion:1.0",
+          "help_en": "The log delivery body suffix",
+          "help_zh": "日志投递包尾缀",
+          "name": "log_body_suffix",
+          "options": [
+            "--log-body-suffix"
+          ],
+          "raw_name": "LogBodySuffix",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "gzip",
+          "help_en": "The compression method. By default, no compression is applied",
+          "help_zh": "压缩方式，默认不压缩",
+          "name": "compress",
+          "options": [
+            "--compress"
+          ],
+          "raw_name": "Compress",
           "required": false,
           "type": "string"
         },
@@ -354,102 +492,6 @@
           }
         },
         {
-          "example": "true",
-          "help_en": "The trailing separator",
-          "help_zh": "末尾分隔符",
-          "name": "last_log_split",
-          "options": [
-            "--last-log-split"
-          ],
-          "raw_name": "LastLogSplit",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "cdnVersion:1.0",
-          "help_en": "The log delivery body prefix",
-          "help_zh": "日志投递包前缀",
-          "name": "log_body_prefix",
-          "options": [
-            "--log-body-prefix"
-          ],
-          "raw_name": "LogBodyPrefix",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "cdnVersion:1.0",
-          "help_en": "The log delivery body suffix",
-          "help_zh": "日志投递包尾缀",
-          "name": "log_body_suffix",
-          "options": [
-            "--log-body-suffix"
-          ],
-          "raw_name": "LogBodySuffix",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "true",
-          "help_en": "Specifies whether to enable log segmentation. Default value: true",
-          "help_zh": "是否开启日志分割，默认为true",
-          "name": "log_split",
-          "options": [
-            "--log-split"
-          ],
-          "raw_name": "LogSplit",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "\\n",
-          "help_en": "The log separator",
-          "help_zh": "日志分隔符",
-          "name": "log_split_words",
-          "options": [
-            "--log-split-words"
-          ],
-          "raw_name": "LogSplitWords",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "5",
-          "help_en": "The maximum size per delivery. Unit: MB",
-          "help_zh": "单次投递最大字节数，单位为MB",
-          "name": "max_batch_mb",
-          "options": [
-            "--max-batch-mb"
-          ],
-          "raw_name": "MaxBatchMB",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "1000",
-          "help_en": "The maximum number of log entries per delivery",
-          "help_zh": "单次投递最大条数",
-          "name": "max_batch_size",
-          "options": [
-            "--max-batch-size"
-          ],
-          "raw_name": "MaxBatchSize",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "3",
-          "help_en": "The maximum number of retries",
-          "help_zh": "最大重试次数",
-          "name": "max_retry",
-          "options": [
-            "--max-retry"
-          ],
-          "raw_name": "MaxRetry",
-          "required": false,
-          "type": "int"
-        },
-        {
           "help_en": "The custom request parameters",
           "help_zh": "自定义请求参数",
           "name": "query_param",
@@ -479,76 +521,39 @@
         },
         {
           "example": "true",
-          "help_en": "Specifies whether to use standard authentication",
-          "help_zh": "是否使用标态鉴权",
-          "name": "standard_auth_on",
+          "help_en": "Specifies whether to enable log segmentation. Default value: true",
+          "help_zh": "是否开启日志分割，默认为true",
+          "name": "log_split",
           "options": [
-            "--standard-auth-on"
+            "--log-split"
           ],
-          "raw_name": "StandardAuthOn",
+          "raw_name": "LogSplit",
           "required": false,
           "type": "bool"
         },
         {
-          "fields": [
-            {
-              "example": "300",
-              "help_en": "The encryption timeout period.\n\nThe value must be greater than 0. A value of 300 or greater is recommended. Unit: seconds",
-              "help_zh": "加密超时时间。\n\n\n大于0值，建议300以上，单位是秒",
-              "name": "expired_time",
-              "options": [
-                "--expired-time"
-              ],
-              "raw_name": "ExpiredTime",
-              "required": false,
-              "type": "int"
-            },
-            {
-              "example": "***",
-              "help_en": "The private key",
-              "help_zh": "私钥",
-              "name": "private_key",
-              "options": [
-                "--private-key"
-              ],
-              "raw_name": "PrivateKey",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "example": "v1/log/upload",
-              "help_en": "The URI path for standard authentication",
-              "help_zh": "标态鉴权 uri 路径",
-              "name": "url_path",
-              "options": [
-                "--url-path"
-              ],
-              "raw_name": "UrlPath",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "The standard authentication parameters",
-          "help_zh": "标态鉴权参数",
-          "name": "standard_auth_param",
+          "example": "true",
+          "help_en": "The trailing separator",
+          "help_zh": "末尾分隔符",
+          "name": "last_log_split",
           "options": [
-            "--standard-auth-param"
+            "--last-log-split"
           ],
-          "raw_name": "StandardAuthParam",
+          "raw_name": "LastLogSplit",
           "required": false,
-          "type": "object"
+          "type": "bool"
         },
         {
-          "example": "10",
-          "help_en": "The timeout period. Unit: seconds",
-          "help_zh": "超时等待时间，单位为秒",
-          "name": "transform_timeout",
+          "example": "\\n",
+          "help_en": "The log separator",
+          "help_zh": "日志分隔符",
+          "name": "log_split_words",
           "options": [
-            "--transform-timeout"
+            "--log-split-words"
           ],
-          "raw_name": "TransformTimeout",
+          "raw_name": "LogSplitWords",
           "required": false,
-          "type": "int"
+          "type": "string"
         }
       ],
       "help_en": "The HTTP delivery configuration parameters",
@@ -566,14 +571,74 @@
     {
       "fields": [
         {
-          "example": "kafka.LeastBytes",
-          "help_en": "The load balancing method",
-          "help_zh": "负载均衡方式",
-          "name": "balancer",
+          "example": "dqc_test2",
+          "help_en": "The Kafka message topic",
+          "help_zh": "Kafka消息主题",
+          "name": "topic",
           "options": [
-            "--balancer"
+            "--topic"
           ],
-          "raw_name": "Balancer",
+          "raw_name": "Topic",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "true",
+          "help_en": "Specifies whether to enable user authentication",
+          "help_zh": "是否开启用户鉴权",
+          "name": "user_auth",
+          "options": [
+            "--user-auth"
+          ],
+          "raw_name": "UserAuth",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "example": "plain",
+          "help_en": "The encryption method",
+          "help_zh": "加密方式",
+          "name": "machanism_type",
+          "options": [
+            "--machanism-type"
+          ],
+          "raw_name": "MachanismType",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "false",
+          "help_en": "Specifies whether to enable SASL-encrypted transmission for Kafka delivery.\n\nThe delivery address must be configured with a public certificate. Self-signed certificate verification will fail",
+          "help_zh": "KAFKA投递是否配置SASL加密传输\n\n这里需要投递地址配置公网证书，私签名校验会失败",
+          "name": "use_tls",
+          "options": [
+            "--use-tls"
+          ],
+          "raw_name": "UseTLS",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "example": "xxx",
+          "help_en": "The username",
+          "help_zh": "用户名",
+          "name": "user_name",
+          "options": [
+            "--user-name"
+          ],
+          "raw_name": "UserName",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "***",
+          "help_en": "The encryption password",
+          "help_zh": "加密密码",
+          "name": "password",
+          "options": [
+            "--password"
+          ],
+          "raw_name": "Password",
           "required": false,
           "type": "string"
         },
@@ -604,74 +669,14 @@
           "type": "string"
         },
         {
-          "example": "plain",
-          "help_en": "The encryption method",
-          "help_zh": "加密方式",
-          "name": "machanism_type",
+          "example": "kafka.LeastBytes",
+          "help_en": "The load balancing method",
+          "help_zh": "负载均衡方式",
+          "name": "balancer",
           "options": [
-            "--machanism-type"
+            "--balancer"
           ],
-          "raw_name": "MachanismType",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "***",
-          "help_en": "The encryption password",
-          "help_zh": "加密密码",
-          "name": "password",
-          "options": [
-            "--password"
-          ],
-          "raw_name": "Password",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "dqc_test2",
-          "help_en": "The Kafka message topic",
-          "help_zh": "Kafka消息主题",
-          "name": "topic",
-          "options": [
-            "--topic"
-          ],
-          "raw_name": "Topic",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "false",
-          "help_en": "Specifies whether to enable SASL-encrypted transmission for Kafka delivery.\n\nThe delivery address must be configured with a public certificate. Self-signed certificate verification will fail",
-          "help_zh": "KAFKA投递是否配置SASL加密传输\n\n这里需要投递地址配置公网证书，私签名校验会失败",
-          "name": "use_tls",
-          "options": [
-            "--use-tls"
-          ],
-          "raw_name": "UseTLS",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "true",
-          "help_en": "Specifies whether to enable user authentication",
-          "help_zh": "是否开启用户鉴权",
-          "name": "user_auth",
-          "options": [
-            "--user-auth"
-          ],
-          "raw_name": "UserAuth",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "xxx",
-          "help_en": "The username",
-          "help_zh": "用户名",
-          "name": "user_name",
-          "options": [
-            "--user-name"
-          ],
-          "raw_name": "UserName",
+          "raw_name": "Balancer",
           "required": false,
           "type": "string"
         }
@@ -691,14 +696,14 @@
     {
       "fields": [
         {
-          "example": "accesslog-test",
-          "help_en": "The SLS Logstore name",
-          "help_zh": "SLS实时日志库名称",
-          "name": "sls_log_store",
+          "example": "cn-hangzhou",
+          "help_en": "The SLS real-time log region name",
+          "help_zh": "SLS实时日志区域名称",
+          "name": "sls_region",
           "options": [
-            "--sls-log-store"
+            "--sls-region"
           ],
-          "raw_name": "SLSLogStore",
+          "raw_name": "SLSRegion",
           "required": false,
           "type": "string"
         },
@@ -715,14 +720,14 @@
           "type": "string"
         },
         {
-          "example": "cn-hangzhou",
-          "help_en": "The SLS real-time log region name",
-          "help_zh": "SLS实时日志区域名称",
-          "name": "sls_region",
+          "example": "accesslog-test",
+          "help_en": "The SLS Logstore name",
+          "help_zh": "SLS实时日志库名称",
+          "name": "sls_log_store",
           "options": [
-            "--sls-region"
+            "--sls-log-store"
           ],
-          "raw_name": "SLSRegion",
+          "raw_name": "SLSLogStore",
           "required": false,
           "type": "string"
         }
@@ -763,23 +768,20 @@
         "description_zh": "请求响应体",
         "properties": {
           "DataCenter": {
-            "backendName": "data.content.Region",
             "description_en": "The data center. Valid values:\ncn: the Chinese mainland.\noversea: outside the Chinese mainland.\nglobal: global",
             "description_zh": "数据中心。取值为：\ncn：中国内地。\noversea：海外（非中国内地）。\nglobal：全球",
             "example": "cn",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "9358E852-992D-5BC7-8BD7-975CA02773A8",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "SiteId": {
-            "backendName": "data.content.SiteId",
             "description_en": "The site ID, which can be obtained by calling the [ListSites]（https://help.aliyun.com/document_detail/2850189.html） operation",
             "description_zh": "站点ID，可通过调用[ListSites]（https://help.aliyun.com/document_detail/2850189.html）接口获取",
             "example": "123456****",
@@ -787,14 +789,13 @@
             "type": "integer"
           },
           "TaskName": {
-            "backendName": "data.content.ProjectName",
             "description_en": "The task name",
             "description_zh": "任务名称",
             "example": "er-oss",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

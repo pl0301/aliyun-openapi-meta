@@ -1,4 +1,6 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun ecd ApplyCoordinationForMonitoring --region cn-hangzhou --ResourceCandidates.1.OwnerEndUserId alice --ResourceCandidates.1.ResourceProperties TestProperty --Uuid 3E14A18BD4D088504B9F8A8751AB0000 --ResourceCandidates.1.ResourceId 'ecd-08zhejm3h7ilr0000' --ResourceCandidates.1.ResourceName DemoComputer --ResourceCandidates.1.ResourceType CLOUD_DESKTOP --CoordinatePolicyType FULL_CONTROL --ResourceCandidates.1.ResourceRegionId 'cn-hangzhou' --RegionId 'cn-hangzhou' --ResourceCandidates.1.OwnerAliUid 1302470215170000 --version 2020-09-30 --method POST --force",
   "cmd_full_name": "ecd apply-coordination-for-monitoring",
   "cmd_name": "apply-coordination-for-monitoring",
   "deprecated": false,
@@ -47,6 +49,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ADMIN_INITIATE"
+      ],
       "example": "ADMIN_INITIATE",
       "help_en": "The initiator type",
       "help_zh": "发起者类型",
@@ -60,6 +65,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "FULL_CONTROL"
+      ],
       "example": "FULL_CONTROL",
       "help_en": "The access policy for the remote assistance procedure",
       "help_zh": "远程协助过程中的权限策略",
@@ -76,16 +84,43 @@
       "element": {
         "fields": [
           {
-            "example": "130247021517****",
-            "help_en": "The Alibaba Cloud account ID of the cloud computer administrator",
-            "help_zh": "云电脑管理员的阿里云账号ID",
-            "name": "owner_ali_uid",
-            "options": [
-              "--owner-ali-uid"
+            "enum": [
+              "CLOUD_DESKTOP"
             ],
-            "raw_name": "OwnerAliUid",
+            "example": "CLOUD_DESKTOP",
+            "help_en": "The resource type",
+            "help_zh": "资源类型",
+            "name": "resource_type",
+            "options": [
+              "--resource-type"
+            ],
+            "raw_name": "ResourceType",
             "required": true,
-            "type": "int"
+            "type": "string"
+          },
+          {
+            "example": "cn-hangzhou",
+            "help_en": "The region where the resource resides",
+            "help_zh": "资源所在地域",
+            "name": "resource_region_id",
+            "options": [
+              "--resource-region-id"
+            ],
+            "raw_name": "ResourceRegionId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "example": "TestProperty",
+            "help_en": "The cloud computer properties",
+            "help_zh": "云电脑属性",
+            "name": "resource_properties",
+            "options": [
+              "--resource-properties"
+            ],
+            "raw_name": "ResourceProperties",
+            "required": false,
+            "type": "string"
           },
           {
             "example": "alice",
@@ -124,40 +159,16 @@
             "type": "string"
           },
           {
-            "example": "TestProperty",
-            "help_en": "The cloud computer properties",
-            "help_zh": "云电脑属性",
-            "name": "resource_properties",
+            "example": "130247021517****",
+            "help_en": "The Alibaba Cloud account ID of the cloud computer administrator",
+            "help_zh": "云电脑管理员的阿里云账号ID",
+            "name": "owner_ali_uid",
             "options": [
-              "--resource-properties"
+              "--owner-ali-uid"
             ],
-            "raw_name": "ResourceProperties",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "cn-hangzhou",
-            "help_en": "The region where the resource resides",
-            "help_zh": "资源所在地域",
-            "name": "resource_region_id",
-            "options": [
-              "--resource-region-id"
-            ],
-            "raw_name": "ResourceRegionId",
+            "raw_name": "OwnerAliUid",
             "required": true,
-            "type": "string"
-          },
-          {
-            "example": "CLOUD_DESKTOP",
-            "help_en": "The resource type",
-            "help_zh": "资源类型",
-            "name": "resource_type",
-            "options": [
-              "--resource-type"
-            ],
-            "raw_name": "ResourceType",
-            "required": true,
-            "type": "string"
+            "type": "int"
           }
         ],
         "type": "object"
@@ -198,92 +209,75 @@
         "description_zh": "返回信息集合",
         "properties": {
           "CoordinateFlowModels": {
-            "backendName": "data",
             "description_en": "The list of collaboration flow data",
             "description_zh": "协同流数据信息列表",
-            "itemName": "CoordinateFlowModel",
             "items": {
               "description_en": "The collaboration flow data",
               "description_zh": "协同流数据信息",
               "properties": {
                 "CoId": {
-                  "backendName": "coId",
                   "description_en": "The collaboration flow ID",
                   "description_zh": "协同流ID",
                   "example": "co-0sot77uale3****",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "CoordinateStatus": {
-                  "backendName": "coordinateStatus",
                   "description_en": "The current collaboration status.\n[_single.resp.200.props.CoordinateFlowModels.items.CoordinateStatus.enum.COORDINATING  ]Collaborating.\n[_single.resp.200.props.CoordinateFlowModels.items.CoordinateStatus.enum.TERMINATING  ]Terminating.\n[_single.resp.200.props.CoordinateFlowModels.items.CoordinateStatus.enum.TERMINATED ]Terminated.\n[_single.resp.200.props.CoordinateFlowModels.items.CoordinateStatus.enum.PENDING ]Pending acceptance",
                   "description_zh": "当前协同状态",
+                  "enumValueTitles": {
+                    "COORDINATING  ": "协同中",
+                    "PENDING ": "待接受",
+                    "TERMINATED ": "已终止",
+                    "TERMINATING  ": " 终止中"
+                  },
                   "example": "PENDING",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "CoordinateTicket": {
-                  "backendName": "coordinateTicket",
                   "description_en": "The ticket used by ASP to establish a connection",
                   "description_zh": "ASP建立连接使用的Ticket",
                   "example": "1VDQ0VTUw0KW0Rlc2t0b3BdDQpHV1Rva2VuPTAwTzgwL3liS25zUEVGdkF6eU1Pc1ExeHZWdmk4VEE3NFJvU1V1d0dPYm1BNkNJWklDMHVNQklWcjU2NS80S0ZQekQ4aGFTR0ZHelZqMTFGbkRpWWgvUFF1Zm1xSXNGdFRFNFRWMExJNit3TkU0L2RMb04wNXBBSE5Tc3M4dWFXY3lwWE****",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "InitiatorType": {
-                  "backendName": "initiatorType",
                   "description_en": "The initiator type",
                   "description_zh": "发起者类型",
+                  "enumValueTitles": {
+                    "ADMIN_INITIATE": "管理员发起",
+                    "ADMIN_INITIATE_FORCE": "管理者强制",
+                    "COORDINATOR_INITIATE_FORCE": "协同者强制"
+                  },
                   "example": "COORDINATOR_INITIATE_FORCE",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "OwnerUserId": {
-                  "backendName": "ownerUserId",
                   "description_en": "The Alibaba Cloud account ID of the user on the user side",
                   "description_zh": "用户侧用户的阿里云账号ID",
                   "example": "alice",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "ResourceId": {
-                  "backendName": "resourceId",
                   "description_en": "The cloud computer ID",
                   "description_zh": "云电脑ID",
                   "example": "ecd-96vi03f9emqnl****",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 },
                 "ResourceName": {
-                  "backendName": "resourceName",
                   "description_en": "The cloud computer name",
                   "description_zh": "云电脑名称",
                   "example": "DemoComputer",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+                  "type": "string"
                 }
               },
               "type": "object"
             },
-            "nullToEmpty": false,
-            "type": "array",
-            "visibility": "Public"
+            "type": "array"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1CBAFFAB-B697-4049-A9B1-67E1FC5F****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

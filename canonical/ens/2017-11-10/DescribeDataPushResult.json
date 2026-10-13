@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ens DescribeDataPushResult --region cn-hangzhou --AppId 'e76f8985-7965-41fc-925b-9648bb6bf650'",
   "cmd_full_name": "ens describe-data-push-result",
   "cmd_name": "describe-data-push-result",
   "deprecated": false,
-  "description_en": "You can invoke DescribeDataPushResult to obtain the pre-push status results of an application's data files on edge zones",
+  "description_en": "Queries the pre-push status of data files for an application on edge nodes",
   "description_zh": "调用DescribeDataPushResult获取应用的数据文件在边缘节点的预推状态结果",
   "kebab_example": "aliyun ens describe-data-push-result --app-id e76f8985-7965-41fc-925b-9648bb6bf650 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "e76f8985-7965-41fc-925b-9648bb6bf650",
-      "help_en": "The ID of the application",
+      "help_en": "The application ID",
       "help_zh": "应用ID",
       "location": "query",
       "name": "app_id",
@@ -34,7 +35,7 @@
     },
     {
       "example": "159828628258496/mirror_file/game-2553efe7-7bf8-40fb-a6e7-09c9c00a992a.tar",
-      "help_en": "The name of the data file. Separate multiple names with commas (,). By default, all data files are queried",
+      "help_en": "The names of the data files. This is a filter condition for the query. Multiple values are supported and separated by commas (,). By default, all data files are queried",
       "help_zh": "数据文件名；属于查询的过滤条件，支持多选，以\",\"号分割；默认查询所有",
       "location": "query",
       "name": "data_names",
@@ -47,7 +48,7 @@
     },
     {
       "example": "90396",
-      "help_en": "The version number of the data file. Separate multiple numbers with commas (,). By default, all versions of data files are queried",
+      "help_en": "The version numbers of the data files. This is a filter condition for the query. Multiple values are supported and separated by commas (,). By default, all versions are queried",
       "help_zh": "数据文件版本号；属于查询的过滤条件，支持多选，以\",\"号分割；默认查询所有",
       "location": "query",
       "name": "data_versions",
@@ -60,7 +61,7 @@
     },
     {
       "example": "2022-02-15",
-      "help_en": "The beginning of the time range to query. Specify the time in the 2006-01-02 format. By default, the time range to query is not restricted",
+      "help_en": "The start time of the query. Format: YYYY-MM-DD. By default, there is no time limit",
       "help_zh": "查询起始时间，格式\"2006-01-02\"；默认无时间限制",
       "location": "query",
       "name": "min_date",
@@ -73,7 +74,7 @@
     },
     {
       "example": "2022-02-20",
-      "help_en": "The end of the time range to query. Specify the time in the 2006-01-02 format. By default, the time range to query is not restricted",
+      "help_en": "The end time of the query. Format: YYYY-MM-DD. By default, there is no time limit",
       "help_zh": "查询终止时间，格式\"2006-01-02\"；默认无时间限制",
       "location": "query",
       "name": "max_date",
@@ -86,7 +87,7 @@
     },
     {
       "example": "1",
-      "help_en": "Page number, starting from 1. This parameter can be omitted when exporting all information",
+      "help_en": "The page number. Pages start from 1. This parameter is not required when you export all information",
       "help_zh": "页码，起始值为1，导出全部信息时可不传入",
       "location": "query",
       "minimum": "1",
@@ -100,7 +101,7 @@
     },
     {
       "example": "10",
-      "help_en": "The number of entries per page. This parameter is optional if you want to return the push status of all data files",
+      "help_en": "The number of entries per page set in Settings for paging during a paged query. This parameter is not required when you export all entries",
       "help_zh": "分页查询时设置的每页行数，导出全部时可不传入",
       "location": "query",
       "name": "page_size",
@@ -113,7 +114,7 @@
     },
     {
       "example": "cn-wuhan-telecom_unicom_cmcc-2,cn-jiaozuo-2",
-      "help_en": "The IDs of ENS nodes. Separate multiple IDs with commas (,). By default, all ENS nodes are queried",
+      "help_en": "The IDs of the edge nodes. This is a filter condition for the query. Multiple values are supported and separated by commas (,). By default, all edge nodes are queried",
       "help_zh": "边缘节点ID列表；属于查询的过滤条件，支持多选，以\",\"号分割；默认查询所有",
       "location": "query",
       "name": "region_ids",
@@ -131,98 +132,140 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "PageNumber": {
-            "backendName": "data.page.pageNo",
-            "description_en": "The page number",
+            "description_en": "The page number for paging during a paged query",
             "description_zh": "分页查询的页码",
             "example": "1",
             "format": "int32",
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.page.pageSize",
-            "description_en": "The number of entries per page",
+            "description_en": "The number of entries per page set in Settings for paging during a paged query",
             "description_zh": "分页查询时设置的每页行数",
             "example": "10",
             "format": "int32",
             "type": "integer"
           },
           "PushResults": {
-            "backendName": "data.PushResults",
-            "itemName": "PushResult",
-            "items": {
-              "properties": {
-                "Name": {
-                  "backendName": "Name",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "StatusStatS": {
-                  "backendName": "StatusStat",
-                  "itemName": "StatusStat",
-                  "items": {
-                    "properties": {
-                      "RegionIdCount": {
-                        "backendName": "RegionIdCount",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "RegionIds": {
-                        "backendName": "RegionIds",
-                        "itemName": "RegionId",
-                        "items": {
-                          "properties": {
-                            "RegionId": {
-                              "backendName": "RegionId",
-                              "type": "string"
-                            },
-                            "StartTime": {
-                              "backendName": "StartTime",
-                              "type": "string"
-                            },
-                            "StatusDescrip": {
-                              "backendName": "StatusDescrip",
-                              "type": "string"
-                            },
-                            "UpdateTime": {
-                              "backendName": "UpdateTime",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "type": "array"
-                      },
-                      "Status": {
-                        "backendName": "Status",
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "PushResult": {
+                "description_en": "The list of data pre-push statuses on edge nodes",
+                "description_zh": "边缘节点的数据预推状态列表",
+                "items": {
+                  "description_en": "The data pre-push status on an edge node",
+                  "description_zh": "边缘节点的数据预推状态",
+                  "properties": {
+                    "Name": {
+                      "description_en": "The name of the data file",
+                      "description_zh": "数据文件名",
+                      "example": "gcs-pre-websocket-eip-telecom",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "StatusStatS": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "StatusStat": {
+                          "description_en": "The list of pre-push status statistics",
+                          "description_zh": "预推状态统计列表",
+                          "items": {
+                            "description_en": "The pre-push status statistics",
+                            "description_zh": "预推状态统计",
+                            "properties": {
+                              "RegionIdCount": {
+                                "description_en": "The total number of edge nodes",
+                                "description_zh": "边缘节点总数",
+                                "example": "2",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "RegionIds": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "itemNode": true,
+                                "properties": {
+                                  "RegionId": {
+                                    "description_en": "The list of data pre-push statuses on edge nodes",
+                                    "description_zh": "边缘节点的数据预推状态列表",
+                                    "items": {
+                                      "description_en": "The data pre-push status on an edge node",
+                                      "description_zh": "边缘节点的数据预推状态",
+                                      "properties": {
+                                        "RegionId": {
+                                          "description_en": "The ID of the edge node",
+                                          "description_zh": "边缘节点ID",
+                                          "example": "cn-wuxi-5",
+                                          "type": "string"
+                                        },
+                                        "StartTime": {
+                                          "description_en": "The start time of the pre-push task. The time is displayed in UTC",
+                                          "description_zh": "预推开始时间，UTC时间格式",
+                                          "example": "2021-12-28T16:00:00Z",
+                                          "type": "string"
+                                        },
+                                        "StatusDescrip": {
+                                          "description_en": "The status description",
+                                          "description_zh": "状态描述",
+                                          "example": "Success",
+                                          "type": "string"
+                                        },
+                                        "UpdateTime": {
+                                          "description_en": "The latest update time of the status. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                                          "description_zh": "状态的最新更新时间，utc时间，采用 ISO 8601 UTC 时间格式，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                                          "example": "2021-12-07T02:37:10Z",
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "Status": {
+                                "description_en": "The pre-push status. Valid values:\nSUCCESS: Pre-push succeeded.\nFAILED: Pre-push failed.\nPUSHING: Data is being pre-pushed",
+                                "description_zh": "预推状态。枚举类型，取值：\nSUCCESS：已预推成功\nFAILED：预推失败\nPUSHING：数据预推中",
+                                "example": "FAILED",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Version": {
+                      "description_en": "The version number of the data file",
+                      "description_zh": "数据文件版本号",
+                      "example": "standard",
+                      "type": "string"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "Version": {
-                  "backendName": "Version",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "CEF72CEB-54B6-4AE8-B225-F876FF7BA984",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.page.pageTotal",
-            "description_en": "The total number of entries returned",
+            "description_en": "The total number of entries",
             "description_zh": "总条数",
             "example": "6",
             "format": "int32",

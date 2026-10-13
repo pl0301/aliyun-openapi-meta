@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "",
   "cmd_full_name": "modelstudio get-billing-trend",
   "cmd_name": "get-billing-trend",
@@ -21,6 +22,10 @@
   },
   "parameters": [
     {
+      "enum": [
+        "MONTH",
+        "DAY"
+      ],
       "example": "DAY",
       "help_en": "The query granularity. This parameter is required",
       "help_zh": "查询粒度，不能为空",
@@ -36,18 +41,6 @@
     {
       "fields": [
         {
-          "example": "2026-08-25",
-          "help_en": "The end time",
-          "help_zh": "结束时间",
-          "name": "end",
-          "options": [
-            "--end"
-          ],
-          "raw_name": "end",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "2026-08-01",
           "help_en": "The start time",
           "help_zh": "开始时间",
@@ -56,6 +49,18 @@
             "--start"
           ],
           "raw_name": "start",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "2026-08-25",
+          "help_en": "The end time",
+          "help_zh": "结束时间",
+          "name": "end",
+          "options": [
+            "--end"
+          ],
+          "raw_name": "end",
           "required": false,
           "type": "string"
         }
@@ -120,18 +125,6 @@
                 "type": "string"
               },
               {
-                "example": "IN",
-                "help_en": "The filter method",
-                "help_zh": "过滤方式",
-                "name": "select_type",
-                "options": [
-                  "--select-type"
-                ],
-                "raw_name": "selectType",
-                "required": false,
-                "type": "string"
-              },
-              {
                 "element": {
                   "type": "string"
                 },
@@ -144,6 +137,22 @@
                 "raw_name": "values",
                 "required": false,
                 "type": "array"
+              },
+              {
+                "enum": [
+                  "NOT",
+                  "IN"
+                ],
+                "example": "IN",
+                "help_en": "The filter method",
+                "help_zh": "过滤方式",
+                "name": "select_type",
+                "options": [
+                  "--select-type"
+                ],
+                "raw_name": "selectType",
+                "required": false,
+                "type": "string"
               }
             ],
             "type": "object"
@@ -234,45 +243,38 @@
         "description_zh": "Schema of Response",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The request result code",
             "description_zh": "请求结果代码",
             "example": "200",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
             "description_en": "The response data",
             "description_zh": "返回数据",
             "properties": {
               "costTotals": {
-                "backendName": "costTotals",
                 "description_en": "The total cost for the entire query time range, including the top N groups and \"Others\"",
                 "description_zh": "整个查询时间范围内的费用合计，包含TopN和“其他”",
                 "properties": {
                   "amount": {
-                    "backendName": "amount",
                     "description_en": "The total amount",
                     "description_zh": "费用总金额",
                     "example": "100",
                     "type": "string"
                   },
                   "currency": {
-                    "backendName": "currency",
                     "description_en": "The currency of the amount",
                     "description_zh": "金额币种",
                     "example": "CNY",
                     "type": "string"
                   },
                   "pretaxAmount": {
-                    "backendName": "pretaxAmount",
                     "description_en": "The pretax amount",
                     "description_zh": "不含税金额",
                     "example": "94.34",
                     "type": "string"
                   },
                   "taxAmount": {
-                    "backendName": "taxAmount",
                     "description_en": "The tax amount",
                     "description_zh": "税费金额",
                     "example": "5.66",
@@ -282,44 +284,37 @@
                 "type": "object"
               },
               "groupByTotal": {
-                "backendName": "groupByTotal",
                 "description_en": "The total cost of the top N groups and the optional \"Others\" group within the period",
                 "description_zh": "周期内TopN分组及可选“其他”分组的费用合计",
-                "itemName": "groupByTotal",
                 "items": {
                   "description_en": "A single cost group",
                   "description_zh": "单个费用分组",
                   "properties": {
                     "amount": {
-                      "backendName": "amount",
                       "description_en": "The total amount of the current group",
                       "description_zh": "当前分组的总金额",
                       "example": "60",
                       "type": "string"
                     },
                     "key": {
-                      "backendName": "key",
                       "description_en": "The grouping dimension value",
                       "description_zh": "分组维度值",
                       "example": "qwen-plus",
                       "type": "string"
                     },
                     "name": {
-                      "backendName": "name",
                       "description_en": "The display name of the group. This value is affected by the locale parameter",
                       "description_zh": "分组展示名称，受入参locale影响",
                       "example": "qwen-plus",
                       "type": "string"
                     },
                     "pretaxAmount": {
-                      "backendName": "pretaxAmount",
                       "description_en": "The pretax amount of the current group",
                       "description_zh": "当前分组的不含税金额",
                       "example": "56.60",
                       "type": "string"
                     },
                     "taxAmount": {
-                      "backendName": "taxAmount",
                       "description_en": "The tax amount of the current group",
                       "description_zh": "当前分组的税费金额",
                       "example": "3.40",
@@ -331,67 +326,56 @@
                 "type": "array"
               },
               "resultByTime": {
-                "backendName": "resultByTime",
                 "description_en": "The cost trend list sorted by time in ascending order",
                 "description_zh": "按时间升序排列的费用趋势列表",
-                "itemName": "resultByTime",
                 "items": {
                   "description_en": "The cost trend for a single statistical period",
                   "description_zh": "单个统计周期的费用趋势",
                   "properties": {
                     "period": {
-                      "backendName": "period",
                       "description_en": "The statistical period. DAY returns yyyyMMdd. MONTH returns yyyyMM",
                       "description_zh": "统计周期。DAY返回yyyyMMdd，MONTH返回yyyyMM",
                       "example": "20260801",
                       "type": "string"
                     },
                     "periodDetails": {
-                      "backendName": "periodDetails",
                       "description_en": "The cost groups that actually exist in the current period",
                       "description_zh": "当前周期实际存在的费用分组",
-                      "itemName": "periodDetails",
                       "items": {
                         "description_en": "A single cost group within the current period",
                         "description_zh": "当前周期内的单个费用分组",
                         "properties": {
                           "amount": {
-                            "backendName": "amount",
                             "description_en": "The amount of the group within the current period",
                             "description_zh": "当前周期内该分组的金额",
                             "example": "20",
                             "type": "string"
                           },
                           "key": {
-                            "backendName": "key",
                             "description_en": "The grouping dimension value. Data beyond the top N uses DIMENSION_GROUP_OTHERS_VALUE",
                             "description_zh": "分组维度值。TopN以外的数据使用DIMENSION_GROUP_OTHERS_VALUE",
                             "example": "qwen-plus",
                             "type": "string"
                           },
                           "name": {
-                            "backendName": "name",
                             "description_en": "The display name of the group. This value is affected by the locale parameter",
                             "description_zh": "分组展示名称，受入参locale影响",
                             "example": "qwen-plus",
                             "type": "string"
                           },
                           "percentage": {
-                            "backendName": "percentage",
                             "description_en": "The ratio of the current group amount to the total amount of the current period",
                             "description_zh": "当前分组金额占当前周期总金额的比例",
                             "example": "0.6667",
                             "type": "string"
                           },
                           "pretaxAmount": {
-                            "backendName": "pretaxAmount",
                             "description_en": "The pretax amount of the group within the current period",
                             "description_zh": "当前周期内该分组的不含税金额",
                             "example": "18.87",
                             "type": "string"
                           },
                           "taxAmount": {
-                            "backendName": "taxAmount",
                             "description_en": "The tax amount of the group within the current period",
                             "description_zh": "当前周期内该分组的税费金额",
                             "example": "1.13",
@@ -403,33 +387,28 @@
                       "type": "array"
                     },
                     "total": {
-                      "backendName": "total",
                       "description_en": "The total cost for the current period",
                       "description_zh": "当前周期的费用合计",
                       "properties": {
                         "amount": {
-                          "backendName": "amount",
                           "description_en": "The total amount for the current period",
                           "description_zh": "当前周期的费用总金额",
                           "example": "30",
                           "type": "string"
                         },
                         "currency": {
-                          "backendName": "currency",
                           "description_en": "The currency of the amount for the current period",
                           "description_zh": "当前周期的金额币种",
                           "example": "CNY",
                           "type": "string"
                         },
                         "pretaxAmount": {
-                          "backendName": "pretaxAmount",
                           "description_en": "The pretax amount for the current period",
                           "description_zh": "当前周期的不含税金额",
                           "example": "28.30",
                           "type": "string"
                         },
                         "taxAmount": {
-                          "backendName": "taxAmount",
                           "description_en": "The tax amount for the current period",
                           "description_zh": "当前周期的税费金额",
                           "example": "1.70",
@@ -447,30 +426,27 @@
             "type": "object"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The request result description",
             "description_zh": "请求结果说明",
             "example": "null",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "099A671E-FA21-5A36-8A73-918572DDEF53",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "请求是否成功",
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

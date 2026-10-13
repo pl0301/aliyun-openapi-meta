@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 5000,
   "camel_example": "aliyun amqp-open ListInstanceWhiteList --region cn-hangzhou --InstanceId 'rabbitmq-cn-xxx' --whiteListType 2",
   "cmd_full_name": "amqp-open list-instance-white-list",
   "cmd_name": "list-instance-white-list",
   "deprecated": false,
-  "description_en": "Queries the IP or VPC whitelist of an instance. Only new-architecture instances are supported, that is, instances whose VPC access point (or VPC PrivateLink access point) ends with mq.amqp.aliyuncs.com",
+  "description_en": "Queries the IP or VPC whitelist of an instance. This operation supports only new-architecture instances whose VPC access point (or VPC PrivateLink access point) ends with mq.amqp.aliyuncs.com",
   "description_zh": "查询实例ip/vpc白名单；\n只支持新架构实例，即VPC接入点（或者VPC PrivateLink 接入点）以mq.amqp.aliyuncs.com结尾的实例",
   "kebab_example": "aliyun amqp-open list-instance-white-list --instance-id rabbitmq-cn-xxx --white-list-type 2 --region cn-hangzhou",
   "method": "POST",
@@ -39,7 +40,7 @@
         "2"
       ],
       "example": "2",
-      "help_en": "The whitelist type. Valid values:\n\n1: IP whitelist type.\n\n2: VPC ID whitelist type",
+      "help_en": "The whitelist type.\n\nIf WhiteListItem contains IP addresses, set WhiteListType to 2.\nIf WhiteListItem contains VPC IDs, set WhiteListType to 1.\n\nThe VPC whitelist applies only to instances whose VPC access point is of the AnyTunnel type. The VPC access point of the latest instances is of the PrivateLink type. You cannot configure a VPC whitelist for such instances",
       "help_zh": "白名单类型。\n\nWhiteListType为1，IP白名单类型；\n\nWhiteListType为2，VPCID白名单类型；",
       "location": "query",
       "name": "white_list_type",
@@ -61,51 +62,68 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The response code. A value of 200 indicates success",
             "description_zh": "返回码。返回200代表成功",
             "example": "200",
             "type": "string"
           },
           "Data": {
-            "backendName": "data",
-            "description_en": "The request result, which contains the specific VPC ID or IP whitelist values. Each entry includes an id and a value. The id is a sequence number that can be used for deletion. The value is the actual whitelist entry",
+            "description_en": "The request result, which contains the specific VPC ID or IP whitelist values. Each entry includes two parts: id, which is the sequence number that can be used for deletion, and value, which is the specific whitelist value",
             "description_zh": "请求结果：VPCID或者IP白名单具体值，包含id和value两部份。id是序号，可用于删除；value是具体值",
             "example": "\"Data\": [\n    {\n      \"id\": 454,\n      \"value\": \"10.1.2.1/30\"\n    }\n  ]",
+            "items": {
+              "description_en": "白名单信息",
+              "description_zh": "白名单信息",
+              "extendType": "true",
+              "properties": {
+                "Id": {
+                  "backendName": "id",
+                  "description_en": "白名单id",
+                  "description_zh": "白名单id",
+                  "example": "1",
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "Value": {
+                  "backendName": "value",
+                  "description_en": "白名单具体值",
+                  "description_zh": "白名单具体值",
+                  "example": "192.168.*.*/32",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
             "type": "any"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The error message returned if the request failed",
             "description_zh": "请求错误时，返回错误信息",
             "example": "xxx failed,xxxx",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求唯一ID",
             "example": "6DC68EC9-0E76-5435-B8C0-FF9492B4****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "StatusCode": {
-            "backendName": "statusCode",
             "description_en": "The response code. A value of 200 indicates success",
             "description_zh": "调用返回码，200标识成功",
             "example": "200",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "请求是否成功",
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

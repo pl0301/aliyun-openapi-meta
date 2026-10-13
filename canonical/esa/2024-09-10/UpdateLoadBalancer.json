@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun esa UpdateLoadBalancer --region cn-hangzhou --SiteId 11591017870000 --Id 959136701740000",
   "cmd_full_name": "esa update-load-balancer",
   "cmd_name": "update-load-balancer",
@@ -21,6 +22,10 @@
   },
   "parameters": [
     {
+      "enum": [
+        "true",
+        "false"
+      ],
       "example": "true",
       "help_en": "Specifies whether the load balancer is enabled.\n\n`true`: The load balancer is enabled.\n\n`false`: The load balancer is disabled",
       "help_zh": "负载均衡器是否启用。\n\ntrue：启用。\nfalse：不启用",
@@ -158,6 +163,42 @@
       "element": {
         "fields": [
           {
+            "example": "rule_1",
+            "help_en": "The name of the rule. This parameter is not required when you configure global settings",
+            "help_zh": "规则名称。添加全局配置的时候不需要设置该参数",
+            "name": "rule_name",
+            "options": [
+              "--rule-name"
+            ],
+            "raw_name": "RuleName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "http.request.method eq \"GET\" ",
+            "help_en": "The content of the rule, specified as a conditional expression to match user requests. This parameter is not required when you configure global settings. Use cases:\n\nTo match all incoming requests, set the value to `true`.\n\nTo match specific requests, set the value to a custom expression, such as `(http.host eq \"video.example.com\")`",
+            "help_zh": "规则内容，使用条件表达式来匹配用户请求。添加全局配置的时候不需要设置该参数。存在两种使用场景：\n匹配所有传入请求：值设置为true\n匹配指定请求：值设置为自定义表达式，例如：(http.host eq \\\"video.example.com\\\")",
+            "name": "rule",
+            "options": [
+              "--rule"
+            ],
+            "raw_name": "Rule",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "on",
+            "help_en": "Specifies whether the rule is enabled. This parameter is not required when you configure global settings. Valid values:\n\n`on`: Enabled.\n\n`off`: Disabled",
+            "help_zh": "规则开关。添加全局配置的时候不需要设置该参数。取值范围：\non：开启。\noff：关闭",
+            "name": "rule_enable",
+            "options": [
+              "--rule-enable"
+            ],
+            "raw_name": "RuleEnable",
+            "required": false,
+            "type": "string"
+          },
+          {
             "fields": [
               {
                 "example": "application/json",
@@ -229,42 +270,6 @@
             "raw_name": "Overrides",
             "required": false,
             "type": "any"
-          },
-          {
-            "example": "http.request.method eq \"GET\" ",
-            "help_en": "The content of the rule, specified as a conditional expression to match user requests. This parameter is not required when you configure global settings. Use cases:\n\nTo match all incoming requests, set the value to `true`.\n\nTo match specific requests, set the value to a custom expression, such as `(http.host eq \"video.example.com\")`",
-            "help_zh": "规则内容，使用条件表达式来匹配用户请求。添加全局配置的时候不需要设置该参数。存在两种使用场景：\n匹配所有传入请求：值设置为true\n匹配指定请求：值设置为自定义表达式，例如：(http.host eq \\\"video.example.com\\\")",
-            "name": "rule",
-            "options": [
-              "--rule"
-            ],
-            "raw_name": "Rule",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "on",
-            "help_en": "Specifies whether the rule is enabled. This parameter is not required when you configure global settings. Valid values:\n\n`on`: Enabled.\n\n`off`: Disabled",
-            "help_zh": "规则开关。添加全局配置的时候不需要设置该参数。取值范围：\non：开启。\noff：关闭",
-            "name": "rule_enable",
-            "options": [
-              "--rule-enable"
-            ],
-            "raw_name": "RuleEnable",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "rule_1",
-            "help_en": "The name of the rule. This parameter is not required when you configure global settings",
-            "help_zh": "规则名称。添加全局配置的时候不需要设置该参数",
-            "name": "rule_name",
-            "options": [
-              "--rule-name"
-            ],
-            "raw_name": "RuleName",
-            "required": false,
-            "type": "string"
           },
           {
             "example": "1",
@@ -360,26 +365,74 @@
     {
       "fields": [
         {
-          "example": "5",
-          "help_en": "The number of consecutive failed health checks required to declare an origin server unhealthy. For example, `5`",
-          "help_zh": "连续探测多少次失败算失败，如5",
-          "name": "consecutive_down",
+          "example": "HTTP",
+          "help_en": "The protocol to use for the health check, such as `HTTP`. If you set this to `off`, no health check is performed",
+          "help_zh": "监视器协议类型，如HTTP，用于健康检查，值为off时，表示不进行检查",
+          "name": "type",
           "options": [
-            "--consecutive-down"
+            "--type"
           ],
-          "raw_name": "ConsecutiveDown",
+          "raw_name": "Type",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "GET",
+          "help_en": "The HTTP method to use for the health check. For example, `GET`",
+          "help_zh": "监视器请求方法，如GET，HTTP协议中的方法",
+          "name": "method",
+          "options": [
+            "--method"
+          ],
+          "raw_name": "Method",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "80",
+          "help_en": "The port on the origin server to use for the health check",
+          "help_zh": "源站端口",
+          "name": "port",
+          "options": [
+            "--port"
+          ],
+          "raw_name": "Port",
           "required": false,
           "type": "int"
         },
         {
-          "example": "3",
-          "help_en": "The number of consecutive successful health checks required to declare an origin server healthy. For example, `3`",
-          "help_zh": "连续探测多少次成功算成功，如3",
-          "name": "consecutive_up",
+          "example": "/health\n",
+          "help_en": "The path on the origin server to request for the health check. For example, `/healthcheck`",
+          "help_zh": "监视器检查路径，如/healthcheck，HTTP请求路径",
+          "name": "path",
           "options": [
-            "--consecutive-up"
+            "--path"
           ],
-          "raw_name": "ConsecutiveUp",
+          "raw_name": "Path",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "100",
+          "help_en": "The interval in seconds between each health check. For example, `60`",
+          "help_zh": "监视间隔，如60秒，检查频率",
+          "name": "interval",
+          "options": [
+            "--interval"
+          ],
+          "raw_name": "Interval",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "5",
+          "help_en": "The timeout for the health check, in seconds. The value must be between 1 and 10, inclusive",
+          "help_zh": "应用健康检查超时时间，单位为秒，取值范围：1-10",
+          "name": "timeout",
+          "options": [
+            "--timeout"
+          ],
+          "raw_name": "Timeout",
           "required": false,
           "type": "int"
         },
@@ -408,6 +461,30 @@
           "type": "bool"
         },
         {
+          "example": "3",
+          "help_en": "The number of consecutive successful health checks required to declare an origin server healthy. For example, `3`",
+          "help_zh": "连续探测多少次成功算成功，如3",
+          "name": "consecutive_up",
+          "options": [
+            "--consecutive-up"
+          ],
+          "raw_name": "ConsecutiveUp",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "5",
+          "help_en": "The number of consecutive failed health checks required to declare an origin server unhealthy. For example, `5`",
+          "help_zh": "连续探测多少次失败算失败，如5",
+          "name": "consecutive_down",
+          "options": [
+            "--consecutive-down"
+          ],
+          "raw_name": "ConsecutiveDown",
+          "required": false,
+          "type": "int"
+        },
+        {
           "example": " {\n        \"host\": [\n            \"example1.com\",\n            \"example2.com\"\n        ]\n    }",
           "help_en": "The HTTP request headers to send with each health check",
           "help_zh": "监视请求头配置",
@@ -420,30 +497,11 @@
           "type": "any"
         },
         {
-          "example": "100",
-          "help_en": "The interval in seconds between each health check. For example, `60`",
-          "help_zh": "监视间隔，如60秒，检查频率",
-          "name": "interval",
-          "options": [
-            "--interval"
+          "enum": [
+            "OutsideChineseMainland",
+            "ChineseMainland",
+            "Global"
           ],
-          "raw_name": "Interval",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "GET",
-          "help_en": "The HTTP method to use for the health check. For example, `GET`",
-          "help_zh": "监视器请求方法，如GET，HTTP协议中的方法",
-          "name": "method",
-          "options": [
-            "--method"
-          ],
-          "raw_name": "Method",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "Global",
           "help_en": "The regions from which the health checks are performed. The default value is `Global`.\n\n`Global`: From probe locations worldwide.\n\n`ChineseMainland`: From probe locations within the Chinese mainland.\n\n`OutsideChineseMainland`: From probe locations outside the Chinese mainland",
           "help_zh": "探测点所在区域，默认为Global，\n\nGlobal: 全球。\nChineseMainland: 中国内地。\nOutsideChineseMainland: 全球（不包括中国内地）",
@@ -452,54 +510,6 @@
             "--monitoring-region"
           ],
           "raw_name": "MonitoringRegion",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "/health\n",
-          "help_en": "The path on the origin server to request for the health check. For example, `/healthcheck`",
-          "help_zh": "监视器检查路径，如/healthcheck，HTTP请求路径",
-          "name": "path",
-          "options": [
-            "--path"
-          ],
-          "raw_name": "Path",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "80",
-          "help_en": "The port on the origin server to use for the health check",
-          "help_zh": "源站端口",
-          "name": "port",
-          "options": [
-            "--port"
-          ],
-          "raw_name": "Port",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "5",
-          "help_en": "The timeout for the health check, in seconds. The value must be between 1 and 10, inclusive",
-          "help_zh": "应用健康检查超时时间，单位为秒，取值范围：1-10",
-          "name": "timeout",
-          "options": [
-            "--timeout"
-          ],
-          "raw_name": "Timeout",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "HTTP",
-          "help_en": "The protocol to use for the health check, such as `HTTP`. If you set this to `off`, no health check is performed",
-          "help_zh": "监视器协议类型，如HTTP，用于健康检查，值为off时，表示不进行检查",
-          "name": "type",
-          "options": [
-            "--type"
-          ],
-          "raw_name": "Type",
           "required": false,
           "type": "string"
         }
@@ -566,7 +576,6 @@
         "description_zh": "修改负载均衡器成功后的响应结构",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "EEEBE525-F576-1196-8DAF-2D70CA3F4D2F\n",

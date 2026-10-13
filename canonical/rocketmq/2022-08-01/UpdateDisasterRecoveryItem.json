@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun rocketmq PATCH /disaster_recovery/1300000016/items/100070284 --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "rocketmq update-disaster-recovery-item",
   "cmd_name": "update-disaster-recovery-item",
@@ -55,26 +56,30 @@
       "element": {
         "fields": [
           {
-            "example": "GID_xxx",
-            "help_en": "The ID of the consumer group. If you use the two-way backup mode, you must specify this parameter",
-            "help_zh": "消费者组ID，ACTIVE_ACTIVE双向备份时必填",
-            "name": "consumer_group_id",
+            "example": "cn-hangzhou",
+            "help_en": "The region ID",
+            "help_zh": "区域ID",
+            "name": "region_id",
             "options": [
-              "--consumer-group-id"
+              "--biz-region-id"
             ],
-            "raw_name": "consumerGroupId",
+            "raw_name": "regionId",
             "required": false,
             "type": "string"
           },
           {
-            "example": "Concurrently",
-            "help_en": "The method used to deliver messages to the destination instance.\n\nValid values:\n\nConcurrently: concurrent delivery\nOrderly: ordered delivery",
-            "help_zh": "消息投递到目标实例的顺序性。\n\n参数取值如下：\nConcurrently：并发投递\nOrderly：顺序投递",
-            "name": "delivery_order_type",
-            "options": [
-              "--delivery-order-type"
+            "enum": [
+              "ALIYUN_ROCKETMQ",
+              "EXTERNAL_ROCKETMQ"
             ],
-            "raw_name": "deliveryOrderType",
+            "example": "ALIYUN_ROCKETMQ\n",
+            "help_en": "The instance type. Valid values:\n\nALIYUN_ROCKETMQ: ApsaraMQ for RocketMQ instance\nEXTERNAL_ROCKETMQ: open source RocketMQ cluster",
+            "help_zh": "实例类型\nALIYUN_ROCKETMQ ：阿里云实例\nEXTERNAL_ROCKETMQ ：外部实例，开源实例，开源集群",
+            "name": "instance_type",
+            "options": [
+              "--instance-type"
+            ],
+            "raw_name": "instanceType",
             "required": false,
             "type": "string"
           },
@@ -91,30 +96,6 @@
             "type": "string"
           },
           {
-            "example": "ALIYUN_ROCKETMQ\n",
-            "help_en": "The instance type. Valid values:\n\nALIYUN_ROCKETMQ: ApsaraMQ for RocketMQ instance\nEXTERNAL_ROCKETMQ: open source RocketMQ cluster",
-            "help_zh": "实例类型\nALIYUN_ROCKETMQ ：阿里云实例\nEXTERNAL_ROCKETMQ ：外部实例，开源实例，开源集群",
-            "name": "instance_type",
-            "options": [
-              "--instance-type"
-            ],
-            "raw_name": "instanceType",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "cn-hangzhou",
-            "help_en": "The region ID",
-            "help_zh": "区域ID",
-            "name": "region_id",
-            "options": [
-              "--biz-region-id"
-            ],
-            "raw_name": "regionId",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "Topic_xxx",
             "help_en": "The topic name. You must specify this parameter",
             "help_zh": "容灾主题名称,必填",
@@ -123,6 +104,34 @@
               "--topic-name"
             ],
             "raw_name": "topicName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "GID_xxx",
+            "help_en": "The ID of the consumer group. If you use the two-way backup mode, you must specify this parameter",
+            "help_zh": "消费者组ID，ACTIVE_ACTIVE双向备份时必填",
+            "name": "consumer_group_id",
+            "options": [
+              "--consumer-group-id"
+            ],
+            "raw_name": "consumerGroupId",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "enum": [
+              "Concurrently",
+              "Orderly"
+            ],
+            "example": "Concurrently",
+            "help_en": "The method used to deliver messages to the destination instance.\n\nValid values:\n\nConcurrently: concurrent delivery\nOrderly: ordered delivery",
+            "help_zh": "消息投递到目标实例的顺序性。\n\n参数取值如下：\nConcurrently：并发投递\nOrderly：顺序投递",
+            "name": "delivery_order_type",
+            "options": [
+              "--delivery-order-type"
+            ],
+            "raw_name": "deliveryOrderType",
             "required": false,
             "type": "string"
           }
@@ -152,35 +161,30 @@
         "description_zh": "Schema of Response",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "Topic.NotFound",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
             "description_en": "The returned data",
             "description_zh": "返回结果",
             "example": "true",
             "type": "boolean"
           },
           "dynamicCode": {
-            "backendName": "dynamicCode",
             "description_en": "The dynamic error code",
             "description_zh": "动态错误码",
             "example": "InstanceId",
             "type": "string"
           },
           "dynamicMessage": {
-            "backendName": "dynamicMessage",
             "description_en": "The dynamic error message",
             "description_zh": "动态错误信息",
             "example": "instanceId",
             "type": "string"
           },
           "httpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The response code",
             "description_zh": "HTTP状态码",
             "example": "200",
@@ -188,14 +192,12 @@
             "type": "integer"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "The instance cannot be found.",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "Id of the request",
             "example": "0C32BED2-FA9F-50AD-9DA7-8B70E26C9D0D",
@@ -204,7 +206,6 @@
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "是否成功",
             "example": "true",

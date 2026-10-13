@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ens DescribeSDGDeploymentStatus --region cn-hangzhou --SDGId 'sdg-xxxx'",
   "cmd_full_name": "ens describe-sdg-deployment-status",
   "cmd_name": "describe-sdg-deployment-status",
@@ -35,7 +36,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Minimum value: 1. Default value: 1",
+      "help_en": "The page number. Pages start from 1. Default value: 1",
       "help_zh": "页码，起始值为：1，默认值：1",
       "location": "query",
       "name": "page_number",
@@ -76,7 +77,7 @@
     },
     {
       "example": "success",
-      "help_en": "The SDG deployment status",
+      "help_en": "The deployment status of the SDG",
       "help_zh": "SDG部署状态",
       "location": "query",
       "name": "status",
@@ -107,7 +108,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The list of edge zone IDs",
+      "help_en": "The list of region IDs",
       "help_zh": "节点ID列表",
       "location": "query",
       "name": "region_ids",
@@ -123,7 +124,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The list of cloud disk IDs",
+      "help_en": "The list of disk IDs",
       "help_zh": "磁盘ID列表",
       "location": "query",
       "name": "disk_ids",
@@ -142,83 +143,84 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DeploymentStatus": {
-            "backendName": "data.DeploymentStatus",
             "description_en": "The list of SDG deployment information",
             "description_zh": "SDG 部署信息列表",
-            "itemName": "DeploymentStatus",
             "items": {
+              "description_en": "",
+              "description_zh": "",
               "properties": {
                 "BlockRwSplitSize": {
-                  "backendName": "BlockRwSplitSize",
-                  "description_en": "The size of the writable layer of the block device, in GiB. A value of 0 indicates that this feature is not enabled",
+                  "description_en": "The size of the writable layer for the block device. Unit: GiB. A value of 0 indicates that this feature is disabled",
                   "description_zh": "块设备可写层大小，单位为GiB，值为0时表示能力未开启",
                   "example": "20",
                   "format": "int32",
                   "type": "integer"
                 },
                 "CacheSize": {
-                  "backendName": "CacheSize",
-                  "description_en": "The cache size, in GiB. A value of 0 indicates that this feature is not enabled",
+                  "description_en": "The cache size. Unit: GiB. A value of 0 indicates that this feature is disabled",
                   "description_zh": "缓存大小，单位为GiB,值为0时表示能力未开启",
                   "example": "20",
                   "format": "int32",
                   "type": "integer"
                 },
                 "DiskAccessProtocol": {
-                  "backendName": "DiskAccessProtocol",
-                  "description_en": "The access protocol type of the mounted shared cloud disk",
+                  "description_en": "The disk access protocol type of the mounted shared cloud disk",
                   "description_zh": "挂载的共享盘磁盘访问协议类型",
                   "example": "iscsi",
                   "type": "string"
                 },
                 "DiskType": {
-                  "backendName": "DiskType",
-                  "description_en": "The type of the mounted shared cloud disk",
+                  "description_en": "The disk type of the mounted shared cloud disk",
                   "description_zh": "挂载的共享盘磁盘类型",
                   "example": "standard",
                   "type": "string"
                 },
                 "InstanceId": {
-                  "backendName": "InstanceId",
                   "description_en": "The AIC instance ID",
                   "description_zh": "AIC实例ID",
                   "example": "aic-xxxx",
                   "type": "string"
                 },
                 "MountType": {
-                  "backendName": "MountType",
                   "description_en": "The deployment type",
                   "description_zh": "部署类型",
+                  "enumValueTitles": {
+                    "common": "普通部署",
+                    "overlay": "读写分离部署"
+                  },
                   "example": "overlay",
                   "type": "string"
                 },
                 "Phase": {
-                  "backendName": "Phase",
                   "description_en": "The SDG deployment phase",
                   "description_zh": "SDG部署阶段",
                   "example": "attach",
                   "type": "string"
                 },
                 "RegionId": {
-                  "backendName": "RegionId",
-                  "description_en": "The edge zone ID",
+                  "description_en": "The region ID",
                   "description_zh": "节点ID",
                   "example": "cn-hangzhou",
                   "type": "string"
                 },
                 "Status": {
-                  "backendName": "Status",
-                  "description_en": "The SDG deployment status",
+                  "description_en": "The deployment status of the SDG",
                   "description_zh": "SDG部署状态",
+                  "enumValueTitles": {
+                    "failed": "部署失败",
+                    "sdg_deploying": "部署中",
+                    "success": "部署成功"
+                  },
                   "example": "success",
                   "type": "string"
                 },
                 "UpdateTime": {
-                  "backendName": "UpdateTime",
-                  "description_en": "The most recent status update time",
-                  "description_zh": "最新的状态更新时间",
+                  "description_en": "The time when the status was last updated. The time is displayed in the ISO 8601 UTC format (YYYY-MM-DDTHH:mm:ssZ)",
+                  "description_zh": "最新的状态更新时间，采用 ISO 8601 UTC 时间格式，格式为 YYYY-MM-DDTHH:mm:ssZ",
                   "example": "2023-02-17T02:44:31Z",
                   "type": "string"
                 }
@@ -228,32 +230,28 @@
             "type": "array"
           },
           "PageNumber": {
-            "backendName": "data.PageNumber",
-            "description_en": "The page number. Minimum value: 1. Default value: 1",
+            "description_en": "The page number. Pages start from 1. Default value: 1",
             "description_zh": "页码，起始值为1。默认值：1",
             "example": "1",
             "format": "int64",
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.PageSize",
-            "description_en": "The number of entries per page when paging is used. Default value: 10",
+            "description_en": "The number of entries per page in a paging query. Default value: 10",
             "description_zh": "分页查询时设置的每页行数，默认值为10",
             "example": "10",
             "format": "int64",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "68B85217-03B8-5141-9216-EA4D7C496B9A",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.TotalCount",
             "description_en": "The total number of deployment records returned",
             "description_zh": "查询到的部署记录总数",
             "example": "100",

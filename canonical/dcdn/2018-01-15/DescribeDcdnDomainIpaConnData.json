@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dcdn DescribeDcdnDomainIpaConnData --region cn-hangzhou --EndTime '2015-02-22T7:00:00Z' --DomainName 'example1.com' --SplitBy domain --StartTime '2015-02-21T07:00:00Z'",
   "cmd_full_name": "dcdn describe-dcdn-domain-ipa-conn-data",
   "cmd_name": "describe-dcdn-domain-ipa-conn-data",
   "deprecated": false,
-  "description_en": "Call the DescribeDcdnDomainIpaConnData operation to query the number of connections for IP Application Accelerator (IPA)",
+  "description_en": "Queries the number of IPA user connections",
   "description_zh": "调用DescribeDcdnDomainIpaConnData查询IPA用户连接数",
   "kebab_example": "aliyun dcdn describe-dcdn-domain-ipa-conn-data --domain-name example1.com --start-time 2015-02-21T07:00:00Z --end-time 2015-02-22T7:00:00Z --split-by domain --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "example1.com",
-      "help_en": "The accelerated domain name for the IPA application. To specify multiple domain names, separate them with commas (,).\n\nIf you leave this parameter empty, the merged data for all accelerated domain names is returned",
+      "help_en": "The accelerated domain names for IPA. Separate multiple domain names with commas (,).\nIf this parameter is left empty, the merged data of all accelerated domain names is returned by default",
       "help_zh": "IPA层应用加速域名，多个域名用英文逗号（,）分隔。\n若参数为空，默认返回所有加速域名合并后数据",
       "location": "query",
       "name": "domain_name",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2015-02-21T07:00:00Z",
-      "help_en": "The beginning of the time range to query.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the data to retrieve.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "获取数据的起始时间点。\n\n日期格式按照ISO8601表示法，并使用UTC+0时间，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "start_time",
@@ -48,7 +49,7 @@
     },
     {
       "example": "2015-02-22T7:00:00Z",
-      "help_en": "The end of the time range to query.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the data to retrieve.\n\nSpecify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\nThe end time must be later than the start time",
       "help_zh": "获取数据的结束时间点。\n\n日期格式按照ISO8601表示法，并使用UTC+0时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -61,7 +62,7 @@
     },
     {
       "example": "domain",
-      "help_en": "The method to group the data. Valid values:\n\ndomain: The data is grouped by accelerated domain name.\n\nIf you leave this parameter empty, the data is not grouped. This is the default value",
+      "help_en": "The grouping method for query results. Valid values:\n\ndomain: Groups the results by accelerated domain name.\n\nEmpty (default): Does not group the results",
       "help_zh": "查询结果分组方式。取值：\n\ndomain：按加速域名分组。\n\n参数为空（默认）：查询结果不分组",
       "location": "query",
       "name": "split_by",
@@ -79,50 +80,63 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "ConnectionDataPerInterval": {
-            "backendName": "data.content",
-            "itemName": "DataModule",
-            "items": {
-              "properties": {
-                "Connections": {
-                  "backendName": "connections",
-                  "format": "int64",
-                  "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DataModule": {
+                "description_en": "The number of user connections in each time interval",
+                "description_zh": "每个时间间隔的用户连接数",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Connections": {
+                      "description_en": "The number of IPA user connections",
+                      "description_zh": "IPA用户连接数",
+                      "example": "189095",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Domain": {
+                      "description_en": "The accelerated domain name",
+                      "description_zh": "加速域名",
+                      "example": "example1.com",
+                      "type": "string"
+                    },
+                    "TimeStamp": {
+                      "description_en": "The start time of the time interval.\n\nThe time follows the ISO 8601 standard and includes the time zone offset in the yyyy-MM-ddTHH:mm:ssXXX format",
+                      "description_zh": "时间片起始时刻。\n\n时间采用 ISO 8601 格式，并包含时区偏移，格式为 yyyy-MM-ddTHH:mm:ssXXX",
+                      "example": "2022-02-21T15:00:00+08:00",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Domain": {
-                  "backendName": "domain",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "TimeStamp": {
-                  "backendName": "time_stp",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "EndTime": {
-            "backendName": "data.endTime",
-            "description_en": "The end of the time range that was queried",
-            "description_zh": "结束时间",
+            "description_en": "The end time.\n\nThe time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is in UTC",
+            "description_zh": "结束时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
             "example": "2015-02-22T15:00:00Z",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "A2A1EEF8-043E-43A1-807C-BEAC18EA1807",
             "type": "string"
           },
           "StartTime": {
-            "backendName": "data.startTime",
-            "description_en": "The beginning of the time range that was queried",
-            "description_zh": "开始时间",
+            "description_en": "The start time.\n\nThe time follows the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time is in UTC",
+            "description_zh": "开始时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
             "example": "2015-02-21T15:00:00Z",
             "type": "string"
           }

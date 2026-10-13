@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "adb configure-result-export",
   "cmd_name": "configure-result-export",
   "deprecated": false,
@@ -63,16 +64,16 @@
     {
       "fields": [
         {
-          "example": "10",
-          "help_en": "The expiration time of the Logstore temporarily generated during the result set export. Unit: days. The Logstore is automatically deleted after it expires. Minimum value: 1 day, maximum: 30 days. Values outside this range will result in an error",
-          "help_zh": "结果集导出临时生成的logstore的过期时间，单位为天，过期后自动删除。\n最小1天，最大30天，超过范围报错",
-          "name": "logstore_ttl",
+          "example": "test-project",
+          "help_en": "The name of the SLS project",
+          "help_zh": "SLS Project名称",
+          "name": "sls_project",
           "options": [
-            "--logstore-ttl"
+            "--sls-project"
           ],
-          "raw_name": "LogstoreTtl",
+          "raw_name": "SlsProject",
           "required": false,
-          "type": "int"
+          "type": "string"
         },
         {
           "example": "aps",
@@ -87,16 +88,16 @@
           "type": "string"
         },
         {
-          "example": "test-project",
-          "help_en": "The name of the SLS project",
-          "help_zh": "SLS Project名称",
-          "name": "sls_project",
+          "example": "10",
+          "help_en": "The expiration time of the Logstore temporarily generated during the result set export. Unit: days. The Logstore is automatically deleted after it expires. Minimum value: 1 day, maximum: 30 days. Values outside this range will result in an error",
+          "help_zh": "结果集导出临时生成的logstore的过期时间，单位为天，过期后自动删除。\n最小1天，最大30天，超过范围报错",
+          "name": "logstore_ttl",
           "options": [
-            "--sls-project"
+            "--logstore-ttl"
           ],
-          "raw_name": "SlsProject",
+          "raw_name": "LogstoreTtl",
           "required": false,
-          "type": "string"
+          "type": "int"
         }
       ],
       "help_en": "The SLS configuration details if the destination is of the SLS type",
@@ -173,45 +174,38 @@
         "description_zh": "ResultData<?>",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The backend error code",
             "description_zh": "后端错误码",
             "example": "200",
             "type": "string"
           },
           "Data": {
-            "backendName": "data",
             "description_en": "The path where the result sets are stored",
             "description_zh": "已配置的结果集导出信息",
             "properties": {
               "ExportType": {
-                "backendName": "exportType",
                 "description_en": "The export type. Valid values:\n\nSLS: Indicates that the export destination is SLS.\nOSS: Indicates that the export destination is OSS",
                 "description_zh": "导出类型，枚举类型，返回结果可能值为：\n\nSLS：标识导出目的为SLS。\nOSS：标识导出目的为OSS",
                 "example": "SLS",
                 "type": "string"
               },
               "OssInfo": {
-                "backendName": "ossInfo",
                 "description_en": "The OSS configuration if the destination is of the OSS type",
                 "description_zh": "当导出目的为OSS类型时，配置成功的OSS导出信息",
                 "properties": {
                   "ExportBasePath": {
-                    "backendName": "exportBasePath",
                     "description_en": "The OSS path where the result sets are stored",
                     "description_zh": "导出结果存储的OSS路径地址",
                     "example": "oss://testBucketName/data_result",
                     "type": "string"
                   },
                   "ResourceGroup": {
-                    "backendName": "resourceGroup",
                     "description_en": "The name of the resource group that runs the job",
                     "description_zh": "导出SQL运行的资源组名称",
                     "example": "aps",
                     "type": "string"
                   },
                   "ResultFileTtl": {
-                    "backendName": "resultFileTtl",
                     "description_en": "The expiration time of the OSS file. Unit: days. Minimum: 1 day, maximum: 30 days",
                     "description_zh": "Oss文件过期时间，单位为天，最小1天，最大30天",
                     "example": "10",
@@ -222,12 +216,10 @@
                 "type": "object"
               },
               "SlsInfo": {
-                "backendName": "slsInfo",
                 "description_en": "The SLS configuration if the destination is of the SLS type",
                 "description_zh": "当导出目的为SLS类型时，对应的SLS配置信息",
                 "properties": {
                   "LogstoreTtl": {
-                    "backendName": "logstoreTtl",
                     "description_en": "The expiration time of the Logstore temporarily generated during the result set export. Unit: days. The Logstore is automatically deleted after it expires. Minimum value: 1 day. Maximum value: 30 days",
                     "description_zh": "结果集导出临时生成的logstore的过期时间，单位为天，过期后自动删除。 最小1天，最大30天",
                     "example": "10",
@@ -235,14 +227,12 @@
                     "type": "integer"
                   },
                   "ResourceGroup": {
-                    "backendName": "resourceGroup",
                     "description_en": "The name of the resource group that runs the job",
                     "description_zh": "导出SQL运行的资源组名称",
                     "example": "aps",
                     "type": "string"
                   },
                   "SlsProject": {
-                    "backendName": "slsProject",
                     "description_en": "The name of the SLS project",
                     "description_zh": "SLS Project名称",
                     "example": "test-project",
@@ -255,7 +245,6 @@
             "type": "object"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code. A value of 200 indicates that the request is successful",
             "description_zh": "HTTP请求返回的响应状态码，200表示请求发送成功",
             "example": "200",
@@ -263,28 +252,25 @@
             "type": "integer"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The returned message. Valid values:\n\nOK is returned if the request is normal.\nThe specific error code is returned if the request is abnormal,",
             "description_zh": "调用结果的附加信息。取值说明：\n\n请求正常，返回OK。\n请求异常，返回具体异常错误码",
             "example": "OK",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "1AD222E9-E606-4A42-BF6D-8A4442913CEF",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request is successful. Valid values:\n\ntrue: Succeeded.\nfalse: Failed",
             "description_zh": "调用是否成功，取值说明：\ntrue：成功。\nfalse：失败",
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "ResultData<?>",
+        "title_en": "",
         "title_zh": "ResultData<?>",
         "type": "object"
       }

@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "cms describe-alert-history-list",
   "cmd_name": "describe-alert-history-list",
   "deprecated": false,
@@ -86,7 +87,7 @@
     },
     {
       "example": "2",
-      "help_en": "The mute status. Valid values:\n2 (default): muted.\n0: alerting or recovered.\n1: ineffective",
+      "help_en": "The mute status. Valid values:\n2 (default): mute period.\n0: alert or recovery.\n1: ineffective period",
       "help_zh": "通道沉默状态。取值：\n2（默认值）：通道沉默。\n0：报警或恢复。\n1：失效期",
       "location": "query",
       "name": "status",
@@ -99,7 +100,7 @@
     },
     {
       "example": "ok",
-      "help_en": "The alert state. Valid values:\nALARM (default): alerting.\nOK: normal",
+      "help_en": "The alert state. Valid values:\nALARM (default): The alert is triggered.\nOK: Normal",
       "help_zh": "报警状态。取值：\nALARM（默认值）：报警状态。\nOK：正常状态",
       "location": "query",
       "name": "state",
@@ -112,7 +113,7 @@
     },
     {
       "example": "true",
-      "help_en": "The time sort order. Valid values: true (default): reverse chronological order. false: chronological order",
+      "help_en": "The time order. Valid values: true (default): reverse chronological order. false: chronological order",
       "help_zh": "时间排序。取值：true（默认值）：表示时间倒序。false：表示时间正序",
       "location": "query",
       "name": "ascending",
@@ -138,8 +139,8 @@
     },
     {
       "example": "1552209685596",
-      "help_en": "The start time of the alert query",
-      "help_zh": "查询报警的开始时间",
+      "help_en": "The start timestamp for querying alerts.\n\nUnit: milliseconds",
+      "help_zh": "查询报警的开始时间戳。\n\n单位：毫秒",
       "location": "query",
       "name": "start_time",
       "options": [
@@ -151,8 +152,8 @@
     },
     {
       "example": "1640608200000",
-      "help_en": "The end time of the alert query",
-      "help_zh": "查询报警的结束时间",
+      "help_en": "The end timestamp for querying alerts.\n\nUnit: milliseconds",
+      "help_zh": "查询报警的结束时间戳。\n\n单位：毫秒",
       "location": "query",
       "name": "end_time",
       "options": [
@@ -195,251 +196,271 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "AlarmHistoryList": {
-            "backendName": "datapoints",
-            "itemName": "AlarmHistory",
-            "items": {
-              "properties": {
-                "AlertName": {
-                  "backendName": "alertName",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "AlertTime": {
-                  "backendName": "alertTime",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "ContactALIIMs": {
-                  "backendName": "contactALIIM",
-                  "itemName": "ContactALIIM",
-                  "items": {
-                    "backendName": "contactALIIM",
-                    "nullToEmpty": true,
-                    "type": "string",
-                    "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "AlarmHistory": {
+                "description_en": "The alert history list",
+                "description_zh": "告警历史列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AlertName": {
+                      "description_en": "The alert name",
+                      "description_zh": "告警名称",
+                      "example": "测评内测-数据库慢调用-低",
+                      "type": "string"
+                    },
+                    "AlertTime": {
+                      "description_en": "The timestamp when the alert was triggered.\n\nUnit: milliseconds",
+                      "description_zh": "发生报警的时间戳。\n\n单位：毫秒",
+                      "example": "1552209685596",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ContactALIIMs": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ContactALIIM": {
+                          "description_en": "The list of TradeManager contacts",
+                          "description_zh": "阿里旺旺的联系人列表",
+                          "items": {
+                            "description_en": "The TradeManager account of the contact",
+                            "description_zh": "联系人的阿里旺旺",
+                            "example": "seller001",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ContactGroups": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ContactGroup": {
+                          "description_en": "The list of alert contact groups",
+                          "description_zh": "报警联系人组的列表",
+                          "items": {
+                            "description_en": "The alert contact group",
+                            "description_zh": "报警联系人组",
+                            "example": "开发运维报警组",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ContactMails": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ContactMail": {
+                          "description_en": "The list of email contacts",
+                          "description_zh": "邮箱的联系人列表",
+                          "items": {
+                            "description_en": "The email address of the contact",
+                            "description_zh": "联系人的邮箱",
+                            "example": "xxx@xxx.com",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ContactSmses": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ContactSms": {
+                          "description_en": "The list of text message contacts",
+                          "description_zh": "短信的联系人列表",
+                          "items": {
+                            "description_en": "The phone number of the contact",
+                            "description_zh": "联系人的手机号",
+                            "example": "185xxxx0307",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Contacts": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Contact": {
+                          "description_en": "The contact list",
+                          "description_zh": "联系人列表",
+                          "items": {
+                            "description_en": "The contact",
+                            "description_zh": "联系人",
+                            "example": "185xxxx0307",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Dimensions": {
+                      "description_en": "The dimensions",
+                      "description_zh": "维度",
+                      "example": "{\\\"instanceId\\\":\\\"i-wz9fovee1h4jv7igaz8i\\\"}",
+                      "type": "string"
+                    },
+                    "EvaluationCount": {
+                      "description_en": "The number of consecutive detection times that the threshold condition must be met before an alert is triggered",
+                      "description_zh": "连续探测几次都满足阈值条件时报警",
+                      "example": "3",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Expression": {
+                      "description_en": "The expression",
+                      "description_zh": "表达式",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "GroupId": {
+                      "description_en": "The application group ID",
+                      "description_zh": "分组ID",
+                      "example": "239765677",
+                      "type": "string"
+                    },
+                    "Id": {
+                      "description_en": "The alert ID",
+                      "description_zh": "报警ID",
+                      "example": "3393FD4A10BD5723CD0DCFB4B25AC79928735672",
+                      "type": "string"
+                    },
+                    "InstanceName": {
+                      "description_en": "The instance name",
+                      "description_zh": "实例名称",
+                      "example": "prd-sflocalizationapi-5855fd9d6d-8hhx9",
+                      "type": "string"
+                    },
+                    "LastTime": {
+                      "description_en": "The duration of the alert.\n\nUnit: milliseconds",
+                      "description_zh": "报警持续时间。\n\n单位：毫秒",
+                      "example": "1744597658",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Level": {
+                      "description_en": "The alert level",
+                      "description_zh": "报警级别",
+                      "example": "NORMAL",
+                      "type": "string"
+                    },
+                    "MetricName": {
+                      "description_en": "The metric name",
+                      "description_zh": "监控项名称",
+                      "example": "cpu_total",
+                      "type": "string"
+                    },
+                    "Namespace": {
+                      "description_en": "The namespace",
+                      "description_zh": "命名空间",
+                      "example": "acs_vpc_eip",
+                      "type": "string"
+                    },
+                    "PreLevel": {
+                      "description_en": "The previous alert level",
+                      "description_zh": "上次告警级别",
+                      "example": "NORMAL",
+                      "type": "string"
+                    },
+                    "RuleName": {
+                      "description_en": "The alert rule name",
+                      "description_zh": "报警规则名称",
+                      "example": "ecs 5分钟tcp连接数超过80%",
+                      "type": "string"
+                    },
+                    "State": {
+                      "description_en": "The alert state",
+                      "description_zh": "报警状态",
+                      "example": "Finished",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The alert status. Valid values:\n0: alert or recovery.\n1: ineffective period.\n2: mute period",
+                      "description_zh": "报警状态。取值：\n0：报警或恢复。\n1：失效期。\n2：通道沉默",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "UserId": {
+                      "description_en": "The user ID",
+                      "description_zh": "用户ID",
+                      "example": "11234766**********",
+                      "type": "string"
+                    },
+                    "Value": {
+                      "description_en": "The tag value of the alert template",
+                      "description_zh": "报警模板的标签值",
+                      "example": "Server=tes-rds.infra.uat.altium365.com.cn%3BDatabase=tenant_directory%3BUid=ciiva%3BPwd=ZJJ6xvd!WeUjaVjvHWLU%3BAutoEnlist=False%3BSSLMode=None%3B",
+                      "type": "string"
+                    },
+                    "Webhooks": {
+                      "description_en": "The callback URL that is invoked when an alert is triggered",
+                      "description_zh": "报警发生时,回调的URL地址",
+                      "example": "[\\\"https://oapi.dingtalk.com/robot/send?access_token=cca17c14bbc6b81b35fdc7caa19fdda531b659eee2969cc35a6362e3b2d10c13\\\"]",
+                      "type": "string"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "parseType": "null",
-                  "type": "array",
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "ContactGroups": {
-                  "backendName": "contactGroups",
-                  "itemName": "ContactGroup",
-                  "items": {
-                    "backendName": "contactGroups",
-                    "nullToEmpty": true,
-                    "type": "string",
-                    "visibility": "Public"
-                  },
-                  "nullToEmpty": true,
-                  "parseType": "null",
-                  "type": "array",
-                  "visibility": "Public"
-                },
-                "ContactMails": {
-                  "backendName": "contactMail",
-                  "itemName": "ContactMail",
-                  "items": {
-                    "backendName": "contactMail",
-                    "nullToEmpty": true,
-                    "type": "string",
-                    "visibility": "Public"
-                  },
-                  "nullToEmpty": true,
-                  "parseType": "null",
-                  "type": "array",
-                  "visibility": "Public"
-                },
-                "ContactSmses": {
-                  "backendName": "contactSms",
-                  "itemName": "ContactSms",
-                  "items": {
-                    "backendName": "contactSms",
-                    "nullToEmpty": true,
-                    "type": "string",
-                    "visibility": "Public"
-                  },
-                  "nullToEmpty": true,
-                  "parseType": "null",
-                  "type": "array",
-                  "visibility": "Public"
-                },
-                "Contacts": {
-                  "backendName": "contacts",
-                  "itemName": "Contact",
-                  "items": {
-                    "backendName": "contacts",
-                    "nullToEmpty": true,
-                    "type": "string",
-                    "visibility": "Public"
-                  },
-                  "nullToEmpty": true,
-                  "parseType": "null",
-                  "type": "array",
-                  "visibility": "Public"
-                },
-                "Dimensions": {
-                  "backendName": "dimensions",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EvaluationCount": {
-                  "backendName": "evaluationCount",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Expression": {
-                  "backendName": "expression",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "GroupId": {
-                  "backendName": "groupId",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Id": {
-                  "backendName": "id",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "InstanceName": {
-                  "backendName": "instanceName",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "LastTime": {
-                  "backendName": "lastTime",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Level": {
-                  "backendName": "level",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "MetricName": {
-                  "backendName": "metricName",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Namespace": {
-                  "backendName": "namespace",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "PreLevel": {
-                  "backendName": "preLevel",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RuleName": {
-                  "backendName": "ruleName",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "State": {
-                  "backendName": "state",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Status": {
-                  "backendName": "notifyStatus",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "UserId": {
-                  "backendName": "userId",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Value": {
-                  "backendName": "value",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Webhooks": {
-                  "backendName": "webhook",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "Code": {
-            "backendName": "code",
             "description_en": "The status code. A value of 200 indicates success",
             "description_zh": "状态码。说明 200表示成功",
             "example": "200",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Message": {
-            "backendName": "msg",
             "description_en": "The returned message",
             "description_zh": "返回信息",
             "example": "successful",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "traceId",
             "description_en": "The request ID, which is used for troubleshooting",
             "description_zh": "请求Id，用于排查问题",
             "example": "C3C69FBE-2262-541F-A409-C52F380BAE63",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the operation was successful. A value of true indicates success. A value of false indicates failure",
             "description_zh": "操作是否成功。true表示成功，false表示失败",
             "example": "true",
-            "nullToEmpty": false,
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           },
           "Total": {
-            "backendName": "total",
             "description_en": "The total number of records",
             "description_zh": "总记录条数",
             "example": "2",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

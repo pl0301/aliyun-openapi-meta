@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun eas POST /api/v2/app_services --region cn-hangzhou --QuotaId abcdef --WorkspaceId 120000 --header \"Content-Type=application/json\" --body '{\"AppVersion\":\"v1\",\"ServiceName\":\"foo\",\"Config\":{\"key\":\"example-string\"},\"ServiceSpec\":\"llama_7b_fp16\",\"Replicas\":1,\"AppType\":\"LLM\"}'",
   "cmd_full_name": "eas create-app-service",
   "cmd_name": "create-app-service",
@@ -57,6 +58,23 @@
       "type": "string"
     },
     {
+      "example": "foo",
+      "help_en": "The service name",
+      "help_zh": "服务名字",
+      "location": "body",
+      "name": "service_name",
+      "options": [
+        "--service-name"
+      ],
+      "param_style": "json",
+      "raw_name": "ServiceName",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "LLM"
+      ],
       "example": "LLM",
       "help_en": "The application service type.\n\nValid values:\n\nLLM\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->",
       "help_zh": "应用服务类型",
@@ -85,20 +103,18 @@
       "type": "string"
     },
     {
-      "help_en": "The additional configurations that are required for service deployment",
-      "help_zh": "部署时需要的其他配置信息",
+      "example": "llama_7b_fp16",
+      "help_en": "The service specifications. Valid values:\n\nllama_7b_fp16\nllama_7b_int8\nllama_13b_fp16\nllama_7b_int8\nchatglm_6b_fp16\nchatglm_6b_int8\nchatglm2_6b_fp16\nbaichuan_7b_int8\nbaichuan_13b_fp16\nbaichuan_7b_fp16",
+      "help_zh": "服务规格。取值如下：\nllama_7b_fp16\nllama_7b_int8\nllama_13b_fp16\nllama_7b_int8\nchatglm_6b_fp16\nchatglm_6b_int8\nchatglm2_6b_fp16\nbaichuan_7b_int8\nbaichuan_13b_fp16\nbaichuan_7b_fp16",
       "location": "body",
-      "name": "config",
+      "name": "service_spec",
       "options": [
-        "--config"
+        "--service-spec"
       ],
       "param_style": "json",
-      "raw_name": "Config",
-      "required": false,
-      "type": "map",
-      "value": {
-        "type": "any"
-      }
+      "raw_name": "ServiceSpec",
+      "required": true,
+      "type": "string"
     },
     {
       "example": "1",
@@ -115,32 +131,20 @@
       "type": "int"
     },
     {
-      "example": "foo",
-      "help_en": "The service name",
-      "help_zh": "服务名字",
+      "help_en": "The additional configurations that are required for service deployment",
+      "help_zh": "部署时需要的其他配置信息",
       "location": "body",
-      "name": "service_name",
+      "name": "config",
       "options": [
-        "--service-name"
+        "--config"
       ],
       "param_style": "json",
-      "raw_name": "ServiceName",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "llama_7b_fp16",
-      "help_en": "The service specifications. Valid values:\n\nllama_7b_fp16\nllama_7b_int8\nllama_13b_fp16\nllama_7b_int8\nchatglm_6b_fp16\nchatglm_6b_int8\nchatglm2_6b_fp16\nbaichuan_7b_int8\nbaichuan_13b_fp16\nbaichuan_7b_fp16",
-      "help_zh": "服务规格。取值如下：\nllama_7b_fp16\nllama_7b_int8\nllama_13b_fp16\nllama_7b_int8\nchatglm_6b_fp16\nchatglm_6b_int8\nchatglm2_6b_fp16\nbaichuan_7b_int8\nbaichuan_13b_fp16\nbaichuan_7b_fp16",
-      "location": "body",
-      "name": "service_spec",
-      "options": [
-        "--service-spec"
-      ],
-      "param_style": "json",
-      "raw_name": "ServiceSpec",
-      "required": true,
-      "type": "string"
+      "raw_name": "Config",
+      "required": false,
+      "type": "map",
+      "value": {
+        "type": "any"
+      }
     }
   ],
   "pathPattern": "/api/v2/app_services",
@@ -153,28 +157,24 @@
         "description_zh": "返回结果",
         "properties": {
           "InternetEndpoint": {
-            "backendName": "internetEndpoint",
             "description_en": "The public endpoint of the service",
             "description_zh": "服务的公网Endpoint",
             "example": "http://pai-eas.cn-shanghai.****",
             "type": "string"
           },
           "IntranetEndpoint": {
-            "backendName": "intranetEndpoint",
             "description_en": "The internal endpoint of the service",
             "description_zh": "服务内网Endpoint",
             "example": "http://pai-eas-vpc.cn-shanghai.****",
             "type": "string"
           },
           "Region": {
-            "backendName": "region",
             "description_en": "The region ID of the service",
             "description_zh": "服务所在的区域",
             "example": "cn-shanghai",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "40325405-579C-4D82****",
@@ -183,21 +183,18 @@
             "type": "string"
           },
           "ServiceId": {
-            "backendName": "serviceId",
             "description_en": "The service ID",
             "description_zh": "服务ID",
             "example": "eas-m-aaxxxddf",
             "type": "string"
           },
           "ServiceName": {
-            "backendName": "serviceName",
             "description_en": "The service name",
             "description_zh": "服务名字",
             "example": "foo",
             "type": "string"
           },
           "Status": {
-            "backendName": "status",
             "description_en": "The service state",
             "description_zh": "服务的状态",
             "example": "Creating",

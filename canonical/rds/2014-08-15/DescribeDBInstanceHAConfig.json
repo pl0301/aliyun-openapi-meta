@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 25000,
   "camel_example": "aliyun rds DescribeDBInstanceHAConfig --region cn-hangzhou --DBInstanceId 'rm-uf6wjk50000'",
   "cmd_full_name": "rds describe-db-instance-ha-config",
   "cmd_name": "describe-db-instance-ha-config",
   "deprecated": false,
-  "description_en": "Queries the high availability mode and data replication mode of an instance",
+  "description_en": "Queries the high-availability mode and data replication mode of an ApsaraDB RDS instance",
   "description_zh": "该接口用于查询RDS实例的高可用模式和数据复制方式",
   "kebab_example": "aliyun rds describe-db-instance-ha-config --db-instance-id rm-uf6wjk50000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "rm-uf6wjk5****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the instance ID",
+      "help_en": "The instance ID. You can call DescribeDBInstances to obtain the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -44,70 +45,87 @@
         "description_zh": "返回参数详情",
         "properties": {
           "DBInstanceId": {
-            "backendName": "data.dbInstanceName",
             "description_en": "The instance ID",
             "description_zh": "实例ID",
             "example": "rm-uf6wjk5****",
-            "mappingResourcePropertyName": "$.DbInstanceId",
             "type": "string"
           },
           "HAMode": {
-            "backendName": "data.haMode",
-            "description_en": "The high availability mode of the instance. Valid values:\n\nRPO: Data consistency is preferred. The instance ensures data reliability to minimize data losses. If you have high requirements on data consistency, select this mode.\nRTO: Service availability is preferred. The instance restores the database service at the earliest opportunity to ensure service availability. If you have high requirements on instance availability, select this mode.\n\nThis parameter is returned only for instances that run MySQL",
+            "description_en": "The High-availability Mode. Valid values:\nRPO: Data consistency is preferred. The instance prioritizes data reliability to minimize data loss. Use RPO mode if you have high requirements for data consistency.\nRTO: Instance availability is preferred. The instance recovers services as soon as possible to maximize available time. Use RTO mode if you have high requirements for database uptime.\n\nThis parameter is returned only for ApsaraDB RDS for MySQL instances",
             "description_zh": "高可用模式，取值：\nRPO：数据一致性优先，实例会尽可能保障数据的可靠性，即数据丢失量最少。对于数据一致性要求比较高的用户应该使用RPO模式。\nRTO：实例可用性优先，实例会尽快恢复服务，即可用时间最长。对于数据库在线时间要求比较高的用户应该使用RTO模式。\n\n仅MySQL实例返回此参数",
             "example": "RPO",
             "type": "string"
           },
           "HostInstanceInfos": {
-            "backendName": "data.hostInstanceInfos",
-            "itemName": "NodeInfo",
-            "items": {
-              "properties": {
-                "DataSyncTime": {
-                  "backendName": "dataDelay",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "NodeInfo": {
+                "description_en": "The information about primary and secondary instances",
+                "description_zh": "主备实例信息列表",
+                "items": {
+                  "description_en": "The details of primary and secondary instances",
+                  "description_zh": "主备实例信息详情",
+                  "properties": {
+                    "DataSyncTime": {
+                      "description_en": "The time when the secondary instance completed data synchronization by replaying logs. The time follows the ISO 8601 standard in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format. The time is displayed in UTC",
+                      "description_zh": "备实例执行日志完成数据同步的时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2018-05-05T15:15:00Z",
+                      "type": "string"
+                    },
+                    "LogSyncTime": {
+                      "description_en": "The time when the secondary instance received the instance log from the primary instance. The time follows the ISO 8601 standard in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format. The time is displayed in UTC",
+                      "description_zh": "备实例收到主实例日志的时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2018-05-05T15:15:00Z",
+                      "type": "string"
+                    },
+                    "NodeId": {
+                      "description_en": "The unique ID of the instance",
+                      "description_zh": "实例的唯一标识",
+                      "example": "3397027",
+                      "type": "string"
+                    },
+                    "NodeType": {
+                      "description_en": "The node type. Valid values:\nMaster: primary node\nSlave: secondary node",
+                      "description_zh": "节点类型，取值：\nMaster：主节点\nSlave：备节点",
+                      "example": "Master",
+                      "type": "string"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID",
+                      "description_zh": "地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "SyncStatus": {
+                      "description_en": "The synchronization status. Valid values:\nNotAvailable: The node is unavailable due to a fault.\nSyncing: Synchronization is in progress. A switchover may cause data loss.\nSynchronized: Synchronization is complete.\nNotSupport: The engine type or version does not support primary/secondary synchronization",
+                      "description_zh": "同步状态，取值：\nNotAvailable：不可用，即发生故障。\nSyncing：同步中，切换可能会发生数据丢失。\nSynchronized：完成同步。\nNotSupport：引擎类型或者版本不涉及主备同步",
+                      "example": "NotAvailable",
+                      "type": "string"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID",
+                      "description_zh": "可用区ID",
+                      "example": "cn-hangzhou-b",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "LogSyncTime": {
-                  "backendName": "logDelay",
-                  "type": "string"
-                },
-                "NodeId": {
-                  "backendName": "nodeId",
-                  "type": "string"
-                },
-                "NodeType": {
-                  "backendName": "nodeType",
-                  "type": "string"
-                },
-                "RegionId": {
-                  "backendName": "region",
-                  "mappingResourcePropertyName": "$.RegionId",
-                  "type": "string"
-                },
-                "SyncStatus": {
-                  "backendName": "syncStatus",
-                  "type": "string"
-                },
-                "ZoneId": {
-                  "backendName": "zoneId",
-                  "mappingResourcePropertyName": "$.ZoneId",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1AD222E9-E606-4A42-BF6D-8A4442913CEF",
             "type": "string"
           },
           "SyncMode": {
-            "backendName": "data.syncMode",
-            "description_en": "The data replication mode of the instance. Valid values:\n\nSync: the synchronous mode\nSemi-sync: the semi-synchronous replication mode\nAsync: the asynchronous mode\n\nThis parameter is returned only for instances that run MySQL",
+            "description_en": "The data replication mode. Valid values:\nSync: synchronous replication\nSemi-sync: semi-synchronous replication\nAsync: asynchronous replication\n\nThis parameter is returned only for ApsaraDB RDS for MySQL instances",
             "description_zh": "数据复制方式，取值：\nSync：强同步\nSemi-sync：半同步\nAsync：异步\n\n仅MySQL实例返回此参数",
             "example": "Sync",
             "type": "string"

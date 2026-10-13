@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun gpdb CreateCollection --region cn-hangzhou --ManagerAccountPassword testpassword --ManagerAccount testaccount --Metadata 'title_:_text_,_content_:_text_,_response_:_int' --Collection document --RegionId 'cn-hangzhou'",
   "cmd_full_name": "gpdb create-collection",
   "cmd_name": "create-collection",
@@ -272,16 +273,16 @@
     {
       "fields": [
         {
-          "example": "hnswflat",
-          "help_en": "The vector index algorithm.\n\nValid values:\n\n`hnswflat`: (Default) An HNSW index without quantization compression.\n\n`novam`: A graph index without quantization compression. This algorithm is suitable for high-performance scenarios, such as real-time recommendations",
-          "help_zh": "向量索引算法\n\n取值说明：\nhnswflat：不带量化压缩的 HNSW 索引（默认值）\nnovam：不带量化压缩的图索引，适用于实时推荐等高性能场景",
-          "name": "algorithm",
+          "example": "64",
+          "help_en": "The maximum number of neighbors for the HNSW algorithm. You do not typically need to set this parameter, as the system automatically determines a value based on the vector dimension.\n\nValue range:\n\nFor AnalyticDB for PostgreSQL V6.0 instances: 1 to 1000.\n\nFor AnalyticDB for PostgreSQL V7.0 instances: 2 to 100. The default value is 16.\n\nWe recommend that you set this parameter based on the vector dimension:\n\n16 for dimensions less than or equal to 384.\n\n32 for dimensions greater than 384 and less than or equal to 768.\n\n64 for dimensions greater than 768 and less than or equal to 1024.\n\n128 for dimensions greater than 1024",
+          "help_zh": "HNSW算法中的最大邻居数。接口会根据向量维度自动设置此值，一般不需要手动设置。\n\n取值范围：\nAnalyticDB PostgreSQL 6.0版实例：1～1000。\nAnalyticDB PostgreSQL 7.0版实例：2～100，默认值16。\n\n建议根据向量维度来设置：\n小于等于384：16\n大于384小于等于768：32\n大于768小于等于1024：64\n大于1024：128",
+          "name": "hnsw_m",
           "options": [
-            "--algorithm"
+            "--hnsw-m"
           ],
-          "raw_name": "Algorithm",
+          "raw_name": "HnswM",
           "required": false,
-          "type": "string"
+          "type": "int"
         },
         {
           "example": "128",
@@ -296,16 +297,16 @@
           "type": "int"
         },
         {
-          "example": "64",
-          "help_en": "The maximum number of neighbors for the HNSW algorithm. You do not typically need to set this parameter, as the system automatically determines a value based on the vector dimension.\n\nValue range:\n\nFor AnalyticDB for PostgreSQL V6.0 instances: 1 to 1000.\n\nFor AnalyticDB for PostgreSQL V7.0 instances: 2 to 100. The default value is 16.\n\nWe recommend that you set this parameter based on the vector dimension:\n\n16 for dimensions less than or equal to 384.\n\n32 for dimensions greater than 384 and less than or equal to 768.\n\n64 for dimensions greater than 768 and less than or equal to 1024.\n\n128 for dimensions greater than 1024",
-          "help_zh": "HNSW算法中的最大邻居数。接口会根据向量维度自动设置此值，一般不需要手动设置。\n\n取值范围：\nAnalyticDB PostgreSQL 6.0版实例：1～1000。\nAnalyticDB PostgreSQL 7.0版实例：2～100，默认值16。\n\n建议根据向量维度来设置：\n小于等于384：16\n大于384小于等于768：32\n大于768小于等于1024：64\n大于1024：128",
-          "name": "hnsw_m",
+          "example": "hnswflat",
+          "help_en": "The vector index algorithm.\n\nValid values:\n\n`hnswflat`: (Default) An HNSW index without quantization compression.\n\n`novam`: A graph index without quantization compression. This algorithm is suitable for high-performance scenarios, such as real-time recommendations",
+          "help_zh": "向量索引算法\n\n取值说明：\nhnswflat：不带量化压缩的 HNSW 索引（默认值）\nnovam：不带量化压缩的图索引，适用于实时推荐等高性能场景",
+          "name": "algorithm",
           "options": [
-            "--hnsw-m"
+            "--algorithm"
           ],
-          "raw_name": "HnswM",
+          "raw_name": "Algorithm",
           "required": false,
-          "type": "int"
+          "type": "string"
         }
       ],
       "help_en": "The configuration for the sparse vector index. If specified, a sparse vector index is created",
@@ -379,24 +380,22 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Message": {
-            "backendName": "message",
             "description_en": "The response message",
             "description_zh": "接口返回详细信息",
             "example": "create successfully",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "ABB39CC3-4488-4857-905D-2E4A051D0521",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Status": {
-            "backendName": "status",
             "description_en": "The status of the operation. Valid values:\n\nsuccess: The operation succeeded.\n\nfail: The operation failed",
             "description_zh": "创建状态，取值说明：\nsuccess：成功。\nfail：失败",
             "example": "success",

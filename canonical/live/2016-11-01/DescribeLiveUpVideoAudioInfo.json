@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun live DescribeLiveUpVideoAudioInfo --region cn-hangzhou --Stream 'rtmp://example.com/AppName/StreamName' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "live describe-live-up-video-audio-info",
   "cmd_name": "describe-live-up-video-audio-info",
   "deprecated": false,
-  "description_en": "Queries the audio and video parameters of an upstream ingest stream within a specified time range",
+  "description_en": "Queries the audio and video parameters of upstream ingest streams within a specified time period",
   "description_zh": "查询一段时间内的流的上行推流的音视频参数",
   "kebab_example": "aliyun live describe-live-up-video-audio-info --biz-region-id cn-hangzhou --stream rtmp://example.com/AppName/StreamName --region cn-hangzhou",
   "method": "GET|POST",
@@ -35,7 +36,7 @@
     },
     {
       "example": "rtmp://example.com/AppName/StreamName",
-      "help_en": "The full name of the stream to query. The format is `rtmp://<ingest domain>/<AppName>/<StreamName>`",
+      "help_en": "The name of the stream to query. Specify the full stream name in the following format: `rtmp://Ingest domain/App name/Stream name`",
       "help_zh": "查询的流名，需要完整填写，格式为：`rtmp://推流域名/app名/流名`",
       "location": "query",
       "name": "stream",
@@ -48,7 +49,7 @@
     },
     {
       "example": "2015-12-10T15:00:00Z",
-      "help_en": "The start time. The format is \\`yyyy-MM-ddTHH:mm:ssZ\\` in UTC",
+      "help_en": "The start time. Specify the time in the yyyy-MM-ddTHH:mm:ssZ format (UTC)",
       "help_zh": "起始时间。格式为：yyyy-MM-ddTHH:mm:ssZ（UTC时间）",
       "location": "query",
       "name": "start_time",
@@ -61,7 +62,7 @@
     },
     {
       "example": "2015-12-10T15:10:00Z ",
-      "help_en": "The end time. The format is \\`yyyy-MM-ddTHH:mm:ssZ\\` in UTC",
+      "help_en": "The end time. Specify the time in the yyyy-MM-ddTHH:mm:ssZ format (UTC)",
       "help_zh": "结束时间。格式为：yyyy-MM-ddTHH:mm:ssZ（UTC时间）",
       "location": "query",
       "name": "end_time",
@@ -79,318 +80,502 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The audio and video information",
+        "description_en": "The video and audio information",
         "description_zh": "视频音频信息",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "BC858082-736F-4A25-867B-E5B67C85ACF7",
             "type": "string"
           },
           "UpItems": {
-            "backendName": "data.content.up_items",
-            "itemName": "PublishItem",
-            "items": {
-              "properties": {
-                "AacHeaders": {
-                  "backendName": "aac_headers",
-                  "itemName": "AacHeaders",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "PublishItem": {
+                "description_en": "The total number of aggregated ingest streams in the response",
+                "description_zh": "返回信息中聚合推流数总计",
+                "items": {
+                  "description_en": "The information",
+                  "description_zh": "信息",
+                  "properties": {
+                    "AacHeaders": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AacHeaders": {
+                          "description_en": "The per-second audio AAC headers. Unit: count",
+                          "description_zh": "秒级音频AAC头，单位：次数",
+                          "items": {
+                            "description_en": "The per-second audio AAC header",
+                            "description_zh": "秒级音频AAC头",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "20",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "AppName": {
-                  "backendName": "app",
-                  "type": "string"
-                },
-                "AudioBitRate": {
-                  "backendName": "audio_bit_rate",
-                  "itemName": "AudioBitRate",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "AppName": {
+                      "description_en": "The name of the ingest application",
+                      "description_zh": "推流App名称",
+                      "example": "AppName",
+                      "type": "string"
+                    },
+                    "AudioBitRate": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AudioBitRate": {
+                          "description_en": "The per-second audio bitrate. Unit: bit/s",
+                          "description_zh": "秒级音频码率，单位：bit/s",
+                          "items": {
+                            "description_en": "The per-second audio bitrate",
+                            "description_zh": "秒级音频码率",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "24552",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "AudioFrames": {
-                  "backendName": "audio_frames",
-                  "itemName": "AudioFrames",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "AudioFrames": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AudioFrames": {
+                          "description_en": "The per-second audio frame rate. Unit: frames",
+                          "description_zh": "秒级音频帧率，单位：帧",
+                          "items": {
+                            "description_en": "The per-second audio frame rate",
+                            "description_zh": "秒级音频帧率",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "23",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "AudioInterval": {
-                  "backendName": "audio_interval",
-                  "itemName": "AudioInterval",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "AudioInterval": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AudioInterval": {
+                          "description_en": "The per-second maximum audio frame interval. Unit: milliseconds",
+                          "description_zh": "秒级最大音频帧间隔，单位：毫秒",
+                          "items": {
+                            "description_en": "The per-second maximum audio frame interval",
+                            "description_zh": "秒级最大音频帧间隔",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "254",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "AudioStamps": {
-                  "backendName": "audio_stamps",
-                  "itemName": "AudioStamps",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "AudioStamps": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AudioStamps": {
+                          "description_en": "The per-second audio timestamp. Unit: milliseconds",
+                          "description_zh": "秒级音频时间戳，单位：毫秒",
+                          "items": {
+                            "description_en": "The per-second audio timestamp",
+                            "description_zh": "秒级音频时间戳",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "725053422",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "AvcHeaders": {
-                  "backendName": "avc_headers",
-                  "itemName": "AvcHeaders",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "AvcHeaders": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AvcHeaders": {
+                          "description_en": "The per-second audio AVC headers. Unit: count",
+                          "description_zh": "秒级音频AVC头，单位：次数",
+                          "items": {
+                            "description_en": "The per-second audio AVC header",
+                            "description_zh": "秒级音频AVC头",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "11",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "CodecInfo": {
-                  "backendName": "codec_info",
-                  "type": "string"
-                },
-                "DomainName": {
-                  "backendName": "vhost",
-                  "type": "string"
-                },
-                "ErrorFlags": {
-                  "backendName": "ErrorFlags",
-                  "itemName": "ErrorFlags",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "CodecInfo": {
+                      "description_en": "The audio and video codec information",
+                      "description_zh": "音视频编码信息",
+                      "example": "H264/AAC",
+                      "type": "string"
+                    },
+                    "DomainName": {
+                      "description_en": "The ingest domain",
+                      "description_zh": "推流域名",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "ErrorFlags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ErrorFlags": {
+                          "description_en": "The error codes for stream ingest disconnection",
+                          "description_zh": "推流断开错误码",
+                          "items": {
+                            "description_en": "The error codes for stream ingest disconnection",
+                            "description_zh": "推流断开错误码",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "0",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "PublishInterval": {
-                  "backendName": "time",
-                  "type": "string"
-                },
-                "PublishIp": {
-                  "backendName": "publish_ip",
-                  "type": "string"
-                },
-                "PublishStatus": {
-                  "backendName": "status",
-                  "type": "string"
-                },
-                "PublishTime": {
-                  "backendName": "publish_time",
-                  "type": "string"
-                },
-                "StopTime": {
-                  "backendName": "stop_time",
-                  "type": "string"
-                },
-                "StreamName": {
-                  "backendName": "vname",
-                  "type": "string"
-                },
-                "UniqueId": {
-                  "backendName": "uid",
-                  "type": "string"
-                },
-                "VideoAndAudioStamp": {
-                  "backendName": "v_a_stamp",
-                  "itemName": "V_AStamp",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "PublishInterval": {
+                      "description_en": "The stream ingest duration, in seconds. A value of \"-\" indicates that stream ingest is in progress and the duration is not yet available",
+                      "description_zh": "推流时长，单位为秒；\"-\"表示正在推流，暂无推流时长",
+                      "example": "-",
+                      "type": "string"
+                    },
+                    "PublishIp": {
+                      "description_en": "The IP address of the stream ingest client",
+                      "description_zh": "推流端IP",
+                      "example": "cn397",
+                      "type": "string"
+                    },
+                    "PublishStatus": {
+                      "description_en": "The stream ingest status. Valid values:\n1: stream ingest is in progress.\n0: stream ingest has ended",
+                      "description_zh": "推流状态，分为 “1”: “正在推流” 或 “0”: “过去推流” 两种",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "PublishTime": {
+                      "description_en": "The start time of stream ingest, in UTC format",
+                      "description_zh": "推流开始时间，UTC格式",
+                      "example": "2015-12-10T15:00:00Z",
+                      "type": "string"
+                    },
+                    "StopTime": {
+                      "description_en": "The end time of stream ingest, in UTC format",
+                      "description_zh": "推流结束时间，UTC格式",
+                      "example": "2015-12-10T15:10:00Z",
+                      "type": "string"
+                    },
+                    "StreamName": {
+                      "description_en": "The name of the stream",
+                      "description_zh": "流的名称",
+                      "example": "StreamName",
+                      "type": "string"
+                    },
+                    "UniqueId": {
+                      "description_en": "The unique ID for each stream ingest session",
+                      "description_zh": "每次推流的唯一ID",
+                      "example": "2.-395_37261_9848098_1538080899396",
+                      "type": "string"
+                    },
+                    "VideoAndAudioStamp": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "V_AStamp": {
+                          "description_en": "The per-second difference between the video UNIX timestamp and the audio UNIX timestamp. Unit: milliseconds",
+                          "description_zh": "秒级音视频时间戳差值，单位：毫秒",
+                          "items": {
+                            "description_en": "The per-second difference between the video UNIX timestamp and the audio UNIX timestamp",
+                            "description_zh": "秒级音视频时间戳差值",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "359",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "VideoBitRate": {
-                  "backendName": "video_bit_rate",
-                  "itemName": "VideoBitRate",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "VideoBitRate": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "VideoBitRate": {
+                          "description_en": "The per-second video bitrate. Unit: bit/s",
+                          "description_zh": "秒级视频码率，单位：bit/s",
+                          "items": {
+                            "description_en": "The per-second video bitrate",
+                            "description_zh": "秒级视频码率",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "3970160",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "VideoFrames": {
-                  "backendName": "video_frames",
-                  "itemName": "VideoFrames",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "VideoFrames": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "VideoFrames": {
+                          "description_en": "The per-second video frame rate. Unit: frames",
+                          "description_zh": "秒级视频帧率，单位：帧",
+                          "items": {
+                            "description_en": "The per-second video frame rate",
+                            "description_zh": "秒级视频帧率",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "29",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "VideoInterval": {
-                  "backendName": "video_interval",
-                  "itemName": "VideoInterval",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "VideoInterval": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "VideoInterval": {
+                          "description_en": "The per-second maximum video keyframe interval. Unit: milliseconds",
+                          "description_zh": "秒级最大视频帧间隔，单位：毫秒",
+                          "items": {
+                            "description_en": "The per-second maximum video keyframe interval",
+                            "description_zh": "秒级最大视频帧间隔",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "278",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "VideoStamps": {
-                  "backendName": "video_stamps",
-                  "itemName": "VideoStamps",
-                  "items": {
-                    "properties": {
-                      "Time": {
-                        "backendName": "time",
-                        "format": "int64",
-                        "type": "integer"
+                    "VideoStamps": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "VideoStamps": {
+                          "description_en": "The per-second video timestamp. Unit: milliseconds",
+                          "description_zh": "秒级视频时间戳，单位：毫秒",
+                          "items": {
+                            "description_en": "The per-second video timestamp",
+                            "description_zh": "秒级视频时间戳",
+                            "properties": {
+                              "Time": {
+                                "description_en": "The query time, expressed as a UNIX timestamp in milliseconds",
+                                "description_zh": "查询时间，用UNIX毫秒时间戳表示",
+                                "example": "1538134750408",
+                                "format": "int64",
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "description_en": "The per-second metric value of the corresponding quality data at the query time",
+                                "description_zh": "对应质量数据在查询时间的秒级指标值",
+                                "example": "725053781",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "Value": {
-                        "backendName": "val",
-                        "format": "int32",
-                        "type": "integer"
-                      }
-                    },
-                    "type": "object"
+                      "type": "object"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "type": "array"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

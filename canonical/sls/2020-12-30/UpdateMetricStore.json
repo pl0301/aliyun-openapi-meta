@@ -1,11 +1,11 @@
 {
-  "camel_example": "aliyun sls PUT /metricstores/my_metric_store --project my-project --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"mode\":\"standard\",\"autoSplit\":true,\"infrequentAccessTTL\":1,\"maxSplitShard\":64,\"appendMeta\":true,\"hot_ttl\":1,\"shardingPolicy\":\"example-string\",\"ttl\":7}",
+  "camel_example": "aliyun sls PUT /metricstores/my_metric_store --project my-project --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "sls update-metric-store",
   "cmd_name": "update-metric-store",
   "deprecated": false,
   "description_en": "Updates the configuration of an existing Metricstore. A Metricstore is used to store metrics",
   "description_zh": "更新一个已存在的时序库的配置，时序库可用于存储时序数据",
-  "kebab_example": "aliyun sls update-metric-store --project my-project --name my_metric_store --ttl 7 --auto-split true --max-split-shard 64 --biz-mode standard --hot-ttl 1 --infrequent-access-ttl 1 --append-meta true --sharding-policy example-string --region cn-hangzhou",
+  "kebab_example": "aliyun sls update-metric-store --project my-project --name my_metric_store --region cn-hangzhou",
   "method": "PUT",
   "multi_version": false,
   "name": "UpdateMetricStore",
@@ -59,17 +59,18 @@
       "type": "string"
     },
     {
-      "help_en": "The appendMeta",
-      "help_zh": "是否记录外网IP地址和日志接收时间",
+      "example": "7",
+      "help_en": "The data retention period. Unit: days",
+      "help_zh": "保存时长，单位为天",
       "location": "body",
-      "name": "append_meta",
+      "name": "ttl",
       "options": [
-        "--append-meta"
+        "--ttl"
       ],
       "param_style": "json",
-      "raw_name": "appendMeta",
+      "raw_name": "ttl",
       "required": false,
-      "type": "bool"
+      "type": "int"
     },
     {
       "example": "true",
@@ -84,32 +85,6 @@
       "raw_name": "autoSplit",
       "required": false,
       "type": "bool"
-    },
-    {
-      "help_en": "The retention period of data in the hot storage layer. Unit: days",
-      "help_zh": "数据在热存储层中的存储时间，单位为天",
-      "location": "body",
-      "name": "hot_ttl",
-      "options": [
-        "--hot-ttl"
-      ],
-      "param_style": "json",
-      "raw_name": "hot_ttl",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "help_en": "The retention period for the IA storage class. Unit: days",
-      "help_zh": "低频存储，单位为天",
-      "location": "body",
-      "name": "infrequent_access_ttl",
-      "options": [
-        "--infrequent-access-ttl"
-      ],
-      "param_style": "json",
-      "raw_name": "infrequentAccessTTL",
-      "required": false,
-      "type": "int"
     },
     {
       "example": "64",
@@ -140,44 +115,48 @@
       "type": "string"
     },
     {
+      "help_en": "The retention period of data in the hot storage layer. Unit: days",
+      "help_zh": "数据在热存储层中的存储时间，单位为天",
+      "location": "body",
+      "name": "hot_ttl",
+      "options": [
+        "--hot-ttl"
+      ],
+      "param_style": "json",
+      "raw_name": "hot_ttl",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "help_en": "The retention period for the IA storage class. Unit: days",
+      "help_zh": "低频存储，单位为天",
+      "location": "body",
+      "name": "infrequent_access_ttl",
+      "options": [
+        "--infrequent-access-ttl"
+      ],
+      "param_style": "json",
+      "raw_name": "infrequentAccessTTL",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "help_en": "The appendMeta",
+      "help_zh": "是否记录外网IP地址和日志接收时间",
+      "location": "body",
+      "name": "append_meta",
+      "options": [
+        "--append-meta"
+      ],
+      "param_style": "json",
+      "raw_name": "appendMeta",
+      "required": false,
+      "type": "bool"
+    },
+    {
       "fields": [
         {
-          "help_en": "The enabled",
-          "help_zh": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
-          "name": "enabled",
-          "options": [
-            "--enabled"
-          ],
-          "raw_name": "enabled",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "1764659409",
-          "help_en": "The queryActiveTime",
-          "help_zh": "查询生效时间，Unix Timestamp",
-          "name": "query_active_time",
-          "options": [
-            "--query-active-time"
-          ],
-          "raw_name": "queryActiveTime",
-          "required": false,
-          "type": "int"
-        },
-        {
           "fields": [
-            {
-              "example": "8",
-              "help_en": "The groupCount",
-              "help_zh": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个",
-              "name": "group_count",
-              "options": [
-                "--group-count"
-              ],
-              "raw_name": "groupCount",
-              "required": true,
-              "type": "int"
-            },
             {
               "element": {
                 "type": "string"
@@ -191,6 +170,18 @@
               "raw_name": "keys",
               "required": true,
               "type": "array"
+            },
+            {
+              "example": "8",
+              "help_en": "The groupCount",
+              "help_zh": "ShardGroup 分组个数，必须为 2 的幂次，小于 shard 个数，通常为 4-32 个",
+              "name": "group_count",
+              "options": [
+                "--group-count"
+              ],
+              "raw_name": "groupCount",
+              "required": true,
+              "type": "int"
             }
           ],
           "help_en": "The shardGroup",
@@ -246,6 +237,29 @@
           "raw_name": "shardHash",
           "required": false,
           "type": "object"
+        },
+        {
+          "example": "1764659409",
+          "help_en": "The queryActiveTime",
+          "help_zh": "查询生效时间，Unix Timestamp",
+          "name": "query_active_time",
+          "options": [
+            "--query-active-time"
+          ],
+          "raw_name": "queryActiveTime",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "help_en": "The enabled",
+          "help_zh": "是否开启，默认 true，传 false 时会关闭 shardingPolicy 功能",
+          "name": "enabled",
+          "options": [
+            "--enabled"
+          ],
+          "raw_name": "enabled",
+          "required": false,
+          "type": "bool"
         }
       ],
       "help_en": "The hash write configuration",
@@ -259,20 +273,6 @@
       "raw_name": "shardingPolicy",
       "required": false,
       "type": "object"
-    },
-    {
-      "example": "7",
-      "help_en": "The data retention period. Unit: days",
-      "help_zh": "保存时长，单位为天",
-      "location": "body",
-      "name": "ttl",
-      "options": [
-        "--ttl"
-      ],
-      "param_style": "json",
-      "raw_name": "ttl",
-      "required": false,
-      "type": "int"
     }
   ],
   "pathPattern": "/metricstores/[name]",

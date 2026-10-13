@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ess DescribeScalingRules --region cn-hangzhou --ShowAlarmRules false --ScalingRuleAri.1 'ari:acs:ess:cn-hangzhou:1406926474060000:scalingrule/asr-bp1dvirgwkoowxk70000' --PageSize 50 --PageNumber 1 --ScalingGroupId 'asg-bp1ffogfdauy0jw00000' --ScalingRuleName.1 scalingrule0000 --ScalingRuleId.1 'asr-bp1dvirgwkoowxk70000' --RegionId 'cn-hangzhou' --ScalingRuleType SimpleScalingRule",
   "cmd_full_name": "ess describe-scaling-rules",
   "cmd_name": "describe-scaling-rules",
@@ -159,7 +160,6 @@
       "schema": {
         "properties": {
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The current page number",
             "description_zh": "当前页码",
             "example": "1",
@@ -167,7 +167,6 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页行数",
             "example": "50",
@@ -175,286 +174,428 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
             "type": "string"
           },
           "ScalingRules": {
-            "backendName": "data.scalingRules",
-            "itemName": "ScalingRule",
-            "items": {
-              "properties": {
-                "AdjustmentType": {
-                  "backendName": "adjustmentType",
-                  "type": "string"
-                },
-                "AdjustmentValue": {
-                  "backendName": "adjustmentValue",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "AlarmDimensions": {
-                  "backendName": "alarmDimensions",
-                  "itemName": "AlarmDimension",
-                  "items": {
-                    "properties": {
-                      "DimensionKey": {
-                        "backendName": "dimensionKey",
-                        "type": "string"
-                      },
-                      "DimensionValue": {
-                        "backendName": "dimensionValue",
-                        "type": "string"
-                      }
+            "itemNode": true,
+            "properties": {
+              "ScalingRule": {
+                "description_en": "The collection of scaling rule information",
+                "description_zh": "伸缩规则信息组成的集合",
+                "items": {
+                  "description_en": "The collection of scaling rule information",
+                  "description_zh": "伸缩规则信息组成的集合",
+                  "properties": {
+                    "AdjustmentType": {
+                      "description_en": "The adjustment method of the scaling rule. Valid values:\n\nQuantityChangeInCapacity: adds or removes a specified number of ECS instances.\nPercentChangeInCapacity: adds or removes a specified percentage of ECS instances.\nTotalCapacity: adjusts the number of ECS instances in the scaling group to a specified value",
+                      "description_zh": "伸缩规则的调整方式。可能值：\n\nQuantityChangeInCapacity：增加或减少指定数量的ECS实例。\nPercentChangeInCapacity：增加或减少指定比例的ECS实例。\nTotalCapacity：将当前伸缩组的ECS实例数量调整到指定数量",
+                      "example": "QuantityChangeInCapacity",
+                      "type": "string"
                     },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "Alarms": {
-                  "backendName": "alarms",
-                  "itemName": "Alarm",
-                  "items": {
-                    "properties": {
-                      "AlarmTaskId": {
-                        "backendName": "alarmTaskId",
-                        "type": "string"
-                      },
-                      "AlarmTaskName": {
-                        "backendName": "alarmTaskName",
-                        "type": "string"
-                      },
-                      "ComparisonOperator": {
-                        "backendName": "comparisonOperator",
-                        "type": "string"
-                      },
-                      "Dimensions": {
-                        "backendName": "dimensions",
-                        "itemName": "Dimension",
-                        "items": {
-                          "properties": {
-                            "DimensionKey": {
-                              "backendName": "dimensionKey",
-                              "type": "string"
+                    "AdjustmentValue": {
+                      "description_en": "The adjustment value of the scaling rule",
+                      "description_zh": "伸缩规则的调整值",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "AlarmDimensions": {
+                      "itemNode": true,
+                      "properties": {
+                        "AlarmDimension": {
+                          "description_en": "The dimension information associated with the metric. This parameter is applicable to target tracking scaling rules. Set this parameter when the metric requires additional dimension information, such as the `rulePool` dimension for the `LoadBalancerRealServerAverageQps` metric",
+                          "description_zh": "监控项关联的维度信息，适用于目标追踪规则，当监控项需额外维度信息时设置，例如`LoadBalancerRealServerAverageQps`监控项需指定`rulePool`维度信息",
+                          "items": {
+                            "description_en": "The dimension information associated with the metric. This parameter is applicable to target tracking scaling rules. Set this parameter when the metric requires additional dimension information, such as the `rulePool` dimension for the `LoadBalancerRealServerAverageQps` metric",
+                            "description_zh": "监控项关联的维度信息，适用于目标追踪规则，当监控项需额外维度信息时设置，例如`LoadBalancerRealServerAverageQps`监控项需指定`rulePool`维度信息",
+                            "properties": {
+                              "DimensionKey": {
+                                "description_en": "The dimension key associated with the metric",
+                                "description_zh": "监控项关联的维度信息键",
+                                "example": "rulePool",
+                                "type": "string"
+                              },
+                              "DimensionValue": {
+                                "description_en": "The dimension value associated with the metric",
+                                "description_zh": "监控项关联的维度信息值",
+                                "example": "sgp-l1cbirz451yxu2****",
+                                "type": "string"
+                              }
                             },
-                            "DimensionValue": {
-                              "backendName": "dimensionValue",
-                              "type": "string"
-                            }
+                            "type": "object"
                           },
-                          "type": "object"
-                        },
-                        "type": "array"
+                          "type": "array"
+                        }
                       },
-                      "EvaluationCount": {
-                        "backendName": "evaluationCount",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "MetricName": {
-                        "backendName": "metricName",
-                        "type": "string"
-                      },
-                      "MetricType": {
-                        "backendName": "metricType",
-                        "type": "string"
-                      },
-                      "Period": {
-                        "backendName": "period",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "Statistics": {
-                        "backendName": "statistics",
-                        "type": "string"
-                      },
-                      "Threshold": {
-                        "backendName": "threshold",
-                        "format": "float",
-                        "type": "number"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "Cooldown": {
-                  "backendName": "cooldown",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "DisableScaleIn": {
-                  "backendName": "disableScaleIn",
-                  "type": "boolean"
-                },
-                "EstimatedInstanceWarmup": {
-                  "backendName": "estimatedInstanceWarmup",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "HybridMetrics": {
-                  "backendName": "hybridMetrics",
-                  "itemName": "HybridMetric",
-                  "items": {
-                    "properties": {
-                      "Dimensions": {
-                        "backendName": "dimensions",
-                        "itemName": "Dimension",
-                        "items": {
-                          "properties": {
-                            "DimensionKey": {
-                              "backendName": "dimensionKey",
-                              "type": "string"
+                    "Alarms": {
+                      "itemNode": true,
+                      "properties": {
+                        "Alarm": {
+                          "description_en": "The CloudMonitor event-triggered tasks associated with the scaling rule. Event-triggered tasks are returned only when the ShowAlarmRules parameter is set to true. Otherwise, an empty list is returned",
+                          "description_zh": "伸缩规则关联的云监控报警任务。仅在ShowAlarmRules参数为true时返回伸缩规则关联的云监控报警任务，否则返回空列表。 ",
+                          "items": {
+                            "description_en": "The CloudMonitor event-triggered tasks associated with the scaling rule. Event-triggered tasks are returned only when the ShowAlarmRules parameter is set to true. Otherwise, an empty list is returned",
+                            "description_zh": "伸缩规则关联的云监控报警任务。仅在ShowAlarmRules参数为true时返回伸缩规则关联的云监控报警任务，否则返回空列表",
+                            "properties": {
+                              "AlarmTaskId": {
+                                "description_en": "The ID of the event-triggered task associated with the scaling rule",
+                                "description_zh": "伸缩规则关联的报警任务的ID",
+                                "example": "asg-bp18p2yfxow2dloq****_1f9458d1-70e1-4bee-8c7f-7a47695b****",
+                                "type": "string"
+                              },
+                              "AlarmTaskName": {
+                                "description_en": "The name of the event-triggered task associated with the scaling rule",
+                                "description_zh": "伸缩规则关联的报警任务的名称",
+                                "example": "alarmtask****",
+                                "type": "string"
+                              },
+                              "ComparisonOperator": {
+                                "description_en": "The comparison operator between the statistical value and the threshold of the metric for the event-triggered task associated with the scaling rule. The comparison operator indicates the relationship in which the statistical value and the threshold can satisfy the condition. Valid values:\n\nThe statistical value is greater than or equal to the threshold. Value: >=.\nThe statistical value is less than or equal to the threshold. Value: <=.\nThe statistical value is greater than the threshold. Value: >.\nThe statistical value is less than the threshold. Value: <",
+                                "description_zh": "伸缩规则关联的报警任务使用的监控项统计值与阈值的比较符，用于指定监控项统计值与阈值在什么关系下满足条件。可能值：\n\n监控项统计值大于等于阈值。取值：>=。\n监控项统计值小于等于阈值。取值：<=。\n监控项统计值大于阈值。取值：>。\n监控项统计值小于阈值。取值：<",
+                                "example": ">=",
+                                "type": "string"
+                              },
+                              "Dimensions": {
+                                "itemNode": true,
+                                "properties": {
+                                  "Dimension": {
+                                    "description_en": "The dimension information of the event-triggered task associated with the scaling rule",
+                                    "description_zh": "伸缩规则关联的报警任务的维度信息",
+                                    "items": {
+                                      "description_en": "The dimension information of the event-triggered task associated with the scaling rule",
+                                      "description_zh": "伸缩规则关联的报警任务的维度信息",
+                                      "properties": {
+                                        "DimensionKey": {
+                                          "description_en": "The dimension key of the event-triggered task associated with the metric. Valid values:\n\nscaling_group: the scaling group ID.\nuserId: the user account ID",
+                                          "description_zh": "监控项关联的报警任务的维度信息键。可能值：\n\nscaling_group：伸缩组ID。\nuserId：用户账号ID",
+                                          "example": "scaling_group",
+                                          "type": "string"
+                                        },
+                                        "DimensionValue": {
+                                          "description_en": "The dimension value of the event-triggered task associated with the metric",
+                                          "description_zh": "监控项关联的报警任务的维度信息值",
+                                          "example": "asg-bp18p2yfxow2dloq****",
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "EvaluationCount": {
+                                "description_en": "The number of consecutive times that the threshold expression must be met before the event-triggered task associated with the scaling rule enters the alert state",
+                                "description_zh": "伸缩规则关联的报警任务到达报警状态需要连续满足阈值表达式的次数",
+                                "example": "3",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "MetricName": {
+                                "description_en": "The name of the metric for the event-triggered task associated with the scaling rule",
+                                "description_zh": "伸缩规则关联的报警任务监控项名称",
+                                "example": "CpuUtilization",
+                                "type": "string"
+                              },
+                              "MetricType": {
+                                "description_en": "The type of the event-triggered task associated with the scaling rule. Valid values:\n\nsystem: system monitoring event-triggered task.\ncustom: custom monitoring event-triggered task",
+                                "description_zh": "伸缩规则关联的报警任务的类型。可能值：\n\nsystem：系统监控报警任务。\ncustom：自定义监控报警任务",
+                                "example": "system",
+                                "type": "string"
+                              },
+                              "Period": {
+                                "description_en": "The statistical period for monitoring data in the target tracking scaling rule",
+                                "description_zh": "目标追踪规则中统计监控项数据的周期",
+                                "example": "60",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "Statistics": {
+                                "description_en": "The statistical method of the event-triggered task associated with the scaling rule. Valid values:\n\nAverage: the average value.\nMaximum: the maximum value.\nMinimum: the minimum value",
+                                "description_zh": "伸缩规则关联的报警任务的统计方式。可能值：\n\nAverage：统计平均值。\nMaximum：统计最大值。\nMinimum：统计最小值",
+                                "example": "Average",
+                                "type": "string"
+                              },
+                              "Threshold": {
+                                "description_en": "The alert threshold of the event-triggered task associated with the scaling rule",
+                                "description_zh": "伸缩规则关联的报警任务的报警阈值",
+                                "example": "50",
+                                "format": "float",
+                                "type": "number"
+                              }
                             },
-                            "DimensionValue": {
-                              "backendName": "dimensionValue",
-                              "type": "string"
-                            }
+                            "type": "object"
                           },
-                          "type": "object"
-                        },
-                        "type": "array"
+                          "type": "array"
+                        }
                       },
-                      "Expression": {
-                        "backendName": "expression",
-                        "type": "string"
-                      },
-                      "Id": {
-                        "backendName": "id",
-                        "type": "string"
-                      },
-                      "MetricName": {
-                        "backendName": "metricName",
-                        "type": "string"
-                      },
-                      "Statistic": {
-                        "backendName": "statistic",
-                        "type": "string"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "HybridMonitorNamespace": {
-                  "backendName": "hybridMonitorNamespace",
-                  "type": "string"
-                },
-                "InitialMaxSize": {
-                  "backendName": "initialMaxSize",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "MaxSize": {
-                  "backendName": "maxSize",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "MetricName": {
-                  "backendName": "metricName",
-                  "type": "string"
-                },
-                "MetricType": {
-                  "backendName": "metricType",
-                  "type": "string"
-                },
-                "MinAdjustmentMagnitude": {
-                  "backendName": "minAdjustmentMagnitude",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "MinSize": {
-                  "backendName": "minSize",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "PredictiveScalingMode": {
-                  "backendName": "predictiveScalingMode",
-                  "type": "string"
-                },
-                "PredictiveTaskBufferTime": {
-                  "backendName": "predictiveTaskBufferTime",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "PredictiveValueBehavior": {
-                  "backendName": "predictiveValueBehavior",
-                  "type": "string"
-                },
-                "PredictiveValueBuffer": {
-                  "backendName": "predictiveValueBuffer",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "ScaleInEvaluationCount": {
-                  "backendName": "scaleInEvaluationCount",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "ScaleOutEvaluationCount": {
-                  "backendName": "scaleOutEvaluationCount",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "ScalingGroupId": {
-                  "backendName": "scalingGroupId",
-                  "type": "string"
-                },
-                "ScalingRuleAri": {
-                  "backendName": "scalingRuleAri",
-                  "type": "string"
-                },
-                "ScalingRuleId": {
-                  "backendName": "scalingRuleId",
-                  "type": "string"
-                },
-                "ScalingRuleName": {
-                  "backendName": "scalingRuleName",
-                  "type": "string"
-                },
-                "ScalingRuleType": {
-                  "backendName": "scalingRuleType",
-                  "type": "string"
-                },
-                "StepAdjustments": {
-                  "backendName": "stepAdjustments",
-                  "itemName": "StepAdjustment",
-                  "items": {
-                    "properties": {
-                      "MetricIntervalLowerBound": {
-                        "backendName": "metricIntervalLowerBound",
-                        "format": "float",
-                        "type": "number"
-                      },
-                      "MetricIntervalUpperBound": {
-                        "backendName": "metricIntervalUpperBound",
-                        "format": "float",
-                        "type": "number"
-                      },
-                      "ScalingAdjustment": {
-                        "backendName": "scalingAdjustment",
-                        "format": "int32",
-                        "type": "integer"
-                      }
+                    "Cooldown": {
+                      "description_en": "The cooldown time of the scaling rule. This parameter is applicable only to simple scaling rules. Valid values: 0 to 86400. Unit: seconds",
+                      "description_zh": "伸缩规则的冷却时间，仅适用于简单规则。可能值：0~86400，单位：秒",
+                      "example": "20",
+                      "format": "int32",
+                      "type": "integer"
                     },
-                    "type": "object"
+                    "DisableScaleIn": {
+                      "description_en": "Indicates whether scale-in is disabled. This parameter is applicable only to target tracking scaling rules. Valid values:\n\ntrue: Scale-in is disabled.\nfalse: Scale-in is allowed",
+                      "description_zh": "是否禁用缩容，仅适用于目标追踪规则。可能值：\n\ntrue：禁用缩容。\nfalse：允许缩容",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "EstimatedInstanceWarmup": {
+                      "description_en": "The warm-up period of a newly created instance. During the warm-up period, the launched instance does not contribute to the monitoring metrics of the scaling group",
+                      "description_zh": "新创建的实例做一系列准备措施，即预热所需要的时间，在预热时间内，已启动的实例将不影响伸缩组的监控指标",
+                      "example": "300",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "HybridMetrics": {
+                      "itemNode": true,
+                      "properties": {
+                        "HybridMetric": {
+                          "description_en": "The Hybrid Cloud Monitoring monitoring metrics settings. For more information, see [Use formula-based custom target tracking scaling rules]（https://help.aliyun.com/document_detail/2852162.html）",
+                          "description_zh": "企业云监控指标设置。如何设置，请参见[使用公式运算自定义目标追踪规则]（https://help.aliyun.com/document_detail/2852162.html）",
+                          "items": {
+                            "properties": {
+                              "Dimensions": {
+                                "itemNode": true,
+                                "properties": {
+                                  "Dimension": {
+                                    "description_en": "The metric dimension. Specifies the resource to be monitored by the metric",
+                                    "description_zh": "指标纬度。用于指定指标监控的资源",
+                                    "items": {
+                                      "properties": {
+                                        "DimensionKey": {
+                                          "description_en": "The dimension key of the metric",
+                                          "description_zh": "指标维度key",
+                                          "example": "queue",
+                                          "type": "string"
+                                        },
+                                        "DimensionValue": {
+                                          "description_en": "The dimension value of the metric",
+                                          "description_zh": "指标维度value",
+                                          "example": "testQueue",
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "Expression": {
+                                "description_en": "The formula expression for multiple Hybrid Cloud Monitoring metrics. The calculation result of the expression is used to trigger scaling. The expression must comply with the Reverse Polish Notation (RPN) specification and supports only the `+ - * /` operators",
+                                "description_zh": "多个企业云监控指标的公制运算表达式，表达式的计算结果将用于触发扩缩容。\n\n运算表达式需满足逆波兰表达式（RPN）规范，并且操作符只支持`+ - * /`",
+                                "example": "(a+b)/2",
+                                "type": "string"
+                              },
+                              "Id": {
+                                "description_en": "The reference ID of the metric in the formula expression",
+                                "description_zh": "公制运算表达式中指标的引用ID",
+                                "example": "a",
+                                "type": "string"
+                              },
+                              "MetricName": {
+                                "description_en": "The name of the monitoring metric in the Hybrid Cloud Monitoring monitoring metrics repository",
+                                "description_zh": "企业云监控指标仓库中的指标名称",
+                                "example": "AliyunSmq_NumberOfMessagesVisible",
+                                "type": "string"
+                              },
+                              "Statistic": {
+                                "description_en": "The statistical method of the metric. Valid values:\nAverage: the average of all data points within the specified interval.\nMinimum: the minimum of all data points within the specified interval.\nMaximum: the maximum of all data points within the specified interval",
+                                "description_zh": "指标的统计方式。可能值：\nAverage：指定区间内所有点的平均值。\nMinimum：指定区间内所有点的最小值。\nMaximum：指定区间内所有点的最大值",
+                                "example": "Average",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "HybridMonitorNamespace": {
+                      "description_en": "The ID of the Hybrid Cloud Monitoring monitoring metrics repository.\n\nTo manage monitoring metrics repositories, see [Manage monitoring metrics repositories]（https://help.aliyun.com/document_detail/217606.html）",
+                      "description_zh": "企业云监控指标仓库ID。\n\n管理指标仓库，请参见[管理指标仓库]（https://help.aliyun.com/document_detail/217606.html）",
+                      "example": "aliyun-test",
+                      "type": "string"
+                    },
+                    "InitialMaxSize": {
+                      "description_en": "The maximum number of instances in the scaling group. This parameter is used in combination with PredictiveValueBehavior",
+                      "description_zh": "伸缩组实例数的上限，和PredictiveValueBehavior结合使用",
+                      "example": "100",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "MaxSize": {
+                      "description_en": "The maximum number of instances in the scaling group",
+                      "description_zh": "伸缩组最大实例数",
+                      "example": "2",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "MetricName": {
+                      "description_en": "The predefined metric. This parameter is applicable to target tracking scaling rules and predictive scaling rules.\n\nValid values for target tracking scaling rules:\nCpuUtilization: the average CPU utilization.\nClassicInternetRx: the average inbound traffic over the public network for the classic network.\nClassicInternetTx: the average outbound traffic over the public network for the classic network.\nVpcInternetRx: the average inbound traffic over the public network for VPCs.\nVpcInternetTx: the average outbound traffic over the public network for VPCs.\nIntranetRx: the average inbound traffic over the internal network.\nIntranetTx: the average outbound traffic over the internal network.\n\nValid values for predictive scaling rules:\nCpuUtilization: the average CPU utilization.\nIntranetRx: the average inbound traffic over the internal network.\nIntranetTx: the average outbound traffic over the internal network",
+                      "description_zh": "预定义监控项，适用于目标追踪规则和预测规则。\n\n目标追踪伸缩规则的可能值： \nCpuUtilization：平均CPU使用率。\nClassicInternetRx：经典网络公网入流量平均值。\nClassicInternetTx：经典网络公网出流量平均值。\nVpcInternetRx：VPC网络公网入流量平均值。\nVpcInternetTx：VPC网络公网出流量平均值。\nIntranetRx：内网入流量平均值。\nIntranetTx：内网出流量平均值。\n预测规则的可能值： \nCpuUtilization：平均CPU使用率。\nIntranetRx：内网入流量平均值。\nIntranetTx：内网出流量平均值",
+                      "example": "CpuUtilization",
+                      "type": "string"
+                    },
+                    "MetricType": {
+                      "description_en": "The type of the metric. Valid values:\n\nsystem: uses CloudMonitor system metrics.\ncustom: uses custom metrics reported to CloudMonitor.\nhybrid: uses Hybrid Cloud Monitoring metrics",
+                      "description_zh": "监控项类型。可能值：\n\nsystem：使用云监控系统指标。\ncustom：使用上报到云监控的自定义指标。\nhybrid：使用企业云监控的指标",
+                      "example": "system",
+                      "type": "string"
+                    },
+                    "MinAdjustmentMagnitude": {
+                      "description_en": "The minimum number of instances to adjust in the scaling rule. This parameter takes effect only when the scaling rule type is `SimpleScalingRule` or `StepScalingRule` and `AdjustmentType` is set to `PercentChangeInCapacity`",
+                      "description_zh": "伸缩规则最小调整实例数，仅当伸缩规则类型为`SimpleScalingRule`或`StepScalingRule`，且`AdjustmentType`为`PercentChangeInCapacity`时生效",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "MinSize": {
+                      "description_en": "The minimum number of instances in the scaling group",
+                      "description_zh": "伸缩组最小实例数",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "PredictiveScalingMode": {
+                      "description_en": "The mode of the predictive scaling rule. Valid values:\n\nPredictAndScale: generates prediction results and creates prediction tasks.\nPredictOnly: generates prediction results but does not create prediction tasks",
+                      "description_zh": "预测规则的模式。可能值：\n\nPredictAndScale：产生预测结果并创建预测任务。\nPredictOnly：产生预测结果，但不会创建预测任务",
+                      "example": "PredictAndScale",
+                      "type": "string"
+                    },
+                    "PredictiveTaskBufferTime": {
+                      "description_en": "The prediction nodes through automatic creation by the predictive scaling rule are executed on the hour by default. You can configure the settings for a buffer time to execute prediction nodes ahead of schedule to prepare resources in advance. Valid values: 0 to 60. Unit: minutes",
+                      "description_zh": "预测规则自动创建的预测任务默认均在整点执行，您可以设置预启动时间提前执行预测任务，预先准备资源。可能值：0~60，单位：分钟",
+                      "example": "30",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "PredictiveValueBehavior": {
+                      "description_en": "The action on the predicted maximum value. Valid values:\n\nMaxOverridePredictiveValue: the initial maximum value overrides the predicted value. If the predicted value is greater than the initial maximum value, the maximum value of the prediction task is set to the initial maximum value.\nPredictiveValueOverrideMax: the predicted value overrides the initial maximum value. If the predicted value is greater than the initial maximum value, the maximum value of the prediction task is set to the predicted value.\nPredictiveValueOverrideMaxWithBuffer: the predicted value is increased by a specified ratio. The predicted value is increased by the ratio specified by PredictiveValueBuffer. If the increased value is greater than the initial maximum value, the increased value is used",
+                      "description_zh": "预测规则最大值处理方式。可能值：\n\nMaxOverridePredictiveValue：初始最大值会覆盖预测值。预测值大于初始最大值时，预测任务的最大值采用初始最大值。\nPredictiveValueOverrideMax：预测值会覆盖初始最大值。预测值大于初始最大值时，预测任务的最大值采用预测值。\nPredictiveValueOverrideMaxWithBuffer：预测值会附加一定比例。预测值会按照PredictiveValueBuffer比例增加，当增加后的值大于初始最大值时，会采用增加后的值",
+                      "example": "MaxOverridePredictiveValue",
+                      "type": "string"
+                    },
+                    "PredictiveValueBuffer": {
+                      "description_en": "This parameter takes effect when PredictiveValueBehavior is set to PredictiveValueOverrideMaxWithBuffer. The predicted value is increased by the specified ratio. If the increased value is greater than the initial maximum value, the increased value is used. Valid values: 0 to 100",
+                      "description_zh": "PredictiveValueBehavior为PredictiveValueOverrideMaxWithBuffer时生效，预测值会按照该比例增加，当增加后的值大于初始最大值时，会采用增加后的值。可能值：0~100",
+                      "example": "50",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ScaleInEvaluationCount": {
+                      "description_en": "After a target tracking scaling rule is created, an event-triggered task is automatically created through automatic creation. This parameter specifies the number of consecutive times that the conditional threshold must be met before the corresponding scale-in event-triggered node triggers an alert",
+                      "description_zh": "创建目标追踪规则后，会自动创建报警任务。本参数用于指定对应的缩容报警任务触发报警时，所需连续满足阈值条件的次数",
+                      "example": "15",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ScaleOutEvaluationCount": {
+                      "description_en": "After a target tracking scaling rule is created, an event-triggered task is automatically created through automatic creation. This parameter specifies the number of consecutive times that the conditional threshold must be met before the corresponding scale-out event-triggered node triggers an alert",
+                      "description_zh": "创建目标追踪规则后，会自动创建报警任务。本参数用于指定对应的扩容报警任务触发报警时，所需连续满足阈值条件的次数",
+                      "example": "3",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "ScalingGroupId": {
+                      "description_en": "The ID of the scaling group",
+                      "description_zh": "伸缩组的ID",
+                      "example": "asg-bp1ffogfdauy0jw0****",
+                      "type": "string"
+                    },
+                    "ScalingRuleAri": {
+                      "description_en": "The unique identifier of the scaling rule",
+                      "description_zh": "伸缩规则的唯一标识符",
+                      "example": "ari:acs:ess:cn-hangzhou:140692647406****:scalingrule/asr-bp1dvirgwkoowxk7****",
+                      "type": "string"
+                    },
+                    "ScalingRuleId": {
+                      "description_en": "The ID of the scaling rule",
+                      "description_zh": "伸缩规则的ID",
+                      "example": "asr-bp1dvirgwkoowxk7****",
+                      "type": "string"
+                    },
+                    "ScalingRuleName": {
+                      "description_en": "The name of the scaling rule",
+                      "description_zh": "伸缩规则的名称",
+                      "example": "scalingrule****",
+                      "type": "string"
+                    },
+                    "ScalingRuleType": {
+                      "description_en": "The type of the scaling rule. Valid values:\n\nSimpleScalingRule: simple scaling. Adjusts the number of ECS instances based on the adjustment method (AdjustmentType) and adjustment value (AdjustmentValue).\nTargetTrackingScalingRule: target tracking scaling rule. Dynamically calculates the number of ECS instances to scale out or scale in based on the predefined monitoring metric (MetricName) and attempts to keep the monitoring metric value close to the target value (TargetValue).\nStepScalingRule: step scaling rule. Provides step-based extension based on thresholds and metric values.\nPredictiveScalingRule: predictive scaling rule. Uses machine learning to analyze historical monitoring data of the scaling group, predict future monitoring metric values, and supports automatic creation of scheduled nodes to configure scaling group boundaries",
+                      "description_zh": "伸缩规则类型。可能值：\n\nSimpleScalingRule：简单规则。根据调整方式（AdjustmentType）和调整值（AdjustmentValue）调整ECS实例数量。\nTargetTrackingScalingRule：目标追踪规则。根据预定义监控（MetricName）项动态计算需要扩缩容的ECS实例数量，尽量将预定义监控项的指标值维持在目标值（TargetValue）附近。\nStepScalingRule：步进规则，根据阈值和指标值提供分步扩展方式。\nPredictiveScalingRule：预测规则，基于机器学习能力分析伸缩组的历史监控数据预测未来监控指标值，并支持自动创建定时任务设置伸缩组边界",
+                      "example": "SimpleScalingRule",
+                      "type": "string"
+                    },
+                    "StepAdjustments": {
+                      "itemNode": true,
+                      "properties": {
+                        "StepAdjustment": {
+                          "description_en": "The step adjustments of the step scaling rule",
+                          "description_zh": "步进规则的分步步骤",
+                          "items": {
+                            "description_en": "The step adjustments of the step scaling rule",
+                            "description_zh": "步进规则的分步步骤",
+                            "properties": {
+                              "MetricIntervalLowerBound": {
+                                "description_en": "The lower bound of the step adjustment. Valid values: -9.999999E18 to 9.999999E18",
+                                "description_zh": "分步步骤的下边界，可能值：-9.999999E18~9.999999E18",
+                                "example": "1.0",
+                                "format": "float",
+                                "type": "number"
+                              },
+                              "MetricIntervalUpperBound": {
+                                "description_en": "The upper bound of the step adjustment. Valid values: -9.999999E18 to 9.999999E18",
+                                "description_zh": "分步步骤的上边界，可能值：-9.999999E18~9.999999E18",
+                                "example": "5.0",
+                                "format": "float",
+                                "type": "number"
+                              },
+                              "ScalingAdjustment": {
+                                "description_en": "The number of instances to scale for the step adjustment",
+                                "description_zh": "分步步骤对应的实例扩展数量",
+                                "example": "1",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "TargetValue": {
+                      "description_en": "The target value. When the scaling rule is a target tracking scaling rule or a predictive scaling rule, the scaling rule adds or removes instances to keep the metric close to the target value",
+                      "description_zh": "目标值。当伸缩规则为目标追踪规则或预测规则时，该伸缩规则将通过添加或删除实例来将指标维持在目标值附近",
+                      "example": "0.125",
+                      "format": "float",
+                      "type": "number"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "TargetValue": {
-                  "backendName": "targetValue",
-                  "format": "float",
-                  "type": "number"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
             "description_en": "The total number of scaling rules",
             "description_zh": "伸缩规则总数",
             "example": "1",

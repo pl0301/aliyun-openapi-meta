@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun imm CreateArchiveFileInspectionTask --region cn-hangzhou --ProjectName 'test-project'",
   "cmd_full_name": "imm create-archive-file-inspection-task",
   "cmd_name": "create-archive-file-inspection-task",
@@ -35,6 +36,30 @@
     },
     {
       "fields": [
+        {
+          "example": "AliyunSTSAssumeForIMMServiceRole",
+          "help_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+          "help_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+          "name": "service_role",
+          "options": [
+            "--service-role"
+          ],
+          "raw_name": "ServiceRole",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+          "help_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+          "help_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+          "name": "policy",
+          "options": [
+            "--policy"
+          ],
+          "raw_name": "Policy",
+          "required": false,
+          "type": "string"
+        },
         {
           "element": {
             "fields": [
@@ -86,30 +111,6 @@
           "raw_name": "Chain",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
-          "help_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
-          "help_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
-          "name": "policy",
-          "options": [
-            "--policy"
-          ],
-          "raw_name": "Policy",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "AliyunSTSAssumeForIMMServiceRole",
-          "help_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
-          "help_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
-          "name": "service_role",
-          "options": [
-            "--service-role"
-          ],
-          "raw_name": "ServiceRole",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "Leave this parameter empty if you do not have special requirements.\n\nThe configuration for chained authorization. This parameter is not required. For more information, see https://help.aliyun.com/document_detail/465340.html",
@@ -166,18 +167,6 @@
     {
       "fields": [
         {
-          "example": "oss://test-bucket/test-object.json",
-          "help_en": "Use an Object Storage Service (OSS) file to receive task notifications. If you provide the URI of this file, detailed task execution information is written to the file in a JSON structure. Normally, you receive notifications through https://help.aliyun.com/document_detail/161886.html, https://help.aliyun.com/document_detail/27412.html, or https://help.aliyun.com/document_detail/29530.html. However, some tasks generate large amounts of information, such as archive previews or decompression tasks. For these tasks, provide this file to get the complete execution results.\n\nThe OSS URI format is oss\\://${Bucket}/${Object}. `${Bucket}` is the name of an OSS bucket in the same region as the current project. `${Object}` is the full path of the file, including the file name extension.\n\n<notice>\n\nThis file is not a notification method. It only serves as a medium to receive detailed task execution information. Task status is sent through standard message notifications. This file contains only the detailed execution information.\n\n</notice>",
-          "help_zh": "使用OSS文件接受任务消息通知。提供该文件地址后，任务执行的具体信息会以JSON结构写入到该文件中。一般情况下，您只需要通过https://help.aliyun.com/document_detail/161886.html服务、https://help.aliyun.com/document_detail/27412.html服务或https://help.aliyun.com/document_detail/29530.html服务接受消息通知，但部分任务执行的信息会比较大（例如压缩包文件预览、解压任务），您可以通过提供该文件获取具体的任务执行结果。\n\nOSS地址规则为oss://${Bucket}/${Object}，其中`${Bucket}`为和当前项目处于同一地域(Region)的OSS Bucket名称，`${Object}`为包含文件扩展名的文件完整路径。\n\n\n<notice>该文件并不作为消息通知的方式，仅作为接受任务执行具体信息的载体。任务的状态信息会通过消息通知的方式发送，该文件仅包含任务执行的具体信息。 \n</notice>",
-          "name": "extended_message_uri",
-          "options": [
-            "--extended-message-uri"
-          ],
-          "raw_name": "ExtendedMessageURI",
-          "required": false,
-          "type": "string"
-        },
-        {
           "fields": [
             {
               "example": "topic1",
@@ -205,18 +194,6 @@
         {
           "fields": [
             {
-              "example": "MQ_INST_11111111111_BYcNy2Nc",
-              "help_en": "The RocketMQ instance ID. Required for RocketMQ message notifications",
-              "help_zh": "RocketMQ实例Id。如果需使用RocketMQ做消息通知，该参数必填",
-              "name": "instance_id",
-              "options": [
-                "--instance-id"
-              ],
-              "raw_name": "InstanceId",
-              "required": false,
-              "type": "string"
-            },
-            {
               "example": "topic1",
               "help_en": "The name of the RocketMQ topic. Required for RocketMQ message notifications",
               "help_zh": "RocketMQ Topic名称。如果需使用RocketMQ做消息通知，该参数必填",
@@ -225,6 +202,18 @@
                 "--topic-name"
               ],
               "raw_name": "TopicName",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "MQ_INST_11111111111_BYcNy2Nc",
+              "help_en": "The RocketMQ instance ID. Required for RocketMQ message notifications",
+              "help_zh": "RocketMQ实例Id。如果需使用RocketMQ做消息通知，该参数必填",
+              "name": "instance_id",
+              "options": [
+                "--instance-id"
+              ],
+              "raw_name": "InstanceId",
               "required": false,
               "type": "string"
             }
@@ -238,6 +227,18 @@
           "raw_name": "RocketMQ",
           "required": false,
           "type": "object"
+        },
+        {
+          "example": "oss://test-bucket/test-object.json",
+          "help_en": "Use an Object Storage Service (OSS) file to receive task notifications. If you provide the URI of this file, detailed task execution information is written to the file in a JSON structure. Normally, you receive notifications through https://help.aliyun.com/document_detail/161886.html, https://help.aliyun.com/document_detail/27412.html, or https://help.aliyun.com/document_detail/29530.html. However, some tasks generate large amounts of information, such as archive previews or decompression tasks. For these tasks, provide this file to get the complete execution results.\n\nThe OSS URI format is oss\\://${Bucket}/${Object}. `${Bucket}` is the name of an OSS bucket in the same region as the current project. `${Object}` is the full path of the file, including the file name extension.\n\n<notice>\n\nThis file is not a notification method. It only serves as a medium to receive detailed task execution information. Task status is sent through standard message notifications. This file contains only the detailed execution information.\n\n</notice>",
+          "help_zh": "使用OSS文件接受任务消息通知。提供该文件地址后，任务执行的具体信息会以JSON结构写入到该文件中。一般情况下，您只需要通过https://help.aliyun.com/document_detail/161886.html服务、https://help.aliyun.com/document_detail/27412.html服务或https://help.aliyun.com/document_detail/29530.html服务接受消息通知，但部分任务执行的信息会比较大（例如压缩包文件预览、解压任务），您可以通过提供该文件获取具体的任务执行结果。\n\nOSS地址规则为oss://${Bucket}/${Object}，其中`${Bucket}`为和当前项目处于同一地域(Region)的OSS Bucket名称，`${Object}`为包含文件扩展名的文件完整路径。\n\n\n<notice>该文件并不作为消息通知的方式，仅作为接受任务执行具体信息的载体。任务的状态信息会通过消息通知的方式发送，该文件仅包含任务执行的具体信息。 \n</notice>",
+          "name": "extended_message_uri",
+          "options": [
+            "--extended-message-uri"
+          ],
+          "raw_name": "ExtendedMessageURI",
+          "required": false,
+          "type": "string"
         }
       ],
       "help_en": "The notification configuration. For more information, see Notification. For the format of asynchronous notification messages, see https://help.aliyun.com/document_detail/2743997.html.\n\nCurrently, API callbacks in IMM do not support custom webhook addresses. Use MNS instead",
@@ -263,30 +264,27 @@
         "description_zh": "响应结构体",
         "properties": {
           "EventId": {
-            "backendName": "EventId",
             "description_en": "The event ID",
             "description_zh": "事件ID",
             "example": "0ED-1Bz8z71k5TtsUejT4UJ16Es*****",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "EC564A9A-BA5C-4499-A087-D9B9E76E*****",
-            "title_en": "请求 ID",
+            "title_en": "",
             "title_zh": "请求 ID",
             "type": "string"
           },
           "TaskId": {
-            "backendName": "TaskId",
             "description_en": "The task ID",
             "description_zh": "任务ID",
             "example": "ArchiveFileInspection-8475218e-d86e-4c66-b3cf-50e74d6c****",
             "type": "string"
           }
         },
-        "title_en": "响应结构体",
+        "title_en": "",
         "title_zh": "响应结构体",
         "type": "object"
       }

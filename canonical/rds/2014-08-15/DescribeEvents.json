@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun rds DescribeEvents --region cn-hangzhou --EndTime '2019-06-12T15:00:00Z' --PageSize 30 --PageNumber 1 --StartTime '2019-06-11T15:00:00Z' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "rds describe-events",
   "cmd_name": "describe-events",
   "deprecated": false,
-  "description_en": "Queries historical events of an instance",
+  "description_en": "Queries the list of historical event records for an ApsaraDB RDS instance",
   "description_zh": "该接口用于查询RDS历史事件记录列表",
   "kebab_example": "aliyun rds describe-events --biz-region-id cn-hangzhou --start-time 2019-06-11T15:00:00Z --end-time 2019-06-12T15:00:00Z --page-size 30 --page-number 1 --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "cn-hangzhou",
-      "help_en": "The region ID. You can call the DescribeRegions operation to query the most recent region list",
+      "help_en": "The region ID. You can call DescribeRegions to query the available regions",
       "help_zh": "地域ID。可调用DescribeRegions获取",
       "location": "query",
       "name": "region_id",
@@ -36,7 +37,7 @@
     },
     {
       "example": "2019-06-11T15:00:00Z",
-      "help_en": "The start of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
       "location": "query",
       "name": "start_time",
@@ -49,7 +50,7 @@
     },
     {
       "example": "2019-06-12T15:00:00Z",
-      "help_en": "The end of the time range to query. The end time must be later than the start time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The end time of the query. The end time must be later than the start time. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
       "help_zh": "查询结束时间，需要晚于开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
       "location": "query",
       "name": "end_time",
@@ -62,7 +63,7 @@
     },
     {
       "example": "30",
-      "help_en": "The number of entries per page. Valid values:\n\n30\n50\n100\n\nDefault value: 30",
+      "help_en": "The number of entries per page. Valid values:\n30\n50\n100\n\nDefault value: 30",
       "help_zh": "每页记录数，取值：\n30\n50\n100\n\n默认值：30",
       "location": "query",
       "name": "page_size",
@@ -75,7 +76,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Pages start from page 1.\n\nDefault value: 1",
+      "help_en": "The page number. Valid values: any integer greater than 0 that does not exceed the maximum value of Integer.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
       "name": "page_number",
@@ -97,112 +98,125 @@
         "description_zh": "返回参数详情",
         "properties": {
           "EventItems": {
-            "backendName": "data.eventItems",
-            "itemName": "EventItems",
-            "items": {
-              "properties": {
-                "CallerUid": {
-                  "backendName": "callerUid",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "EventItems": {
+                "description_en": "The event list",
+                "description_zh": "事件列表",
+                "items": {
+                  "description_en": "The event details",
+                  "description_zh": "事件详情",
+                  "properties": {
+                    "CallerUid": {
+                      "description_en": "The user ID of the event executor",
+                      "description_zh": "事件执行人的用户ID",
+                      "example": "22973492****",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "EventId": {
+                      "description_en": "The event ID",
+                      "description_zh": "事件ID",
+                      "example": "11000053",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "EventName": {
+                      "description_en": "The event name",
+                      "description_zh": "事件名称",
+                      "example": "ModifySecurityIPList",
+                      "type": "string"
+                    },
+                    "EventPayload": {
+                      "description_en": "The request parameters or context parameters of the event",
+                      "description_zh": "事件的请求参数或上下文参数",
+                      "example": "{\\\"Domain\\\": \\\"rds-inc-share.aliyuncs.com\\\", \\\"Api\\\": \\\"ReleaseInstancePublicConnection\\\"}",
+                      "type": "string"
+                    },
+                    "EventReason": {
+                      "description_en": "The source of the event operation",
+                      "description_zh": "事件操作的来源",
+                      "example": "FROM_USER",
+                      "type": "string"
+                    },
+                    "EventRecordTime": {
+                      "description_en": "The time when the event was recorded. This time is slightly later than the time when the event occurred",
+                      "description_zh": "事件的记录时间。会稍晚于事件的发生时间",
+                      "example": "2019-08-20T01:12:49Z",
+                      "type": "string"
+                    },
+                    "EventTime": {
+                      "description_en": "The time when the event occurred",
+                      "description_zh": "事件发生时间",
+                      "example": "2019-08-20T01:08:22Z",
+                      "type": "string"
+                    },
+                    "EventType": {
+                      "description_en": "The event type",
+                      "description_zh": "事件类型",
+                      "example": "NetworkManagement",
+                      "type": "string"
+                    },
+                    "EventUserType": {
+                      "description_en": "The type of the user who executed the event",
+                      "description_zh": "执行事件的用户类型",
+                      "example": "SYSTEM",
+                      "type": "string"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID",
+                      "description_zh": "地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "ResourceName": {
+                      "description_en": "The name of the resource associated with the event. Currently, only instance IDs are supported",
+                      "description_zh": "事件关联资源名称。当前仅有实例ID",
+                      "example": "rm-bp****",
+                      "type": "string"
+                    },
+                    "ResourceType": {
+                      "description_en": "The type of the resource associated with the event. Currently, only instances are supported",
+                      "description_zh": "事件关联资源类型。当前仅有实例",
+                      "example": "instance",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "EventId": {
-                  "backendName": "eventId",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "EventName": {
-                  "backendName": "eventName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EventPayload": {
-                  "backendName": "eventPayload",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EventReason": {
-                  "backendName": "eventReason",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EventRecordTime": {
-                  "backendName": "eventRecordTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EventTime": {
-                  "backendName": "eventTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EventType": {
-                  "backendName": "eventType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EventUserType": {
-                  "backendName": "eventUserType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RegionId": {
-                  "backendName": "regionId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ResourceName": {
-                  "backendName": "resourceName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ResourceType": {
-                  "backendName": "resourceType",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页记录数",
             "example": "30",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "A103039D-B1B2-4C57-B989-7D7C0DA95426",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecordCount",
-            "description_en": "The total number of entries returned",
+            "description_en": "The total number of records",
             "description_zh": "总记录数",
             "example": "40",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

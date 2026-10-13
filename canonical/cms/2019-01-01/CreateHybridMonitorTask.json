@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun cms CreateHybridMonitorTask --region cn-hangzhou --TaskType aliyun_fc --CollectTargetType aliyun_fc --Namespace aliyun",
   "cmd_full_name": "cms create-hybrid-monitor-task",
   "cmd_name": "create-hybrid-monitor-task",
@@ -61,6 +62,10 @@
     },
     {
       "doc_required": true,
+      "enum": [
+        "aliyun_fc",
+        "aliyun_sls"
+      ],
       "example": "aliyun_fc",
       "help_en": "The type of the monitoring task. Valid values:\n\naliyun_fc: a data import task for Alibaba Cloud services.\naliyun_sls: a metric for SLS logs",
       "help_zh": "监控任务类型。取值：\n\naliyun_fc：阿里云产品的数据接入任务。\naliyun_sls：SLS日志的监控项",
@@ -87,6 +92,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "15",
+        "60"
+      ],
       "example": "60",
       "help_en": "The collection period of the metric. Valid values:\n\n15\n60 (default)\n\nUnit: seconds.\n\nThis parameter is required only when `TaskType` is set to `aliyun_sls`",
       "help_zh": "监控项的采集周期。取值：\n\n15\n60（默认值）\n\n单位：秒。\n\n仅当`TaskType`为`aliyun_sls`时，需要设置该参数",
@@ -142,18 +151,6 @@
       "element": {
         "fields": [
           {
-            "example": "app_service",
-            "help_en": "The label key of the metric",
-            "help_zh": "监控项的标签键",
-            "name": "name",
-            "options": [
-              "--name"
-            ],
-            "raw_name": "Name",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "testValue",
             "help_en": "The label value of the metric",
             "help_zh": "监控项的标签值",
@@ -162,6 +159,18 @@
               "--value"
             ],
             "raw_name": "Value",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "app_service",
+            "help_en": "The label key of the metric",
+            "help_zh": "监控项的标签键",
+            "name": "name",
+            "options": [
+              "--name"
+            ],
+            "raw_name": "Name",
             "required": false,
             "type": "string"
           }
@@ -196,51 +205,38 @@
     {
       "fields": [
         {
-          "element": {
-            "fields": [
-              {
-                "example": "SuccRate",
-                "help_en": "The alias of the arithmetic operation result of the extended field for SLS log statistical results",
-                "help_zh": "SLS日志统计结果的扩展字段的四则运算结果的别名",
-                "name": "alias",
-                "options": [
-                  "--alias"
-                ],
-                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{1,39}$",
-                "raw_name": "Alias",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "success_count",
-                "help_en": "The arithmetic operation results of the extended fields for SLS log statistical results",
-                "help_zh": "SLS日志统计结果的扩展字段的四则运算结果",
-                "name": "express",
-                "options": [
-                  "--express"
-                ],
-                "raw_name": "Express",
-                "required": false,
-                "type": "string"
-              }
-            ],
-            "type": "object"
-          },
-          "help_en": "The arithmetic operation results of the extended fields for SLS log statistical results",
-          "help_zh": "SLS日志统计结果的扩展字段的四则运算结果",
-          "name": "express",
-          "options": [
-            "--express"
-          ],
-          "raw_name": "Express",
-          "required": false,
-          "type": "array"
-        },
-        {
           "fields": [
+            {
+              "enum": [
+                "or",
+                "and"
+              ],
+              "example": "and",
+              "help_en": "The relationship between multiple filter conditions. Valid values:\n\nand (default): Logs are processed only when all filter conditions are met.\nor: Logs are processed when any filter condition is met",
+              "help_zh": "多个参数过滤条件之间的关系。取值：\n\nand（默认值）：满足所有过滤条件，才处理日志。\nor：满足任意过滤条件，即可处理日志",
+              "name": "relation",
+              "options": [
+                "--relation"
+              ],
+              "raw_name": "Relation",
+              "required": false,
+              "type": "string"
+            },
             {
               "element": {
                 "fields": [
+                  {
+                    "example": "code",
+                    "help_en": "The name of the parameter to filter in SLS logs",
+                    "help_zh": "SLS日志中过滤的参数名称",
+                    "name": "sls_key_name",
+                    "options": [
+                      "--sls-key-name"
+                    ],
+                    "raw_name": "SLSKeyName",
+                    "required": false,
+                    "type": "string"
+                  },
                   {
                     "enum": [
                       ">",
@@ -260,18 +256,6 @@
                       "--operator"
                     ],
                     "raw_name": "Operator",
-                    "required": false,
-                    "type": "string"
-                  },
-                  {
-                    "example": "code",
-                    "help_en": "The name of the parameter to filter in SLS logs",
-                    "help_zh": "SLS日志中过滤的参数名称",
-                    "name": "sls_key_name",
-                    "options": [
-                      "--sls-key-name"
-                    ],
-                    "raw_name": "SLSKeyName",
                     "required": false,
                     "type": "string"
                   },
@@ -299,18 +283,6 @@
               "raw_name": "Filters",
               "required": false,
               "type": "array"
-            },
-            {
-              "example": "and",
-              "help_en": "The relationship between multiple filter conditions. Valid values:\n\nand (default): Logs are processed only when all filter conditions are met.\nor: Logs are processed when any filter condition is met",
-              "help_zh": "多个参数过滤条件之间的关系。取值：\n\nand（默认值）：满足所有过滤条件，才处理日志。\nor：满足任意过滤条件，即可处理日志",
-              "name": "relation",
-              "options": [
-                "--relation"
-              ],
-              "raw_name": "Relation",
-              "required": false,
-              "type": "string"
             }
           ],
           "help_en": "The filter conditions for parameters in SLS logs",
@@ -327,20 +299,7 @@
           "element": {
             "fields": [
               {
-                "example": "ApiResult",
-                "help_en": "The alias of the SLS log statistical result",
-                "help_zh": "SLS日志统计结果的别名",
-                "name": "alias",
-                "options": [
-                  "--alias"
-                ],
-                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{1,39}$",
-                "raw_name": "Alias",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "code",
+                "example": "name",
                 "help_en": "The name of the parameter for SLS log statistics",
                 "help_zh": "SLS日志统计的参数名称",
                 "name": "sls_key_name",
@@ -348,36 +307,6 @@
                   "--sls-key-name"
                 ],
                 "raw_name": "SLSKeyName",
-                "required": false,
-                "type": "string"
-              }
-            ],
-            "type": "object"
-          },
-          "help_en": "Aggregates data by spatial dimensions, equivalent to Group By in SQL",
-          "help_zh": "对数据进行空间维度聚合，相当于SQL中的Group By",
-          "name": "group_by",
-          "options": [
-            "--group-by"
-          ],
-          "raw_name": "GroupBy",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "element": {
-            "fields": [
-              {
-                "example": "level_count",
-                "help_en": "The alias of the SLS log statistical result",
-                "help_zh": "SLS日志统计结果的别名",
-                "min_length": "0",
-                "name": "alias",
-                "options": [
-                  "--alias"
-                ],
-                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{1,39}$",
-                "raw_name": "Alias",
                 "required": false,
                 "type": "string"
               },
@@ -390,6 +319,20 @@
                   "--function"
                 ],
                 "raw_name": "Function",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "level_count",
+                "help_en": "The alias of the SLS log statistical result",
+                "help_zh": "SLS日志统计结果的别名",
+                "min_length": "0",
+                "name": "alias",
+                "options": [
+                  "--alias"
+                ],
+                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{1,39}$",
+                "raw_name": "Alias",
                 "required": false,
                 "type": "string"
               },
@@ -416,18 +359,6 @@
                 "raw_name": "Parameter2",
                 "required": false,
                 "type": "string"
-              },
-              {
-                "example": "name",
-                "help_en": "The name of the parameter for SLS log statistics",
-                "help_zh": "SLS日志统计的参数名称",
-                "name": "sls_key_name",
-                "options": [
-                  "--sls-key-name"
-                ],
-                "raw_name": "SLSKeyName",
-                "required": false,
-                "type": "string"
               }
             ],
             "type": "object"
@@ -439,6 +370,88 @@
             "--statistics"
           ],
           "raw_name": "Statistics",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "fields": [
+              {
+                "example": "code",
+                "help_en": "The name of the parameter for SLS log statistics",
+                "help_zh": "SLS日志统计的参数名称",
+                "name": "sls_key_name",
+                "options": [
+                  "--sls-key-name"
+                ],
+                "raw_name": "SLSKeyName",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "ApiResult",
+                "help_en": "The alias of the SLS log statistical result",
+                "help_zh": "SLS日志统计结果的别名",
+                "name": "alias",
+                "options": [
+                  "--alias"
+                ],
+                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{1,39}$",
+                "raw_name": "Alias",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          },
+          "help_en": "Aggregates data by spatial dimensions, equivalent to Group By in SQL",
+          "help_zh": "对数据进行空间维度聚合，相当于SQL中的Group By",
+          "name": "group_by",
+          "options": [
+            "--group-by"
+          ],
+          "raw_name": "GroupBy",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "fields": [
+              {
+                "example": "success_count",
+                "help_en": "The arithmetic operation results of the extended fields for SLS log statistical results",
+                "help_zh": "SLS日志统计结果的扩展字段的四则运算结果",
+                "name": "express",
+                "options": [
+                  "--express"
+                ],
+                "raw_name": "Express",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "SuccRate",
+                "help_en": "The alias of the arithmetic operation result of the extended field for SLS log statistical results",
+                "help_zh": "SLS日志统计结果的扩展字段的四则运算结果的别名",
+                "name": "alias",
+                "options": [
+                  "--alias"
+                ],
+                "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{1,39}$",
+                "raw_name": "Alias",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          },
+          "help_en": "The arithmetic operation results of the extended fields for SLS log statistical results",
+          "help_zh": "SLS日志统计结果的扩展字段的四则运算结果",
+          "name": "express",
+          "options": [
+            "--express"
+          ],
+          "raw_name": "Express",
           "required": false,
           "type": "array"
         }
@@ -482,48 +495,34 @@
         "description_zh": "无",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The HTTP status code.\n\n200 indicates success",
             "description_zh": "状态码。\n\n200表示成功",
             "example": "200",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "yamlConfigFail",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "28CEA2E0-3E90-51B2-A7E8-B1ED75534E49",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the operation was successful. Valid values:\n\ntrue: Successful.\nfalse: Failed",
             "description_zh": "操作是否成功。取值：\n\ntrue：成功。\nfalse：失败",
             "example": "true",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TaskId": {
-            "backendName": "resource.id",
             "description_en": "The monitoring task ID",
             "description_zh": "监控任务ID",
             "example": "36****",
             "format": "int64",
-            "mappingResourcePropertyName": "$.HybridMonitorSlsTaskId",
             "type": "integer"
           }
         },

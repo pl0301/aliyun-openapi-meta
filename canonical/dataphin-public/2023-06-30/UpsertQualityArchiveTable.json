@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 60000,
   "camel_example": "",
   "cmd_full_name": "dataphin-public upsert-quality-archive-table",
   "cmd_name": "upsert-quality-archive-table",
@@ -38,16 +39,16 @@
     {
       "fields": [
         {
-          "example": "CREATE_NEW_TABLE",
-          "help_en": "The mode for adding the archived table. Valid values:\n\nCREATE_NEW_TABLE: creates a new table.\nBIND_EXIST_TABLE: binds an existing table",
-          "help_zh": "新增方式: CREATE_NEW_TABLE 新建表，BIND_EXIST_TABLE 绑定已有表",
-          "name": "add_mode",
+          "example": "1",
+          "help_en": "The ID of the monitored object to which the archived table belongs",
+          "help_zh": "所属监控对象ID",
+          "name": "watch_id",
           "options": [
-            "--add-mode"
+            "--watch-id"
           ],
-          "raw_name": "AddMode",
-          "required": false,
-          "type": "string"
+          "raw_name": "WatchId",
+          "required": true,
+          "type": "int"
         },
         {
           "example": "88012",
@@ -60,6 +61,42 @@
           "raw_name": "ArchiveTableId",
           "required": false,
           "type": "int"
+        },
+        {
+          "example": "true",
+          "help_en": "Specifies whether to set the archived table as the active table. Only the value true is supported. After the table is set as active, the previously active table under the same monitored object is automatically deactivated (only one active table is allowed at a time). If you set this parameter to false, an InvalidParameter error is returned. If this parameter is not specified, the default value true is used. If this parameter is left empty, the active status remains unchanged",
+          "help_zh": "是否设置为生效表。仅支持 true，设置后同一监控对象下原生效表自动取消生效（生效表恒定唯一）；传 false 会返回 InvalidParameter；不填默认 true；不传则不改变生效状态",
+          "name": "set_active",
+          "options": [
+            "--set-active"
+          ],
+          "raw_name": "SetActive",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "example": "CREATE_NEW_TABLE",
+          "help_en": "The mode for adding the archived table. Valid values:\n\nCREATE_NEW_TABLE: creates a new table.\nBIND_EXIST_TABLE: binds an existing table",
+          "help_zh": "新增方式: CREATE_NEW_TABLE 新建表，BIND_EXIST_TABLE 绑定已有表",
+          "name": "add_mode",
+          "options": [
+            "--add-mode"
+          ],
+          "raw_name": "AddMode",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "vip_user_tips112",
+          "help_en": "The table name prefix for the new archived table. This parameter is required when AddMode is set to CREATE_NEW_TABLE. The system automatically appends the _exception_data suffix. For example, if you specify vip_user_tips112, the actual table name is vip_user_tips112_exception_data",
+          "help_zh": "新建归档表的表名前缀，AddMode=CREATE_NEW_TABLE 时必填；系统会自动拼接 _exception_data 后缀，例如传 vip_user_tips112 实际建表为 vip_user_tips112_exception_data",
+          "name": "new_table_name_prefix",
+          "options": [
+            "--new-table-name-prefix"
+          ],
+          "raw_name": "NewTableNamePrefix",
+          "required": false,
+          "type": "string"
         },
         {
           "example": "dataphin03.ads_region_order_summary",
@@ -95,42 +132,6 @@
           ],
           "raw_name": "MaxArchiveCount",
           "required": false,
-          "type": "int"
-        },
-        {
-          "example": "vip_user_tips112",
-          "help_en": "The table name prefix for the new archived table. This parameter is required when AddMode is set to CREATE_NEW_TABLE. The system automatically appends the _exception_data suffix. For example, if you specify vip_user_tips112, the actual table name is vip_user_tips112_exception_data",
-          "help_zh": "新建归档表的表名前缀，AddMode=CREATE_NEW_TABLE 时必填；系统会自动拼接 _exception_data 后缀，例如传 vip_user_tips112 实际建表为 vip_user_tips112_exception_data",
-          "name": "new_table_name_prefix",
-          "options": [
-            "--new-table-name-prefix"
-          ],
-          "raw_name": "NewTableNamePrefix",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "true",
-          "help_en": "Specifies whether to set the archived table as the active table. Only the value true is supported. After the table is set as active, the previously active table under the same monitored object is automatically deactivated (only one active table is allowed at a time). If you set this parameter to false, an InvalidParameter error is returned. If this parameter is not specified, the default value true is used. If this parameter is left empty, the active status remains unchanged",
-          "help_zh": "是否设置为生效表。仅支持 true，设置后同一监控对象下原生效表自动取消生效（生效表恒定唯一）；传 false 会返回 InvalidParameter；不填默认 true；不传则不改变生效状态",
-          "name": "set_active",
-          "options": [
-            "--set-active"
-          ],
-          "raw_name": "SetActive",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "1",
-          "help_en": "The ID of the monitored object to which the archived table belongs",
-          "help_zh": "所属监控对象ID",
-          "name": "watch_id",
-          "options": [
-            "--watch-id"
-          ],
-          "raw_name": "WatchId",
-          "required": true,
           "type": "int"
         }
       ],
@@ -170,72 +171,64 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Code": {
-            "backendName": "Code",
             "description_en": "The backend response code",
             "description_zh": "后端响应码",
             "example": "OK",
-            "title_en": "后端响应码",
+            "title_en": "",
             "title_zh": "后端响应码",
             "type": "string"
           },
           "Data": {
-            "backendName": "Data",
             "description_en": "The submit status of the asynchronous task",
             "description_zh": "异步任务提交结果",
-            "parseType": "struct",
             "properties": {
               "ProgressId": {
-                "backendName": "ProgressId",
                 "description_en": "The progress ID of the asynchronous task. This is an asynchronous operation. After a successful submission, only this ID is returned. Call GetQualityArchiveTableProgress to poll the task status and retrieve the final archived table information",
                 "description_zh": "异步任务进度ID。本接口为异步接口，提交成功后仅返回该ID，需调用 GetQualityArchiveTableProgress 轮询任务状态与最终的归档表信息",
                 "example": "d78f0b5c9a1e4f2ab3c6d5e4f7a8b9c0",
-                "title_en": "异步任务进度ID。本接口为异步接口，提交成功后仅返回该ID，需调用 GetQualityArchiveTableProgress 轮询任务状态与最终的归档表信息",
+                "title_en": "",
                 "title_zh": "异步任务进度ID。本接口为异步接口，提交成功后仅返回该ID，需调用 GetQualityArchiveTableProgress 轮询任务状态与最终的归档表信息",
                 "type": "string"
               }
             },
-            "title_en": "异步任务提交结果",
+            "title_en": "",
             "title_zh": "异步任务提交结果",
             "type": "object"
           },
           "HttpStatusCode": {
-            "backendName": "HttpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "HTTP响应码",
             "example": "200",
             "format": "int32",
-            "title_en": "HTTP响应码",
+            "title_en": "",
             "title_zh": "HTTP响应码",
             "type": "integer"
           },
           "Message": {
-            "backendName": "Message",
             "description_en": "The error details returned by the backend",
             "description_zh": "后端相应异常详情",
             "example": "internal error",
-            "title_en": "后端相应异常详情",
+            "title_en": "",
             "title_zh": "后端相应异常详情",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "82E78D6B-AA8F-1FEF-8AA3-5C9DA2A79140",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "Success": {
-            "backendName": "Success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "请求成功与否",
-            "title_en": "请求成功与否",
+            "title_en": "",
             "title_zh": "请求成功与否",
             "type": "boolean"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

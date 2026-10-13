@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 15000,
   "camel_example": "aliyun tablestore POST /v2/openapi/createinstance --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"InstanceName\":\"instance-test\",\"Policy\":\"{\\\"Version\\\":\\\"1\\\",\\\"Statement\\\":[{\\\"Action\\\":[\\\"ots:0\\\"],\\\"Resource\\\":[\\\"acs:ots:0:13791xxxxxxxxxxx:instance/myinstance0\\\"],\\\"Principal\\\":[\\\"0\\\"],\\\"Effect\\\":\\\"Allow\\\",\\\"Condition\\\":{\\\"StringEquals\\\":{\\\"ots:TLSVersion\\\":[\\\"1.2\\\"]},\\\"IpAddress\\\":{\\\"acs:SourceIp\\\":[\\\"192.168.0.1\\\",\\\"198.51.100.1\\\"]}}}]}\",\"NetworkSourceACL\":[\"TRUST_PROXY\"],\"NetworkTypeACL\":[\"VPC\"],\"ResourceGroupId\":\"rg-acfmxh4em5jnbcd\",\"Network\":\"NORMAL\",\"InstanceDescription\":\"the_test_instance\",\"ClusterType\":\"SSD\",\"DisableReplication\":false,\"Tags\":[{\"Value\":\"0woauavextilfqr61\",\"Key\":\"p_instance\"}]}' --version 2020-12-09 --force",
   "cmd_full_name": "tablestore create-instance",
   "cmd_name": "create-instance",
@@ -35,6 +36,24 @@
   },
   "parameters": [
     {
+      "example": "instance-test",
+      "help_en": "The name of the instance. Instance naming conventions:\n\nThe name can contain only letters, digits, and hyphens (-).\nThe name must start with a letter.\nThe name cannot end with a hyphen (-).\nThe name is case-insensitive.\nThe name must be 3 to 16 characters in length.\nThe name cannot contain the following words: ali, ay, ots, taobao, and admin",
+      "help_zh": "实例名称。实例的命名规范如下：\n必须由英文字母、数字或短划线（-）组成。\n首字符必须为英文字母。\n末尾字符不能为短划线（-）。\n大小写不敏感。\n长度在3~16字符之间。\n实例名称不能包含ali、ay、ots、taobao、admin这几个单词",
+      "location": "body",
+      "name": "instance_name",
+      "options": [
+        "--instance-name"
+      ],
+      "param_style": "json",
+      "raw_name": "InstanceName",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "SSD",
+        "HYBRID"
+      ],
       "example": "SSD",
       "help_en": "The type of the instance",
       "help_zh": "集群类型（即实例规格）",
@@ -47,20 +66,6 @@
       "raw_name": "ClusterType",
       "required": true,
       "type": "string"
-    },
-    {
-      "example": "false",
-      "help_en": "(Deprecated) Specifies whether to enable disaster recovery for the instance.\n\nValid values:\n\nfalse\ntrue",
-      "help_zh": "（已弃用）是否开启实例的容灾状态",
-      "location": "body",
-      "name": "disable_replication",
-      "options": [
-        "--disable-replication"
-      ],
-      "param_style": "json",
-      "raw_name": "DisableReplication",
-      "required": false,
-      "type": "bool"
     },
     {
       "example": "the test instance",
@@ -77,17 +82,17 @@
       "type": "string"
     },
     {
-      "example": "instance-test",
-      "help_en": "The name of the instance. Instance naming conventions:\n\nThe name can contain only letters, digits, and hyphens (-).\nThe name must start with a letter.\nThe name cannot end with a hyphen (-).\nThe name is case-insensitive.\nThe name must be 3 to 16 characters in length.\nThe name cannot contain the following words: ali, ay, ots, taobao, and admin",
-      "help_zh": "实例名称。实例的命名规范如下：\n必须由英文字母、数字或短划线（-）组成。\n首字符必须为英文字母。\n末尾字符不能为短划线（-）。\n大小写不敏感。\n长度在3~16字符之间。\n实例名称不能包含ali、ay、ots、taobao、admin这几个单词",
+      "example": "rg-acfmxh4em5jnbcd",
+      "help_en": "The ID of the resource group to which the instance belongs",
+      "help_zh": "资源组ID",
       "location": "body",
-      "name": "instance_name",
+      "name": "resource_group_id",
       "options": [
-        "--instance-name"
+        "--resource-group-id"
       ],
       "param_style": "json",
-      "raw_name": "InstanceName",
-      "required": true,
+      "raw_name": "ResourceGroupId",
+      "required": false,
       "type": "string"
     },
     {
@@ -108,22 +113,6 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The types of the source from which access is allowed. By default, the following source type is allowed:\n\nTRUST_PROXY: console",
-      "help_zh": "实例允许的网络来源列表，默认都允许。\n\nTRUST_PROXY：可信网关（控制台）",
-      "location": "body",
-      "name": "network_source_acl",
-      "options": [
-        "--network-source-acl"
-      ],
-      "param_style": "json",
-      "raw_name": "NetworkSourceACL",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "element": {
-        "type": "string"
-      },
       "help_en": "The types of the network from which access is allowed. By default, the following network types are allowed:\n\nINTERNET: Internet\nVPC: virtual private cloud (VPC)\nCLASSIC: classic network",
       "help_zh": "实例允许的网络类型列表，默认都允许。\nINTERNET：公网。\nVPC：VPC网络。\nCLASSIC：经典网",
       "location": "body",
@@ -133,6 +122,22 @@
       ],
       "param_style": "json",
       "raw_name": "NetworkTypeACL",
+      "required": false,
+      "type": "array"
+    },
+    {
+      "element": {
+        "type": "string"
+      },
+      "help_en": "The types of the source from which access is allowed. By default, the following source type is allowed:\n\nTRUST_PROXY: console",
+      "help_zh": "实例允许的网络来源列表，默认都允许。\n\nTRUST_PROXY：可信网关（控制台）",
+      "location": "body",
+      "name": "network_source_acl",
+      "options": [
+        "--network-source-acl"
+      ],
+      "param_style": "json",
+      "raw_name": "NetworkSourceACL",
       "required": false,
       "type": "array"
     },
@@ -148,20 +153,6 @@
       ],
       "param_style": "json",
       "raw_name": "Policy",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "rg-acfmxh4em5jnbcd",
-      "help_en": "The ID of the resource group to which the instance belongs",
-      "help_zh": "资源组ID",
-      "location": "body",
-      "name": "resource_group_id",
-      "options": [
-        "--resource-group-id"
-      ],
-      "param_style": "json",
-      "raw_name": "ResourceGroupId",
       "required": false,
       "type": "string"
     },
@@ -206,6 +197,20 @@
       "raw_name": "Tags",
       "required": false,
       "type": "array"
+    },
+    {
+      "example": "false",
+      "help_en": "(Deprecated) Specifies whether to enable disaster recovery for the instance.\n\nValid values:\n\nfalse\ntrue",
+      "help_zh": "（已弃用）是否开启实例的容灾状态",
+      "location": "body",
+      "name": "disable_replication",
+      "options": [
+        "--disable-replication"
+      ],
+      "param_style": "json",
+      "raw_name": "DisableReplication",
+      "required": false,
+      "type": "bool"
     }
   ],
   "pathPattern": "/v2/openapi/createinstance",
@@ -221,7 +226,7 @@
             "description_en": "The HTTP status code",
             "description_zh": "响应状态码",
             "example": "200",
-            "title_en": "响应状态码",
+            "title_en": "",
             "title_zh": "响应状态码",
             "type": "string"
           },
@@ -229,7 +234,7 @@
             "description_en": "The response message",
             "description_zh": "响应消息描述",
             "example": "success",
-            "title_en": "响应消息描述",
+            "title_en": "",
             "title_zh": "响应消息描述",
             "type": "string"
           },

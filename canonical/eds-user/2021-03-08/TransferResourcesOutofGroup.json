@@ -1,8 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun eds-user TransferResourcesOutofGroup --region cn-hangzhou --Resources.1.ResourceId 'ecd-1shc5sk0vo0000' --TargetResourceGroupId 'rg-hcjo6dugpo10000' --ResourceGroupId 'rg-66konqltcpx430000' --Platform AliyunConsole --AppRuleId 'bwr-47wdwfe5x3ql7qwf4' --TimerId 'ccg-0bf5d87dtipve4aqt' --Resources.1.RegionId 'cn-hangzhou' --BusinessChannel ENTERPRISE --Resources.1.ResourceType DESKTOP --PolicyId 'system-all-enabled-policy' --version 2021-03-08 --method POST --force",
   "cmd_full_name": "eds-user transfer-resources-outof-group",
   "cmd_name": "transfer-resources-outof-group",
   "deprecated": false,
-  "description_en": "将资源从资源组中转出",
+  "description_en": "Moves resources out of a resource group",
   "description_zh": "将资源从资源组中转出",
   "kebab_example": "aliyun eds-user transfer-resources-outof-group --resource-group-id rg-66konqltcpx430000 --resources ResourceId=ecd-1shc5sk0vo0000 ResourceType=DESKTOP RegionId=cn-hangzhou --target-resource-group-id rg-hcjo6dugpo10000 --platform AliyunConsole --business-channel ENTERPRISE --api-version 2021-03-08 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +23,7 @@
   "parameters": [
     {
       "example": "rg-66konqltcpx43****",
-      "help_en": "The ResourceGroupId",
+      "help_en": "The resource group ID",
       "help_zh": "资源组ID",
       "location": "query",
       "name": "resource_group_id",
@@ -37,7 +39,7 @@
         "fields": [
           {
             "example": "cn-hangzhou",
-            "help_en": "The RegionId",
+            "help_en": "The region ID of the resource",
             "help_zh": "资源所属的地域ID",
             "name": "region_id",
             "options": [
@@ -49,7 +51,7 @@
           },
           {
             "example": "ecd-1shc5sk0vo****",
-            "help_en": "The ResourceId",
+            "help_en": "The resource ID",
             "help_zh": "资源ID",
             "name": "resource_id",
             "options": [
@@ -60,8 +62,12 @@
             "type": "string"
           },
           {
+            "enum": [
+              "CLOUD_PHONE",
+              "DESKTOP"
+            ],
             "example": "DESKTOP",
-            "help_en": "The ResourceType",
+            "help_en": "The resource type",
             "help_zh": "资源类型",
             "name": "resource_type",
             "options": [
@@ -74,7 +80,7 @@
         ],
         "type": "object"
       },
-      "help_en": "The Resources",
+      "help_en": "The list of resources",
       "help_zh": "资源列表",
       "location": "query",
       "name": "resources",
@@ -88,7 +94,7 @@
     },
     {
       "example": "rg-hcjo6dugpo1****",
-      "help_en": "The TargetResourceGroupId",
+      "help_en": "The ID of the target resource group to which you want to move the resources",
       "help_zh": "目标资源组ID，期望转入的资源组ID",
       "location": "query",
       "name": "target_resource_group_id",
@@ -100,8 +106,47 @@
       "type": "string"
     },
     {
+      "example": "system-all-enabled-policy",
+      "help_en": "The policy ID to associate with the resources after they are moved out of the resource group. This parameter is used only for pure move-out operations and cannot be specified together with TargetResourceGroupId. If this parameter is left empty, the system default behavior is used",
+      "help_zh": "资源移出资源组后关联的策略 ID。仅用于纯移出，不能与 TargetResourceGroupId 同时设置；为空时沿用系统默认处理",
+      "location": "query",
+      "name": "policy_id",
+      "options": [
+        "--policy-id"
+      ],
+      "raw_name": "PolicyId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "ccg-0bf5d87dtipve4aqt",
+      "help_en": "The scheduled task ID to associate with the resources after they are moved out of the resource group. This parameter is used only for pure move-out operations and cannot be specified together with TargetResourceGroupId. If this parameter is left empty, no scheduled task is associated",
+      "help_zh": "资源移出资源组后关联的定时任务 ID。仅用于纯移出，不能与 TargetResourceGroupId 同时设置；为空时不额外关联定时任务",
+      "location": "query",
+      "name": "timer_id",
+      "options": [
+        "--timer-id"
+      ],
+      "raw_name": "TimerId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "bwr-47wdwfe5x3ql7qwf4",
+      "help_en": "The software blacklists and whitelists rule ID to associate with the resources after they are moved out of the resource group. This parameter is used only for pure move-out operations and cannot be set together with TargetResourceGroupId. If this parameter is left empty, no rule is associated",
+      "help_zh": "资源移出资源组后关联的软件黑白名单规则 ID。仅用于纯移出，不能与 TargetResourceGroupId 同时设置；为空时不额外关联规则",
+      "location": "query",
+      "name": "app_rule_id",
+      "options": [
+        "--app-rule-id"
+      ],
+      "raw_name": "AppRuleId",
+      "required": false,
+      "type": "string"
+    },
+    {
       "example": "AliyunConsole",
-      "help_en": "The Platform",
+      "help_en": "Fixed value: AliyunConsole.\nFor Wuying Enterprise Edition, set this parameter to AliyunConsole. Other platforms are not publicly available",
       "help_zh": "固定值：AliyunConsole。\n无影企业版固定传AliyunConsole，其他平台暂不对外开放",
       "location": "query",
       "name": "platform",
@@ -114,7 +159,7 @@
     },
     {
       "example": "ENTERPRISE",
-      "help_en": "渠道",
+      "help_en": "The channel",
       "help_zh": "渠道",
       "location": "query",
       "name": "business_channel",
@@ -132,18 +177,19 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "The response struct",
         "description_zh": "返回数据结构",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "D2B1DF9E-576B-5B91-BAF6-2C3DD1****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

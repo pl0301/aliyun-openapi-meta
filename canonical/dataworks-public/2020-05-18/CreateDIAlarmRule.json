@@ -1,8 +1,9 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "dataworks-public create-di-alarm-rule",
   "cmd_name": "create-di-alarm-rule",
   "deprecated": false,
-  "description_en": "Creates an alert rule for a synchronization task",
+  "description_en": "Creates an alert rule for a task in the new version of Data Integration. Currently, supported task types include the real-time full-database synchronization solution from MySQL to Hologres",
   "description_zh": "创建数据集成新版任务告警规则，当前支持的任务类型包括：MySQL到Hologres整库实时解决方案",
   "kebab_example": "aliyun dataworks-public create-di-alarm-rule --di-job-id 11265 --metric-type Heartbeat --trigger-conditions Severity=Warning Duration=15 Threshold=5 --notification-settings '{\"NotificationChannels\":[{}],\"InhibitionInterval\":5,\"NotificationReceivers\":[{}]}' --api-version 2020-05-18 --region cn-hangzhou",
   "method": "POST",
@@ -49,7 +50,7 @@
     },
     {
       "example": "Heartbeat",
-      "help_en": "The metric type in the alert rule. Valid values:\n\nHeartbeat\n\nFailoverCount\n\nDelay",
+      "help_en": "The metric type in the alert rule. Valid values:\n\n\n\n\nHeartbeat: task status alert\nFailoverCount: failover count alert\nDelay: task latency alert",
       "help_zh": "告警指标类型，可选的枚举值：\nHeartbeat（任务状态报警）\nFailoverCount（failover次数报警）\nDelay（任务延迟报警）",
       "location": "formData",
       "name": "metric_type",
@@ -64,18 +65,6 @@
       "element": {
         "fields": [
           {
-            "example": "15",
-            "help_en": "The time interval for alert calculation. Unit: minutes",
-            "help_zh": "告警计算时间区间，单位分钟",
-            "name": "duration",
-            "options": [
-              "--duration"
-            ],
-            "raw_name": "Duration",
-            "required": false,
-            "type": "int"
-          },
-          {
             "example": "Warning",
             "help_en": "The severity level. Valid values:\n\nWarning\n\nCritical",
             "help_zh": "严重程度，可选的枚举值：\nWarning\nCritical",
@@ -86,6 +75,18 @@
             "raw_name": "Severity",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "15",
+            "help_en": "The time interval for alert calculation. Unit: minutes",
+            "help_zh": "告警计算时间区间，单位分钟",
+            "name": "duration",
+            "options": [
+              "--duration"
+            ],
+            "raw_name": "Duration",
+            "required": false,
+            "type": "int"
           },
           {
             "example": "5",
@@ -117,20 +118,20 @@
     {
       "fields": [
         {
-          "example": "5",
-          "help_en": "The duration of the alert suppression interval. Default value: 5. Unit: minutes",
-          "help_zh": "告警抑制间隔时长，单位分钟，默认5分钟",
-          "name": "inhibition_interval",
-          "options": [
-            "--inhibition-interval"
-          ],
-          "raw_name": "InhibitionInterval",
-          "required": false,
-          "type": "int"
-        },
-        {
           "element": {
             "fields": [
+              {
+                "example": "Warning",
+                "help_en": "The severity level. Valid values:\n\nWarning\n\nCritical",
+                "help_zh": "严重程度。\nWarning\nCritical",
+                "name": "severity",
+                "options": [
+                  "--severity"
+                ],
+                "raw_name": "Severity",
+                "required": false,
+                "type": "string"
+              },
               {
                 "element": {
                   "type": "string"
@@ -144,18 +145,6 @@
                 "raw_name": "Channels",
                 "required": false,
                 "type": "array"
-              },
-              {
-                "example": "Warning",
-                "help_en": "The severity level. Valid values:\n\nWarning\n\nCritical",
-                "help_zh": "严重程度。\nWarning\nCritical",
-                "name": "severity",
-                "options": [
-                  "--severity"
-                ],
-                "raw_name": "Severity",
-                "required": false,
-                "type": "string"
               }
             ],
             "type": "object"
@@ -211,6 +200,18 @@
           "raw_name": "NotificationReceivers",
           "required": true,
           "type": "array"
+        },
+        {
+          "example": "5",
+          "help_en": "The duration of the alert suppression interval. Default value: 5. Unit: minutes",
+          "help_zh": "告警抑制间隔时长，单位分钟，默认5分钟",
+          "name": "inhibition_interval",
+          "options": [
+            "--inhibition-interval"
+          ],
+          "raw_name": "InhibitionInterval",
+          "required": false,
+          "type": "int"
         }
       ],
       "help_en": "The alert notification settings",
@@ -249,7 +250,6 @@
         "description_zh": "响应",
         "properties": {
           "DIAlarmRuleId": {
-            "backendName": "data",
             "description_en": "The alert rule ID",
             "description_zh": "告警规则ID",
             "example": "34988",
@@ -257,16 +257,15 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "C636A747-7E4E-594D-94CD-2B4F8A9A9A63",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 5000,
   "camel_example": "aliyun energyexpertexternal POST /api/v1/carbon/hvac/editUnfavorableAreaDevices --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"systemId\":\"system1\",\"factoryId\":\"000\",\"hvacDeviceConfigVOList\":[{\"deviceType\":\"1\",\"floorId\":\"floorId2\",\"isForbidden\":1,\"isUnfavorableArea\":1,\"deviceName\":\"name1\",\"deviceId\":\"id1\",\"fenceId\":\"fenceId1\",\"buildingId\":\"buildingId1\"}]}'",
   "cmd_full_name": "energyexpertexternal edit-unfavorable-area-devices",
   "cmd_name": "edit-unfavorable-area-devices",
@@ -42,17 +43,31 @@
       "type": "string"
     },
     {
+      "example": "system1",
+      "help_en": "The site ID",
+      "help_zh": "站点id",
+      "location": "body",
+      "name": "system_id",
+      "options": [
+        "--system-id"
+      ],
+      "param_style": "json",
+      "raw_name": "systemId",
+      "required": true,
+      "type": "string"
+    },
+    {
       "element": {
         "fields": [
           {
-            "example": "buildingId1",
-            "help_en": "The building ID",
-            "help_zh": "楼栋id",
-            "name": "building_id",
+            "example": "name1",
+            "help_en": "The device name",
+            "help_zh": "设备名称",
+            "name": "device_name",
             "options": [
-              "--building-id"
+              "--device-name"
             ],
-            "raw_name": "buildingId",
+            "raw_name": "deviceName",
             "required": false,
             "type": "string"
           },
@@ -69,18 +84,14 @@
             "type": "string"
           },
           {
-            "example": "name1",
-            "help_en": "The device name",
-            "help_zh": "设备名称",
-            "name": "device_name",
-            "options": [
-              "--device-name"
+            "enum": [
+              "空调机组",
+              "锅炉",
+              "冷机",
+              "冷却塔",
+              "水泵",
+              "室内环境"
             ],
-            "raw_name": "deviceName",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "1",
             "help_en": "The device type. Enter the enumeration value",
             "help_zh": "设备类型(请输入枚举数值)",
@@ -93,14 +104,46 @@
             "type": "string"
           },
           {
-            "example": "fenceId1",
-            "help_en": "The fence ID",
-            "help_zh": "围栏id",
-            "name": "fence_id",
-            "options": [
-              "--fence-id"
+            "enum": [
+              "不是禁用设备",
+              "是禁用设备"
             ],
-            "raw_name": "fenceId",
+            "example": "1",
+            "help_en": "Specifies whether the device is disabled. Valid values: 1 and 0",
+            "help_zh": "是否禁用：1，0",
+            "name": "is_forbidden",
+            "options": [
+              "--is-forbidden"
+            ],
+            "raw_name": "isForbidden",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "enum": [
+              "是不利区",
+              "不是不利区"
+            ],
+            "example": "1",
+            "help_en": "Specifies whether the device is in an unfavorable area. Valid values: 1 and 0",
+            "help_zh": "是否不利区：1，0",
+            "name": "is_unfavorable_area",
+            "options": [
+              "--is-unfavorable-area"
+            ],
+            "raw_name": "isUnfavorableArea",
+            "required": true,
+            "type": "int"
+          },
+          {
+            "example": "buildingId1",
+            "help_en": "The building ID",
+            "help_zh": "楼栋id",
+            "name": "building_id",
+            "options": [
+              "--building-id"
+            ],
+            "raw_name": "buildingId",
             "required": false,
             "type": "string"
           },
@@ -117,28 +160,16 @@
             "type": "string"
           },
           {
-            "example": "1",
-            "help_en": "Specifies whether the device is disabled. Valid values: 1 and 0",
-            "help_zh": "是否禁用：1，0",
-            "name": "is_forbidden",
+            "example": "fenceId1",
+            "help_en": "The fence ID",
+            "help_zh": "围栏id",
+            "name": "fence_id",
             "options": [
-              "--is-forbidden"
+              "--fence-id"
             ],
-            "raw_name": "isForbidden",
+            "raw_name": "fenceId",
             "required": false,
-            "type": "int"
-          },
-          {
-            "example": "1",
-            "help_en": "Specifies whether the device is in an unfavorable area. Valid values: 1 and 0",
-            "help_zh": "是否不利区：1，0",
-            "name": "is_unfavorable_area",
-            "options": [
-              "--is-unfavorable-area"
-            ],
-            "raw_name": "isUnfavorableArea",
-            "required": true,
-            "type": "int"
+            "type": "string"
           }
         ],
         "type": "object"
@@ -154,20 +185,6 @@
       "raw_name": "hvacDeviceConfigVOList",
       "required": true,
       "type": "array"
-    },
-    {
-      "example": "system1",
-      "help_en": "The site ID",
-      "help_zh": "站点id",
-      "location": "body",
-      "name": "system_id",
-      "options": [
-        "--system-id"
-      ],
-      "param_style": "json",
-      "raw_name": "systemId",
-      "required": true,
-      "type": "string"
     }
   ],
   "pathPattern": "/api/v1/carbon/hvac/editUnfavorableAreaDevices",
@@ -180,14 +197,16 @@
         "description_zh": "Schema of Response",
         "properties": {
           "data": {
-            "backendName": "data",
             "description_en": "The returned data",
             "description_zh": "返回数据",
+            "enumValueTitles": {
+              "失败": "false",
+              "成功": "true"
+            },
             "example": "true",
             "type": "boolean"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "Id of the request",
             "example": "83A5A7DD-8974-5769-952E-590A97BEA34E",

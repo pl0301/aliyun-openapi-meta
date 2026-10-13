@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun acc CreateImageCache --region cn-hangzhou --Images.1 'registry-vpc.cn-hangzhou.aliyuncs.com/00000/00000:v1' --ImageCacheName 'my-imc' --NetworkConfig '{\"EipInstance\":{},\"VSwitchIds\":[\"vsw-0jlqxyfxgdw4tzqy00000\"],\"SecurityGroupId\":\"sg-0jlgektkddwa42n00000\"}' --RegionId 'cn-hangzhou' --version 2024-04-02 --method POST --force",
   "cmd_full_name": "acc create-image-cache",
   "cmd_name": "create-image-cache",
@@ -136,8 +137,50 @@
     {
       "fields": [
         {
+          "element": {
+            "type": "string"
+          },
+          "help_en": "The vSwitch IDs. A maximum of 10 vSwitches are supported. One of them is selected for image pulling",
+          "help_zh": "交换机ID信息，最多 10 个，会选择其中一个进行镜像拉取",
+          "name": "vswitchids",
+          "options": [
+            "--vswitchids"
+          ],
+          "raw_name": "VSwitchIds",
+          "required": true,
+          "type": "array"
+        },
+        {
+          "example": "sg-0jlgektkddwa42n*****",
+          "help_en": "The security group ID",
+          "help_zh": "安全组ID",
+          "name": "security_group_id",
+          "options": [
+            "--security-group-id"
+          ],
+          "raw_name": "SecurityGroupId",
+          "required": true,
+          "type": "string"
+        },
+        {
           "fields": [
             {
+              "example": "eip-0jl0bx3fnpnjc9i4*****",
+              "help_en": "The EIP instance ID. This parameter takes priority. If specified, other parameters are ignored",
+              "help_zh": "弹性公网 IP，优先使用该参数，填写则其他参数失效",
+              "name": "instance_id",
+              "options": [
+                "--instance-id"
+              ],
+              "raw_name": "InstanceId",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "true",
               "help_en": "Specifies whether automatic creation of an EIP is enabled",
               "help_zh": "是否自动创建EIP",
@@ -160,18 +203,6 @@
               "raw_name": "Bandwidth",
               "required": false,
               "type": "int"
-            },
-            {
-              "example": "eip-0jl0bx3fnpnjc9i4*****",
-              "help_en": "The EIP instance ID. This parameter takes priority. If specified, other parameters are ignored",
-              "help_zh": "弹性公网 IP，优先使用该参数，填写则其他参数失效",
-              "name": "instance_id",
-              "options": [
-                "--instance-id"
-              ],
-              "raw_name": "InstanceId",
-              "required": false,
-              "type": "string"
             }
           ],
           "help_en": "The elastic IP address (EIP) instance configuration",
@@ -183,32 +214,6 @@
           "raw_name": "EipInstance",
           "required": false,
           "type": "object"
-        },
-        {
-          "example": "sg-0jlgektkddwa42n*****",
-          "help_en": "The security group ID",
-          "help_zh": "安全组ID",
-          "name": "security_group_id",
-          "options": [
-            "--security-group-id"
-          ],
-          "raw_name": "SecurityGroupId",
-          "required": true,
-          "type": "string"
-        },
-        {
-          "element": {
-            "type": "string"
-          },
-          "help_en": "The vSwitch IDs. A maximum of 10 vSwitches are supported. One of them is selected for image pulling",
-          "help_zh": "交换机ID信息，最多 10 个，会选择其中一个进行镜像拉取",
-          "name": "vswitchids",
-          "options": [
-            "--vswitchids"
-          ],
-          "raw_name": "VSwitchIds",
-          "required": true,
-          "type": "array"
         }
       ],
       "help_en": "The network configuration for pulling images when creating the image cache",
@@ -227,18 +232,6 @@
       "element": {
         "fields": [
           {
-            "example": "mypassword",
-            "help_en": "The password of the image registry",
-            "help_zh": "镜像仓库密码",
-            "name": "password",
-            "options": [
-              "--password"
-            ],
-            "raw_name": "Password",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "registry-vpc.cn-hangzhou.aliyuncs.com",
             "help_en": "The image registry address without the http:// or https:// prefix",
             "help_zh": "不带 http:// 或 https:// 前缀的镜像仓库地址",
@@ -251,18 +244,34 @@
             "type": "string"
           },
           {
-            "example": "false",
-            "help_en": "Specifies whether to skip certificate verification when creating an image cache from images in a self-managed image registry that uses a self-signed certificate. This prevents image pull failures caused by certificate verification failures.\nDefault value: `false`",
-            "help_zh": "使用自签发证书的自建镜像仓库中的镜像创建镜像缓存时，需配置该参数来跳过证书认证，避免因证书认证失败而导致镜像拉取失败。\n默认值：`false`",
-            "name": "skip_cert_verification",
+            "example": "myusername",
+            "help_en": "The username of the image registry",
+            "help_zh": "镜像仓库用户名",
+            "name": "username",
             "options": [
-              "--skip-cert-verification"
+              "--username"
             ],
-            "raw_name": "SkipCertVerification",
+            "raw_name": "Username",
             "required": false,
-            "type": "bool"
+            "type": "string"
           },
           {
+            "example": "mypassword",
+            "help_en": "The password of the image registry",
+            "help_zh": "镜像仓库密码",
+            "name": "password",
+            "options": [
+              "--password"
+            ],
+            "raw_name": "Password",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "enum": [
+              "true",
+              "false"
+            ],
             "example": "false",
             "help_en": "Specifies whether to use HTTP to pull images, which prevents image pull failures caused by protocol mismatch.\nDefault value: `false`",
             "help_zh": "服务使用 HTTP 协议拉取镜像，避免因协议不同而导致镜像拉取失败。\n默认值：`false`",
@@ -275,16 +284,20 @@
             "type": "bool"
           },
           {
-            "example": "myusername",
-            "help_en": "The username of the image registry",
-            "help_zh": "镜像仓库用户名",
-            "name": "username",
-            "options": [
-              "--username"
+            "enum": [
+              "true",
+              "false"
             ],
-            "raw_name": "Username",
+            "example": "false",
+            "help_en": "Specifies whether to skip certificate verification when creating an image cache from images in a self-managed image registry that uses a self-signed certificate. This prevents image pull failures caused by certificate verification failures.\nDefault value: `false`",
+            "help_zh": "使用自签发证书的自建镜像仓库中的镜像创建镜像缓存时，需配置该参数来跳过证书认证，避免因证书认证失败而导致镜像拉取失败。\n默认值：`false`",
+            "name": "skip_cert_verification",
+            "options": [
+              "--skip-cert-verification"
+            ],
+            "raw_name": "SkipCertVerification",
             "required": false,
-            "type": "string"
+            "type": "bool"
           }
         ],
         "type": "object"
@@ -366,23 +379,21 @@
         "description_zh": "返回参数对象",
         "properties": {
           "ImageCacheId": {
-            "backendName": "data.imageCacheId",
             "description_en": "The image cache ID",
             "description_zh": "镜像缓存 ID",
             "example": "imc-bp1dj*****",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求 ID",
             "example": "0E234675-3465-4CC3-9D0F-9A864BC*****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

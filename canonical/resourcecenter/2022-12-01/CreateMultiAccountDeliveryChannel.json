@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun resourcecenter CreateMultiAccountDeliveryChannel --region cn-hangzhou --DeliveryChannelFilter.AccountScopes.1 'rd-r40000' --DeliveryChannelName 'test-multi-account-delivery' --DeliveryChannelFilter.ResourceTypes.1 'ACS::VPC::VPC' --method POST --force",
   "cmd_full_name": "resourcecenter create-multi-account-delivery-channel",
   "cmd_name": "create-multi-account-delivery-channel",
@@ -49,18 +50,6 @@
     {
       "fields": [
         {
-          "example": "select * from resources limit 100;\n",
-          "help_en": "The custom expression",
-          "help_zh": "自定义表达式",
-          "name": "custom_expression",
-          "options": [
-            "--custom-expression"
-          ],
-          "raw_name": "CustomExpression",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "09:00Z",
           "help_en": "The delivery time. The value is in UTC and uses the `HH:mmZ` format. Example: `09:00Z`",
           "help_zh": "投递时间。使用 UTC 时间，格式为 `HH:mmZ`，例如 `09:00Z`",
@@ -69,6 +58,46 @@
             "--delivery-time"
           ],
           "raw_name": "DeliveryTime",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "acs:oss:cn-hangzhou:1911422487776***:resourcecenter-oss",
+          "help_en": "The Alibaba Cloud Resource Name (ARN) of the delivery target. Valid values:\nIf `TargetType` is set to `OSS`, set `TargetArn` to the ARN of an OSS bucket whose name starts with `resourcecenter-`. Example: `acs:oss:cn-hangzhou:191142248777****:resourcecenter-oss`.\nIf `TargetType` is set to `SLS`, set `TargetArn` to the ARN of a Logstore whose name starts with `resourcecenter-`. Example: `acs:log:cn-hangzhou: 191142248777****:project/delivery/logstore/resourcecenter-sls`",
+          "help_zh": "投递目标ARN。取值：\n当指定`TargetType`为`OSS`时，`TargetArn`需传入前缀名称为`resourcecenter-`的存储空间ARN。例如：`acs:oss:cn-hangzhou:191142248777****:resourcecenter-oss`。\n当指定`TargetType`为`SLS`时，`TargetArn`需传入前缀名称为`resourcecenter-`的日志库ARN。例如：`acs:log:cn-hangzhou: 191142248777****:project/delivery/logstore/resourcecenter-sls`",
+          "name": "target_arn",
+          "options": [
+            "--target-arn"
+          ],
+          "raw_name": "TargetArn",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "enum": [
+            "SLS",
+            "OSS"
+          ],
+          "example": "OSS",
+          "help_en": "The type of the delivery target. Valid values:\n\nFor standard resource snapshot delivery, only `OSS` is supported.\n\nFor custom resource snapshot delivery, `OSS` or `SLS` is supported",
+          "help_zh": "投递目标类型。取值：\n\n对于标准资源快照定时投递，仅可传入`OSS`。\n\n对于自定义资源快照定时投递，可传入`OSS`或`SLS`",
+          "name": "target_type",
+          "options": [
+            "--target-type"
+          ],
+          "raw_name": "TargetType",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "select * from resources limit 100;\n",
+          "help_en": "The custom expression",
+          "help_zh": "自定义表达式",
+          "name": "custom_expression",
+          "options": [
+            "--custom-expression"
+          ],
+          "raw_name": "CustomExpression",
           "required": false,
           "type": "string"
         },
@@ -96,30 +125,6 @@
           "raw_name": "SlsProperties",
           "required": false,
           "type": "object"
-        },
-        {
-          "example": "acs:oss:cn-hangzhou:1911422487776***:resourcecenter-oss",
-          "help_en": "The Alibaba Cloud Resource Name (ARN) of the delivery target. Valid values:\nIf `TargetType` is set to `OSS`, set `TargetArn` to the ARN of an OSS bucket whose name starts with `resourcecenter-`. Example: `acs:oss:cn-hangzhou:191142248777****:resourcecenter-oss`.\nIf `TargetType` is set to `SLS`, set `TargetArn` to the ARN of a Logstore whose name starts with `resourcecenter-`. Example: `acs:log:cn-hangzhou: 191142248777****:project/delivery/logstore/resourcecenter-sls`",
-          "help_zh": "投递目标ARN。取值：\n当指定`TargetType`为`OSS`时，`TargetArn`需传入前缀名称为`resourcecenter-`的存储空间ARN。例如：`acs:oss:cn-hangzhou:191142248777****:resourcecenter-oss`。\n当指定`TargetType`为`SLS`时，`TargetArn`需传入前缀名称为`resourcecenter-`的日志库ARN。例如：`acs:log:cn-hangzhou: 191142248777****:project/delivery/logstore/resourcecenter-sls`",
-          "name": "target_arn",
-          "options": [
-            "--target-arn"
-          ],
-          "raw_name": "TargetArn",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "OSS",
-          "help_en": "The type of the delivery target. Valid values:\n\nFor standard resource snapshot delivery, only `OSS` is supported.\n\nFor custom resource snapshot delivery, `OSS` or `SLS` is supported",
-          "help_zh": "投递目标类型。取值：\n\n对于标准资源快照定时投递，仅可传入`OSS`。\n\n对于自定义资源快照定时投递，可传入`OSS`或`SLS`",
-          "name": "target_type",
-          "options": [
-            "--target-type"
-          ],
-          "raw_name": "TargetType",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The scheduled resource snapshot delivery configuration",
@@ -174,6 +179,9 @@
           "type": "string"
         },
         {
+          "enum": [
+            "SLS"
+          ],
           "example": "SLS",
           "help_en": "The type of the delivery target.\n\nValid values: `SLS`",
           "help_zh": "投递目标类型。\n\n取值：`SLS`",
@@ -252,23 +260,21 @@
         "description_zh": "返回参数",
         "properties": {
           "DeliveryChannelId": {
-            "backendName": "deliveryChannelId",
             "description_en": "The ID of the delivery channel",
             "description_zh": "投递ID",
             "example": "dc-6q79dm4o9***",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "994BFEFE-4BB5-5A27-8917-4583DEEF2***",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

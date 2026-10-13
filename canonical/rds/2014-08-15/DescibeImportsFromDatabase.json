@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun rds DescibeImportsFromDatabase --region cn-hangzhou --EndTime '2023-06-11T16:00Z' --DBInstanceId 'rm-bp00000' --StartTime '2023-06-11T15:00Z' --Engine MySQL",
   "cmd_full_name": "rds descibe-imports-from-database",
   "cmd_name": "descibe-imports-from-database",
   "deprecated": false,
-  "description_en": "Queries the migration tasks of an instance",
+  "description_en": "Queries the instance migration status list",
   "description_zh": "该接口用于查看实例迁移状态列表",
   "kebab_example": "aliyun rds descibe-imports-from-database --db-instance-id rm-bp00000 --engine MySQL --start-time 2023-06-11T15:00Z --end-time 2023-06-11T16:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -35,7 +36,7 @@
     },
     {
       "example": "rm-bp*****",
-      "help_en": "The instance ID. You can call the DescribeDBInstances operation to query the IDs of instances",
+      "help_en": "The instance ID. You can call DescribeDBInstances to query the instance ID",
       "help_zh": "实例ID。可调用DescribeDBInstances获取",
       "location": "query",
       "name": "db_instance_id",
@@ -48,7 +49,7 @@
     },
     {
       "example": "MySQL",
-      "help_en": "The database engine of the instance. Set the value to MySQL",
+      "help_en": "The database engine. Set the value to MySQL",
       "help_zh": "数据库类型。取值：MySQL",
       "location": "query",
       "name": "engine",
@@ -74,7 +75,7 @@
     },
     {
       "example": "2023-06-11T15:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
+      "help_en": "The start time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
       "help_zh": "查询开始时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
       "location": "query",
       "name": "start_time",
@@ -87,7 +88,7 @@
     },
     {
       "example": "2023-06-11T16:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mmZ format. The time must be in UTC",
+      "help_en": "The end time of the query. Format: <i>yyyy-MM-dd</i>T<i>HH:mm</i>Z (UTC)",
       "help_zh": "查询结束时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm</i>Z（UTC时间）",
       "location": "query",
       "name": "end_time",
@@ -100,7 +101,7 @@
     },
     {
       "example": "30",
-      "help_en": "The number of entries to return on each page. Valid values:\n\n30\n50\n100\n\nDefault value: 30",
+      "help_en": "The number of entries per page. Valid values:\n\n30\n50\n100\n\nDefault value: 30",
       "help_zh": "每页记录数。取值：\n\n30\n50\n100\n\n默认值：30",
       "location": "query",
       "name": "page_size",
@@ -113,7 +114,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. Valid values: any non-zero positive integer.\n\nDefault value: 1",
+      "help_en": "The page number. Valid values: any non-zero positive integer that does not exceed the maximum value of the Integer data type.\n\nDefault value: 1",
       "help_zh": "页码，取值：大于0且不超过Integer的最大值。\n\n默认值：1",
       "location": "query",
       "minimum": "1",
@@ -127,7 +128,7 @@
     },
     {
       "example": "rg-acfmy*****",
-      "help_en": "The ID of the resource group. You can call the DescribeDBInstanceAttribute operation to obtain the ID of the resource group",
+      "help_en": "The resource group ID. You can call DescribeDBInstanceAttribute to query the resource group ID",
       "help_zh": "资源组ID。可调用DescribeDBInstanceAttribute获取",
       "location": "query",
       "name": "resource_group_id",
@@ -149,104 +150,64 @@
         "description_zh": "返回参数详情",
         "properties": {
           "Items": {
-            "backendName": "data.items",
-            "itemName": "ImportResultFromDB",
-            "items": {
-              "properties": {
-                "ImportDataStatus": {
-                  "backendName": "migrationStatusforDrc",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "NotStart",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "FullExporting",
-                        "value": "2"
-                      },
-                      {
-                        "targetValue": "FullImporting",
-                        "value": "3"
-                      },
-                      {
-                        "targetValue": "Success",
-                        "value": "4"
-                      },
-                      {
-                        "targetValue": "Failed",
-                        "value": "5"
-                      },
-                      {
-                        "targetValue": "Canceled",
-                        "value": "6"
-                      },
-                      {
-                        "targetValue": "Canceling",
-                        "value": "8"
-                      },
-                      {
-                        "targetValue": "IncrementalWaiting",
-                        "value": "14"
-                      },
-                      {
-                        "targetValue": "IncrementalImporting",
-                        "value": "15"
-                      },
-                      {
-                        "targetValue": "StopSyncing",
-                        "value": "16"
-                      }
-                    ]
-                  }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "ImportResultFromDB": {
+                "description_en": "The migration status list",
+                "description_zh": "迁移状态列表",
+                "items": {
+                  "description_en": "The migration status details",
+                  "description_zh": "迁移状态详情",
+                  "properties": {
+                    "ImportDataStatus": {
+                      "description_en": "The status of the migration task. Valid values:\nNotStart: not started\nFullExporting: full export in progress\nFullImporting: full import in progress\nSuccess: succeeded\nFailed: failed\nCanceled: canceled\nCanceling: canceling\nIncrementalWaiting: waiting for incremental synchronization\nIncrementalImporting: incremental synchronization in progress\nStopSyncing: synchronization stopped",
+                      "description_zh": "迁移任务状态。取值：\nNotStart：未开始\nFullExporting：全量导出中\nFullImporting：全量导入中\nSuccess：成功\nFailed：失败\nCanceled：已取消\nCanceling：正在取消\nIncrementalWaiting：增量同步等待\nIncrementalImporting：增量同步中\nStopSyncing：停止同步",
+                      "example": "NotStart",
+                      "type": "string"
+                    },
+                    "ImportDataStatusDescription": {
+                      "description_en": "The description of the migration task",
+                      "description_zh": "迁移任务描述",
+                      "example": "描述信息。",
+                      "type": "string"
+                    },
+                    "ImportDataType": {
+                      "description_en": "The type of the migration task. Valid values:\nFull: full migration\nIncremental: incremental migration",
+                      "description_zh": "迁移任务类型。取值：\nFull：全量迁移\nIncremental：增量迁移",
+                      "example": "Full",
+                      "type": "string"
+                    },
+                    "ImportId": {
+                      "description_en": "The ID of the migration task",
+                      "description_zh": "迁移任务的ID",
+                      "example": "123",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "IncrementalImportingTime": {
+                      "description_en": "The incremental synchronization time. Format: <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z (UTC)",
+                      "description_zh": "增量同步时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）",
+                      "example": "2023-06-11T15:00Z",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "ImportDataStatusDescription": {
-                  "backendName": "migrationStatusDescription",
-                  "type": "string"
-                },
-                "ImportDataType": {
-                  "backendName": "transferType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Full",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "Incremental",
-                        "value": "3"
-                      }
-                    ]
-                  }
-                },
-                "ImportId": {
-                  "backendName": "migrationId",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "IncrementalImportingTime": {
-                  "backendName": "incrementalSyncTime",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumbers",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "mappingResourcePropertyName": "$.PageNumber",
             "type": "integer"
           },
           "PageRecordCount": {
-            "backendName": "data.maxRecordsPerPage",
             "description_en": "The number of entries per page",
             "description_zh": "每页记录数",
             "example": "1",
@@ -254,15 +215,13 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "B000AA91-393D-46F9-8D9B-098E28931A3A",
             "type": "string"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecords",
-            "description_en": "The total number of entries returned",
+            "description_en": "The total number of entries",
             "description_zh": "记录总数",
             "example": "1",
             "format": "int32",

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 5000,
   "camel_example": "aliyun rds DescribeDedicatedHosts --region cn-hangzhou --HostType dhg_cloud_ssd --DedicatedHostId 'ch-t4nn100ddxxxxxxxx' --AllocationStatus 1 --ZoneId 'cn-hangzhou-i' --DedicatedHostGroupId 'dhg-7a9xxxxxxxx' --HostStatus 1 --RegionId 'cn-hangzhou' --OrderId 102565235",
   "cmd_full_name": "rds describe-dedicated-hosts",
   "cmd_name": "describe-dedicated-hosts",
   "deprecated": false,
-  "description_en": "Queries the information about the hosts in a dedicated cluster",
+  "description_en": "Queries the host information in a dedicated cluster",
   "description_zh": "查询专属集群内的主机信息",
   "kebab_example": "aliyun rds describe-dedicated-hosts --biz-region-id cn-hangzhou --dedicated-host-group-id dhg-7a9xxxxxxxx --order-id 102565235 --host-type dhg_cloud_ssd --host-status 1 --allocation-status 1 --zone-id cn-hangzhou-i --dedicated-host-id ch-t4nn100ddxxxxxxxx --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "cn-hangzhou",
-      "help_en": "The region ID. You can call the DescribeRegions operation to query the most recent region list",
+      "help_en": "The region ID. You can call the DescribeRegions operation to query the region ID",
       "help_zh": "地域ID。可以通过接口DescribeRegions查看地域ID",
       "location": "query",
       "name": "region_id",
@@ -61,7 +62,7 @@
     },
     {
       "example": "dhg_cloud_ssd",
-      "help_en": "The storage type of the host. Valid values:\n\ndhg_cloud_ssd: enhanced SSD (ESSD)\ndhg_local_ssd: local SSD",
+      "help_en": "The storage type of the host. Valid values:\ndhg_cloud_ssd: ESSD cloud disk.\ndhg_local_ssd: local standard SSD",
       "help_zh": "主机存储类型。取值：\ndhg_cloud_ssd：ESSD云盘。\ndhg_local_ssd：SSD本地盘",
       "location": "query",
       "name": "host_type",
@@ -74,7 +75,7 @@
     },
     {
       "example": "1",
-      "help_en": "The status of the host. Valid values:\n\n0: creating\n1: running\n2: faulty\n3: being replaced\n4: deprecated\n5: deleting\n6: restarting",
+      "help_en": "The host status. Valid values:\n0: being created\n1: running\n2: down\n3: offline (host being replaced)\n4: offline\n5: deleted\n6: restarting",
       "help_zh": "主机状态。取值：\n0：创建中\n1：使用中\n2：宕机\n3：宕机下线（替换主机中）\n4：下线\n5：删除\n6：重启中",
       "location": "query",
       "name": "host_status",
@@ -87,7 +88,7 @@
     },
     {
       "example": "1",
-      "help_en": "Specifies whether instances can be deployed on the host. Valid values:\n\n0: Instances cannot be deployed on the host.\n1: Instances can be deployed on the host",
+      "help_en": "Specifies whether the host allows instance allocation. Valid values:\n0: Instance allocation is not allowed.\n1: Instance allocation is allowed",
       "help_zh": "主机当前是否允许分配实例。取值：\n0：不允许分配。\n1：允许分配",
       "location": "query",
       "name": "allocation_status",
@@ -113,7 +114,7 @@
     },
     {
       "example": "ch-t4nn100ddxxxxxxxx",
-      "help_en": "The ID of the host in the dedicated cluster",
+      "help_en": "The host ID in the dedicated cluster",
       "help_zh": "专属集群主机ID",
       "location": "query",
       "name": "dedicated_host_id",
@@ -131,176 +132,208 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DedicatedHostGroupId": {
-            "backendName": "data.dedicatedHostGroupId",
             "description_en": "The host group ID",
             "description_zh": "主机组ID",
             "example": "dhg-7a9xxxxxxxx",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "DedicatedHosts": {
-            "backendName": "data.dedicatedHosts",
-            "itemName": "DedicatedHosts",
-            "items": {
-              "properties": {
-                "AccountName": {
-                  "backendName": "userAccount",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DedicatedHosts": {
+                "description_en": "The host information list",
+                "description_zh": "主机信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AccountName": {
+                      "description_en": "The account of the dedicated cluster host. You can call the [CreateDedicatedHostAccount]（https://help.aliyun.com/document_detail/196877.html） operation to create an account",
+                      "description_zh": "专属集群主机账号。可通过[CreateDedicatedHostAccount]（https://help.aliyun.com/document_detail/196877.html）创建",
+                      "example": "test123",
+                      "type": "string"
+                    },
+                    "AllocationStatus": {
+                      "description_en": "Indicates whether the host allows instance allocation. Valid values:\n0: Instance allocation is not allowed.\n1: Instance allocation is allowed",
+                      "description_zh": "主机当前是否允许分配实例。返回值：\n0：不允许分配\n1：允许分配",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "BastionInstanceId": {
+                      "description_en": "The bastion host ID",
+                      "description_zh": "堡垒机ID",
+                      "example": "bastionhost-cn-m7xxxxxxxx",
+                      "type": "string"
+                    },
+                    "CPUAllocationRatio": {
+                      "description_en": "The CPU overcommit ratio of the dedicated cluster. Unit: %. For more information about the overcommit ratio, see [Cluster management]（https://help.aliyun.com/document_detail/182328.html）",
+                      "description_zh": "当前专属集群的CPU超配比。单位：%。关于超配比的更多信息，请参见[管理集群]（https://help.aliyun.com/document_detail/182328.html）",
+                      "example": "200",
+                      "type": "string"
+                    },
+                    "CpuUsed": {
+                      "description_en": "The number of CPU cores used on the host. Unit: cores",
+                      "description_zh": "主机CPU已使用核数。单位：个",
+                      "example": "4",
+                      "type": "string"
+                    },
+                    "CreatedTime": {
+                      "description_en": "The time when the host was created",
+                      "description_zh": "主机创建时间",
+                      "example": "2021-03-25 17:29:06.0",
+                      "type": "string"
+                    },
+                    "DedicatedHostGroupId": {
+                      "description_en": "The dedicated cluster ID",
+                      "description_zh": "专属集群ID",
+                      "example": "dhg-7a9xxxxxxxx",
+                      "type": "string"
+                    },
+                    "DedicatedHostId": {
+                      "description_en": "The host ID",
+                      "description_zh": "主机ID",
+                      "example": "i-bpxxxxxxx",
+                      "type": "string"
+                    },
+                    "DiskAllocationRatio": {
+                      "description_en": "The disk space overcommit ratio of the dedicated cluster. Unit: %. For more information about the overcommit ratio, see [Cluster management]（https://help.aliyun.com/document_detail/182328.html）",
+                      "description_zh": "当前专属集群的磁盘空间超配比。单位：%。关于超配比的更多信息，请参见[管理集群]（https://help.aliyun.com/document_detail/182328.html）",
+                      "example": "200",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The expiration time of the host",
+                      "description_zh": "主机到期时间",
+                      "example": "2021-04-25T16:00:00Z",
+                      "type": "string"
+                    },
+                    "Engine": {
+                      "description_en": "The database engine of the instance",
+                      "description_zh": "实例的数据库引擎",
+                      "example": "mysql",
+                      "type": "string"
+                    },
+                    "HostCPU": {
+                      "description_en": "The total number of CPU cores on the host. Unit: cores",
+                      "description_zh": "主机CPU总核数。单位：个",
+                      "example": "8",
+                      "type": "string"
+                    },
+                    "HostClass": {
+                      "description_en": "The host specification",
+                      "description_zh": "主机规格",
+                      "example": "ecs.i2.16xlarge",
+                      "type": "string"
+                    },
+                    "HostMem": {
+                      "description_en": "The total memory of the host. Unit: MB",
+                      "description_zh": "主机内存总量。单位：MB",
+                      "example": "32238",
+                      "type": "string"
+                    },
+                    "HostName": {
+                      "description_en": "The host name",
+                      "description_zh": "主机名称",
+                      "example": "testHost1",
+                      "type": "string"
+                    },
+                    "HostStatus": {
+                      "description_en": "The host status. Valid values:\n0: being created\n1: running\n2: down\n3: offline (host being replaced)\n4: offline\n5: deleted\n6: restarting",
+                      "description_zh": "主机状态。返回值：\n0：创建中\n1：使用中\n2：宕机\n3：宕机下线（替换主机中）\n4：下线\n5：删除\n6：重启中",
+                      "example": "1",
+                      "type": "string"
+                    },
+                    "HostStorage": {
+                      "description_en": "The storage capacity of the host. Unit: MB",
+                      "description_zh": "主机存储容量。单位：MB",
+                      "example": "2097152",
+                      "type": "string"
+                    },
+                    "HostType": {
+                      "description_en": "The storage type of the host. Valid values:\ndhg_cloud_ssd: ESSD cloud disk.\ndhg_local_ssd: local standard SSD",
+                      "description_zh": "主机存储类型。返回值：\ndhg_cloud_ssd：ESSD云盘。\ndhg_local_ssd：SSD本地盘",
+                      "example": "dhg_cloud_ssd",
+                      "type": "string"
+                    },
+                    "IPAddress": {
+                      "description_en": "The internal IP address of the host",
+                      "description_zh": "主机内网IP地址",
+                      "example": "192.xx.xx.xx",
+                      "type": "string"
+                    },
+                    "ImageCategory": {
+                      "description_en": "The host image. This parameter is returned only when the Engine parameter is set to mssql. Valid values:\nWindowsWithMssqlStdLicense: Windows with SQL Server Standard Edition license.\nWindowsWithMssqlEntLisence: Windows with SQL Server Enterprise Edition license.\nWindowsWithMssqlWebLisence: Windows with SQL Server Web Edition license",
+                      "description_zh": "主机镜像。仅在Engine参数为mssql时返回。返回值：\nWindowsWithMssqlStdLicense：Windows（含SQL Server标准版License）。\nWindowsWithMssqlEntLisence：Windows（含SQL Server企业版License）。\nWindowsWithMssqlWebLisence：Windows（含SQL ServerWeb版License）",
+                      "example": "WindowsWithMssqlStdLicense",
+                      "type": "string"
+                    },
+                    "InstanceNumber": {
+                      "description_en": "The total number of instances on the host",
+                      "description_zh": "主机上的实例总数",
+                      "example": "4",
+                      "type": "string"
+                    },
+                    "MemAllocationRatio": {
+                      "description_en": "The maximum memory usage of each host in the host group",
+                      "description_zh": "主机组中每台主机的内存最大使用率",
+                      "example": "90",
+                      "type": "string"
+                    },
+                    "MemoryUsed": {
+                      "description_en": "The amount of memory used. Unit: MB",
+                      "description_zh": "已使用内存。单位：MB",
+                      "example": "16384",
+                      "type": "string"
+                    },
+                    "OpenPermission": {
+                      "description_en": "The OS permission status of the host. Valid values:\n0 or null: Cannot be enabled.\n1: Can be enabled.\n3: Enabled",
+                      "description_zh": "主机OS权限开放状态。返回值：\n0或者null：不可开放。\n1：可开放。\n3：已开放",
+                      "example": "3",
+                      "type": "string"
+                    },
+                    "StorageUsed": {
+                      "description_en": "The amount of storage used",
+                      "description_zh": "已使用存储空间",
+                      "example": "0",
+                      "type": "string"
+                    },
+                    "VPCId": {
+                      "description_en": "The virtual private cloud (VPC) ID of the host",
+                      "description_zh": "主机所属专有网络VPC ID",
+                      "example": "vpc-bpxxxxxxx",
+                      "type": "string"
+                    },
+                    "VSwitchId": {
+                      "description_en": "The vSwitch ID of the host",
+                      "description_zh": "主机所属虚拟交换机ID",
+                      "example": "vsw-bpxxxxxxx",
+                      "type": "string"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID of the host",
+                      "description_zh": "主机所在可用区ID",
+                      "example": "cn-hangzhou-i",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "AllocationStatus": {
-                  "backendName": "allocationStatus",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "BastionInstanceId": {
-                  "backendName": "bastionInstanceId",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CPUAllocationRatio": {
-                  "backendName": "cpuAllocationRatio",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CpuUsed": {
-                  "backendName": "cpuUsed",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CreatedTime": {
-                  "backendName": "createdTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DedicatedHostGroupId": {
-                  "backendName": "dedicatedHostGroupId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DedicatedHostId": {
-                  "backendName": "dedicatedHostId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DiskAllocationRatio": {
-                  "backendName": "diskAllocationRatio",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "EndTime": {
-                  "backendName": "endTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Engine": {
-                  "backendName": "engine",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostCPU": {
-                  "backendName": "hostCPU",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostClass": {
-                  "backendName": "hostClass",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostMem": {
-                  "backendName": "hostMem",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostName": {
-                  "backendName": "hostName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostStatus": {
-                  "backendName": "hostStatus",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostStorage": {
-                  "backendName": "hostStorage",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "HostType": {
-                  "backendName": "hostType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "IPAddress": {
-                  "backendName": "ipAddress",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ImageCategory": {
-                  "backendName": "imageCategory",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "InstanceNumber": {
-                  "backendName": "instanceNumber",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "MemAllocationRatio": {
-                  "backendName": "memAllocationRatio",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "MemoryUsed": {
-                  "backendName": "memoryUsed",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "OpenPermission": {
-                  "backendName": "openPermission",
-                  "nullToEmpty": false,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StorageUsed": {
-                  "backendName": "storageUsed",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VPCId": {
-                  "backendName": "vpcId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VSwitchId": {
-                  "backendName": "vswitchId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ZoneId": {
-                  "backendName": "zoneId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "C860658E-68A6-46C1-AF6E-3AE7C4D3CACF",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

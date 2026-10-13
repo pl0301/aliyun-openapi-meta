@@ -1,0 +1,431 @@
+{
+  "camel_example": "aliyun ossutil api get-bucket-lifecycle --bucket examplebucket --region cn-hangzhou",
+  "cmd_full_name": "oss get-bucket-lifecycle",
+  "cmd_name": "get-bucket-lifecycle",
+  "components": {
+    "schemas": {
+      "LifecycleConfiguration": {
+        "description_en": "The container for lifecycle configurations. A maximum of 1,000 rules can be configured",
+        "description_zh": "Lifecycle配置的容器，最多可容纳1000条规则",
+        "properties": {
+          "Rule": {
+            "description_en": "The container for a lifecycle rule. The expiration time of an object must be later than the time when the object is transitioned to the Infrequent Access or Archive storage class",
+            "description_zh": "生命周期规则的容器。Object设置过期时间必须大于转储为IA或者Archive存储类型的时间",
+            "items": {
+              "$ref": "#/components/schemas/LifecycleRule",
+              "description_en": "The container for a lifecycle rule. The expiration time of an object must be later than the time when the object is transitioned to the Infrequent Access or Archive storage class",
+              "description_zh": "生命周期规则的容器。Object设置过期时间必须大于转储为IA或者Archive存储类型的时间"
+            },
+            "title": "description",
+            "type": "array"
+          }
+        },
+        "title": "A short description of struct",
+        "type": "object"
+      },
+      "LifecycleRule": {
+        "description_en": "The container for lifecycle rules.\nArchive buckets do not support creating transition rules.\nThe expiration time of an object must be greater than the time to transition the object to the Infrequent Access or Archive storage class",
+        "description_zh": "生命周期规则的容器。\n不支持Archive Bucket创建转储规则。\nObject设置过期时间必须大于转储为IA或者Archive存储类型的时间",
+        "properties": {
+          "AbortMultipartUpload": {
+            "description_en": "The expiration attributes of incomplete multipart uploads",
+            "description_zh": "指定未完成分片上传的过期属性",
+            "properties": {
+              "CreatedBeforeDate": {
+                "description_en": "The date based on which OSS executes the lifecycle rule. OSS executes the lifecycle rule on objects that were last updated before this date. The date must conform to the ISO 8601 standard and be expressed in UTC. The time must be midnight UTC",
+                "description_zh": "指定一个日期，OSS会对最后更新时间早于该日期的数据执行生命周期规则。日期必须服从ISO8601的格式，且要求是UTC的零点",
+                "example": "2002-10-11T00:00:00.000Z",
+                "format": "iso8601",
+                "title": "指定一个日期，OSS会对最后更新时间早于该日期的数据执行生命周期规则。日期格式为yyyy-MM-ddT00:00:00.000Z。  日期需要按照ISO8601标准表示并使用UTC时间，且必须为UTC的零点。",
+                "type": "string"
+              },
+              "Days": {
+                "description_en": "The number of days after the last update to an object before the lifecycle rule takes effect",
+                "description_zh": "指定生命周期规则在距离Object最后更新多少天后生效",
+                "example": "1",
+                "format": "int32",
+                "title": "指定生命周期规则在距离Object最后更新多少天后生效。  当请求中存在IsAccessTime参数且IsAccessTime取值为true时，此参数表示生命周期规则在距离Object最后访问多少天后生效。",
+                "type": "integer"
+              }
+            },
+            "title": "指定未完成分片上传的过期属性。",
+            "type": "object"
+          },
+          "AtimeBase": {
+            "description_en": "The timestamp when access tracking was enabled for the bucket",
+            "description_zh": "存储空间开启访问追踪的时间戳",
+            "example": "1626158525",
+            "format": "int64",
+            "title": "存储空间开启访问追踪的时间戳",
+            "type": "integer"
+          },
+          "Expiration": {
+            "description_en": "The expiration attributes of the object lifecycle rule. For a versioning-enabled bucket, the specified expiration attributes apply only to the current version of the object.\n<br>The expiration time of an object must be greater than the time to transition the object to the Infrequent Access or Archive storage class",
+            "description_zh": "指定Object生命周期规则的过期属性。 对于受版本控制的Bucket，指定的过期属性只对Object的当前版本生效。\n<br>Object的过期时间必须大于转储为IA或Archive类型的时间",
+            "properties": {
+              "CreatedBeforeDate": {
+                "description_en": "The date based on which OSS executes the lifecycle rule. OSS executes the lifecycle rule on objects that were last updated before this date. The date must be in yyyy-MM-ddT00:00:00.000Z format.\n<br>The date must conform to the ISO 8601 standard and be expressed in UTC. The time must be midnight UTC",
+                "description_zh": "指定一个日期，OSS会对最后更新时间早于该日期的数据执行生命周期规则。日期格式为yyyy-MM-ddT00:00:00.000Z。\n<br>日期需要按照ISO8601标准表示并使用UTC时间，且必须为UTC的零点",
+                "example": "2002-10-11T00:00:00.000Z",
+                "format": "iso8601",
+                "title": "指定一个日期，OSS会对最后更新时间早于该日期的数据执行生命周期规则。日期格式为yyyy-MM-ddT00:00:00.000Z。  日期需要按照ISO8601标准表示并使用UTC时间，且必须为UTC的零点。",
+                "type": "string"
+              },
+              "Days": {
+                "description_en": "The number of days after the last update to an object before the lifecycle rule takes effect",
+                "description_zh": "指定生命周期规则在距离Object最后更新多少天后生效",
+                "example": "1",
+                "format": "int32",
+                "title": "指定生命周期规则在距离Object最后更新多少天后生效。  当请求中存在IsAccessTime参数且IsAccessTime取值为true时，此参数表示生命周期规则在距离Object最后访问多少天后生效。",
+                "type": "integer"
+              },
+              "ExpiredObjectDeleteMarker": {
+                "description_en": "Specifies whether to automatically remove expired delete markers.\n\ntrue: Expired delete markers are automatically removed. When this parameter is set to true, you cannot specify Days or CreatedBeforeDate.\n\nfalse: Expired delete markers are not automatically removed. When this parameter is set to false, you must specify Days or CreatedBeforeDate",
+                "description_zh": "指定是否自动移除过期删除标记。\n\ntrue：表示自动移除过期删除标记。取值为true时，不支持指定Days或CreatedBeforeDate。\n\nfalse：表示不会自动移除过期删除标记。取值为false时，则必须指定Days或CreatedBeforeDate",
+                "enumValueTitles": {
+                  "false": "false",
+                  "true": "true"
+                },
+                "example": "true",
+                "title": "指定是否自动移除过期删除标记。取值如下：  true：表示自动移除过期删除标记。当取值为true时，不支持指定Days或CreatedBeforeDate。  false：表示不会自动移除过期删除标记。当取值为false时，必须指定Days或CreatedBeforeDate。",
+                "type": "boolean"
+              }
+            },
+            "title": "指定Object的过期属性。 对于已开启版本控制的Bucket，指定的过期时间只对Object当前版本生效。  Object的过期时间必须大于转储为IA或Archive类型的时间。",
+            "type": "object"
+          },
+          "Filter": {
+            "description_en": "The exclusion conditions of the rule",
+            "description_zh": "本条规则的排除条件",
+            "properties": {
+              "Not": {
+                "description_en": "The condition that causes the rule to be skipped",
+                "description_zh": "满足何种规则跳过",
+                "items": {
+                  "extendType": "true",
+                  "properties": {
+                    "Prefix": {
+                      "description_en": "本条排除规则所适用的Object前缀。不可为空。  如果Rule节点下配置了Prefix，则Not节点下的Prefix必须以Rule节点下的Prefix为前缀。例如，Rule节点下配置的Prefix为dir，则Not节点下的Prefix必须以dir开头，例如dir1、dir2等。  如果Not节点下未配置Tag，则Not节点下配置的Prefix不能和Rule节点下的Prefix相同",
+                      "description_zh": "本条排除规则所适用的Object前缀。不可为空。  如果Rule节点下配置了Prefix，则Not节点下的Prefix必须以Rule节点下的Prefix为前缀。例如，Rule节点下配置的Prefix为dir，则Not节点下的Prefix必须以dir开头，例如dir1、dir2等。  如果Not节点下未配置Tag，则Not节点下配置的Prefix不能和Rule节点下的Prefix相同",
+                      "example": "logs/keep/",
+                      "title": "本条排除规则所适用的Object前缀。不可为空。  如果Rule节点下配置了Prefix，则Not节点下的Prefix必须以Rule节点下的Prefix为前缀。例如，Rule节点下配置的Prefix为dir，则Not节点下的Prefix必须以dir开头，例如dir1、dir2等。  如果Not节点下未配置Tag，则Not节点下配置的Prefix不能和Rule节点下的Prefix相同。",
+                      "type": "string",
+                      "visibility": "Public"
+                    },
+                    "Tag": {
+                      "$ref": "#/components/schemas/Tag",
+                      "description_en": "本条排除规则所适用的Object标签，至多一个，可置空",
+                      "description_zh": "本条排除规则所适用的Object标签，至多一个，可置空",
+                      "title": "本条排除规则所适用的Object标签，至多一个，可置空。",
+                      "visibility": "Public"
+                    }
+                  },
+                  "type": "object",
+                  "visibility": "Public"
+                },
+                "properties": {
+                  "Prefix": {
+                    "description_en": "The object prefix to which the exclusion rule applies. This parameter cannot be empty. If a prefix is configured in the Rule element, the prefix in the Not element must start with the prefix in the Rule element. For example, if the prefix in the Rule element is dir, the prefix in the Not element must start with dir, such as dir1 or dir2. If no tag is configured in the Not element, the prefix in the Not element cannot be the same as the prefix in the Rule element",
+                    "description_zh": "本条排除规则所适用的Object前缀。不可为空。  如果Rule节点下配置了Prefix，则Not节点下的Prefix必须以Rule节点下的Prefix为前缀。例如，Rule节点下配置的Prefix为dir，则Not节点下的Prefix必须以dir开头，例如dir1、dir2等。  如果Not节点下未配置Tag，则Not节点下配置的Prefix不能和Rule节点下的Prefix相同",
+                    "example": "logs/keep/",
+                    "title": "本条排除规则所适用的Object前缀。不可为空。  如果Rule节点下配置了Prefix，则Not节点下的Prefix必须以Rule节点下的Prefix为前缀。例如，Rule节点下配置的Prefix为dir，则Not节点下的Prefix必须以dir开头，例如dir1、dir2等。  如果Not节点下未配置Tag，则Not节点下配置的Prefix不能和Rule节点下的Prefix相同。",
+                    "type": "string"
+                  },
+                  "Tag": {
+                    "$ref": "#/components/schemas/Tag",
+                    "description_en": "The object tag to which the exclusion rule applies. At most one tag is allowed and it can be left empty",
+                    "description_zh": "本条排除规则所适用的Object标签，至多一个，可置空",
+                    "title": "本条排除规则所适用的Object标签，至多一个，可置空。"
+                  }
+                },
+                "title": "如果Object满足该条件，则跳过本条规则的匹配。如果配置了Filter，则Filter下必须有且只有一个Not节点。",
+                "type": "object"
+              },
+              "ObjectSizeGreaterThan": {
+                "description_en": "The lifecycle rule applies only to objects whose size is greater than this value",
+                "description_zh": "本条生命周期规则只对文件大小大于该值的文件生效",
+                "example": "10240",
+                "format": "int64",
+                "title": "本条生命周期规则只对文件大小大于该值的文件生效",
+                "type": "integer"
+              },
+              "ObjectSizeLessThan": {
+                "description_en": "The lifecycle rule applies only to objects whose size is less than this value",
+                "description_zh": "本条生命周期规则只对文件大小小于该值的文件生效",
+                "example": "10240",
+                "format": "int64",
+                "title": "本条生命周期规则只对文件大小小于该值的文件生效",
+                "type": "integer"
+              }
+            },
+            "title": "本条排除规则的条件参数容器，至多一个，可置空。",
+            "type": "object"
+          },
+          "ID": {
+            "description_en": "The unique ID that identifies the rule. The ID can contain up to 255 bytes. If this parameter is not specified or is left empty, OSS automatically generates a unique ID",
+            "description_zh": "标识规则的唯一ID。最多由255个字节组成。如没有指定，或者该值为空时，OSS会自动生成一个唯一ID",
+            "example": "rule1",
+            "required": true,
+            "title": "标识规则的唯一ID，最多由255个字符组成。如果未指定或者指定该值为空时，OSS会自动生成一个唯一ID。",
+            "type": "string"
+          },
+          "NoncurrentVersionExpiration": {
+            "description_en": "The expiration attributes of the lifecycle rule for non-current versions of objects",
+            "description_zh": "指定Object非当前版本生命周期规则的过期属性",
+            "properties": {
+              "NoncurrentDays": {
+                "description_en": "The number of days after an object becomes a non-current version before the lifecycle rule takes effect",
+                "description_zh": "指定生命周期规则在Object成为非当前版本多少天后生效",
+                "example": "5",
+                "format": "int32",
+                "title": "指定生命周期规则在Object成为非当前版本多少天后生效。  当请求中存在IsAccessTime参数且IsAccessTime取值为true时，此参数表示生命周期规则在Object最后访问多少天后生效。",
+                "type": "integer"
+              }
+            },
+            "title": "非当前版本生命周期规则的过期属性",
+            "type": "object"
+          },
+          "NoncurrentVersionTransition": {
+            "description_en": "Specifies when OSS transitions non-current versions of the specified objects to the Infrequent Access or Archive storage class within the valid lifecycle rule.\nThe time to transition Standard objects to the Archive storage class must be greater than the time to transition them to the Infrequent Access storage class",
+            "description_zh": "在有效的生命周期规则中，OSS何时将指定Object的非当前版本转储为IA或者Archive存储类型 。\nStandard类型的Object转储为Archive类型的时间必须大于转储为IA类型的时间",
+            "items": {
+              "description_en": "Specifies when OSS transitions non-current versions of the specified objects to the Infrequent Access or Archive storage class within the valid lifecycle rule.\nThe time to transition Standard objects to the Archive storage class must be greater than the time to transition them to the Infrequent Access storage class",
+              "description_zh": "在有效的生命周期规则中，OSS何时将指定Object的非当前版本转储为IA或者Archive存储类型 。\nStandard类型的Object转储为Archive类型的时间必须大于转储为IA类型的时间",
+              "properties": {
+                "AllowSmallFile": {
+                  "description_en": "Specifies whether to transition objects smaller than 64 KB to the Infrequent Access, Archive, or Cold Archive storage class when lifecycle rules are configured based on the last access time. Valid values:\n\ntrue (default): All objects, including those smaller than 64 KB, are transitioned. Objects smaller than 64 KB are billed as 64 KB. Objects greater than or equal to 64 KB are billed based on their actual sizes. Setting this parameter to true may increase storage costs.\n\nfalse: Objects smaller than 64 KB are not transitioned",
+                  "description_zh": "基于最后一次访问时间设置生命周期规则时，指定是否将小于64 KB的Object转储为低频、归档、冷归档文件类型。取值如下：\n\ntrue（默认值）：转储包含小于64 KB在内的所有Object。当Object小于64 KB时，按照64 KB计算。当Object大于或等于64 KB时，按照实际大小计算。设置为true时，可能会增加存储费用。\n\nfalse：不转储小于64 KB的Object",
+                  "example": "true",
+                  "title": "基于最后一次访问时间设置生命周期规则时，指定是否将小于64 KB的Object转储为低频、归档、冷归档文件类型。取值如下：  true（默认值）：转储包含小于64 KB在内的所有Object。当Object小于64 KB时，按照64 KB计算。当Object大于或等于64 KB时，按照实际大小计算。设置为true时，可能会增加存储费用。  false：不转储小于64 KB的Object。",
+                  "type": "boolean"
+                },
+                "IsAccessTime": {
+                  "description_en": "Specifies whether to match the rule based on the last access time. Valid values:\n\ntrue: The last access time of the object is used to match the rule.\n\nfalse (default): The last modified time of the object is used to match the rule",
+                  "description_zh": "指定是否基于last access time匹配规则。取值如下：\n\ntrue：采用Object的last access time（最后一次访问时间）匹配规则。\n\nfalse（默认值）：采用Object的last modify time（最后一次修改时间）匹配规则",
+                  "example": "true",
+                  "title": "指定是否基于last access time匹配规则。取值如下：  true：采用Object的last access time（最后一次访问时间）匹配规则。  false（默认值）：采用Object的last modified time（最后一次修改时间）匹配规则。",
+                  "type": "boolean"
+                },
+                "NoncurrentDays": {
+                  "description_en": "The number of days after an object becomes a non-current version before the lifecycle rule takes effect",
+                  "description_zh": "指定生命周期规则在Object成为非当前版本多少天后生效",
+                  "example": "5",
+                  "format": "int32",
+                  "title": "指定生命周期规则在Object成为非当前版本多少天后生效。  当请求中存在IsAccessTime参数且IsAccessTime取值为true时，此参数表示生命周期规则在Object最后访问多少天后生效。",
+                  "type": "integer"
+                },
+                "ReturnToStdWhenVisit": {
+                  "description_en": "Specifies whether to transition an object back to the Standard storage class when the object is accessed after being transitioned to a non-Standard storage class. This parameter takes effect only when IsAccessTime is set to true. Valid values:\n\ntrue: The object is transitioned from a non-Standard storage class back to the Standard storage class.\n\nfalse (default): The object remains in the non-Standard storage class",
+                  "description_zh": "指定Object转为非标准存储后，再次访问时是否将Object转为标准存储。只有当IsAccessTime设置为true时才有效。取值如下：\n\ntrue：Object由非标准存储转为标准存储。\n\nfalse（默认值）：Object仍为非标准存储",
+                  "example": "true",
+                  "title": "指定Object转为非标准存储后，再次访问时是否将Object转为标准存储。只有当IsAccessTime设置为true时才有效。取值如下：  true：Object由非标准存储转为标准存储。  false（默认值）：Object仍为非标准存储。",
+                  "type": "boolean"
+                },
+                "StorageClass": {
+                  "$ref": "#/components/schemas/StorageClass",
+                  "description_en": "The storage class to which objects are transitioned.\n\nIA: Infrequent Access\nArchive: Archive\nColdArchive: Cold Archive\n\nObjects in an Infrequent Access bucket can be transitioned to the Archive or Cold Archive storage class, but cannot be transitioned to the Standard storage class",
+                  "description_zh": "指定Object转储的存储类型。\n\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\n\nIA Bucket中的Object可以转储为Archive或者ColdArchive存储类型，但不支持转储为Standard存储类型",
+                  "enumValueTitles": {},
+                  "title": "目标存储类型"
+                }
+              },
+              "type": "object"
+            },
+            "title": "非当前版本生命周期规则的转储属性",
+            "type": "array"
+          },
+          "Prefix": {
+            "description_en": "The prefix that the rule applies to. Duplicate prefixes are not supported.\nIf a prefix is specified, the rule applies only to objects in the bucket whose names contain the prefix.\nIf the prefix is left empty, the rule applies to all objects in the bucket",
+            "description_zh": "指定规则所适用的前缀（Prefix）。Prefix不可重复。\n若指定了Prefix，则表示此规则仅适用于Bucket中与Prefix匹配的Object。\n若Prefix置空，则表示此规则适用于Bucket中的所有Object",
+            "example": "tmp/",
+            "required": false,
+            "title": "指定规则所适用的前缀（Prefix）。不支持设置相同的Prefix。  如果指定了Prefix，则表示此规则仅适用于Bucket中与Prefix匹配的Object。  如果Prefix置空，则表示此规则适用于Bucket中的所有Object。",
+            "type": "string"
+          },
+          "Status": {
+            "description_en": "Specifies whether to enable the rule. Valid values:\nEnabled: The rule is enabled. OSS periodically executes the rule.\nDisabled: The rule is disabled. OSS ignores the rule",
+            "description_zh": "是否启用规则。取值范围如下：\nEnabled：表示启用规则，OSS会定期执行该规则。\nDisabled：表示不启用规则，OSS会忽略该规则",
+            "enumValueTitles": {
+              "Disabled": "Disabled",
+              "Enabled": "Enabled"
+            },
+            "example": "Enabled",
+            "required": true,
+            "title": "是否启用规则。取值如下：  Enabled：表示启用规则，OSS会定期执行该规则。  Disabled：表示不启用规则，OSS会忽略该规则。",
+            "type": "string"
+          },
+          "Tag": {
+            "description_en": "The object tagging to which the rule applies. You can configure multiple labels in Settings",
+            "description_zh": "指定规则所适用的对象标签，可设置多个",
+            "items": {
+              "$ref": "#/components/schemas/Tag",
+              "description_en": "The object tagging to which the rule applies. You can configure multiple labels in Settings",
+              "description_zh": "指定规则所适用的对象标签，可设置多个"
+            },
+            "title": "指定规则所适用的对象标签，可设置多个。",
+            "type": "array"
+          },
+          "Transition": {
+            "description_en": "Specifies when OSS transitions objects to the Infrequent Access, Archive, or Cold Archive storage class during the object lifecycle.\nIn a Standard bucket, Standard objects can be transitioned to the Infrequent Access, Archive, or Cold Archive storage class. The time to transition objects to the Archive storage class must be greater than the time to transition objects to the Infrequent Access storage class. For example, if Days is set to 30 for a Transition rule that transitions objects to Infrequent Access, Days for a Transition rule that transitions objects to Archive must be greater than 30.\n\nYou can specify only one of Days or CreatedBeforeDate",
+            "description_zh": "指定Object在有效生命周期中，OSS何时将Object转储为IA、Archive和ColdArchive存储类型 。\nStandard Bucket中的Standard Object可以转储为IA、Archive或ColdArchive存储类型，但转储Archive存储类型的时间必须比转储IA存储类型的时间长。例如Transition\nIA设置Days为30，Transition Archive设置Days必须大于30。\n\nDays或CreatedBeforeDate只能二选一",
+            "items": {
+              "description_en": "Specifies when OSS transitions objects to the Infrequent Access, Archive, or Cold Archive storage class during the object lifecycle.\nIn a Standard bucket, Standard objects can be transitioned to the Infrequent Access, Archive, or Cold Archive storage class. The time to transition objects to the Archive storage class must be greater than the time to transition objects to the Infrequent Access storage class. For example, if Days is set to 30 for a Transition rule that transitions objects to Infrequent Access, Days for a Transition rule that transitions objects to Archive must be greater than 30.\n\nYou can specify only one of Days or CreatedBeforeDate",
+              "description_zh": "指定Object在有效生命周期中，OSS何时将Object转储为IA、Archive和ColdArchive存储类型 。\nStandard Bucket中的Standard Object可以转储为IA、Archive或ColdArchive存储类型，但转储Archive存储类型的时间必须比转储IA存储类型的时间长。例如Transition\nIA设置Days为30，Transition Archive设置Days必须大于30。\n\nDays或CreatedBeforeDate只能二选一",
+              "properties": {
+                "AllowSmallFile": {
+                  "description_en": "Specifies whether to transition objects smaller than 64 KB to the Infrequent Access, Archive, or Cold Archive storage class when lifecycle rules are configured based on the last access time. Valid values:\n\ntrue (default): All objects, including those smaller than 64 KB, are transitioned. Objects smaller than 64 KB are billed as 64 KB. Objects greater than or equal to 64 KB are billed based on their actual sizes. Setting this parameter to true may increase storage costs.\n\nfalse: Objects smaller than 64 KB are not transitioned",
+                  "description_zh": "基于最后一次访问时间设置生命周期规则时，指定是否将小于64 KB的Object转储为低频、归档、冷归档文件类型。取值如下：\n\ntrue（默认值）：转储包含小于64 KB在内的所有Object。当Object小于64 KB时，按照64 KB计算。当Object大于或等于64 KB时，按照实际大小计算。设置为true时，可能会增加存储费用。\n\nfalse：不转储小于64 KB的Object",
+                  "example": "true",
+                  "title": "基于最后一次访问时间设置生命周期规则时，指定是否将小于64 KB的Object转储为低频、归档、冷归档文件类型。取值如下：  true（默认值）：转储包含小于64 KB在内的所有Object。当Object小于64 KB时，按照64 KB计算。当Object大于或等于64 KB时，按照实际大小计算。设置为true时，可能会增加存储费用。  false：不转储小于64 KB的Object。",
+                  "type": "boolean"
+                },
+                "CreatedBeforeDate": {
+                  "description_en": "The date based on which OSS executes the lifecycle rule. OSS executes the lifecycle rule on objects that were last updated before this date. The date must conform to the ISO 8601 standard and be expressed in UTC. The time must be midnight UTC",
+                  "description_zh": "指定一个日期，OSS会对最后更新时间早于该日期的数据执行生命周期规则。日期必须服从ISO8601的格式，且要求是UTC的零点",
+                  "example": "2002-10-11T00:00:00.000Z",
+                  "format": "iso8601",
+                  "title": "指定一个日期，OSS会对最后更新时间早于该日期的数据执行生命周期规则。日期格式为yyyy-MM-ddT00:00:00.000Z。  日期需要按照ISO8601标准表示并使用UTC时间，且必须为UTC的零点。",
+                  "type": "string"
+                },
+                "Days": {
+                  "description_en": "The number of days after the last update to an object before the lifecycle rule takes effect",
+                  "description_zh": "指定生命周期规则在距离Object最后更新多少天后生效",
+                  "example": "1",
+                  "format": "int32",
+                  "title": "指定生命周期规则在距离Object最后更新多少天后生效。  当请求中存在IsAccessTime参数且IsAccessTime取值为true时，此参数表示生命周期规则在距离Object最后访问多少天后生效。",
+                  "type": "integer"
+                },
+                "IsAccessTime": {
+                  "description_en": "Specifies whether to match the rule based on the last access time. Valid values:\n\ntrue: The last access time of the object is used to match the rule.\n\nfalse (default): The last modified time of the object is used to match the rule",
+                  "description_zh": "指定是否基于last access time匹配规则。取值如下：\n\ntrue：采用Object的last access time（最后一次访问时间）匹配规则。\n\nfalse（默认值）：采用Object的last modify time（最后一次修改时间）匹配规则",
+                  "example": "true",
+                  "title": "指定是否基于last access time匹配规则。取值如下：  true：采用Object的last access time（最后一次访问时间）匹配规则。  false（默认值）：采用Object的last modified time（最后一次修改时间）匹配规则。",
+                  "type": "boolean"
+                },
+                "ReturnToStdWhenVisit": {
+                  "description_en": "Specifies whether to transition an object back to the Standard storage class when the object is accessed after being transitioned to a non-Standard storage class. This parameter takes effect only when IsAccessTime is set to true. Valid values:\n\ntrue: The object is transitioned from a non-Standard storage class back to the Standard storage class.\n\nfalse (default): The object remains in the non-Standard storage class",
+                  "description_zh": "指定Object转为非标准存储后，再次访问时是否将Object转为标准存储。只有当IsAccessTime设置为true时才有效。取值如下：\n\ntrue：Object由非标准存储转为标准存储。\n\nfalse（默认值）：Object仍为非标准存储",
+                  "example": "true",
+                  "title": "指定Object转为非标准存储后，再次访问时是否将Object转为标准存储。只有当IsAccessTime设置为true时才有效。取值如下：  true：Object由非标准存储转为标准存储。  false（默认值）：Object仍为非标准存储。",
+                  "type": "boolean"
+                },
+                "StorageClass": {
+                  "$ref": "#/components/schemas/StorageClass",
+                  "description_en": "The storage class to which objects are transitioned.\n\nIA: Infrequent Access\nArchive: Archive\nColdArchive: Cold Archive\n\nObjects in an Infrequent Access bucket can be transitioned to the Archive or Cold Archive storage class, but cannot be transitioned to the Standard storage class",
+                  "description_zh": "指定Object转储的存储类型。\n\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\n\nIA Bucket中的Object可以转储为Archive或者ColdArchive存储类型，但不支持转储为Standard存储类型",
+                  "enumValueTitles": {},
+                  "title": "指定Object转储的存储类型。取值如下：  IA：低频访问  Archive：归档存储  ColdArchive：冷归档存储  DeepColdArchive：深度冷归档存储"
+                }
+              },
+              "type": "object"
+            },
+            "title": "指定Object在有效生命周期中，OSS何时转换Object的存储类型。  Standard Bucket中Standard Object可以转储为IA、Archive或ColdArchive存储类型，但转储Archive存储类型的时间必须比转储IA存储类型的时间长。例如Transition IA设置Days为30，Transition Archive设置Days必须大于30。",
+            "type": "array"
+          }
+        },
+        "title": "保存存储空间生命周期规则的容器",
+        "type": "object"
+      },
+      "StorageClass": {
+        "default": "Standard",
+        "description_en": "The storage class of the bucket. Valid values:\n\nStandard (default): Standard.\nIA: Infrequent Access.\nArchive: Archive.\nColdArchive: Cold Archive.\nDeepColdArchive: Deep Cold Archive",
+        "description_zh": "Bucket的存储类型。 取值范围如下：\n\nStandard（默认）：标准存储\nIA：低频访问\nArchive：归档存储\nColdArchive：冷归档存储\nDeepColdArchive：深度冷归档存储",
+        "enum": [
+          "Standard",
+          "IA",
+          "Archive",
+          "ColdArchive",
+          "DeepColdArchive"
+        ],
+        "enumValueTitles": {
+          "Archive": "Archive",
+          "ColdArchive": "ColdArchive",
+          "IA": "IA",
+          "Standard": "Standard"
+        },
+        "example": "Standard",
+        "title": "The storage class of a bucket.",
+        "type": "string"
+      },
+      "Tag": {
+        "description_en": "The container for the bucket tag",
+        "description_zh": "设置Bucket Tag的容器",
+        "properties": {
+          "Key": {
+            "description_en": "The key of the bucket tag.\n\nThe maximum length is 64 bytes.\nThe key cannot start with `http ://`, `https://`, or `Aliyun`.\nThe key must be UTF-8 encoded.\nThe key cannot be empty",
+            "description_zh": "指定Bucket Tag的Key。\n\n最大长度为64字节。\n不能以`http ://`、`https://`、`Aliyun`为前缀。\n必须为UTF-8编码。\n不能为空",
+            "example": "testb",
+            "required": true,
+            "title": "key",
+            "type": "string"
+          },
+          "Value": {
+            "description_en": "The value of the bucket tag.\nThe maximum length is 128 bytes.\nThe value must be UTF-8 encoded.\nThe value can be empty",
+            "description_zh": "指定Bucket Tag的Value。\n最大长度为128字节。\n必须为UTF-8编码。\n可以为空",
+            "example": "testv2",
+            "title": "value",
+            "type": "string"
+          }
+        },
+        "title": "标签键值对",
+        "type": "object"
+      }
+    }
+  },
+  "deprecated": false,
+  "description_en": "Queries the lifecycle rules of a bucket. Only the bucket owner has the permission to query the lifecycle rules of a bucket",
+  "description_zh": "查看存储空间（Bucket）的生命周期规则（Lifecycle）。只有Bucket的拥有者才有权限查看Bucket的生命周期规则",
+  "kebab_example": "",
+  "method": "GET",
+  "multi_version": false,
+  "name": "GetBucketLifecycle",
+  "operation": {
+    "action": "GetBucketLifecycle",
+    "api_style": "ROA",
+    "api_version": "2019-05-17",
+    "method": "GET",
+    "operation_type": "read",
+    "protocol": "HTTPS",
+    "system_operation_type": "get",
+    "url": "/?lifecycle"
+  },
+  "parameters": [
+    {
+      "example": "examplebucket",
+      "help_en": "The bucket name",
+      "help_zh": "Bucket名称",
+      "location": "host",
+      "name": "bucket",
+      "options": [
+        "--bucket"
+      ],
+      "raw_name": "bucket",
+      "required": true,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "/?lifecycle",
+  "product_code": "Oss",
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body",
+        "description_zh": "接口响应体",
+        "properties": {
+          "LifecycleConfiguration": {
+            "$ref": "#/components/schemas/LifecycleConfiguration",
+            "description_en": "The container that stores the lifecycle rules of the bucket",
+            "description_zh": "存储Bucket生命周期规则的容器",
+            "title_en": "",
+            "title_zh": "保存存储空间生命周期规则的容器"
+          }
+        },
+        "title_en": "",
+        "title_zh": "接口响应体",
+        "type": "object"
+      }
+    },
+    "5XX": {}
+  }
+}

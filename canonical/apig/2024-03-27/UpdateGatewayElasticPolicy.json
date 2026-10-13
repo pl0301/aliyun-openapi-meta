@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun apig POST /v1/gateways/gw-xxxx/elastic-policy --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"elasticPolicy\":{\"elasticEnabled\":true,\"loadWarningThreshold\":true,\"enableScaleTimePolicyList\":[{\"startTime\":\"09:00\",\"endTime\":\"18:00\"}],\"maxUnits\":10,\"elasticType\":\"CronHPA\",\"timePolicyList\":[{\"startTime\":\"00:00\",\"units\":4,\"endTime\":\"06:00\"}]}}'",
   "cmd_full_name": "apig update-gateway-elastic-policy",
   "cmd_name": "update-gateway-elastic-policy",
   "deprecated": false,
-  "description_en": "更新网关弹性策略",
+  "description_en": "Updates the elastic policy of a gateway",
   "description_zh": "更新网关弹性策略",
   "kebab_example": "aliyun apig update-gateway-elastic-policy --gateway-id gw-xxxx --elastic-policy '{\"elasticEnabled\":true,\"loadWarningThreshold\":true,\"enableScaleTimePolicyList\":[{\"startTime\":\"09:00\",\"endTime\":\"18:00\"}],\"maxUnits\":10,\"elasticType\":\"CronHPA\",\"timePolicyList\":[{\"startTime\":\"00:00\",\"units\":4,\"endTime\":\"06:00\"}]}' --region cn-hangzhou",
   "method": "POST",
@@ -27,7 +28,7 @@
   "parameters": [
     {
       "example": "gw-xxxx",
-      "help_en": "The gatewayId",
+      "help_en": "The gateway ID. This parameter is used for RAM authorization",
       "help_zh": "网关 ID（RAM 授权维度）",
       "location": "path",
       "name": "gateway_id",
@@ -42,7 +43,7 @@
       "fields": [
         {
           "example": "true",
-          "help_en": "The elasticEnabled",
+          "help_en": "Specifies whether to enable the elastic policy. A value of false indicates that the elastic policy is disabled. When the elastic policy is disabled, other fields are not validated and the system directly proceeds with the disabling process",
           "help_zh": "是否开启弹性；false 表示关闭（关闭场景其余字段不校验，直接走关闭流程）",
           "name": "elastic_enabled",
           "options": [
@@ -54,7 +55,7 @@
         },
         {
           "example": "CronHPA",
-          "help_en": "The elasticType",
+          "help_en": "The policy type",
           "help_zh": "策略类型",
           "name": "elastic_type",
           "options": [
@@ -68,20 +69,20 @@
           "element": {
             "fields": [
               {
-                "example": "18:00",
-                "help_en": "The endTime",
-                "help_zh": "运维结束时间（HH:mm）",
-                "name": "end_time",
+                "example": "4",
+                "help_en": "The number of replicas",
+                "help_zh": "副本数",
+                "name": "units",
                 "options": [
-                  "--end-time"
+                  "--units"
                 ],
-                "raw_name": "endTime",
+                "raw_name": "units",
                 "required": false,
-                "type": "string"
+                "type": "int"
               },
               {
-                "example": "09:00",
-                "help_en": "The startTime",
+                "example": "00:00",
+                "help_en": "The O&M start time in the HH:mm format",
                 "help_zh": "运维开始时间（HH:mm）",
                 "name": "start_time",
                 "options": [
@@ -90,35 +91,35 @@
                 "raw_name": "startTime",
                 "required": false,
                 "type": "string"
+              },
+              {
+                "example": "06:00",
+                "help_en": "The O&M end time in the HH:mm format",
+                "help_zh": "运维结束时间（HH:mm）",
+                "name": "end_time",
+                "options": [
+                  "--end-time"
+                ],
+                "raw_name": "endTime",
+                "required": false,
+                "type": "string"
               }
             ],
             "type": "object"
           },
-          "help_en": "The enableScaleTimePolicyList",
-          "help_zh": "AutoHPA 允许扩容时间段（startTime/endTime）",
-          "name": "enable_scale_time_policy_list",
+          "help_en": "The list of scheduled policies",
+          "help_zh": "定时策略列表",
+          "name": "time_policy_list",
           "options": [
-            "--enable-scale-time-policy-list"
+            "--time-policy-list"
           ],
-          "raw_name": "enableScaleTimePolicyList",
+          "raw_name": "timePolicyList",
           "required": false,
           "type": "array"
         },
         {
-          "example": "true",
-          "help_en": "The loadWarningThreshold",
-          "help_zh": "AutoHPA 负载告警阈值开关",
-          "name": "load_warning_threshold",
-          "options": [
-            "--load-warning-threshold"
-          ],
-          "raw_name": "loadWarningThreshold",
-          "required": false,
-          "type": "bool"
-        },
-        {
           "example": "10 ",
-          "help_en": "The maxUnits",
+          "help_en": "The maximum number of replicas. This parameter is required for AutoHPA",
           "help_zh": "最大副本数（AutoHPA 必填）",
           "name": "max_units",
           "options": [
@@ -129,23 +130,23 @@
           "type": "int"
         },
         {
+          "example": "true",
+          "help_en": "Specifies whether to enable the AutoHPA load alert threshold",
+          "help_zh": "AutoHPA 负载告警阈值开关",
+          "name": "load_warning_threshold",
+          "options": [
+            "--load-warning-threshold"
+          ],
+          "raw_name": "loadWarningThreshold",
+          "required": false,
+          "type": "bool"
+        },
+        {
           "element": {
             "fields": [
               {
-                "example": "06:00",
-                "help_en": "The endTime",
-                "help_zh": "运维结束时间（HH:mm）",
-                "name": "end_time",
-                "options": [
-                  "--end-time"
-                ],
-                "raw_name": "endTime",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "00:00",
-                "help_en": "The startTime",
+                "example": "09:00",
+                "help_en": "The O&M start time in the HH:mm format",
                 "help_zh": "运维开始时间（HH:mm）",
                 "name": "start_time",
                 "options": [
@@ -156,32 +157,32 @@
                 "type": "string"
               },
               {
-                "example": "4",
-                "help_en": "The units",
-                "help_zh": "副本数",
-                "name": "units",
+                "example": "18:00",
+                "help_en": "The O&M end time in the HH:mm format",
+                "help_zh": "运维结束时间（HH:mm）",
+                "name": "end_time",
                 "options": [
-                  "--units"
+                  "--end-time"
                 ],
-                "raw_name": "units",
+                "raw_name": "endTime",
                 "required": false,
-                "type": "int"
+                "type": "string"
               }
             ],
             "type": "object"
           },
-          "help_en": "The timePolicyList",
-          "help_zh": "定时策略列表",
-          "name": "time_policy_list",
+          "help_en": "The time periods during which AutoHPA is allowed to scale out, specified by startTime and endTime",
+          "help_zh": "AutoHPA 允许扩容时间段（startTime/endTime）",
+          "name": "enable_scale_time_policy_list",
           "options": [
-            "--time-policy-list"
+            "--enable-scale-time-policy-list"
           ],
-          "raw_name": "timePolicyList",
+          "raw_name": "enableScaleTimePolicyList",
           "required": false,
           "type": "array"
         }
       ],
-      "help_en": "The elasticPolicy",
+      "help_en": "The elastic policy object",
       "help_zh": "弹性策略对象",
       "location": "body",
       "name": "elastic_policy",
@@ -204,11 +205,13 @@
         "description_zh": "Schema of Response",
         "properties": {
           "code": {
+            "description_en": "The response code",
             "description_zh": "响应码",
             "example": "200",
             "type": "string"
           },
           "message": {
+            "description_en": "The response message",
             "description_zh": "响应消息",
             "example": "success",
             "type": "string"
@@ -217,12 +220,12 @@
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "5B540EB6-7CF6-5326-A312-E3D68446CE07",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }
@@ -230,6 +233,7 @@
   },
   "v1_body_parameters": [
     {
+      "help_en": "The request body",
       "help_zh": "请求Body",
       "name": "body",
       "param_style": "json",
@@ -240,6 +244,7 @@
   ],
   "v1_parameters": [
     {
+      "help_en": "The request body",
       "help_zh": "请求Body",
       "name": "body",
       "param_style": "json",
@@ -248,6 +253,7 @@
       "type": "string"
     },
     {
+      "help_en": "The gateway ID. This parameter is used for RAM authorization",
       "help_zh": "网关 ID（RAM 授权维度）",
       "name": "gatewayId",
       "position": "path",

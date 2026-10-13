@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 9000,
   "camel_example": "aliyun esa ListWafManagedRules --region cn-hangzhou --AttackType 11",
   "cmd_full_name": "esa list-waf-managed-rules",
   "cmd_name": "list-waf-managed-rules",
@@ -62,18 +63,6 @@
     {
       "fields": [
         {
-          "example": "monitor",
-          "help_en": "The unified action when ProtectionLevel is greater than 0. This parameter cannot be empty in this case.\n\nCommon valid values: monitor, deny, js, captcha. The actual available values depend on the instance quota",
-          "help_zh": "当 ProtectionLevel > 0 时的统一处置动作，此时不可为空。\n\n常用取值：monitor、deny、js、captcha 等，实际可用值取决于实例配额",
-          "name": "action",
-          "options": [
-            "--action"
-          ],
-          "raw_name": "Action",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "11",
           "help_en": "The attack type encoding. The value cannot be 0.\n\nExample values: 11 (SQL injection), 12 (XSS), 13 (code execute), 14 (CRLF), 15 (local file inclusion (LFI)), 16 (remote file inclusion (RFI)), 17 (WebShell), 22 (command injection), 26 (SSRF), 27 (path traversal), 28 (protocol violation), 31 (scanner behavior)",
           "help_zh": "攻击类型编码，不可为 0。\n\n取值示例：11（SQL 注入）、12（XSS）、13（代码执行）、14（CRLF）、15（本地文件包含）、16（远程文件包含）、17（WebShell）、22（命令注入）、26（SSRF）、27（路径穿越）、28（协议违规）、31（扫描器行为）等",
@@ -86,20 +75,32 @@
           "type": "int"
         },
         {
+          "example": "-1",
+          "help_en": "The protection level within the ruleset.\n\nValid values: -1 (custom mode, specify each rule through ManagedRules), 1 (loose), 2 (medium), 3 (strict), 4 (super strict).\n\nWhen the value is -1, ManagedRules cannot be empty. When the value is greater than 0, Action cannot be empty",
+          "help_zh": "规则集内的防护等级。\n\n取值：-1（自定义模式，通过 ManagedRules 逐条指定）、1（宽松）、2（中等）、3（严格）、4（超严格）。\n\n当值为 -1 时，ManagedRules 不能为空；当值 > 0 时，Action 不能为空",
+          "name": "protection_level",
+          "options": [
+            "--protection-level"
+          ],
+          "raw_name": "ProtectionLevel",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "monitor",
+          "help_en": "The unified action when ProtectionLevel is greater than 0. This parameter cannot be empty in this case.\n\nCommon valid values: monitor, deny, js, captcha. The actual available values depend on the instance quota",
+          "help_zh": "当 ProtectionLevel > 0 时的统一处置动作，此时不可为空。\n\n常用取值：monitor、deny、js、captcha 等，实际可用值取决于实例配额",
+          "name": "action",
+          "options": [
+            "--action"
+          ],
+          "raw_name": "Action",
+          "required": false,
+          "type": "string"
+        },
+        {
           "element": {
             "fields": [
-              {
-                "example": "js",
-                "help_en": "The action for a single rule. This parameter takes effect only in custom mode (ProtectionLevel = -1).\n\nCommon valid values: monitor, deny, js, captcha. The actual available values depend on the instance quota",
-                "help_zh": "单条规则的处置动作，仅在自定义模式（ProtectionLevel = -1）下生效。\n\n常用取值：monitor、deny、js、captcha 等，实际可用值取决于实例配额",
-                "name": "action",
-                "options": [
-                  "--action"
-                ],
-                "raw_name": "Action",
-                "required": false,
-                "type": "string"
-              },
               {
                 "example": "20611349",
                 "help_en": "The unique ID of a single managed rule",
@@ -123,6 +124,18 @@
                 "raw_name": "Status",
                 "required": false,
                 "type": "string"
+              },
+              {
+                "example": "js",
+                "help_en": "The action for a single rule. This parameter takes effect only in custom mode (ProtectionLevel = -1).\n\nCommon valid values: monitor, deny, js, captcha. The actual available values depend on the instance quota",
+                "help_zh": "单条规则的处置动作，仅在自定义模式（ProtectionLevel = -1）下生效。\n\n常用取值：monitor、deny、js、captcha 等，实际可用值取决于实例配额",
+                "name": "action",
+                "options": [
+                  "--action"
+                ],
+                "raw_name": "Action",
+                "required": false,
+                "type": "string"
               }
             ],
             "type": "object"
@@ -136,18 +149,6 @@
           "raw_name": "ManagedRules",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "-1",
-          "help_en": "The protection level within the ruleset.\n\nValid values: -1 (custom mode, specify each rule through ManagedRules), 1 (loose), 2 (medium), 3 (strict), 4 (super strict).\n\nWhen the value is -1, ManagedRules cannot be empty. When the value is greater than 0, Action cannot be empty",
-          "help_zh": "规则集内的防护等级。\n\n取值：-1（自定义模式，通过 ManagedRules 逐条指定）、1（宽松）、2（中等）、3（严格）、4（超严格）。\n\n当值为 -1 时，ManagedRules 不能为空；当值 > 0 时，Action 不能为空",
-          "name": "protection_level",
-          "options": [
-            "--protection-level"
-          ],
-          "raw_name": "ProtectionLevel",
-          "required": false,
-          "type": "int"
         }
       ],
       "help_en": "The managed ruleset configuration in JSON string format.\n\nContains the AttackType, ProtectionLevel, Action, and ManagedRules subfields. When ProtectionLevel is set to -1 (custom mode), specify the status and action for each rule through the ManagedRules array",
@@ -205,18 +206,6 @@
       "example": "{\\\"Status\\\":\\\"\\\",\\\"ProtectionLevels\\\":[2,1],\\\"Action\\\":\\\"\\\",\\\"IdNameLike\\\":\\\"\\\"}",
       "fields": [
         {
-          "example": "deny",
-          "help_en": "The action",
-          "help_zh": "动作",
-          "name": "action",
-          "options": [
-            "--action"
-          ],
-          "raw_name": "Action",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "example",
           "help_en": "Fuzzy match by rule ID or rule name",
           "help_zh": "模糊查询规则id或规则名称",
@@ -241,6 +230,18 @@
           "raw_name": "ProtectionLevels",
           "required": false,
           "type": "array"
+        },
+        {
+          "example": "deny",
+          "help_en": "The action",
+          "help_zh": "动作",
+          "name": "action",
+          "options": [
+            "--action"
+          ],
+          "raw_name": "Action",
+          "required": false,
+          "type": "string"
         },
         {
           "example": "on",
@@ -304,52 +305,45 @@
         "description_zh": "Schema of Response",
         "properties": {
           "PageNumber": {
-            "backendName": "data.content.pageNumber",
             "description_en": "The page number",
             "description_zh": "页面号码",
             "example": "1",
             "format": "int32",
-            "title_en": "页面号码",
+            "title_en": "",
             "title_zh": "页面号码",
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.content.pageSize",
             "description_en": "The page size",
             "description_zh": "页面大小",
             "example": "20",
             "format": "int32",
-            "title_en": "页面大小",
+            "title_en": "",
             "title_zh": "页面大小",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "36af3fcc-43d0-441c-86b1-428951dc8225",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "Rules": {
-            "backendName": "data.content.rules",
             "description_en": "The list of managed rules",
             "description_zh": "托管规则列表",
-            "itemName": "rule",
             "items": {
               "description_en": "The managed rule details",
               "description_zh": "托管规则详情",
               "properties": {
                 "Action": {
-                  "backendName": "action",
                   "description_en": "The protection action of the managed rule",
                   "description_zh": "托管规则防护动作",
                   "example": "deny",
                   "type": "string"
                 },
                 "Id": {
-                  "backendName": "id",
                   "description_en": "The managed rule ID",
                   "description_zh": "托管规则ID",
                   "example": "100001",
@@ -357,14 +351,12 @@
                   "type": "integer"
                 },
                 "Name": {
-                  "backendName": "name",
                   "description_en": "The managed rule name",
                   "description_zh": "托管规则名称",
                   "example": "SQL injection ",
                   "type": "string"
                 },
                 "ProtectionLevel": {
-                  "backendName": "protectionLevel",
                   "description_en": "The protection level of the managed rule",
                   "description_zh": "托管规则防护等级",
                   "example": "1",
@@ -372,7 +364,6 @@
                   "type": "integer"
                 },
                 "Status": {
-                  "backendName": "status",
                   "description_en": "The protection status of the managed rule",
                   "description_zh": "托管规则防护状态",
                   "example": "on",
@@ -384,17 +375,16 @@
             "type": "array"
           },
           "TotalCount": {
-            "backendName": "data.content.totalCount",
             "description_en": "The total number of rules after filtering",
             "description_zh": "过滤后总规则数",
             "example": "20",
             "format": "int64",
-            "title_en": "过滤后总规则数",
+            "title_en": "",
             "title_zh": "过滤后总规则数",
             "type": "integer"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

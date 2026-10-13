@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 60000,
   "camel_example": "aliyun dataanalysisgbi POST /gbi/runSqlGeneration --region cn-hangzhou --workspaceId 'llm-2v3934xtp49esw64' --header \"Content-Type=application/json\" --version 2024-08-23 --force",
   "cmd_full_name": "dataanalysisgbi run-sql-generation",
   "cmd_name": "run-sql-generation",
@@ -42,6 +43,25 @@
       "type": "string"
     },
     {
+      "enum": [
+        "STANDARD_TURBO",
+        "STANDARD_MIX",
+        "CUSTOMIZATION"
+      ],
+      "example": "STANDARD_MIX",
+      "help_en": "The version information specified for the current request. If empty, the default workspace version is used",
+      "help_zh": "当前请求指定使用的版本信息，不填时使用默认业务空间版本",
+      "location": "body",
+      "name": "specification_type",
+      "options": [
+        "--specification-type"
+      ],
+      "param_style": "json",
+      "raw_name": "specificationType",
+      "required": false,
+      "type": "string"
+    },
+    {
       "example": "请问销量前十的产品有哪些",
       "help_en": "The query entered by the user",
       "help_zh": "用户输入的query",
@@ -68,20 +88,6 @@
       "raw_name": "sessionId",
       "required": false,
       "type": "string"
-    },
-    {
-      "example": "STANDARD_MIX",
-      "help_en": "The version information specified for the current request. If empty, the default workspace version is used",
-      "help_zh": "当前请求指定使用的版本信息，不填时使用默认业务空间版本",
-      "location": "body",
-      "name": "specification_type",
-      "options": [
-        "--specification-type"
-      ],
-      "param_style": "json",
-      "raw_name": "specificationType",
-      "required": false,
-      "type": "string"
     }
   ],
   "pathPattern": "/gbi/runSqlGeneration",
@@ -94,60 +100,61 @@
         "description_zh": "SseEmitter",
         "properties": {
           "data": {
-            "backendName": "data",
             "description_en": "Return information",
             "description_zh": "返回信息",
             "properties": {
               "chat": {
-                "backendName": "chat",
+                "description_en": "",
+                "description_zh": "",
                 "properties": {
                   "text": {
-                    "backendName": "text",
+                    "description_en": "",
+                    "description_zh": "",
                     "type": "string"
                   }
                 },
                 "type": "object"
               },
               "errorMessage": {
-                "backendName": "errorMessage",
                 "description_en": "Error message",
                 "description_zh": "错误信息",
                 "example": "Access was denied, message: No such namespace namespaces/tech-scp-chain7.",
                 "type": "string"
               },
               "event": {
-                "backendName": "event",
                 "description_en": "Event type",
                 "description_zh": "事件类型",
+                "enumValueTitles": {
+                  "evidence": "所用到的辅助模型推理的信息",
+                  "rewrite": "改写事件",
+                  "selector": "选表事件",
+                  "sql": "生成sql的最终事件",
+                  "sql_part": "流式生成sql的中间事件"
+                },
                 "example": "sql",
                 "type": "string"
               },
               "evidence": {
-                "backendName": "evidence",
                 "description_en": "Information used for auxiliary model inference",
                 "description_zh": "所用到的辅助模型推理的信息",
                 "example": "今年是2024年",
                 "type": "string"
               },
               "requestId": {
-                "backendName": "requestId",
                 "description_en": "The ID of the current request",
                 "description_zh": "当前本次请求的id",
                 "example": "DA2578F7-88A5-5D6E-9305-33E724E97D60",
                 "type": "string"
               },
               "rewrite": {
-                "backendName": "rewrite",
                 "description_en": "The rewritten user input",
                 "description_zh": "改写后的用户输入",
                 "example": "查询全部关键字数据，并以饼图形式展示",
                 "type": "string"
               },
               "selector": {
-                "backendName": "selector",
                 "description_en": "List of specific table names retrieved",
                 "description_zh": "召回的具体的表的名字列表",
-                "itemName": "selector",
                 "items": {
                   "description_en": "The name of the specific table retrieved",
                   "description_zh": "召回的具体的表的名字",
@@ -157,21 +164,18 @@
                 "type": "array"
               },
               "sessionId": {
-                "backendName": "sessionId",
                 "description_en": "Conversation ID",
                 "description_zh": "对话ID",
                 "example": "f64c38dd-a235-4bb4-ae6c-79eaedcba699",
                 "type": "string"
               },
               "sql": {
-                "backendName": "sql",
                 "description_en": "The SQL statement generated for the current conversation",
                 "description_zh": "当前对话生成的SQL语句",
                 "example": "select p.product_id, p.product_name, sum(o.quantity) as total_sales from products p join orders o on p.product_id = o.product_id where o.order_date between '2022-10-22' and '2024-10-22' group by p.product_id, p.product_name having total_sales > 5",
                 "type": "string"
               },
               "sqlError": {
-                "backendName": "sqlError",
                 "description_en": "If the task execution fails, this field reports the reason for the failure",
                 "description_zh": "当任务执行失败时，此字段会报错导致任务失败的原因",
                 "example": "Can not issue data manipulation statements with executeQuery()",

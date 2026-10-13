@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun fc-open POST /2021-04-06/custom-domains --region cn-hangzhou --header \"X-Fc-Date=Wed,_11_May_2022_09:00:00_GMT\" --header \"X-Fc-Trace-Id=rid281s000000\" --header \"X-Fc-Account-Id=1880770869020000\" --header \"Content-Type=application/json\" --body '{\"protocol\":\"HTTP\",\"routeConfig\":{\"routes\":[{\"path\":\"/login\",\"functionName\":\"f1\",\"methods\":[\"GET\"],\"qualifier\":\"prod\",\"rewriteConfig\":{\"regexRules\":[{\"match\":\"^/js/_.00\",\"replacement\":\"/public/javascripts/_1\"}],\"wildcardRules\":[{\"match\":\"/api/0\",\"replacement\":\"/_1\"}],\"equalRules\":[{\"match\":\"/old\",\"replacement\":\"/new\"}]},\"serviceName\":\"s1\"}]},\"certConfig\":{\"privateKey\":\"example-string\",\"certName\":\"my-cert\",\"certificate\":\"example-string\"},\"domainName\":\"example.com\",\"tlsConfig\":{\"minVersion\":\"TLSv1.2\",\"cipherSuites\":[\"TLS_RSA_WITH_RC4_128_SHA\"],\"maxVersion\":\"TLSv1.3\"},\"wafConfig\":{\"enableWAF\":true}}'",
   "cmd_full_name": "fc-open create-custom-domain",
   "cmd_name": "create-custom-domain",
@@ -9,7 +10,6 @@
         "description_zh": "HTTPS证书配置",
         "properties": {
           "certName": {
-            "backendName": "certName",
             "description_en": "The name of the certificate. The name can be customized. ",
             "description_zh": "证书的名称。支持字母、数字、下划线（_）和短划线（-），不能以数字和短划线（-）开头。长度范围为1~128个字符",
             "example": "my-cert",
@@ -17,7 +17,6 @@
             "type": "string"
           },
           "certificate": {
-            "backendName": "certificate",
             "description_en": "The certificate. To configure a certificate chain, specify multiple certificates in sequence. ",
             "description_zh": "证书，如果是证书链，则需要依次填写多个证书",
             "example": "-----BEGIN CERTIFICATE----- xxxxx -----END CERTIFICATE-----",
@@ -25,11 +24,9 @@
             "type": "string"
           },
           "privateKey": {
-            "backendName": "privateKey",
             "description_en": "The private key. ",
             "description_zh": "私钥",
             "example": "-----BEGIN RSA PRIVATE KEY----- xxxxx -----END RSA PRIVATE KEY-----",
-            "sensitive": true,
             "title": "私钥",
             "type": "string"
           }
@@ -42,7 +39,6 @@
         "description_zh": "自定义域名单条路由规则",
         "properties": {
           "functionName": {
-            "backendName": "functionName",
             "description_en": "The name of the function that corresponds to the routing rule",
             "description_zh": "此条路由规则对应的函数名称",
             "example": "f1",
@@ -50,7 +46,6 @@
             "type": "string"
           },
           "methods": {
-            "backendName": "methods",
             "description_en": "The request methods supported by the routing rule",
             "description_zh": "此条路由规则支持的请求方法列表",
             "items": {
@@ -64,6 +59,15 @@
                 "DELETE",
                 "PATCH"
               ],
+              "enumValueTitles": {
+                "DELETE": "DELETE",
+                "GET": "GET",
+                "HEAD": "HEAD",
+                "OPTIONS": "OPTIONS",
+                "PATCH": "PATCH",
+                "POST": "POST",
+                "PUT": "PUT"
+              },
               "example": "GET",
               "type": "string"
             },
@@ -71,7 +75,6 @@
             "type": "array"
           },
           "path": {
-            "backendName": "path",
             "description_en": "The request path that corresponds to the routing rule",
             "description_zh": "此条路由规则对应的请求路径",
             "example": "/login",
@@ -79,7 +82,6 @@
             "type": "string"
           },
           "qualifier": {
-            "backendName": "qualifier",
             "description_en": "The version of the service to which the function that corresponds to the routing rule belongs. For more information, see [Overview]（https://help.aliyun.com/document_detail/96351.html）",
             "description_zh": "此条路由规则对应的函数所在服务的版本。更多信息，请参见[版本简介]（https://help.aliyun.com/document_detail/96351.html）",
             "example": "prod",
@@ -88,13 +90,11 @@
           },
           "rewriteConfig": {
             "$ref": "#/components/schemas/RewriteConfig",
-            "backendName": "rewriteConfig",
             "description_en": "The URI rewrite configuration",
             "description_zh": "URI重写配置",
             "title": "URI重写配置"
           },
           "serviceName": {
-            "backendName": "serviceName",
             "description_en": "The name of the service to which the function that corresponds to the routing rule belongs",
             "description_zh": "此条路由规则对应的函数所在服务的名称",
             "example": "s1",
@@ -110,13 +110,13 @@
         "description_zh": "URI重写配置",
         "properties": {
           "equalRules": {
-            "backendName": "equalRules",
             "description_en": "The exact match rules",
             "description_zh": "完全匹配规则",
             "items": {
+              "description_en": "",
+              "description_zh": "",
               "properties": {
                 "match": {
-                  "backendName": "match",
                   "description_en": "The matching rule",
                   "description_zh": "匹配规则",
                   "example": "/old",
@@ -124,7 +124,6 @@
                   "type": "string"
                 },
                 "replacement": {
-                  "backendName": "replacement",
                   "description_en": "The replacement rule",
                   "description_zh": "替换规则",
                   "example": "/new",
@@ -138,13 +137,13 @@
             "type": "array"
           },
           "regexRules": {
-            "backendName": "regexRules",
             "description_en": "The regex match rules",
             "description_zh": "正则匹配规则",
             "items": {
+              "description_en": "",
+              "description_zh": "",
               "properties": {
                 "match": {
-                  "backendName": "match",
                   "description_en": "The matching rule",
                   "description_zh": "匹配规则",
                   "example": "^/js/(.*?)$",
@@ -152,7 +151,6 @@
                   "type": "string"
                 },
                 "replacement": {
-                  "backendName": "replacement",
                   "description_en": "The replacement rule",
                   "description_zh": "替换规则",
                   "example": "/public/javascripts/$1",
@@ -166,13 +164,13 @@
             "type": "array"
           },
           "wildcardRules": {
-            "backendName": "wildcardRules",
             "description_en": "The wildcard match rules",
             "description_zh": "通配符匹配规则",
             "items": {
+              "description_en": "",
+              "description_zh": "",
               "properties": {
                 "match": {
-                  "backendName": "match",
                   "description_en": "The matching rule",
                   "description_zh": "匹配规则",
                   "example": "/api/*",
@@ -180,7 +178,6 @@
                   "type": "string"
                 },
                 "replacement": {
-                  "backendName": "replacement",
                   "description_en": "The replacement rule",
                   "description_zh": "替换规则",
                   "example": "/$1",
@@ -202,10 +199,8 @@
         "description_zh": "RouteConfig的具体信息",
         "properties": {
           "routes": {
-            "backendName": "routes",
             "description_en": "The routes, which specify the mappings between PATH and Function during access to a custom domain name",
             "description_zh": "路由表：自定义域名访问时的PATH到Function的映射列表",
-            "itemName": "route",
             "items": {
               "$ref": "#/components/schemas/PathConfig",
               "description_en": "The mapping between PATH and Function during access to a custom domain name",
@@ -223,7 +218,6 @@
         "description_zh": "TLS配置",
         "properties": {
           "cipherSuites": {
-            "backendName": "cipherSuites",
             "description_en": "The TLS cipher suites",
             "description_zh": "TLS加密套件列表",
             "items": {
@@ -237,17 +231,23 @@
             "type": "array"
           },
           "maxVersion": {
-            "backendName": "maxVersion",
             "description_en": "The maximum TLS version.\n\nValid values:\n\nTLSv1.3\nTLSv1.2",
             "description_zh": "TLS最大版本号",
+            "enumValueTitles": {
+              "TLSv1.2": "TLSv1.2",
+              "TLSv1.3": "TLSv1.3"
+            },
             "example": "TLSv1.3",
             "title": "TLS最大版本号",
             "type": "string"
           },
           "minVersion": {
-            "backendName": "minVersion",
             "description_en": "The minimum TLS version.\n\nValid values:\n\nTLSv1.3\nTLSv1.2",
             "description_zh": "TLS最小版本号",
+            "enumValueTitles": {
+              "TLSv1.2": "TLSv1.2",
+              "TLSv1.3": "TLSv1.3"
+            },
             "example": "TLSv1.2",
             "required": true,
             "title": "TLS最小版本号",
@@ -258,9 +258,10 @@
         "type": "object"
       },
       "WAFConfig": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "enableWAF": {
-            "backendName": "enableWAF",
             "description_en": "Specifies whether to enable Web Application Firewall (WAF)",
             "description_zh": "是否开启Web应用防火墙",
             "example": "true",
@@ -301,59 +302,8 @@
   },
   "parameters": [
     {
-      "fields": [
-        {
-          "example": "my-cert",
-          "help_en": "The name of the certificate. The name can be customized. ",
-          "help_zh": "证书的名称。支持字母、数字、下划线（_）和短划线（-），不能以数字和短划线（-）开头。长度范围为1~128个字符",
-          "name": "cert_name",
-          "options": [
-            "--cert-name"
-          ],
-          "raw_name": "certName",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "-----BEGIN CERTIFICATE----- xxxxx -----END CERTIFICATE-----",
-          "help_en": "The certificate. To configure a certificate chain, specify multiple certificates in sequence. ",
-          "help_zh": "证书，如果是证书链，则需要依次填写多个证书",
-          "name": "certificate",
-          "options": [
-            "--certificate"
-          ],
-          "raw_name": "certificate",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "-----BEGIN RSA PRIVATE KEY----- xxxxx -----END RSA PRIVATE KEY-----",
-          "help_en": "The private key. ",
-          "help_zh": "私钥",
-          "name": "private_key",
-          "options": [
-            "--private-key"
-          ],
-          "raw_name": "privateKey",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "help_en": "The HTTPS certificate information",
-      "help_zh": "HTTPS证书的信息",
-      "location": "body",
-      "name": "cert_config",
-      "options": [
-        "--cert-config"
-      ],
-      "param_style": "json",
-      "raw_name": "certConfig",
-      "required": false,
-      "type": "object"
-    },
-    {
       "example": "example.com",
-      "help_en": "The domain name. Specify a custom domain name that has been filed or has an access filing with Alibaba Cloud",
+      "help_en": "The domain name. Enter a custom domain name that has been filed or has an access filing with Alibaba Cloud",
       "help_zh": "域名。填写已在阿里云备案或接入备案的自定义域名名称",
       "location": "body",
       "name": "domain_name",
@@ -435,6 +385,18 @@
                 "type": "string"
               },
               {
+                "example": "s1",
+                "help_en": "The name of the service to which the function that corresponds to the routing rule belongs",
+                "help_zh": "此条路由规则对应的函数所在服务的名称",
+                "name": "service_name",
+                "options": [
+                  "--service-name"
+                ],
+                "raw_name": "serviceName",
+                "required": false,
+                "type": "string"
+              },
+              {
                 "fields": [
                   {
                     "element": {
@@ -480,46 +442,6 @@
                     "element": {
                       "fields": [
                         {
-                          "example": "^/js/(.*?)$",
-                          "help_en": "The matching rule",
-                          "help_zh": "匹配规则",
-                          "name": "match",
-                          "options": [
-                            "--match"
-                          ],
-                          "raw_name": "match",
-                          "required": false,
-                          "type": "string"
-                        },
-                        {
-                          "example": "/public/javascripts/$1",
-                          "help_en": "The replacement rule",
-                          "help_zh": "替换规则",
-                          "name": "replacement",
-                          "options": [
-                            "--replacement"
-                          ],
-                          "raw_name": "replacement",
-                          "required": false,
-                          "type": "string"
-                        }
-                      ],
-                      "type": "object"
-                    },
-                    "help_en": "The regex match rules",
-                    "help_zh": "正则匹配规则",
-                    "name": "regex_rules",
-                    "options": [
-                      "--regex-rules"
-                    ],
-                    "raw_name": "regexRules",
-                    "required": false,
-                    "type": "array"
-                  },
-                  {
-                    "element": {
-                      "fields": [
-                        {
                           "example": "/api/*",
                           "help_en": "The matching rule",
                           "help_zh": "匹配规则",
@@ -555,6 +477,46 @@
                     "raw_name": "wildcardRules",
                     "required": false,
                     "type": "array"
+                  },
+                  {
+                    "element": {
+                      "fields": [
+                        {
+                          "example": "^/js/(.*?)$",
+                          "help_en": "The matching rule",
+                          "help_zh": "匹配规则",
+                          "name": "match",
+                          "options": [
+                            "--match"
+                          ],
+                          "raw_name": "match",
+                          "required": false,
+                          "type": "string"
+                        },
+                        {
+                          "example": "/public/javascripts/$1",
+                          "help_en": "The replacement rule",
+                          "help_zh": "替换规则",
+                          "name": "replacement",
+                          "options": [
+                            "--replacement"
+                          ],
+                          "raw_name": "replacement",
+                          "required": false,
+                          "type": "string"
+                        }
+                      ],
+                      "type": "object"
+                    },
+                    "help_en": "The regex match rules",
+                    "help_zh": "正则匹配规则",
+                    "name": "regex_rules",
+                    "options": [
+                      "--regex-rules"
+                    ],
+                    "raw_name": "regexRules",
+                    "required": false,
+                    "type": "array"
                   }
                 ],
                 "help_en": "The URI rewrite configurations",
@@ -566,18 +528,6 @@
                 "raw_name": "rewriteConfig",
                 "required": false,
                 "type": "object"
-              },
-              {
-                "example": "s1",
-                "help_en": "The name of the service to which the function that corresponds to the routing rule belongs",
-                "help_zh": "此条路由规则对应的函数所在服务的名称",
-                "name": "service_name",
-                "options": [
-                  "--service-name"
-                ],
-                "raw_name": "serviceName",
-                "required": false,
-                "type": "string"
               }
             ],
             "type": "object"
@@ -608,6 +558,73 @@
     {
       "fields": [
         {
+          "example": "my-cert",
+          "help_en": "The name of the certificate. The name can be customized. ",
+          "help_zh": "证书的名称。支持字母、数字、下划线（_）和短划线（-），不能以数字和短划线（-）开头。长度范围为1~128个字符",
+          "name": "cert_name",
+          "options": [
+            "--cert-name"
+          ],
+          "raw_name": "certName",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "-----BEGIN CERTIFICATE----- xxxxx -----END CERTIFICATE-----",
+          "help_en": "The certificate. To configure a certificate chain, specify multiple certificates in sequence. ",
+          "help_zh": "证书，如果是证书链，则需要依次填写多个证书",
+          "name": "certificate",
+          "options": [
+            "--certificate"
+          ],
+          "raw_name": "certificate",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "-----BEGIN RSA PRIVATE KEY----- xxxxx -----END RSA PRIVATE KEY-----",
+          "help_en": "The private key. ",
+          "help_zh": "私钥",
+          "name": "private_key",
+          "options": [
+            "--private-key"
+          ],
+          "raw_name": "privateKey",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "help_en": "The HTTPS certificate information",
+      "help_zh": "HTTPS证书的信息",
+      "location": "body",
+      "name": "cert_config",
+      "options": [
+        "--cert-config"
+      ],
+      "param_style": "json",
+      "raw_name": "certConfig",
+      "required": false,
+      "type": "object"
+    },
+    {
+      "fields": [
+        {
+          "enum": [
+            "TLSv1.3",
+            "TLSv1.2"
+          ],
+          "example": "TLSv1.2",
+          "help_en": "The minimum TLS version.\n\nValid values:\n\nTLSv1.3\nTLSv1.2",
+          "help_zh": "TLS最小版本号",
+          "name": "min_version",
+          "options": [
+            "--min-version"
+          ],
+          "raw_name": "minVersion",
+          "required": true,
+          "type": "string"
+        },
+        {
           "element": {
             "type": "string"
           },
@@ -622,6 +639,10 @@
           "type": "array"
         },
         {
+          "enum": [
+            "TLSv1.3",
+            "TLSv1.2"
+          ],
           "example": "TLSv1.3",
           "help_en": "The maximum TLS version.\n\nValid values:\n\nTLSv1.3\nTLSv1.2",
           "help_zh": "TLS最大版本号",
@@ -631,18 +652,6 @@
           ],
           "raw_name": "maxVersion",
           "required": false,
-          "type": "string"
-        },
-        {
-          "example": "TLSv1.2",
-          "help_en": "The minimum TLS version.\n\nValid values:\n\nTLSv1.3\nTLSv1.2",
-          "help_zh": "TLS最小版本号",
-          "name": "min_version",
-          "options": [
-            "--min-version"
-          ],
-          "raw_name": "minVersion",
-          "required": true,
           "type": "string"
         }
       ],
@@ -687,7 +696,7 @@
     },
     {
       "example": "188077086902****",
-      "help_en": "The Alibaba Cloud account ID",
+      "help_en": "The ID of your Alibaba Cloud account",
       "help_zh": "您的阿里云账号（主账号）ID",
       "location": "header",
       "name": "x_fc_account_id",
@@ -735,7 +744,7 @@
         "description_zh": "返回数据",
         "properties": {
           "accountId": {
-            "description_en": "The Alibaba Cloud account ID",
+            "description_en": "The ID of your Alibaba Cloud account",
             "description_zh": "您的阿里云账号（主账号）ID",
             "example": "1986114****4305\t",
             "type": "string"
@@ -752,22 +761,22 @@
             "description_zh": "HTTPS证书的配置信息"
           },
           "createdTime": {
-            "description_en": "The time when the domain name was bound",
-            "description_zh": "域名绑定的时间",
-            "example": "2020-07-27T08:02:19Z\t",
+            "description_en": "The time when the domain name was bound. The format is YYYY-MM-DDTHH:mm:ssZ in UTC",
+            "description_zh": "域名绑定的时间。格式为 YYYY-MM-DDTHH:mm:ssZ，使用 UTC 时间",
+            "example": "2020-07-27T08:02:19Z",
             "type": "string"
           },
           "domainName": {
             "description_en": "The domain name",
             "description_zh": "域名",
             "example": "example.com\t",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "lastModifiedTime": {
-            "description_en": "The time when the domain name was last updated",
-            "description_zh": "域名上一次被更新的时间",
+            "description_en": "The time when the domain name was last updated. The format is YYYY-MM-DDTHH:mm:ssZ in UTC",
+            "description_zh": "域名上一次被更新的时间。格式为 YYYY-MM-DDTHH:mm:ssZ，使用 UTC 时间",
             "example": "2020-07-27T08:02:19Z",
             "type": "string"
           },
@@ -793,7 +802,7 @@
             "description_zh": "Web应用防火墙配置信息"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

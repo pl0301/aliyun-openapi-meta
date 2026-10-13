@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ehpc ApplyNodes --region cn-hangzhou --ClusterId 'ehpc-hz-FYUr320000' --ZoneInfos.1.ZoneId 'cn-hangzhou-b' --TargetCapacity 20 --ZoneInfos.1.VSwitchId 'vsw-bp1e47optm9g58zcu0000'",
   "cmd_full_name": "ehpc apply-nodes",
   "cmd_name": "apply-nodes",
@@ -377,18 +378,6 @@
       "element": {
         "fields": [
           {
-            "example": "ecs.n1.tiny",
-            "help_en": "The instance type of the compute node. The default value is the instance type that was specified when you created the cluster or the last time you added compute nodes.\n\nValid values of N: 1 to 10",
-            "help_zh": "待添加的节点规格，默认使用上次扩容或者创建集群时的计算节点规格。\n\nN的取值范围：1~10",
-            "name": "instance_type",
-            "options": [
-              "--instance-type"
-            ],
-            "raw_name": "InstanceType",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "0.034",
             "help_en": "The maximum hourly price that you can pay for the preemptible node. The value is a floating-point number that supports up to three decimal places.\n\nThe parameter takes effect only when ComputeSpotStrategy is set to SpotWithPriceLimit.\n\nValid values of N: 1 to 10",
             "help_zh": "您可以为该抢占式实例支付的每小时最高价格。取值是浮点数，最多支持3位小数。\n\n当参数ComputeSpotStrategy取值为SpotWithPriceLimit时才生效。\n\nN的取值范围：1~10",
@@ -409,6 +398,18 @@
               "--target-image-id"
             ],
             "raw_name": "TargetImageId",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "ecs.n1.tiny",
+            "help_en": "The instance type of the compute node. The default value is the instance type that was specified when you created the cluster or the last time you added compute nodes.\n\nValid values of N: 1 to 10",
+            "help_zh": "待添加的节点规格，默认使用上次扩容或者创建集群时的计算节点规格。\n\nN的取值范围：1~10",
+            "name": "instance_type",
+            "options": [
+              "--instance-type"
+            ],
+            "raw_name": "InstanceType",
             "required": false,
             "type": "string"
           }
@@ -504,54 +505,46 @@
       "schema": {
         "properties": {
           "Detail": {
-            "backendName": "Detail",
             "description_en": "The detailed result of the request",
             "description_zh": "API调用结果详情",
             "example": "Resources Application is satisfied. Creating...",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "InstanceIds": {
-            "backendName": "InstanceIds",
-            "itemName": "InstanceId",
-            "items": {
-              "backendName": "InstanceIds",
-              "nullToEmpty": true,
-              "type": "string",
-              "visibility": "Public"
+            "itemNode": true,
+            "properties": {
+              "InstanceId": {
+                "description_en": "The instance IDs.\n\nAddNodes is an asynchronous API operation. If a request succeeds, a response is immediately generated before ECS instances are created. Therefore, the value of this parameter is null. You can call the [ListNodes]（https://help.aliyun.com/document_detail/87161.html） operation to query the IDs of the ECS instances",
+                "description_zh": "实例ID。\n\n由于ApplyNodes是异步操作，请求成功就会立即返回结果，不会等待实例创建成功，因此InstanceIds内容为空。您可以通过[ListNodes]（https://help.aliyun.com/document_detail/87161.html）获取InstanceId",
+                "items": {
+                  "description_en": "The instance IDs.\n\nAddNodes is an asynchronous API operation. If a request succeeds, a response is immediately generated before ECS instances are created. Therefore, the value of the parameter is null. You can call the [ListNodes]（https://help.aliyun.com/document_detail/87161.html） operation to query the ID of the ECS instance",
+                  "description_zh": "实例ID。\n\n由于ApplyNodes是异步操作，请求成功就会立即返回结果，不会等待实例创建成功，因此InstanceIds内容为空。您可以通过[ListNodes]（https://help.aliyun.com/document_detail/87161.html）获取InstanceId",
+                  "example": "null",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "parseType": "null",
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The task ID",
             "description_zh": "任务ID",
             "example": "B745C159-3155-4B94-95D0-4B73D4D2****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "SatisfiedAmount": {
-            "backendName": "SatisfiedAmount",
             "description_en": "The number of the compute nodes that are created",
             "description_zh": "创建成功的计算节点数量",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "TaskId": {
-            "backendName": "TaskId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "B745C159-3155-4B94-95D0-4B73D4D2****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

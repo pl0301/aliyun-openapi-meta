@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun vs BatchResumeVsStream --region cn-hangzhou --DomainName 'example.com' --Channel 'live/stream1' --LiveStreamType publisher --version 2018-12-12 --method POST --force",
   "cmd_full_name": "vs batch-resume-vs-stream",
   "cmd_name": "batch-resume-vs-stream",
   "deprecated": false,
-  "description_en": "Resumes stream ingest for one or more streams",
+  "description_en": "Resumes the push of a specific stream",
   "description_zh": "恢复某条流的推送",
   "kebab_example": "aliyun vs batch-resume-vs-stream --domain-name example.com --channel live/stream1 --live-stream-type publisher --region cn-hangzhou",
   "method": "GET|POST",
@@ -33,7 +34,7 @@
     },
     {
       "example": "live/stream1",
-      "help_en": "The name of the stream in the AppName/StreamName format. To specify multiple streams, separate the stream names with commas",
+      "help_en": "The stream name in the format of AppName/StreamName. Separate multiple stream names with commas (,)",
       "help_zh": "流名称，格式为AppName/StreamName, 多个用,隔开",
       "location": "query",
       "name": "channel",
@@ -49,7 +50,7 @@
         "publisher"
       ],
       "example": "publisher",
-      "help_en": "The type of live stream. Only publisher is supported, which indicates that the stream is ingested by a streamer",
+      "help_en": "Specifies whether the stream is pushed by the broadcaster or pulled by the client. Valid value: publisher (broadcaster push)",
       "help_zh": "用于指定主播推流还是客户端拉流, 目前支持“publisher”（主播推送）",
       "location": "query",
       "name": "live_stream_type",
@@ -64,8 +65,9 @@
       "enum": [
         "resume"
       ],
-      "help_en": "The ControlStreamAction",
-      "help_zh": "The ControlStreamAction",
+      "example": "resume",
+      "help_en": "The stream control operation. Set the value to resume to resume the stream push",
+      "help_zh": "控制流操作。固定取值为 resume，表示恢复推流",
       "location": "query",
       "name": "control_stream_action",
       "options": [
@@ -82,46 +84,72 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "该条任务请求ID",
             "example": "BEA5625F-8FCF-48F4-851B-CA63946DA664",
             "type": "string"
           },
           "ResumeResult": {
-            "backendName": "data.content.data",
-            "itemName": "ResumeResultInfo",
-            "items": {
-              "properties": {
-                "Channels": {
-                  "backendName": "Channel",
-                  "itemName": "Channel",
-                  "items": {
-                    "backendName": "Channel",
-                    "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "ResumeResultInfo": {
+                "description_en": "The task result of the recover node",
+                "description_zh": "恢复任务结果",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Channels": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Channel": {
+                          "description_en": "The list of streams in the format of AppName/StreamName",
+                          "description_zh": "流列表，格式为AppName/StreamName",
+                          "items": {
+                            "description_en": "The list of streams in the format of AppName/StreamName",
+                            "description_zh": "流列表，格式为AppName/StreamName",
+                            "example": "live/stream1",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Count": {
+                      "description_en": "The number of successful or failed streams",
+                      "description_zh": "成功或者失败的路数",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Detail": {
+                      "description_en": "The error cause. Valid values: ok and internal-error",
+                      "description_zh": "错误原因, 取值ok/internal-error,表示成功/内部错误",
+                      "example": "ok",
+                      "type": "string"
+                    },
+                    "Result": {
+                      "description_en": "The operation result. Valid values: success and fail",
+                      "description_zh": "操作结果，取值success/fail, 表示成功/失败",
+                      "example": "success",
+                      "type": "string"
+                    }
                   },
-                  "parseType": "null",
-                  "type": "array"
+                  "type": "object"
                 },
-                "Count": {
-                  "backendName": "Count",
-                  "format": "int32",
-                  "type": "integer"
-                },
-                "Detail": {
-                  "backendName": "Detail",
-                  "type": "string"
-                },
-                "Result": {
-                  "backendName": "Result",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

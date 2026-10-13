@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun r-kvstore DescribeParameterTemplates --region cn-hangzhou --EngineVersion '5.0' --CharacterType logic --Engine Redis",
   "cmd_full_name": "r-kvstore describe-parameter-templates",
   "cmd_name": "describe-parameter-templates",
   "deprecated": false,
-  "description_en": "Queries the parameter list and default values of an ApsaraDB for Tair (Redis® OSS-Compatible) database instance for different architectures and major engine versions",
+  "description_en": "Queries the parameters and default values of ApsaraDB Tair (Redis® OSS-Compatible) database instances across different architectures and major engine versions",
   "description_zh": "查询云数据库 Tair（兼容 Redis）实例在不同架构和大版本下的参数列表和默认值",
   "kebab_example": "aliyun r-kvstore describe-parameter-templates --character-type logic --engine Redis --engine-version 5.0 --region cn-hangzhou",
   "method": "GET|POST",
@@ -27,7 +28,7 @@
         "normal"
       ],
       "example": "logic",
-      "help_en": "The architecture of the instance. For more information, see https://help.aliyun.com/document_detail/86132.html. Valid values:\n\nlogic: cluster or read/write splitting architecture.\nnormal: standard architecture (primary/secondary).\n\n<props=\"china\">If EngineVersion is set to 6.0, this parameter does not support the value logic.</props>",
+      "help_en": "The architecture of the instance. For more information, see https://help.aliyun.com/document_detail/86132.html. Valid values:\nlogic: cluster or read/write splitting architecture\nnormal: standard architecture (primary/secondary)\n\n<props=\"china\">When EngineVersion is set to 6.0, this parameter does not support the logic value.</props>",
       "help_zh": "实例的架构，更多信息，请参见https://help.aliyun.com/document_detail/86132.html。取值：\nlogic：集群或读写分离架构。\nnormal：标准架构（主备）。\n\n<props=\"china\">当EngineVersion取值为6.0时，本参数不支持传入logic。</props>",
       "location": "query",
       "name": "character_type",
@@ -41,7 +42,7 @@
     {
       "doc_required": true,
       "example": "Redis",
-      "help_en": "The database type. Set the value to Redis",
+      "help_en": "The database engine. Set the value to Redis",
       "help_zh": "数据库类型，取值固定为Redis",
       "location": "query",
       "name": "engine",
@@ -68,7 +69,7 @@
     },
     {
       "example": "rg-acfmyiu4ekp****",
-      "help_en": "The resource group ID. You can invoke the https://help.aliyun.com/document_detail/158855.html operation to obtain the resource group ID.\nYou can also obtain the resource group ID in the console. Related operations, see https://help.aliyun.com/document_detail/151181.html",
+      "help_en": "The ID of the resource group. You can invoke the https://help.aliyun.com/document_detail/158855.html operation to query the ID of the resource group.\nYou can also obtain the resource group ID in the console. For related operations, see https://help.aliyun.com/document_detail/151181.html",
       "help_zh": "资源组ID。您可以通过调用https://help.aliyun.com/document_detail/158855.html接口获取资源组ID。\n您也可以通过控制台获取资源组ID，相关操作，请参见https://help.aliyun.com/document_detail/151181.html",
       "location": "query",
       "name": "resource_group_id",
@@ -81,7 +82,7 @@
     },
     {
       "example": "r-bp1zxszhcgatnx****",
-      "help_en": "The instance ID. You can call the https://help.aliyun.com/document_detail/473778.html operation to obtain the instance ID",
+      "help_en": "The ID of the instance. You can call the https://help.aliyun.com/document_detail/473778.html operation to query the instance ID",
       "help_zh": "实例ID，可调用https://help.aliyun.com/document_detail/473778.html获取",
       "location": "query",
       "name": "instance_id",
@@ -115,104 +116,88 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Engine": {
-            "backendName": "data.engine",
-            "description_en": "The database type. The return value is fixed as Redis",
+            "description_en": "The database engine. The value is always Redis",
             "description_zh": "数据库类型，返回值固定为Redis",
             "example": "redis",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "EngineVersion": {
-            "backendName": "data.engineVersion",
             "description_en": "The major engine version of the instance",
             "description_zh": "实例的大版本",
             "example": "5.0",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "ParameterCount": {
-            "backendName": "data.parameterNumbers",
             "description_en": "The number of parameters",
             "description_zh": "参数个数",
             "example": "24",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Parameters": {
-            "backendName": "data.parameters",
-            "itemName": "TemplateRecord",
-            "items": {
-              "properties": {
-                "CheckingCode": {
-                  "backendName": "checkingCode",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ForceModify": {
-                  "backendName": "revisable",
-                  "type": "boolean",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "true",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "false",
-                        "value": "0"
-                      }
-                    ]
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "TemplateRecord": {
+                "description_en": "The list of detailed parameter information",
+                "description_zh": "参数的详细信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CheckingCode": {
+                      "description_en": "The valid values of the parameter",
+                      "description_zh": "参数值的可选范围",
+                      "example": "[yes|no]",
+                      "type": "string"
+                    },
+                    "ForceModify": {
+                      "description_en": "Indicates whether the parameter can be modified. Valid values:\ntrue: The parameter can be modified.\nfalse: The parameter cannot be modified",
+                      "description_zh": "参数是否可修改，返回值：\ntrue：可修改。\nfalse：不可修改",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ForceRestart": {
+                      "description_en": "Indicates whether a restart is required for the parameter modification to take effect. Valid values:\ntrue: A restart is required for the modification to take effect.\nfalse: The modification takes effect immediately without a restart",
+                      "description_zh": "参数修改后，是否需要重启生效，返回值：\ntrue：需要重启生效。\nfalse：修改后立即生效，无需重启",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ParameterDescription": {
+                      "description_en": "The description of the parameter",
+                      "description_zh": "参数描述",
+                      "example": "开启aof持久化模式",
+                      "type": "string"
+                    },
+                    "ParameterName": {
+                      "description_en": "The name of the parameter. For more information about the purpose and settings of the parameter, see [metric description]（https://help.aliyun.com/document_detail/259681.html）",
+                      "description_zh": "参数名，更多关于参数作用的介绍和设置说明，请参见[参数说明]（https://help.aliyun.com/document_detail/259681.html）",
+                      "example": "appendonly",
+                      "type": "string"
+                    },
+                    "ParameterValue": {
+                      "description_en": "The default value of the parameter",
+                      "description_zh": "参数默认值",
+                      "example": "yes",
+                      "type": "string"
+                    }
                   },
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "ForceRestart": {
-                  "backendName": "effective",
-                  "type": "boolean",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "true",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "false",
-                        "value": "1"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "ParameterDescription": {
-                  "backendName": "parameterDescription",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ParameterName": {
-                  "backendName": "parameterName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ParameterValue": {
-                  "backendName": "parameterValue",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID",
+            "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "9DA28D8E-514D-4F12-ADED-70A9C818****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

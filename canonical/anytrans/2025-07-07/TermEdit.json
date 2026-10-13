@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 60000,
   "camel_example": "aliyun anytrans POST /anytrans/translate/intervene/edit --region cn-hangzhou --header \"Content-Type=application/x-www-form-urlencoded\" --body ext={terms=[{}],paramMap=bizUserld_:_123456_,_bizType_:session}&targetLanguage=zh&action=ADD&sourceLanguage=en&workspaceId=llm-kqtrcpdee4xm29xx&scene=mt-turbo --version 2025-07-07 --force",
   "cmd_full_name": "anytrans term-edit",
   "cmd_name": "term-edit",
@@ -36,6 +37,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ADD",
+        "DELETE",
+        "MODIFY"
+      ],
       "example": "ADD",
       "help_en": "The action type",
       "help_zh": "操作类型",
@@ -75,6 +81,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "mt-plus",
+        "mt-turbo"
+      ],
       "example": "mt-turbo",
       "help_en": "The model type",
       "help_zh": "模型类型",
@@ -90,32 +100,8 @@
     {
       "fields": [
         {
-          "example": "{\"bizUserld\":\"123456\",\"bizType\":session\"}",
-          "help_en": "The extended parameter configuration",
-          "help_zh": "扩展参数配置（bizUserld：业务层面的用户ID，用来区分不\n同业务用户，做到“按用户隔离”的术语干预，互不影响。\nbizType：业务场景类型/标识，用来区分不同场景，做到\n“按场景隔离”的术语干预，互不影响。）",
-          "name": "param_map",
-          "options": [
-            "--param-map"
-          ],
-          "raw_name": "paramMap",
-          "required": false,
-          "type": "any"
-        },
-        {
           "element": {
             "fields": [
-              {
-                "example": "大模型",
-                "help_en": "The source text",
-                "help_zh": "源文本",
-                "name": "src",
-                "options": [
-                  "--src"
-                ],
-                "raw_name": "src",
-                "required": true,
-                "type": "string"
-              },
               {
                 "example": "92669964",
                 "help_en": "The intervention term ID",
@@ -126,6 +112,18 @@
                 ],
                 "raw_name": "termId",
                 "required": false,
+                "type": "string"
+              },
+              {
+                "example": "大模型",
+                "help_en": "The source text",
+                "help_zh": "源文本",
+                "name": "src",
+                "options": [
+                  "--src"
+                ],
+                "raw_name": "src",
+                "required": true,
                 "type": "string"
               },
               {
@@ -152,6 +150,22 @@
           "raw_name": "terms",
           "required": true,
           "type": "array"
+        },
+        {
+          "enum": [
+            "bizType",
+            "bizUserId"
+          ],
+          "example": "{\"bizUserld\":\"123456\",\"bizType\":session\"}",
+          "help_en": "The extended parameter configuration",
+          "help_zh": "扩展参数配置（bizUserld：业务层面的用户ID，用来区分不\n同业务用户，做到“按用户隔离”的术语干预，互不影响。\nbizType：业务场景类型/标识，用来区分不同场景，做到\n“按场景隔离”的术语干预，互不影响。）",
+          "name": "param_map",
+          "options": [
+            "--param-map"
+          ],
+          "raw_name": "paramMap",
+          "required": false,
+          "type": "any"
         }
       ],
       "help_en": "The extended parameters",
@@ -177,19 +191,16 @@
         "description_zh": "Schema of Response",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The status code",
             "description_zh": "响应状态码",
             "example": "success",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
             "description_en": "The response data",
             "description_zh": "返回数据",
             "properties": {
               "failCount": {
-                "backendName": "failCount",
                 "description_en": "The number of items that failed to be processed",
                 "description_zh": "失败数量",
                 "example": "0",
@@ -197,30 +208,25 @@
                 "type": "integer"
               },
               "terms": {
-                "backendName": "terms",
                 "description_en": "An array of intervention term objects",
                 "description_zh": "干预术语列表",
-                "itemName": "terms",
                 "items": {
                   "description_en": "An intervention term",
                   "description_zh": "干预术语",
                   "properties": {
                     "src": {
-                      "backendName": "src",
                       "description_en": "The source text",
                       "description_zh": "源文本",
                       "example": "大模型",
                       "type": "string"
                     },
                     "termId": {
-                      "backendName": "termId",
                       "description_en": "The term ID",
                       "description_zh": "术语id",
                       "example": "92669964",
                       "type": "string"
                     },
                     "tgt": {
-                      "backendName": "tgt",
                       "description_en": "The target text",
                       "description_zh": "目标文本",
                       "example": "LLM",
@@ -235,31 +241,31 @@
             "type": "object"
           },
           "httpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "http状态码",
             "example": "200",
             "type": "string"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The message",
             "description_zh": "响应信息",
             "example": "success",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求id",
             "example": "1DCD50EC-D218-1844-9CD8-E97CAB9D31BE",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "default": "true",
             "description_en": "Indicates whether the API call is successful",
             "description_zh": "接口调用是否成功",
+            "enumValueTitles": {
+              "false": "否",
+              "ture": "是"
+            },
             "example": "true",
             "type": "boolean"
           }

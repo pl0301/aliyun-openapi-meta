@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun hbr BrowseFiles --region cn-hangzhou --Path ef600046a --PageSize 10 --NextToken 'eyJ000Q==' --StorageClass STANDARD --MaxResults 10 --Token 000 --VaultId 'v-000000jtz' --AbsolutePath '/data/' --SnapshotHash 971000e9d --Edition STANDARD --PageNumber 1 --ClientId 'c-000000o48' --RestoreId 'r-000000oy9'",
   "cmd_full_name": "hbr browse-files",
   "cmd_name": "browse-files",
@@ -180,6 +181,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "STANDARD",
+        "BASIC"
+      ],
       "example": "STANDARD",
       "help_en": "The Cloud Backup edition. Valid values:\n\nSTANDARD: Standard Edition. This is the default value.\n\nBASIC: Basic Edition. Only ECS file backup is supported in Basic Edition",
       "help_zh": "云备份功能版本，支持：\nSTANDARD: 标准版，默认值。\nBASIC：基础版。目前仅支持ECS文件备份基础版",
@@ -199,17 +204,16 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The HTTP status code. A value of 200 indicates that the request was successful",
             "description_zh": "返回码，200表示成功",
             "example": "200",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "MaxResults": {
-            "backendName": "maxResults",
             "description_en": "The maximum number of entries returned per page",
             "description_zh": "本次读取的最大数据记录数量",
             "example": "10",
@@ -217,104 +221,99 @@
             "type": "integer"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The response message. The value `successful` is returned if the request was successful. An error message is returned if the request failed",
             "description_zh": "返回信息描述，成功一般返回successful，错误时会返回相应错误信息",
             "example": "successful",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "NextToken": {
-            "backendName": "nextToken",
             "description_en": "The pagination token for the next page of results. An empty value indicates that no more pages are available",
             "description_zh": "下一页开始的Token，NextToken为空说明没有下一页",
             "example": "eyJ***Q==\n",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Nodes": {
-            "backendName": "nodes",
-            "itemName": "Node",
-            "items": {
-              "properties": {
-                "Name": {
-                  "backendName": "name",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Node": {
+                "description_en": "The file system objects",
+                "description_zh": "文件系统对象",
+                "items": {
+                  "description_en": "The properties of a file system object",
+                  "description_zh": "文件系统对象属性",
+                  "properties": {
+                    "Name": {
+                      "description_en": "The name of the file or directory",
+                      "description_zh": "文件或目录名",
+                      "example": "fileName",
+                      "type": "string"
+                    },
+                    "Size": {
+                      "description_en": "The file size, in bytes",
+                      "description_zh": "文件大小",
+                      "example": "58727654",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Subtree": {
+                      "description_en": "The hash value of the subdirectory. Use this value in the Path parameter to browse the contents of this subdirectory",
+                      "description_zh": "子目录的哈希值",
+                      "example": "ef6***46a",
+                      "type": "string"
+                    },
+                    "Type": {
+                      "description_en": "The object type",
+                      "description_zh": "对象类型",
+                      "enumValueTitles": {
+                        "dir": "目录",
+                        "file": "文件",
+                        "symlink": "符合链接"
+                      },
+                      "example": "file",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Size": {
-                  "backendName": "size",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Subtree": {
-                  "backendName": "subtree",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Type": {
-                  "backendName": "type",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "pageNumber",
             "description_en": "The page number. Pages start from 1. Default value: 1",
             "description_zh": "分页页码，从1开始，默认值为1",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "The number of entries per page. Valid values: 1 to 99. Default value: 10",
             "description_zh": "分页大小，最小值为1，最大值为99，默认值为10",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": true,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "843F7A45-8B***35-ECECBE5E5F78",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful.\n\ntrue: The request was successful.\n\nfalse: The request failed",
             "description_zh": "请求是否成功。\n\ntrue：成功\nfalse：失败",
             "example": "True",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           },
           "TotalCount": {
-            "backendName": "totalCount",
             "description_en": "The total number of entries returned",
             "description_zh": "记录总数",
             "example": "11",
             "format": "int32",
-            "nullToEmpty": true,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

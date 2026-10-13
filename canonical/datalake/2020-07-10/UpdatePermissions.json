@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun datalake PUT /api/metastore/auth/permissions/ --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"Type\":\"Hive\",\"DelegateAccesses\":[\"ALTER/SELECT/CREATE,_etc.\"],\"MetaResource\":{\"CatalogResource\":{\"CatalogId\":\"1344371\"},\"FunctionResource\":{\"FunctionName\":\"default\",\"DatabaseName\":\"default\"},\"ColumnResource\":{\"TableName\":\"test\",\"ColumnNames\":[\"name\"],\"DatabaseName\":\"default\"},\"TableResource\":{\"TableName\":\"test_parquet\",\"DatabaseName\":\"database_test\"},\"ResourceType\":\"TABLE\",\"DatabaseResource\":{\"DatabaseName\":\"default\",\"DatabaseWildcard\":\"0\"}},\"Accesses\":[\"ALTER/SELECT/CREATE,_etc.\"],\"CatalogId\":\"1344371\",\"Principal\":{\"PrincipalArn\":\"acs:ram::_AliyunAccountId_:user/username_abc\"}}' --version 2020-07-10 --force",
   "cmd_full_name": "datalake update-permissions",
   "cmd_name": "update-permissions",
@@ -31,53 +32,43 @@
   },
   "parameters": [
     {
-      "element": {
-        "type": "string"
-      },
-      "help_en": "The access permissions to grant",
-      "help_zh": "授权的访问权限列表",
+      "enum": [
+        "hive"
+      ],
+      "example": "Hive",
+      "help_en": "The authorization type. Only Hive is supported",
+      "help_zh": "授权的类型，目前仅支持Hive",
       "location": "body",
-      "name": "accesses",
+      "name": "type",
       "options": [
-        "--accesses"
+        "--type"
       ],
       "param_style": "json",
-      "raw_name": "Accesses",
+      "raw_name": "Type",
       "required": true,
-      "type": "array"
-    },
-    {
-      "example": "1344371",
-      "help_en": "The ID of the catalog",
-      "help_zh": "数据目录ID",
-      "location": "body",
-      "name": "catalog_id",
-      "options": [
-        "--catalog-id"
-      ],
-      "param_style": "json",
-      "raw_name": "CatalogId",
-      "required": false,
       "type": "string"
     },
     {
-      "element": {
-        "type": "string"
-      },
-      "help_en": "The grantable access permissions. This parameter is not available",
-      "help_zh": "可委托的访问权限列表（暂不支持）",
-      "location": "body",
-      "name": "delegate_accesses",
-      "options": [
-        "--delegate-accesses"
-      ],
-      "param_style": "json",
-      "raw_name": "DelegateAccesses",
-      "required": true,
-      "type": "array"
-    },
-    {
       "fields": [
+        {
+          "enum": [
+            "TABLE",
+            "DATABASE",
+            "COLUMN",
+            " CATALOG",
+            " FUNCTION"
+          ],
+          "example": "TABLE",
+          "help_en": "The object type of the metadata resource",
+          "help_zh": "元数据资源对象类型",
+          "name": "resource_type",
+          "options": [
+            "--resource-type"
+          ],
+          "raw_name": "ResourceType",
+          "required": false,
+          "type": "string"
+        },
         {
           "fields": [
             {
@@ -100,57 +91,6 @@
             "--catalog-resource"
           ],
           "raw_name": "CatalogResource",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "fields": [
-            {
-              "element": {
-                "type": "string"
-              },
-              "help_en": "The list of field names",
-              "help_zh": "字段名列表",
-              "name": "column_names",
-              "options": [
-                "--column-names"
-              ],
-              "raw_name": "ColumnNames",
-              "required": false,
-              "type": "array"
-            },
-            {
-              "example": "default",
-              "help_en": "The database name",
-              "help_zh": "数据库的名称",
-              "name": "database_name",
-              "options": [
-                "--database-name"
-              ],
-              "raw_name": "DatabaseName",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "example": "test",
-              "help_en": "The name of the metatable",
-              "help_zh": "表的名称",
-              "name": "table_name",
-              "options": [
-                "--table-name"
-              ],
-              "raw_name": "TableName",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "Authentication resource structure-Column",
-          "help_zh": "鉴权资源结构-Column",
-          "name": "column_resource",
-          "options": [
-            "--column-resource"
-          ],
-          "raw_name": "ColumnResource",
           "required": false,
           "type": "object"
         },
@@ -194,6 +134,43 @@
         {
           "fields": [
             {
+              "example": "database_test",
+              "help_en": "The database name",
+              "help_zh": "数据库的名称",
+              "name": "database_name",
+              "options": [
+                "--database-name"
+              ],
+              "raw_name": "DatabaseName",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "test_parquet",
+              "help_en": "The name of the queried table",
+              "help_zh": "表名称",
+              "name": "table_name",
+              "options": [
+                "--table-name"
+              ],
+              "raw_name": "TableName",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "help_en": "Authentication resource structure-Table",
+          "help_zh": "鉴权资源结构-Table",
+          "name": "table_resource",
+          "options": [
+            "--table-resource"
+          ],
+          "raw_name": "TableResource",
+          "required": false,
+          "type": "object"
+        },
+        {
+          "fields": [
+            {
               "example": "default",
               "help_en": "The name of the database",
               "help_zh": "数据库的名称",
@@ -229,21 +206,9 @@
           "type": "object"
         },
         {
-          "example": "TABLE",
-          "help_en": "The object type of the metadata resource",
-          "help_zh": "元数据资源对象类型",
-          "name": "resource_type",
-          "options": [
-            "--resource-type"
-          ],
-          "raw_name": "ResourceType",
-          "required": false,
-          "type": "string"
-        },
-        {
           "fields": [
             {
-              "example": "database_test",
+              "example": "default",
               "help_en": "The database name",
               "help_zh": "数据库的名称",
               "name": "database_name",
@@ -255,9 +220,9 @@
               "type": "string"
             },
             {
-              "example": "test_parquet",
-              "help_en": "The name of the queried table",
-              "help_zh": "表名称",
+              "example": "test",
+              "help_en": "The name of the metatable",
+              "help_zh": "表的名称",
               "name": "table_name",
               "options": [
                 "--table-name"
@@ -265,15 +230,29 @@
               "raw_name": "TableName",
               "required": false,
               "type": "string"
+            },
+            {
+              "element": {
+                "type": "string"
+              },
+              "help_en": "The list of field names",
+              "help_zh": "字段名列表",
+              "name": "column_names",
+              "options": [
+                "--column-names"
+              ],
+              "raw_name": "ColumnNames",
+              "required": false,
+              "type": "array"
             }
           ],
-          "help_en": "Authentication resource structure-Table",
-          "help_zh": "鉴权资源结构-Table",
-          "name": "table_resource",
+          "help_en": "Authentication resource structure-Column",
+          "help_zh": "鉴权资源结构-Column",
+          "name": "column_resource",
           "options": [
-            "--table-resource"
+            "--column-resource"
           ],
-          "raw_name": "TableResource",
+          "raw_name": "ColumnResource",
           "required": false,
           "type": "object"
         }
@@ -289,6 +268,38 @@
       "raw_name": "MetaResource",
       "required": true,
       "type": "object"
+    },
+    {
+      "element": {
+        "type": "string"
+      },
+      "help_en": "The access permissions to grant",
+      "help_zh": "授权的访问权限列表",
+      "location": "body",
+      "name": "accesses",
+      "options": [
+        "--accesses"
+      ],
+      "param_style": "json",
+      "raw_name": "Accesses",
+      "required": true,
+      "type": "array"
+    },
+    {
+      "element": {
+        "type": "string"
+      },
+      "help_en": "The grantable access permissions. This parameter is not available",
+      "help_zh": "可委托的访问权限列表（暂不支持）",
+      "location": "body",
+      "name": "delegate_accesses",
+      "options": [
+        "--delegate-accesses"
+      ],
+      "param_style": "json",
+      "raw_name": "DelegateAccesses",
+      "required": true,
+      "type": "array"
     },
     {
       "fields": [
@@ -318,20 +329,17 @@
       "type": "object"
     },
     {
-      "enum": [
-        "hive"
-      ],
-      "example": "Hive",
-      "help_en": "The authorization type. Only Hive is supported",
-      "help_zh": "授权的类型，目前仅支持Hive",
+      "example": "1344371",
+      "help_en": "The ID of the catalog",
+      "help_zh": "数据目录ID",
       "location": "body",
-      "name": "type",
+      "name": "catalog_id",
       "options": [
-        "--type"
+        "--catalog-id"
       ],
       "param_style": "json",
-      "raw_name": "Type",
-      "required": true,
+      "raw_name": "CatalogId",
+      "required": false,
       "type": "string"
     }
   ],
@@ -348,7 +356,7 @@
             "description_en": "The response code",
             "description_zh": "状态码描述",
             "example": "OK",
-            "title_en": "Response Code",
+            "title_en": "",
             "title_zh": "Response Code",
             "type": "string"
           },
@@ -356,7 +364,7 @@
             "description_en": "The returned message",
             "description_zh": "返回信息",
             "example": ".",
-            "title_en": "Message Code",
+            "title_en": "",
             "title_zh": "Message Code",
             "type": "string"
           },
@@ -364,7 +372,7 @@
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "B7F4B621-E41E-4C84-B97F-42B5380A32BB",
-            "title_en": "RequestId",
+            "title_en": "",
             "title_zh": "RequestId",
             "type": "string"
           },
@@ -372,12 +380,12 @@
             "description_en": "Indicates whether the call was successful. Valid values:\n\ntrue\n\nfalse",
             "description_zh": "是否调用成功。取值如下：\ntrue：调用成功。\nfalse：调用失败",
             "example": "true",
-            "title_en": "Success",
+            "title_en": "",
             "title_zh": "Success",
             "type": "boolean"
           }
         },
-        "title_en": "Response Object",
+        "title_en": "",
         "title_zh": "Response Object",
         "type": "object"
       }

@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun ens DescribeClusterNodes --region cn-hangzhou --PageSize 10 --ClusterId 'eck-xxxxxxxx' --PageNumber 1 --NodepoolId np751e9d5464cf4ef081087137f33e4528",
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun ens DescribeClusterNodes --region cn-hangzhou --ClusterId 'eck-xxxxxxxx'",
   "cmd_full_name": "ens describe-cluster-nodes",
   "cmd_name": "describe-cluster-nodes",
   "deprecated": false,
-  "description_en": "You can call the DescribeClusterNodes operation to query information about nodes that meet specified criteria",
+  "description_en": "Queries a list of nodes that meet specific conditions",
   "description_zh": "您可以调用DescribeClusterNodes接口，查询符合条件的节点列表信息",
-  "kebab_example": "aliyun ens describe-cluster-nodes --cluster-id eck-xxxxxxxx --nodepool-id np751e9d5464cf4ef081087137f33e4528 --page-number 1 --page-size 10 --region cn-hangzhou",
+  "kebab_example": "aliyun ens describe-cluster-nodes --cluster-id eck-xxxxxxxx --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": false,
   "name": "DescribeClusterNodes",
@@ -43,12 +44,12 @@
         "--nodepool-id"
       ],
       "raw_name": "NodepoolId",
-      "required": true,
+      "required": false,
       "type": "string"
     },
     {
       "example": "1",
-      "help_en": "The page number. The value starts from 1",
+      "help_en": "The page number. Pages start from 1",
       "help_zh": "分页页码（从1开始）",
       "location": "query",
       "minimum": "1",
@@ -57,7 +58,7 @@
         "--page-number"
       ],
       "raw_name": "PageNumber",
-      "required": true,
+      "required": false,
       "type": "int"
     },
     {
@@ -72,7 +73,7 @@
         "--page-size"
       ],
       "raw_name": "PageSize",
-      "required": true,
+      "required": false,
       "type": "int"
     }
   ],
@@ -82,51 +83,43 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The response schema",
+        "description_en": "Schema of Response",
         "description_zh": "Schema of Response",
         "properties": {
           "Nodes": {
-            "backendName": "data.nodes",
             "description_en": "The node information",
             "description_zh": "节点信息",
-            "itemName": "nodes",
             "items": {
               "description_en": "The node information",
               "description_zh": "节点信息",
               "properties": {
                 "ClusterId": {
-                  "backendName": "cluster_id",
                   "description_en": "The cluster ID",
                   "description_zh": "集群ID",
                   "example": "eck-xxxxxxxx",
                   "type": "string"
                 },
                 "EnsRegionId": {
-                  "backendName": "ens_region_id",
-                  "description_en": "The ENS node ID",
+                  "description_en": "The ENS edge zone ID",
                   "description_zh": "ENS节点ID",
                   "example": "cn-fuzhou-23",
                   "type": "string"
                 },
                 "ImageId": {
-                  "backendName": "image_id",
-                  "description_en": "The ID of the instance image",
+                  "description_en": "The instance image ID",
                   "description_zh": "实例镜像id",
                   "example": "m-680cki2ruj1q2bm0mz1k9tnbz",
                   "type": "string"
                 },
                 "InstanceId": {
-                  "backendName": "instance_id",
                   "description_en": "The instance ID",
                   "description_zh": "实例ID",
                   "example": "i-51mctytg7tv4yw4amu3oczxsx",
                   "type": "string"
                 },
                 "IpAddress": {
-                  "backendName": "ip_address",
                   "description_en": "The IP address of the ENS instance",
                   "description_zh": "ENS实例IP地址",
-                  "itemName": "ip_address",
                   "items": {
                     "description_en": "The IP address of the ENS instance",
                     "description_zh": "ENS实例IP地址",
@@ -135,23 +128,45 @@
                   },
                   "type": "array"
                 },
+                "NodeInfo": {
+                  "description_en": "The node information",
+                  "description_zh": "节点信息",
+                  "properties": {
+                    "ContainerRuntimeVersion": {
+                      "description_en": "The container runtime version",
+                      "description_zh": "容器运行时版本",
+                      "example": "containerd://1.6.28",
+                      "type": "string"
+                    },
+                    "KubeletVersion": {
+                      "description_en": "The kubelet version of the node",
+                      "description_zh": "节点kubelet版本",
+                      "example": "v1.30.7-aliyun.1",
+                      "type": "string"
+                    },
+                    "OsImage": {
+                      "description_en": "The operating system image of the node",
+                      "description_zh": "节点操作系统镜像",
+                      "example": "CentOS Linux 7 (Core)",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
                 "NodepoolId": {
-                  "backendName": "nodepool_id",
                   "description_en": "The node pool ID",
                   "description_zh": "节点池ID",
                   "example": "np861febb748f84f5f9f1c76819eff7f56",
                   "type": "string"
                 },
                 "PayType": {
-                  "backendName": "pay_type",
-                  "description_en": "The billing method. The value is PostPaid (pay-as-you-go)",
+                  "description_en": "The billing method. Valid values:\nPostPaid: pay-as-you-go",
                   "description_zh": "付费类型。取值：PostPaid（后付费）",
                   "example": "PrePaid",
                   "type": "string"
                 },
                 "State": {
-                  "backendName": "state",
-                  "description_en": "The status of the node pool.\n\ninitial: The node pool is being created.\n\nrunning: The node pool is created.\n\nremoving: The node pool is being removed",
+                  "description_en": "The status of the node pool. Valid values:\ninitial: The node pool is being created.\nrunning: The node pool is created.\nremoving: The node pool is being removed",
                   "description_zh": "节点池状态信息。\n\ninitial：创建中\nrunning：创建完成\nremoving：移除中",
                   "example": "initial",
                   "type": "string"
@@ -162,12 +177,10 @@
             "type": "array"
           },
           "Page": {
-            "backendName": "data.page",
-            "description_en": "The paging information",
+            "description_en": "The pagination information",
             "description_zh": "翻页信息",
             "properties": {
               "PageNumber": {
-                "backendName": "page_number",
                 "description_en": "The current page number",
                 "description_zh": "当前查询页码",
                 "example": "1",
@@ -175,15 +188,13 @@
                 "type": "integer"
               },
               "PageSize": {
-                "backendName": "page_size",
-                "description_en": "The number of entries on the current page",
+                "description_en": "The number of entries per page",
                 "description_zh": "当前查询每页的行数",
                 "example": "10",
                 "format": "int32",
                 "type": "integer"
               },
               "TotalCount": {
-                "backendName": "total_count",
                 "description_en": "The total number of entries",
                 "description_zh": "总数",
                 "example": "30",
@@ -194,14 +205,13 @@
             "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "CEF72CEB-54B6-4AE8-B225-F876FF7BA984",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

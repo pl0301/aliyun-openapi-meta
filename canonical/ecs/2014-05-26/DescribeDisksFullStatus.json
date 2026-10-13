@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 9000,
   "camel_example": "aliyun ecs DescribeDisksFullStatus --region cn-hangzhou --Status Available --EventTime.End '2018-05-08T02:48:52Z' --Tag.1.Key TestKey --PageSize 10 --ResourceGroupId 'rg-aek2kkmhmhs0000' --EventType Stalled --HealthStatus Warning --EventId.1 'e-bp67acfmxazb4p0000' --PageNumber 1 --EventTime.Start '2018-05-06T02:43:10Z' --Tag.1.Value TestValue --DiskId.1 'd-bp67acfmxazb4p0000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs describe-disks-full-status",
   "cmd_name": "describe-disks-full-status",
@@ -176,7 +177,7 @@
         "fields": [
           {
             "example": "TestKey",
-            "help_en": "The tag key attached to the block storage resource. N specifies that you can set one or more tag keys. The value of N in this parameter corresponds to the value of N in the `Tag.N.Value` parameter to form a key-value pair. Valid values of N: 1 to 20.\n\nIf you use a single tag to filter resources, the number of resources with the tag cannot exceed 1,000. If you use multiple tags to filter resources, the number of resources that are attached to all specified tags cannot exceed 1,000",
+            "help_en": "The tag key attached to the block storage resource. N specifies that you can set one or more tag keys. The value of N in this parameter corresponds to the value of N in the `Tag.N.Value` parameter to form a key-value pair. Valid values of N: 1 to 20.\n\nIf you use a single tag to filter resources, the resource count with that tag cannot exceed 1,000. If you use multiple tags to filter resources, the resource count of resources that are attached to all specified tags cannot exceed 1,000",
             "help_zh": "块存储资源绑定的标签键。N表示可以设置一个或多个标签键，且N的数值和`Tag.N.Value`参数中的N对应，构成键值对。N的取值范围：1~20。\n\n使用一个标签过滤资源，查询到该标签下的资源数量不能超过1000个；使用多个标签过滤资源，查询到同时绑定了多个标签的资源数量不能超过1000个",
             "name": "key",
             "options": [
@@ -220,105 +221,152 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DiskFullStatusSet": {
-            "backendName": "data.data",
-            "itemName": "DiskFullStatusType",
-            "items": {
-              "properties": {
-                "Device": {
-                  "backendName": "device",
-                  "type": "string"
-                },
-                "DiskEventSet": {
-                  "backendName": "diskEvents",
-                  "itemName": "DiskEventType",
-                  "items": {
-                    "properties": {
-                      "EventEndTime": {
-                        "backendName": "eventEndTimeStr",
-                        "type": "string"
-                      },
-                      "EventId": {
-                        "backendName": "eventId",
-                        "type": "string"
-                      },
-                      "EventTime": {
-                        "backendName": "eventTimeStr",
-                        "type": "string"
-                      },
-                      "EventType": {
-                        "backendName": "diskEventType",
-                        "properties": {
-                          "Code": {
-                            "backendName": "code",
-                            "format": "int32",
-                            "type": "integer"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DiskFullStatusType": {
+                "description_en": "The array of block storage full status entries",
+                "description_zh": "块存储全状态数组",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Device": {
+                      "description_en": "The device name of the block storage device attached to an instance, such as /dev/xvdb.\n\nThis parameter has a value only when the `Status` parameter is set to `In_use`. The value is empty for other statuses. \n\nThis parameter will be deprecated. To improve code compatibility, do not use this parameter",
+                      "description_zh": "块存储挂载于实例上的设备名，例如/dev/xvdb。\n\n该参数仅在`Status`参数值为`In_use`时有值，其他状态时为空。 \n\n该参数即将停止使用，为提高代码兼容性，建议您尽量不要使用该参数",
+                      "example": "null",
+                      "type": "string"
+                    },
+                    "DiskEventSet": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DiskEventType": {
+                          "description_en": "The array of block storage events",
+                          "description_zh": "块存储事件数组",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "EventEndTime": {
+                                "description_en": "The time when the event ended. The time is displayed in UTC in the ISO 8601 format",
+                                "description_zh": "事件结束时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2018-05-06T02:48:52Z",
+                                "type": "string"
+                              },
+                              "EventId": {
+                                "description_en": "The block storage event ID",
+                                "description_zh": "块存储事件ID",
+                                "example": "e-bp67acfmxazb4p****",
+                                "type": "string"
+                              },
+                              "EventTime": {
+                                "description_en": "The time when the event occurred. The time is displayed in UTC in the ISO 8601 format",
+                                "description_zh": "事件发生时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2018-05-08T02:43:10Z",
+                                "type": "string"
+                              },
+                              "EventType": {
+                                "description_en": "The event type",
+                                "description_zh": "事件类型",
+                                "properties": {
+                                  "Code": {
+                                    "description_en": "The event type code",
+                                    "description_zh": "事件类型代码",
+                                    "example": "7",
+                                    "format": "int32",
+                                    "type": "integer"
+                                  },
+                                  "Name": {
+                                    "description_en": "The event type name. Valid values:\nDegraded: The block storage performance is degraded.\nSeverelyDegraded: The block storage performance is severely degraded.\nStalled: The block storage performance is severely impacted.\nErrorDetected: A local disk is damaged",
+                                    "description_zh": "事件类型名称。可能值：\nDegraded：块存储性能降级。\nSeverelyDegraded：块存储性能严重降级。\nStalled：块存储性能受到严重影响。\nErrorDetected：本地盘出现损坏",
+                                    "example": "Stalled",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "ImpactLevel": {
+                                "description_en": "The impact level",
+                                "description_zh": "影响级别",
+                                "example": "100",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
                           },
-                          "Name": {
-                            "backendName": "name",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
+                          "type": "array"
+                        }
                       },
-                      "ImpactLevel": {
-                        "backendName": "impactLevel",
-                        "type": "string"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "DiskId": {
-                  "backendName": "diskId",
-                  "mappingResourcePropertyName": "$.DiskId",
-                  "type": "string"
-                },
-                "HealthStatus": {
-                  "backendName": "diskHealthStatus",
-                  "properties": {
-                    "Code": {
-                      "backendName": "code",
-                      "format": "int32",
-                      "type": "integer"
-                    },
-                    "Name": {
-                      "backendName": "name",
+                    "DiskId": {
+                      "description_en": "The block storage ID",
+                      "description_zh": "块存储ID",
+                      "example": "d-bp67acfmxazb4p****",
                       "type": "string"
+                    },
+                    "HealthStatus": {
+                      "description_en": "The health status of the block storage device",
+                      "description_zh": "块存储健康状态",
+                      "properties": {
+                        "Code": {
+                          "description_en": "The status code of the block storage health status",
+                          "description_zh": "块存储健康状态代码",
+                          "example": "128",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Name": {
+                          "description_en": "The name of the block storage health status",
+                          "description_zh": "块存储健康状态名称",
+                          "example": "Impaired",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "InstanceId": {
+                      "description_en": "The instance ID",
+                      "description_zh": "实例ID",
+                      "example": "i-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The lifecycle status of the block storage device",
+                      "description_zh": "块存储生命周期状态",
+                      "properties": {
+                        "Code": {
+                          "description_en": "The status code of the block storage lifecycle status",
+                          "description_zh": "块存储生命周期状态代码",
+                          "example": "129",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Name": {
+                          "description_en": "The name of the block storage lifecycle status",
+                          "description_zh": "块存储生命周期状态名称",
+                          "example": "Available",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "type": "object"
                 },
-                "InstanceId": {
-                  "backendName": "ecsInstanceId",
-                  "type": "string"
-                },
-                "Status": {
-                  "backendName": "diskLifeCycleStatus",
-                  "properties": {
-                    "Code": {
-                      "backendName": "code",
-                      "format": "int32",
-                      "type": "integer"
-                    },
-                    "Name": {
-                      "backendName": "name",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number",
             "description_zh": "列表页码",
             "example": "1",
@@ -326,7 +374,6 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页大小",
             "example": "10",
@@ -334,14 +381,12 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
             "description_en": "The total number of full status entries",
             "description_zh": "全状态总数",
             "example": "2",

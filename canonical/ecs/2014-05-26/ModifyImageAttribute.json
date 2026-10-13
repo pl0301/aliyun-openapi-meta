@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 5000,
   "camel_example": "aliyun ecs ModifyImageAttribute --region cn-hangzhou --ImageId 'm-bp18ygjuqnwhechc0000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs modify-image-attribute",
   "cmd_name": "modify-image-attribute",
@@ -86,6 +87,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "BIOS",
+        "UEFI",
+        "UEFI-Preferred"
+      ],
       "example": "BIOS",
       "help_en": "The boot mode of the image. Valid values:\nBIOS: Basic Input/Output System (BIOS) boot mode.\nUEFI: Unified Extensible Firmware Interface (UEFI) boot mode.\nUEFI-Preferred: dual boot mode.\n\n\n<notice>\n\n   To prevent instances from failing to start due to an unsupported boot mode, make sure that you understand the boot modes supported by the image before you modify this parameter. For more information about image boot modes, see [Image boot modes](~~2244655#b9caa9b8bb1wf~~).\n\n</notice>",
       "help_zh": "修改镜像的启动模式。取值范围：\nBIOS：BIOS启动模式。\nUEFI：UEFI启动模式。\nUEFI-Preferred：双启动模式。\n\n\n<notice>\n\n   为了避免使用镜像不支持的启动模式导致实例无法正常启动，请您务必在修改之前了解目标镜像支持的启动模式。镜像启动模式详情，请参见[镜像启动模式](~~2244655#b9caa9b8bb1wf~~)。\n\n</notice>",
@@ -127,18 +133,6 @@
     {
       "fields": [
         {
-          "example": "v2",
-          "help_en": "The metadata access mode of the image. Valid values:\nv1: When you create an ECS instance from this image, you cannot set the metadata access mode to IMDSv2 only (hardened mode).\nv2: When you create an ECS instance from this image, you can set the metadata access mode to IMDSv2 only (hardened mode).\n<notice>\n\n  ImdsSupport cannot be changed from v2 to v1. If you need to change it, create a new image from the snapshot associated with this image and set the value to v1.\n\n</notice>",
-          "help_zh": "镜像的元数据访问模式，可能值：\nv1：通过该镜像创建ECS实例时，不支持将元数据访问模式设置为“仅加固模式”。\nv2：通过该镜像创建ECS实例时，支持将元数据访问模式设置为“仅加固模式”。\n<notice>\n\n  ImdsSupport不允许从v2修改为v1，若需要修改，可通过该镜像关联的快照重新创建一个新的镜像并设置为v1。\n\n</notice>",
-          "name": "imds_support",
-          "options": [
-            "--imds-support"
-          ],
-          "raw_name": "ImdsSupport",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "supported",
           "help_en": "Modifies the NVMe support attribute of the image. If this parameter is not specified, the current value is retained.\n<notice>Before enabling this feature, make sure that the NVMe driver is pre-installed in the operating system. Recommended procedure: install the driver on an instance, create a custom image, and then call this operation. Forcibly enabling this feature without the driver will cause instance startup failures.></notice>",
           "help_zh": "修改镜像的 NVMe 支持属性，不传保持不变。\n<notice>开启前必须确保OS已预装NVMe驱动。建议路径：实例装驱动 - 制作自定义镜像 - 调用本接口。若无驱动强行开启将导致实例启动失败。></notice>",
@@ -147,6 +141,18 @@
             "--nvme-support"
           ],
           "raw_name": "NvmeSupport",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "v2",
+          "help_en": "The metadata access mode of the image. Valid values:\nv1: When you create an ECS instance from this image, you cannot set the metadata access mode to IMDSv2 only (hardened mode).\nv2: When you create an ECS instance from this image, you can set the metadata access mode to IMDSv2 only (hardened mode).\n<notice>\n\n  ImdsSupport cannot be changed from v2 to v1. If you need to change it, create a new image from the snapshot associated with this image and set the value to v1.\n\n</notice>",
+          "help_zh": "镜像的元数据访问模式，可能值：\nv1：通过该镜像创建ECS实例时，不支持将元数据访问模式设置为“仅加固模式”。\nv2：通过该镜像创建ECS实例时，支持将元数据访问模式设置为“仅加固模式”。\n<notice>\n\n  ImdsSupport不允许从v2修改为v1，若需要修改，可通过该镜像关联的快照重新创建一个新的镜像并设置为v1。\n\n</notice>",
+          "name": "imds_support",
+          "options": [
+            "--imds-support"
+          ],
+          "raw_name": "ImdsSupport",
           "required": false,
           "type": "string"
         }
@@ -182,9 +188,10 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",

@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun mts QueryMediaCensorJobList --region cn-hangzhou --EndOfJobCreatedTimeRange '2022-02-14T02:16:07Z' --NextPageToken 79aff3eee82242e092899db5f6690000 --State All --StartOfJobCreatedTimeRange '2021-12-22T03:48:05Z' --MaximumPageSize 20 --PipelineId c5b30b7c0d0e4a0abde1d5f9e7510000 --JobIds 'fa9c34be3bcf42919ac4d17752390000,78dc866518b843259669df58ed300000'",
   "cmd_full_name": "mts query-media-censor-job-list",
   "cmd_name": "query-media-censor-job-list",
@@ -14,6 +15,7 @@
     "api_style": "RPC",
     "api_version": "2014-06-18",
     "method": "POST",
+    "operation_type": "read",
     "protocol": "HTTPS",
     "system_operation_type": "get",
     "url": ""
@@ -21,7 +23,7 @@
   "parameters": [
     {
       "example": "fa9c34be3bcf42919ac4d1775239****,78dc866518b843259669df58ed30****",
-      "help_en": "The ID of the content moderation job. You can obtain the job ID from the response parameters of the https://help.aliyun.com/document_detail/91779.html operation. Separate multiple IDs with commas (,)",
+      "help_en": "The IDs of the content moderation jobs. You can obtain the IDs from the response parameters of the https://help.aliyun.com/document_detail/91779.html operation. Separate multiple IDs with commas (,)",
       "help_zh": "媒体审核作业ID。可以从https://help.aliyun.com/document_detail/91779.html的返回参数中获取，多个使用半角逗号（,）分隔",
       "location": "query",
       "name": "job_ids",
@@ -34,7 +36,7 @@
     },
     {
       "example": "79aff3eee82242e092899db5f669****",
-      "help_en": "The token used to retrieve the next page of results. Leave this parameter empty for the first request. The token for the next page is returned in the response to the first request",
+      "help_en": "The token used to retrieve the next page. Leave this parameter empty for the first request. The token is returned after the first query",
       "help_zh": "下一页标识，第一次提交时为空即可。下一页标识将在第一次查询后返回",
       "location": "query",
       "name": "next_page_token",
@@ -47,7 +49,7 @@
     },
     {
       "example": "20",
-      "help_en": "The maximum number of results to return on each page.\n\nDefault: 30.\n\nValid values: 1 to 300",
+      "help_en": "The maximum number of entries to return per page.\n\nDefault value: 30.\nValid values: 1 to 300",
       "help_zh": "每页最大返回数。\n\n默认：30\n取值：1~300",
       "location": "query",
       "maximum": "100",
@@ -62,7 +64,7 @@
     },
     {
       "example": "All",
-      "help_en": "The state of the jobs to query. Valid values:\n\nAll: all jobs.\n\nQueuing: jobs that are in the queue.\n\nAnalysing: jobs that are being analyzed.\n\nFail: failed jobs.\n\nSuccess: successful jobs",
+      "help_en": "The status of the jobs to query. Valid values:\n\nAll: All statuses.\n\nQueuing: Queuing.\n\nAnalysing: Analyzing.\n\nFail: Failed.\n\nSuccess: Succeeded",
       "help_zh": "需要查询的作业状态。取值：\n\nAll：全部。\n\nQueuing：排队中。\n\nAnalysing：分析中。\n\nFail：失败。\n\nSuccess：成功",
       "location": "query",
       "name": "state",
@@ -75,7 +77,7 @@
     },
     {
       "example": "2021-12-22T03:48:05Z",
-      "help_en": "The start of the time range to query jobs by their creation time.\n\nThe date and time are in the ISO 8601 format and in UTC.\n\nThe format is YYYY-MM-DDThh:mm:ssZ",
+      "help_en": "The earliest time when the job was created.\n\nSpecify the time in the ISO 8601 standard. The time must be in UTC.\nFormat: YYYY-MM-DDThh:mm:ssZ",
       "help_zh": "最早任务创建时间。\n\n日期格式按照ISO8601标准表示，并需要使用UTC时间。\n格式为：YYYY-MM-DDThh:mm:ssZ ",
       "location": "query",
       "name": "start_of_job_created_time_range",
@@ -88,7 +90,7 @@
     },
     {
       "example": "2022-02-14T02:16:07Z",
-      "help_en": "The end of the time range to query jobs by their creation time.\n\nThe date and time are in the ISO 8601 format and in UTC.\n\nThe format is YYYY-MM-DDThh:mm:ssZ",
+      "help_en": "The latest time when the job was created.\n\nSpecify the time in the ISO 8601 standard. The time must be in UTC.\nFormat: YYYY-MM-DDThh:mm:ssZ",
       "help_zh": "最晚任务创建时间。\n\n日期格式按照ISO8601标准表示，并需要使用UTC时间。\n格式为：YYYY-MM-DDThh:mm:ssZ ",
       "location": "query",
       "name": "end_of_job_created_time_range",
@@ -101,7 +103,7 @@
     },
     {
       "example": "c5b30b7c0d0e4a0abde1d5f9e751****",
-      "help_en": "The ID of the MPS queue. To obtain the MPS queue ID, log on to the ApsaraVideo Media Processing console (https://mps.console.aliyun.com/overview) and choose Global Settings > MPS Queues and Callbacks",
+      "help_en": "The ID of the MPS queue. You can obtain the ID by choosing Global Settings > MPS Queues and Callbacks in the ApsaraVideo Media Processing console (https://mps.console.aliyun.com/overview)",
       "help_zh": "管道ID。可以通过媒体处理控制台 (https://mps.console.aliyun.com/overview) > 全局设置 > 管道及回调获取",
       "location": "query",
       "name": "pipeline_id",
@@ -119,333 +121,506 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The response parameters",
+        "description_en": "The response elements",
         "description_zh": "返回参数",
         "properties": {
           "MediaCensorJobList": {
-            "backendName": "data.jobList",
-            "itemName": "MediaCensorJob",
-            "items": {
-              "properties": {
-                "AudioCensorResult": {
-                  "backendName": "audioCensorResult",
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "MediaCensorJob": {
+                "description_en": "The list of content moderation jobs",
+                "description_zh": "媒体审核作业列表",
+                "items": {
+                  "description_en": "The details of the content moderation job",
+                  "description_zh": "媒体审核作业详细信息",
                   "properties": {
-                    "Label": {
-                      "backendName": "label",
-                      "type": "string"
-                    },
-                    "Suggestion": {
-                      "backendName": "suggestion",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "BarrageCensorResult": {
-                  "backendName": "barrageCensorResult",
-                  "properties": {
-                    "Label": {
-                      "backendName": "label",
-                      "type": "string"
-                    },
-                    "Rate": {
-                      "backendName": "rate",
-                      "type": "string"
-                    },
-                    "Scene": {
-                      "backendName": "scene",
-                      "type": "string"
-                    },
-                    "Suggestion": {
-                      "backendName": "suggestion",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "Code": {
-                  "backendName": "code",
-                  "type": "string"
-                },
-                "CoverImageCensorResults": {
-                  "backendName": "coverImageCensorResults",
-                  "itemName": "CoverImageCensorResult",
-                  "items": {
-                    "properties": {
-                      "Bucket": {
-                        "backendName": "bucket",
-                        "type": "string"
-                      },
-                      "Location": {
-                        "backendName": "location",
-                        "type": "string"
-                      },
-                      "Object": {
-                        "backendName": "object",
-                        "type": "string"
-                      },
-                      "Results": {
-                        "backendName": "results",
-                        "itemName": "Result",
-                        "items": {
-                          "properties": {
-                            "Label": {
-                              "backendName": "label",
-                              "type": "string"
-                            },
-                            "Rate": {
-                              "backendName": "rate",
-                              "type": "string"
-                            },
-                            "Scene": {
-                              "backendName": "scene",
-                              "type": "string"
-                            },
-                            "Suggestion": {
-                              "backendName": "suggestion",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "type": "array"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "CreationTime": {
-                  "backendName": "createTime",
-                  "type": "string"
-                },
-                "DescCensorResult": {
-                  "backendName": "descCensorResult",
-                  "properties": {
-                    "Label": {
-                      "backendName": "label",
-                      "type": "string"
-                    },
-                    "Rate": {
-                      "backendName": "rate",
-                      "type": "string"
-                    },
-                    "Scene": {
-                      "backendName": "scene",
-                      "type": "string"
-                    },
-                    "Suggestion": {
-                      "backendName": "suggestion",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "FinishTime": {
-                  "backendName": "finishTime",
-                  "type": "string"
-                },
-                "Input": {
-                  "backendName": "input",
-                  "properties": {
-                    "Bucket": {
-                      "backendName": "bucket",
-                      "type": "string"
-                    },
-                    "Location": {
-                      "backendName": "location",
-                      "type": "string"
-                    },
-                    "Object": {
-                      "backendName": "object",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "JobId": {
-                  "backendName": "jobId",
-                  "type": "string"
-                },
-                "Message": {
-                  "backendName": "message",
-                  "type": "string"
-                },
-                "PipelineId": {
-                  "backendName": "pipelineId",
-                  "type": "string"
-                },
-                "State": {
-                  "backendName": "state",
-                  "type": "string"
-                },
-                "Suggestion": {
-                  "backendName": "suggestion",
-                  "type": "string"
-                },
-                "TitleCensorResult": {
-                  "backendName": "titleCensorResult",
-                  "properties": {
-                    "Label": {
-                      "backendName": "label",
-                      "type": "string"
-                    },
-                    "Rate": {
-                      "backendName": "rate",
-                      "type": "string"
-                    },
-                    "Scene": {
-                      "backendName": "scene",
-                      "type": "string"
-                    },
-                    "Suggestion": {
-                      "backendName": "suggestion",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "UserData": {
-                  "backendName": "userData",
-                  "type": "string"
-                },
-                "VensorCensorResult": {
-                  "backendName": "videoCensorResult",
-                  "properties": {
-                    "CensorResults": {
-                      "backendName": "censorResults",
-                      "itemName": "CensorResult",
-                      "items": {
-                        "properties": {
-                          "Label": {
-                            "backendName": "label",
-                            "type": "string"
-                          },
-                          "Rate": {
-                            "backendName": "rate",
-                            "type": "string"
-                          },
-                          "Scene": {
-                            "backendName": "scene",
-                            "type": "string"
-                          },
-                          "Suggestion": {
-                            "backendName": "suggestion",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    },
-                    "NextPageToken": {
-                      "backendName": "nextPageToken",
-                      "type": "string"
-                    },
-                    "VideoTimelines": {
-                      "backendName": "videoTimelines",
-                      "itemName": "VideoTimeline",
-                      "items": {
-                        "properties": {
-                          "CensorResults": {
-                            "backendName": "censorResults",
-                            "itemName": "CensorResult",
-                            "items": {
-                              "properties": {
-                                "Label": {
-                                  "backendName": "label",
-                                  "type": "string"
-                                },
-                                "Rate": {
-                                  "backendName": "rate",
-                                  "type": "string"
-                                },
-                                "Scene": {
-                                  "backendName": "scene",
-                                  "type": "string"
-                                },
-                                "Suggestion": {
-                                  "backendName": "suggestion",
-                                  "type": "string"
-                                }
-                              },
-                              "type": "object"
-                            },
-                            "type": "array"
-                          },
-                          "Object": {
-                            "backendName": "object",
-                            "type": "string"
-                          },
-                          "Timestamp": {
-                            "backendName": "timestamp",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    }
-                  },
-                  "type": "object"
-                },
-                "VideoCensorConfig": {
-                  "backendName": "videoCensorConfig",
-                  "properties": {
-                    "BizType": {
-                      "backendName": "bizType",
-                      "type": "string"
-                    },
-                    "OutputFile": {
-                      "backendName": "outputFile",
+                    "AudioCensorResult": {
+                      "description_en": "The audio moderation result",
+                      "description_zh": "音频审核结果",
                       "properties": {
-                        "Bucket": {
-                          "backendName": "bucket",
+                        "Label": {
+                          "description_en": "The categories of the detection result. Valid values:\n\nnormal: Normal text.\n\nspam: Spam content included.\n\nad: Advertisement.\n\npolitics: Political content.\n\nterrorism: Terrorism content.\nabuse: Abusive content.\nporn: Pornographic content.\nflood: Flooding.\ncontraband: Contraband content.\nmeaningless: Meaningless content.\nharmful: Undesirable scene. This includes scenarios such as money worship, fan support, negative emotions, and negative inducement",
+                          "description_zh": "检测结果的分类。取值：\n\nnormal：正常文本\n\nspam：含垃圾信息\n\nad：广告\n\npolitics：涉政\n\nterrorism：暴恐\nabuse：辱骂\nporn：色情\nflood：灌水\ncontraband：违禁\nmeaningless：无意义\nharmful：不良场景（支持拜金炫富、追星应援、负面情绪、负面诱导等检测场景）",
+                          "example": "normal",
                           "type": "string"
                         },
-                        "Location": {
-                          "backendName": "location",
-                          "type": "string"
-                        },
-                        "Object": {
-                          "backendName": "object",
+                        "Suggestion": {
+                          "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\nreview: Manual review is required.\nblock: The content is blocked",
+                          "description_zh": "处理建议。可取值：\n\npass：通过\nreview：人工重审\nblock：拦截",
+                          "example": "pass",
                           "type": "string"
                         }
                       },
                       "type": "object"
                     },
-                    "VideoCensor": {
-                      "backendName": "videoCensor",
+                    "BarrageCensorResult": {
+                      "description_en": "The live comment moderation result",
+                      "description_zh": "弹幕审核结果",
+                      "properties": {
+                        "Label": {
+                          "description_en": "The categories of the moderation result. Multiple categories are separated by commas (,). Valid values:\nnormal: Normal.\nspam: Spam content included.\nad: Advertisement.\npolitics: Political content.\nterrorism: Terrorism content.\nabuse: Abusive content.\nporn: Pornographic content.\nflood: Flooding.\ncontraband: Contraband content.\nmeaningless: Meaningless content.\nharmful: Undesirable scene. This includes scenarios such as money worship, fan support, negative emotions, and negative inducement",
+                          "description_zh": "审核结果分类，多个使用半角逗号（,）分隔。取值：\nnormal：普通\nspam：含垃圾信息\nad：广告\npolitics：涉政\nterrorism：暴恐\nabuse：辱骂\nporn：色情\nflood：灌水\ncontraband：违禁\nmeaningless：无意义\nharmful：不良场景（支持拜金炫富、追星应援、负面情绪、负面诱导等检测场景）",
+                          "example": "normal",
+                          "type": "string"
+                        },
+                        "Rate": {
+                          "description_en": "The confidence score",
+                          "description_zh": "分值",
+                          "example": "99.91",
+                          "type": "string"
+                        },
+                        "Scene": {
+                          "description_en": "The moderation scenario. Set the value to antispam, which indicates text anti-spam",
+                          "description_zh": "审核场景。固定取值：antispam，文本反垃圾",
+                          "example": "antispam",
+                          "type": "string"
+                        },
+                        "Suggestion": {
+                          "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\n\nreview: Manual review is required.\n\nblock: The content is blocked",
+                          "description_zh": "处理建议。可取值：\n\npass：通过。\n\nreview：人工重审。\n\nblock：拦截",
+                          "example": "pass",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Code": {
+                      "description_en": "The error code returned when the job fails. This parameter is not returned when the job is successful",
+                      "description_zh": "作业失败时错误码。执行成功时此参数不返回",
+                      "example": "InvalidParameter.ResourceNotFound",
                       "type": "string"
+                    },
+                    "CoverImageCensorResults": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "CoverImageCensorResult": {
+                          "description_en": "The list of cover image moderation results",
+                          "description_zh": "封面图片审查结果列表",
+                          "items": {
+                            "description_en": "The details of the cover image moderation result",
+                            "description_zh": "封面图片审查结果详细信息",
+                            "properties": {
+                              "Bucket": {
+                                "description_en": "The OSS bucket of the cover image",
+                                "description_zh": "封面图片的OSS Bucket",
+                                "example": "example-Bucket-****",
+                                "type": "string"
+                              },
+                              "Location": {
+                                "description_en": "The OSS location of the cover image",
+                                "description_zh": "封面图片的OSS Location",
+                                "example": "oss-cn-shanghai",
+                                "type": "string"
+                              },
+                              "Object": {
+                                "description_en": "The OSS object of the cover image",
+                                "description_zh": "封面图片的OSS Object",
+                                "example": "test/ai/censor/v2/vme-****.jpg",
+                                "type": "string"
+                              },
+                              "Results": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "itemNode": true,
+                                "properties": {
+                                  "Result": {
+                                    "description_en": "The moderation results of the job",
+                                    "description_zh": "作业审核结果",
+                                    "items": {
+                                      "description_en": "The details of the job moderation result",
+                                      "description_zh": "作业审核结果详细信息",
+                                      "properties": {
+                                        "Label": {
+                                          "description_en": "The labels of the moderation result. Multiple labels are separated by commas (,).\n\nPorn detection (porn) result categories:\n    - nomal: Normal.\n    - sexy: Sexy.\n    - porn: Pornographic.\n\nTerrorism and political content detection (terrorism) result categories:\n    - naomal: Normal.\n    - bloody: Bloody.\n    - explosion: Explosion and smoke.\n    - outfit: Special outfit.\n    - logo: Special logo.\n    - weapon: Weapon.\n    - politics: Political content.\n    - violence: Violence.\n    - crowd: Crowd.\n    - parade: Parade.\n    - carcrash: Car crash.\n    - flag: Flag.\n    - location: Landmark.\n    - others: Others.\n\nText and image violation (ad) result categories:\n    - normal: Normal.\n    - ad: Other advertisements.\n    - politics: Political content in text.\n    - porn: Pornographic content in text.\n    - abuse: Abusive content in text.\n    - terrorism: Terrorism content in text.\n    - contraband: Contraband content in text.\n    - spam: Other spam content in text.\n    - npx: Messy advertisement.\n    - qrcode: QR code included.\n    - programCode: Mini program code included.\n\nUndesirable scene (live) result categories:\n    - normal: Normal.\n    - meaningless: No content in the image, such as a black or white screen.\n    - PIP: Picture-in-picture.\n    - smoking: Smoking.\n    - drivelive: Live streaming in a car.\n\nLogo detection (Logo) result categories:\n    - normal: Normal.\n    - TV: Controlled logo included.\n    - trademark: Trademark included",
+                                          "description_zh": "审核结果的标签，多个使用半角逗号（,）分隔。\n\n图片智能鉴黄（porn）审核结果分类：\n    - nomal：正常。\n    - sexy：性感。\n    - porn：色情。\n\n图片暴恐涉政（terrorism）结果分类：\n    - naomal：正常。\n    - bloody：血腥。\n    - explosion：爆炸烟光。\n    - outfit：特殊装束。\n    - logo：特殊标识。\n    - weapon：武器。\n    - politics：涉政。\n    - violence：打斗。\n    - crowd：聚众。\n    - parade：游行。\n    - carcrash：车祸现场。\n    - flag：旗帜。\n    - location：地标。\n    - others：其他。\n\n图文违规（ad）结果分类：\n    - normal：正常。\n    - ad：其他广告。\n    - politics：文字含涉政内容。\n    - porn：文字含涉黄内容。\n    - abuse：文字含辱骂内容。\n    - terrorism：文字含暴恐内容。\n    - contraband：文字含违禁内容。\n    - spam：文字含其他垃圾内容。\n    - npx：牛皮藓广告。\n    - qrcode：含二维码。\n    - programCode：含小程序码。\n\n图片不良场景（live）结果分类：\n    - normal：正常。\n    - meaningless：图片中无内容（例如黑屏、白屏）。\n    - PIP：画中画。\n    - smoking：吸烟。\n    - drivelive：车内直播。\n\n图片Logo（Logo）结果分类：\n    - normal：正常。\n    - TV：含受管控的Logo。\n    - trademark：含商标",
+                                          "example": "normal",
+                                          "type": "string"
+                                        },
+                                        "Rate": {
+                                          "description_en": "The confidence score. Valid values: 0 to 100",
+                                          "description_zh": "分值。可取值：0~100",
+                                          "example": "100",
+                                          "type": "string"
+                                        },
+                                        "Scene": {
+                                          "description_en": "The moderation scenario. Valid values:\n\nporn: Porn detection.\nterrorism: Terrorism and political content detection.\nad: Text and image violation detection.\nlive: Undesirable scene detection.\nLogo: Logo detection",
+                                          "description_zh": "审核场景。\n\nporn：鉴黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nLogo：图片Logo",
+                                          "example": "live",
+                                          "type": "string"
+                                        },
+                                        "Suggestion": {
+                                          "description_en": "The overall moderation result of the job. Valid values:\n\npass: The content is approved.\nreview: Manual review is required.\nblock: The content is blocked.\n\nIf the moderation result of any category is review, the overall result is review. If the moderation result of any category is block, the overall result is block",
+                                          "description_zh": "作业整体审核结果。取值：\n\npass：通过。\nreview：人工重审。\nblock：拦截。\n\n任何一种类型的审核结果是Review时，整体结果为Review，任何一种类型的审核结果是Block时，整体结果为Block",
+                                          "example": "pass",
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "CreationTime": {
+                      "description_en": "The time when the job was created. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "任务创建时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2021-11-04T07:25:48Z",
+                      "type": "string"
+                    },
+                    "DescCensorResult": {
+                      "description_en": "The description moderation result",
+                      "description_zh": "描述审核结果",
+                      "properties": {
+                        "Label": {
+                          "description_en": "The categories of the moderation result. Multiple categories are separated by commas (,). Valid values:\nnormal: Normal.\nspam: Spam content included.\nad: Advertisement.\npolitics: Political content.\nterrorism: Terrorism content.\nabuse: Abusive content.\nporn: Pornographic content.\nflood: Flooding.\ncontraband: Contraband content.\nmeaningless: Meaningless content.\nharmful: Undesirable scene. This includes scenarios such as money worship, fan support, negative emotions, and negative inducement",
+                          "description_zh": "审核结果分类，多个使用半角逗号（,）分隔。取值：\nnormal：普通\nspam：含垃圾信息\nad：广告\npolitics：涉政\nterrorism：暴恐\nabuse：辱骂\nporn：色情\nflood：灌水\ncontraband：违禁\nmeaningless：无意义\nharmful：不良场景（支持拜金炫富、追星应援、负面情绪、负面诱导等检测场景）",
+                          "example": "ad",
+                          "type": "string"
+                        },
+                        "Rate": {
+                          "description_en": "The confidence score",
+                          "description_zh": "分值",
+                          "example": "100",
+                          "type": "string"
+                        },
+                        "Scene": {
+                          "description_en": "The moderation scenario. Set the value to antispam, which indicates text anti-spam",
+                          "description_zh": "审核场景。固定取值：antispam，文本反垃圾",
+                          "example": "antispam",
+                          "type": "string"
+                        },
+                        "Suggestion": {
+                          "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\n\nreview: Manual review is required.\n\nblock: The content is blocked",
+                          "description_zh": "处理建议。可取值：\n\npass：通过。\n\nreview：人工重审。\n\nblock：拦截",
+                          "example": "pass",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "FinishTime": {
+                      "description_en": "The time when the job was completed. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "完成时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2021-11-04T07:25:48Z",
+                      "type": "string"
+                    },
+                    "Input": {
+                      "description_en": "The job input",
+                      "description_zh": "作业输入",
+                      "properties": {
+                        "Bucket": {
+                          "description_en": "The OSS bucket of the input file",
+                          "description_zh": "输入文件的OSS Bucket",
+                          "example": "bucket-test-in-****",
+                          "type": "string"
+                        },
+                        "Location": {
+                          "description_en": "The OSS location of the input file",
+                          "description_zh": "输入文件的OSS Location",
+                          "example": "oss-cn-shanghai",
+                          "type": "string"
+                        },
+                        "Object": {
+                          "description_en": "The OSS object of the input file",
+                          "description_zh": "输入文件的OSS Object",
+                          "example": "test/ai/censor/test-****.mp4",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "JobId": {
+                      "description_en": "The ID of the content moderation job",
+                      "description_zh": "媒体审核作业ID",
+                      "example": "f8f166eea7a44e9bb0a4aecf9543****",
+                      "type": "string"
+                    },
+                    "Message": {
+                      "description_en": "The error message returned when the job fails. This parameter is not returned when the job is successful",
+                      "description_zh": "作业失败时错误信息。执行成功时不返回此参数",
+                      "example": "The resource operated cannot be found",
+                      "type": "string"
+                    },
+                    "PipelineId": {
+                      "description_en": "The ID of the MPS queue",
+                      "description_zh": "管道ID",
+                      "example": "c5b30b7c0d0e4a0abde1d5f9e751****",
+                      "type": "string"
+                    },
+                    "State": {
+                      "description_en": "The status of the job",
+                      "description_zh": "作业状态",
+                      "example": "Success",
+                      "type": "string"
+                    },
+                    "Suggestion": {
+                      "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\nreview: Manual review is required.\nblock: The content is blocked",
+                      "description_zh": "处理建议。可取值：\n\npass：通过。\nreview：人工重审。\nblock：拦截",
+                      "example": "pass",
+                      "type": "string"
+                    },
+                    "TitleCensorResult": {
+                      "description_en": "The title moderation result",
+                      "description_zh": "标题审核结果",
+                      "properties": {
+                        "Label": {
+                          "description_en": "The labels of the moderation result. Multiple labels are separated by commas (,). Valid values:\n\nnormal: Normal.\nspam: Spam content included.\nad: Advertisement.\npolitics: Political content.\nterrorism: Terrorism content.\nabuse: Abusive content.\nporn: Pornographic content.\nflood: Flooding.\ncontraband: Contraband content.\nmeaningless: Meaningless content.\nharmful: Undesirable scene. This includes scenarios such as money worship, fan support, negative emotions, and negative inducement",
+                          "description_zh": "审核结果的标签，多个使用半角逗号（,）分隔。\n\nnormal：普通\nspam：含垃圾信息\nad：广告\npolitics：涉政\nterrorism：暴恐\nabuse：辱骂\nporn：色情\nflood：灌水\ncontraband：违禁\nmeaningless：无意义\nharmful：不良场景（支持拜金炫富、追星应援、负面情绪、负面诱导等检测场景）",
+                          "example": "meaningless",
+                          "type": "string"
+                        },
+                        "Rate": {
+                          "description_en": "The confidence score",
+                          "description_zh": "分值",
+                          "example": "99.91",
+                          "type": "string"
+                        },
+                        "Scene": {
+                          "description_en": "The moderation scenario. Set the value to antispam, which indicates text anti-spam",
+                          "description_zh": "审核场景。取固定值：antispam，文本反垃圾",
+                          "example": "antispam",
+                          "type": "string"
+                        },
+                        "Suggestion": {
+                          "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\n\nreview: Manual review is required.\n\nblock: The content is blocked",
+                          "description_zh": "处理建议。取值：\n\npass：通过。\n\nreview：人工重审。\n\nblock：拦截",
+                          "example": "block",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "UserData": {
+                      "description_en": "The custom user data",
+                      "description_zh": "用户自定义数据",
+                      "example": "example userdata ****",
+                      "type": "string"
+                    },
+                    "VensorCensorResult": {
+                      "description_en": "The video moderation result",
+                      "description_zh": "视频审查结果",
+                      "properties": {
+                        "CensorResults": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "CensorResult": {
+                              "description_en": "The collection of moderation results, which includes the summary information of various scenarios such as porn, violence, terrorism, and political content",
+                              "description_zh": "审核结果集合，包含各种场景（黄、暴、恐、政）的概要信息",
+                              "items": {
+                                "description_en": "The details of the moderation result",
+                                "description_zh": "审核结果详细信息",
+                                "properties": {
+                                  "Label": {
+                                    "description_en": "The categories of the moderation result. Multiple categories are separated by commas (,). Valid values:\n\nPorn detection (porn) result categories:\n    - porn: Pornographic.\n    - sexy: Sexy.\n    - normal: Normal.\nTerrorism and political content detection (terrorism) result categories:\n    - normal: Normal.\n    - bloody: Bloody.\n    - explosion: Explosion and smoke.\n    - outfit: Special outfit.\n    - logo: Special logo.\n    - weapon: Weapon.\n    - politics: Political content.\n    - violence: Violence.\n    - crowd: Crowd.\n    - parade: Parade.\n    - carcrash: Car crash.\n    - flag: Flag.\n    - location: Landmark.\n    - others: Others.\n\nAdvertisement (ad) result categories:\n    - normal: Normal.\n    - ad: Other advertisements.\n    - politics: Political content in text.\n    - porn: Pornographic content in text.\n    - abuse: Abusive content in text.\n    - terrorism: Terrorism content in text.\n    - contraband: Contraband content in text.\n    - spam: Other spam content in text.\n    - npx: Messy advertisement.\n    - qrcode: QR code included.\n    - programCode: Mini program code included.\nUndesirable scene (live) result categories:\n    - normal: Normal.\n    - meaningless: No content in the image, such as a black or white screen.\n    - PIP: Picture-in-picture.\n    - smoking: Smoking.\n    - drivelive: Live streaming in a car.\nLogo detection (logo) result categories:\n    - normal: Normal.\n    - TV: Controlled logo included.\n    - trademark: Trademark included",
+                                    "description_zh": "审核结果分类，多个使用半角逗号（,）分隔。取值：\n\n图片鉴黄（porn）审核结果分类：\n    - porn：色情。\n    - sexy：性感。\n    - normal：通过。\n暴恐涉政（terrorism）审核结果分类：\n    - normal：正常。\n    - bloody：血腥。\n    - explosion：爆炸烟光。\n    - outfit：特殊装束。\n    - logo：特殊标识。\n    - weapon：武器。\n    - politics：涉政。\n    - violence：打斗。\n    - crowd：聚众。\n    - parade：游行。\n    - carcrash：车祸现场。\n    - flag：旗帜。\n    - location：地标。\n    - others：其他。\n\n广告（ad）审核结果分类：\n    - normal：正常。\n    - ad：其他广告。\n    - politics：文字含涉政内容。\n    - porn：文字含涉黄内容。\n    - abuse：文字含辱骂内容。\n    - terrorism：文字含暴恐内容。\n    - contraband：文字含违禁内容。\n    - spam：文字含其他垃圾内容。\n    - npx：牛皮藓广告。\n    - qrcode：含二维码。\n    - programCode：含小程序码。\n不良场景（live）结果分类：\n    - normal：正常。\n    - meaningless：图片中无内容（例如黑屏、白屏）。\n    - PIP：画中画。\n    - smoking：吸烟。\n    - drivelive：车内直播。\nLogo（logo）审核结果分类：\n    - normal：正常。\n    - TV：含受管控的Logo。\n    - trademark：含商标",
+                                    "example": "meaningless",
+                                    "type": "string"
+                                  },
+                                  "Rate": {
+                                    "description_en": "The confidence score",
+                                    "description_zh": "分值",
+                                    "example": "100",
+                                    "type": "string"
+                                  },
+                                  "Scene": {
+                                    "description_en": "The moderation scenario. Valid values:\n\nporn: Porn detection.\nterrorism: Terrorism and political content detection.\nad: Text and image violation detection.\nlive: Undesirable scene detection.\nlogo: Logo detection",
+                                    "description_zh": "审核场景。\n\nporn：鉴黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nlogo：图片Logo",
+                                    "example": "terrorism",
+                                    "type": "string"
+                                  },
+                                  "Suggestion": {
+                                    "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\n\nreview: Manual review is required.\n\nblock: The content is blocked",
+                                    "description_zh": "处理建议。取值：\n\npass：通过。\n\nreview：人工重审。\n\nblock：拦截",
+                                    "example": "review",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "NextPageToken": {
+                          "description_en": "The token for the next page",
+                          "description_zh": "下一页标识",
+                          "example": "ea04afcca7cd4e80b9ece8fbb251****",
+                          "type": "string"
+                        },
+                        "VideoTimelines": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "VideoTimeline": {
+                              "description_en": "The moderation results at specific timestamps, sorted in ascending order of time",
+                              "description_zh": "详细时间点的审核结果，按照时间从小到大排序",
+                              "items": {
+                                "description_en": "The detailed information",
+                                "description_zh": "详细信息",
+                                "properties": {
+                                  "CensorResults": {
+                                    "description_en": "",
+                                    "description_zh": "",
+                                    "itemNode": true,
+                                    "properties": {
+                                      "CensorResult": {
+                                        "description_en": "The labels and confidence scores of various types of moderation results",
+                                        "description_zh": "包含多种类型审核结果的标签、分值等",
+                                        "items": {
+                                          "description_en": "The detailed information",
+                                          "description_zh": "详细信息",
+                                          "properties": {
+                                            "Label": {
+                                              "description_en": "The categories of the moderation result. Multiple categories are separated by commas (,). Valid values:\n\nPorn detection (porn) result categories:\n    - porn: Pornographic.\n    - sexy: Sexy.\n    - normal: Normal.\nTerrorism and political content detection (terrorism) result categories:\n    - normal: Normal.\n    - bloody: Bloody.\n    - explosion: Explosion and smoke.\n    - outfit: Special outfit.\n    - logo: Special logo.\n    - weapon: Weapon.\n    - politics: Political content.\n    - violence: Violence.\n    - crowd: Crowd.\n    - parade: Parade.\n    - carcrash: Car crash.\n    - flag: Flag.\n    - location: Landmark.\n    - others: Others.\n\nAdvertisement (ad) result categories:\n    - normal: Normal.\n    - ad: Other advertisements.\n    - politics: Political content in text.\n    - porn: Pornographic content in text.\n    - abuse: Abusive content in text.\n    - terrorism: Terrorism content in text.\n    - contraband: Contraband content in text.\n    - spam: Other spam content in text.\n    - npx: Messy advertisement.\n    - qrcode: QR code included.\n    - programCode: Mini program code included.\nUndesirable scene (live) result categories:\n    - normal: Normal.\n    - meaningless: No content in the image, such as a black or white screen.\n    - PIP: Picture-in-picture.\n    - smoking: Smoking.\n    - drivelive: Live streaming in a car.\nLogo detection (logo) result categories:\n    - normal: Normal.\n    - TV: Controlled logo included.\n    - trademark: Trademark included",
+                                              "description_zh": "审核结果分类，多个使用半角逗号（,）分隔。取值：\n\n图片鉴黄（porn）审核结果分类：\n    - porn：色情。\n    - sexy：性感。\n    - normal：通过。\n暴恐涉政（terrorism）审核结果分类：\n    - normal：正常。\n    - bloody：血腥。\n    - explosion：爆炸烟光。\n    - outfit：特殊装束。\n    - logo：特殊标识。\n    - weapon：武器。\n    - politics：涉政。\n    - violence：打斗。\n    - crowd：聚众。\n    - parade：游行。\n    - carcrash：车祸现场。\n    - flag：旗帜。\n    - location：地标。\n    - others：其他。\n\n广告（ad）审核结果分类：\n    - normal：正常。\n    - ad：其他广告。\n    - politics：文字含涉政内容。\n    - porn：文字含涉黄内容。\n    - abuse：文字含辱骂内容。\n    - terrorism：文字含暴恐内容。\n    - contraband：文字含违禁内容。\n    - spam：文字含其他垃圾内容。\n    - npx：牛皮藓广告。\n    - qrcode：含二维码。\n    - programCode：含小程序码。\n不良场景（live）结果分类：\n    - normal：正常。\n    - meaningless：图片中无内容（例如黑屏、白屏）。\n    - PIP：画中画。\n    - smoking：吸烟。\n    - drivelive：车内直播。\nLogo（logo）审核结果分类：\n    - normal：正常。\n    - TV：含受管控的Logo。\n    - trademark：含商标",
+                                              "example": "normal",
+                                              "type": "string"
+                                            },
+                                            "Rate": {
+                                              "description_en": "The confidence score",
+                                              "description_zh": "分值",
+                                              "example": "99.99",
+                                              "type": "string"
+                                            },
+                                            "Scene": {
+                                              "description_en": "The moderation scenario. Valid values:\n\nporn: Porn detection.\nterrorism: Terrorism and political content detection.\nad: Text and image violation detection.\nlive: Undesirable scene detection.\nlogo: Logo detection",
+                                              "description_zh": "审核场景。\n\nporn：鉴黄。\nterrorism：暴恐涉政。\nad：图文违规。\nlive：不良场景。\nlogo：图片Logo",
+                                              "example": "pron",
+                                              "type": "string"
+                                            },
+                                            "Suggestion": {
+                                              "description_en": "The moderation suggestion. Valid values:\n\npass: The content is approved.\n\nreview: Manual review is required.\n\nblock: The content is blocked",
+                                              "description_zh": "处理建议。取值：\n\npass：通过，\n\nreview：人工重审，\n\nblock：拦截",
+                                              "example": "block",
+                                              "type": "string"
+                                            }
+                                          },
+                                          "type": "object"
+                                        },
+                                        "type": "array"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Object": {
+                                    "description_en": "The OSS object of the snapshot output file.\n\nIn the example, {Count} is a placeholder. The image objects are sequentially named output00001-****.jpg, output00002-****.jpg, and so on",
+                                    "description_zh": "截图输出文件（OSS Object）。\n\n示例中{Count}是占位符，图片Object依次为`output00001-****.jpg,output00002-****.jpg`等",
+                                    "example": "output{Count}.jpg",
+                                    "type": "string"
+                                  },
+                                  "Timestamp": {
+                                    "description_en": "The position in the video. Format: hh:mm:ss[.SSS]",
+                                    "description_zh": "视频中的位置。格式：`hh:mm:ss[.SSS]`",
+                                    "example": "00:02:59.999",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "VideoCensorConfig": {
+                      "description_en": "The video moderation configuration",
+                      "description_zh": "视频审查配置",
+                      "properties": {
+                        "BizType": {
+                          "description_en": "The moderation template. Default value: common, which indicates the default template.\n\nIf you do not specify this parameter, the default value common is used. If you commit a ticket to create a custom moderation template, this parameter returns the UID",
+                          "description_zh": "审核模板。默认common（默认模板）。\n\n不填默认为common，如果是通过提交工单自定义的审核模板，此项返回UID",
+                          "example": "common",
+                          "type": "string"
+                        },
+                        "OutputFile": {
+                          "description_en": "The storage address of the video snapshot results",
+                          "description_zh": "视频截图结果的保存地址",
+                          "properties": {
+                            "Bucket": {
+                              "description_en": "The OSS bucket where the snapshot output file is stored",
+                              "description_zh": "截图输出文件所在OSS Bucket",
+                              "example": "test-bucket-****",
+                              "type": "string"
+                            },
+                            "Location": {
+                              "description_en": "The OSS location of the OSS bucket where the snapshot output file is stored",
+                              "description_zh": "截图输出OSS Bucket所在的OSS Location",
+                              "example": "oss-cn-shanghai",
+                              "type": "string"
+                            },
+                            "Object": {
+                              "description_en": "The OSS object of the snapshot output file.\n\nIn the example, {Count} is a placeholder. The image objects are sequentially named output00001-****.jpg, output00002-****.jpg, and so on",
+                              "description_zh": "截图输出文件 （OSS Object）。\n\n示例中{Count}是占位符，图片Object依次为`output00001-****.jpg,output00002-****.jpg`等",
+                              "example": "output{Count}.jpg",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "VideoCensor": {
+                          "description_en": "Specifies whether to moderate the video content. Default value: true. Valid values:\n\ntrue: The video content is moderated.\n\nfalse: The video content is not moderated",
+                          "description_zh": "是否需要审核视频内容。默认值：true。可取值：\n\ntrue：审核。\n\nfalse：不审核",
+                          "example": "true",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "type": "object"
-                }
-              },
-              "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "NextPageToken": {
-            "backendName": "data.nextPageToken",
-            "description_en": "The token for the next page. This is a 32-bit universally unique identifier (UUID). This parameter is returned when the query results span multiple pages. The value of this parameter is updated for each query",
+            "description_en": "The token for the next page, which is a 32-character UUID. This parameter is returned when the query results exceed one page. The value is updated with each query",
             "description_zh": "下一页标识，32位UUID。查询结果大于一页时返回，每次查询值都会更新",
             "example": "9b1a42bc6e8d46e6a1383b7e7f01****",
             "type": "string"
           },
           "NonExistIds": {
-            "backendName": "data.nonExistIds",
-            "itemName": "String",
-            "items": {
-              "backendName": "data.nonExistIds",
-              "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "String": {
+                "description_en": "The list of non-existent job IDs. This parameter is not returned if the list is empty",
+                "description_zh": "不存在的作业ID列表。如果为空则不返回此参数",
+                "items": {
+                  "description_en": "The job ID",
+                  "description_zh": "作业ID",
+                  "example": "78dc866518b843259669df58ed30****",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "parseType": "null",
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID",
+            "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "D1D5C080-8E2F-5030-8AB4-13092F17631B",
             "type": "string"

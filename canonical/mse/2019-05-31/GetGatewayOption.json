@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun mse GetGatewayOption --region cn-hangzhou --GatewayUniqueId 'gw-c9bc5afd61014165bd58f621b49100000'",
   "cmd_full_name": "mse get-gateway-option",
   "cmd_name": "get-gateway-option",
@@ -9,7 +10,6 @@
         "description_zh": "网关选项描述",
         "properties": {
           "DisableHttp2Alpn": {
-            "backendName": "disableHttp2Alpn",
             "description_en": "Specifies whether to disable the HTTP/2 protocol",
             "description_zh": "是否关闭HTTP 2.0协议",
             "example": "true",
@@ -17,7 +17,6 @@
             "type": "boolean"
           },
           "EnableHardwareAcceleration": {
-            "backendName": "enableHardwareAcceleration",
             "description_en": "Specifies whether to enable hardware acceleration",
             "description_zh": "是否开启硬件加速",
             "example": "true",
@@ -25,7 +24,6 @@
             "type": "boolean"
           },
           "EnableWaf": {
-            "backendName": "enableWaf",
             "description_en": "Specifies whether to enable Web Application Firewall (WAF)",
             "description_zh": "是否开启waf",
             "example": "true",
@@ -33,21 +31,22 @@
             "type": "boolean"
           },
           "LogConfigDetails": {
-            "backendName": "slsConfigDetails",
             "description_en": "The description of Simple Log Service",
             "description_zh": "日志投递服务描述",
             "properties": {
               "LogEnabled": {
-                "backendName": "logOn",
                 "description_en": "Specifies whether to activate Simple Log Service.\n\nValid value:\n\ntrue\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->\n\nfalse\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->",
                 "description_zh": "是否开启日志投递SLS服务",
+                "enumValueTitles": {
+                  "false": "关闭日志投递",
+                  "true": "开启日志投递"
+                },
                 "example": "true",
                 "required": true,
                 "title": "是否开启日志投递",
                 "type": "boolean"
               },
               "LogStoreName": {
-                "backendName": "logStoreName",
                 "description_en": "The name of the Logstore",
                 "description_zh": "日志存储名称",
                 "example": "name",
@@ -55,7 +54,6 @@
                 "type": "string"
               },
               "ProjectName": {
-                "backendName": "projectName",
                 "description_en": "The name of the destination Simple Log Service project",
                 "description_zh": "日志投递的目的",
                 "example": "project",
@@ -67,22 +65,20 @@
             "type": "object"
           },
           "TraceDetails": {
-            "backendName": "xtraceDetails",
             "description_en": "The data structure",
             "description_zh": "数据结构",
             "properties": {
               "Sample": {
-                "backendName": "sample",
                 "default": "10",
                 "description_en": "The sampling rate of Tracing Analysis",
                 "description_zh": "XTrace的采样率",
+                "enumValueTitles": {},
                 "example": "10",
                 "format": "int64",
                 "title": "trace采样率，默认为10",
                 "type": "integer"
               },
               "ServiceId": {
-                "backendName": "serviceId",
                 "description_en": "The ID of the SkyWalking service. This parameter is required if TraceType is set to SKYWALKING",
                 "description_zh": "SkyWalking服务Id，trace类型为SKYWALKING时必填",
                 "example": "10458",
@@ -91,7 +87,6 @@
                 "type": "integer"
               },
               "ServicePort": {
-                "backendName": "servicePort",
                 "description_en": "The port of the SkyWalking service. This parameter is required if TraceType is set to SKYWALKING",
                 "description_zh": "SkyWalking服务端口，trace类型为SKYWALKING时必填",
                 "example": "80",
@@ -99,16 +94,18 @@
                 "type": "string"
               },
               "TraceEnabled": {
-                "backendName": "traceOn",
                 "description_en": "Specifies whether to activate Tracing Analysis.\n\nValid value:\n\nfalse\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->\n\ntrue\n\n    <!-- -->\n\n    <!-- -->\n\n    <!-- -->",
                 "description_zh": "是否开通XTrace",
+                "enumValueTitles": {
+                  "false": "关闭xtrace",
+                  "true": "开启xtrace"
+                },
                 "example": "true",
                 "required": true,
                 "title": "trace是否开启",
                 "type": "boolean"
               },
               "TraceType": {
-                "backendName": "traceType",
                 "default": "XTRACE",
                 "description_en": "The type of Tracing Analysis. Valid values: XTRACE and SKYWALKING",
                 "description_zh": "trace类型，可选XTRACE和SKYWALKING",
@@ -168,7 +165,7 @@
         "--gateway-unique-id"
       ],
       "raw_name": "GatewayUniqueId",
-      "required": false,
+      "required": true,
       "type": "string"
     },
     {
@@ -195,7 +192,6 @@
         "description_zh": "数据结构",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The status code returned. The value 200 indicates that the request is successfully processed",
             "description_zh": "状态码。说明：200表示成功",
             "example": "200",
@@ -204,13 +200,11 @@
           },
           "Data": {
             "$ref": "#/components/schemas/GatewayOption",
-            "backendName": "data",
             "description_en": "The detailed configurations of the gateway.\n\nTraceDetails: the sampling description of Managed Service for OpenTelemetry. Content: TraceEnabled indicates whether Managed Service for OpenTelemetry is activated. Sample indicates the sampling rate of Managed Service for OpenTelemetry.\nLogConfigDetails: the description of Simple Log Service. Content: LogEnabled indicates whether Simple Log Service is activated. ProjectName indicates the Simple Log Service project to which logs are delivered. LogStoreName indicates the name of the Logstore.\nEnableHardwareAcceleration: indicates whether hardware acceleration is enabled.\nDisableHttp2Alpn: indicates whether the HTTP/2 protocol is disabled.\nEnableWaf: indicates whether Web Application Firewall (WAF) is enabled",
             "description_zh": "网关操作详情。\n\nTraceDetails：XTrace采样描述。内容：TraceEnabled为是否开通XTrace，Sample为XTrace的采样率。\n\nLogConfigDetails：日志投递服务描述。内容：LogEnabled为是否开启日志投递SLS服务，ProjectName为日志投递的目的，LogStoreName为日志存储名称。\n\nEnableHardwareAcceleration：是否开启硬件加速。\n\nDisableHttp2Alpn：是否关闭HTTP 2.0协议。\n\nEnableWaf：是否开启waf",
             "example": "{'LogConfigDetails': {'LogEnabled': False}, 'TraceDetails': {'TraceEnabled': False}}"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code returned",
             "description_zh": "HTTP状态码",
             "example": "200",
@@ -218,14 +212,12 @@
             "type": "integer"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The message returned.\n\nIf the request is successful, a success message is returned.\nIf the request fails, an error message is returned, such as the \"TaskId not found\" message",
             "description_zh": "返回信息。\n\n当请求成功时，返回成功信息。\n当请求失败时，返回失败原因，例如：TaskId not found",
             "example": "The request is processed successfully.",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "C92F4A4D-A2FD-593E-839E-F3D4DFD2****",
@@ -234,7 +226,6 @@
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful. Valid values:\n\n`true`: The request was successful.\n`false`: The request failed",
             "description_zh": "请求结果，取值如下：\n`true`：请求成功。\n`false`：请求失败",
             "example": "true",

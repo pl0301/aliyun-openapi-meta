@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 4000,
   "camel_example": "aliyun paillmtrace GET /api/v1/PAILLMTrace/TracesDatas --region cn-hangzhou --MinTime '2024-01-31_2024-12-31_23:59:59' --header \"Content-Type=application/json\"",
   "cmd_full_name": "paillmtrace list-traces-datas",
   "cmd_name": "list-traces-datas",
@@ -238,6 +239,17 @@
       "element": {
         "fields": [
           {
+            "enum": [
+              "Status",
+              "SpanName",
+              "Input",
+              "TraceType",
+              "SpanType",
+              "ServiceName",
+              "Output",
+              "TraceName",
+              "ServiceId"
+            ],
             "example": "output",
             "help_en": "The name of the filter parameter, case-insensitive. Supported parameters: 'serviceid', 'servicename', 'input', 'output', 'status', 'tracetype', and 'tracename'.\n\nThe otel span attributes corresponding to the parameters:\n\nserviceid: resources.service.id\n\nservicename: resources.service.name\n\ninput: attributes.input.value\n\noutput: attributes.output.value\n\nstatus: statusCode\n\ntracetype: the attributes.gen_ai.span.kind of span whose parentSpanId is 0\n\ntracename: the spanName of span whose parentSpanId is 0\n\nValid values:\n\nStatus\nSpanName\nInput\nTraceType\nSpanType\nServiceName\nOutput\nTraceName\nServiceId",
             "help_zh": "过滤参数名称，支持若干预定义参数和用户自定义参数。\n\n预定义参数，大小写不敏感，包括：'serviceid', 'servicename', 'input', 'output', 'status', 'tracetype', 'tracename'。这些预定义参数对应的span属性如下：\n\nserviceid: resources.service.id\n\nservicename: resources.service.name\n\ninput: attributes.input.value\n\noutput: attributes.output.value\n\nstatus: statusCode\n\ntracetype: parentSpanId是0的span，attributes.gen_ai.span.kind\n\ntracename: parentSpanId是0的span，spanName\n\n自定义参数，大小写敏感。：\n用户可以自定义参数名称。这个名称会作为一个以attributes开头的json路径的后缀。服务端以这个json路径为位置，按operator和value，筛选符合条件的span。\n\n比如用户自定义key为 foo.bar，那么服务端会在attributes.foo.bar 这个位置执行筛选。比如用户自定义key为 gen_ai.FOO.BAR，那么服务端会在attributes.gen_ai.FOO.BAR 这个位置执行筛选",
@@ -250,6 +262,11 @@
             "type": "string"
           },
           {
+            "enum": [
+              "contains",
+              "=",
+              "startsWith"
+            ],
             "example": "contains",
             "help_en": "The parameter operator. Case-insensitive. Supported operators: '=', 'contains', and 'startswith'.\n\nValid values:\n\ncontains\n\\=\nstartsWith",
             "help_zh": "参数运算符。大小写不敏感。目前支持：‘=’，’contains‘，'startswith'",
@@ -289,6 +306,10 @@
       "type": "array"
     },
     {
+      "enum": [
+        "ROOT_ONLY",
+        "REMOVE_EMBEDDING"
+      ],
       "example": "REMOVE_EMBEDDING\nROOT_ONLY",
       "help_en": "The content simplification method for returned trace data to reduce the data volume.\n\nREMOVE_EMBEDDING: Removes all embedding array contents.\n\nROOT_ONLY: Returns only the root span for each trace, with the root span content also having the REMOVE_EMBEDDING applied.\n\nBlank: Maintains the original data without simplification",
       "help_zh": "对返回的链路数据做内容简化的方法，用于减少数据返回量。\n\nREMOVE_EMBEDDING - 将所有的embedding数组具体内容清除\n\nROOT_ONLY - 每个链路仅返回root span，且如果root span内容也做REMOVE_EMBEDDING处理。\n\n不填写 - 则维持原有数据",
@@ -302,6 +323,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "StartTime",
+        "Duration"
+      ],
       "example": "StartTime\nDuration\nTotalTokens\nTraceId",
       "help_en": "The field used to sort the returned results. Valid values: StartTime and Duration",
       "help_zh": "返回结果排序字段，目前支持trace开始时间、trace时长、trace总token数量、和trace id",
@@ -315,6 +340,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ASC",
+        "DESC"
+      ],
       "example": "DESC\nASC",
       "help_en": "The sorting order. Valid values:\n\nASC\nDESC (default)",
       "help_zh": "排序方向。取值范围：\nASC：升序\nDESC（默认值）：降序",
@@ -362,14 +391,13 @@
             "description_zh": "符合条件的trace的总数",
             "example": "22",
             "format": "int32",
-            "title_en": "总记录数。",
+            "title_en": "",
             "title_zh": "总记录数。",
             "type": "integer"
           },
           "Traces": {
             "description_en": "The JSON array with each element being a trace's JSON string. Length of the array is equal to or less than the page size parameter value",
             "description_zh": "json array，每个element是一个trace的json string。array长度等于或者小于page size参数值",
-            "itemName": "traces",
             "items": {
               "description_en": "A JSON string representing a trace",
               "description_zh": "代表一个trace的json string",

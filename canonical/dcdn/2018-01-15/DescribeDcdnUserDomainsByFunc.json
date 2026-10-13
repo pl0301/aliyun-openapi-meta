@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dcdn DescribeDcdnUserDomainsByFunc --region cn-hangzhou --FuncId 7",
   "cmd_full_name": "dcdn describe-dcdn-user-domains-by-func",
   "cmd_name": "describe-dcdn-user-domains-by-func",
   "deprecated": false,
-  "description_en": "Call the DescribeDcdnUserDomainsByFunc operation to query all DCDN domain names that are associated with your account and have a specific feature configured. The feature is specified by FuncId",
+  "description_en": "Queries all DCDN domain names under a user account that are configured with a specified feature by using the feature ID",
   "description_zh": "调用DescribeDcdnUserDomainsByFunc通过FuncId查询用户名下所有配置了指定功能的DCDN域名",
   "kebab_example": "aliyun dcdn describe-dcdn-user-domains-by-func --func-id 7 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "7",
-      "help_en": "The ID of the feature. To find the ID, search for the feature by name in the https://help.aliyun.com/document_detail/410622.html document. For example, the ID of the back-to-origin HOST configuration feature (set_req_host_header) is 18",
+      "help_en": "The feature ID. You can search for the feature ID by feature name in the https://help.aliyun.com/document_detail/410622.html document. For example, the feature ID for configuring the back-to-origin host (set_req_host_header) is 18",
       "help_zh": "功能ID，您可在https://help.aliyun.com/document_detail/410622.html文档，根据功能名称搜索查询。\n例如：配置回源HOST（set_req_host_header）功能ID为18",
       "location": "query",
       "name": "func_id",
@@ -35,7 +36,7 @@
     },
     {
       "example": "config",
-      "help_en": "Specifies whether the feature specified by FuncId is enabled.\n\nconfig: enabled.\n\nunconfig: not enabled",
+      "help_en": "Specifies whether the feature specified by FuncId is enabled. Valid values:\n\nconfig: Enabled.\nunconfig: Disabled",
       "help_zh": "是否开通funcid功能。\n\nconfig：开通。\nunconfig：未开通",
       "location": "query",
       "name": "func_filter",
@@ -61,7 +62,7 @@
     },
     {
       "example": "1",
-      "help_en": "The number of the page to return. The default value is 1. Valid values: 1 to 100000",
+      "help_en": "The page number. Default value: 1. Valid values: 1 to 100000",
       "help_zh": "页码，默认值：1。\n取值范围：1~100000",
       "location": "query",
       "maximum": "100000",
@@ -76,7 +77,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of domain names to return on each page. The default value is 20. Valid values: 1 to 500",
+      "help_en": "The number of domain names to return on each page. Default value: 20. Valid values: 1 to 500",
       "help_zh": "单页显示域名的数量，默认值：20。\n取值范围：1~500",
       "location": "query",
       "maximum": "500",
@@ -108,7 +109,7 @@
         "exact_match"
       ],
       "example": "exact_match",
-      "help_en": "The query type. The default value is exact_match. Valid values:\n\nfuzzy_match: fuzzy query.\n\nexact_match: exact match",
+      "help_en": "The query type. Default value: exact_match. Valid values:\n\nfuzzy_match: fuzzy match.\nexact_match: exact match",
       "help_zh": "查询类型，支持以下2种类型，默认为精确查询。\n\nfuzzy_match：模糊查询。\nexact_match：精确查询",
       "location": "query",
       "name": "match_type",
@@ -126,88 +127,135 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Domains": {
-            "backendName": "data.content.data",
-            "itemName": "PageData",
-            "items": {
-              "properties": {
-                "Cname": {
-                  "backendName": "cname",
-                  "type": "string"
-                },
-                "Description": {
-                  "backendName": "remark",
-                  "type": "string"
-                },
-                "DomainName": {
-                  "backendName": "domainNameReal",
-                  "type": "string"
-                },
-                "DomainStatus": {
-                  "backendName": "enabled",
-                  "type": "string"
-                },
-                "GmtCreated": {
-                  "backendName": "gmtCreatedStr",
-                  "type": "string"
-                },
-                "GmtModified": {
-                  "backendName": "gmtModifiedStr",
-                  "type": "string"
-                },
-                "ResourceGroupId": {
-                  "backendName": "resourceGroupId",
-                  "type": "string"
-                },
-                "Sandbox": {
-                  "backendName": "sandbox",
-                  "type": "string"
-                },
-                "Sources": {
-                  "backendName": "sources",
-                  "itemName": "Source",
-                  "items": {
-                    "properties": {
-                      "Content": {
-                        "backendName": "content",
-                        "type": "string"
-                      },
-                      "Port": {
-                        "backendName": "port",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "Priority": {
-                        "backendName": "priority",
-                        "type": "string"
-                      },
-                      "Type": {
-                        "backendName": "type",
-                        "type": "string"
-                      },
-                      "Weight": {
-                        "backendName": "weight",
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "PageData": {
+                "description_en": "The array of PageData elements, which contains the status information of the accelerated domain names",
+                "description_zh": "由PageData组成的数组格式，返回加速域名的状态信息",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Cname": {
+                      "description_en": "The CNAME domain name that corresponds to the accelerated domain name",
+                      "description_zh": "加速域名对应的CNAME域名",
+                      "example": "example.com.w.alikunlun.net",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "Description": {
+                      "description_en": "The reason for the review failure",
+                      "description_zh": "审核失败原因",
+                      "example": "audit failed",
+                      "type": "string"
+                    },
+                    "DomainName": {
+                      "description_en": "The name of the accelerated domain name",
+                      "description_zh": "加速域名名称",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "DomainStatus": {
+                      "description_en": "The status of the accelerated domain name. Valid values:\n\nonline: Enabled.\noffline: Disabled.\nconfiguring: Configuring.\nconfigure_failed: Configuration failed.\nchecking: Under review.\ncheck_failed: Review failed",
+                      "description_zh": "加速域名状态。取值：\n\nonline：启用。\noffline：停用。\nconfiguring：配置中。\nconfigure_failed：配置失败。\nchecking：正在审核。\ncheck_failed：审核失败",
+                      "example": "configure_failed",
+                      "type": "string"
+                    },
+                    "GmtCreated": {
+                      "description_en": "The time when the accelerated domain name was created",
+                      "description_zh": "加速域名创建时间",
+                      "example": "2015-10-28T09:32:51Z",
+                      "type": "string"
+                    },
+                    "GmtModified": {
+                      "description_en": "The time when the accelerated domain name was last modified",
+                      "description_zh": "加速域名修改时间",
+                      "example": "2015-10-28T11:05:50Z",
+                      "type": "string"
+                    },
+                    "ResourceGroupId": {
+                      "description_en": "The ID of the resource group",
+                      "description_zh": "资源组ID",
+                      "example": "rg-acfmyuji4b6r4**",
+                      "type": "string"
+                    },
+                    "Sandbox": {
+                      "description_en": "The sandbox",
+                      "description_zh": "沙箱",
+                      "example": "normal",
+                      "type": "string"
+                    },
+                    "Sources": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Source": {
+                          "description_en": "The origin server information",
+                          "description_zh": "源站信息",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "Content": {
+                                "description_en": "The addresses of the origin server",
+                                "description_zh": "源站地址",
+                                "example": "image.developer.aliyundoc.com",
+                                "type": "string"
+                              },
+                              "Port": {
+                                "description_en": "The Origin Server Port",
+                                "description_zh": "源站端口",
+                                "example": "80",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "Priority": {
+                                "description_en": "The priority",
+                                "description_zh": "优先级",
+                                "example": "20",
+                                "type": "string"
+                              },
+                              "Type": {
+                                "description_en": "The type of the origin server",
+                                "description_zh": "源站类型",
+                                "example": "oss",
+                                "type": "string"
+                              },
+                              "Weight": {
+                                "description_en": "The back-to-origin weight",
+                                "description_zh": "回源权重",
+                                "example": "20",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "SslProtocol": {
+                      "description_en": "Specifies whether HTTPS is enabled. Valid values:\n\non: Enabled.\noff: Disabled",
+                      "description_zh": "HTTPS开关。取值：\n\non：已开启。\noff：未开启",
+                      "example": "on",
+                      "type": "string"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "type": "array"
+                  "type": "object"
                 },
-                "SslProtocol": {
-                  "backendName": "sslProtocol",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageIndex",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
@@ -215,22 +263,19 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
-            "description_en": "The number of domain names returned on the current page",
+            "description_en": "The number of domain names returned per page",
             "description_zh": "单页显示域名的数量",
             "example": "5",
             "format": "int64",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID",
+            "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "AA75AADB-5E25-4970-B480-EAA1F5658483",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.content.totalCount",
             "description_en": "The total number of domain names",
             "description_zh": "域名总个数",
             "example": "16",

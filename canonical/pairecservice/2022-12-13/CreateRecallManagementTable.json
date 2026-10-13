@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun pairecservice POST /api/v1/recallmanagementtables --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"MaxcomputeProjectName\":\"test\",\"MaxcomputeTableName\":\"table-1\",\"Description\":\"this_is_a_test_table\",\"MaxcomputeSchema\":\"default\",\"MinDataSizeFluctuationThreshold\":10,\"InstanceId\":\"pairec-cn-test123\",\"Config\":\"{\\\"\\\":\\\"example-string\\\"}\",\"Name\":\"table-123\",\"DataSource\":\"MaxcomputeAndApiApi\",\"MinRowCountFluctuationThreshold\":10,\"Type\":\"Recall\",\"MaxRowCountFluctuationThreshold\":100,\"Fields\":[{\"Type\":\"STRING_全大写\",\"Attributes\":[\"Primary\"],\"VectorMetricType\":\"L2\",\"Name\":\"age\",\"VectorDimension\":32}],\"EnableRowCountFluctuationThreshold\":true,\"RecallType\":\"X2I\",\"EnableDataSizeFluctuationThreshold\":true,\"MaxDataSizeFluctuationThreshold\":100}' --version 2022-12-13 --force",
   "cmd_full_name": "pairecservice create-recall-management-table",
   "cmd_name": "create-recall-management-table",
@@ -42,30 +43,30 @@
   },
   "parameters": [
     {
-      "example": "{\"\":\"\"}",
-      "help_en": "Additional settings for the table",
-      "help_zh": "表的一些额外配置",
+      "example": "pairec-cn-test123",
+      "help_en": "The instance ID",
+      "help_zh": "实例ID",
       "location": "body",
-      "name": "config",
+      "name": "instance_id",
       "options": [
-        "--config"
+        "--instance-id"
       ],
       "param_style": "json",
-      "raw_name": "Config",
-      "required": false,
+      "raw_name": "InstanceId",
+      "required": true,
       "type": "string"
     },
     {
-      "example": "MaxcomputeAndApiApi",
-      "help_en": "The data source",
-      "help_zh": "数据来源",
+      "example": "table-123",
+      "help_en": "The name of the table",
+      "help_zh": "表名称",
       "location": "body",
-      "name": "data_source",
+      "name": "name",
       "options": [
-        "--data-source"
+        "--name"
       ],
       "param_style": "json",
-      "raw_name": "DataSource",
+      "raw_name": "Name",
       "required": false,
       "type": "string"
     },
@@ -84,50 +85,78 @@
       "type": "string"
     },
     {
-      "example": "true",
-      "help_en": "Whether to enable the data size fluctuation threshold",
-      "help_zh": "是否启动表大小波动阈值",
+      "example": "Recall",
+      "help_en": "The table type",
+      "help_zh": "表类型",
       "location": "body",
-      "name": "enable_data_size_fluctuation_threshold",
+      "name": "type",
       "options": [
-        "--enable-data-size-fluctuation-threshold"
+        "--type"
       ],
       "param_style": "json",
-      "raw_name": "EnableDataSizeFluctuationThreshold",
+      "raw_name": "Type",
       "required": false,
-      "type": "bool"
+      "type": "string"
     },
     {
-      "example": "true",
-      "help_en": "Whether to enable the row count fluctuation threshold",
-      "help_zh": "是否启动表数据条目波动阈值",
+      "example": "X2I",
+      "help_en": "The recall type of the table",
+      "help_zh": "表的召回类型",
       "location": "body",
-      "name": "enable_row_count_fluctuation_threshold",
+      "name": "recall_type",
       "options": [
-        "--enable-row-count-fluctuation-threshold"
+        "--recall-type"
       ],
       "param_style": "json",
-      "raw_name": "EnableRowCountFluctuationThreshold",
+      "raw_name": "RecallType",
       "required": false,
-      "type": "bool"
+      "type": "string"
+    },
+    {
+      "example": "MaxcomputeAndApiApi",
+      "help_en": "The data source",
+      "help_zh": "数据来源",
+      "location": "body",
+      "name": "data_source",
+      "options": [
+        "--data-source"
+      ],
+      "param_style": "json",
+      "raw_name": "DataSource",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "test",
+      "help_en": "The MaxCompute project",
+      "help_zh": "maxcompute 项目",
+      "location": "body",
+      "name": "maxcompute_project_name",
+      "options": [
+        "--maxcompute-project-name"
+      ],
+      "param_style": "json",
+      "raw_name": "MaxcomputeProjectName",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "table-1",
+      "help_en": "The name of the table in MaxCompute",
+      "help_zh": "maxcompute 中表名",
+      "location": "body",
+      "name": "maxcompute_table_name",
+      "options": [
+        "--maxcompute-table-name"
+      ],
+      "param_style": "json",
+      "raw_name": "MaxcomputeTableName",
+      "required": false,
+      "type": "string"
     },
     {
       "element": {
         "fields": [
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The attributes of the field. Valid values:\n\n`Primary`: The primary key field.\n\n`Item`: The item field.\n\n`Score`: The recall score field.\n\n`Vector`: The vector field.\n\n`Index`: The index field",
-            "help_zh": "枚举值：\nPrimary：主键字段\nItem：物品字段\nScore：召回分字段\nVector：向量字段\nIndex：索引字段\n字段属性",
-            "name": "attributes",
-            "options": [
-              "--attributes"
-            ],
-            "raw_name": "Attributes",
-            "required": false,
-            "type": "array"
-          },
           {
             "example": "age",
             "help_en": "The name of the field",
@@ -151,6 +180,20 @@
             "raw_name": "Type",
             "required": false,
             "type": "string"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The attributes of the field. Valid values:\n\n`Primary`: The primary key field.\n\n`Item`: The item field.\n\n`Score`: The recall score field.\n\n`Vector`: The vector field.\n\n`Index`: The index field",
+            "help_zh": "枚举值：\nPrimary：主键字段\nItem：物品字段\nScore：召回分字段\nVector：向量字段\nIndex：索引字段\n字段属性",
+            "name": "attributes",
+            "options": [
+              "--attributes"
+            ],
+            "raw_name": "Attributes",
+            "required": false,
+            "type": "array"
           },
           {
             "example": "32",
@@ -192,30 +235,44 @@
       "type": "array"
     },
     {
-      "example": "pairec-cn-test123",
-      "help_en": "The instance ID",
-      "help_zh": "实例ID",
+      "example": "{\"\":\"\"}",
+      "help_en": "Additional settings for the table",
+      "help_zh": "表的一些额外配置",
       "location": "body",
-      "name": "instance_id",
+      "name": "config",
       "options": [
-        "--instance-id"
+        "--config"
       ],
       "param_style": "json",
-      "raw_name": "InstanceId",
-      "required": true,
+      "raw_name": "Config",
+      "required": false,
       "type": "string"
     },
     {
-      "example": "100",
-      "help_en": "The maximum data size fluctuation threshold",
-      "help_zh": "表大小波动阈值最大值",
+      "example": "true",
+      "help_en": "Whether to enable the row count fluctuation threshold",
+      "help_zh": "是否启动表数据条目波动阈值",
       "location": "body",
-      "name": "max_data_size_fluctuation_threshold",
+      "name": "enable_row_count_fluctuation_threshold",
       "options": [
-        "--max-data-size-fluctuation-threshold"
+        "--enable-row-count-fluctuation-threshold"
       ],
       "param_style": "json",
-      "raw_name": "MaxDataSizeFluctuationThreshold",
+      "raw_name": "EnableRowCountFluctuationThreshold",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "10",
+      "help_en": "The minimum row count fluctuation threshold",
+      "help_zh": "表数据条目波动阈值最小值",
+      "location": "body",
+      "name": "min_row_count_fluctuation_threshold",
+      "options": [
+        "--min-row-count-fluctuation-threshold"
+      ],
+      "param_style": "json",
+      "raw_name": "MinRowCountFluctuationThreshold",
       "required": false,
       "type": "int"
     },
@@ -234,46 +291,18 @@
       "type": "int"
     },
     {
-      "example": "test",
-      "help_en": "The MaxCompute project",
-      "help_zh": "maxcompute 项目",
+      "example": "true",
+      "help_en": "Whether to enable the data size fluctuation threshold",
+      "help_zh": "是否启动表大小波动阈值",
       "location": "body",
-      "name": "maxcompute_project_name",
+      "name": "enable_data_size_fluctuation_threshold",
       "options": [
-        "--maxcompute-project-name"
+        "--enable-data-size-fluctuation-threshold"
       ],
       "param_style": "json",
-      "raw_name": "MaxcomputeProjectName",
+      "raw_name": "EnableDataSizeFluctuationThreshold",
       "required": false,
-      "type": "string"
-    },
-    {
-      "example": "default",
-      "help_en": "The schema in MaxCompute",
-      "help_zh": "maxcompute 的schema",
-      "location": "body",
-      "name": "maxcompute_schema",
-      "options": [
-        "--maxcompute-schema"
-      ],
-      "param_style": "json",
-      "raw_name": "MaxcomputeSchema",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "table-1",
-      "help_en": "The name of the table in MaxCompute",
-      "help_zh": "maxcompute 中表名",
-      "location": "body",
-      "name": "maxcompute_table_name",
-      "options": [
-        "--maxcompute-table-name"
-      ],
-      "param_style": "json",
-      "raw_name": "MaxcomputeTableName",
-      "required": false,
-      "type": "string"
+      "type": "bool"
     },
     {
       "example": "10",
@@ -290,58 +319,30 @@
       "type": "int"
     },
     {
-      "example": "10",
-      "help_en": "The minimum row count fluctuation threshold",
-      "help_zh": "表数据条目波动阈值最小值",
+      "example": "100",
+      "help_en": "The maximum data size fluctuation threshold",
+      "help_zh": "表大小波动阈值最大值",
       "location": "body",
-      "name": "min_row_count_fluctuation_threshold",
+      "name": "max_data_size_fluctuation_threshold",
       "options": [
-        "--min-row-count-fluctuation-threshold"
+        "--max-data-size-fluctuation-threshold"
       ],
       "param_style": "json",
-      "raw_name": "MinRowCountFluctuationThreshold",
+      "raw_name": "MaxDataSizeFluctuationThreshold",
       "required": false,
       "type": "int"
     },
     {
-      "example": "table-123",
-      "help_en": "The name of the table",
-      "help_zh": "表名称",
+      "example": "default",
+      "help_en": "The schema in MaxCompute",
+      "help_zh": "maxcompute 的schema",
       "location": "body",
-      "name": "name",
+      "name": "maxcompute_schema",
       "options": [
-        "--name"
+        "--maxcompute-schema"
       ],
       "param_style": "json",
-      "raw_name": "Name",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "X2I",
-      "help_en": "The recall type of the table",
-      "help_zh": "表的召回类型",
-      "location": "body",
-      "name": "recall_type",
-      "options": [
-        "--recall-type"
-      ],
-      "param_style": "json",
-      "raw_name": "RecallType",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "Recall",
-      "help_en": "The table type",
-      "help_zh": "表类型",
-      "location": "body",
-      "name": "type",
-      "options": [
-        "--type"
-      ],
-      "param_style": "json",
-      "raw_name": "Type",
+      "raw_name": "MaxcomputeSchema",
       "required": false,
       "type": "string"
     }

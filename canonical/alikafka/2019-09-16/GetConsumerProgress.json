@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun alikafka GetConsumerProgress --region cn-hangzhou --InstanceId 'alikafka_pre-cn-mp919o4v0000' --ConsumerId 'kafka-test' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "alikafka get-consumer-progress",
   "cmd_name": "get-consumer-progress",
@@ -82,208 +83,229 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The status code. A value of 200 indicates that the request is successful",
             "description_zh": "状态码。返回200代表成功",
             "example": "200",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "ConsumerProgress": {
-            "backendName": "data",
             "description_en": "The consumption status",
             "description_zh": "消费状态",
-            "nullToEmpty": false,
             "properties": {
               "LastTimestamp": {
-                "backendName": "lastTimestamp",
                 "description_en": "The latest time when a message was stored. This time is calculated based on the consumer offsets of all topics in the consumer group.\n\nThis parameter is not supported for topics on Serverless instances or topics that use local storage on provisioned instances. In these cases, -1 is returned.\n\nFor topics that use cloud storage on provisioned instances, this parameter returns the message creation timestamp. This happens only after you submit the consumer offset for a consumer group that was created in the console or by an API call. If the message has no creation timestamp, -1 is returned",
                 "description_zh": "该 Group 所有消费位点所对应的消息数据的最大存储时间。\n\nServerless实例所有 Topic 类型暂不支持、预留实例的 Local 类型的 Topic 暂不支持。值统一返回 -1。\n只有预留实例的云存储类型的 Topic，通过控制台或 OpenApi 创建的 Group 提交消费位点后，才会返回对应消息的创建时间戳。如果对应的消息不存在创建时间戳，则返回-1",
                 "example": "1566874931649",
                 "format": "int64",
-                "nullToEmpty": false,
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "RebalanceInfoList": {
-                "backendName": "rebalanceInfoList",
-                "itemName": "RebalanceInfoList",
-                "items": {
-                  "properties": {
-                    "Generation": {
-                      "backendName": "generation",
-                      "format": "int64",
-                      "type": "integer"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "RebalanceInfoList": {
+                    "description_en": "The rebalancing details of the consumer group.\n\nThis parameter is no longer returned. To query rebalancing details, call the ListRebalanceInfo operation",
+                    "description_zh": "该 Group 的 Rebalance 详情。\n\n\n该接口不会再返回此字段，需要查询 Rebalance 详情请使用 ListRebalanceInfo 接口",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Generation": {
+                          "description_en": "The number of rebalancing events",
+                          "description_zh": "Rebalance 次数",
+                          "example": "100",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "GroupId": {
+                          "description_en": "The ID of the subscriber group",
+                          "description_zh": "订阅方的Group ID",
+                          "example": "falcon-uat",
+                          "type": "string"
+                        },
+                        "LastRebalanceTimestamp": {
+                          "description_en": "The time when the latest rebalancing event occurred. The value is a UNIX timestamp in seconds",
+                          "description_zh": "本轮 Rebalance 发生的时间。单位 s",
+                          "example": "1709199270",
+                          "format": "int64",
+                          "type": "integer"
+                        },
+                        "Reason": {
+                          "description_en": "The reason for the rebalancing event",
+                          "description_zh": "发生 Rebalance 的原因",
+                          "example": "removing member consumer-1-cd14eb9c-379b-4b8e-9bbd-76f147f8536f on LeaveGroup",
+                          "type": "string"
+                        },
+                        "RebalanceSuccess": {
+                          "description_en": "Indicates whether a new member joined the consumer group during the latest rebalancing event",
+                          "description_zh": "本轮 Rebalance 是否有新成员加入消费组",
+                          "example": "true",
+                          "type": "boolean"
+                        },
+                        "RebalanceTimeConsuming": {
+                          "description_en": "The duration of the latest rebalancing event. Unit: ms",
+                          "description_zh": "本轮 Rebalance 的持续时间。单位 ms ",
+                          "example": "1",
+                          "format": "int64",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "GroupId": {
-                      "backendName": "groupId",
-                      "mappingResourcePropertyName": "$.ConsumerId",
-                      "type": "string"
-                    },
-                    "LastRebalanceTimestamp": {
-                      "backendName": "lastRebalanceTimestamp",
-                      "format": "int64",
-                      "type": "integer"
-                    },
-                    "Reason": {
-                      "backendName": "reason",
-                      "type": "string"
-                    },
-                    "RebalanceSuccess": {
-                      "backendName": "rebalanceSuccess",
-                      "type": "boolean"
-                    },
-                    "RebalanceTimeConsuming": {
-                      "backendName": "rebalanceTimeConsuming",
-                      "format": "int64",
-                      "type": "integer"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "type": "array"
+                "type": "object"
               },
               "TopicList": {
-                "backendName": "progressOneTopics",
-                "itemName": "TopicList",
-                "items": {
-                  "properties": {
-                    "LastTimestamp": {
-                      "backendName": "lastTimestamp",
-                      "format": "int64",
-                      "nullToEmpty": false,
-                      "type": "integer",
-                      "visibility": "Public"
-                    },
-                    "OffsetList": {
-                      "backendName": "offsetList",
-                      "itemName": "OffsetList",
-                      "items": {
-                        "properties": {
-                          "Accumulate": {
-                            "backendName": "accumulate",
-                            "format": "int64",
-                            "type": "integer",
-                            "visibility": "Public"
-                          },
-                          "BrokerOffset": {
-                            "backendName": "brokerOffset",
-                            "format": "int64",
-                            "nullToEmpty": false,
-                            "type": "integer",
-                            "visibility": "Public"
-                          },
-                          "ClientId": {
-                            "backendName": "clientId",
-                            "type": "string"
-                          },
-                          "ClientIp": {
-                            "backendName": "clientAddr",
-                            "type": "string"
-                          },
-                          "ConsumerOffset": {
-                            "backendName": "consumerOffset",
-                            "format": "int64",
-                            "nullToEmpty": false,
-                            "type": "integer",
-                            "visibility": "Public"
-                          },
-                          "LastTimestamp": {
-                            "backendName": "lastTimestamp",
-                            "format": "int64",
-                            "nullToEmpty": false,
-                            "type": "integer",
-                            "visibility": "Public"
-                          },
-                          "MemberId": {
-                            "backendName": "memberId",
-                            "type": "string"
-                          },
-                          "Partition": {
-                            "backendName": "partition",
-                            "format": "int32",
-                            "nullToEmpty": false,
-                            "type": "integer",
-                            "visibility": "Public"
-                          }
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "TopicList": {
+                    "description_en": "The list of consumption progress for each topic in the consumer group",
+                    "description_zh": "此Group对应的每个Topic的消费进度列表",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "LastTimestamp": {
+                          "description_en": "The latest time when a message was stored. This time is calculated based on the consumer offsets of all topics to which the consumer group subscribes.\n\nThis parameter is not supported for topics on Serverless instances or topics that use local storage on provisioned instances. In these cases, -1 is returned.\n\nFor topics that use cloud storage on provisioned instances, this parameter returns the message creation timestamp. This happens only after you submit the consumer offset for a consumer group that was created in the console or by an API call. If the message has no creation timestamp, -1 is returned",
+                          "description_zh": "该 Group 所订阅 Topic 的所有消费位点所对应的消息数据的最大存储时间。\n\n\nServerless实例所有 Topic 类型暂不支持、预留实例的 Local 类型的 Topic 暂不支持。值统一返回 -1。\n只有预留实例的云存储类型的 Topic，通过控制台或 OpenApi 创建的 Group 提交消费位点后，才会返回对应消息的创建时间戳。如果对应的消息不存在创建时间戳，则返回-1",
+                          "example": "1566874931649",
+                          "format": "int64",
+                          "type": "integer"
                         },
-                        "type": "object"
+                        "OffsetList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "OffsetList": {
+                              "description_en": "The list of offsets",
+                              "description_zh": "偏移列表",
+                              "items": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "properties": {
+                                  "Accumulate": {
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "BrokerOffset": {
+                                    "description_en": "The latest offset",
+                                    "description_zh": "最大位点",
+                                    "example": "9",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "ClientId": {
+                                    "description_en": "The client ID of the application",
+                                    "description_zh": "应用的客户端ID",
+                                    "example": "client-id-KafkaConsumerDemo",
+                                    "type": "string"
+                                  },
+                                  "ClientIp": {
+                                    "description_en": "The IP address of the client",
+                                    "description_zh": "客户端 IP",
+                                    "example": "172.16.11.3",
+                                    "type": "string"
+                                  },
+                                  "ConsumerOffset": {
+                                    "description_en": "The consumer offset",
+                                    "description_zh": "消费位点",
+                                    "example": "9",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "LastTimestamp": {
+                                    "description_en": "The time when the message at the consumer offset of the partition was stored.\n\nThis parameter is not supported for topics on Serverless instances or topics that use local storage on provisioned instances. In these cases, -1 is returned.\n\nFor topics that use cloud storage on provisioned instances, this parameter returns the message creation timestamp. This happens only after you submit the consumer offset for a consumer group that was created in the console or by an API call. If the message has no creation timestamp, -1 is returned",
+                                    "description_zh": "该分区的消费位点所对应的消息数据的存储时间。\n\n\nServerless实例所有 Topic 类型暂不支持、预留实例的 Local 类型的 Topic 暂不支持。值统一返回 -1。\n只有预留实例的云存储类型的 Topic，通过控制台或 OpenApi 创建的 Group 提交消费位点后，才会返回对应消息的创建时间戳。如果对应的消息不存在创建时间戳，则返回-1",
+                                    "example": "1566874931649",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  },
+                                  "MemberId": {
+                                    "description_en": "The member ID",
+                                    "description_zh": "成员 ID",
+                                    "example": "client-id-KafkaConsumerDemo-70b64883-a911-4882-8084-598b958848b4",
+                                    "type": "string"
+                                  },
+                                  "Partition": {
+                                    "description_en": "The partition ID",
+                                    "description_zh": "分区ID",
+                                    "example": "0",
+                                    "format": "int32",
+                                    "type": "integer"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Topic": {
+                          "description_en": "The topic name",
+                          "description_zh": "Topic名称",
+                          "example": "kafka-test",
+                          "type": "string"
+                        },
+                        "TotalDiff": {
+                          "description_en": "The total number of unconsumed messages in the topic. This value is the message accumulation",
+                          "description_zh": "该Topic的未消费消息总量，即堆积量",
+                          "example": "0",
+                          "format": "int64",
+                          "type": "integer"
+                        }
                       },
-                      "nullToEmpty": false,
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "object"
                     },
-                    "Topic": {
-                      "backendName": "topic",
-                      "nullToEmpty": false,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "TotalDiff": {
-                      "backendName": "totalDiff",
-                      "format": "int64",
-                      "nullToEmpty": false,
-                      "type": "integer",
-                      "visibility": "Public"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": false,
-                "type": "array",
-                "visibility": "Public"
+                "type": "object"
               },
               "TotalDiff": {
-                "backendName": "totalDiff",
                 "description_en": "The total number of unconsumed messages in all topics. This value is the message accumulation",
                 "description_zh": "所有Topic的未消费消息总量，即堆积量",
                 "example": "0",
                 "format": "int64",
-                "nullToEmpty": false,
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "state": {
-                "backendName": "state",
                 "description_en": "The status of the consumer group:\n\nUNKNOWN\n\nPREPARING_REBALANCE\n\nCOMPLETING_REBALANCE\n\nSTABLE\n\nDEAD\n\nEMPTY",
                 "description_zh": "消费者组消费状态：\n\nUNKNOWN\nPREPARING_REBALANCE\nCOMPLETING_REBALANCE\nSTABLE\nDEAD\nEMPTY",
                 "example": "STABLE",
                 "type": "string"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The returned message",
             "description_zh": "返回信息",
             "example": "operation success.",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "252820E1-A2E6-45F2-B4C9-1056B8CE****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the call is successful",
             "description_zh": "调用是否成功",
             "example": "true",
-            "nullToEmpty": false,
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

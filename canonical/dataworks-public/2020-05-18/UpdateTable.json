@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "cmd_full_name": "dataworks-public update-table",
   "cmd_name": "update-table",
   "deprecated": true,
@@ -36,7 +37,7 @@
     },
     {
       "example": "1",
-      "help_en": "The scope in which the table is visible. Valid values: 0, 1, and 2. The value 0 indicates that the table is invisible to all workspace members. The value 1 indicates that the table is visible to all workspace members. The value 2 indicates that the table is visible to workspace members",
+      "help_en": "The scope in which the table is visible. Valid values: 0, 1, and 2. The value 0 indicates that the table is invisible to all members. The value 1 indicates that the table is visible to all members. The value 2 indicates that the table is visible to workspace members",
       "help_zh": "表的可见性，包括0（对所有成员不可见）、1（对所有成员可见）和2（对工作空间成员可见）",
       "location": "query",
       "name": "visibility",
@@ -255,18 +256,6 @@
       "element": {
         "fields": [
           {
-            "example": "abc",
-            "help_en": "The name of the field",
-            "help_zh": "字段的名称",
-            "name": "column_name",
-            "options": [
-              "--column-name"
-            ],
-            "raw_name": "ColumnName",
-            "required": true,
-            "type": "string"
-          },
-          {
             "example": "中文",
             "help_en": "The display name of the field",
             "help_zh": "字段的中文名称",
@@ -279,14 +268,14 @@
             "type": "string"
           },
           {
-            "example": "string",
-            "help_en": "The type of the field. For more information, see MaxCompute field types",
-            "help_zh": "字段的类型，请参见MaxCompute支持的字段类型",
-            "name": "column_type",
+            "example": "abc",
+            "help_en": "The name of the field",
+            "help_zh": "字段的名称",
+            "name": "column_name",
             "options": [
-              "--column-type"
+              "--column-name"
             ],
-            "raw_name": "ColumnType",
+            "raw_name": "ColumnName",
             "required": true,
             "type": "string"
           },
@@ -303,16 +292,28 @@
             "type": "string"
           },
           {
-            "example": "0",
-            "help_en": "Specifies whether the field is a partition field. Valid values: 0 and 1. The value 0 indicates that the field is not a partition field. The value 1 indicates that the field is a partition field",
-            "help_zh": "是否为分区字段，包括0（否）和1（是）",
-            "name": "is_partition_col",
+            "example": "string",
+            "help_en": "The type of the field. For more information, see MaxCompute field types",
+            "help_zh": "字段的类型，请参见MaxCompute支持的字段类型",
+            "name": "column_type",
             "options": [
-              "--is-partition-col"
+              "--column-type"
             ],
-            "raw_name": "IsPartitionCol",
+            "raw_name": "ColumnType",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "example": "1",
+            "help_en": "The sequence number of the field. If the field is a partition field, this parameter is not supported",
+            "help_zh": "字段的序号。如果字段为分区字段，则不支持配置Columns.N.SeqNumber",
+            "name": "seq_number",
+            "options": [
+              "--seq-number"
+            ],
+            "raw_name": "SeqNumber",
             "required": false,
-            "type": "bool"
+            "type": "int"
           },
           {
             "example": "10",
@@ -327,16 +328,16 @@
             "type": "int"
           },
           {
-            "example": "1",
-            "help_en": "The sequence number of the field. If the field is a partition field, this parameter is not supported",
-            "help_zh": "字段的序号。如果字段为分区字段，则不支持配置Columns.N.SeqNumber",
-            "name": "seq_number",
+            "example": "0",
+            "help_en": "Specifies whether the field is a partition field. Valid values: 0 and 1. The value 0 indicates that the field is not a partition field. The value 1 indicates that the field is a partition field",
+            "help_zh": "是否为分区字段，包括0（否）和1（是）",
+            "name": "is_partition_col",
             "options": [
-              "--seq-number"
+              "--is-partition-col"
             ],
-            "raw_name": "SeqNumber",
+            "raw_name": "IsPartitionCol",
             "required": false,
-            "type": "int"
+            "type": "bool"
           }
         ],
         "type": "object"
@@ -408,59 +409,41 @@
         "description_zh": "返回对象",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "abcde",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TaskInfo": {
-            "backendName": "data",
-            "description_en": "The information about the request task. After a request task is submitted, it is divided into multiple subtasks that are run in sequence. After the current subtask is complete, the next subtask starts to run. After all subtasks are complete, the request task is complete. If a request task is terminated due to one of the following issues, address the issue based on the error code and initiate the request task again:\n\nThe request task fails to be submitted.\n\nAfter the request task is submitted, a subtask fails to run",
+            "description_en": "The information about the request task. After a request task is submitted, it is divided into multiple subtasks that are run in sequence. After the current subtask succeeds, the next subtask starts to run. After all subtasks are complete, the request task is complete. If a request task is terminated due to one of the following issues, address the issue based on the error code and initiate the request task again:\n\n\n\n\nThe request task fails to be submitted.\nAfter the request task is submitted, a subtask fails to run",
             "description_zh": "请求任务的信息。\n请求任务提交成功后，会被分为多个子任务有序执行。当前子任务执行成功后，才会继续执行下一个子任务，所有子任务执行完毕，该请求任务结束。如下情况，请求任务会终止，您需要根据错误码信息解决问题后重新发起请求任务：\n请求任务提交失败。\n请求任务提交成功后，任意子任务执行失败",
-            "nullToEmpty": false,
             "properties": {
               "Content": {
-                "backendName": "content",
                 "description_en": "The details about the status of the current subtask. Valid values:\n\nIf the current subtask is successful, success is returned.\n\nIf the current subtask fails, the error details are displayed",
                 "description_zh": "当前子任务的执行状态详细信息。具体如下：\n执行成功，则显示success。\n执行失败则显示对应的报错详情",
                 "example": "success",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "NextTaskId": {
-                "backendName": "nextTaskId",
-                "description_en": "The ID of the subtask that you want to run. If this parameter is left empty, all subtasks are complete. You can call the [GetDDLJobStatus]（https://help.aliyun.com/document_detail/185659.html） operation to query the status of the subtask based on the subtask ID",
+                "description_en": "The ID of the next subtask to run. If this field is empty, all subtasks have finished. You can use this ID to query the corresponding subtask status by calling [GetDDLJobStatus]（https://help.aliyun.com/document_detail/185659.html）",
                 "description_zh": "即将执行的子任务ID。如果该字段为空，则表示所有子任务均已结束。您可以使用获取到的ID，从[GetDDLJobStatus]（https://help.aliyun.com/document_detail/185659.html）接口查询对应子任务的状态",
                 "example": "abc1",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "Status": {
-                "backendName": "status",
                 "description_en": "The status of the current subtask. Valid values:\n\noperating: The subtask is running.\n\nsuccess: The subtask succeeds.\n\nfailure: The subtask fails to run. For more information about the error details, see the Content parameter",
                 "description_zh": "当前执行的子任务的状态信息。取值如下：\noperating表示子任务正在执行中。\nsuccess表示子任务执行成功。\nfailure表示子任务执行失败。详细的报错信息请参见Content参数",
                 "example": "success",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "TaskId": {
-                "backendName": "taskId",
                 "description_en": "The ID of the current subtask",
                 "description_zh": "当前执行的子任务ID",
                 "example": "abc",
-                "nullToEmpty": false,
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

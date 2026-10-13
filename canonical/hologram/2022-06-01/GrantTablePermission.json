@@ -1,13 +1,14 @@
 {
-  "camel_example": "aliyun hologram POST /api/v1/instances/hgpostcn-cn-zpr3426xxx/grantTablePermission --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"privileges\":[\"INSERT\"],\"databaseName\":\"my_db\",\"columnNames\":[\"example-string\"],\"allTable\":true,\"userName\":\"p4_1234xxxx\",\"schemaName\":\"my_schema\",\"tableName\":\"orders_pay\"}'",
+  "backend_timeout_ms": 60000,
+  "camel_example": "aliyun hologram POST /api/v1/instances/hgpostcn-cn-zpr3426xxx/grantTablePermission --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"privileges\":[\"INSERT\"],\"databaseName\":\"my_db\",\"columnNames\":[\"order_id\"],\"allTable\":true,\"userName\":\"p4_1234xxxx\",\"schemaName\":\"my_schema\",\"tableName\":\"orders_pay\"}'",
   "cmd_full_name": "hologram grant-table-permission",
   "cmd_name": "grant-table-permission",
   "deprecated": false,
-  "description_en": "Grants permissions on a table to a specified user",
-  "description_zh": "DB授权",
-  "kebab_example": "aliyun hologram grant-table-permission --instance-id hgpostcn-cn-zpr3426xxx --database-name my_db --privileges INSERT --user-name p4_1234xxxx --schema-name my_schema --table-name orders_pay --all-table true --column-names example-string --region cn-hangzhou",
+  "description_en": "Grants table permissions to a specified user",
+  "description_zh": "为指定用户授予表权限",
+  "kebab_example": "aliyun hologram grant-table-permission --instance-id hgpostcn-cn-zpr3426xxx --database-name my_db --privileges INSERT --user-name p4_1234xxxx --schema-name my_schema --table-name orders_pay --all-table true --column-names order_id --api-version 2022-06-01 --region cn-hangzhou",
   "method": "POST",
-  "multi_version": false,
+  "multi_version": true,
   "name": "GrantTablePermission",
   "operation": {
     "action": "GrantTablePermission",
@@ -45,38 +46,8 @@
       "type": "string"
     },
     {
-      "example": "true",
-      "help_en": "Specifies whether to grant the permissions on all tables in the schema",
-      "help_zh": "是否给当前所有表授权",
-      "location": "body",
-      "name": "all_table",
-      "options": [
-        "--all-table"
-      ],
-      "param_style": "json",
-      "raw_name": "allTable",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "element": {
-        "type": "string"
-      },
-      "help_en": "The columnNames",
-      "help_zh": "The columnNames",
-      "location": "body",
-      "name": "column_names",
-      "options": [
-        "--column-names"
-      ],
-      "param_style": "json",
-      "raw_name": "columnNames",
-      "required": false,
-      "type": "array"
-    },
-    {
       "example": " my_db",
-      "help_en": "The name of the database",
+      "help_en": "The database name",
       "help_zh": "database名称",
       "location": "body",
       "name": "database_name",
@@ -92,7 +63,7 @@
       "element": {
         "type": "string"
       },
-      "help_en": "The permissions to grant",
+      "help_en": "The list of permissions",
       "help_zh": "权限列表",
       "location": "body",
       "name": "privileges",
@@ -103,6 +74,20 @@
       "raw_name": "privileges",
       "required": false,
       "type": "array"
+    },
+    {
+      "example": "p4_1234xxxx",
+      "help_en": "The user ID. For more information, see https://help.aliyun.com/document_detail/130393.html",
+      "help_zh": "用户id。请参考 https://help.aliyun.com/document_detail/130393.html",
+      "location": "body",
+      "name": "user_name",
+      "options": [
+        "--user-name"
+      ],
+      "param_style": "json",
+      "raw_name": "userName",
+      "required": false,
+      "type": "string"
     },
     {
       "example": "my_schema",
@@ -133,18 +118,34 @@
       "type": "string"
     },
     {
-      "example": "p4_1234xxxx",
-      "help_en": "The user ID. For more information, see https://help.aliyun.com/document_detail/130393.html",
-      "help_zh": "用户id。请参考 https://help.aliyun.com/document_detail/130393.html",
+      "example": "true",
+      "help_en": "Specifies whether to grant permissions on all existing tables",
+      "help_zh": "是否给当前所有表授权",
       "location": "body",
-      "name": "user_name",
+      "name": "all_table",
       "options": [
-        "--user-name"
+        "--all-table"
       ],
       "param_style": "json",
-      "raw_name": "userName",
+      "raw_name": "allTable",
       "required": false,
-      "type": "string"
+      "type": "bool"
+    },
+    {
+      "element": {
+        "type": "string"
+      },
+      "help_en": "The list of column names to grant permissions on",
+      "help_zh": "需要授予权限的列名列表",
+      "location": "body",
+      "name": "column_names",
+      "options": [
+        "--column-names"
+      ],
+      "param_style": "json",
+      "raw_name": "columnNames",
+      "required": false,
+      "type": "array"
     }
   ],
   "pathPattern": "/api/v1/instances/[instanceId]/grantTablePermission",
@@ -153,47 +154,43 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Data": {
-            "backendName": "data",
-            "description_en": "The result of the operation. A value of `true` indicates the operation was successful, and `false` indicates it failed",
+            "description_en": "Indicates whether the operation succeeded. Valid values:\ntrue: Succeeded.\nfalse: Failed",
             "description_zh": "true:成功；false：失败",
             "example": "true",
             "type": "boolean"
           },
           "ErrorCode": {
-            "backendName": "errorCode",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "null",
             "type": "string"
           },
           "ErrorMessage": {
-            "backendName": "errorMessage",
             "description_en": "The error message",
             "description_zh": "错误消息",
             "example": "null",
             "type": "string"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "http状态码",
             "example": "200",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
-            "description_zh": "Id of the request",
+            "description_zh": "请求 ID",
             "example": "2A8DEF6E-067E-5DB0-BAE1-2894266E6C6A\n",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful",
+            "description_en": "Indicates whether the request succeeded. This parameter is unrelated to the business result",
             "description_zh": "请求结果，表示此次请求是否发生异常，和业务无关",
             "example": "true",
             "type": "string"

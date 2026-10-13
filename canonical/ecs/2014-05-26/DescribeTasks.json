@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 5000,
   "camel_example": "aliyun ecs DescribeTasks --region cn-hangzhou --PageSize 10 --TaskIds 't-bp1hvgwromzv32iq0000,t-bp179lofu2pv768w0000' --EndTime '2020-11-23T15:16:00Z' --PageNumber 1 --TaskGroupId 'g-2ze2op2grqpclwu70000' --TaskAction ImportImage --ResourceIds.1 'm-bp1i8huqm5u70000' --StartTime '2020-11-23T15:10:00Z' --RegionId 'cn-hangzhou' --TaskStatus Finished",
   "cmd_full_name": "ecs describe-tasks",
   "cmd_name": "describe-tasks",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "1",
-      "help_en": "The page number of the results.\n\nMinimum value: 1.\n\nDefault value: 1",
+      "help_en": "The page number of the query results.\n\nMinimum value: 1.\n\nDefault value: 1",
       "help_zh": "查询结果的页码。\n\n起始值：1。\n\n默认值：1",
       "location": "query",
       "minimum": "1",
@@ -77,7 +78,7 @@
     },
     {
       "example": "ImportImage",
-      "help_en": "The name of the API operation associated with the task. Valid values:\n\nImportImage: import an image.\nExportImage: export an image.\nRedeployInstance: redeploy an ECS instance.\nModifyDiskSpec: change the cloud disk type.\nArchiveSnapshot: archive a snapshot",
+      "help_en": "The name of the API operation associated with the task. Valid values:\n\nImportImage: import an image.\nExportImage: export an image.\nRedeployInstance: redeploy an ECS instance.\nModifyDiskSpec: change the type of a cloud disk.\nArchiveSnapshot: archive a snapshot",
       "help_zh": "任务操作的接口名称。取值范围：\n\nImportImage：导入镜像。\nExportImage：导出镜像。\nRedeployInstance：重新部署ECS实例。\nModifyDiskSpec：变更云盘类型。\nArchiveSnapshot ：归档快照",
       "location": "query",
       "name": "task_action",
@@ -163,99 +164,102 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "PageNumber": {
-            "backendName": "data.pageNo",
-            "description_en": "The page number of the current page in a paged query",
+            "description_en": "The page number of the current page in the paging query",
             "description_zh": "分页查询的当前页码",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
-            "description_en": "The number of entries on the current page",
+            "description_en": "The number of entries per page",
             "description_zh": "当前分页包含多少条目",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "RegionId": {
-            "backendName": "data.regionNo",
             "description_en": "The region ID",
             "description_zh": "地域ID",
             "example": "cn-hangzhou",
-            "mappingResourcePropertyName": "$.RegionId",
-            "nullToEmpty": true,
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",
-            "nullToEmpty": true,
             "type": "string"
           },
           "TaskSet": {
-            "backendName": "data.data",
-            "itemName": "Task",
-            "items": {
-              "properties": {
-                "CreationTime": {
-                  "backendName": "creationTime",
-                  "mappingResourcePropertyName": "$.CreateTime",
-                  "nullToEmpty": true,
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Task": {
+                "description_en": "The collection of tasks",
+                "description_zh": "任务集合",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CreationTime": {
+                      "description_en": "The creation time. The time is displayed in ISO 8601 format in UTC",
+                      "description_zh": "创建时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2020-11-24T12:50Z",
+                      "type": "string"
+                    },
+                    "FinishedTime": {
+                      "description_en": "The time when the task was completed. The time is displayed in ISO 8601 format in UTC",
+                      "description_zh": "结束时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2020-11-24T12:50Z",
+                      "type": "string"
+                    },
+                    "ResourceId": {
+                      "description_en": "The resource ID",
+                      "description_zh": "资源ID",
+                      "example": "m-bp1i8huqm5u7****",
+                      "type": "string"
+                    },
+                    "SupportCancel": {
+                      "description_en": "Indicates whether the task can be canceled",
+                      "description_zh": "是否支持取消任务",
+                      "example": "true",
+                      "type": "string"
+                    },
+                    "TaskAction": {
+                      "description_en": "The task name",
+                      "description_zh": "任务名称",
+                      "example": "ImportImage",
+                      "type": "string"
+                    },
+                    "TaskId": {
+                      "description_en": "The task ID",
+                      "description_zh": "任务ID",
+                      "example": "t-bp1hvgwromzv32iq****",
+                      "type": "string"
+                    },
+                    "TaskStatus": {
+                      "description_en": "The task status",
+                      "description_zh": "任务状态",
+                      "example": "Finished",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "FinishedTime": {
-                  "backendName": "finishedTime",
-                  "mappingResourcePropertyName": "$.FinishedTime",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ResourceId": {
-                  "backendName": "resourceId",
-                  "type": "string"
-                },
-                "SupportCancel": {
-                  "backendName": "supportCancel",
-                  "mappingResourcePropertyName": "$.SupportCancel",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "TaskAction": {
-                  "backendName": "taskAction",
-                  "mappingResourcePropertyName": "$.TaskAction",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "TaskId": {
-                  "backendName": "taskId",
-                  "mappingResourcePropertyName": "$.TaskId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "TaskStatus": {
-                  "backendName": "taskStatus",
-                  "mappingResourcePropertyName": "$.Status",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "TotalCount": {
-            "backendName": "data.total",
             "description_en": "The total number of entries returned",
             "description_zh": "返回结果的总条目数",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           }
         },

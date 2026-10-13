@@ -1,4 +1,6 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun ecd SetDesktopGroupScaleTimer --region cn-hangzhou --DesktopGroupId 'dg-2i8qxpv6t1a030000' --RegionId 'cn-hangzhou' --version 2020-09-30 --method POST --force",
   "cmd_full_name": "ecd set-desktop-group-scale-timer",
   "cmd_name": "set-desktop-group-scale-timer",
   "deprecated": false,
@@ -50,28 +52,34 @@
       "element": {
         "fields": [
           {
-            "example": "5",
-            "help_en": "The number of cloud computers to purchase, which is one of the scaling policy parameters. Valid values: 0 to 200",
-            "help_zh": "伸缩策略参数之一：购买云电脑数。取值范围：0~200",
-            "name": "buy_res_amount",
-            "options": [
-              "--buy-res-amount"
+            "enum": [
+              "drop",
+              "normal",
+              "peak",
+              "rise"
             ],
-            "raw_name": "BuyResAmount",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "0 0 12 ? * 1",
-            "help_en": "The cron expression for the trigger time",
-            "help_zh": "触发时间的Cron表达式",
-            "name": "cron",
+            "example": "rise",
+            "help_en": "The policy type",
+            "help_zh": "策略类型",
+            "name": "type",
             "options": [
-              "--cron"
+              "--type"
             ],
-            "raw_name": "Cron",
+            "raw_name": "Type",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "0.85",
+            "help_en": "The session occupancy threshold, which is used as the trigger condition for automatic scaling of the multi-session cloud computer pool. The session occupancy is calculated by using the following formula:\n\n```Session occupancy = Number of attached sessions / (Total number of cloud computer resources × Maximum number of sessions supported per cloud computer) × 100%```\n\nWhen the session occupancy reaches this threshold, new cloud computers are created. When the session occupancy does not reach this threshold, excess cloud computers are deleted",
+            "help_zh": "会话占用率阈值，用作多会话云电脑池的自动伸缩触发条件。会话占用率的计算公式为：\n\n```会话占用率 = 已绑定会话数 / (云电脑资源总数 × 每台云电脑支持的最大会话数) × 100%```\n\n当会话占用率达到该阈值时，则会新建云电脑；未达到该阈值时，则删除多余的云电脑",
+            "name": "ratio_threshold",
+            "options": [
+              "--ratio-threshold"
+            ],
+            "raw_name": "RatioThreshold",
+            "required": false,
+            "type": "float"
           },
           {
             "example": "180000",
@@ -86,26 +94,14 @@
             "type": "int"
           },
           {
-            "example": "0",
-            "help_en": "The load balancing policy for the multi-session cloud computer pool",
-            "help_zh": "多会话云电脑池的负载均衡策略",
-            "name": "load_policy",
+            "example": "5",
+            "help_en": "The number of cloud computers to purchase, which is one of the scaling policy parameters. Valid values: 0 to 200",
+            "help_zh": "伸缩策略参数之一：购买云电脑数。取值范围：0~200",
+            "name": "buy_res_amount",
             "options": [
-              "--load-policy"
+              "--buy-res-amount"
             ],
-            "raw_name": "LoadPolicy",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "100",
-            "help_en": "The maximum number of cloud computers, which is one of the scaling policy parameters. Valid values: 0 to 200",
-            "help_zh": "伸缩策略参数之一：云电脑最大数量。取值范围：0~200",
-            "name": "max_res_amount",
-            "options": [
-              "--max-res-amount"
-            ],
-            "raw_name": "MaxResAmount",
+            "raw_name": "BuyResAmount",
             "required": false,
             "type": "int"
           },
@@ -122,28 +118,44 @@
             "type": "int"
           },
           {
-            "example": "0.85",
-            "help_en": "The session occupancy threshold, which is used as the trigger condition for automatic scaling of the multi-session cloud computer pool. The session occupancy is calculated by using the following formula:\n\n```Session occupancy = Number of attached sessions / (Total number of cloud computer resources × Maximum number of sessions supported per cloud computer) × 100%```\n\nWhen the session occupancy reaches this threshold, new cloud computers are created. When the session occupancy does not reach this threshold, excess cloud computers are deleted",
-            "help_zh": "会话占用率阈值，用作多会话云电脑池的自动伸缩触发条件。会话占用率的计算公式为：\n\n```会话占用率 = 已绑定会话数 / (云电脑资源总数 × 每台云电脑支持的最大会话数) × 100%```\n\n当会话占用率达到该阈值时，则会新建云电脑；未达到该阈值时，则删除多余的云电脑",
-            "name": "ratio_threshold",
+            "example": "100",
+            "help_en": "The maximum number of cloud computers, which is one of the scaling policy parameters. Valid values: 0 to 200",
+            "help_zh": "伸缩策略参数之一：云电脑最大数量。取值范围：0~200",
+            "name": "max_res_amount",
             "options": [
-              "--ratio-threshold"
+              "--max-res-amount"
             ],
-            "raw_name": "RatioThreshold",
+            "raw_name": "MaxResAmount",
             "required": false,
-            "type": "float"
+            "type": "int"
           },
           {
-            "example": "rise",
-            "help_en": "The policy type",
-            "help_zh": "策略类型",
-            "name": "type",
+            "example": "0 0 12 ? * 1",
+            "help_en": "The cron expression for the trigger time",
+            "help_zh": "触发时间的Cron表达式",
+            "name": "cron",
             "options": [
-              "--type"
+              "--cron"
             ],
-            "raw_name": "Type",
+            "raw_name": "Cron",
             "required": false,
             "type": "string"
+          },
+          {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "example": "0",
+            "help_en": "The load balancing policy for the multi-session cloud computer pool",
+            "help_zh": "多会话云电脑池的负载均衡策略",
+            "name": "load_policy",
+            "options": [
+              "--load-policy"
+            ],
+            "raw_name": "LoadPolicy",
+            "required": false,
+            "type": "int"
           }
         ],
         "type": "object"
@@ -171,13 +183,10 @@
         "description_zh": "返回信息集合",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1CBAFFAB-B697-4049-A9B1-67E1FC5F****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun iacservice POST /modules --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"clientToken\":\"a65451293e64979ba7a4b573950217fe\",\"name\":\"my-ecs-module\",\"description\":\"ECS_instance_module\",\"groupInfo\":{\"groupId\":\"g-5fd38c9b92d541a7083a86432e2\",\"projectId\":\"p-433aead75605713865c386cb9d\"},\"source\":\"OSS\",\"versionStrategy\":\"Manual\",\"sourcePath\":\"oss::https://terraform-pipeline.oss-eu-central-1.aliyuncs.com/code.zip\",\"statePath\":\"oss::https://terraform-pipeline.oss-eu-central-1.aliyuncs.com/terraform.tfstate\",\"tags\":[{\"tagValue\":\"TestValue\",\"tagKey\":\"TestKey\"}]}'",
   "cmd_full_name": "iacservice create-module",
   "cmd_name": "create-module",
@@ -115,6 +116,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "ExportTask",
+        "Upload",
+        "Registry",
+        "Editor",
+        "OSS"
+      ],
       "example": "OSS",
       "help_en": "The source from which the template is created. Valid values:\nOSS: imports from a ZIP file stored in OSS.\nRegistry: creates from a module in the template registry.\nExportTask: references a template exported by a resource export task.\nEditor: creates a blank template that supports online editing.\nUpload: uploads a local template file to generate the template",
       "help_zh": "创建来源，取值\nOSS：从OSS存储的ZIP文件导入；\nRegistry : 使用模板中心的模块来创建；\nExportTask：引用资源导出任务导出的模板\nEditor：空白模板，支持在线编辑；\nUpload：用本地的模板文件上传生成；",
@@ -157,20 +165,26 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Manual",
+        "SourcePathUpdated"
+      ],
+      "example": "Manual",
+      "help_en": "The version generation strategy. Valid values:\n\nManual: manually generates a version. This is the default value.\nSourcePathUpdated: generates a new version when sourcePath is modified",
+      "help_zh": "版本生成策略,取值\n\nManual :手动生成版本(默认)\nSourcePathUpdated ：\n 修改sourcePath触发生成新版本",
+      "location": "body",
+      "name": "version_strategy",
+      "options": [
+        "--version-strategy"
+      ],
+      "param_style": "json",
+      "raw_name": "versionStrategy",
+      "required": false,
+      "type": "string"
+    },
+    {
       "element": {
         "fields": [
-          {
-            "example": "TestKey",
-            "help_en": "The tag key of the template",
-            "help_zh": "模板的标签键",
-            "name": "tag_key",
-            "options": [
-              "--tag-key"
-            ],
-            "raw_name": "tagKey",
-            "required": false,
-            "type": "string"
-          },
           {
             "example": "TestValue",
             "help_en": "The tag value of the template",
@@ -180,6 +194,18 @@
               "--tag-value"
             ],
             "raw_name": "tagValue",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "TestKey",
+            "help_en": "The tag key of the template",
+            "help_zh": "模板的标签键",
+            "name": "tag_key",
+            "options": [
+              "--tag-key"
+            ],
+            "raw_name": "tagKey",
             "required": false,
             "type": "string"
           }
@@ -197,20 +223,6 @@
       "raw_name": "tags",
       "required": false,
       "type": "array"
-    },
-    {
-      "example": "Manual",
-      "help_en": "The version generation strategy. Valid values:\n\nManual: manually generates a version. This is the default value.\nSourcePathUpdated: generates a new version when sourcePath is modified",
-      "help_zh": "版本生成策略,取值\n\nManual :手动生成版本(默认)\nSourcePathUpdated ：\n 修改sourcePath触发生成新版本",
-      "location": "body",
-      "name": "version_strategy",
-      "options": [
-        "--version-strategy"
-      ],
-      "param_style": "json",
-      "raw_name": "versionStrategy",
-      "required": false,
-      "type": "string"
     }
   ],
   "pathPattern": "/modules",
@@ -223,23 +235,21 @@
         "description_zh": "响应体结构",
         "properties": {
           "moduleId": {
-            "backendName": "module",
             "description_en": "The template ID",
             "description_zh": "模板ID",
             "example": "mod-518855d9a058cfffcc446d8fe3c99",
             "type": "string"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "0D797DC3-FF04-5C21-81EB-92C7799512E3",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

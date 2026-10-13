@@ -1,5 +1,5 @@
 {
-  "camel_example": "",
+  "camel_example": "aliyun pds POST /v2/file/create --region cn-hangzhou --header \"Content-Type=application/json\" --version 2022-03-01 --force",
   "cmd_full_name": "pds create-file",
   "cmd_name": "create-file",
   "components": {
@@ -182,82 +182,51 @@
   },
   "parameters": [
     {
-      "enum": [
-        "ignore",
-        "auto_rename",
-        "refuse"
-      ],
-      "example": "ignore",
-      "help_en": "The mode for handling files with duplicate names. Valid values:\n\nignore: allows files with duplicate names.\nauto_rename: automatically renames the file when a file with the same name exists. By default, the current timestamp is appended, such as xxx_20060102_150405.\nrefuse: rejects the creation of a new file when a file with the same name exists on the server, and returns the details of the existing file to the client.\n\nDefault value: ignore",
-      "help_zh": "同名文件处理模式，可选值如下：\n\nignore：允许同名文件；\n\nauto_rename：当发现同名文件是，云端自动重命名，默认为追加当前时间点，如 xxx _20060102_150405；\n\nrefuse：当云端存在同名文件时，拒绝创建新文件，返回客户端已存在同名文件的详细信息。\n\n默认为 ignore",
-      "location": "body",
-      "name": "check_name_mode",
-      "options": [
-        "--check-name-mode"
-      ],
-      "param_style": "json",
-      "raw_name": "check_name_mode",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "7C4A8D09CA3762AF61E59520943DC26494F8941B",
-      "help_en": "The hash value of the file content. The value is calculated based on the algorithm specified by content_hash_name",
-      "help_zh": "文件内容 hash 值，需要根据 content_hash_name 指定的算法计算",
-      "location": "body",
-      "name": "content_hash",
-      "options": [
-        "--content-hash"
-      ],
-      "param_style": "json",
-      "raw_name": "content_hash",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "enum": [
-        "sha1"
-      ],
-      "example": "sha1",
-      "help_en": "The hash algorithm name for the file content. Currently, only sha1 is supported",
-      "help_zh": "文件内容hash算法名，当前只支持 sha1",
-      "location": "body",
-      "name": "content_hash_name",
-      "options": [
-        "--content-hash-name"
-      ],
-      "param_style": "json",
-      "raw_name": "content_hash_name",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "application/json",
-      "help_en": "The file content type. Default value: application/oct-stream.<props=\"china\"> For common content_type values, refer to OSS How do I set Content-Type (MIME)? (https://help.aliyun.com/document_detail/39522.htm?spm=a2c4g.11186623.0.0.5a0b7dbb1TPnWF#concept-5041).</props>",
-      "help_zh": "文件内容类型，默认值 application/oct-stream<props=\"china\">，常见的 content_type 可以参考 OSS 《如何设置Content-Type（MIME）？》 (https://help.aliyun.com/document_detail/39522.htm?spm=a2c4g.11186623.0.0.5a0b7dbb1TPnWF#concept-5041)。</props>",
-      "location": "body",
-      "name": "content_type",
-      "options": [
-        "--content-type"
-      ],
-      "param_style": "json",
-      "raw_name": "content_type",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "团队文件",
-      "help_en": "The file description. The description can be up to 1024 characters. Default value: empty",
-      "help_zh": "文件描述信息，最长 1024 字符，默认为空",
+      "example": "a.txt",
+      "help_en": "The file name. The name can be up to 1024 bytes in UTF-8 encoding and cannot contain forward slashes (/)",
+      "help_zh": "文件名称，按照 utf8 编码最长 1024 字节，不能包含 /",
       "location": "body",
       "max_length": "1024",
-      "name": "description",
+      "min_length": "1",
+      "name": "name",
       "options": [
-        "--description"
+        "--name"
       ],
       "param_style": "json",
-      "raw_name": "description",
-      "required": false,
+      "raw_name": "name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "file",
+        "folder"
+      ],
+      "example": "file",
+      "help_en": "The file type. Valid values:\n\nfile: file.\nfolder: folder",
+      "help_zh": "文件类型，可选值如下：\n\nfile：文件\nfolder：文件夹",
+      "location": "body",
+      "name": "type",
+      "options": [
+        "--type"
+      ],
+      "param_style": "json",
+      "raw_name": "type",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "fileid1",
+      "help_en": "The parent folder ID. Set this parameter to root to upload to the root directory",
+      "help_zh": "父目录id，上传到根目录时填写 root",
+      "location": "body",
+      "name": "parent_file_id",
+      "options": [
+        "--parent-file-id"
+      ],
+      "param_style": "json",
+      "raw_name": "parent_file_id",
+      "required": true,
       "type": "string"
     },
     {
@@ -276,131 +245,61 @@
       "type": "string"
     },
     {
-      "example": "9520943DC264",
-      "help_en": "The file ID. This parameter is required for overwrite operations",
-      "help_zh": "文件id，覆盖写时必填",
+      "example": "7JQX1FswpQ8",
+      "help_en": "The share ID. This parameter is required when uploading through a share link",
+      "help_zh": "分享 id，当通过分享链接上传时必填",
       "location": "body",
-      "name": "file_id",
+      "name": "share_id",
       "options": [
-        "--file-id"
+        "--share-id"
       ],
       "param_style": "json",
-      "raw_name": "file_id",
+      "raw_name": "share_id",
       "required": false,
       "type": "string"
     },
     {
-      "example": "false",
-      "help_en": "Specifies whether the file is hidden. Default value: not hidden",
-      "help_zh": "是否隐藏，默认不隐藏",
+      "example": "1024",
+      "help_en": "The file size, in bytes",
+      "help_zh": "文件大小，单位为 byte",
       "location": "body",
-      "name": "hidden",
+      "name": "size",
       "options": [
-        "--hidden"
+        "--size"
       ],
       "param_style": "json",
-      "raw_name": "hidden",
+      "raw_name": "size",
       "required": false,
-      "type": "bool"
+      "type": "int"
     },
     {
-      "example": "2023-10-04T14:30:00Z",
-      "help_en": "The local creation time of the file. Default value: empty. Format: yyyy-MM-ddTHH:mm:ssZ, in UTC+0 time zone",
-      "help_zh": "文件本地创建时间，默认为空，格式为：yyyy-MM-ddTHH:mm:ssZ，采用 UTC +0 时区",
+      "example": "application/json",
+      "help_en": "The file content type. Default value: application/oct-stream.<props=\"china\"> For common content_type values, refer to OSS How do I set Content-Type (MIME)? (https://help.aliyun.com/document_detail/39522.htm?spm=a2c4g.11186623.0.0.5a0b7dbb1TPnWF#concept-5041).</props>",
+      "help_zh": "文件内容类型，默认值 application/oct-stream<props=\"china\">，常见的 content_type 可以参考 OSS 《如何设置Content-Type（MIME）？》 (https://help.aliyun.com/document_detail/39522.htm?spm=a2c4g.11186623.0.0.5a0b7dbb1TPnWF#concept-5041)。</props>",
       "location": "body",
-      "name": "local_created_at",
+      "name": "content_type",
       "options": [
-        "--local-created-at"
+        "--content-type"
       ],
       "param_style": "json",
-      "raw_name": "local_created_at",
+      "raw_name": "content_type",
       "required": false,
-      "type": "string"
-    },
-    {
-      "example": "2023-10-04T14:30:00Z",
-      "help_en": "The local modification time of the file. Default value: empty. Format: yyyy-MM-ddTHH:mm:ssZ, in UTC+0 time zone",
-      "help_zh": "文件本地修改时间，默认为空，格式为：yyyy-MM-ddTHH:mm:ssZ，采用 UTC +0 时区",
-      "location": "body",
-      "name": "local_modified_at",
-      "options": [
-        "--local-modified-at"
-      ],
-      "param_style": "json",
-      "raw_name": "local_modified_at",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "a.txt",
-      "help_en": "The file name. The name can be up to 1024 bytes in UTF-8 encoding and cannot contain forward slashes (/)",
-      "help_zh": "文件名称，按照 utf8 编码最长 1024 字节，不能包含 /",
-      "location": "body",
-      "max_length": "1024",
-      "min_length": "1",
-      "name": "name",
-      "options": [
-        "--name"
-      ],
-      "param_style": "json",
-      "raw_name": "name",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "true",
-      "help_en": "Specifies whether to enable the parallel part upload feature",
-      "help_zh": "是否开启并行上传分片功能",
-      "location": "body",
-      "name": "parallel_upload",
-      "options": [
-        "--parallel-upload"
-      ],
-      "param_style": "json",
-      "raw_name": "parallel_upload",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "example": "fileid1",
-      "help_en": "The parent folder ID. Set this parameter to root to upload to the root directory",
-      "help_zh": "父目录id，上传到根目录时填写 root",
-      "location": "body",
-      "name": "parent_file_id",
-      "options": [
-        "--parent-file-id"
-      ],
-      "param_style": "json",
-      "raw_name": "parent_file_id",
-      "required": true,
       "type": "string"
     },
     {
       "element": {
         "fields": [
           {
-            "example": "ASKJDJSKDJJSJDJS",
-            "help_en": "The MD5 value of the part. Specify this parameter when you need to verify the MD5 of the part during upload",
-            "help_zh": "分片的 MD5, 需要在上传分片时校验分片的MD5时填写",
-            "name": "content_md5",
+            "example": "1",
+            "help_en": "The part sequence number, starting from 1",
+            "help_zh": "分片序列号，从 1 开始",
+            "name": "part_number",
             "options": [
-              "--content-md5"
+              "--part-number"
             ],
-            "raw_name": "content_md5",
+            "raw_name": "part_number",
             "required": false,
-            "type": "string"
-          },
-          {
-            "example": "application/json",
-            "help_en": "The Content-Type value that the client must set when uploading a part by using PUT. If the Content-Type specified by the client during upload does not match this value, a signature error occurs. Default value: empty. The client does not need to specify Content-Type during PUT",
-            "help_zh": "指定客户端使用 Put 上传分片时需要设置的 Content-Type 值。\n如果客户端上传时指定的 Content-Type 和这里不一致，会出现签名错误。\n默认为空，客户端 Put 时可以不指定 Content-Type",
-            "name": "content_type",
-            "options": [
-              "--content-type"
-            ],
-            "raw_name": "content_type",
-            "required": false,
-            "type": "string"
+            "type": "int"
           },
           {
             "fields": [
@@ -442,16 +341,28 @@
             "type": "object"
           },
           {
-            "example": "1",
-            "help_en": "The part sequence number, starting from 1",
-            "help_zh": "分片序列号，从 1 开始",
-            "name": "part_number",
+            "example": "ASKJDJSKDJJSJDJS",
+            "help_en": "The MD5 value of the part. Specify this parameter when you need to verify the MD5 of the part during upload",
+            "help_zh": "分片的 MD5, 需要在上传分片时校验分片的MD5时填写",
+            "name": "content_md5",
             "options": [
-              "--part-number"
+              "--content-md5"
             ],
-            "raw_name": "part_number",
+            "raw_name": "content_md5",
             "required": false,
-            "type": "int"
+            "type": "string"
+          },
+          {
+            "example": "application/json",
+            "help_en": "The Content-Type value that the client must set when uploading a part by using PUT. If the Content-Type specified by the client during upload does not match this value, a signature error occurs. Default value: empty. The client does not need to specify Content-Type during PUT",
+            "help_zh": "指定客户端使用 Put 上传分片时需要设置的 Content-Type 值。\n如果客户端上传时指定的 Content-Type 和这里不一致，会出现签名错误。\n默认为空，客户端 Put 时可以不指定 Content-Type",
+            "name": "content_type",
+            "options": [
+              "--content-type"
+            ],
+            "raw_name": "content_type",
+            "required": false,
+            "type": "string"
           }
         ],
         "type": "object"
@@ -467,80 +378,6 @@
       "raw_name": "part_info_list",
       "required": false,
       "type": "array"
-    },
-    {
-      "example": "7C4A8D09CA3762AF61E59520943DC26494F89411",
-      "help_en": "The SHA1 value of the first 1 KB of the file. Specify this parameter when using the pre-rapid-upload feature. If no match is found on the server, the client does not need to calculate the full SHA1 of the file for rapid upload",
-      "help_zh": "使用预秒传功能时填写，为文件前1KB sha1值，当远端没有匹配上时，客户端无需再计算文件完整 sha1 去尝试秒传",
-      "location": "body",
-      "name": "pre_hash",
-      "options": [
-        "--pre-hash"
-      ],
-      "param_style": "json",
-      "raw_name": "pre_hash",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "7JQX1FswpQ8",
-      "help_en": "The share ID. This parameter is required when uploading through a share link",
-      "help_zh": "分享 id，当通过分享链接上传时必填",
-      "location": "body",
-      "name": "share_id",
-      "options": [
-        "--share-id"
-      ],
-      "param_style": "json",
-      "raw_name": "share_id",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "1024",
-      "help_en": "The file size, in bytes",
-      "help_zh": "文件大小，单位为 byte",
-      "location": "body",
-      "name": "size",
-      "options": [
-        "--size"
-      ],
-      "param_style": "json",
-      "raw_name": "size",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "enum": [
-        "file",
-        "folder"
-      ],
-      "example": "file",
-      "help_en": "The file type. Valid values:\n\nfile: file.\nfolder: folder",
-      "help_zh": "文件类型，可选值如下：\n\nfile：文件\nfolder：文件夹",
-      "location": "body",
-      "name": "type",
-      "options": [
-        "--type"
-      ],
-      "param_style": "json",
-      "raw_name": "type",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "multipart",
-      "help_en": "The upload type. Valid values: multipart and form. Default value: multipart",
-      "help_zh": "上传类型，支持 multipart，form，默认：multipart",
-      "location": "body",
-      "name": "upload_type",
-      "options": [
-        "--upload-type"
-      ],
-      "param_style": "json",
-      "raw_name": "upload_type",
-      "required": false,
-      "type": "string"
     },
     {
       "element": {
@@ -582,6 +419,169 @@
       "raw_name": "user_tags",
       "required": false,
       "type": "array"
+    },
+    {
+      "example": "false",
+      "help_en": "Specifies whether the file is hidden. Default value: not hidden",
+      "help_zh": "是否隐藏，默认不隐藏",
+      "location": "body",
+      "name": "hidden",
+      "options": [
+        "--hidden"
+      ],
+      "param_style": "json",
+      "raw_name": "hidden",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "团队文件",
+      "help_en": "The file description. The description can be up to 1024 characters. Default value: empty",
+      "help_zh": "文件描述信息，最长 1024 字符，默认为空",
+      "location": "body",
+      "max_length": "1024",
+      "name": "description",
+      "options": [
+        "--description"
+      ],
+      "param_style": "json",
+      "raw_name": "description",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "7C4A8D09CA3762AF61E59520943DC26494F8941B",
+      "help_en": "The hash value of the file content. The value is calculated based on the algorithm specified by content_hash_name",
+      "help_zh": "文件内容 hash 值，需要根据 content_hash_name 指定的算法计算",
+      "location": "body",
+      "name": "content_hash",
+      "options": [
+        "--content-hash"
+      ],
+      "param_style": "json",
+      "raw_name": "content_hash",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "sha1"
+      ],
+      "example": "sha1",
+      "help_en": "The hash algorithm name for the file content. Currently, only sha1 is supported",
+      "help_zh": "文件内容hash算法名，当前只支持 sha1",
+      "location": "body",
+      "name": "content_hash_name",
+      "options": [
+        "--content-hash-name"
+      ],
+      "param_style": "json",
+      "raw_name": "content_hash_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "7C4A8D09CA3762AF61E59520943DC26494F89411",
+      "help_en": "The SHA1 value of the first 1 KB of the file. Specify this parameter when using the pre-rapid-upload feature. If no match is found on the server, the client does not need to calculate the full SHA1 of the file for rapid upload",
+      "help_zh": "使用预秒传功能时填写，为文件前1KB sha1值，当远端没有匹配上时，客户端无需再计算文件完整 sha1 去尝试秒传",
+      "location": "body",
+      "name": "pre_hash",
+      "options": [
+        "--pre-hash"
+      ],
+      "param_style": "json",
+      "raw_name": "pre_hash",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "ignore",
+        "auto_rename",
+        "refuse"
+      ],
+      "example": "ignore",
+      "help_en": "The mode for handling files with duplicate names. Valid values:\n\nignore: allows files with duplicate names.\nauto_rename: automatically renames the file when a file with the same name exists. By default, the current timestamp is appended, such as xxx_20060102_150405.\nrefuse: rejects the creation of a new file when a file with the same name exists on the server, and returns the details of the existing file to the client.\n\nDefault value: ignore",
+      "help_zh": "同名文件处理模式，可选值如下：\n\nignore：允许同名文件；\n\nauto_rename：当发现同名文件是，云端自动重命名，默认为追加当前时间点，如 xxx _20060102_150405；\n\nrefuse：当云端存在同名文件时，拒绝创建新文件，返回客户端已存在同名文件的详细信息。\n\n默认为 ignore",
+      "location": "body",
+      "name": "check_name_mode",
+      "options": [
+        "--check-name-mode"
+      ],
+      "param_style": "json",
+      "raw_name": "check_name_mode",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "9520943DC264",
+      "help_en": "The file ID. This parameter is required for overwrite operations",
+      "help_zh": "文件id，覆盖写时必填",
+      "location": "body",
+      "name": "file_id",
+      "options": [
+        "--file-id"
+      ],
+      "param_style": "json",
+      "raw_name": "file_id",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "2023-10-04T14:30:00Z",
+      "help_en": "The local creation time of the file. Default value: empty. Format: yyyy-MM-ddTHH:mm:ssZ, in UTC+0 time zone",
+      "help_zh": "文件本地创建时间，默认为空，格式为：yyyy-MM-ddTHH:mm:ssZ，采用 UTC +0 时区",
+      "location": "body",
+      "name": "local_created_at",
+      "options": [
+        "--local-created-at"
+      ],
+      "param_style": "json",
+      "raw_name": "local_created_at",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "2023-10-04T14:30:00Z",
+      "help_en": "The local modification time of the file. Default value: empty. Format: yyyy-MM-ddTHH:mm:ssZ, in UTC+0 time zone",
+      "help_zh": "文件本地修改时间，默认为空，格式为：yyyy-MM-ddTHH:mm:ssZ，采用 UTC +0 时区",
+      "location": "body",
+      "name": "local_modified_at",
+      "options": [
+        "--local-modified-at"
+      ],
+      "param_style": "json",
+      "raw_name": "local_modified_at",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "true",
+      "help_en": "Specifies whether to enable the parallel part upload feature",
+      "help_zh": "是否开启并行上传分片功能",
+      "location": "body",
+      "name": "parallel_upload",
+      "options": [
+        "--parallel-upload"
+      ],
+      "param_style": "json",
+      "raw_name": "parallel_upload",
+      "required": false,
+      "type": "bool"
+    },
+    {
+      "example": "multipart",
+      "help_en": "The upload type. Valid values: multipart and form. Default value: multipart",
+      "help_zh": "上传类型，支持 multipart，form，默认：multipart",
+      "location": "body",
+      "name": "upload_type",
+      "options": [
+        "--upload-type"
+      ],
+      "param_style": "json",
+      "raw_name": "upload_type",
+      "required": false,
+      "type": "string"
     }
   ],
   "pathPattern": "/v2/file/create",

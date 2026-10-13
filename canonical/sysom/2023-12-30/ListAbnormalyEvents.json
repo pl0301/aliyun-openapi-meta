@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun sysom GET /api/v1/openapi/cluster_health/range/abnormaly_events --region cn-hangzhou --showPod 1 --cluster '2d33d4be-bf54-4070-82ca-c1dc2d8b1562' --current 1 --instance 'i-wz9d00ut2ska3mlyhn6j' --pod 'test-pod' --level potential --start '1.725797727754E12' --namespace default --pageSize 10 --end '1.725801327754E12' --event '节点根文件系统使用检测' --header \"Content-Type=application/json\" --version 2023-12-30 --force",
   "cmd_full_name": "sysom list-abnormaly-events",
   "cmd_name": "list-abnormaly-events",
@@ -99,6 +100,11 @@
       "type": "float"
     },
     {
+      "enum": [
+        "warning",
+        "error",
+        "potential"
+      ],
       "example": "potential",
       "help_en": "The level of the anomaly event",
       "help_zh": "异常事件的等级",
@@ -112,6 +118,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0"
+      ],
       "example": "1",
       "help_en": "Specifies whether to display anomaly events of the pod",
       "help_zh": "是否展示Pod的异常事件",
@@ -174,23 +183,19 @@
         "description_zh": "Schema of Response",
         "properties": {
           "code": {
-            "backendName": "code",
             "description_en": "The status code.\n`code == Success` indicates that the authorization is successful.\nOther status codes indicate that the authorization failed. Check the `message` field for the detailed fault information",
             "description_zh": "状态码\n`code == Success` 则代表授权成功；\n其它状态码代表授权失败，授权失败时查看 `message` 字段获取详细的错误信息；",
             "example": "Success",
             "type": "string"
           },
           "data": {
-            "backendName": "data",
             "description_en": "The returned result",
             "description_zh": "返回结果",
-            "itemName": "异常项列表",
             "items": {
               "description_en": "The returned data",
               "description_zh": "返回数据",
               "properties": {
                 "created_at": {
-                  "backendName": "created_at",
                   "description_en": "The creation time",
                   "description_zh": "创建时间",
                   "example": "1725801090000",
@@ -198,22 +203,26 @@
                   "type": "integer"
                 },
                 "description": {
-                  "backendName": "description",
                   "description_en": "The description of the anomaly item",
                   "description_zh": "异常项的具体描述",
                   "example": "节点发生OOM, 可查看OOM发生原因",
                   "type": "string"
                 },
                 "diag_status": {
-                  "backendName": "diag_status",
                   "description_en": "The diagnostic status. Valid values: 1: the diagnosis is ready. 2: the diagnosis is running. 3: the diagnosis is complete. 4: the item is not diagnosable. 5: the diagnosis failed",
                   "description_zh": "诊断状态(1为诊断已就绪，2代表诊断运行中，3代表诊断完成，4代表不可诊断，5代表诊断失败）",
+                  "enumValueTitles": {
+                    "不可诊断": "4",
+                    "诊断失败": "5",
+                    "诊断完成": "3",
+                    "诊断已就绪": "1",
+                    "诊断运行中": "2"
+                  },
                   "example": "3",
                   "format": "int32",
                   "type": "integer"
                 },
                 "end_at": {
-                  "backendName": "end_at",
                   "description_en": "The end time of the anomaly event",
                   "description_zh": "异常事件结束时间",
                   "example": "1725797727754",
@@ -221,63 +230,58 @@
                   "type": "integer"
                 },
                 "instance": {
-                  "backendName": "instance",
                   "description_en": "The instance ID",
                   "description_zh": "实例ID",
                   "example": "i-wz9d00ut2ska3mlyhn6j",
                   "type": "string"
                 },
                 "item": {
-                  "backendName": "item",
                   "description_en": "The name of the anomaly item",
                   "description_zh": "异常项名称",
                   "example": "节点CPU使用率检测",
                   "type": "string"
                 },
                 "level": {
-                  "backendName": "level",
                   "description_en": "The level of the anomaly item",
                   "description_zh": "异常项等级",
+                  "enumValueTitles": {
+                    "error": "error",
+                    "potential": "potential",
+                    "warning": "warning"
+                  },
                   "example": "potential",
                   "type": "string"
                 },
                 "namespace": {
-                  "backendName": "namespace",
                   "description_en": "The namespace of the pod",
                   "description_zh": "Pod所在的命名空间",
                   "example": "default",
                   "type": "string"
                 },
                 "opts": {
-                  "backendName": "opts",
                   "description_en": "The list of operations for the anomaly item",
                   "description_zh": "异常项操作列表",
-                  "itemName": "操作列表",
                   "items": {
                     "description_en": "The operation item for the anomaly item",
                     "description_zh": "异常项操作项",
                     "properties": {
                       "label": {
-                        "backendName": "label",
                         "description_en": "The operation type",
                         "description_zh": "操作类型",
                         "example": "diagnose",
                         "type": "string"
                       },
                       "result": {
-                        "backendName": "result",
                         "description_en": "The diagnostic result of the anomaly item",
                         "description_zh": "异常项诊断结果",
                         "properties": {
                           "status": {
-                            "backendName": "status",
                             "description_en": "The diagnostic status",
                             "description_zh": "诊断状态",
                             "example": "success",
                             "type": "string"
                           },
                           "url": {
-                            "backendName": "url",
                             "description_en": "The URL of the diagnostic details",
                             "description_zh": "诊断详情URL",
                             "example": "/diagnose/result/PhfFg456",
@@ -287,7 +291,6 @@
                         "type": "object"
                       },
                       "type": {
-                        "backendName": "type",
                         "description_en": "The diagnostic type",
                         "description_zh": "诊断类型",
                         "example": "auto",
@@ -299,19 +302,16 @@
                   "type": "array"
                 },
                 "pod": {
-                  "backendName": "pod",
                   "description_en": "The pod name",
                   "description_zh": "Pod名称",
                   "example": "test-pod",
                   "type": "string"
                 },
                 "raw_metrics": {
-                  "backendName": "raw_metrics",
                   "description_en": "The raw metrics",
                   "description_zh": "原始指标",
                   "properties": {
                     "end_time": {
-                      "backendName": "end_time",
                       "description_en": "The end time",
                       "description_zh": "结束时间",
                       "example": "1761814928",
@@ -319,10 +319,8 @@
                       "type": "number"
                     },
                     "metrics": {
-                      "backendName": "metrics",
                       "description_en": "The list of metric values",
                       "description_zh": "指标数值列表",
-                      "itemName": "指标列表",
                       "items": {
                         "description_en": "The metric name",
                         "description_zh": "指标名称",
@@ -332,7 +330,6 @@
                       "type": "array"
                     },
                     "start_time": {
-                      "backendName": "start_time",
                       "description_en": "The start time",
                       "description_zh": "开始时间",
                       "example": "1761814928",
@@ -343,21 +340,24 @@
                   "type": "object"
                 },
                 "region_id": {
-                  "backendName": "region_id",
                   "description_en": "The region ID",
                   "description_zh": "地域ID",
                   "example": "cn-shanghai",
                   "type": "string"
                 },
                 "type": {
-                  "backendName": "type",
                   "description_en": "The type of the anomaly item",
                   "description_zh": "异常项类型",
+                  "enumValueTitles": {
+                    "error": "error",
+                    "latency": "latency",
+                    "load": "load",
+                    "saturation": "saturation"
+                  },
                   "example": "saturation",
                   "type": "string"
                 },
                 "uuid": {
-                  "backendName": "uuid",
                   "description_en": "The UUID of the anomaly event",
                   "description_zh": "异常事件对应的uuid",
                   "example": "43f05b46-1034-42e8-a528-6e5ca1108277",
@@ -369,14 +369,12 @@
             "type": "array"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The error code description. This field is empty if no error occurs",
             "description_zh": "错误码描述，若无错误则为空",
             "example": "Success",
             "type": "string"
           },
           "total": {
-            "backendName": "total",
             "description_en": "The total number of records",
             "description_zh": "总记录数",
             "example": "4",
@@ -384,7 +382,7 @@
             "type": "integer"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

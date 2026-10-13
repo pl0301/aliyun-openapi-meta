@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ehpc SubmitServerlessJob --region cn-hangzhou --Container '{\"WorkingDir\":\"/usr/local/\",\"Command\":[\"python3\"],\"Arg\":[\"hello.py\"],\"VolumeMount\":[{}],\"Image\":\"registry-vpc.cn-hangzhou.aliyuncs.com/ehpc/hpl:latest\",\"Gpu\":1,\"EnvironmentVar\":[{}]}' --ClusterId 'ehpc-hz-FYUr320000' --JobName testjob",
   "cmd_full_name": "ehpc submit-serverless-job",
   "cmd_name": "submit-serverless-job",
@@ -50,18 +51,6 @@
     {
       "fields": [
         {
-          "example": "5",
-          "help_en": "The end value of the array job index. Valid values: 0 to 4999. The value must be greater than or equal to the value of IndexStart",
-          "help_zh": "数组作业索引的结束值。取值范围：0~4999，且大于等于IndexStart",
-          "name": "index_end",
-          "options": [
-            "--index-end"
-          ],
-          "raw_name": "IndexEnd",
-          "required": false,
-          "type": "int"
-        },
-        {
           "example": "1",
           "help_en": "The starting value of the array job index. Valid values: 0 to 4999",
           "help_zh": "数组作业索引的起始值。取值范围：0~4999",
@@ -70,6 +59,18 @@
             "--index-start"
           ],
           "raw_name": "IndexStart",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "5",
+          "help_en": "The end value of the array job index. Valid values: 0 to 4999. The value must be greater than or equal to the value of IndexStart",
+          "help_zh": "数组作业索引的结束值。取值范围：0~4999，且大于等于IndexStart",
+          "name": "index_end",
+          "options": [
+            "--index-end"
+          ],
+          "raw_name": "IndexEnd",
           "required": false,
           "type": "int"
         },
@@ -238,34 +239,6 @@
       "fields": [
         {
           "element": {
-            "type": "string"
-          },
-          "help_en": "The arguments of the container startup command. You can specify up to 10 arguments",
-          "help_zh": "容器启动命令对应的参数列表。最多10个",
-          "name": "arg",
-          "options": [
-            "--arg"
-          ],
-          "raw_name": "Arg",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "element": {
-            "type": "string"
-          },
-          "help_en": "The container startup commands",
-          "help_zh": "容器启动指令列表",
-          "name": "command",
-          "options": [
-            "--command"
-          ],
-          "raw_name": "Command",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "element": {
             "fields": [
               {
                 "example": "PATH",
@@ -305,16 +278,16 @@
           "type": "array"
         },
         {
-          "example": "1",
-          "help_en": "The number of GPUs used by the container",
-          "help_zh": "容器使用的GPU个数",
-          "name": "gpu",
+          "example": "/usr/local/\n",
+          "help_en": "The working directory of the container",
+          "help_zh": "容器工作目录",
+          "name": "working_dir",
           "options": [
-            "--gpu"
+            "--working-dir"
           ],
-          "raw_name": "Gpu",
+          "raw_name": "WorkingDir",
           "required": false,
-          "type": "int"
+          "type": "string"
         },
         {
           "example": "registry-vpc.cn-hangzhou.aliyuncs.com/ehpc/hpl:latest\n",
@@ -330,7 +303,59 @@
         },
         {
           "element": {
+            "type": "string"
+          },
+          "help_en": "The container startup commands",
+          "help_zh": "容器启动指令列表",
+          "name": "command",
+          "options": [
+            "--command"
+          ],
+          "raw_name": "Command",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "type": "string"
+          },
+          "help_en": "The arguments of the container startup command. You can specify up to 10 arguments",
+          "help_zh": "容器启动命令对应的参数列表。最多10个",
+          "name": "arg",
+          "options": [
+            "--arg"
+          ],
+          "raw_name": "Arg",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "example": "1",
+          "help_en": "The number of GPUs used by the container",
+          "help_zh": "容器使用的GPU个数",
+          "name": "gpu",
+          "options": [
+            "--gpu"
+          ],
+          "raw_name": "Gpu",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "element": {
             "fields": [
+              {
+                "example": "/data",
+                "help_en": "The directory to which the volume is mounted.\n\nThe data stored in this directory is overwritten by the data on the volume. Exercise caution when you specify this parameter",
+                "help_zh": "容器挂载数据卷的目录。    \n\n容器挂载目录下的内容会被Volume的内容直接覆盖，请谨慎使用",
+                "name": "mount_path",
+                "options": [
+                  "--mount-path"
+                ],
+                "raw_name": "MountPath",
+                "required": false,
+                "type": "string"
+              },
               {
                 "example": "alicloud/oss",
                 "help_en": "The driver type when you use the FlexVolume plug-in to mount a volume. Valid values:\n\nalicloud/nas: a NAS driver.\nalicloud/oss: an OSS driver",
@@ -354,18 +379,6 @@
                 "raw_name": "FlexVolumeOptions",
                 "required": false,
                 "type": "string"
-              },
-              {
-                "example": "/data",
-                "help_en": "The directory to which the volume is mounted.\n\nThe data stored in this directory is overwritten by the data on the volume. Exercise caution when you specify this parameter",
-                "help_zh": "容器挂载数据卷的目录。    \n\n容器挂载目录下的内容会被Volume的内容直接覆盖，请谨慎使用",
-                "name": "mount_path",
-                "options": [
-                  "--mount-path"
-                ],
-                "raw_name": "MountPath",
-                "required": false,
-                "type": "string"
               }
             ],
             "type": "object"
@@ -379,18 +392,6 @@
           "raw_name": "VolumeMount",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "/usr/local/\n",
-          "help_en": "The working directory of the container",
-          "help_zh": "容器工作目录",
-          "name": "working_dir",
-          "options": [
-            "--working-dir"
-          ],
-          "raw_name": "WorkingDir",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The properties of the Serverless job container",
@@ -525,21 +526,16 @@
       "schema": {
         "properties": {
           "JobId": {
-            "backendName": "JobId",
             "description_en": "The ID of the serverless job",
             "description_zh": "Serverless作业ID",
             "example": "10",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "04F0F334-1335-436C-A1D7-6C044FE73368",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

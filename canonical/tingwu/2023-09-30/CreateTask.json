@@ -1,9 +1,9 @@
 {
-  "camel_example": "aliyun tingwu PUT /openapi/tingwu/v2/tasks --region cn-hangzhou --type offline --header \"Content-Type=application/json\" --version 2023-09-30 --force",
+  "backend_timeout_ms": 15000,
   "cmd_full_name": "tingwu create-task",
   "cmd_name": "create-task",
   "deprecated": false,
-  "description_en": "Create offline transcription and real-time meeting tasks in Tingwu",
+  "description_en": "Creates a Tingwu task, including creating an offline transcription task and a real-time meeting task",
   "description_zh": "创建听悟任务，包括创建离线转写任务和实时会议任务",
   "kebab_example": "aliyun tingwu create-task --type offline --api-version 2023-09-30 --region cn-hangzhou",
   "method": "PUT",
@@ -28,8 +28,12 @@
   },
   "parameters": [
     {
+      "enum": [
+        "offline",
+        "realtime"
+      ],
       "example": "offline",
-      "help_en": "The type of the task. Valid values:\n\noffline: An offline task, such as an offline transcription.\n\nrealtime: A real-time task, such as a real-time recording",
+      "help_en": "The task type. Valid values:\noffline: indicates an offline task, such as offline transcription.\nrealtime: indicates a real-time task, such as creating a real-time record",
       "help_zh": "任务类型：\noffline：表示离线任务，比如离线转写\nrealtime：表示实时任务，比如创建实时记录",
       "location": "query",
       "name": "type",
@@ -41,8 +45,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "stop",
+        "start"
+      ],
       "example": "stop",
-      "help_en": "The operation to perform. Valid values:\n\nstart: Creates a task. This is the default value and does not typically need to be set.\n\nstop: Stops a real-time recording task. This value is used only for real-time tasks. To end the recording, set this parameter to `stop`",
+      "help_en": "The operation. Valid values:\nstart: creates the task. This is the default value and usually does not need to be explicitly set.\nstop: stops a real-time meeting task. This corresponds to creating a real-time meeting. Set this parameter to stop and trigger the call after the meeting ends. This is used in real-time meeting scenarios.\nNote: When ending a real-time record, you must set this parameter to stop",
       "help_zh": "操作项，可选取值：\n\nstart：表示任务的创建，也是默认值，通常情况下无须显示设置\nstop：停止实时会议任务，对应的是创建实时会议，在会议结束后设置为stop并触发调用；实时会议场景使用；\n\n需要注意：在结束实时记录时，务必设置此参数，且设置为stop",
       "location": "query",
       "name": "operation",
@@ -55,7 +63,7 @@
     },
     {
       "example": "JV1sRTisRMi****",
-      "help_en": "The AppKey of the project that you created in the console",
+      "help_en": "The AppKey of the project created in the console",
       "help_zh": "在管控台创建的项目AppKey",
       "location": "body",
       "name": "app_key",
@@ -70,7 +78,7 @@
     {
       "fields": [
         {
-          "help_en": "Multi-channel audio or video processing mode",
+          "help_en": "The multi-channel audio and video processing mode",
           "help_zh": "多通道音视频处理模式",
           "name": "audio_channel_mode",
           "options": [
@@ -82,7 +90,7 @@
         },
         {
           "example": "http://xxx.com/zzz/1.wav",
-          "help_en": "The HTTP or HTTPS URL of the source audio or video file. This parameter is required when you create an offline transcription task",
+          "help_en": "The HTTP or HTTPS URL of the original audio or video file set when you create an offline transcription task",
           "help_zh": "当您创建离线转写任务，设置的原始音视频文件的http(s)链接",
           "name": "file_url",
           "options": [
@@ -93,8 +101,15 @@
           "type": "string"
         },
         {
+          "enum": [
+            "mp3",
+            "aac",
+            "speex",
+            "opus",
+            "pcm"
+          ],
           "example": "pcm",
-          "help_en": "The encoding format of the audio stream data. This parameter is required when you create a real-time recording task. The following values are supported:\n\npcm\n\nopus\n\naac\n\nspeex\n\nmp3",
+          "help_en": "The encoding format of the audio stream data specified when you create a real-time meeting, such as pcm. Valid values:\npcm\nopus\naac\nspeex\nmp3",
           "help_zh": "您创建实时会议时，需通过该参数指定音频流数据的编码格式，比如pcm。当前支持以下取值：\n\npcm\nopus\naac\nspeex\nmp3",
           "name": "format",
           "options": [
@@ -108,7 +123,7 @@
           "element": {
             "type": "string"
           },
-          "help_en": "Preferred languages. This applies only when SourceLanguage is multilingual. It restricts the output language of the model",
+          "help_en": "The preferred language. This parameter takes effect only when SourceLanguage is set to multilingual and limits the output language of the model",
           "help_zh": "偏好语种，仅当SourceLanguage=\"multilingual\"时生效，限制模型的输出语种",
           "name": "language_hints",
           "options": [
@@ -120,7 +135,7 @@
         },
         {
           "example": "false",
-          "help_en": "Specifies whether to enable multi-channel audio stream recognition. This parameter applies only to real-time recording scenarios. The default value is `false`",
+          "help_en": "Specifies whether to enable multi-channel audio stream recognition. You only need to consider setting this parameter in real-time recording scenarios. Default value: false",
           "help_zh": "是否开启多通道音频流识别。当且仅当在实时记录场景下才需考虑设置，默认为false",
           "name": "multiple_streams_enabled",
           "options": [
@@ -131,7 +146,7 @@
           "type": "bool"
         },
         {
-          "help_en": "After you configure OSS settings in the console, specify an OSS path to save results directly to your OSS bucket",
+          "help_en": "After configuring OSS information in the console, you can configure the OSS write path to save the results directly to a custom OSS bucket",
           "help_zh": "在控制台配置oss信息后，可以通过配置oss写入地址，将结果直接保存到自定义oss内",
           "name": "output_path",
           "options": [
@@ -143,7 +158,7 @@
         },
         {
           "example": "false",
-          "help_en": "Specifies whether to enable callbacks. To receive callbacks, you must configure the callback type and URL in the console and set this parameter to `true`",
+          "help_en": "Specifies whether to enable the callback feature. To enable the callback feature, you must configure the callback type and URL in the console and set this parameter to true when creating a task",
           "help_zh": "是否开启回调功能。\n当需要开启回调功能时，您需要在控制台配置好回调类型和地址，并在创建任务时将该参数置为true",
           "name": "progressive_callbacks_enabled",
           "options": [
@@ -159,7 +174,7 @@
             "8000"
           ],
           "example": "16000",
-          "help_en": "The sample rate of the audio stream data. This parameter is required when you create a real-time recording task. The supported values are 8000 and 16000.\n\n8000: Suitable for telephony and customer service scenarios.\n\n16000: Suitable for real-time meeting audio capture scenarios",
+          "help_en": "The sampling rate of the audio stream data specified when you create a real-time meeting. Valid values:\n8000: used in telephone customer service scenarios.\n16000: used in real-time meeting audio collection scenarios",
           "help_zh": "您创建实时会议时，需通过该参数指定音频流数据的采样率。当前支持8000和16000。\n\n8000：电话客服类场景\n16000：实时会议音频采集场景",
           "name": "sample_rate",
           "options": [
@@ -170,8 +185,15 @@
           "type": "int"
         },
         {
+          "enum": [
+            "ja",
+            "fspk",
+            "yue",
+            "en",
+            "cn"
+          ],
           "example": "cn",
-          "help_en": "The language model for speech transcription. The following values are supported:\n\ncn: Chinese\n\nen: English\n\nfspk: Chinese-English code-switching\n\nja: Japanese\n\nyue: Cantonese",
+          "help_en": "The language model used for audio transcription. Valid values:\ncn: Chinese.\nen: English.\nfspk: free speech in Chinese and English.\nja: Japanese.\nyue: Cantonese",
           "help_zh": "音频转写使用的语言模型。 支持以下取值：\n\ncn：中文\nen：英文\nfspk：中英文自由说\nja：日文\nyue：粤语",
           "name": "source_language",
           "options": [
@@ -183,7 +205,7 @@
         },
         {
           "example": "9922c84c087044eda18659c128b56c84",
-          "help_en": "The task ID that is returned when you create a real-time recording. This ID is required to stop the recording. Specify this parameter only when stopping a real-time recording",
+          "help_en": "The TaskId returned when you create a real-time record. You can use this ID to end the real-time record. Set this parameter only when ending a real-time record. Do not set it at other times",
           "help_zh": "您创建实时记录时返回的TaskId，通过此Id，您可以结束实时记录。该参数仅在结束实时记录时设置，其他时候请不要设置",
           "name": "task_id",
           "options": [
@@ -195,7 +217,7 @@
         },
         {
           "example": "task_tingwu_123",
-          "help_en": "A custom identifier that you can set for the task",
+          "help_en": "The custom identifier set by the user to associate with this task",
           "help_zh": "用户设置的自定义标识，用以关联本任务",
           "name": "task_key",
           "options": [
@@ -206,7 +228,7 @@
           "type": "string"
         }
       ],
-      "help_en": "The basic input parameters for creating a task. The required parameters vary based on the task type.\n\nFor an offline task (`type=\"offline\"`), you must specify the `SourceLanguage` and `FileUrl` parameters.\n\nFor a real-time task (`type=\"realtime\"`), you must also specify the `SourceLanguage`, `Format`, and `SampleRate` parameters",
+      "help_en": "The basic information parameters set when creating a task. Note that the required parameters vary depending on the task type.\nWhen type is set to offline, which indicates an offline task, you must set the SourceLanguage and FileUrl parameters.\nWhen type is set to realtime, which indicates a real-time meeting task, you must additionally set the SourceLanguage, Format, and SampleRate parameters",
       "help_zh": "创建任务时设置的基本信息参数。注意不同的任务类型所需设置的必选参数并不相同。\n\n当type=offline，也即离线任务时，您必须设置SourceLanguage和FileUrl参数；\n\n当type=realtime，也即实时会议任务时，您必须额外设置SourceLanguage、Format、SampleRate参数；",
       "location": "body",
       "name": "input",
@@ -223,8 +245,9 @@
         {
           "fields": [
             {
-              "help_en": "The ChapterGranularity",
-              "help_zh": "The ChapterGranularity",
+              "example": "Coarse",
+              "help_en": "The chapter granularity. Valid values:\nCoarse: coarse granularity, with about 4 chapters per hour of audio or video.\nGeneral: medium granularity, with about 6 chapters per hour of audio or video.\nMeticulous: fine granularity, with about 12 to 15 chapters per hour of audio or video.\nDefault value: Meticulous",
+              "help_zh": "章节粒度。可选值：Coarse（粗粒度，每小时音视频约4个章节）、General（中等粒度，每小时音视频约6个章节）、Meticulous（细粒度，每小时音视频约12至15个章节）。默认值为Meticulous",
               "name": "chapter_granularity",
               "options": [
                 "--chapter-granularity"
@@ -234,8 +257,8 @@
               "type": "string"
             }
           ],
-          "help_en": "The AutoChapters",
-          "help_zh": "The AutoChapters",
+          "help_en": "The chapter overview control parameter object",
+          "help_zh": "章节速览控制参数对象",
           "name": "auto_chapters",
           "options": [
             "--auto-chapters"
@@ -246,7 +269,7 @@
         },
         {
           "example": "true",
-          "help_en": "Specifies whether to generate a chapter summary, which includes chapter titles and summaries for each chapter",
+          "help_en": "Specifies whether to enable the chapter overview feature. If enabled, chapter titles and summaries are generated",
           "help_zh": "是否启用章节速览功能，开启后会生成章节标题和章节摘要结果",
           "name": "auto_chapters_enabled",
           "options": [
@@ -262,7 +285,8 @@
               "element": {
                 "fields": [
                   {
-                    "help_en": "Definition of the content extraction dimension",
+                    "example": "客户提到对车型价格、优惠活动或担心之后降价",
+                    "help_en": "The definition of the extraction dimension for dialog content extraction",
                     "help_zh": "对话内容提取的维度定义",
                     "name": "content",
                     "options": [
@@ -273,8 +297,9 @@
                     "type": "string"
                   },
                   {
-                    "help_en": "The Identity",
-                    "help_zh": "The Identity",
+                    "example": "客户",
+                    "help_en": "The speaker identity corresponding to the extraction dimension for dialog content extraction. This parameter must be used together with the identity recognition feature",
+                    "help_zh": "对话内容提取维度对应的说话人身份，需要与身份识别功能配合使用",
                     "name": "identity",
                     "options": [
                       "--identity"
@@ -284,7 +309,8 @@
                     "type": "string"
                   },
                   {
-                    "help_en": "Name of the content extraction dimension",
+                    "example": "客户价格异议",
+                    "help_en": "The name of the extraction dimension for dialog content extraction",
                     "help_zh": "对话内容提取的提取维度名称",
                     "name": "title",
                     "options": [
@@ -297,7 +323,7 @@
                 ],
                 "type": "object"
               },
-              "help_en": "List of content extraction dimensions. Each dimension includes a name and definition",
+              "help_en": "The list of extraction dimensions for dialog content extraction, including the name and definition of each extraction item",
               "help_zh": "对话内容提取的提取维度列表，包含提取项的名称和定义",
               "name": "extraction_contents",
               "options": [
@@ -308,7 +334,8 @@
               "type": "array"
             },
             {
-              "help_en": "Description of the conversation scenario for content extraction",
+              "example": "汽车门店线下销售场景",
+              "help_en": "The scene description for dialog content extraction",
               "help_zh": "对话内容提取的场景描述",
               "name": "scene_introduction",
               "options": [
@@ -333,7 +360,7 @@
               }
             }
           ],
-          "help_en": "Conversation content extraction parameters",
+          "help_en": "The dialog content extraction parameter object",
           "help_zh": "对话内容提取参数对象",
           "name": "content_extraction",
           "options": [
@@ -344,7 +371,7 @@
           "type": "object"
         },
         {
-          "help_en": "业务用户Id",
+          "help_en": "The business user ID",
           "help_zh": "业务用户Id",
           "name": "content_extraction_enabled",
           "options": [
@@ -361,7 +388,7 @@
                 "fields": [
                   {
                     "example": "tingwu-turbo",
-                    "help_en": "The model to use for the prompt",
+                    "help_en": "The model specified for the prompt",
                     "help_zh": "指定Prompt的模型",
                     "name": "model",
                     "options": [
@@ -373,7 +400,7 @@
                   },
                   {
                     "example": "summary-demo",
-                    "help_en": "A custom name for the prompt, used to identify the corresponding output",
+                    "help_en": "The custom name of the prompt, which is used to match the output results",
                     "help_zh": "Prompt的自定义名称，用于匹配输出结果",
                     "name": "name",
                     "options": [
@@ -385,7 +412,7 @@
                   },
                   {
                     "example": "总结一下下面的对话内容:{Transcription}",
-                    "help_en": "The content of the custom prompt",
+                    "help_en": "The custom content of the prompt",
                     "help_zh": "Prompt的自定义内容",
                     "name": "prompt",
                     "options": [
@@ -397,7 +424,7 @@
                   },
                   {
                     "example": "default",
-                    "help_en": "Specifies the format for the `{Transcription}` tag",
+                    "help_en": "The format of the {Transcription} tag",
                     "help_zh": "指定{Transcription}标签格式",
                     "name": "trans_type",
                     "options": [
@@ -410,7 +437,7 @@
                 ],
                 "type": "object"
               },
-              "help_en": "A list of custom prompt parameters",
+              "help_en": "The list of parameters for the custom prompt",
               "help_zh": "自定义Prompt的参数列表",
               "name": "contents",
               "options": [
@@ -421,7 +448,7 @@
               "type": "array"
             }
           ],
-          "help_en": "Parameters to control the custom prompt feature",
+          "help_en": "The custom prompt control parameter object",
           "help_zh": "自定义Prompt控制参数对象",
           "name": "custom_prompt",
           "options": [
@@ -446,8 +473,8 @@
         {
           "fields": [
             {
-              "help_en": "The DomainEducationEnabled",
-              "help_zh": "The DomainEducationEnabled",
+              "help_en": "Specifies whether to enable the education domain capability",
+              "help_zh": "是否启用教育领域能力",
               "name": "domain_education_enabled",
               "options": [
                 "--domain-education-enabled"
@@ -457,7 +484,7 @@
               "type": "bool"
             },
             {
-              "help_en": "Full-text summary format",
+              "help_en": "The return format of the full-text summary",
               "help_zh": "全文摘要返回格式",
               "name": "full_text_summary_format",
               "options": [
@@ -468,7 +495,7 @@
               "type": "string"
             },
             {
-              "help_en": "Maximum number of keywords",
+              "help_en": "The maximum number of keywords",
               "help_zh": "指定关键词的数量",
               "name": "max_keywords",
               "options": [
@@ -480,7 +507,7 @@
             },
             {
               "example": "true",
-              "help_en": "Specifies whether to enable nfix. You do not typically need to configure this parameter",
+              "help_en": "Specifies whether to enable Nfix. You do not need to set this parameter in most cases",
               "help_zh": "是否启用nfix，通常情况无须设置",
               "name": "nfix_enabled",
               "options": [
@@ -491,8 +518,8 @@
               "type": "bool"
             },
             {
-              "help_en": "The OcrAuxiliaryEnabled",
-              "help_zh": "The OcrAuxiliaryEnabled",
+              "help_en": "Specifies whether to enable the OCR auxiliary capability",
+              "help_zh": "是否启用 OCR 辅助能力",
               "name": "ocr_auxiliary_enabled",
               "options": [
                 "--ocr-auxiliary-enabled"
@@ -502,8 +529,8 @@
               "type": "bool"
             },
             {
-              "help_en": "The TranslateLlmSceneEnabled",
-              "help_zh": "The TranslateLlmSceneEnabled",
+              "help_en": "Specifies whether to use a large language model for translation",
+              "help_zh": "是否使用大模型翻译",
               "name": "translate_llm_scene_enabled",
               "options": [
                 "--translate-llm-scene-enabled"
@@ -515,7 +542,7 @@
             {
               "fields": [
                 {
-                  "help_en": "业务场景类型",
+                  "help_en": "The business scenario type",
                   "help_zh": "业务场景类型",
                   "name": "biz_type",
                   "options": [
@@ -526,8 +553,8 @@
                   "type": "string"
                 },
                 {
-                  "help_en": "The bizUserId",
-                  "help_zh": "The bizUserId",
+                  "help_en": "The business user ID",
+                  "help_zh": "业务用户 ID",
                   "name": "biz_user_id",
                   "options": [
                     "--biz-user-id"
@@ -537,7 +564,7 @@
                   "type": "string"
                 }
               ],
-              "help_en": "翻译热词配置",
+              "help_en": "The translation hotword configuration",
               "help_zh": "翻译热词配置",
               "name": "translation_hotword_map",
               "options": [
@@ -548,7 +575,7 @@
               "type": "object"
             }
           ],
-          "help_en": "Extended parameters for advanced use cases. You do not typically need to configure these parameters",
+          "help_en": "The extended parameters. You do not need to set them in most cases",
           "help_zh": "扩展参数，通常情况无须设置",
           "name": "extra_params",
           "options": [
@@ -564,7 +591,8 @@
               "element": {
                 "fields": [
                   {
-                    "help_en": "Identity description",
+                    "example": "介绍车辆的不同配置、性能与技术、舒适性与便利性等",
+                    "help_en": "The identity description",
                     "help_zh": "身份描述",
                     "name": "description",
                     "options": [
@@ -575,7 +603,8 @@
                     "type": "string"
                   },
                   {
-                    "help_en": "Identity name",
+                    "example": "销售",
+                    "help_en": "The identity name",
                     "help_zh": "身份名称",
                     "name": "name",
                     "options": [
@@ -588,7 +617,7 @@
                 ],
                 "type": "object"
               },
-              "help_en": "List of identities, including identity name and description",
+              "help_en": "The list of identity recognition content, including the identity name and description",
               "help_zh": "身份识别的内容列表，包含身份名称和描述",
               "name": "identity_contents",
               "options": [
@@ -599,7 +628,8 @@
               "type": "array"
             },
             {
-              "help_en": "Description of the scenario for identity recognition",
+              "example": "汽车门店线下销售场景",
+              "help_en": "The scene description for identity recognition",
               "help_zh": "身份识别的场景描述",
               "name": "scene_introduction",
               "options": [
@@ -610,7 +640,7 @@
               "type": "string"
             }
           ],
-          "help_en": "Identity recognition parameters",
+          "help_en": "The identity recognition parameter object",
           "help_zh": "身份识别参数对象",
           "name": "identity_recognition",
           "options": [
@@ -621,7 +651,7 @@
           "type": "object"
         },
         {
-          "help_en": "Enable identity recognition",
+          "help_en": "Specifies whether to enable identity recognition",
           "help_zh": "身份识别开关",
           "name": "identity_recognition_enabled",
           "options": [
@@ -632,8 +662,9 @@
           "type": "bool"
         },
         {
-          "help_en": "The LlmOutputLanguage",
-          "help_zh": "The LlmOutputLanguage",
+          "example": "en",
+          "help_en": "The output language for large language model tasks. Valid values:\ncn: Chinese.\nen: English.\nThis parameter takes effect only for mind maps and chapter overviews",
+          "help_zh": "大模型任务的输出语种。可选值：cn（中文）、en（英文）。目前仅对思维导图和章节速览生效",
           "name": "llm_output_language",
           "options": [
             "--llm-output-language"
@@ -648,7 +679,7 @@
               "element": {
                 "type": "string"
               },
-              "help_en": "The types of analysis to perform when the intelligent minutes feature is enabled. Supported values: `Actions` (action items) and `KeyInformation` (key information, including keywords and key points)",
+              "help_en": "The expected feature parameter types when the meeting assistance feature is enabled. Valid values: Actions (to-do items) and KeyInformation (key information, including keywords and key sentences)",
               "help_zh": "开启智能功能时，需传入期望的功能参数类型，支持待办(Actions)、关键信息(KeyInformation)。其中关键信息包含关键词和重点内容(关键句)",
               "name": "types",
               "options": [
@@ -659,7 +690,7 @@
               "type": "array"
             }
           ],
-          "help_en": "Parameters for the intelligent minutes feature, which supports processing for action items, keywords, and key points. If `MeetingAssistanceEnabled` is set to `true` but you do not specify this object, all analysis types are enabled by default",
+          "help_en": "The control parameters for the meeting assistance feature, which supports algorithm processing for to-do items, keywords, and key content. If you enable MeetingAssistanceEnabled but do not set the algorithm types through MeetingAssistance, all types are called and returned by default",
           "help_zh": "智能纪要功能控制参数，支持待办事项、关键词、重点内容的算法处理。 若您启用MeetingAssistanceEnabled但未通过MeetingAssistance设置算法类型，则默认都进行调用和返回",
           "name": "meeting_assistance",
           "options": [
@@ -671,7 +702,7 @@
         },
         {
           "example": "false",
-          "help_en": "Specifies whether to generate intelligent minutes, which include keywords, key points, and action items",
+          "help_en": "Specifies whether to enable the intelligent meeting minutes feature. When enabled, keywords, key points, and to-do items are generated",
           "help_zh": "是否启用智能纪要功能，开启后会生成关键词、重点内容、待办等结果",
           "name": "meeting_assistance_enabled",
           "options": [
@@ -682,8 +713,9 @@
           "type": "bool"
         },
         {
-          "help_en": "The Model",
-          "help_zh": "The Model",
+          "example": "qwq",
+          "help_en": "The global model used for large language model post-processing tasks. Valid values: default, qwen-plus, and qwq. This parameter does not override the model specified in a custom prompt",
+          "help_zh": "大模型后处理任务使用的全局模型。可选值：default、qwen-plus、qwq；该参数不覆盖自定义Prompt中单独指定的模型",
           "name": "model",
           "options": [
             "--model"
@@ -694,7 +726,7 @@
         },
         {
           "example": "false",
-          "help_en": "Specifies whether to enable PPT extraction. If enabled, the service extracts slides from the video file and generates corresponding summaries. This feature applies only to offline transcription tasks with a video source file and has no effect on other task types",
+          "help_en": "Specifies whether to enable the PPT extraction and summarization feature. When enabled, PPT slides in video files are extracted and summarized. Enable this parameter only for offline transcription when the source file is a video file. Results cannot be generated in real-time recording scenarios or offline transcription scenarios where the source file is audio only",
           "help_zh": "是否启用PPT抽取和PPT总结功能，开启后会对视频文件中的PPT进行画面抽取，并形成对应的总结。 该参数建议仅在离线转写且源文件是视频文件时开启。在实时记录场景及离线转写但源文件仅是音频输入场景下无法生成结果",
           "name": "ppt_extraction_enabled",
           "options": [
@@ -710,7 +742,8 @@
               "element": {
                 "fields": [
                   {
-                    "help_en": "Definition of the inspection dimension",
+                    "example": "销售在开场白的时候主动向客户打招呼进行欢迎",
+                    "help_en": "The definition of the service quality inspection dimension",
                     "help_zh": "服务质检的质检维度定义",
                     "name": "content",
                     "options": [
@@ -721,7 +754,8 @@
                     "type": "string"
                   },
                   {
-                    "help_en": "Name of the inspection dimension",
+                    "example": "到店迎接-欢迎语",
+                    "help_en": "The name of the service quality inspection dimension",
                     "help_zh": "服务质检的质检维度名称",
                     "name": "title",
                     "options": [
@@ -734,7 +768,7 @@
                 ],
                 "type": "object"
               },
-              "help_en": "List of inspection dimensions for service quality inspection. Each dimension includes a name and definition, which tells the Large Language Model how to evaluate whether the dimension is met",
+              "help_en": "The list of quality inspection dimensions for service quality inspection. Each dimension includes a name and a definition, which specifies the criteria for the large language model to determine whether the dimension is met",
               "help_zh": "服务质检的质检维度列表，包含质检维度名称和定义，即需要大模型以什么样的标准判断该维度是否命中",
               "name": "inspection_contents",
               "options": [
@@ -745,7 +779,8 @@
               "type": "array"
             },
             {
-              "help_en": "Description of the inspection goals and focus areas for service quality inspection",
+              "example": "请检测对话中汽车销售人员表现是否接待热情、态度良好",
+              "help_en": "The description of the inspection objectives and focus areas for service quality inspection",
               "help_zh": "服务质检的检测目标和侧重点描述",
               "name": "inspection_introduction",
               "options": [
@@ -756,7 +791,8 @@
               "type": "string"
             },
             {
-              "help_en": "Description of the conversation scenario for service quality inspection",
+              "example": "汽车门店线下销售场景",
+              "help_en": "The description of the conversation scenario for service quality inspection",
               "help_zh": "服务质检的对话场景描述",
               "name": "scene_introduction",
               "options": [
@@ -781,7 +817,7 @@
               }
             }
           ],
-          "help_en": "Service quality inspection parameters",
+          "help_en": "The service quality inspection parameter object",
           "help_zh": "服务质检参数对象",
           "name": "service_inspection",
           "options": [
@@ -792,7 +828,7 @@
           "type": "object"
         },
         {
-          "help_en": "Enable service quality inspection. Default is false",
+          "help_en": "Specifies whether to enable the service quality inspection feature. Default value: false",
           "help_zh": "服务质检功能开关，默认为false",
           "name": "service_inspection_enabled",
           "options": [
@@ -808,8 +844,13 @@
               "element": {
                 "type": "string"
               },
+              "enum": [
+                "Conversational",
+                "QuestionsAnswering",
+                "Paragraph"
+              ],
               "example": "Paragraph",
-              "help_en": "The types of summaries to generate. This parameter is required when summarization is enabled. Supported types include `Paragraph` (full-text summary), `Conversational` (speaker summary), and `QuestionsAnswering` (Q\\&A summary)",
+              "help_en": "The expected summarization types when the summarization feature is enabled. Valid values: Paragraph, Conversational, and QuestionsAnswering",
               "help_zh": "开启摘要功能时，需传入期望的摘要类型，支持全文摘要(Paragraph)、发言人总结摘要(Conversational)、问答回顾摘要(QuestionsAnswering)",
               "name": "types",
               "options": [
@@ -820,7 +861,7 @@
               "type": "array"
             }
           ],
-          "help_en": "Parameters for the summarization feature",
+          "help_en": "The control parameters for the summarization feature",
           "help_zh": "摘要功能控制参数",
           "name": "summarization",
           "options": [
@@ -832,7 +873,7 @@
         },
         {
           "example": "false",
-          "help_en": "Specifies whether to enable the summarization feature, which can generate results such as a full-text summary and a speaker summary",
+          "help_en": "Specifies whether to enable the summarization feature. When enabled, full-text summaries and speaker summaries are generated based on the specified summarization types",
           "help_zh": "是否启用摘要功能，开启后会可以生成全文摘要、发言人总结等结果",
           "name": "summarization_enabled",
           "options": [
@@ -844,7 +885,7 @@
         },
         {
           "example": "false",
-          "help_en": "Specifies whether to enable the spoken-to-written conversion feature",
+          "help_en": "Specifies whether to enable the spoken-to-written text conversion feature",
           "help_zh": "是否启用口语书面化功能",
           "name": "text_polish_enabled",
           "options": [
@@ -858,7 +899,7 @@
           "fields": [
             {
               "example": "false",
-              "help_en": "Specifies whether to generate and save an audio waveform from the source audio/video file or audio stream. This parameter is optional for offline transcription and real-time recording tasks",
+              "help_en": "Specifies whether to generate and save an audio waveform for the original audio and video files or audio streams. Currently, only the MP3 format is supported. This parameter is optional when you create an offline file transcription or real-time meeting task",
               "help_zh": "是否将原始音视频文件或音频流生成音频波形图并保存，目前仅支持设置为mp3格式。在创建离线文件转写或实时会议时可选",
               "name": "spectrum_enabled",
               "options": [
@@ -873,7 +914,7 @@
                 "mp3"
               ],
               "example": "mp3",
-              "help_en": "Specifies the target format for the transcoded audio. Set to `mp3` to transcode the source audio into MP3 format for storage. This parameter is optional for offline transcription and real-time recording tasks",
+              "help_en": "Specifies whether to transcode and save the original audio and video files or audio streams in MP3 format. Currently, only the MP3 format is supported. This parameter is optional when you create an offline file transcription or real-time meeting task",
               "help_zh": "是否将原始音视频文件或音频流转成mp3格式保存，目前仅支持设置为mp3格式。在创建离线文件转写或实时会议时可选",
               "name": "target_audio_format",
               "options": [
@@ -888,7 +929,7 @@
                 "mp4"
               ],
               "example": "mp4",
-              "help_en": "Specifies the target format for the transcoded video. Set to `mp4` to transcode the source video into MP4 format for storage. This parameter applies only to offline transcription tasks with a video source file",
+              "help_en": "Specifies whether to transcode and save the original video files in MP4 format. Currently, only the MP4 format is supported. This parameter is valid only when you create an offline file transcription task and the original file is a video file. You do not need to specify this parameter in most cases",
               "help_zh": "是否将原始视频文件转成mp4格式保存，目前仅支持设置为mp4格式。仅在创建离线文件转写且原始文件为视频格式时设置此参数有意义，通常无须设置",
               "name": "target_video_format",
               "options": [
@@ -900,7 +941,7 @@
             },
             {
               "example": "false",
-              "help_en": "Specifies whether to extract and save video thumbnails from the source video file. This parameter applies only to offline transcription tasks with a video source file",
+              "help_en": "Specifies whether to extract and save video thumbnails from the original video files. This parameter is valid only when you create an offline file transcription task and the original file is a video file. You do not need to specify this parameter in most cases",
               "help_zh": "是否将原始视频文件抽取视频缩略图并保存。仅在创建离线文件转写且原始文件为视频格式时设置此参数有意义，通常无须设置",
               "name": "video_thumbnail_enabled",
               "options": [
@@ -911,7 +952,7 @@
               "type": "bool"
             }
           ],
-          "help_en": "Parameters for transcoding source audio/video files or audio streams",
+          "help_en": "The transcoding module for audio and video files or audio streams",
           "help_zh": "音视频或音频流转码转换模块",
           "name": "transcoding",
           "options": [
@@ -924,8 +965,12 @@
         {
           "fields": [
             {
+              "enum": [
+                "1",
+                "2"
+              ],
               "example": "1",
-              "help_en": "Specifies the level of detail for speech transcription results for the active speaker in a real-time recording scenario.\n\n1: Returns results only when a complete sentence is recognized.\n\n2: Returns both intermediate and final results as they are recognized.\n\nThis parameter applies only to real-time recordings when `MultipleStreamsEnabled` is set to `true`",
+              "help_en": "The return level of speech recognition results for active speakers in real-time recording scenarios.\n1: Return recognition results when a complete sentence is recognized.\n2: Return recognition results when intermediate results and complete sentences are recognized.\nSpecify this parameter only in real-time recording scenarios when MultipleStreamsEnabled is set to true. You do not need to specify this parameter in offline transcription scenarios",
               "help_zh": "设置实时记录场景下活跃说话人对应的语音识别结果返回等级。\n\n1：识别出完整句子时返回识别结果；\n\n2：识别出中间结果及完整句子时返回识别结果；\n\n仅在实时记录场景下且MultipleStreamsEnabled=true时按需设置，离线转写场景无须设置",
               "name": "additional_stream_output_level",
               "options": [
@@ -937,7 +982,7 @@
             },
             {
               "example": "false",
-              "help_en": "Specifies whether to enable sound event detection, which identifies non-speech events in the audio, such as music",
+              "help_en": "Specifies whether to enable the audio event detection feature during speech transcription to determine whether events such as music exist in the audio",
               "help_zh": "是否在语音转写过程中开启声音事件检测功能，用以判断音频中是否存在比如music等事件",
               "name": "audio_event_detection_enabled",
               "options": [
@@ -950,8 +995,12 @@
             {
               "fields": [
                 {
+                  "enum": [
+                    "0",
+                    "2"
+                  ],
                   "example": "2",
-                  "help_en": "Specifies the number of speakers to identify.\n\nIf this parameter is not set, speakers are not differentiated in the transcript.\n\nSet the value to `0` to identify an unknown number of speakers.\n\nSet the value to `2` to identify two speakers",
+                  "help_en": "The speaker diarization parameters.\nNot specified: Speaker diarization is disabled.\n0: The number of speakers is unspecified.\n2: The number of speakers is 2",
                   "help_zh": "设置说话人分离参数。\n\n不设置：不使用说话人角色区分。 \n\n0：说话人角色区分结果为不定人数。\n\n 2：说话人角色区分结果为2人",
                   "name": "speaker_count",
                   "options": [
@@ -962,7 +1011,7 @@
                   "type": "int"
                 }
               ],
-              "help_en": "Parameters for the speaker diarization feature",
+              "help_en": "The parameters for the speaker diarization feature",
               "help_zh": "说话人分离功能参数",
               "name": "diarization",
               "options": [
@@ -974,7 +1023,7 @@
             },
             {
               "example": "false",
-              "help_en": "Specifies whether to enable speaker diarization",
+              "help_en": "Specifies whether to enable the speaker diarization feature",
               "help_zh": "是否开启说话人分离功能",
               "name": "diarization_enabled",
               "options": [
@@ -985,7 +1034,7 @@
               "type": "bool"
             },
             {
-              "help_en": "是否启用语音转写过程中的文本顺滑功能，默认开启",
+              "help_en": "Specifies whether to enable the text smoothing feature during speech transcription. Default value: true",
               "help_zh": "是否启用语音转写过程中的文本顺滑功能，默认开启",
               "name": "disfluency_enabled",
               "options": [
@@ -996,7 +1045,8 @@
               "type": "bool"
             },
             {
-              "help_en": "Set the speech transcription model to improve accuracy for specific domains",
+              "example": "domain-automotive",
+              "help_en": "The speech transcription model used to improve transcription accuracy in specific domains",
               "help_zh": "设置语音转写模型，提升特定领域转写效果",
               "name": "model",
               "options": [
@@ -1007,8 +1057,12 @@
               "type": "string"
             },
             {
+              "enum": [
+                "1",
+                "2"
+              ],
               "example": "2",
-              "help_en": "Specifies the level of detail for the speech transcription results. Default value: `1`.\n\n1: Returns results only when a complete sentence is recognized.\n\n2: Returns both intermediate and final results as they are recognized",
+              "help_en": "The return level of speech recognition results. Default value: 1.\n1: Return recognition results when a complete sentence is recognized.\n2: Return recognition results when intermediate results and complete sentences are recognized",
               "help_zh": "设置语音识别结果返回等级。默认值是1。\n\n1：识别出完整句子时返回识别结果；\n\n2：识别出中间结果及完整句子时返回识别结果",
               "name": "output_level",
               "options": [
@@ -1019,8 +1073,22 @@
               "type": "int"
             },
             {
+              "help_en": "The hot word vocabulary",
+              "help_zh": "热词词表",
+              "name": "phrase",
+              "options": [
+                "--phrase"
+              ],
+              "raw_name": "Phrase",
+              "required": false,
+              "type": "map",
+              "value": {
+                "type": "any"
+              }
+            },
+            {
               "example": "ce9c2a34b6d847bf92a77d0a196f****",
-              "help_en": "The ID of the hotword list",
+              "help_en": "The ID of the hot word vocabulary",
               "help_zh": "热词的词表ID",
               "name": "phrase_id",
               "options": [
@@ -1031,7 +1099,7 @@
               "type": "string"
             },
             {
-              "help_en": "Enable sensitive word filtering during speech transcription. Enabled by default",
+              "help_en": "Specifies whether to enable the profanity filter feature during speech transcription. Default value: true",
               "help_zh": "是否启用语音转写过程中的敏感词过滤功能，默认开启",
               "name": "profanity_filter_enabled",
               "options": [
@@ -1042,8 +1110,8 @@
               "type": "bool"
             },
             {
-              "help_en": "The RealtimeDiarizationEnabled",
-              "help_zh": "The RealtimeDiarizationEnabled",
+              "help_en": "Specifies whether to enable real-time speaker diarization",
+              "help_zh": "是否启用实时说话人分离",
               "name": "realtime_diarization_enabled",
               "options": [
                 "--realtime-diarization-enabled"
@@ -1053,7 +1121,7 @@
               "type": "bool"
             }
           ],
-          "help_en": "Parameters to control the speech transcription process",
+          "help_en": "The control parameters for speech transcription",
           "help_zh": "语音转写控制参数",
           "name": "transcription",
           "options": [
@@ -1066,8 +1134,12 @@
         {
           "fields": [
             {
+              "enum": [
+                "1",
+                "2"
+              ],
               "example": "1",
-              "help_en": "Specifies the level of detail for real-time translation results for the active speaker.\n\n1: Returns results only for complete sentences.\n\n2: Returns both intermediate and final results.\n\nThis parameter applies only to real-time recordings when `MultipleStreamsEnabled` is set to `true`",
+              "help_en": "Sets the return level of language translation recognition results for the active speaker in real-time transcription scenarios.\n\n1: Returns recognition results when a complete sentence is recognized.\n2: Returns recognition results when intermediate results and complete sentences are recognized.\n\nSet this parameter as needed only in real-time transcription scenarios when MultipleStreamsEnabled is set to true. You do not need to set this parameter in offline transcription scenarios",
               "help_zh": "设置实时记录场景下活跃说话人对应的语言翻译识别结果返回等级。\n\n1：识别出完整句子时返回识别结果；\n2：识别出中间结果及完整句子时返回识别结果；\n\n仅在实时记录场景下且MultipleStreamsEnabled=true时按需设置，离线转写场景无须设置",
               "name": "additional_stream_output_level",
               "options": [
@@ -1078,8 +1150,12 @@
               "type": "int"
             },
             {
+              "enum": [
+                "1",
+                "2"
+              ],
               "example": "2",
-              "help_en": "Specifies the level of detail for real-time translation results. Default value: `1`.\n\n1: Returns results only for complete sentences.\n\n2: Returns both intermediate and final results.\n\nThis parameter applies only to real-time recordings",
+              "help_en": "Sets the return level of real-time language translation recognition results. Default value: 1.\n\n1: Returns recognition results when a complete sentence is recognized.\n2: Returns recognition results when intermediate results and complete sentences are recognized.\n\nSet this parameter as needed only in real-time transcription scenarios. You do not need to set this parameter in offline transcription scenarios",
               "help_zh": "设置实时语言翻译识别结果返回等级。默认值是1。\n\n1：识别出完整句子时返回识别结果；\n2：识别出中间结果及完整句子时返回识别结果。\n\n仅在实时记录场景下按需设置，离线转写场景无须设置",
               "name": "output_level",
               "options": [
@@ -1093,7 +1169,7 @@
               "element": {
                 "type": "string"
               },
-              "help_en": "The target languages for translation. This parameter is required if translation is enabled. Supported languages include Chinese, English, and Japanese",
+              "help_en": "The target languages to set when the translation feature is enabled. Chinese, English, and Japanese are supported",
               "help_zh": "翻译功能开启时需设置目标语言。支持中英日",
               "name": "target_languages",
               "options": [
@@ -1104,7 +1180,7 @@
               "type": "array"
             },
             {
-              "help_en": "是否使用大模型翻译，默认为false",
+              "help_en": "Specifies whether to use large language model translation. Default value: false",
               "help_zh": "是否使用大模型翻译，默认为false",
               "name": "translate_llm_scene_enabled",
               "options": [
@@ -1115,7 +1191,7 @@
               "type": "bool"
             }
           ],
-          "help_en": "Parameters to control the translation feature",
+          "help_en": "The control parameters for the translation feature",
           "help_zh": "翻译功能控制参数",
           "name": "translation",
           "options": [
@@ -1138,7 +1214,7 @@
           "type": "bool"
         }
       ],
-      "help_en": "Algorithm-related parameters for customizing task processing",
+      "help_en": "The algorithm-related parameters set when creating a task. You can set them as needed",
       "help_zh": "创建任务时设置的算法相关参数。您可以按需设置",
       "location": "body",
       "name": "parameters",
@@ -1157,7 +1233,7 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The response schema",
+        "description_en": "Schema of Response",
         "description_zh": "Schema of Response",
         "properties": {
           "Code": {
@@ -1167,14 +1243,14 @@
             "type": "string"
           },
           "Data": {
-            "description_en": "The response data",
+            "description_en": "The returned object",
             "description_zh": "返回对象",
             "properties": {
               "MeetingJoinUrl": {
-                "description_en": "The stream ingestion URL. Push audio streams to this URL for real-time transcription",
+                "description_en": "The audio stream push URL generated in the real-time recording scenario. You can use this URL for subsequent real-time audio stream recognition",
                 "description_zh": "实时记录场景下生成的音频流推送地址，您可以在后续实时音频流识别时通过该地址进行",
                 "example": "wss://tingwu-realtime-cn-beijing.aliyuncs.com/api/ws/v1?mc=****",
-                "title_en": "实时记录场景下生成的音频流推送地址，您可以在后续实时音频流识别时通过该地址进行",
+                "title_en": "",
                 "title_zh": "实时记录场景下生成的音频流推送地址，您可以在后续实时音频流识别时通过该地址进行",
                 "type": "string"
               },
@@ -1185,7 +1261,7 @@
                 "type": "string"
               },
               "TaskKey": {
-                "description_en": "The custom identifier specified during task creation",
+                "description_en": "The custom identifier specified when the task is created",
                 "description_zh": "用户创建任务时设置的自定义标识",
                 "example": "task_tingwu_123",
                 "type": "string"
@@ -1194,7 +1270,7 @@
                 "description_en": "The task status",
                 "description_zh": "任务状态",
                 "example": "ONGOING",
-                "title_en": "任务状态",
+                "title_en": "",
                 "title_zh": "任务状态",
                 "type": "string"
               }
@@ -1208,29 +1284,18 @@
             "type": "string"
           },
           "RequestId": {
-            "description_en": "The request ID, used for troubleshooting only",
+            "description_en": "The request ID, used only for joint debugging",
             "description_zh": "请求ID，仅用于联调",
             "example": "35124E1C-AE99-5D6C-A52E-BD689D8D****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }
     }
-  },
-  "v1_body_parameters": [
-    {
-      "help_en": "The request body parameters",
-      "help_zh": "请求参数body",
-      "name": "body",
-      "param_style": "json",
-      "position": "body",
-      "required": false,
-      "type": "string"
-    }
-  ]
+  }
 }

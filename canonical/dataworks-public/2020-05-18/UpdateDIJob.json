@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "cmd_full_name": "dataworks-public update-di-job",
   "cmd_name": "update-di-job",
   "deprecated": false,
@@ -128,30 +129,6 @@
       "element": {
         "fields": [
           {
-            "example": "Rename",
-            "help_en": "The type of the action. Valid values:\n\nDefinePrimaryKey\nRename\nAddColumn\nHandleDml\nDefineIncrementalCondition\nDefineCycleScheduleSettings\nDefineRuntimeSettings\nDefinePartitionKey",
-            "help_zh": "动作类型，可选的枚举值：\nDefinePrimaryKey（定义主键）\nRename（重命名）\nAddColumn（增加列）\nHandleDml（DML处理）\nDefineIncrementalCondition（定义增量条件）\nDefineCycleScheduleSettings（定义周期调度设置）\nDefineRuntimeSettings（定义高级配置参数）\nDefinePartitionKey（定义分区列）",
-            "name": "rule_action_type",
-            "options": [
-              "--rule-action-type"
-            ],
-            "raw_name": "RuleActionType",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "{\"expression\":\"${srcDatasoureName}_${srcDatabaseName}\"}",
-            "help_en": "The expression of the rule. The expression must be a JSON string.\n\nExample of a renaming rule: {\"expression\":\"${srcDatasourceName}_${srcDatabaseName}_0922\",\"variables\":[{\"variableName\":\"srcDatabaseName\",\"variableRules\":[{\"from\":\"fromdb\",\"to\":\"todb\"}]}]}.\n\nexpression: the expression of the renaming rule. The expression may contain the following variables: ${srcDatasourceName}, ${srcDatabaseName}, and ${srcTableName}. ${srcDatasourceName} specifies the name of the source. ${srcDatabaseName} specifies the name of a source database. ${srcTableName} specifies the name of a source table. variables: the generation rule for a variable used in the expression of the renaming rule. The default value of the specified variable is the original value of the object indicated by the variable. You can define a group of string replacement rules to change the original values based on your business requirements. variableName: the name of the variable. Do not enclose the variable name in ${}. variableRules: the string replacement rules for variables. The system runs the string replacement rules in sequence. from specifies the original string. to specifies the new string. Example of a rule used to add a specific field to the destination and assign a value to the field: {\"columns\":[{\"columnName\":\"my_add_column\",\"columnValueType\":\"Constant\",\"columnValue\":\"123\"}]}.\n\nIf you do not configure such a rule, no fields are added to the destination and no values are assigned by default. columnName: the name of the field that you want to add. columnValueType: the value type of the field. Valid values: Constant and Variable. columnValue: the value of the field that you want to add. If you set the valueType parameter to Constant, set the columnValue parameter to a custom constant of the STRING type. If you set the valueType parameter to Variable, set the columnValue to a built-in variable. The following built-in variables are supported: EXECUTE_TIME (LONG data type), DB_NAME_SRC (STRING data type), DATASOURCE_NAME_SRC (STRING data type), TABLE_NAME_SRC (STRING data type), DB_NAME_DEST (STRING data type), DATASOURCE_NAME_DEST (STRING data type), TABLE_NAME_DEST (STRING data type), and DB_NAME_SRC_TRANSED (STRING data type). EXECUTE_TIME specifies the execution time. DB_NAME_SRC indicates the name of a source database. DATASOURCE_NAME_SRC specifies the name of the source. TABLE_NAME_SRC specifies the name of a source table. DB_NAME_DEST specifies the name of a destination database. DATASOURCE_NAME_DEST specifies the name of the destination. TABLE_NAME_DEST specifies the name of a destination table. DB_NAME_SRC_TRANSED specifies the database name obtained after a transformation. Example of a rule used to specify primary key fields for a destination table: {\"columns\":[\"ukcolumn1\",\"ukcolumn2\"]}.\n\nIf you do not configure such a rule, the primary key fields in the mapped source table are used for the destination table by default. If the destination table is an existing table, Data Integration does not modify the schema of the destination table. If the specified primary key fields do not exist in the destination table, an error is reported when the synchronization task starts to run. If the destination table is automatically created by the system, Data Integration automatically creates the schema of the destination table. The schema contains the primary key fields that you specify. If the specified primary key fields do not exist in the destination table, an error is reported when the synchronization task starts to run. Example of a rule used to process DML messages: {\"dmlPolicies\":[{\"dmlType\":\"Delete\",\"dmlAction\":\"Filter\",\"filterCondition\":\"id > 1\"}]}.\n\nIf you do not configure such a rule, the default processing policy for messages generated for insert, update, and delete operations is Normal. dmlType: the DML operation. Valid values: Insert, Update, and Delete. dmlAction: the processing policy for DML messages. Valid values: Normal, Ignore, Filter, and LogicalDelete. Filter indicates conditional processing. You can set the dmlAction parameter to Filter only when the dmlType parameter is set to Update or Delete. filterCondition: the condition used to filter DML messages. This parameter is required only when the dmlAction parameter is set to Filter",
-            "help_zh": "规则表达式，json string格式。\n\n重命名规则（Rename）示例： {\"expression\":\"${srcDatasourceName}_${srcDatabaseName}_0922\",\"variables\":[{\"variableName\":\"srcDatabaseName\",\"variableRules\":[{\"from\":\"fromdb\",\"to\":\"todb\"}]}]}\n\nexpression：为重命名转换规则表达式，表达式内支持变量包括：${srcDatasourceName}（源端数据源名）、${srcDatabaseName}（源端库名）、${srcTableName}（源端表名）。\nvariables：为重命名转换规则表达式中各变量的生成规则，参数默认值为对应含义在源端的原始值，可按需定义一组字符串替换规则对原始值进行改写。variableName：变量名，不含${}。variableRules：变量生成规则组，按顺序串行执行替换，from原始字符串；to替换后字符串。\n在目标端增加指定列并赋值规则（AddColumn）示例： {\"columns\":[{\"columnName\":\"my_add_column\",\"columnValueType\":\"Constant\",\"columnValue\":\"123\"}]}\n\n如不指定，默认规则为不加列不复制。\ncolumnName：附加的列名称。\ncolumnValueType：附加的列取值类型，包括Constant（常量）、Variable（变量）。\ncolumnValue：附加的列取值。当valueType=Constant时，value为自定义常量，String类型。当valueType=Variable时，value为内置变量。内置变量可选值包括：EXECUTE_TIME（执行时间，Long类型）、DB_NAME_SRC（源端数据库名称，String类型）、DATASOURCE_NAME_SRC（源端数据源名称，String类型）、TABLE_NAME_SRC（源端表名，String类型）、DB_NAME_DEST（目标端数据库名称，String类型）、DATASOURCE_NAME_DEST（目标端数据源名称，String类型）、TABLE_NAME_DEST（目标端表名，String类型）、DB_NAME_SRC_TRANSED（转换后的数据库名称，String类型）。\n指定目标端表的主键列列名（DefinePrimaryKey）示例： {\"columns\":[\"ukcolumn1\",\"ukcolumn2\"]}\n\n如不指定默认使用源端主键列。\n当目标端为已有表：数据集成系统不会修改目标端表结构，如果指定的主键列不在目标端的列集合中，任务启动会报错提示。\n当目标端为自动建表：数据集成系统会自动创建目标端表结构，表结构包含定义的主键列。当指定的主键列不在目标端的列集合中时，任务启动会报错提示。\nDML处理规则（HandleDml）示例： {\"dmlPolicies\":[{\"dmlType\":\"Delete\",\"dmlAction\":\"Filter\",\"filterCondition\":\"id > 1\"}]}\n\n如不指定，默认规则为Insert、Update、Delete均为Normal\ndmlType：DML操作类型，Insert（插入）、Update（更新）、Delete（删除）\ndmlAction：DML处理策略，Normal（正常处理）、Ignore（忽略）、Filter（有条件的正常处理，当dmlType=Update/Delete时使用）、LogicalDelete（逻辑删除）\nfilterCondition：DML过滤条件，当dmlAction=Filter时使用",
-            "name": "rule_expression",
-            "options": [
-              "--rule-expression"
-            ],
-            "raw_name": "RuleExpression",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "rename_rule_1",
             "help_en": "The name of the rule. If the values of the RuleActionType parameter and the RuleTargetType parameter are the same for multiple transformation rules, you must make sure that the transformation rule names are unique",
             "help_zh": "规则名称，当动作类型和动作作用的目标类型相同时，规则名称需保证唯一性",
@@ -164,14 +141,38 @@
             "type": "string"
           },
           {
+            "example": "Rename",
+            "help_en": "The type of the action. Valid values:\n\n\n\n\nDefinePrimaryKey: define primary keys\nRename: rename\nAddColumn: add columns\nHandleDml: process DML\nDefineIncrementalCondition: define incremental conditions\nDefineCycleScheduleSettings: define periodic scheduling settings\nDefineRuntimeSettings: define advanced configuration parameters\nDefinePartitionKey: define partition columns",
+            "help_zh": "动作类型，可选的枚举值：\nDefinePrimaryKey（定义主键）\nRename（重命名）\nAddColumn（增加列）\nHandleDml（DML处理）\nDefineIncrementalCondition（定义增量条件）\nDefineCycleScheduleSettings（定义周期调度设置）\nDefineRuntimeSettings（定义高级配置参数）\nDefinePartitionKey（定义分区列）",
+            "name": "rule_action_type",
+            "options": [
+              "--rule-action-type"
+            ],
+            "raw_name": "RuleActionType",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "Table",
-            "help_en": "The type of the object on which you want to perform the action. Valid values:\n\nTable\nSchema",
+            "help_en": "The type of the object on which you want to perform the action. Valid values:\n\n\n\n\nTable: table\nSchema: schema",
             "help_zh": "动作作用的目标类型，可选的枚举值：\nTable（表）\nSchema（schema）",
             "name": "rule_target_type",
             "options": [
               "--rule-target-type"
             ],
             "raw_name": "RuleTargetType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "{\"expression\":\"${srcDatasoureName}_${srcDatabaseName}\"}",
+            "help_en": "The expression of the rule. The expression must be a JSON string.\n\nExample of a renaming rule: {\"expression\":\"${srcDatasourceName}_${srcDatabaseName}_0922\",\"variables\":[{\"variableName\":\"srcDatabaseName\",\"variableRules\":[{\"from\":\"fromdb\",\"to\":\"todb\"}]}]}.\n\nexpression: the expression of the renaming rule. The expression may contain the following variables: ${srcDatasourceName}, ${srcDatabaseName}, and ${srcTableName}. ${srcDatasourceName} specifies the name of the source. ${srcDatabaseName} specifies the name of a source database. ${srcTableName} specifies the name of a source table. variables: the generation rule for a variable used in the expression of the renaming rule. The default value of the specified variable is the original value of the object indicated by the variable. You can define a group of string replacement rules to change the original values based on your business requirements. variableName: the name of the variable. Do not enclose the variable name in ${}. variableRules: the string replacement rules for variables. The system runs the string replacement rules in sequence. from specifies the original string. to specifies the new string. Example of a rule used to add a specific field to the destination and assign a value to the field: {\"columns\":[{\"columnName\":\"my_add_column\",\"columnValueType\":\"Constant\",\"columnValue\":\"123\"}]}.\n\nIf you do not configure such a rule, no fields are added to the destination and no values are assigned by default. columnName: the name of the field that you want to add. columnValueType: the value type of the field. Valid values: Constant and Variable. columnValue: the value of the field that you want to add. If you set the valueType parameter to Constant, set the columnValue parameter to a custom constant of the STRING type. If you set the valueType parameter to Variable, set the columnValue to a built-in variable. The following built-in variables are supported: EXECUTE_TIME (LONG data type), DB_NAME_SRC (STRING data type), DATASOURCE_NAME_SRC (STRING data type), TABLE_NAME_SRC (STRING data type), DB_NAME_DEST (STRING data type), DATASOURCE_NAME_DEST (STRING data type), TABLE_NAME_DEST (STRING data type), and DB_NAME_SRC_TRANSED (STRING data type). EXECUTE_TIME specifies the execution time. DB_NAME_SRC indicates the name of a source database. DATASOURCE_NAME_SRC specifies the name of the source. TABLE_NAME_SRC specifies the name of a source table. DB_NAME_DEST specifies the name of a destination database. DATASOURCE_NAME_DEST specifies the name of the destination. TABLE_NAME_DEST specifies the name of a destination table. DB_NAME_SRC_TRANSED specifies the database name obtained after a transformation. Example of a rule used to specify primary key fields for a destination table: {\"columns\":[\"ukcolumn1\",\"ukcolumn2\"]}.\n\nIf you do not configure such a rule, the primary key fields in the mapped source table are used for the destination table by default. If the destination table is an existing table, Data Integration does not modify the schema of the destination table. If the specified primary key fields do not exist in the destination table, an error is reported when the synchronization task starts to run. If the destination table is automatically created by the system, Data Integration automatically creates the schema of the destination table. The schema contains the primary key fields that you specify. If the specified primary key fields do not exist in the destination table, an error is reported when the synchronization task starts to run. Example of a rule used to process DML messages: {\"dmlPolicies\":[{\"dmlType\":\"Delete\",\"dmlAction\":\"Filter\",\"filterCondition\":\"id > 1\"}]}.\n\nIf you do not configure such a rule, the default processing policy for messages generated for insert, update, and delete operations is Normal. dmlType: the DML operation. Valid values: Insert, Update, and Delete. dmlAction: the processing policy for DML messages. Valid values: Normal, Ignore, Filter, and LogicalDelete. Filter indicates conditional processing. You can set the dmlAction parameter to Filter only when the dmlType parameter is set to Update or Delete. filterCondition: the condition used to filter DML messages. This parameter is required only when the dmlAction parameter is set to Filter",
+            "help_zh": "规则表达式，json string格式。\n\n重命名规则（Rename）示例： {\"expression\":\"${srcDatasourceName}_${srcDatabaseName}_0922\",\"variables\":[{\"variableName\":\"srcDatabaseName\",\"variableRules\":[{\"from\":\"fromdb\",\"to\":\"todb\"}]}]}\n\nexpression：为重命名转换规则表达式，表达式内支持变量包括：${srcDatasourceName}（源端数据源名）、${srcDatabaseName}（源端库名）、${srcTableName}（源端表名）。\nvariables：为重命名转换规则表达式中各变量的生成规则，参数默认值为对应含义在源端的原始值，可按需定义一组字符串替换规则对原始值进行改写。variableName：变量名，不含${}。variableRules：变量生成规则组，按顺序串行执行替换，from原始字符串；to替换后字符串。\n在目标端增加指定列并赋值规则（AddColumn）示例： {\"columns\":[{\"columnName\":\"my_add_column\",\"columnValueType\":\"Constant\",\"columnValue\":\"123\"}]}\n\n如不指定，默认规则为不加列不复制。\ncolumnName：附加的列名称。\ncolumnValueType：附加的列取值类型，包括Constant（常量）、Variable（变量）。\ncolumnValue：附加的列取值。当valueType=Constant时，value为自定义常量，String类型。当valueType=Variable时，value为内置变量。内置变量可选值包括：EXECUTE_TIME（执行时间，Long类型）、DB_NAME_SRC（源端数据库名称，String类型）、DATASOURCE_NAME_SRC（源端数据源名称，String类型）、TABLE_NAME_SRC（源端表名，String类型）、DB_NAME_DEST（目标端数据库名称，String类型）、DATASOURCE_NAME_DEST（目标端数据源名称，String类型）、TABLE_NAME_DEST（目标端表名，String类型）、DB_NAME_SRC_TRANSED（转换后的数据库名称，String类型）。\n指定目标端表的主键列列名（DefinePrimaryKey）示例： {\"columns\":[\"ukcolumn1\",\"ukcolumn2\"]}\n\n如不指定默认使用源端主键列。\n当目标端为已有表：数据集成系统不会修改目标端表结构，如果指定的主键列不在目标端的列集合中，任务启动会报错提示。\n当目标端为自动建表：数据集成系统会自动创建目标端表结构，表结构包含定义的主键列。当指定的主键列不在目标端的列集合中时，任务启动会报错提示。\nDML处理规则（HandleDml）示例： {\"dmlPolicies\":[{\"dmlType\":\"Delete\",\"dmlAction\":\"Filter\",\"filterCondition\":\"id > 1\"}]}\n\n如不指定，默认规则为Insert、Update、Delete均为Normal\ndmlType：DML操作类型，Insert（插入）、Update（更新）、Delete（删除）\ndmlAction：DML处理策略，Normal（正常处理）、Ignore（忽略）、Filter（有条件的正常处理，当dmlType=Update/Delete时使用）、LogicalDelete（逻辑删除）\nfilterCondition：DML过滤条件，当dmlAction=Filter时使用",
+            "name": "rule_expression",
+            "options": [
+              "--rule-expression"
+            ],
+            "raw_name": "RuleExpression",
             "required": false,
             "type": "string"
           }
@@ -197,6 +198,18 @@
             "element": {
               "fields": [
                 {
+                  "example": "Table",
+                  "help_en": "The type of the object. Valid values:\n\n\n\n\nTable: table\nDatabase: database",
+                  "help_zh": "对象类型，可选的枚举值：\nTable（表）\nDatabase（数据库）",
+                  "name": "object_type",
+                  "options": [
+                    "--object-type"
+                  ],
+                  "raw_name": "ObjectType",
+                  "required": false,
+                  "type": "string"
+                },
+                {
                   "example": "mysql_table_1",
                   "help_en": "The expression",
                   "help_zh": "表达式",
@@ -205,18 +218,6 @@
                     "--expression"
                   ],
                   "raw_name": "Expression",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "Table",
-                  "help_en": "The type of the object. Valid values:\n\nTable\nDatabase",
-                  "help_zh": "对象类型，可选的枚举值：\nTable（表）\nDatabase（数据库）",
-                  "name": "object_type",
-                  "options": [
-                    "--object-type"
-                  ],
-                  "raw_name": "ObjectType",
                   "required": false,
                   "type": "string"
                 }
@@ -237,18 +238,6 @@
             "element": {
               "fields": [
                 {
-                  "example": "Rename",
-                  "help_en": "The type of the action. Valid values:\n\nDefinePrimaryKey\nRename\nAddColumn\nHandleDml\nDefineIncrementalCondition\nDefineCycleScheduleSettings\nDefineRuntimeSettings\nDefinePartitionKey",
-                  "help_zh": "动作类型，可选的枚举值：\nDefinePrimaryKey（定义主键）\nRename（重命名）\nAddColumn（增加列）\nHandleDml（DML处理）\nDefineIncrementalCondition（定义增量条件）\nDefineCycleScheduleSettings（定义周期调度设置）\nDefineRuntimeSettings（定义高级配置参数）\nDefinePartitionKey（定义分区列）",
-                  "name": "rule_action_type",
-                  "options": [
-                    "--rule-action-type"
-                  ],
-                  "raw_name": "RuleActionType",
-                  "required": false,
-                  "type": "string"
-                },
-                {
                   "example": "rename_rule_1",
                   "help_en": "The name of the rule. If the values of the RuleActionType parameter and the RuleTargetType parameter are the same for multiple transformation rules, you must make sure that the transformation rule names are unique",
                   "help_zh": "规则名称，在一种动作类型+动作作用的目标类型下规则名称唯一",
@@ -261,8 +250,20 @@
                   "type": "string"
                 },
                 {
+                  "example": "Rename",
+                  "help_en": "The type of the action. Valid values:\n\n\n\n\nDefinePrimaryKey: define primary keys\nRename: rename\nAddColumn: add columns\nHandleDml: process DML\nDefineIncrementalCondition: define incremental conditions\nDefineCycleScheduleSettings: define periodic scheduling settings\nDefineRuntimeSettings: define advanced configuration parameters\nDefinePartitionKey: define partition columns",
+                  "help_zh": "动作类型，可选的枚举值：\nDefinePrimaryKey（定义主键）\nRename（重命名）\nAddColumn（增加列）\nHandleDml（DML处理）\nDefineIncrementalCondition（定义增量条件）\nDefineCycleScheduleSettings（定义周期调度设置）\nDefineRuntimeSettings（定义高级配置参数）\nDefinePartitionKey（定义分区列）",
+                  "name": "rule_action_type",
+                  "options": [
+                    "--rule-action-type"
+                  ],
+                  "raw_name": "RuleActionType",
+                  "required": false,
+                  "type": "string"
+                },
+                {
                   "example": "Table",
-                  "help_en": "The type of the object on which you want to perform the action. Valid values:\n\nTable\nSchema",
+                  "help_en": "The type of the object on which you want to perform the action. Valid values:\n\n\n\n\nTable: table\nSchema: schema",
                   "help_zh": "动作作用的目标类型，可选的枚举值;\nTable（表）\nSchema（schema）",
                   "name": "rule_target_type",
                   "options": [
@@ -288,7 +289,7 @@
         ],
         "type": "object"
       },
-      "help_en": "The list of mappings between rules used to select synchronization objects in the source and transformation rules applied to the selected synchronization objects. Each entry in the list displays a mapping between a rule used to select synchronization objects and a transformation rule applied to the selected synchronization objects",
+      "help_en": "The list of mappings between rules used to select synchronization objects in the source and transformation rules applied to the selected synchronization objects. Each entry describes a list of source object selection rules and a list of transformation rules applied to that group of objects",
       "help_zh": "同步对象转换映射列表，列表中每个元素描述了一组源端同步对象选择规则列表和在该组同步对象上应用的同步对象转换规则列表",
       "location": "formData",
       "name": "table_mappings",
@@ -303,85 +304,20 @@
     {
       "fields": [
         {
-          "example": "{\"structInfo\":\"MANAGED\",\"storageType\":\"TEXTFILE\",\"writeMode\":\"APPEND\",\"partitionColumns\":[{\"columnName\":\"pt\",\"columnType\":\"STRING\",\"comment\":\"\"}],\"fieldDelimiter\":\"\"}\n",
-          "help_en": "The channel control settings for the synchronization task. The value of this parameter must be a JSON string",
-          "help_zh": "通道相关任务设置，Json String形式",
-          "name": "channel_settings",
-          "options": [
-            "--channel-settings"
-          ],
-          "raw_name": "ChannelSettings",
-          "required": false,
-          "type": "string"
-        },
-        {
           "element": {
             "fields": [
               {
-                "example": "text",
-                "help_en": "The data type of a destination field",
-                "help_zh": "目标端类型",
-                "name": "destination_data_type",
+                "example": "AddColumn",
+                "help_en": "The type of the DDL operation. Valid values:\n\n\n\n\nRenameColumn: rename a column\nModifyColumn: update a column\nCreateTable: create a table\nTruncateTable: empty a table\nDropTable: delete a table\nDropColumn: delete a column\nAddColumn: add a column",
+                "help_zh": "DDL类型，可选的枚举值;\nRenameColumn（重命名列）\nModifyColumn（更新列）\nCreateTable（新建表）\nTruncateTable（清空表）\nDropTable（删除表）\nDropColumn（删除列）\nAddColumn（新增列）",
+                "name": "type",
                 "options": [
-                  "--destination-data-type"
+                  "--type"
                 ],
-                "raw_name": "DestinationDataType",
+                "raw_name": "Type",
                 "required": false,
                 "type": "string"
               },
-              {
-                "example": "bigint",
-                "help_en": "The data type of a source field",
-                "help_zh": "源端类型",
-                "name": "source_data_type",
-                "options": [
-                  "--source-data-type"
-                ],
-                "raw_name": "SourceDataType",
-                "required": false,
-                "type": "string"
-              }
-            ],
-            "type": "object"
-          },
-          "help_en": "The settings for data type mappings between source fields and destination fields. The value of this parameter must be an array",
-          "help_zh": "列类型映射，支持多值",
-          "name": "column_data_type_settings",
-          "options": [
-            "--column-data-type-settings"
-          ],
-          "raw_name": "ColumnDataTypeSettings",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "fields": [
-            {
-              "example": "bizdate=$bizdate\n",
-              "help_en": "The scheduling parameters",
-              "help_zh": "调度参数",
-              "name": "schedule_parameters",
-              "options": [
-                "--schedule-parameters"
-              ],
-              "raw_name": "ScheduleParameters",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "The settings for periodic scheduling",
-          "help_zh": "周期调度设置",
-          "name": "cycle_schedule_settings",
-          "options": [
-            "--cycle-schedule-settings"
-          ],
-          "raw_name": "CycleScheduleSettings",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "element": {
-            "fields": [
               {
                 "example": "Critical",
                 "help_en": "The processing policy for DDL messages. Valid values:\n\nIgnore: ignores a DDL message.\nCritical: reports an error for a DDL message.\nNormal: normally processes a DDL message",
@@ -391,18 +327,6 @@
                   "--action"
                 ],
                 "raw_name": "Action",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "AddColumn",
-                "help_en": "The type of the DDL operation. Valid values:\n\nRenameColumn\nModifyColumn\nCreateTable\nTruncateTable\nDropTable\nDropColumn\nAddColumn",
-                "help_zh": "DDL类型，可选的枚举值;\nRenameColumn（重命名列）\nModifyColumn（更新列）\nCreateTable（新建表）\nTruncateTable（清空表）\nDropTable（删除表）\nDropColumn（删除列）\nAddColumn（新增列）",
-                "name": "type",
-                "options": [
-                  "--type"
-                ],
-                "raw_name": "Type",
                 "required": false,
                 "type": "string"
               }
@@ -416,6 +340,46 @@
             "--ddl-handling-settings"
           ],
           "raw_name": "DdlHandlingSettings",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "fields": [
+              {
+                "example": "bigint",
+                "help_en": "The data type of a source field",
+                "help_zh": "源端类型",
+                "name": "source_data_type",
+                "options": [
+                  "--source-data-type"
+                ],
+                "raw_name": "SourceDataType",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "text",
+                "help_en": "The data type of a destination field",
+                "help_zh": "目标端类型",
+                "name": "destination_data_type",
+                "options": [
+                  "--destination-data-type"
+                ],
+                "raw_name": "DestinationDataType",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          },
+          "help_en": "The settings for data type mappings between source fields and destination fields. The value of this parameter must be an array",
+          "help_zh": "列类型映射，支持多值",
+          "name": "column_data_type_settings",
+          "options": [
+            "--column-data-type-settings"
+          ],
+          "raw_name": "ColumnDataTypeSettings",
           "required": false,
           "type": "array"
         },
@@ -458,9 +422,46 @@
           "raw_name": "RuntimeSettings",
           "required": false,
           "type": "array"
+        },
+        {
+          "fields": [
+            {
+              "example": "bizdate=$bizdate\n",
+              "help_en": "The scheduling parameters",
+              "help_zh": "调度参数",
+              "name": "schedule_parameters",
+              "options": [
+                "--schedule-parameters"
+              ],
+              "raw_name": "ScheduleParameters",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "help_en": "The settings for periodic scheduling",
+          "help_zh": "周期调度设置",
+          "name": "cycle_schedule_settings",
+          "options": [
+            "--cycle-schedule-settings"
+          ],
+          "raw_name": "CycleScheduleSettings",
+          "required": false,
+          "type": "object"
+        },
+        {
+          "example": "{\"structInfo\":\"MANAGED\",\"storageType\":\"TEXTFILE\",\"writeMode\":\"APPEND\",\"partitionColumns\":[{\"columnName\":\"pt\",\"columnType\":\"STRING\",\"comment\":\"\"}],\"fieldDelimiter\":\"\"}\n",
+          "help_en": "The channel control settings for the synchronization task. The value of this parameter must be a JSON string",
+          "help_zh": "通道相关任务设置，Json String形式",
+          "name": "channel_settings",
+          "options": [
+            "--channel-settings"
+          ],
+          "raw_name": "ChannelSettings",
+          "required": false,
+          "type": "string"
         }
       ],
-      "help_en": "The settings for the dimension of the synchronization task. The settings include processing policies for DDL messages, policies for data type mappings between source fields and destination fields, and runtime parameters of the synchronization task",
+      "help_en": "The settings at the synchronization task level. The settings include processing policies for DDL messages, policies for data type mappings between source fields and destination fields, and runtime parameters of the synchronization task",
       "help_zh": "同步任务维度的设置，含DDL处理策略、源端和目标端列数据类型映射策略、任务运行时参数等",
       "location": "formData",
       "name": "job_settings",
@@ -483,16 +484,15 @@
         "description_zh": "响应",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "AAC30B35-820D-5F3E-A42C-E96BB6379325",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

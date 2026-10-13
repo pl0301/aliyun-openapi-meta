@@ -1,0 +1,218 @@
+{
+  "camel_example": "aliyun ossutil api get-bucket-replication-progress --bucket examplebucket --region cn-hangzhou --rule-id test_replication_1",
+  "cmd_full_name": "oss get-bucket-replication-progress",
+  "cmd_name": "get-bucket-replication-progress",
+  "components": {
+    "schemas": {
+      "ReplicationDestination": {
+        "description_en": "The container that stores the information about the destination bucket",
+        "description_zh": "保存目标Bucket信息的容器",
+        "properties": {
+          "Bucket": {
+            "description_en": "The destination bucket to which data is replicated",
+            "description_zh": "指定数据要复制到的目标Bucket",
+            "example": "target-bucket",
+            "title": "指定数据要复制到的目标Bucket。",
+            "type": "string"
+          },
+          "Location": {
+            "description_en": "The region in which the destination bucket is located",
+            "description_zh": "目标Bucket所处的地域",
+            "enumValueTitles": {},
+            "example": "oss-cn-beijing",
+            "title": "目标Bucket所处的地域。",
+            "type": "string"
+          },
+          "TransferType": {
+            "description_en": "The data transfer link used for data replication. Valid values:\ninternal (default): the default data transfer link of OSS.\noss_acc: the transfer acceleration link. You can use the transfer acceleration link only when you create a cross-region replication rule",
+            "description_zh": "指定数据复制时使用的数据传输链路。\n取值：\ninternal（默认值）：OSS默认传输链路。\noss_acc：传输加速链路。只有创建跨区域复制规则时才能使用传输加速链路",
+            "enum": [
+              "internal",
+              "oss_acc"
+            ],
+            "enumValueTitles": {},
+            "example": "oss_acc",
+            "title": "指定数据复制时使用的数据传输链路。  取值：  internal（默认值）：OSS默认传输链路。  oss_acc：传输加速链路。只有创建跨区域复制规则时才能使用传输加速链路。",
+            "type": "string"
+          }
+        },
+        "title": "保存目标Bucket信息的容器。",
+        "type": "object"
+      },
+      "ReplicationPrefixSet": {
+        "description_en": "The container that stores prefixes. You can specify up to 10 prefixes in each replication rule",
+        "description_zh": "保存Prefix的容器，每个复制规则中，最多能指定10个Prefix",
+        "properties": {
+          "Prefix": {
+            "description_en": "The prefix of the objects to be replicated. Only objects that match the specified prefix are replicated to the destination bucket.\nThe maximum length of a prefix is 1,023 characters.\nIf a prefix is configured, both newly written data and historical data are synchronized according to the rules specified by the prefix",
+            "description_zh": "设置待复制Object的Prefix。只有匹配该Prefix的Object才被复制到目标Bucket。\nPrefix最大长度为1023个字符。\n如果配置了Prefix，则新写入的数据和历史数据的同步都会遵循Prefix指定的规则",
+            "items": {
+              "description_en": "The prefix of the objects to be replicated. Only objects that match the specified prefix are replicated to the destination bucket.\nThe maximum length of a prefix is 1,023 characters.\nIf a prefix is configured, both newly written data and historical data are synchronized according to the rules specified by the prefix",
+              "description_zh": "设置待复制Object的Prefix。只有匹配该Prefix的Object才被复制到目标Bucket。\nPrefix最大长度为1023个字符。\n如果配置了Prefix，则新写入的数据和历史数据的同步都会遵循Prefix指定的规则",
+              "example": "video",
+              "type": "string"
+            },
+            "title": "设置待复制Object的Prefix。只有匹配该Prefix的Object才被复制到目标Bucket。  Prefix最大长度为1023个字符。  如果配置了Prefix，则新写入的数据和历史数据的同步都会遵循Prefix指定的规则。",
+            "type": "array"
+          }
+        },
+        "title": "保存前缀（Prefix）的容器。每条数据复制规则中，最多可指定10条Prefix。",
+        "type": "object"
+      },
+      "ReplicationProgressRule": {
+        "description_en": "The data replication progress information",
+        "description_zh": "数据复制进度信息",
+        "properties": {
+          "Action": {
+            "description_en": "The operations that are replicated to the destination bucket.\n\nAction allows the following operation types. You can specify one or more types.\n\nALL (default): PUT, DELETE, and ABORT operations are all replicated to the destination bucket.\n\nPUT: write operations that are replicated to the destination bucket, including PutObject, PostObject, AppendObject, CopyObject, PutObjectACL, InitiateMultipartUpload, UploadPart, UploadPartCopy, and CompleteMultipartUpload",
+            "description_zh": "表示被同步到目标Bucket的操作。\n\nAction允许以下操作类型，您可以指定一项或者多项。\n\nALL（默认操作）：表示PUT、DELETE、ABORT操作均会被同步到目标Bucket。\n\nPUT：表示被同步到目标Bucket的写入操作，包括PutObject、PostObject、AppendObject、CopyObject、PutObjectACL、 InitiateMultipartUpload 、 UploadPart、UploadPartCopy和CompleteMultipartUpload",
+            "enumValueTitles": {
+              "ALL": "PUT/DELETE/ABORT操作都会同步",
+              "PUT": "仅同步写入类操作"
+            },
+            "example": "PUT",
+            "title": "表示被同步到目标Bucket的操作。  Action允许以下操作类型，您可以指定一项或者多项。  ALL（默认操作）：表示PUT、DELETE、ABORT操作均会被同步到目标Bucket。  PUT：表示被同步到目标Bucket的写入操作，包括PutObject、PostObject、AppendObject、CopyObject、PutObjectACL、 InitiateMultipartUpload 、 UploadPart、UploadPartCopy和CompleteMultipartUpload。",
+            "type": "string"
+          },
+          "Destination": {
+            "$ref": "#/components/schemas/ReplicationDestination",
+            "description_en": "The container that stores the destination bucket information",
+            "description_zh": "保存目标Bucket信息的容器",
+            "title": "保存目标Bucket信息的容器。"
+          },
+          "HistoricalObjectReplication": {
+            "description_en": "Specifies whether to replicate historical data. Historical data refers to the data that exists in the source bucket before data replication is enabled.\n\nValid values:\n\nenabled (default): Replicate historical data.\n\ndisabled: Do not replicate historical data. Only data written after the cross-region replication rule takes effect is replicated",
+            "description_zh": "是否复制历史数据。即开启数据复制前，是否将源Bucket中的数据复制到目标Bucket。\n\n取值：\n\nenabled（默认值）：表示复制历史数据。\n\ndisabled：表示不复制历史数据，仅复制跨区域复制规则生效后新写入的数据",
+            "enumValueTitles": {
+              "disabled": "不复制历史数据",
+              "enabled": "复制历史数据"
+            },
+            "example": "enabled",
+            "title": "是否复制历史数据。即开启数据复制前，是否将源Bucket中的数据复制到目标Bucket。  取值：  enabled（默认值）：表示复制历史数据。  disabled：表示不复制历史数据，仅复制跨区域复制规则生效后新写入的数据。",
+            "type": "string"
+          },
+          "ID": {
+            "description_en": "The rule ID",
+            "description_zh": "rule id",
+            "example": "rep01",
+            "title": "复制规则对应的ID。",
+            "type": "string"
+          },
+          "PrefixSet": {
+            "$ref": "#/components/schemas/ReplicationPrefixSet",
+            "description_en": "The container that stores prefixes. You can specify up to 10 prefixes in each replication rule",
+            "description_zh": "保存Prefix 的容器，每个复制规则中，最多能指定10个Prefix",
+            "title": "保存Prefix 的容器，只有匹配该Prefix的Object才会被复制到目标Bucket。"
+          },
+          "Progress": {
+            "description_en": "The container that stores the replication progress. This element is returned only when data is being replicated (doing)",
+            "description_zh": "保存复制进度的容器，仅当数据处于同步状态（doing）时才返回此元素",
+            "properties": {
+              "HistoricalObject": {
+                "description_en": "显示已复制历史数据的百分比。仅对开启了历史数据复制的Bucket有效",
+                "description_zh": "显示已复制历史数据的百分比。仅对开启了历史数据复制的Bucket有效",
+                "example": "0.86",
+                "title": "显示已复制历史数据的百分比。仅对开启了历史数据复制的Bucket有效。",
+                "type": "string"
+              },
+              "NewObject": {
+                "description_en": "显示数据复制到目标Bucket的时间点（GMT格式）。\n\n例如Thu, 24 Sep 2015 15:39:18 GMT，表示早于该时间点写入的数据都已复制到目标Bucket",
+                "description_zh": "显示数据复制到目标Bucket的时间点（GMT格式）。\n\n例如Thu, 24 Sep 2015 15:39:18 GMT，表示早于该时间点写入的数据都已复制到目标Bucket",
+                "example": "Thu, 24 Sep 2015 15:39:18 GMT",
+                "title": "显示数据复制到目标Bucket的时间点（GMT格式）。  例如Thu, 24 Sep 2015 15:39:18 GMT，表示早于该时间点写入的数据都已复制到目标Bucket。",
+                "type": "string"
+              }
+            },
+            "title": "保存复制进度的容器，仅当数据处于同步状态（doing）时才返回此元素。",
+            "type": "object"
+          },
+          "Status": {
+            "description_en": "The replication status",
+            "description_zh": "复制状态",
+            "example": "doing",
+            "title": "表示复制状态。  取值：  starting：设置数据复制规则后，OSS会为Bucket准备复制任务，此时的复制状态为starting。  doing：当数据复制规则生效后，即数据处于同步状态时，此时的复制状态为doing。  closing：删除数据复制规则后，OSS会自动完成清理工作，此时的复制状态为closing。",
+            "type": "string"
+          }
+        },
+        "title": "保存每个复制规则进度条目的容器。",
+        "type": "object"
+      }
+    }
+  },
+  "deprecated": false,
+  "description_en": "Retrieves the data replication progress of a bucket",
+  "description_zh": "获取某个存储空间（Bucket）的数据复制进度",
+  "kebab_example": "",
+  "method": "GET",
+  "multi_version": false,
+  "name": "GetBucketReplicationProgress",
+  "operation": {
+    "action": "GetBucketReplicationProgress",
+    "api_style": "ROA",
+    "api_version": "2019-05-17",
+    "method": "GET",
+    "operation_type": "read",
+    "protocol": "HTTPS",
+    "system_operation_type": "get",
+    "url": "/?replicationProgress"
+  },
+  "parameters": [
+    {
+      "example": "examplebucket",
+      "help_en": "The bucket name",
+      "help_zh": "Bucket名称",
+      "location": "host",
+      "name": "bucket",
+      "options": [
+        "--bucket"
+      ],
+      "raw_name": "bucket",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "test_replication_1",
+      "help_en": "The ID of the replication rule. You can obtain this ID from GetBucketReplication",
+      "help_zh": "复制规则对应的ID。此ID可从GetBucketReplication中获取",
+      "location": "query",
+      "name": "rule_id",
+      "options": [
+        "--rule-id"
+      ],
+      "raw_name": "rule-id",
+      "required": true,
+      "type": "string"
+    }
+  ],
+  "pathPattern": "/?replicationProgress",
+  "product_code": "Oss",
+  "protocol": "HTTP|HTTPS",
+  "responses": {
+    "200": {
+      "schema": {
+        "description_en": "The response body that contains the progress entry for each replication rule",
+        "description_zh": "保存每个复制规则进度条目的响应体",
+        "properties": {
+          "ReplicationProgress": {
+            "description_en": "The list that contains the progress entry for each replication rule",
+            "description_zh": "保存每个复制规则进度条目的列表",
+            "properties": {
+              "Rule": {
+                "description_en": "The container that stores the replication rule progress information",
+                "description_zh": "保存复制规则进度信息的容器",
+                "items": {
+                  "$ref": "#/components/schemas/ReplicationProgressRule",
+                  "description_en": "",
+                  "description_zh": ""
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      }
+    }
+  }
+}

@@ -1,10 +1,11 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ecs DescribeImageFromFamily --region cn-hangzhou --ImageFamily 'hangzhou-daily-update' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs describe-image-from-family",
   "cmd_name": "describe-image-from-family",
   "deprecated": false,
-  "description_en": "Queries the latest available custom image in a specified image family",
-  "description_zh": "查询指定镜像族系内最新创建的可用自定义镜像",
+  "description_en": "Queries the latest available image in a specified image family",
+  "description_zh": "调用DescribeImageFromFamily查询指定镜像族系内最新的可用镜像",
   "kebab_example": "aliyun ecs describe-image-from-family --biz-region-id cn-hangzhou --image-family hangzhou-daily-update --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": false,
@@ -35,7 +36,7 @@
     },
     {
       "example": "hangzhou-daily-update",
-      "help_en": "The name of the image family.\n\nImage families are supported for custom images, public images, community images, and shared images. For more information, see https://help.aliyun.com/document_detail/174241.html",
+      "help_en": "The name of the image family.\n\nCustom images, public images, community images, and shared images all support image families. For more information, see https://help.aliyun.com/document_detail/174241.html",
       "help_zh": "镜像族系名称。\n\n自定义镜像、公共镜像、社区镜像、共享镜像均已支持镜像族系，使用方法及介绍请参见https://help.aliyun.com/document_detail/174241.html",
       "location": "query",
       "name": "image_family",
@@ -53,266 +54,238 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Image": {
-            "backendName": "data",
             "description_en": "The image information",
             "description_zh": "返回的镜像信息",
-            "nullToEmpty": false,
             "properties": {
               "Architecture": {
-                "backendName": "osBit",
                 "description_en": "The system architecture type of the image. Valid values:\ni386\nx86_64",
                 "description_zh": "镜像系统架构类型。可能值：\ni386\nx86_64",
                 "example": "x86_64",
-                "nullToEmpty": true,
-                "type": "string",
-                "valueMapping": {
-                  "cases": [
-                    {
-                      "targetValue": "i386",
-                      "value": "32"
-                    },
-                    {
-                      "targetValue": "x86_64",
-                      "value": "64"
-                    }
-                  ]
-                }
+                "type": "string"
               },
               "CreationTime": {
-                "backendName": "gmtCreated",
-                "description_en": "The time when the image was created",
-                "description_zh": "镜像的创建时间",
+                "description_en": "The time when the image was created. The time follows the ISO 8601 standard in UTC",
+                "description_zh": "镜像的创建时间。格式为 ISO 8601，时区为 UTC",
                 "example": "2018-01-10T01:01:10Z",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "Description": {
-                "backendName": "remark",
                 "description_en": "The description of the image",
                 "description_zh": "描述信息",
                 "example": "testDescription",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "DiskDeviceMappings": {
-                "backendName": "diskDeviceMappings",
-                "itemName": "DiskDeviceMapping",
-                "items": {
-                  "properties": {
-                    "Device": {
-                      "backendName": "device",
-                      "nullToEmpty": true,
-                      "type": "string"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "DiskDeviceMapping": {
+                    "description_en": "The mappings between disks and snapshots in the image",
+                    "description_zh": "镜像下包含云盘和快照的映射关系",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "Device": {
+                          "description_en": "The device information of the disk, such as /dev/xvdb.\nThis parameter will be deprecated. To ensure compatibility, do not use this parameter",
+                          "description_zh": "云盘的设备信息，例如/dev/xvdb。\n该参数即将停止使用，为提高代码的兼容性，建议您尽量不要使用该参数",
+                          "example": "/dev/xvdb",
+                          "type": "string"
+                        },
+                        "Format": {
+                          "description_en": "The format of the image",
+                          "description_zh": "镜像格式",
+                          "example": "qcow2",
+                          "type": "string"
+                        },
+                        "ImportOSSBucket": {
+                          "description_en": "The OSS bucket that contains the imported image",
+                          "description_zh": "导入镜像所属OSS的Bucket",
+                          "example": "testEcsImport",
+                          "type": "string"
+                        },
+                        "ImportOSSObject": {
+                          "description_en": "The OSS object that corresponds to the imported image",
+                          "description_zh": "导入镜像所属OSS的Object",
+                          "example": "imageImport",
+                          "type": "string"
+                        },
+                        "Size": {
+                          "description_en": "The size of the disk. Unit: GiB",
+                          "description_zh": "云盘大小，单位GiB",
+                          "example": "80",
+                          "type": "string"
+                        },
+                        "SnapshotId": {
+                          "description_en": "The snapshot ID",
+                          "description_zh": "快照ID",
+                          "example": "s-bp17ot2q7x72ggtw****",
+                          "type": "string"
+                        },
+                        "Type": {
+                          "description_en": "The type of the image",
+                          "description_zh": "镜像的类型",
+                          "example": "custom",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "Format": {
-                      "backendName": "format",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    },
-                    "ImportOSSBucket": {
-                      "backendName": "importOSSBucket",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    },
-                    "ImportOSSObject": {
-                      "backendName": "importOSSObject",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    },
-                    "Size": {
-                      "backendName": "size",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    },
-                    "SnapshotId": {
-                      "backendName": "snapshotId",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    },
-                    "Type": {
-                      "backendName": "diskType",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": true,
-                "type": "array"
+                "type": "object"
               },
               "ImageFamily": {
-                "backendName": "imageFamily",
                 "description_en": "The image family",
                 "description_zh": "镜像族系",
                 "example": "testImageFamily",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "ImageId": {
-                "backendName": "resourceId",
                 "description_en": "The image ID",
                 "description_zh": "镜像ID",
                 "example": "m-bp1g7004ksh0oeuc****",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "ImageName": {
-                "backendName": "name",
                 "description_en": "The name of the image",
                 "description_zh": "镜像的名称",
                 "example": "testImageName",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "ImageOwnerAlias": {
-                "backendName": "imageCategory",
-                "description_en": "The alias of the image owner. Valid values:\nsystem: public image.\nself: your custom image.\nothers: shared image from other users.\nmarketplace: Alibaba Cloud Marketplace image",
+                "description_en": "The alias of the image owner. Valid values:\nsystem: public image.\nself: your custom image.\nothers: public image of another user.\nmarketplace: Alibaba Cloud Marketplace image",
                 "description_zh": "镜像所有者别名。可能值：\nsystem：公共镜像。\nself：您的自定义镜像。\nothers：其他用户的公开镜像。\nmarketplace：云市场镜像",
                 "example": "self",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "ImageVersion": {
-                "backendName": "version",
                 "description_en": "The image version",
                 "description_zh": "镜像版本",
                 "example": "2",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "IsCopied": {
-                "backendName": "isCopied",
                 "description_en": "Indicates whether the image is a copy of another image",
                 "description_zh": "是否是复制的镜像",
                 "example": "false",
-                "nullToEmpty": true,
                 "type": "boolean"
               },
               "IsSelfShared": {
-                "backendName": "isSelfShared",
                 "description_en": "Indicates whether the custom image has been shared with other users",
                 "description_zh": "是否共享过该自定义镜像给其他用户",
                 "example": "true",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "IsSubscribed": {
-                "backendName": "subscribed",
                 "description_en": "Indicates whether you have subscribed to the Terms of Service for the image product that corresponds to the product code",
                 "description_zh": "是否订阅了该镜像商品码对应的镜像商品服务条款",
                 "example": "false",
-                "nullToEmpty": true,
                 "type": "boolean"
               },
               "IsSupportCloudinit": {
-                "backendName": "isSupportCloudinit",
                 "description_en": "Indicates whether cloud-init is supported",
                 "description_zh": "是否支持cloud-init",
                 "example": "true",
-                "nullToEmpty": true,
                 "type": "boolean"
               },
               "IsSupportIoOptimized": {
-                "backendName": "isSupportIoOptimized",
-                "description_en": "Indicates whether the image can run on an I/O optimized instance",
+                "description_en": "Indicates whether the image can be used on I/O optimized instances",
                 "description_zh": "是否可以在I/O优化实例上运行",
                 "example": "true",
-                "nullToEmpty": true,
                 "type": "boolean"
               },
               "OSName": {
-                "backendName": "osName",
                 "description_en": "The China-locale display name of the operating system",
                 "description_zh": "操作系统的中文显示名称",
                 "example": "Alibaba Cloud Linux 2.1903",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "OSType": {
-                "backendName": "osType",
                 "description_en": "The type of the operating system. Valid values:\nwindows\nlinux",
                 "description_zh": "操作系统类型。可能值：\nwindows\nlinux",
                 "example": "linux",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "Platform": {
-                "backendName": "platform",
                 "description_en": "The operating system platform",
                 "description_zh": "操作系统平台",
                 "example": "Aliyun",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "ProductCode": {
-                "backendName": "productCode",
                 "description_en": "The product code of the Alibaba Cloud Marketplace image",
                 "description_zh": "镜像市场的镜像商品标示",
                 "example": "jxsc00****",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "Progress": {
-                "backendName": "progress",
                 "description_en": "The image creation progress, in percent",
                 "description_zh": "镜像完成的进度，单位为百分比",
                 "example": "100",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "Size": {
-                "backendName": "imageSize",
                 "description_en": "The size of the image. Unit: GiB",
                 "description_zh": "镜像大小，单位GiB",
                 "example": "80",
                 "format": "int32",
-                "nullToEmpty": true,
                 "type": "integer"
               },
               "Status": {
-                "backendName": "status",
                 "description_en": "The status of the image. Valid values:\nUnAvailable: unavailable\nAvailable: available\nCreating: being created\nCreateFailed: failed to be created",
                 "description_zh": "镜像的状态。可能值：\nUnAvailable：不可用\nAvailable：可用\nCreating：创建中\nCreateFailed：创建失败",
                 "example": "Available",
-                "nullToEmpty": true,
                 "type": "string"
               },
               "Tags": {
-                "backendName": "tags",
-                "itemName": "Tag",
-                "items": {
-                  "properties": {
-                    "TagKey": {
-                      "backendName": "tagKey",
-                      "nullToEmpty": true,
-                      "type": "string"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Tag": {
+                    "description_en": "The tag key-value pairs of the image",
+                    "description_zh": "镜像的标签对信息",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "TagKey": {
+                          "description_en": "The tag key of the custom image",
+                          "description_zh": "自定义镜像的标签键",
+                          "example": "TestKey",
+                          "type": "string"
+                        },
+                        "TagValue": {
+                          "description_en": "The tag value of the custom image",
+                          "description_zh": "自定义镜像的标签值",
+                          "example": "TestValue",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "TagValue": {
-                      "backendName": "tagValue",
-                      "nullToEmpty": true,
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": true,
-                "type": "array"
+                "type": "object"
               },
               "Usage": {
-                "backendName": "usage",
-                "description_en": "The type of resource that references the image. Valid values:\ninstance: One or more ECS instances have been created from the image.\nnone: No ECS instances have been created from the image",
+                "description_en": "The type of resource to which the image is associated. Valid values:\ninstance: one or more ECS instances have been created from the image.\nnone: no ECS instances have been created from the image",
                 "description_zh": "有引用关系的资源类型。可能值：\ninstance：创建了一台或多台ECS实例。\nnone：未创建过ECS实例",
                 "example": "none",
-                "nullToEmpty": true,
                 "type": "string"
               }
             },
             "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3C83E",

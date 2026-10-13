@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun emr-serverless-spark POST /api/v1/workspaces/w-d2d82aa09155/rayJob --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"headSpec\":{\"queueName\":\"root_queue\",\"memory\":\"8Gi\",\"displayReleaseVersion\":\"err-1.3.0_Ray_2.55.1,_Python_3.12\",\"cpu\":\"2\",\"enableAutoScaling\":true,\"idleTimeoutSeconds\":60,\"gpuSpec\":\"ecs.gn6i-c4g1.xlarge\"},\"metadataJson\":\"{\\\"resourceName\\\":\\\"test\\\"}\",\"runtimeEnvJson\":\"{\\\"pip\\\":[\\\"requests==2.26.0\\\",\\\"pendulum==2.1.2\\\"],\\\"env_vars\\\":{\\\"KEY\\\":\\\"VALUE\\\"}}\",\"workingDir\":\"oss://mybucket/rayjob.zip\",\"entrypointMemory\":\"4Gi\",\"extraParam\":\"{\\\"userDefinedFiles\\\":\\\"oss://mybucket/artifact/config.json,oss://mybucket/artifact/config2.json\\\",\\\"userRequirementsFile\\\":\\\"oss://mybucket/requirements.txt\\\"}\",\"clusterId\":\"ray-xxxxxxxxx\",\"entrypointResources\":\"{\\\"fpu\\\":1}\",\"workerSpec\":[{\"workerType\":\"CPU\",\"maxReplica\":10,\"groupName\":\"WorkerGroup1\",\"queueName\":\"root_queue\",\"memory\":\"16Gi\",\"displayReleaseVersion\":\"ray-1.2.0_Ray_2.55.1,_Python_3.12\",\"replica\":2,\"cpu\":\"4\",\"minReplica\":1,\"gpuSpec\":\"ecs.gn6i-c4g1.xlarge\"}],\"tags\":[{\"value\":\"test\",\"key\":\"jobname\"}],\"ttlSecondsAfterFinished\":60,\"shutdownAfterJobFinishes\":true,\"displayReleaseVersion\":\"err-1.2.0_Ray_2.55.1,_Python_3.12\",\"entrypoint\":\"python_-c_print_hello_ray_job\",\"networkServiceName\":\"vpc\",\"name\":\"my-job\",\"volumeIds\":[\"vol-12345678\"],\"submissionMode\":\"HTTPMode\",\"entrypointNumCpus\":\"1\",\"activeDeadlineSeconds\":3600,\"entrypointNumGpus\":\"0\"}' --version 2023-08-08 --force",
   "cmd_full_name": "emr-serverless-spark submit-ray-job",
   "cmd_name": "submit-ray-job",
@@ -59,50 +60,8 @@
       "type": "string"
     },
     {
-      "example": "3600",
-      "help_en": "The timeout period of the job, which includes the cluster creation time and job runtime. The job is canceled if this period is exceeded",
-      "help_zh": "任务超时时间，包含集群创建和任务运行时间，超过该时间任务会被取消",
-      "location": "body",
-      "name": "active_deadline_seconds",
-      "options": [
-        "--active-deadline-seconds"
-      ],
-      "param_style": "json",
-      "raw_name": "activeDeadlineSeconds",
-      "required": false,
-      "type": "int"
-    },
-    {
-      "example": "ray-xxxxxxxxx",
-      "help_en": "The ID of an existing Ray cluster to which the job is submitted",
-      "help_zh": "提交到已经存在的ray集群id",
-      "location": "body",
-      "name": "cluster_id",
-      "options": [
-        "--cluster-id"
-      ],
-      "param_style": "json",
-      "raw_name": "clusterId",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "err-1.2.0 (Ray 2.55.1, Python 3.12)",
-      "help_en": "The Ray DPI engine version number",
-      "help_zh": "Ray引擎版本号",
-      "location": "body",
-      "name": "display_release_version",
-      "options": [
-        "--display-release-version"
-      ],
-      "param_style": "json",
-      "raw_name": "displayReleaseVersion",
-      "required": false,
-      "type": "string"
-    },
-    {
       "example": "python -c \"print('hello ray job')\"",
-      "help_en": "The startup command",
+      "help_en": "The entrypoint command",
       "help_zh": "启动命令",
       "location": "body",
       "name": "entrypoint",
@@ -111,189 +70,6 @@
       ],
       "param_style": "json",
       "raw_name": "entrypoint",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "4Gi",
-      "help_en": "The memory size requested by the entrypoint task",
-      "help_zh": "入口任务申请的内存大小",
-      "location": "body",
-      "name": "entrypoint_memory",
-      "options": [
-        "--entrypoint-memory"
-      ],
-      "param_style": "json",
-      "raw_name": "entrypointMemory",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "1",
-      "help_en": "The number of CPUs requested by the entrypoint task",
-      "help_zh": "入口任务申请的 CPU 数量",
-      "location": "body",
-      "name": "entrypoint_num_cpus",
-      "options": [
-        "--entrypoint-num-cpus"
-      ],
-      "param_style": "json",
-      "raw_name": "entrypointNumCpus",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "0",
-      "help_en": "The number of GPUs requested by the entrypoint task",
-      "help_zh": "入口任务申请的 GPU 数量",
-      "location": "body",
-      "name": "entrypoint_num_gpus",
-      "options": [
-        "--entrypoint-num-gpus"
-      ],
-      "param_style": "json",
-      "raw_name": "entrypointNumGpus",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "{\"fpu\": 1}",
-      "help_en": "The custom resource request JSON string for the entrypoint task",
-      "help_zh": "入口任务自定义资源请求 JSON 字符串",
-      "location": "body",
-      "name": "entrypoint_resources",
-      "options": [
-        "--entrypoint-resources"
-      ],
-      "param_style": "json",
-      "raw_name": "entrypointResources",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "{\"userDefinedFiles\": \"oss://mybucket/artifact/config.json,oss://mybucket/artifact/config2.json\", \"userRequirementsFile\": \"oss://mybucket/requirements.txt\"}",
-      "help_en": "The extra parameters in a JSON string",
-      "help_zh": "额外参数 JSON 字符串",
-      "location": "body",
-      "name": "extra_param",
-      "options": [
-        "--extra-param"
-      ],
-      "param_style": "json",
-      "raw_name": "extraParam",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "fields": [
-        {
-          "example": "2",
-          "help_en": "The number of CPU cores",
-          "help_zh": "CPU核数",
-          "name": "cpu",
-          "options": [
-            "--cpu"
-          ],
-          "raw_name": "cpu",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "err-1.3.0 (Ray 2.55.1, Python 3.12)",
-          "help_en": "The Ray DPI engine version",
-          "help_zh": "Ray引擎版本",
-          "name": "display_release_version",
-          "options": [
-            "--display-release-version"
-          ],
-          "raw_name": "displayReleaseVersion",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "true",
-          "help_en": "Specifies whether to enable automatic scaling for workers",
-          "help_zh": "是否开启Worker自动扩缩容",
-          "name": "enable_auto_scaling",
-          "options": [
-            "--enable-auto-scaling"
-          ],
-          "raw_name": "enableAutoScaling",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "ecs.gn6i-c4g1.xlarge",
-          "help_en": "The GPU instance type",
-          "help_zh": "gpu机型",
-          "name": "gpu_spec",
-          "options": [
-            "--gpu-spec"
-          ],
-          "raw_name": "gpuSpec",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "60",
-          "help_en": "The worker idle timeout period after automatic scaling is enabled",
-          "help_zh": "开启自动扩缩容后Worker Idle时间",
-          "name": "idle_timeout_seconds",
-          "options": [
-            "--idle-timeout-seconds"
-          ],
-          "raw_name": "idleTimeoutSeconds",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "8Gi",
-          "help_en": "The memory size. Unit: GiB",
-          "help_zh": "内存，单位Gi",
-          "name": "memory",
-          "options": [
-            "--memory"
-          ],
-          "raw_name": "memory",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "root_queue",
-          "help_en": "The queue name",
-          "help_zh": "队列名称",
-          "name": "queue_name",
-          "options": [
-            "--queue-name"
-          ],
-          "raw_name": "queueName",
-          "required": false,
-          "type": "string"
-        }
-      ],
-      "help_en": "The Ray cluster head node parameters",
-      "help_zh": "Ray集群Head节点参数",
-      "location": "body",
-      "name": "head_spec",
-      "options": [
-        "--head-spec"
-      ],
-      "param_style": "json",
-      "raw_name": "headSpec",
-      "required": false,
-      "type": "object"
-    },
-    {
-      "example": "{\"resourceName\": \"test\"}",
-      "help_en": "The job metadata JSON string",
-      "help_zh": "任务元数据 JSON 字符串",
-      "location": "body",
-      "name": "metadata_json",
-      "options": [
-        "--metadata-json"
-      ],
-      "param_style": "json",
-      "raw_name": "metadataJson",
       "required": false,
       "type": "string"
     },
@@ -312,58 +88,16 @@
       "type": "string"
     },
     {
-      "example": "vpc",
-      "help_en": "The network connectivity name",
-      "help_zh": "网络连接名称",
+      "example": "err-1.2.0 (Ray 2.55.1, Python 3.12)",
+      "help_en": "The Ray DPI engine database engine version number",
+      "help_zh": "Ray引擎版本号",
       "location": "body",
-      "name": "network_service_name",
+      "name": "display_release_version",
       "options": [
-        "--network-service-name"
+        "--display-release-version"
       ],
       "param_style": "json",
-      "raw_name": "networkServiceName",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "{\"pip\":[\"requests==2.26.0\",\"pendulum==2.1.2\"],\"env_vars\":{\"KEY\":\"VALUE\"}}",
-      "help_en": "The Ray runtime environment JSON string",
-      "help_zh": "Ray runtime environment JSON 字符串",
-      "location": "body",
-      "name": "runtime_env_json",
-      "options": [
-        "--runtime-env-json"
-      ],
-      "param_style": "json",
-      "raw_name": "runtimeEnvJson",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "true",
-      "help_en": "Specifies whether to automatically destroy the temporary cluster after the job finishes. Default value: true",
-      "help_zh": "任务完成后是否自动销毁临时集群，默认 true",
-      "location": "body",
-      "name": "shutdown_after_job_finishes",
-      "options": [
-        "--shutdown-after-job-finishes"
-      ],
-      "param_style": "json",
-      "raw_name": "shutdownAfterJobFinishes",
-      "required": false,
-      "type": "bool"
-    },
-    {
-      "example": "HTTPMode",
-      "help_en": "The job submission mode",
-      "help_zh": "提交作业方式",
-      "location": "body",
-      "name": "submission_mode",
-      "options": [
-        "--submission-mode"
-      ],
-      "param_style": "json",
-      "raw_name": "submissionMode",
+      "raw_name": "displayReleaseVersion",
       "required": false,
       "type": "string"
     },
@@ -410,8 +144,148 @@
       "type": "array"
     },
     {
+      "example": "vpc",
+      "help_en": "The network connectivity name",
+      "help_zh": "网络连接名称",
+      "location": "body",
+      "name": "network_service_name",
+      "options": [
+        "--network-service-name"
+      ],
+      "param_style": "json",
+      "raw_name": "networkServiceName",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "{\"pip\":[\"requests==2.26.0\",\"pendulum==2.1.2\"],\"env_vars\":{\"KEY\":\"VALUE\"}}",
+      "help_en": "The Ray runtime environment JSON string",
+      "help_zh": "Ray runtime environment JSON 字符串",
+      "location": "body",
+      "name": "runtime_env_json",
+      "options": [
+        "--runtime-env-json"
+      ],
+      "param_style": "json",
+      "raw_name": "runtimeEnvJson",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "oss://mybucket/rayjob.zip",
+      "help_en": "The URL of the working directory for the job code",
+      "help_zh": "任务代码工作目录 URL",
+      "location": "body",
+      "name": "working_dir",
+      "options": [
+        "--working-dir"
+      ],
+      "param_style": "json",
+      "raw_name": "workingDir",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "{\"resourceName\": \"test\"}",
+      "help_en": "The job metadata JSON string",
+      "help_zh": "任务元数据 JSON 字符串",
+      "location": "body",
+      "name": "metadata_json",
+      "options": [
+        "--metadata-json"
+      ],
+      "param_style": "json",
+      "raw_name": "metadataJson",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "HTTPMode",
+      "help_en": "The job submission mode",
+      "help_zh": "提交作业方式",
+      "location": "body",
+      "name": "submission_mode",
+      "options": [
+        "--submission-mode"
+      ],
+      "param_style": "json",
+      "raw_name": "submissionMode",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "1",
+      "help_en": "The number of CPUs requested by the entrypoint job",
+      "help_zh": "入口任务申请的 CPU 数量",
+      "location": "body",
+      "name": "entrypoint_num_cpus",
+      "options": [
+        "--entrypoint-num-cpus"
+      ],
+      "param_style": "json",
+      "raw_name": "entrypointNumCpus",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "0",
+      "help_en": "The number of GPUs requested by the entrypoint job",
+      "help_zh": "入口任务申请的 GPU 数量",
+      "location": "body",
+      "name": "entrypoint_num_gpus",
+      "options": [
+        "--entrypoint-num-gpus"
+      ],
+      "param_style": "json",
+      "raw_name": "entrypointNumGpus",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "4Gi",
+      "help_en": "The memory size requested by the entrypoint job",
+      "help_zh": "入口任务申请的内存大小",
+      "location": "body",
+      "name": "entrypoint_memory",
+      "options": [
+        "--entrypoint-memory"
+      ],
+      "param_style": "json",
+      "raw_name": "entrypointMemory",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "{\"fpu\": 1}",
+      "help_en": "The custom resource request JSON string for the entrypoint job",
+      "help_zh": "入口任务自定义资源请求 JSON 字符串",
+      "location": "body",
+      "name": "entrypoint_resources",
+      "options": [
+        "--entrypoint-resources"
+      ],
+      "param_style": "json",
+      "raw_name": "entrypointResources",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "true",
+      "help_en": "Specifies whether to automatically destroy the temporary cluster after the job finishes. Default value: true",
+      "help_zh": "任务完成后是否自动销毁临时集群，默认 true",
+      "location": "body",
+      "name": "shutdown_after_job_finishes",
+      "options": [
+        "--shutdown-after-job-finishes"
+      ],
+      "param_style": "json",
+      "raw_name": "shutdownAfterJobFinishes",
+      "required": false,
+      "type": "bool"
+    },
+    {
       "example": "60",
-      "help_en": "The number of seconds to wait before destroying the cluster. This parameter takes effect only when shutdownAfterJobFinishes is set to true",
+      "help_en": "The wait time in seconds before the cluster is destroyed. This parameter takes effect only when shutdownAfterJobFinishes is set to true",
       "help_zh": "集群销毁前等待秒数，shutdownAfterJobFinishes 为 true 时有效",
       "location": "body",
       "name": "ttl_seconds_after_finished",
@@ -420,6 +294,20 @@
       ],
       "param_style": "json",
       "raw_name": "ttlSecondsAfterFinished",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "example": "3600",
+      "help_en": "The job timeout period, which includes the cluster creation and job execution time. The job is canceled if it exceeds this period",
+      "help_zh": "任务超时时间，包含集群创建和任务运行时间，超过该时间任务会被取消",
+      "location": "body",
+      "name": "active_deadline_seconds",
+      "options": [
+        "--active-deadline-seconds"
+      ],
+      "param_style": "json",
+      "raw_name": "activeDeadlineSeconds",
       "required": false,
       "type": "int"
     },
@@ -440,44 +328,107 @@
       "type": "array"
     },
     {
+      "fields": [
+        {
+          "example": "root_queue",
+          "help_en": "The queue name",
+          "help_zh": "队列名称",
+          "name": "queue_name",
+          "options": [
+            "--queue-name"
+          ],
+          "raw_name": "queueName",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "2",
+          "help_en": "The number of CPU cores",
+          "help_zh": "CPU核数",
+          "name": "cpu",
+          "options": [
+            "--cpu"
+          ],
+          "raw_name": "cpu",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "8Gi",
+          "help_en": "The memory size, in Gi",
+          "help_zh": "内存，单位Gi",
+          "name": "memory",
+          "options": [
+            "--memory"
+          ],
+          "raw_name": "memory",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "true",
+          "help_en": "Specifies whether to enable auto-scaling for worker nodes",
+          "help_zh": "是否开启Worker自动扩缩容",
+          "name": "enable_auto_scaling",
+          "options": [
+            "--enable-auto-scaling"
+          ],
+          "raw_name": "enableAutoScaling",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "example": "60",
+          "help_en": "The idle time for worker nodes after auto-scaling is enabled",
+          "help_zh": "开启自动扩缩容后Worker Idle时间",
+          "name": "idle_timeout_seconds",
+          "options": [
+            "--idle-timeout-seconds"
+          ],
+          "raw_name": "idleTimeoutSeconds",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "ecs.gn6i-c4g1.xlarge",
+          "help_en": "The GPU instance type",
+          "help_zh": "gpu机型",
+          "name": "gpu_spec",
+          "options": [
+            "--gpu-spec"
+          ],
+          "raw_name": "gpuSpec",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "err-1.3.0 (Ray 2.55.1, Python 3.12)",
+          "help_en": "The Ray DPI engine database engine version",
+          "help_zh": "Ray引擎版本",
+          "name": "display_release_version",
+          "options": [
+            "--display-release-version"
+          ],
+          "raw_name": "displayReleaseVersion",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "help_en": "The parameters of the Ray cluster head node",
+      "help_zh": "Ray集群Head节点参数",
+      "location": "body",
+      "name": "head_spec",
+      "options": [
+        "--head-spec"
+      ],
+      "param_style": "json",
+      "raw_name": "headSpec",
+      "required": false,
+      "type": "object"
+    },
+    {
       "element": {
         "fields": [
-          {
-            "example": "4",
-            "help_en": "The number of CPU cores",
-            "help_zh": "CPU核数",
-            "name": "cpu",
-            "options": [
-              "--cpu"
-            ],
-            "raw_name": "cpu",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "ray-1.2.0 (Ray 2.55.1, Python 3.12)",
-            "help_en": "The database engine version",
-            "help_zh": "引擎版本",
-            "name": "display_release_version",
-            "options": [
-              "--display-release-version"
-            ],
-            "raw_name": "displayReleaseVersion",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "ecs.gn6i-c4g1.xlarge",
-            "help_en": "The GPU instance type",
-            "help_zh": "gpu机型",
-            "name": "gpu_spec",
-            "options": [
-              "--gpu-spec"
-            ],
-            "raw_name": "gpuSpec",
-            "required": false,
-            "type": "string"
-          },
           {
             "example": "WorkerGroup1",
             "help_en": "The worker group name",
@@ -491,50 +442,17 @@
             "type": "string"
           },
           {
-            "example": "10",
-            "help_en": "The maximum number of workers after automatic scaling is enabled",
-            "help_zh": "开启自动扩缩容后最大Worker数量",
-            "name": "max_replica",
-            "options": [
-              "--max-replica"
+            "enum": [
+              "CPU"
             ],
-            "raw_name": "maxReplica",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "16Gi",
-            "help_en": "The memory size. Unit: GiB",
-            "help_zh": "内存，单位Gi",
-            "name": "memory",
+            "example": "CPU",
+            "help_en": "The worker type",
+            "help_zh": "Worker类型",
+            "name": "worker_type",
             "options": [
-              "--memory"
+              "--worker-type"
             ],
-            "raw_name": "memory",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "1",
-            "help_en": "The minimum number of workers after automatic scaling is enabled",
-            "help_zh": "开启自动扩缩容后最小Worker数量",
-            "name": "min_replica",
-            "options": [
-              "--min-replica"
-            ],
-            "raw_name": "minReplica",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "root_queue",
-            "help_en": "The queue name",
-            "help_zh": "队列名称",
-            "name": "queue_name",
-            "options": [
-              "--queue-name"
-            ],
-            "raw_name": "queueName",
+            "raw_name": "workerType",
             "required": false,
             "type": "string"
           },
@@ -551,24 +469,93 @@
             "type": "int"
           },
           {
-            "enum": [
-              "CPU"
-            ],
-            "example": "CPU",
-            "help_en": "The worker type",
-            "help_zh": "Worker类型",
-            "name": "worker_type",
+            "example": "root_queue",
+            "help_en": "The queue name",
+            "help_zh": "队列名称",
+            "name": "queue_name",
             "options": [
-              "--worker-type"
+              "--queue-name"
             ],
-            "raw_name": "workerType",
+            "raw_name": "queueName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "4",
+            "help_en": "The number of CPU cores",
+            "help_zh": "CPU核数",
+            "name": "cpu",
+            "options": [
+              "--cpu"
+            ],
+            "raw_name": "cpu",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "16Gi",
+            "help_en": "The memory size, in Gi",
+            "help_zh": "内存，单位Gi",
+            "name": "memory",
+            "options": [
+              "--memory"
+            ],
+            "raw_name": "memory",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "1",
+            "help_en": "The minimum number of workers when automatic scaling is enabled",
+            "help_zh": "开启自动扩缩容后最小Worker数量",
+            "name": "min_replica",
+            "options": [
+              "--min-replica"
+            ],
+            "raw_name": "minReplica",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "10",
+            "help_en": "The maximum number of workers when automatic scaling is enabled",
+            "help_zh": "开启自动扩缩容后最大Worker数量",
+            "name": "max_replica",
+            "options": [
+              "--max-replica"
+            ],
+            "raw_name": "maxReplica",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "ecs.gn6i-c4g1.xlarge",
+            "help_en": "The GPU instance type",
+            "help_zh": "gpu机型",
+            "name": "gpu_spec",
+            "options": [
+              "--gpu-spec"
+            ],
+            "raw_name": "gpuSpec",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "ray-1.2.0 (Ray 2.55.1, Python 3.12)",
+            "help_en": "The DPI engine version",
+            "help_zh": "引擎版本",
+            "name": "display_release_version",
+            "options": [
+              "--display-release-version"
+            ],
+            "raw_name": "displayReleaseVersion",
             "required": false,
             "type": "string"
           }
         ],
         "type": "object"
       },
-      "help_en": "The parameters of the worker nodes in the Ray cluster",
+      "help_en": "The Ray cluster worker node parameters",
       "help_zh": "Ray集群Worker节点参数",
       "location": "body",
       "name": "worker_spec",
@@ -581,16 +568,30 @@
       "type": "array"
     },
     {
-      "example": "oss://mybucket/rayjob.zip",
-      "help_en": "The URL of the job code working directory",
-      "help_zh": "任务代码工作目录 URL",
+      "example": "{\"userDefinedFiles\": \"oss://mybucket/artifact/config.json,oss://mybucket/artifact/config2.json\", \"userRequirementsFile\": \"oss://mybucket/requirements.txt\"}",
+      "help_en": "The JSON string for additional parameters",
+      "help_zh": "额外参数 JSON 字符串",
       "location": "body",
-      "name": "working_dir",
+      "name": "extra_param",
       "options": [
-        "--working-dir"
+        "--extra-param"
       ],
       "param_style": "json",
-      "raw_name": "workingDir",
+      "raw_name": "extraParam",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "ray-xxxxxxxxx",
+      "help_en": "The ID of the existing Ray cluster",
+      "help_zh": "提交到已经存在的ray集群id",
+      "location": "body",
+      "name": "cluster_id",
+      "options": [
+        "--cluster-id"
+      ],
+      "param_style": "json",
+      "raw_name": "clusterId",
       "required": false,
       "type": "string"
     }
@@ -605,25 +606,23 @@
         "description_zh": "Schema of Response",
         "properties": {
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "DD6B1B2A-5837-5237-ABE4-FF0C8944",
-            "title_en": "请求ID。",
+            "title_en": "",
             "title_zh": "请求ID。",
             "type": "string"
           },
           "submissionId": {
-            "backendName": "data.submissionId",
-            "description_en": "Ray Job ID",
+            "description_en": "The Ray job ID",
             "description_zh": "Ray Job ID",
             "example": "rj-k7nm8ahl5te4tg91",
-            "title_en": "Ray Job ID。",
+            "title_en": "",
             "title_zh": "Ray Job ID。",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

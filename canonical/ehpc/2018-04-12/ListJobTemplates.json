@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ehpc ListJobTemplates --region cn-hangzhou --PageSize 10 --PageNumber 1 --Name jobtemplateName",
   "cmd_full_name": "ehpc list-job-templates",
   "cmd_name": "list-job-templates",
@@ -68,158 +69,178 @@
       "schema": {
         "properties": {
           "PageNumber": {
-            "backendName": "PageNumber",
             "description_en": "The page number returned",
             "description_zh": "当前页码",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "PageSize",
             "description_en": "The number of entries returned per page",
             "description_zh": "本页条数",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "04F0F334-1335-436C-A1D7-6C044FE7****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Templates": {
-            "backendName": "Templates",
-            "itemName": "JobTemplates",
-            "items": {
-              "properties": {
-                "ArrayRequest": {
-                  "backendName": "ArrayRequest",
-                  "type": "string",
-                  "visibility": "Public"
+            "itemNode": true,
+            "properties": {
+              "JobTemplates": {
+                "description_en": "The list of job templates",
+                "description_zh": "作业模板信息列表",
+                "items": {
+                  "properties": {
+                    "ArrayRequest": {
+                      "description_en": "The queue of the job.\n\nFormat: X-Y:Z. X is the minimum index value. Y is the maximum index value. Z is the step size. For example, 2-7:2 indicates that three jobs need to be run and their index values are 2, 4, and 6",
+                      "description_zh": "作业队列。\n\n格式为X-Y:Z， 最小值X是第一个索引，最大值Y是最后一个索引，Z表示步长，例如2-7:2，表示作业队列包含编号为2、4、6的3个子作业",
+                      "example": "2-7:2",
+                      "type": "string"
+                    },
+                    "ClockTime": {
+                      "description_en": "The maximum running time of the job. Valid formats:\n\nhh:mm:ss\nmm:ss\nss",
+                      "description_zh": "作业最大运行时间。支持三种格式：\nhh:mm:ss\nmm:ss\nss",
+                      "example": "12:00:00",
+                      "type": "string"
+                    },
+                    "CommandLine": {
+                      "description_en": "The command that is used to run the job",
+                      "description_zh": "执行作业命令",
+                      "example": "./LammpsTest/lammps.pbs",
+                      "type": "string"
+                    },
+                    "Gpu": {
+                      "description_en": "The maximum GPU usage for individual compute nodes. Valid values: 1 to 8.\n\nThe parameter takes effect only when the cluster uses PBS and a compute node is a GPU-accelerated instance",
+                      "description_zh": "单个计算节点使用GPU的数量。可能值：1~8。\n\n仅支持使用pbs调度器的集群，且集群内计算节点含GPU时该参数生效",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Id": {
+                      "description_en": "The ID of the job template",
+                      "description_zh": "作业模板ID",
+                      "example": "ehpc-job-tmpl-6RxO5y****",
+                      "type": "string"
+                    },
+                    "InputFileUrl": {
+                      "description_en": "The URL of the job files that are uploaded to an Object Storage Service (OSS) bucket",
+                      "description_zh": "已上传到OSS上的作业文件链接",
+                      "example": "https://test.oss-cn-beijing.aliyuncs.com/test.py",
+                      "type": "string"
+                    },
+                    "Mem": {
+                      "description_en": "The maximum memory usage of a single compute node. The unit can be GB, MB, or KB, and is case-insensitive",
+                      "description_zh": "单个计算节点最大使用内存数。支持GB、MB、KB，单位不区分大小写",
+                      "example": "1GB",
+                      "type": "string"
+                    },
+                    "Name": {
+                      "description_en": "The name of the job template",
+                      "description_zh": "作业模板名称",
+                      "example": "job1",
+                      "type": "string"
+                    },
+                    "Node": {
+                      "description_en": "The number of compute nodes. Valid values: 1 to 500",
+                      "description_zh": "提交作业所需计算节点数。可能值：1~500",
+                      "example": "2",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "PackagePath": {
+                      "description_en": "The path that is used to run the job",
+                      "description_zh": "执行作业路径",
+                      "example": "./jobfolder",
+                      "type": "string"
+                    },
+                    "Priority": {
+                      "description_en": "The priority of the job. Valid values: 0 to 9. A larger value indicates a higher priority",
+                      "description_zh": "作业优先级。可能值：0~9，取值越大，优先级越高",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Queue": {
+                      "description_en": "The queue of the job",
+                      "description_zh": "作业队列",
+                      "example": "workq",
+                      "type": "string"
+                    },
+                    "ReRunable": {
+                      "description_en": "Specifies whether the job can be rerun. Valid values:\n\ntrue: The job can be rerun.\nfalse: The job cannot be rerun",
+                      "description_zh": "是否支持重新执行作业。可能值：\n\ntrue：支持\n\nfalse：不支持",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "RunasUser": {
+                      "description_en": "The name of the user that runs the job",
+                      "description_zh": "执行作业的用户名称",
+                      "example": "user1",
+                      "type": "string"
+                    },
+                    "StderrRedirectPath": {
+                      "description_en": "The output file path of stderr",
+                      "description_zh": "错误输出路径",
+                      "example": "./LammpsTest",
+                      "type": "string"
+                    },
+                    "StdoutRedirectPath": {
+                      "description_en": "The output file path of stdout",
+                      "description_zh": "标准输出路径",
+                      "example": "./Lammps",
+                      "type": "string"
+                    },
+                    "Task": {
+                      "description_en": "The number of tasks required by a single compute node. Valid values: 1 to 1000",
+                      "description_zh": "单个计算节点所需任务数。可能值：1~1000",
+                      "example": "2",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "Thread": {
+                      "description_en": "The number of threads required by a single task. Valid values: 1 to 1000",
+                      "description_zh": "单个任务所需线程数。可能值：1~1000",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "UnzipCmd": {
+                      "description_en": "The command that is used to decompress the job files downloaded from an OSS bucket. The parameter takes effect only when WithUnzipCmd is set to true. Valid values:\n\ntar xzf: decompresses GZIP files.\ntar xf: decompresses TAR files.\nunzip: decompresses ZIP files",
+                      "description_zh": "解压命令，当WithUnzipCmd取值为true时，该参数生效。取值范围：\n\ntar xzf：解开gzip格式压缩包\n\ntar xf：解开tar格式压缩包\n\nunzip：解开zip格式压缩包",
+                      "example": "tar xzf",
+                      "type": "string"
+                    },
+                    "Variables": {
+                      "description_en": "The environment variables of the job",
+                      "description_zh": "作业的环境变量",
+                      "example": "[{Name:,Value:},{Name:,Value:}]",
+                      "type": "string"
+                    },
+                    "WithUnzipCmd": {
+                      "description_en": "Specifies whether to decompress the job files downloaded from an OSS bucket. Valid value:\n\ntrue: decompresses the job file.\nfalse: does not decompress the job file",
+                      "description_zh": "是否解压下载后的作业文件。取值范围：\n\ntrue：是\n\nfalse：否",
+                      "example": "true",
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
                 },
-                "ClockTime": {
-                  "backendName": "ClockTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CommandLine": {
-                  "backendName": "CommandLine",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Gpu": {
-                  "backendName": "Gpu",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Id": {
-                  "backendName": "Id",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "InputFileUrl": {
-                  "backendName": "InputFileUrl",
-                  "type": "string"
-                },
-                "Mem": {
-                  "backendName": "Mem",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Name": {
-                  "backendName": "Name",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Node": {
-                  "backendName": "Node",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "PackagePath": {
-                  "backendName": "PackagePath",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Priority": {
-                  "backendName": "Priority",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Queue": {
-                  "backendName": "Queue",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ReRunable": {
-                  "backendName": "ReRunable",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "RunasUser": {
-                  "backendName": "RunasUser",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StderrRedirectPath": {
-                  "backendName": "StderrRedirectPath",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StdoutRedirectPath": {
-                  "backendName": "StdoutRedirectPath",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Task": {
-                  "backendName": "Task",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Thread": {
-                  "backendName": "Thread",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "UnzipCmd": {
-                  "backendName": "UnzipCmd",
-                  "type": "string"
-                },
-                "Variables": {
-                  "backendName": "Variables",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "WithUnzipCmd": {
-                  "backendName": "WithUnzipCmd",
-                  "type": "boolean"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "TotalCount": {
-            "backendName": "TotalCount",
             "description_en": "The total number of returned entries",
             "description_zh": "列表条目总数",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

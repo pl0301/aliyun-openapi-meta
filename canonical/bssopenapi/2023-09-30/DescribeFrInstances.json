@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "bssopenapi describe-fr-instances",
   "cmd_name": "describe-fr-instances",
   "deprecated": false,
@@ -22,8 +23,16 @@
   },
   "parameters": [
     {
+      "enum": [
+        "oss_arc",
+        "cu",
+        "ecsRi",
+        "oss_rc",
+        "fr",
+        "polardb"
+      ],
       "example": "cu",
-      "help_en": "The resource dimension for the query",
+      "help_en": "The resource dimension",
       "help_zh": "查询的资源维度",
       "location": "formData",
       "name": "group",
@@ -35,6 +44,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "valid",
+        "exhaust",
+        "invalid"
+      ],
       "example": "valid",
       "help_en": "The resource status",
       "help_zh": "资源状态",
@@ -75,8 +89,8 @@
     },
     {
       "example": "1678939035000",
-      "help_en": "The start time",
-      "help_zh": "开始时间",
+      "help_en": "The start time, specified as a UNIX timestamp in milliseconds",
+      "help_zh": "开始时间，使用 Unix 时间戳，单位为毫秒",
       "location": "formData",
       "name": "start_time",
       "options": [
@@ -88,8 +102,8 @@
     },
     {
       "example": "1710604800000",
-      "help_en": "The end time",
-      "help_zh": "结束时间",
+      "help_en": "The end time, specified as a UNIX timestamp in milliseconds",
+      "help_zh": "结束时间，使用 Unix 时间戳，单位为毫秒",
       "location": "formData",
       "name": "end_time",
       "options": [
@@ -153,7 +167,7 @@
     },
     {
       "example": "*",
-      "help_en": "The specification",
+      "help_en": "The specifications",
       "help_zh": "规格",
       "location": "formData",
       "name": "spec",
@@ -165,6 +179,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "periodMonthlyShift",
+        "deadlineAcc",
+        "absolute",
+        "periodMonthlyAcc"
+      ],
       "example": "deadlineAcc",
       "help_en": "The capacity type",
       "help_zh": "容量类型",
@@ -191,6 +211,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "startTime",
+        "endTime"
+      ],
       "example": "startTime",
       "help_en": "The sort field",
       "help_zh": "排序字段",
@@ -204,8 +228,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "asc",
+        "desc"
+      ],
       "example": "asc",
-      "help_en": "The collation for sorting",
+      "help_en": "The sorting collation",
       "help_zh": "排序规则",
       "location": "formData",
       "name": "sort_rule",
@@ -220,20 +248,6 @@
       "element": {
         "fields": [
           {
-            "element": {
-              "type": "int"
-            },
-            "help_en": "The account list to access. If empty, all accounts under the current entity ID are selected",
-            "help_zh": "访问的账号列表，为空代表全选当前实体ID下所有账号",
-            "name": "account_ids",
-            "options": [
-              "--account-ids"
-            ],
-            "raw_name": "AccountIds",
-            "required": false,
-            "type": "array"
-          },
-          {
             "example": "1004064243473974",
             "help_en": "The enterprise entity ID",
             "help_zh": "企业实体ID",
@@ -244,11 +258,25 @@
             "raw_name": "EcId",
             "required": true,
             "type": "string"
+          },
+          {
+            "element": {
+              "type": "int"
+            },
+            "help_en": "The list of accessed accounts. If this parameter is left empty, all accounts under the current entity ID are selected",
+            "help_zh": "访问的账号列表，为空代表全选当前实体ID下所有账号",
+            "name": "account_ids",
+            "options": [
+              "--account-ids"
+            ],
+            "raw_name": "AccountIds",
+            "required": false,
+            "type": "array"
           }
         ],
         "type": "object"
       },
-      "help_en": "The enterprise and account list. If empty, the current account is queried",
+      "help_en": "The list of enterprises and accounts. If this parameter is left empty, the current account is queried",
       "help_zh": "企业与账号列表，为空表示查询当前账号自身",
       "location": "query",
       "name": "ec_id_account_ids",
@@ -262,7 +290,7 @@
     },
     {
       "example": "2684202000018",
-      "help_en": "The primary marketplace ID. If empty, the marketplace ID of the current user is used by default",
+      "help_en": "The primary marketplace ID. If this parameter is left empty, the marketplace ID of the current user is used by default",
       "help_zh": "一级售卖场ID，如果为空，默认使用当前用户所属的场ID填充",
       "location": "query",
       "name": "nbid",
@@ -275,7 +303,7 @@
     },
     {
       "example": "FR-***",
-      "help_en": "The instance tag label value of the resource plan instance",
+      "help_en": "The label value of the resource plan instance tag",
       "help_zh": "资源包实例标签值",
       "location": "query",
       "name": "instance_tag",
@@ -297,234 +325,212 @@
         "description_zh": "BssApiPageResult<InstanceOverviewResponse>",
         "properties": {
           "CurrentPage": {
-            "backendName": "currentPage",
             "description_en": "The current page number",
             "description_zh": "当前页码",
             "example": "1",
             "format": "int32",
-            "title_en": "当前页码",
+            "title_en": "",
             "title_zh": "当前页码",
             "type": "integer"
           },
           "Data": {
-            "backendName": "data",
             "description_en": "The data list",
             "description_zh": "数据列表",
-            "itemName": "FrInstances",
             "items": {
               "description_en": "The returned data",
               "description_zh": "返回数据",
               "properties": {
                 "AccountId": {
-                  "backendName": "accountId",
                   "description_en": "The account ID",
                   "description_zh": "账号ID",
                   "example": "1990699401005016",
                   "format": "int64",
-                  "title_en": "用户id",
+                  "title_en": "",
                   "title_zh": "用户id",
                   "type": "integer"
                 },
                 "AccountName": {
-                  "backendName": "accountName",
                   "description_en": "The account name",
                   "description_zh": "账号名",
                   "example": "icloudtest",
-                  "title_en": "账号名",
+                  "title_en": "",
                   "title_zh": "账号名",
                   "type": "string"
                 },
                 "AutoPurchase": {
-                  "backendName": "autoPurchase",
+                  "description_en": "The auto-purchase information",
+                  "description_zh": "自动购买信息",
                   "properties": {
                     "AlreadyAutoPurchase": {
-                      "backendName": "alreadyAutoPurchase",
+                      "description_en": "Indicates whether the resource has been auto-purchased",
+                      "description_zh": "是否已自动购买",
                       "type": "boolean"
                     },
                     "SettingAutoPurchase": {
-                      "backendName": "settingAutoPurchase",
+                      "description_en": "Indicates whether auto-purchase is configured",
+                      "description_zh": "是否已设置自动购买",
                       "type": "boolean"
                     },
                     "SupportAutoPurchase": {
-                      "backendName": "supportAutoPurchase",
+                      "description_en": "Indicates whether auto-purchase is supported",
+                      "description_zh": "是否支持自动购买",
                       "type": "boolean"
                     }
                   },
                   "type": "object"
                 },
                 "CapacitiyTypeName": {
-                  "backendName": "capacityTypeName",
                   "description_en": "The capacity type name",
                   "description_zh": "容量类型名",
                   "example": "总量递减型",
-                  "title_en": "容量类型名",
+                  "title_en": "",
                   "title_zh": "容量类型名",
                   "type": "string"
                 },
                 "CapacityType": {
-                  "backendName": "capacityType",
                   "description_en": "The capacity type",
                   "description_zh": "容量类型",
                   "properties": {
                     "Code": {
-                      "backendName": "code",
-                      "description_en": "The property code",
+                      "description_en": "The attribute code",
                       "description_zh": "属性编码",
                       "example": "deadlineAcc",
                       "type": "string"
                     },
                     "Name": {
-                      "backendName": "name",
-                      "description_en": "The property name",
+                      "description_en": "The attribute name",
                       "description_zh": "属性名称",
                       "example": "总量递减型",
                       "type": "string"
                     }
                   },
-                  "title_en": "容量类型",
+                  "title_en": "",
                   "title_zh": "容量类型",
                   "type": "object"
                 },
                 "CapacityTypeCode": {
-                  "backendName": "capacityTypeCode",
                   "description_en": "The capacity type code",
                   "description_zh": "容量类型code",
                   "example": "deadlineAcc",
-                  "title_en": "容量类型code",
+                  "title_en": "",
                   "title_zh": "容量类型code",
                   "type": "string"
                 },
                 "Commodity": {
-                  "backendName": "commodity",
                   "description_en": "The commodity",
                   "description_zh": "商品",
                   "properties": {
                     "Code": {
-                      "backendName": "code",
-                      "description_en": "The property code",
+                      "description_en": "The attribute code",
                       "description_zh": "属性编码",
                       "example": "slb_albcubag_dp_cn",
                       "type": "string"
                     },
                     "Name": {
-                      "backendName": "name",
-                      "description_en": "The property name",
+                      "description_en": "The attribute name",
                       "description_zh": "属性名称",
                       "example": "ALB资源包",
                       "type": "string"
                     }
                   },
-                  "title_en": "商品",
+                  "title_en": "",
                   "title_zh": "商品",
                   "type": "object"
                 },
                 "CommodityCode": {
-                  "backendName": "commodityCode",
                   "description_en": "The commodity code",
                   "description_zh": "商品code",
                   "example": "pts",
-                  "title_en": "商品code",
+                  "title_en": "",
                   "title_zh": "商品code",
                   "type": "string"
                 },
                 "CommodityName": {
-                  "backendName": "commodityName",
                   "description_en": "The commodity name",
                   "description_zh": "商品名",
                   "example": "性能测试",
-                  "title_en": "商品名",
+                  "title_en": "",
                   "title_zh": "商品名",
                   "type": "string"
                 },
                 "CurrCapacityBaseUnit": {
-                  "backendName": "currCapacityBaseUnit",
                   "description_en": "The current capacity base unit",
                   "description_zh": "当前容量基准单位",
                   "example": "CU",
                   "type": "string"
                 },
                 "CurrCapacityBaseValue": {
-                  "backendName": "currCapacityBaseValue",
                   "description_en": "The current capacity base value",
                   "description_zh": "当前容量基准值",
                   "example": "1000.000000",
                   "type": "string"
                 },
                 "CurrCapacityViewUnit": {
-                  "backendName": "currCapacityViewUnit",
                   "description_en": "The current capacity display unit",
                   "description_zh": "当前容量显示单位",
                   "example": "CU",
-                  "title_en": "当前容量显示单位",
+                  "title_en": "",
                   "title_zh": "当前容量显示单位",
                   "type": "string"
                 },
                 "CurrCapacityViewValue": {
-                  "backendName": "currCapacityViewValue",
                   "description_en": "The current capacity display value",
                   "description_zh": "当前容量显示值",
                   "example": "1000.000000",
-                  "title_en": "当前容量显示值",
+                  "title_en": "",
                   "title_zh": "当前容量显示值",
                   "type": "string"
                 },
                 "CycleType": {
-                  "backendName": "cycleType",
-                  "description_en": "The commitment cycle",
+                  "description_en": "The commitment period",
                   "description_zh": "承诺周期",
                   "properties": {
                     "Code": {
-                      "backendName": "code",
-                      "description_en": "The commitment cycle code",
+                      "description_en": "The commitment period code",
                       "description_zh": "承诺周期 Code",
                       "example": "hour",
                       "type": "string"
                     },
                     "Name": {
-                      "backendName": "name",
-                      "description_en": "The commitment cycle name",
+                      "description_en": "The commitment period name",
                       "description_zh": "承诺周期名",
                       "example": "小时",
                       "type": "string"
                     }
                   },
-                  "title_en": "承诺周期",
+                  "title_en": "",
                   "title_zh": "承诺周期",
                   "type": "object"
                 },
                 "CycleTypeCode": {
-                  "backendName": "cycleTypeCode",
-                  "description_en": "The commitment cycle code",
+                  "description_en": "The commitment period code",
                   "description_zh": "承诺周期 Code",
                   "example": "hour",
                   "type": "string"
                 },
                 "CycleTypeName": {
-                  "backendName": "cycleTypeName",
-                  "description_en": "The commitment cycle name",
+                  "description_en": "The commitment period name",
                   "description_zh": "承诺周期名",
                   "example": "小时",
-                  "title_en": "承诺周期名",
+                  "title_en": "",
                   "title_zh": "承诺周期名",
                   "type": "string"
                 },
                 "DeductRegions": {
-                  "backendName": "deductRegions",
-                  "description_en": "The list of deductible regions",
+                  "description_en": "The list of regions where deductions are applicable",
                   "description_zh": "可抵扣地域列表",
-                  "itemName": "DeductRegions",
                   "items": {
+                    "description_en": "",
+                    "description_zh": "",
                     "properties": {
                       "Code": {
-                        "backendName": "code",
-                        "description_en": "The deductible region code",
+                        "description_en": "The code of the region where deductions are applicable",
                         "description_zh": "可抵扣地域 Code",
                         "example": "cn-beijing",
                         "type": "string"
                       },
                       "Name": {
-                        "backendName": "name",
-                        "description_en": "The deductible region",
+                        "description_en": "The region where deductions are applicable",
                         "description_zh": "可抵扣地域",
                         "example": "北京",
                         "type": "string"
@@ -535,302 +541,267 @@
                   "type": "array"
                 },
                 "EnableDeductRule": {
-                  "backendName": "enableDeductRule",
+                  "description_en": "Indicates whether the deduction rule is enabled",
+                  "description_zh": "是否启用抵扣规则",
                   "type": "boolean"
                 },
                 "EnableExchange": {
-                  "backendName": "enableExchange",
-                  "description_en": "Indicates whether exchange is supported",
+                  "description_en": "Indicates whether exchanges are supported",
                   "description_zh": "能否换购",
                   "example": "false",
-                  "title_zh": "能否换购",
                   "type": "boolean"
                 },
                 "EnableRenew": {
-                  "backendName": "enableRenew",
                   "description_en": "Indicates whether renewal is supported",
                   "description_zh": "能否续费",
                   "example": "false",
-                  "title_en": "能否续费",
+                  "title_en": "",
                   "title_zh": "能否续费",
                   "type": "boolean"
                 },
                 "EnableUpgrade": {
-                  "backendName": "enableUpgrade",
-                  "description_en": "Indicates whether upgrade is supported",
+                  "description_en": "Indicates whether upgrades are supported",
                   "description_zh": "能否升级",
                   "example": "false",
-                  "title_en": "能否升级",
+                  "title_en": "",
                   "title_zh": "能否升级",
                   "type": "boolean"
                 },
                 "EndTime": {
-                  "backendName": "endTime",
-                  "description_en": "The expiration time",
-                  "description_zh": "失效时间",
+                  "description_en": "The expiration time. The value is a UNIX timestamp in milliseconds",
+                  "description_zh": "失效时间，使用 Unix 时间戳，单位为毫秒",
                   "example": "1710604800000",
                   "format": "int64",
-                  "title_en": "失效时间",
+                  "title_en": "",
                   "title_zh": "失效时间",
                   "type": "integer"
                 },
                 "ExchangeCommodityCode": {
-                  "backendName": "exchangeCommodityCode",
-                  "description_en": "The exchange commodity code",
+                  "description_en": "The commodity code for exchange",
                   "description_zh": "换购商品编码",
                   "example": "null",
-                  "title_en": "换购商品code",
+                  "title_en": "",
                   "title_zh": "换购商品code",
                   "type": "string"
                 },
                 "InitCapacityBaseUnit": {
-                  "backendName": "initCapacityBaseUnit",
                   "description_en": "The initial capacity base unit",
                   "description_zh": "初始容量基准单位",
                   "example": "CU",
                   "type": "string"
                 },
                 "InitCapacityBaseValue": {
-                  "backendName": "initCapacityBaseValue",
                   "description_en": "The initial capacity base value",
                   "description_zh": "初始容量基准值",
                   "example": "1000.000000",
                   "type": "string"
                 },
                 "InitCapacityViewUnit": {
-                  "backendName": "initCapacityViewUnit",
                   "description_en": "The initial capacity display unit",
                   "description_zh": "初始容量显示单位",
                   "example": "CU",
-                  "title_en": "初始容量显示单位",
+                  "title_en": "",
                   "title_zh": "初始容量显示单位",
                   "type": "string"
                 },
                 "InitCapacityViewValue": {
-                  "backendName": "initCapacityViewValue",
                   "description_en": "The initial capacity display value",
                   "description_zh": "初始容量显示值",
                   "example": "1000.000000",
-                  "title_en": "初始容量显示值",
+                  "title_en": "",
                   "title_zh": "初始容量显示值",
                   "type": "string"
                 },
                 "InstanceId": {
-                  "backendName": "instanceId",
                   "description_en": "The instance name",
                   "description_zh": "实例名称",
                   "example": "alb_cubag*******",
-                  "title_en": "实例名称",
+                  "title_en": "",
                   "title_zh": "实例名称",
                   "type": "string"
                 },
                 "PeriodCapacityViewUnit": {
-                  "backendName": "periodCapacityViewUnit",
                   "description_en": "The period capacity display unit",
                   "description_zh": "周期容量显示单位",
                   "example": "CU",
-                  "title_en": "周期容量显示单位",
+                  "title_en": "",
                   "title_zh": "周期容量显示单位",
                   "type": "string"
                 },
                 "PeriodCapacityViewValue": {
-                  "backendName": "periodCapacityViewValue",
                   "description_en": "The period capacity display value",
                   "description_zh": "周期容量显示值",
                   "example": "1000.000000",
-                  "title_en": "周期容量显示值",
+                  "title_en": "",
                   "title_zh": "周期容量显示值",
                   "type": "string"
                 },
                 "PeriodTime": {
-                  "backendName": "periodTime",
-                  "description_en": "The period time",
-                  "description_zh": "周期时间",
+                  "description_en": "The period time unit, such as hour for hours",
+                  "description_zh": "周期时间单位，例如 hour 表示小时",
                   "example": "hour",
-                  "title_en": "周期时间",
+                  "title_en": "",
                   "title_zh": "周期时间",
                   "type": "string"
                 },
                 "Product": {
-                  "backendName": "product",
                   "description_en": "The product",
                   "description_zh": "产品",
                   "properties": {
                     "Code": {
-                      "backendName": "code",
-                      "description_en": "The property code",
+                      "description_en": "The attribute code",
                       "description_zh": "属性编码",
                       "example": "slb",
                       "type": "string"
                     },
                     "Name": {
-                      "backendName": "name",
-                      "description_en": "The property name",
+                      "description_en": "The attribute name",
                       "description_zh": "属性名称",
                       "example": "负载均衡",
                       "type": "string"
                     }
                   },
-                  "title_en": "产品",
+                  "title_en": "",
                   "title_zh": "产品",
                   "type": "object"
                 },
                 "ProductCode": {
-                  "backendName": "productCode",
                   "description_en": "The product code",
                   "description_zh": "产品code",
                   "example": "pts",
-                  "title_en": "产品code",
+                  "title_en": "",
                   "title_zh": "产品code",
                   "type": "string"
                 },
                 "ProductName": {
-                  "backendName": "productName",
                   "description_en": "The product name",
                   "description_zh": "产品名",
                   "example": "性能测试",
-                  "title_en": "产品名",
+                  "title_en": "",
                   "title_zh": "产品名",
                   "type": "string"
                 },
                 "PurchaseTime": {
-                  "backendName": "purchaseTime",
-                  "description_en": "The purchase time",
-                  "description_zh": "购买时间",
+                  "description_en": "The purchase time. The value is a UNIX timestamp in milliseconds",
+                  "description_zh": "购买时间，使用 Unix 时间戳，单位为毫秒",
                   "example": "1678939036000",
                   "format": "int64",
-                  "title_en": "购买时间",
+                  "title_en": "",
                   "title_zh": "购买时间",
                   "type": "integer"
                 },
                 "Region": {
-                  "backendName": "region",
                   "description_en": "The region",
                   "description_zh": "地域",
                   "example": "*",
-                  "title_en": "地域",
+                  "title_en": "",
                   "title_zh": "地域",
                   "type": "string"
                 },
                 "RegionName": {
-                  "backendName": "regionName",
                   "description_en": "The region name",
                   "description_zh": "地域名称",
                   "example": "cn-qingdao",
                   "type": "string"
                 },
                 "Spec": {
-                  "backendName": "spec",
-                  "description_en": "The specification",
+                  "description_en": "The specifications",
                   "description_zh": "规格",
                   "example": "*",
-                  "title_en": "规格",
+                  "title_en": "",
                   "title_zh": "规格",
                   "type": "string"
                 },
                 "StartTime": {
-                  "backendName": "startTime",
-                  "description_en": "The effective period",
-                  "description_zh": "生效时间",
+                  "description_en": "The effective period. The value is a UNIX timestamp in milliseconds",
+                  "description_zh": "生效时间，使用 Unix 时间戳，单位为毫秒",
                   "example": "1678939035000",
                   "format": "int64",
-                  "title_en": "生效时间",
+                  "title_en": "",
                   "title_zh": "生效时间",
                   "type": "integer"
                 },
                 "Status": {
-                  "backendName": "status",
                   "description_en": "The resource status",
                   "description_zh": "资源状态",
                   "properties": {
                     "Code": {
-                      "backendName": "code",
-                      "description_en": "The property code",
+                      "description_en": "The attribute code",
                       "description_zh": "属性编码",
                       "example": "valid",
                       "type": "string"
                     },
                     "Name": {
-                      "backendName": "name",
-                      "description_en": "The property name",
+                      "description_en": "The attribute name",
                       "description_zh": "属性名称",
                       "example": "有效",
                       "type": "string"
                     }
                   },
-                  "title_en": "资源状态",
+                  "title_en": "",
                   "title_zh": "资源状态",
                   "type": "object"
                 },
                 "StatusCode": {
-                  "backendName": "statusCode",
                   "description_en": "The resource status code",
                   "description_zh": "资源状态code",
                   "example": "valid",
-                  "title_en": "资源状态code",
+                  "title_en": "",
                   "title_zh": "资源状态code",
                   "type": "string"
                 },
                 "StatusName": {
-                  "backendName": "statusName",
                   "description_en": "The resource status name",
                   "description_zh": "资源状态名",
                   "example": "有效",
-                  "title_en": "资源状态名",
+                  "title_en": "",
                   "title_zh": "资源状态名",
                   "type": "string"
                 },
                 "Template": {
-                  "backendName": "template",
                   "description_en": "The template",
                   "description_zh": "模板",
                   "properties": {
                     "Code": {
-                      "backendName": "code",
-                      "description_en": "The property code",
+                      "description_en": "The attribute code",
                       "description_zh": "属性编码",
                       "example": "alb_cubag*******",
                       "type": "string"
                     },
                     "Name": {
-                      "backendName": "name",
-                      "description_en": "The property name",
+                      "description_en": "The attribute name",
                       "description_zh": "属性名称",
                       "example": "中国内地区域",
                       "type": "string"
                     }
                   },
-                  "title_en": "模板",
+                  "title_en": "",
                   "title_zh": "模板",
                   "type": "object"
                 },
                 "TemplateCode": {
-                  "backendName": "templateCode",
                   "description_en": "The template code",
                   "description_zh": "模板code",
                   "example": "FPT_armsappbag_deadlineAcc_bj",
-                  "title_en": "模板code",
+                  "title_en": "",
                   "title_zh": "模板code",
                   "type": "string"
                 },
                 "TemplateName": {
-                  "backendName": "templateName",
                   "description_en": "The template name",
                   "description_zh": "模板名",
                   "example": "new_test",
-                  "title_en": "模板名",
+                  "title_en": "",
                   "title_zh": "模板名",
                   "type": "string"
                 },
                 "periodCapacityBaseUnit": {
-                  "backendName": "periodCapacityBaseUnit",
                   "description_en": "The periodic capacity base unit",
                   "description_zh": "周期容量基准单位",
                   "example": "CU",
                   "type": "string"
                 },
                 "periodCapacityBaseValue": {
-                  "backendName": "periodCapacityBaseValue",
                   "description_en": "The periodic capacity base value",
                   "description_zh": "周期容量基准值",
                   "example": "1000.000000",
@@ -839,39 +810,36 @@
               },
               "type": "object"
             },
-            "title_en": "数据列表",
+            "title_en": "",
             "title_zh": "数据列表",
             "type": "array"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页大小",
             "example": "20",
             "format": "int32",
-            "title_en": "每页大小",
+            "title_en": "",
             "title_zh": "每页大小",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "6000EE23-274B-4E07-A697-FF2E999520A4",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "totalCount",
             "description_en": "The total number of records",
             "description_zh": "总记录数",
             "example": "1",
             "format": "int32",
-            "title_en": "总记录数",
+            "title_en": "",
             "title_zh": "总记录数",
             "type": "integer"
           }
         },
-        "title_en": "BssApiPageResult<InstanceOverviewResponse>",
+        "title_en": "",
         "title_zh": "BssApiPageResult<InstanceOverviewResponse>",
         "type": "object"
       }

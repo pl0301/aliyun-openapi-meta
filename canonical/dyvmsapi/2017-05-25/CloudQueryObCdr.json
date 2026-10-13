@@ -3,7 +3,7 @@
   "cmd_full_name": "dyvmsapi cloud-query-ob-cdr",
   "cmd_name": "cloud-query-ob-cdr",
   "deprecated": false,
-  "description_en": "Searches for agent outbound call records by criteria",
+  "description_en": "Queries outbound call records of agents based on a conditional query",
   "description_zh": "根据条件查询座席外呼通话记录",
   "kebab_example": "aliyun dyvmsapi cloud-query-ob-cdr --enterprise-id 7000002 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,8 +22,8 @@
   "parameters": [
     {
       "example": "7000002",
-      "help_en": "The call center ID",
-      "help_zh": "呼叫中心 id",
+      "help_en": "The call center ID.\n\nBefore calling this operation, create a call center instance in the Cloud Call Center console and obtain the instance ID from the instance access URL",
+      "help_zh": "呼叫中心 id\n\n调用前需在云联络中心控制台创建呼叫中心实例，并从实例访问地址中获取实例 ID",
       "location": "query",
       "name": "enterprise_id",
       "options": [
@@ -35,7 +35,7 @@
     },
     {
       "example": "uniq_1-162046xxxx.12",
-      "help_en": "The unique ID of the call. If you specify this parameter, the API ignores all other parameters and returns only the record with the matching unique ID",
+      "help_en": "If the uniqueId value is not empty, all other parameters are ignored and only the record with the specified phone unique identifier is queried",
       "help_zh": "如果uniqueId值不为空，则以下其它参数无效，即仅查询电话唯一标识为uniqueId的记录信息",
       "location": "query",
       "name": "unique_id",
@@ -48,7 +48,7 @@
     },
     {
       "example": "req_uniq_1-162046xxxx.12",
-      "help_en": "The request unique ID. The system queries the current month by default. If the record for the specified `RequestUniqueId` is not in the current month, you must also specify the `StartTime` parameter",
+      "help_en": "Queries the record corresponding to the specified request unique ID. By default, the current month is queried. If the requestUniqueId does not belong to the current month, pass the query parameter startTime as a pass-through query parameter",
       "help_zh": "查询请求唯一id对应的记录信息，默认查询当前月，如requestUniqueId不属于当前月，查询时请传递查询参数 查询开始时间(startTime)",
       "location": "query",
       "name": "request_unique_id",
@@ -61,7 +61,7 @@
     },
     {
       "example": "4",
-      "help_en": "The call type. If omitted, all call types are returned. Valid values: `4` (Preview outbound call), `6` (Caller-initiated outbound call), and `9` (Internal call)",
+      "help_en": "The call type. Leave empty for all types. Valid values:\n4: Preview outbound call.\n6: Caller outbound call.\n9: Internal call",
       "help_zh": "呼叫类型；为空表示全部，可选值为：4:预览外呼 6:主叫外呼 9:内部呼叫",
       "location": "query",
       "name": "call_type",
@@ -74,7 +74,7 @@
     },
     {
       "example": "33 ",
-      "help_en": "The call result. Valid values: `30` (Agent did not answer), `31` (Agent answered, customer not dialed), `32` (Agent answered, customer did not answer), `33` (Both agent and customer answered), `50` (Caller-initiated outbound call: customer answered), `51` (Caller-initiated outbound call: customer did not answer), `52` (Caller-initiated outbound call: both parties answered)",
+      "help_en": "The call result. Parameter description:\n30: Agent did not answer.\n31: Agent answered, customer not called.\n32: Agent answered, customer did not answer.\n33: Both parties answered.\n50: Caller outbound call answered.\n51: Caller outbound call, customer did not answer.\n52: Caller outbound call, both parties answered",
       "help_zh": "呼叫结果；参数说明：30 座席未接听; 31 座席接听,未呼叫客户; 32 座席接听,客户未接听; 33 双方接听; 50 主叫外呼接听; 51 主叫外呼,客户未接听; 52 主叫外呼,双方接听",
       "location": "query",
       "name": "status",
@@ -87,7 +87,7 @@
     },
     {
       "example": "北京",
-      "help_en": "The province where the customer's phone number is registered. If omitted, records from all provinces are returned. Example: `Sichuan`. This value must be URL-encoded",
+      "help_en": "The province to which the customer phone number belongs. Leave empty for all provinces. This parameter must be URL-encoded",
       "help_zh": "客户电话归属省份；为空表示全部，如\"四川\"，此参数需要URLEncode",
       "location": "query",
       "name": "province",
@@ -100,7 +100,7 @@
     },
     {
       "example": "北京",
-      "help_en": "The city where the customer's phone number is registered. If omitted, records from all cities are returned. Example: `Chengdu`. This value must be URL-encoded",
+      "help_en": "The city to which the customer phone number belongs. Leave empty for all cities. This parameter must be URL-encoded",
       "help_zh": "客户电话归属城市；为空表示全部，如\"成都\"，此参数需要URLEncode",
       "location": "query",
       "name": "city",
@@ -113,7 +113,7 @@
     },
     {
       "example": "1",
-      "help_en": "Specifies which timestamp the `StartTime` and `EndTime` parameters apply to. This parameter applies only when you specify both `StartTime` and `EndTime`. Valid values: `1` (start time) and `2` (end time). Default: `1`",
+      "help_en": "The time range type that determines how the startTime and endTime parameters take effect for call records. This parameter takes effect only when startTime and endTime are not empty. Valid values:\n1: Call start time.\n2: Call end time.\n\nDefault value: 1",
       "help_zh": "查询时间开始结束范围生效类型；通话记录startTime和endTime时间范围生效类型，当startTime和endTime不为空时生效；取值：1.呼叫开始时间 2.呼叫结束时间； 默认为1",
       "location": "query",
       "name": "time_range_type",
@@ -126,7 +126,7 @@
     },
     {
       "example": "1775024775",
-      "help_en": "The start time of the query time range, specified as a Unix timestamp in seconds. The `StartTime` and `EndTime` must be within the same calendar month. Default: The first day of the current month",
+      "help_en": "The query start time in UNIX timestamp format, accurate to seconds. startTime and endTime cannot span across months. Default value: the first day of the current month",
       "help_zh": "查询开始时间；时间戳格式,精确到s。startTime与endTime不允许跨月，默认值取当前月份第一天",
       "location": "query",
       "name": "start_time",
@@ -139,7 +139,7 @@
     },
     {
       "example": "1775030413",
-      "help_en": "The end time of the query time range, specified as a Unix timestamp in seconds. The `StartTime` and `EndTime` must be within the same calendar month. Default: The last day of the current month",
+      "help_en": "The query end time in UNIX timestamp format, accurate to seconds. startTime and endTime cannot span across months. Default value: the last day of the current month",
       "help_zh": "查询结束时间；时间戳格式,精确到s。startTime与endTime不允许跨月，默认值取当前月份最后一天",
       "location": "query",
       "name": "end_time",
@@ -152,7 +152,7 @@
     },
     {
       "example": "0",
-      "help_en": "The zero-based index of the first record to return. Default: `0`",
+      "help_en": "The offset from which to start retrieving records. The value must be greater than or equal to 0. Default value: 0",
       "help_zh": "从第几条开始取；大于等于0，默认0",
       "location": "query",
       "name": "start",
@@ -165,7 +165,7 @@
     },
     {
       "example": "10",
-      "help_en": "The maximum number of records to return per page. The value must be in the range of 1 to 1,000. Default: `10`",
+      "help_en": "The number of records to retrieve. The value must be greater than 0 and cannot exceed 1000. Default value: 10",
       "help_zh": "需要取出的数据条数；大于0，最大不能超过1000，默认10",
       "location": "query",
       "name": "limit",
@@ -178,7 +178,7 @@
     },
     {
       "example": "{\"userFieldkey\":\"userFieldvalue\"}",
-      "help_en": "The key of a user-defined field. Use this parameter with `UserFieldValue` to filter results by a specific user-defined field. Fuzzy matching is not supported. This value must be URL-encoded",
+      "help_en": "The custom parameter for field-specific search key. When this parameter is passed, userFieldValue must also be passed. Only one field can be queried. Fuzzy match is not supported. The custom field-specific search condition is constructed as: {\"userFieldkey\":\"userFieldvalue\"}. This parameter must be URL-encoded",
       "help_zh": "用户自定义参数指定查询key；传递该参数时必须传递userFieldValue，仅查询一个字段，不支持模糊匹配，构造的自定义字段查询条件为:{\"userFieldkey\":\"userFieldvalue\"}，此参数需要URLEncode",
       "location": "query",
       "name": "user_fieldkey",
@@ -191,7 +191,7 @@
     },
     {
       "example": "{\"userFieldkey\":\"userFieldvalue\"}",
-      "help_en": "The value of a user-defined field. Use this parameter with `UserFieldkey` to filter results by a specific user-defined field. Fuzzy matching is not supported. This value must be URL-encoded",
+      "help_en": "The custom parameter for field-specific search value. When this parameter is passed, userFieldKey must also be passed. Only one field can be queried. Fuzzy match is not supported. The custom field-specific search condition is constructed as: {\"userFieldkey\":\"userFieldvalue\"}. This parameter must be URL-encoded",
       "help_zh": "用户自定义参数指定查询value；传递该参数时必须传递userFieldKey，仅查询一个字段，不支持模糊匹配，构造的自定义字段查询条件为:{\"userFieldkey\":\"userFieldvalue\"}，此参数需要URLEncode",
       "location": "query",
       "name": "user_field_value",
@@ -204,7 +204,7 @@
     },
     {
       "example": "13322223333",
-      "help_en": "The customer number. To query multiple numbers, provide a comma-separated list of up to 100 numbers. Fuzzy matching is not supported",
+      "help_en": "The customer number. You can specify one or more customer numbers separated by commas (,). A maximum of 100 numbers can be specified at a time. Fuzzy match is not supported",
       "help_zh": "客户号码，支持一个或多个客户号码查询，多个客户号码以英文逗号隔开，一次最多支持100个。不支持模糊匹配",
       "location": "query",
       "name": "customer_number",
@@ -217,7 +217,7 @@
     },
     {
       "example": "1111",
-      "help_en": "The agent ID. Each ID must be 3 to 10 characters long. To query multiple IDs, provide a comma-separated list of up to 100 IDs. Fuzzy matching is not supported",
+      "help_en": "The agent ID. Each agent ID is 3 to 10 characters long. You can specify one or more agent IDs separated by commas (,). A maximum of 100 IDs can be specified at a time. Fuzzy match is not supported",
       "help_zh": "座席工号，单个座席工号3-10位，支持一个或多个座席工号查询，多个座席工号以英文逗号隔开，一次最多支持100个。不支持模糊匹配",
       "location": "query",
       "name": "cno",
@@ -230,7 +230,7 @@
     },
     {
       "example": "455",
-      "help_en": "The agent's outbound group ID. The ID must be 2 to 20 characters long. To query multiple IDs, provide a comma-separated list of up to 10 IDs. Fuzzy matching is not supported",
+      "help_en": "The outbound call group to which the agent belongs. Each group ID is 2 to 20 characters long. You can specify one or more group IDs separated by commas (,). A maximum of 10 IDs can be specified at a time. Fuzzy match is not supported",
       "help_zh": "座席所属外呼组 单个外呼组号2-20位，支持一个或多个座席工号查询，多个座席工号以英文逗号隔开，一次最多支持10个。不支持模糊匹配",
       "location": "query",
       "name": "gno",
@@ -269,7 +269,7 @@
     },
     {
       "example": "4100",
-      "help_en": "The Calling Line Identification (CLID) that was displayed to the customer",
+      "help_en": "The filter condition for the caller ID displayed to the customer",
       "help_zh": "客户侧外显号码过滤条件",
       "location": "query",
       "name": "clid",
@@ -282,7 +282,7 @@
     },
     {
       "example": "2000",
-      "help_en": "The actual display number on the customer's device. For AXB outbound calls that use a virtual number, this parameter filters by the virtual number if this option is enabled",
+      "help_en": "The filter condition for the actual caller ID displayed to the customer. When a virtual number is used for AXB outbound calls and the switch is enabled, the actual caller ID displayed to the customer is the virtual number",
       "help_zh": "客户侧真实外显号码过滤条件，当使用虚拟号进行AXB外呼且开关打开时，实际过滤的客户侧真实外显号码是虚拟号",
       "location": "query",
       "name": "left_display_number",
@@ -295,7 +295,7 @@
     },
     {
       "example": "0",
-      "help_en": "The sort order. Valid values: `0` (start time, ascending), `1` (start time, descending), `2` (end time, ascending), `3` (end time, descending)",
+      "help_en": "The sort order. Valid values:\n0: Ascending by record creation time.\n1: Descending by record creation time.\n2: Ascending by end time.\n3: Descending by end time",
       "help_zh": "排序方式；取值说明：0: 按照记录产生的时序顺序排序，1：按照记录产生的时序逆序排序，2: 按照结束时间的时序顺序排序，3：按照结束时间的时序逆序排序",
       "location": "query",
       "name": "order",
@@ -308,7 +308,7 @@
     },
     {
       "example": "1",
-      "help_en": "Specifies whether to return the total count of matching records. Valid values: `1` (Yes) and `0` (No). Default: `1`",
+      "help_en": "Specifies whether to return the total count. Valid values:\n0: Does not return the total count.\n1: Returns the total count.\n\nDefault value: 1",
       "help_zh": "是否返回总条数；取值说明：0: 不返回，1：返回，不传默认为1",
       "location": "query",
       "name": "return_count",
@@ -321,7 +321,7 @@
     },
     {
       "example": "0",
-      "help_en": "Specifies whether the call was a downgraded call. Valid values: `0` (No) and `1` (Yes)",
+      "help_en": "Specifies whether the call is downgraded. Valid values:\n0: No.\n1: Yes",
       "help_zh": "是否呼叫降级；0-否, 1-是",
       "location": "query",
       "name": "down_grade",
@@ -334,7 +334,7 @@
     },
     {
       "example": "1",
-      "help_en": "Specifies whether the call was a live answer. Valid values: `0` (No) and `1` (Yes)",
+      "help_en": "Specifies whether the call was answered by a real person. Valid values:\n1: Yes.\n0: No",
       "help_zh": "真人接听；取值说明：1-是、0-否",
       "location": "query",
       "name": "is_real_answer",
@@ -352,482 +352,429 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "AccessDeniedDetail": {
-            "backendName": "accessDeniedDetail",
-            "description_en": "The details of the failed request",
+            "description_en": "The details of the request failure",
             "description_zh": "请求失败详情",
             "example": "无",
             "type": "string"
           },
           "Code": {
-            "backendName": "code",
             "description_en": "The response code",
             "description_zh": "响应码",
             "example": "OK",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Data": {
-            "backendName": "model",
             "description_en": "The returned data",
             "description_zh": "返回数据",
             "properties": {
               "List": {
-                "backendName": "list",
-                "description_en": "A list of call records for agent outbound calls",
+                "description_en": "The array of agent outbound call records",
                 "description_zh": "座席外呼通话记录数组",
                 "example": "",
-                "itemName": "list",
                 "items": {
-                  "backendName": "items",
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "AgentClid": {
-                      "backendName": "agentClid",
-                      "description_en": "The number displayed to the agent",
+                      "description_en": "The display number on the agent side",
                       "description_zh": "座席侧外显号码",
                       "example": "02138276106",
-                      "title_en": "座席侧外显号码",
+                      "title_en": "",
                       "title_zh": "座席侧外显号码",
                       "type": "string"
                     },
                     "AgentName": {
-                      "backendName": "agentName",
-                      "description_en": "The agent's name",
+                      "description_en": "The agent name",
                       "description_zh": "座席名称",
                       "example": "name3",
-                      "title_en": "座席名称",
+                      "title_en": "",
                       "title_zh": "座席名称",
                       "type": "string"
                     },
                     "AgentNumber": {
-                      "backendName": "agentNumber",
-                      "description_en": "The agent's phone number. This can be a landline number (area code and a 7- or 8-digit number, with no hyphen in between) or an 11-digit mobile number. Example: `0104100596`",
+                      "description_en": "The agent phone number. The format is area code + 7- or 8-digit landline number with no hyphen between the area code and the number, or an 11-digit mobile number. For example, 0104100596",
                       "description_zh": "座席电话 区号 +7或8位的固话号码，区号与固话号码之间无'-'；或11位长度的手机号码。0104100596",
                       "example": "0104100596",
-                      "title_en": "座席电话 区号 +7或8位的固话号码，区号与固话号码之间无'-'；或11位长度的手机号码。0104100596",
+                      "title_en": "",
                       "title_zh": "座席电话 区号 +7或8位的固话号码，区号与固话号码之间无'-'；或11位长度的手机号码。0104100596",
                       "type": "string"
                     },
                     "AnswerTime": {
-                      "backendName": "answerTime",
-                      "description_en": "The time, as a Unix timestamp in seconds, when the agent answered the call. Example: `1480904471`",
+                      "description_en": "The time when the agent answered the call. This is a UNIX timestamp accurate to seconds, such as 1480904471",
                       "description_zh": "座席接听时间，时间戳，精确到s，如1480904471",
                       "example": "1775024775",
-                      "title_en": "座席接听时间，时间戳，精确到s，如1480904471",
+                      "title_en": "",
                       "title_zh": "座席接听时间，时间戳，精确到s，如1480904471",
                       "type": "string"
                     },
                     "BridgeDuration": {
-                      "backendName": "bridgeDuration",
-                      "description_en": "The duration, in seconds, that both parties were connected",
+                      "description_en": "The service processing duration, in seconds",
                       "description_zh": "服务处理时长秒数，单位是s",
                       "example": "10",
-                      "title_en": "服务处理时长秒数，单位是s",
+                      "title_en": "",
                       "title_zh": "服务处理时长秒数，单位是s",
                       "type": "string"
                     },
                     "BridgeTime": {
-                      "backendName": "bridgeTime",
-                      "description_en": "The time, as a Unix timestamp in seconds, when both parties were connected. Example: `1480904471`",
+                      "description_en": "The time when both parties were connected. This value is a UNIX timestamp in seconds, such as 1480904471",
                       "description_zh": "双方接听时间，时间戳，精确到s，如1480904471",
                       "example": "1775024775",
-                      "title_en": "双方接听时间，时间戳，精确到s，如1480904471",
+                      "title_en": "",
                       "title_zh": "双方接听时间，时间戳，精确到s，如1480904471",
                       "type": "string"
                     },
                     "CallId": {
-                      "backendName": "callId",
                       "description_en": "The unique ID of the call",
                       "description_zh": "通话唯一标识",
                       "example": "uniq_1-162046xxxx.12",
-                      "title_en": "通话唯一标识",
+                      "title_en": "",
                       "title_zh": "通话唯一标识",
                       "type": "string"
                     },
                     "CallType": {
-                      "backendName": "callType",
-                      "description_en": "The type of call. `4` indicates a Preview outbound call and `6` indicates a Caller outbound call",
+                      "description_en": "The call type. Valid values:\n4: preview outbound call.\n6: caller outbound call",
                       "description_zh": "呼叫类型：4、预览外呼; 6、主叫外呼",
                       "example": "4",
-                      "title_en": "呼叫类型：4、预览外呼; 6、主叫外呼",
+                      "title_en": "",
                       "title_zh": "呼叫类型：4、预览外呼; 6、主叫外呼",
                       "type": "string"
                     },
                     "CalleeRingingTime": {
-                      "backendName": "calleeRingingTime",
-                      "description_en": "The time, as a Unix timestamp in seconds, when the customer's phone started ringing. Example: `1480904471`",
+                      "description_en": "The ringing time on the customer side. This is a UNIX timestamp accurate to seconds, such as 1480904471",
                       "description_zh": "客户侧响铃时间，时间戳，精确到s，如1480904471",
                       "example": "1775024775",
-                      "title_en": "客户侧响铃时间，时间戳，精确到s，如1480904471",
+                      "title_en": "",
                       "title_zh": "客户侧响铃时间，时间戳，精确到s，如1480904471",
                       "type": "string"
                     },
                     "Clid": {
-                      "backendName": "clid",
-                      "description_en": "The number displayed to the customer. If a virtual number is used for an AXB outbound call and the feature is enabled, this parameter returns the virtual number",
+                      "description_en": "The display number on the customer side. When a virtual number is used for AXB outbound calls and the switch is enabled, the actual display number returned on the customer side is the virtual number",
                       "description_zh": "客户侧外显号码，当使用虚拟号进行AXB外呼且开关打开时，实际返回的客户侧外显号码是虚拟号",
                       "example": "41008502",
-                      "title_en": "客户侧外显号码，当使用虚拟号进行AXB外呼且开关打开时，实际返回的客户侧外显号码是虚拟号",
+                      "title_en": "",
                       "title_zh": "客户侧外显号码，当使用虚拟号进行AXB外呼且开关打开时，实际返回的客户侧外显号码是虚拟号",
                       "type": "string"
                     },
                     "Cno": {
-                      "backendName": "cno",
-                      "description_en": "The agent ID. Example: `2000`",
+                      "description_en": "The agent ID, such as 2000",
                       "description_zh": "座席工号，如2000",
                       "example": "2000\n",
-                      "title_en": "座席工号，如2000",
+                      "title_en": "",
                       "title_zh": "座席工号，如2000",
                       "type": "string"
                     },
                     "CustomerAreaCode": {
-                      "backendName": "customerAreaCode",
-                      "description_en": "The area code of the customer's number",
+                      "description_en": "The area code of the customer phone number",
                       "description_zh": "客户号码区号",
                       "example": "028",
-                      "title_en": "客户号码区号",
+                      "title_en": "",
                       "title_zh": "客户号码区号",
                       "type": "string"
                     },
                     "CustomerCity": {
-                      "backendName": "customerCity",
-                      "description_en": "The city associated with the customer's number. For example, Beijing",
+                      "description_en": "The city to which the customer number belongs, such as Beijing",
                       "description_zh": "客户号码归属城市,北京",
                       "example": "北京",
-                      "title_en": "客户号码归属城市,北京",
+                      "title_en": "",
                       "title_zh": "客户号码归属城市,北京",
                       "type": "string"
                     },
                     "CustomerNumber": {
-                      "backendName": "customerNumber",
-                      "description_en": "The customer's phone number. This can be a domestic landline or mobile number. A landline number consists of an area code and a 7- or 8-digit number, with no hyphen in between. A mobile number is 11 digits long. When using a virtual number with an extension, the format is `{virtual_number}-{extension}`. Examples: `01041005968` or `18701051984` or `18701051984-7538`",
+                      "description_en": "The customer number. For domestic landlines or mobile phones, the format is area code + 7- or 8-digit landline number with no hyphen between the area code and the number, or an 11-digit mobile number. For example, 01041005968 or 18701051984. For the virtual number with extension scenario, the format is virtual number-extension, such as 18701051984-7538",
                       "description_zh": "客户号码 国内固话或手机，区号 + 7或8位的固话号码，区号与固话号码之间无'-'；或11位长度的手机号码。如 01041005968或18701051984 或虚拟号-分机号场景格式，如 18701051984-7538",
                       "example": "01041005968",
-                      "title_en": "客户号码 国内固话或手机，区号 + 7或8位的固话号码，区号与固话号码之间无'-'；或11位长度的手机号码。如 01041005968或18701051984 或虚拟号-分机号场景格式，如 18701051984-7538",
+                      "title_en": "",
                       "title_zh": "客户号码 国内固话或手机，区号 + 7或8位的固话号码，区号与固话号码之间无'-'；或11位长度的手机号码。如 01041005968或18701051984 或虚拟号-分机号场景格式，如 18701051984-7538",
                       "type": "string"
                     },
                     "CustomerProvince": {
-                      "backendName": "customerProvince",
-                      "description_en": "The province associated with the customer's number. For example, Beijing",
+                      "description_en": "The province to which the customer number belongs, such as Beijing",
                       "description_zh": "客户号码归属省份，如 北京",
                       "example": "北京",
-                      "title_en": "客户号码归属省份，如 北京",
+                      "title_en": "",
                       "title_zh": "客户号码归属省份，如 北京",
                       "type": "string"
                     },
                     "DisplayNumber": {
-                      "backendName": "displayNumber",
-                      "description_en": "The number displayed to the agent. In an AXB outbound call, this is the virtual number",
+                      "description_en": "The actual display number on the agent side. When the AXB scenario is used for outbound calls, the actual display number on the agent side is a virtual number",
                       "description_zh": "座席侧真实外显号码，当使用AXB场景进行外呼时，座席侧真实外显号码为虚拟号",
                       "example": "41008502",
-                      "title_en": "座席侧真实外显号码，当使用AXB场景进行外呼时，座席侧真实外显号码为虚拟号",
+                      "title_en": "",
                       "title_zh": "座席侧真实外显号码，当使用AXB场景进行外呼时，座席侧真实外显号码为虚拟号",
                       "type": "string"
                     },
                     "DownGrade": {
-                      "backendName": "downGrade",
-                      "description_en": "Whether the call was downgraded. Valid values: `0` (No) and `1` (Yes)",
+                      "description_en": "Indicates whether the call was downgraded. Valid values:\n0: No.\n1: Yes",
                       "description_zh": "是否呼叫降级, 0-否, 1-是",
                       "example": "1",
-                      "title_en": "是否呼叫降级, 0-否, 1-是",
+                      "title_en": "",
                       "title_zh": "是否呼叫降级, 0-否, 1-是",
                       "type": "string"
                     },
                     "DownGradeCounts": {
-                      "backendName": "downGradeCounts",
                       "description_en": "The number of downgrades",
                       "description_zh": "降级次数",
                       "example": "1",
-                      "title_en": "降级次数",
+                      "title_en": "",
                       "title_zh": "降级次数",
                       "type": "string"
                     },
                     "EndReason": {
-                      "backendName": "endReason",
-                      "description_en": "The reason an answered call was terminated. Valid values include: `1000` (Primary party disconnected), `1001` (Non-primary party disconnected), and `1002` (Forcibly disconnected)",
+                      "description_en": "The end reason, which indicates the hangup reason after the call is answered. Valid values:\n1000: The primary channel hung up.\n1001: A non-primary channel hung up.\n1002: The call was forcibly disconnected",
                       "description_zh": "结束原因,接听之后的挂机原因 1000:主通道挂机 1001:非主通道挂机 1002:被强拆",
                       "example": "1000",
-                      "title_en": "结束原因,接听之后的挂机原因 1000:主通道挂机 1001:非主通道挂机 1002:被强拆",
+                      "title_en": "",
                       "title_zh": "结束原因,接听之后的挂机原因 1000:主通道挂机 1001:非主通道挂机 1002:被强拆",
                       "type": "string"
                     },
                     "EndTime": {
-                      "backendName": "endTime",
-                      "description_en": "The time, as a Unix timestamp in seconds, when the call ended. Example: `1480904471`",
+                      "description_en": "The call end time. This is a UNIX timestamp accurate to seconds, such as 1480904471",
                       "description_zh": "电话结束时间，时间戳，精确到s，如1480904471",
                       "example": "1775024875",
-                      "title_en": "电话结束时间，时间戳，精确到s，如1480904471",
+                      "title_en": "",
                       "title_zh": "电话结束时间，时间戳，精确到s，如1480904471",
                       "type": "string"
                     },
                     "Gno": {
-                      "backendName": "gno",
-                      "description_en": "The agent's outbound call group number",
+                      "description_en": "The agent outbound call group number",
                       "description_zh": "座席外呼组号",
                       "example": "133",
                       "type": "string"
                     },
                     "HangupReason": {
-                      "backendName": "hangupReason",
-                      "description_en": "The reason for the hang-up",
+                      "description_en": "The hangup reason",
                       "description_zh": "挂断原因",
                       "example": "0",
                       "type": "string"
                     },
                     "Id": {
-                      "backendName": "id",
-                      "description_en": "The ID",
+                      "description_en": "Id",
                       "description_zh": "Id",
                       "example": "9075217226",
                       "type": "string"
                     },
                     "IsRealAnswer": {
-                      "backendName": "isRealAnswer",
-                      "description_en": "Whether the call was answered by a person. Valid values: `1` (Yes), `0` (No), or null",
+                      "description_en": "Indicates whether the call was answered by a real person. Valid values: 1: yes. 0: no. Empty value: unknown",
                       "description_zh": "是否真人接听：1 - 是、0 - 否、空值",
                       "example": "1",
-                      "title_en": "是否真人接听：1 - 是、0 - 否、空值",
+                      "title_en": "",
                       "title_zh": "是否真人接听：1 - 是、0 - 否、空值",
                       "type": "string"
                     },
                     "LeftDisplayNumber": {
-                      "backendName": "leftDisplayNumber",
-                      "description_en": "The number displayed to the customer. In an AXB outbound call, this is the virtual number",
+                      "description_en": "The actual display number shown to the customer. When the AXB scenario is used for outbound calls, the actual display number on the customer side is a virtual number",
                       "description_zh": "客户侧真实外显号码，当使用AXB场景进行外呼时，客户侧真实外显号码为虚拟号",
                       "example": "13322225555",
-                      "title_en": "客户侧真实外显号码，当使用AXB场景进行外呼时，客户侧真实外显号码为虚拟号",
+                      "title_en": "",
                       "title_zh": "客户侧真实外显号码，当使用AXB场景进行外呼时，客户侧真实外显号码为虚拟号",
                       "type": "string"
                     },
                     "MainRingingTime": {
-                      "backendName": "mainRingingTime",
-                      "description_en": "For an outbound call from an extension, this is the Unix timestamp (in seconds) when the phone started ringing",
-                      "description_zh": "分机外呼，话机响铃时间",
+                      "description_en": "The time when the phone started ringing for an extension outbound call.\n\nThis value is a UNIX timestamp in seconds",
+                      "description_zh": "分机外呼，话机响铃时间\n\n使用 Unix 时间戳，单位为秒",
                       "example": "1775024775",
-                      "title_en": "分机外呼，话机响铃时间",
+                      "title_en": "",
                       "title_zh": "分机外呼，话机响铃时间",
                       "type": "string"
                     },
                     "RealAnswerTime": {
-                      "backendName": "realAnswerTime",
-                      "description_en": "The time, as a Unix timestamp in seconds, when a person answered the call. Example: `1480904471`",
+                      "description_en": "The time when a real person answered the call. This is a UNIX timestamp accurate to seconds, such as 1480904471",
                       "description_zh": "真人接听时间，时间戳，精确到s，如1480904471",
                       "example": "1775024775",
-                      "title_en": "真人接听时间，时间戳，精确到s，如1480904471",
+                      "title_en": "",
                       "title_zh": "真人接听时间，时间戳，精确到s，如1480904471",
                       "type": "string"
                     },
                     "RecordFile": {
-                      "backendName": "recordFile",
-                      "description_en": "A list of call recordings",
+                      "description_en": "The array of call recordings",
                       "description_zh": "通话记录录音数组",
                       "example": "",
-                      "itemName": "recordFile",
                       "items": {
-                        "backendName": "items",
+                        "description_en": "",
+                        "description_zh": "",
                         "properties": {
                           "File": {
-                            "backendName": "file",
-                            "description_en": "The name of the recording file",
+                            "description_en": "The recording file name",
                             "description_zh": "录音文件名",
                             "example": "record_file_name.",
-                            "title_en": "录音文件名",
+                            "title_en": "",
                             "title_zh": "录音文件名",
                             "type": "string"
                           },
                           "Monitor_type": {
-                            "backendName": "monitor_type",
-                            "description_en": "Audio mixing 2. Multi-track recording (saves two mono WAV files) 3. Voicemail 5. Multi-track recording (saves one stereo WAV file)",
+                            "description_en": "The recording type. Valid values:\n1: Mixed recording.\n2: Separate-channel recording (two mono WAV files are retained).\n3: Voice mail.\n5: Separate-channel recording (one stereo WAV file is retained)",
                             "description_zh": "混音 2. 分线录音（保留2个单声道WAV） 3.留言 5. 分线录音（保留1个双声道WAV）",
                             "example": "1",
                             "format": "int64",
-                            "title_en": "混音 2. 分线录音（保留2个单声道WAV） 3.留言 5. 分线录音（保留1个双声道WAV）",
+                            "title_en": "",
                             "title_zh": "混音 2. 分线录音（保留2个单声道WAV） 3.留言 5. 分线录音（保留1个双声道WAV）",
                             "type": "integer"
                           },
                           "Type": {
-                            "backendName": "type",
-                            "description_en": "The file type. `record` indicates a recording and `voicemail` indicates a voicemail",
+                            "description_en": "The recording file type. Valid values:\nrecord: recording.\nvoicemail: voice mail",
                             "description_zh": "取值：record,voicemail 说明：record是录音， voicemail是留言",
                             "example": "record",
-                            "title_en": "取值：record,voicemail 说明：record是录音， voicemail是留言",
+                            "title_en": "",
                             "title_zh": "取值：record,voicemail 说明：record是录音， voicemail是留言",
                             "type": "string"
                           }
                         },
                         "type": "object"
                       },
-                      "title_en": "通话记录录音数组，json格式",
+                      "title_en": "",
                       "title_zh": "通话记录录音数组，json格式",
                       "type": "array"
                     },
                     "RequestUniqueId": {
-                      "backendName": "requestUniqueId",
-                      "description_en": "The unique ID of the request",
+                      "description_en": "The unique request ID",
                       "description_zh": "请求唯一id",
                       "example": "uniq_1-162046xxxx.12",
-                      "title_en": "请求唯一id",
+                      "title_en": "",
                       "title_zh": "请求唯一id",
                       "type": "string"
                     },
                     "RtcTotalDuration": {
-                      "backendName": "rtcTotalDuration",
-                      "description_en": "The total duration of the RTC call, in seconds. This parameter applies only to Caller Outbound Calls. The duration is `endTime - startTime`",
+                      "description_en": "The RTC total call duration in seconds. This value is valid when the call type is caller outbound call (RTC). Calculation rule: endTime - startTime",
                       "description_zh": "RTC总通话时长秒数，单位是s，在呼叫类型为主叫外呼(RTC)时有效，计算规则：endTime-startTime",
                       "example": "133",
-                      "title_en": "RTC总通话时长秒数，单位是s，在呼叫类型为主叫外呼(RTC)时有效，计算规则：endTime-startTime",
+                      "title_en": "",
                       "title_zh": "RTC总通话时长秒数，单位是s，在呼叫类型为主叫外呼(RTC)时有效，计算规则：endTime-startTime",
                       "type": "string"
                     },
                     "SipCause": {
-                      "backendName": "sipCause",
-                      "description_en": "The SIP response code, which ranges from 200 to 699. Note: For Caller Outbound Calls (RTC), the agent does not initiate the call or perform SIP negotiation, so this value defaults to `0`",
+                      "description_en": "The SIP response code, ranging from 200 to 699. Note: For caller outbound calls using RTC, there is no SIP negotiation on the agent side and no call is initiated, so this value defaults to 0",
                       "description_zh": "SIP响应码：200 ~ 699 详见 注：主叫外呼RTC座席侧没有SIP协商的概念，并未发起呼叫，因此该值默认为0",
                       "example": "200",
-                      "title_en": "SIP响应码：200 ~ 699 详见 注：主叫外呼RTC座席侧没有SIP协商的概念，并未发起呼叫，因此该值默认为0",
+                      "title_en": "",
                       "title_zh": "SIP响应码：200 ~ 699 详见 注：主叫外呼RTC座席侧没有SIP协商的概念，并未发起呼叫，因此该值默认为0",
                       "type": "string"
                     },
                     "StartTime": {
-                      "backendName": "startTime",
-                      "description_en": "The time, as a Unix timestamp in seconds, when the agent initiated the outbound call. Example: `1480904471`",
+                      "description_en": "The time when the agent started the outbound call. This value is a UNIX timestamp in seconds, such as 1480904471",
                       "description_zh": "座席开始外呼时间，时间戳，精确到s，如1480904471",
                       "example": "1775024775",
-                      "title_en": "座席开始外呼时间，时间戳，精确到s，如1480904471",
+                      "title_en": "",
                       "title_zh": "座席开始外呼时间，时间戳，精确到s，如1480904471",
                       "type": "string"
                     },
                     "Status": {
-                      "backendName": "status",
-                      "description_en": "The result of the outbound call. Valid values: `30` (Agent did not answer), `31` (Agent answered, customer not called), `32` (Agent answered, customer did not answer), `33` (Both parties answered), `50` (Caller outbound call answered), `51` (Caller outbound call, customer did not answer), `52` (Caller outbound call, both parties answered)",
+                      "description_en": "The outbound call result. Valid values:\n30: The agent did not answer.\n31: The agent answered but did not call the customer.\n32: The agent answered but the customer did not answer.\n33: Both parties answered.\n50: The caller outbound call was answered.\n51: The caller outbound call was made but the customer did not answer.\n52: The caller outbound call was made and both parties answered",
                       "description_zh": "外呼结果：30 座席未接听; 31 座席接听,未呼叫客户; 32 座席接听,客户未接听; 33 双方接听; 50 主叫外呼接听; 51 主叫外呼,客户未接听; 52 主叫外呼,双方接听",
                       "example": "33",
-                      "title_en": "外呼结果：30 座席未接听; 31 座席接听,未呼叫客户; 32 座席接听,客户未接听; 33 双方接听; 50 主叫外呼接听; 51 主叫外呼,客户未接听; 52 主叫外呼,双方接听。",
+                      "title_en": "",
                       "title_zh": "外呼结果：30 座席未接听; 31 座席接听,未呼叫客户; 32 座席接听,客户未接听; 33 双方接听; 50 主叫外呼接听; 51 主叫外呼,客户未接听; 52 主叫外呼,双方接听。",
                       "type": "string"
                     },
                     "StatusCode": {
-                      "backendName": "statusCode",
-                      "description_en": "The status code of the call",
+                      "description_en": "The call result code",
                       "description_zh": "呼叫结果码",
                       "example": "33",
                       "type": "string"
                     },
                     "StatusReason": {
-                      "backendName": "statusReason",
-                      "description_en": "The reason for the call status. This applies to caller outbound calls. Valid values: `1` (Enterprise blocklist), `2` (Blocked by risk control), `20001` (Call restriction), `20002` (The number is on a blocklist or is not on an allow list), `20003` (Outside allowed calling hours), `3` (Invalid display number), `4` (Incorrect voice navigation), `5` (Enterprise service suspended), `6` (No permission for outbound calls), `7` (Exceeded call limit), `8` (Invalid number), `9` (Other error)",
+                      "description_en": "The call status reason (for caller outbound calls). Valid values:\n1: Enterprise blacklist.\n2: Intercepted by the risk control system.\n20001: Call restriction.\n20002: Blacklisted or not whitelisted.\n20003: Restricted calling time period.\n3: Invalid display number.\n4: Incorrect voice navigation.\n5: Enterprise suspended.\n6: No permission for outbound calls.\n7: Exceeded call count limit.\n8: Incorrect number.\n9: Other errors",
                       "description_zh": "通话状态原因（主叫外呼）描述：1 - 企业黑名单; 2 - 风控系统拦截; 20001 - 呼叫限制；20002 - 黑名单或非白名单；20003 - 禁拨时间段； 3 - 无效的外显号码; 4 - 错误的语音导航; 5 - 企业停机; 6 - 无权限外呼; 7 - 超出呼叫次数限制; 8 - 错误号码; 9 - 其他错误；",
                       "example": "9",
-                      "title_en": "通话状态原因（主叫外呼）描述：1 - 企业黑名单; 2 - 风控系统拦截; 20001 - 呼叫限制；20002 - 黑名单或非白名单；20003 - 禁拨时间段； 3 - 无效的外显号码; 4 - 错误的语音导航; 5 - 企业停机; 6 - 无权限外呼; 7 - 超出呼叫次数限制; 8 - 错误号码; 9 - 其他错误；",
+                      "title_en": "",
                       "title_zh": "通话状态原因（主叫外呼）描述：1 - 企业黑名单; 2 - 风控系统拦截; 20001 - 呼叫限制；20002 - 黑名单或非白名单；20003 - 禁拨时间段； 3 - 无效的外显号码; 4 - 错误的语音导航; 5 - 企业停机; 6 - 无权限外呼; 7 - 超出呼叫次数限制; 8 - 错误号码; 9 - 其他错误；",
                       "type": "string"
                     },
                     "TaskId": {
-                      "backendName": "taskId",
-                      "description_en": "The ID of the automated agent outbound call task",
+                      "description_en": "The ID of the agent automatic outbound call task",
                       "description_zh": "座席自动外呼任务id",
                       "example": "333",
-                      "title_en": "座席自动外呼任务id",
+                      "title_en": "",
                       "title_zh": "座席自动外呼任务id",
                       "type": "string"
                     },
                     "TotalDuration": {
-                      "backendName": "totalDuration",
-                      "description_en": "The total duration of the call, in seconds",
+                      "description_en": "The total call duration, in seconds",
                       "description_zh": "总通话时长秒数，单位是s",
                       "example": "30",
-                      "title_en": "总通话时长秒数，单位是s",
+                      "title_en": "",
                       "title_zh": "总通话时长秒数，单位是s",
                       "type": "string"
                     },
                     "TrunkGroupKey": {
-                      "backendName": "trunkGroupKey",
-                      "description_en": "The key of the trunk group",
+                      "description_en": "The trunk group code",
                       "description_zh": "中继群组代号",
                       "example": "30020",
-                      "title_en": "中继群组代号",
+                      "title_en": "",
                       "title_zh": "中继群组代号",
                       "type": "string"
                     },
                     "TsiFile": {
-                      "backendName": "tsiFile",
-                      "description_en": "The name of the ring-back tone file",
+                      "description_en": "The name of the color ring back tone file",
                       "description_zh": "彩铃文件名称",
                       "example": "name2",
-                      "title_en": "彩铃文件名称",
+                      "title_en": "",
                       "title_zh": "彩铃文件名称",
                       "type": "string"
                     },
                     "TsiFileFormat": {
-                      "backendName": "tsiFileFormat",
-                      "description_en": "The file format of the ring-back tone",
+                      "description_en": "The color ring back tone file type",
                       "description_zh": "彩铃文件类型",
                       "example": "mp3",
-                      "title_en": "彩铃文件类型",
+                      "title_en": "",
                       "title_zh": "彩铃文件类型",
                       "type": "string"
                     },
                     "UniqueId": {
-                      "backendName": "uniqueId",
-                      "description_en": "The unique ID of the call",
+                      "description_en": "The unique call identifier",
                       "description_zh": "电话唯一标识",
                       "example": "uniq_1-162046xxxx.12",
-                      "title_en": "电话唯一标识",
+                      "title_en": "",
                       "title_zh": "电话唯一标识",
                       "type": "string"
                     },
                     "UserField": {
-                      "backendName": "userField",
-                      "description_en": "Custom fields for the call record, in JSON format",
+                      "description_en": "The custom field for call records, in JSON format",
                       "description_zh": "通话记录自定义字段，json格式",
                       "example": "{}",
-                      "title_en": "通话记录自定义字段，json格式",
+                      "title_en": "",
                       "title_zh": "通话记录自定义字段，json格式",
                       "type": "object"
                     },
                     "VadIn": {
-                      "backendName": "vadIn",
-                      "description_en": "The percentage of talk time in the inbound direction, which indicates the call quality. The value ranges from 0 to 100",
+                      "description_en": "The call quality percentage. The value ranges from 0 to 100, indicating the percentage of speaking time in the inbound direction",
                       "description_zh": "通话质量百分比,数据是0-100之间，in方向说话占用的百分比",
                       "example": "30",
-                      "title_en": "通话质量百分比,数据是0-100之间，in方向说话占用的百分比",
+                      "title_en": "",
                       "title_zh": "通话质量百分比,数据是0-100之间，in方向说话占用的百分比",
                       "type": "string"
                     },
                     "VadOut": {
-                      "backendName": "vadOut",
-                      "description_en": "The percentage of talk time in the outbound direction, which indicates the call quality. The value ranges from 0 to 100",
+                      "description_en": "The call quality percentage. The value ranges from 0 to 100, indicating the percentage of speaking time in the outbound direction",
                       "description_zh": "通话质量百分比,数据是0-100之间，out方向说话占用的百分比",
                       "example": "70",
-                      "title_en": "通话质量百分比,数据是0-100之间，out方向说话占用的百分比",
+                      "title_en": "",
                       "title_zh": "通话质量百分比,数据是0-100之间，out方向说话占用的百分比",
                       "type": "string"
                     },
                     "WaitDuration": {
-                      "backendName": "waitDuration",
-                      "description_en": "The customer's wait time in seconds",
+                      "description_en": "The customer wait duration, in seconds",
                       "description_zh": "客户等待时长秒数，单位是s",
                       "example": "5",
-                      "title_en": "客户等待时长秒数，单位是s",
+                      "title_en": "",
                       "title_zh": "客户等待时长秒数，单位是s",
                       "type": "string"
                     },
                     "XNumber": {
-                      "backendName": "xNumber",
                       "description_en": "The virtual number",
                       "description_zh": "虚拟号码",
                       "example": "13322444",
-                      "title_en": "虚拟号码",
+                      "title_en": "",
                       "title_zh": "虚拟号码",
                       "type": "string"
                     }
                   },
                   "type": "object"
                 },
-                "title_en": "座席外呼通话记录数组",
+                "title_en": "",
                 "title_zh": "座席外呼通话记录数组",
                 "type": "array"
               }
@@ -835,22 +782,16 @@
             "type": "object"
           },
           "Message": {
-            "backendName": "message",
-            "description_en": "The response message",
+            "description_en": "The returned message",
             "description_zh": "返回信息",
             "example": "OK",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "6086693B-2250-17CE-A41F-06259AB6DB1B",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

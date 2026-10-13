@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun cdn DescribeCdnUserBillType --region cn-hangzhou --EndTime '2018-10-31T16:00:00Z' --StartTime '2018-09-30T16:00:00Z'",
   "cmd_full_name": "cdn describe-cdn-user-bill-type",
   "cmd_name": "describe-cdn-user-bill-type",
   "deprecated": false,
-  "description_en": "Queries information about the metering methods of an account. The maximum time range to query is one month",
+  "description_en": "Queries the billing type of a user. You can query data for up to one month",
   "description_zh": "调用DescribeCdnUserBillType查询用户计费类型，最多查询一个月的数据",
   "kebab_example": "aliyun cdn describe-cdn-user-bill-type --start-time 2018-09-30T16:00:00Z --end-time 2018-10-31T16:00:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "2018-09-30T16:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe minimum data granularity is 5 minutes",
+      "help_en": "The start time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe minimum data granularity is 5 minutes",
       "help_zh": "获取数据起始时间。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n最小数据粒度为5分钟",
       "location": "query",
       "name": "start_time",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2018-10-31T16:00:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取数据结束时间。日期格式按照ISO8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -53,45 +54,67 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "BillTypeData": {
-            "backendName": "data.content",
-            "itemName": "BillTypeDataItem",
-            "items": {
-              "properties": {
-                "BillType": {
-                  "backendName": "billType",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "BillTypeDataItem": {
+                "description_en": "The returned data of user billing types",
+                "description_zh": "用户计费类型返回数据",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "BillType": {
+                      "description_en": "The metering method.\n\nA value with the _overseas suffix indicates that billing for regions outside China is not divided by region. For example, \"BillType\": \"month_avg_day_bandwidth_overseas\" indicates that the metering method is monthly average daily peak bandwidth for regions outside China, and the billing is not divided by region.\n\nValid values:\nhour_flow: billed by hourly data transfer\nday_bandwidth: billed by daily bandwidth\nmonth_95: billed by monthly 95th percentile bandwidth\nmonth_avg_day_bandwidth: billed by monthly average daily peak bandwidth\nmonth_4th_day_bandwidth: billed by peak bandwidth on the fourth day of each month\nmonth_avg_day_95: billed by monthly average daily 95th percentile bandwidth\nmonth_95_night_half: billed by 95th percentile bandwidth with a 50% discount during nighttime\nhour_vas: billed by hourly value-added services\nquic_hour_count: billed by hourly QUIC requests\nday_count: billed by daily requests\nhour_count: billed by hourly requests\nday_95: billed by daily 95th percentile bandwidth",
+                      "description_zh": "计费模式。\n\n带_overseas后缀表示海外不分大区计费，例如：\"BillType\": \"month_avg_day_bandwidth_overseas\" 则表明该计费方式为月均日峰值海外不分区计费。\n\n计费模式取值如下所示：\nhour_flow：按小时流量计费。\nday_bandwidth：按日带宽计费。\nmonth_95：按月结95峰值带宽计费。\nmonth_avg_day_bandwidth：按月均日峰值带宽计费。\nmonth_4th_day_bandwidth：按月第四日峰值带宽计费。\nmonth_avg_day_95：按月均日95峰值带宽计费。\nmonth_95_night_half：按夜间半价95峰值带宽计费。\nhour_vas：按小时增值服务计费。\nquic_hour_count：按小时QUIC请求数计费。\nday_count：按日请求次数计费。\nhour_count：按小时请求次数计费。\nday_95：按日95峰值带宽计费",
+                      "example": "month_avg_day_bandwidth_overseas",
+                      "type": "string"
+                    },
+                    "BillingCycle": {
+                      "description_en": "The billing cycle",
+                      "description_zh": "计费周期",
+                      "example": "month",
+                      "type": "string"
+                    },
+                    "Dimension": {
+                      "description_en": "The dimension. Valid values:\nflow: traffic and bandwidth\nvas: value-added services (HTTPS and dynamic requests)\nquic: QUIC requests\nwebsocket: WebSocket communication protocol\nrtlog2sls: real-time log delivery to Simple Log Service\nstationflow: internal network traffic billing",
+                      "description_zh": "维度。取值如下所示：\nflow：流量带宽。\nvas：增值服务（https、动态请求）。\nquic：QUIC 请求数。\nwebsocket：websocket通信协议。\nrtlog2sls：实时日志推送sls。\nstationflow：流量内网化计费",
+                      "example": "flow",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The end time of the billing method. The time is in the ISO 8601 standard and in UTC",
+                      "description_zh": "计费模式结束时间。时间格式为 ISO 8601，使用 UTC 时间",
+                      "example": "2018-10-31T16:00:00Z",
+                      "type": "string"
+                    },
+                    "Product": {
+                      "description_en": "The product",
+                      "description_zh": "产品",
+                      "example": "cdn",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The start time of the billing method. The time is in the ISO 8601 standard and in UTC",
+                      "description_zh": "计费模式起始时间。时间格式为 ISO 8601，使用 UTC 时间",
+                      "example": "2018-10-30T16:00:00Z",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "BillingCycle": {
-                  "backendName": "billingCycle",
-                  "type": "string"
-                },
-                "Dimension": {
-                  "backendName": "dimension",
-                  "type": "string"
-                },
-                "EndTime": {
-                  "backendName": "endTime",
-                  "type": "string"
-                },
-                "Product": {
-                  "backendName": "product",
-                  "type": "string"
-                },
-                "StartTime": {
-                  "backendName": "startTime",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "C370DAF1-C838-4288-A1A0-9A87633D248E",
             "type": "string"

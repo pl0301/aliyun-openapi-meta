@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun hologram POST /api/v1/instances/hgprecn-cn-lbj35pw74002/network --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"networkTypes\":\"Internet,VPCSingleTunnel\",\"vSwitchId\":\"vsw-2vccsiymtqr9aavew0vo3\",\"vpcId\":\"vpc-t4netc3y5etlondfb5ra7\",\"vpcOwnerId\":\"1999365732646672\",\"anyTunnelToSingleTunnel\":\"true\",\"vpcRegionId\":\"cn-hangzhou\"}'",
   "cmd_full_name": "hologram update-instance-network-type",
   "cmd_name": "update-instance-network-type",
@@ -7,7 +8,7 @@
   "description_zh": "该接口用于修改实例网络类型",
   "kebab_example": "aliyun hologram update-instance-network-type --instance-id hgprecn-cn-lbj35pw74002 --network-types Internet,VPCSingleTunnel --vpc-id vpc-t4netc3y5etlondfb5ra7 --vswitch-id vsw-2vccsiymtqr9aavew0vo3 --vpc-region-id cn-hangzhou --vpc-owner-id 1999365732646672 --any-tunnel-to-single-tunnel true --region cn-hangzhou",
   "method": "POST",
-  "multi_version": false,
+  "multi_version": true,
   "name": "UpdateInstanceNetworkType",
   "operation": {
     "action": "UpdateInstanceNetworkType",
@@ -44,20 +45,12 @@
       "type": "string"
     },
     {
-      "example": "true",
-      "help_en": "Specifies whether to change the network type from AnyTunnel to SingleTunnel. This parameter is not applicable to new instances. Keep the default value of null",
-      "help_zh": "是否从AnyTunnel转换成SingleTunnel（新实例无用，默认为null即可）",
-      "location": "body",
-      "name": "any_tunnel_to_single_tunnel",
-      "options": [
-        "--any-tunnel-to-single-tunnel"
+      "enum": [
+        "VPCSingleTunnel",
+        "Intranet",
+        "VPCAnyTunnel",
+        "Internet"
       ],
-      "param_style": "json",
-      "raw_name": "anyTunnelToSingleTunnel",
-      "required": false,
-      "type": "string"
-    },
-    {
       "example": "Internet,VPCSingleTunnel",
       "help_en": "The network types to enable. The order of the network types does not matter. For example, if an instance has the Internet, Intranet, and VPCSingleTunnel network types enabled, disable the Internet network type by specifying \\`Intranet,VPCSingleTunnel\\`",
       "help_zh": "希望开启的网络类型列表，已有网络类型的组合，顺序无关。\n比如已经开启公网、内网和VPCSingleTunnel，如要关闭公网，\n则把公网类型去掉即可，即传递 “Intranet, VPCSingleTunnel” ",
@@ -68,20 +61,6 @@
       ],
       "param_style": "json",
       "raw_name": "networkTypes",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "vsw-2vccsiymtqr9aavew0vo3",
-      "help_en": "The ID of the vSwitch",
-      "help_zh": "虚拟交换机id",
-      "location": "body",
-      "name": "vswitch_id",
-      "options": [
-        "--vswitch-id"
-      ],
-      "param_style": "json",
-      "raw_name": "vSwitchId",
       "required": false,
       "type": "string"
     },
@@ -100,16 +79,16 @@
       "type": "string"
     },
     {
-      "example": "1999365732646672",
-      "help_en": "The ID of the Alibaba Cloud account that owns the VPC",
-      "help_zh": "vpc 的ownerId，即阿里云账号ID",
+      "example": "vsw-2vccsiymtqr9aavew0vo3",
+      "help_en": "The ID of the vSwitch",
+      "help_zh": "虚拟交换机id",
       "location": "body",
-      "name": "vpc_owner_id",
+      "name": "vswitch_id",
       "options": [
-        "--vpc-owner-id"
+        "--vswitch-id"
       ],
       "param_style": "json",
-      "raw_name": "vpcOwnerId",
+      "raw_name": "vSwitchId",
       "required": false,
       "type": "string"
     },
@@ -126,6 +105,38 @@
       "raw_name": "vpcRegionId",
       "required": false,
       "type": "string"
+    },
+    {
+      "example": "1999365732646672",
+      "help_en": "The ID of the Alibaba Cloud account that owns the VPC",
+      "help_zh": "vpc 的ownerId，即阿里云账号ID",
+      "location": "body",
+      "name": "vpc_owner_id",
+      "options": [
+        "--vpc-owner-id"
+      ],
+      "param_style": "json",
+      "raw_name": "vpcOwnerId",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "others/null",
+        "true"
+      ],
+      "example": "true",
+      "help_en": "Specifies whether to change the network type from AnyTunnel to SingleTunnel. This parameter is not applicable to new instances. Keep the default value of null",
+      "help_zh": "是否从AnyTunnel转换成SingleTunnel（新实例无用，默认为null即可）",
+      "location": "body",
+      "name": "any_tunnel_to_single_tunnel",
+      "options": [
+        "--any-tunnel-to-single-tunnel"
+      ],
+      "param_style": "json",
+      "raw_name": "anyTunnelToSingleTunnel",
+      "required": false,
+      "type": "string"
     }
   ],
   "pathPattern": "/api/v1/instances/[instanceId]/network",
@@ -138,51 +149,53 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Data": {
-            "backendName": "data",
             "description_en": "The result of the operation",
             "description_zh": "返回结果",
+            "enumValueTitles": {
+              "false": "失败",
+              "true": "成功"
+            },
             "example": "true",
             "type": "string"
           },
           "ErrorCode": {
-            "backendName": "errorCode",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "null",
             "type": "string"
           },
           "ErrorMessage": {
-            "backendName": "errorMessage",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "null",
             "type": "string"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "http状态码",
             "example": "200",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "Id of the request",
             "example": "9CC37B9F-F4B4-5FF1-939B-AEE78DC70130",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "请求结果",
+            "enumValueTitles": {
+              "false": "失败",
+              "true": "成功"
+            },
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

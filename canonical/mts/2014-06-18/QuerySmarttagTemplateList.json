@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun mts QuerySmarttagTemplateList --region cn-hangzhou --TemplateId 05de22f255284c7a8d2aab535dde0000",
   "cmd_full_name": "mts query-smarttag-template-list",
   "cmd_name": "query-smarttag-template-list",
@@ -44,86 +45,114 @@
         "description_zh": "返回参数",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "5210DBB0-E327-4D45-ADBC-0B83C8796E26",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Templates": {
-            "backendName": "data.templates",
-            "itemName": "Template",
-            "items": {
-              "properties": {
-                "AnalyseTypes": {
-                  "backendName": "analyseTypes",
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Template": {
+                "description_en": "The list of templates",
+                "description_zh": "模板列表",
+                "items": {
+                  "description_en": "The details of the template",
+                  "description_zh": "模板详细信息",
+                  "properties": {
+                    "AnalyseTypes": {
+                      "description_en": "The analysis type. One or more values may be returned. Valid values: \n\nocr: Recognizes tags from text in images.\nasr: Recognizes tags from audio speech.\nclassification: Video classification.\nshows: Recognizes shows in videos.\nface: Recognizes faces in videos.\nrole: Recognizes character roles in videos.\nobject: Recognizes objects in videos.\ntvstation: Recognizes TV station logos in videos.\naction: Recognizes action events in videos.\nemotion: Recognizes facial expressions in videos.\nlandmark: Recognizes landmarks in videos.\nscene: Recognizes scenes in videos.\nmovieIp: Recognizes movie and TV show IPs in videos.\n\nsubtitle: Caption extraction",
+                      "description_zh": "分析类型，可能返回一个或多个。可取值： \n\nocr：从图像⽂字中识别出标签 。\nasr：从⾳频语⾳中识别出标签 。\nclassification：视频分类 。\nshows：视频识别节⽬ 。\nface：视频识别⼈脸 。\nrole：视频识别⼈物⻆⾊ 。\nobject：视频识别物体 。\ntvstation：视频识别台标。\naction：视频识别动作事件 。\nemotion：视频识别表情 。\nlandmark：视频识别地标 。\nscene：视频识别场景。\nmovieIp：视频识别影视IP。\n\nsubtitle：字幕提取功能",
+                      "example": "ocr,asr,classification,shows,face,role,object,tvstation,action,emotion,landmark,scene",
+                      "type": "string"
+                    },
+                    "FaceCategoryIds": {
+                      "description_en": "The system face library ID. One or more values may be returned. Valid values:\n\ncelebrity: celebrity figures.\npolitician: political figures.\nsensitive: sensitive figures",
+                      "description_zh": "系统⼈脸库ID，可能返回一个或多个。可取值：\n\ncelebrity：明星⼈物。\npolitician：政治⼈物。\nsensitive：敏感⼈物",
+                      "example": "politician,sensitive,celebrity",
+                      "type": "string"
+                    },
+                    "FaceCustomParamsConfig": {
+                      "description_en": "The parameters of the face algorithm in JSON string format. Currently, the face detection threshold and face recognition threshold are supported. Valid values:\n\nfaceDetThreshold: the face detection threshold. Default value: 0.999. This parameter is valid only for unknown face analysis.\n\nfaceRegThreshold: the face recognition threshold. Default value: 0.9",
+                      "description_zh": "人脸算法的参数，JSON String形式，目前支持人脸检测阈值和人脸识别阈值。取值：\n\nfaceDetThreshold：人脸检测阈值，默认阈值0.999，只对陌生人脸分析有效。\n\nfaceRegThreshold：人脸识别阈值，默认阈值0.9",
+                      "example": "{ \"faceDetThreshold\":0.999, \"faceRegThreshold\":0.9 }",
+                      "type": "string"
+                    },
+                    "Industry": {
+                      "description_en": "The industry. Default value: common. Valid values:\n\nmicroVideo: short video industry.\n\ncommon: general industry",
+                      "description_zh": "⾏业。默认值：common（通用行业）。可取值：\n\nmicroVideo：小视频行业。\n\ncommon：通用行业",
+                      "example": "common",
+                      "type": "string"
+                    },
+                    "IsDefault": {
+                      "description_en": "Indicates whether this is the default template. Valid values:\n\ntrue: Yes.\n\nfalse: No",
+                      "description_zh": "是否为默认模板。可取值：\n\ntrue：是\n\nfalse：否",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "KeywordConfig": {
+                      "description_en": "The keyword tag configuration. The type field specifies the part-of-speech categories. You can select multiple categories separated by commas (,). The following categories are available:\n\nname: person name\n\nlocation: place name\n\norganization: organization name\n\nother: other\n\nIf KeywordConfig is not specified, or the Keyword field is invalid (not a JSON string), or KeywordsConfig does not contain the type field, or the type field is invalid, all keyword types are returned by default",
+                      "description_zh": "关键词标签配置。type代表词性类别选择，可多选，用半角逗号（,）分隔，当前有以下类别：\n\nname：人名\n\nlocation：地名\n\norganization：机构名\n\nother：其他\n\n当不传KeywordConfig时或者Keyword字段非法（不为JSON String）或者KeywordsConfig不包含type字段或者type字段非法时默认返回type全部类型关键词",
+                      "example": "{ \"type\": \"name,location,organization,other\" }",
+                      "type": "string"
+                    },
+                    "KnowledgeConfig": {
+                      "description_en": "In intelligent tagging 2.0 and 2.0-custom modes, specifies the scope of knowledge graph fields returned in the tag results. For more information about knowledge graph fields, see [Knowledge graph fields of intelligent tagging jobs]（https://help.aliyun.com/document_detail/356383.html）. If this parameter is not specified, or knowledgeConfig is empty, or knowledgeConfig is invalid (not a JSON string), the following fields are returned by default:\n\nmovie:\n\n    - name: IP name\n\n    - alias: IP alias\n    - chnl: category\n    - genre: genre\n    - country: production country or region\n    - language: language\n    - releaseYear: release year\n\nmusic:\n\n    - songName: song name\n    - artistName: artist name\n    - artistArea: artist region (Chinese/Japanese/Korean/Western/Other)\n    - albumName: album name\n\nperson:\n\n    - name: name\n    - gender: gender\n    - citizenship: citizenship\n    - occupation: occupation\n    - classification: type\n    - nationality: ethnicity\n    - birthPlace: birthplace\n    - birthDate: date of birth\n\nlandmark\n    - name: name\n    - nameEn: English name\n    - description: description\n    - address: address\n\nitem\n\n    - brandName: brand\n    - finegrainName: fine-grained description",
+                      "description_zh": "智能标签2.0和2.0-custom模式下，设置返回标签结果中识别到知识图谱信息字段范围。更多知识图谱信息请参见[智能标签作业知识图谱字段说明]（https://help.aliyun.com/document_detail/356383.html）。不填写或者knowledgeConfig为空或者knowledgeConfig非法（不为JSON String）时，默认输出以下字段：\n\nmovie：\n\n    - name：IP名称\n\n    - alias：IP别名\n    - chnl：类别\n    - genre：类型\n    - country：制片国家、地区\n    - language：语言\n    -  releaseYear：发布年份\n\nmusic：\n\n    - songName：歌曲名称\n    - artistName：歌手姓名\n    - artistArea：歌手所属地区，华语/日本/韩国/欧美/其他\n    - albumName：专辑名称\n\nperson：\n\n    - name：姓名\n    - gender：性别\n    - citizenship：国籍\n    -  occupation：职业\n    - classification：类型\n    - nationality：民族\n    - birthPlace：出生地\n    - birthDate：出生日期\n\nlandmark\n    - name：名称\n    - nameEn：英文名\n    - description：描述\n    - address：地址\n\nitem\n\n    - brandName：品牌\n    - finegrainName：细粒度描述",
+                      "example": "{ \"movie\":\"name,alias,chnl,genre\", \"music\":\"songName,artistName\", \"person\":\"name,gender\" }",
+                      "type": "string"
+                    },
+                    "LabelType": {
+                      "description_en": "The labeling type. Default value: auto. Valid values:\n\nauto: machine labeling.\n\nhmi: human-machine collaboration",
+                      "description_zh": "标注类型，默认值auto。目前支持类型：\n\nauto：机器打标。\n\nhmi：人机协同",
+                      "example": "hmi",
+                      "type": "string"
+                    },
+                    "LabelVersion": {
+                      "description_en": "The intelligent tagging version. Default value: \"1.0\". Valid values:\n\n1.0: intelligent tagging 1.0.\n\n2.0: intelligent tagging 2.0 (CPV tags).\n\n2.0-custom: intelligent tagging 2.0-custom (CPV tag custom model)",
+                      "description_zh": "指定智能标签版本，默认为\"1.0\"。可取值：\n\n1.0：智能标签1.0，\n\n2.0：智能标签2.0（CPV标签）\n\n2.0-custom：智能标签2.0-custom（CPV标签定制模型）",
+                      "example": "1.0",
+                      "type": "string"
+                    },
+                    "LandmarkGroupIds": {
+                      "description_en": "The list of landmark library IDs used for recognition",
+                      "description_zh": "参与识别的地域库ID列表",
+                      "example": "common",
+                      "type": "string"
+                    },
+                    "ObjectGroupIds": {
+                      "description_en": "The list of object library IDs used for recognition",
+                      "description_zh": "参与识别的物体库ID列表",
+                      "example": "general,item,weapon,animal",
+                      "type": "string"
+                    },
+                    "Scene": {
+                      "description_en": "The scenario. Valid values:\n\nsearch: search scenario.\nrecommend: recommendation scenario",
+                      "description_zh": "场景，可取值：\n\nsearch：搜索场景。\nrecommend：推荐场景",
+                      "example": "search",
+                      "type": "string"
+                    },
+                    "TemplateId": {
+                      "description_en": "The template ID",
+                      "description_zh": "模板ID",
+                      "example": "05de22f255284c7a8d2aab535dde****",
+                      "type": "string"
+                    },
+                    "TemplateName": {
+                      "description_en": "The template name",
+                      "description_zh": "模板名称",
+                      "example": "example-****",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "FaceCategoryIds": {
-                  "backendName": "faceCategoryIds",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "FaceCustomParamsConfig": {
-                  "backendName": "faceCustomParamsConfig",
-                  "type": "string"
-                },
-                "Industry": {
-                  "backendName": "industry",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "IsDefault": {
-                  "backendName": "isDefault",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "KeywordConfig": {
-                  "backendName": "keywordConfig",
-                  "type": "string"
-                },
-                "KnowledgeConfig": {
-                  "backendName": "knowledgeConfig",
-                  "type": "string"
-                },
-                "LabelType": {
-                  "backendName": "labelType",
-                  "type": "string"
-                },
-                "LabelVersion": {
-                  "backendName": "labelVersion",
-                  "type": "string"
-                },
-                "LandmarkGroupIds": {
-                  "backendName": "landmarkGroupIds",
-                  "type": "string"
-                },
-                "ObjectGroupIds": {
-                  "backendName": "objectGroupIds",
-                  "type": "string"
-                },
-                "Scene": {
-                  "backendName": "scene",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "TemplateId": {
-                  "backendName": "templateId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "TemplateName": {
-                  "backendName": "templateName",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

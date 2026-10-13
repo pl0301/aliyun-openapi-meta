@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun bssopenapi QueryRedeem --region cn-hangzhou --EffectiveOrNot true --ExpiryTimeStart '2018-08-01T00:00:00Z' --PageNum 1 --PageSize 10 --ExpiryTimeEnd '2018-08-01T00:00:00Z'",
   "cmd_full_name": "bssopenapi query-redeem",
   "cmd_name": "query-redeem",
   "deprecated": false,
-  "description_en": "Queries the information about a voucher",
+  "description_en": "Queries the redemption ticket information of a user",
   "description_zh": "查询用户提货券信息",
   "kebab_example": "aliyun bssopenapi query-redeem --expiry-time-start 2018-08-01T00:00:00Z --expiry-time-end 2018-08-01T00:00:00Z --effective-or-not true --page-num 1 --page-size 10 --api-version 2017-12-14 --region cn-hangzhou",
   "method": "GET",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "2018-08-01T00:00:00Z",
-      "help_en": "The start time when the redemption coupon expires. The value must be in the yyyy-MM-ddTHH:mm:ssZ format",
+      "help_en": "The start time of the expiration period. Format: yyyy-MM-ddTHH:mm:ssZ",
       "help_zh": "失效开始时间。格式：yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "expiry_time_start",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2018-08-01T00:00:00Z",
-      "help_en": "The end time when the redemption coupon expires. The value must be in the yyyy-MM-ddTHH:mm:ssZ format",
+      "help_en": "The end time of the expiration period. Format: yyyy-MM-ddTHH:mm:ssZ",
       "help_zh": "失效结束时间。格式：yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "expiry_time_end",
@@ -48,7 +49,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether the redemption coupon takes effect. Valid values:\n\ntrue\nfalse\n\nDefault value: false",
+      "help_en": "Specifies whether the redemption ticket is effective. Valid values:\ntrue: Effective.\nfalse: Not effective.\n\nDefault value: false",
       "help_zh": "提货券是否生效：\ntrue。\nfalse。\n\n默认false",
       "location": "query",
       "name": "effective_or_not",
@@ -61,7 +62,7 @@
     },
     {
       "example": "1",
-      "help_en": "The number of the page to return",
+      "help_en": "The page number",
       "help_zh": "页码",
       "location": "query",
       "name": "page_num",
@@ -74,7 +75,7 @@
     },
     {
       "example": "10",
-      "help_en": "The number of entries to return on each page",
+      "help_en": "The number of entries per page. The value cannot exceed 300",
       "help_zh": "每页显示条数。每页条数不允许超过300",
       "location": "query",
       "name": "page_size",
@@ -92,154 +93,140 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
-            "description_en": "The status code returned",
+            "description_en": "The status code",
             "description_zh": "状态码",
             "example": "Success",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Data": {
-            "backendName": "data",
-            "description_en": "The data returned",
+            "description_en": "The returned data",
             "description_zh": "返回数据",
-            "nullToEmpty": false,
             "properties": {
               "PageNum": {
-                "backendName": "pageNum",
-                "description_en": "The page number of the returned page",
+                "description_en": "The page number",
                 "description_zh": "页码",
                 "example": "1",
                 "format": "int64",
-                "nullToEmpty": false,
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "PageSize": {
-                "backendName": "pageSize",
-                "description_en": "The number of entries returned per page",
+                "description_en": "The number of entries per page",
                 "description_zh": "每页显示条数",
                 "example": "10",
                 "format": "int64",
-                "nullToEmpty": false,
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               },
               "Redeem": {
-                "backendName": "redeemList",
-                "itemName": "Redeem",
-                "items": {
-                  "properties": {
-                    "ApplicableProducts": {
-                      "backendName": "applicableProducts",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Redeem": {
+                    "description_en": "The redemption ticket details",
+                    "description_zh": "提货券详情",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "ApplicableProducts": {
+                          "description_en": "The applicable products",
+                          "description_zh": "适用产品",
+                          "example": "云服务器",
+                          "type": "string"
+                        },
+                        "Balance": {
+                          "description_en": "The balance",
+                          "description_zh": "余额",
+                          "example": "0",
+                          "type": "string"
+                        },
+                        "EffectiveTime": {
+                          "description_en": "The effective period of the redemption ticket. Format: YYYY-MM-DD HH:mm:ss",
+                          "description_zh": "提货券生效时间，格式为 YYYY-MM-DD HH:mm:ss",
+                          "example": "2018-05-14 20:25:00",
+                          "type": "string"
+                        },
+                        "ExpiryTime": {
+                          "description_en": "The expiration time of the redemption ticket. Format: YYYY-MM-DD HH:mm:ss",
+                          "description_zh": "提货券失效时间，格式为 YYYY-MM-DD HH:mm:ss",
+                          "example": "2018-06-13 20:25:00",
+                          "type": "string"
+                        },
+                        "GrantedTime": {
+                          "description_en": "The issue time of the redemption ticket. Format: YYYY-MM-DD HH:mm:ss",
+                          "description_zh": "提货券发行时间，格式为 YYYY-MM-DD HH:mm:ss",
+                          "example": "2018-05-14 20:25:00",
+                          "type": "string"
+                        },
+                        "NominalValue": {
+                          "description_en": "The face value",
+                          "description_zh": "面额",
+                          "example": "0",
+                          "type": "string"
+                        },
+                        "RedeemId": {
+                          "description_en": "The redemption ticket ID",
+                          "description_zh": "提货券ID",
+                          "example": "1342",
+                          "type": "string"
+                        },
+                        "RedeemNo": {
+                          "description_en": "The redemption ticket number",
+                          "description_zh": "提货券Number",
+                          "example": "4889*****1610",
+                          "type": "string"
+                        },
+                        "Specification": {
+                          "description_en": "The specifications of the redemption ticket",
+                          "description_zh": "提货券规格",
+                          "example": "无",
+                          "type": "string"
+                        },
+                        "Status": {
+                          "description_en": "The status of the redemption ticket. Valid values:\nGenerated: Generated.\nCallBack: Called back.\nRefundPending: Refund in progress.\nCanceled: Canceled.\nOrder_Canceled: Order canceled.\nActivePending: Activating.\nActiveSuccess: Activated.\nExchangePending: Exchanging.\nExchangeSuccess: Exchanged.\nExpired: Expired.\nInvalid: Invalid",
+                          "description_zh": "提货券状态，取值：\nGenerated：已生成。\nCallBack：已回调。\nRefundPending：提货券退款中。\nCanceled：提货券已作废。\nOrder_Canceled：订单已作废。\nActivePending：激活中，请稍后。\nActiveSuccess：激活成功。\nExchangePending：兑换中。\nExchangeSuccess：兑换成功。\nExpired：已过期。\nInvalid：已作废",
+                          "example": "Generated",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "Balance": {
-                      "backendName": "balance",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "EffectiveTime": {
-                      "backendName": "effectiveTime",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "ExpiryTime": {
-                      "backendName": "expiryTime",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "GrantedTime": {
-                      "backendName": "grantedTime",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "NominalValue": {
-                      "backendName": "nominalValue",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "RedeemId": {
-                      "backendName": "redeemId",
-                      "nullToEmpty": false,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "RedeemNo": {
-                      "backendName": "redeemNo",
-                      "nullToEmpty": false,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "Specification": {
-                      "backendName": "specification",
-                      "nullToEmpty": true,
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "Status": {
-                      "backendName": "status",
-                      "nullToEmpty": false,
-                      "type": "string",
-                      "visibility": "Public"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": true,
-                "type": "array",
-                "visibility": "Public"
+                "type": "object"
               },
               "TotalCount": {
-                "backendName": "totalCount",
-                "description_en": "The total number of returned entries",
+                "description_en": "The total number of entries",
                 "description_zh": "总记录数",
                 "example": "1",
                 "format": "int64",
-                "nullToEmpty": false,
-                "type": "integer",
-                "visibility": "Public"
+                "type": "integer"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
-            "description_en": "The message returned",
+            "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "Successful",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "E503DC7B-E4F0-4B3C-BC89-BCECF1338F0B",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request is successful",
             "description_zh": "是否成功",
             "example": "true",
-            "nullToEmpty": false,
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

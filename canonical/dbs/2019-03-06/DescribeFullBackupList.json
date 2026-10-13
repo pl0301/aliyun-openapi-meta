@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dbs DescribeFullBackupList --region cn-hangzhou --BackupPlanId dbsr179qz000000",
   "cmd_full_name": "dbs describe-full-backup-list",
   "cmd_name": "describe-full-backup-list",
   "deprecated": false,
-  "description_en": "This operation lists full backup jobs in Database Backup (DBS)",
+  "description_en": "Queries the list of full backup tasks in Database Backup (DBS)",
   "description_zh": "该接口用于查看DBS全量备份任务列表",
   "kebab_example": "aliyun dbs describe-full-backup-list --backup-plan-id dbsr179qz000000 --api-version 2019-03-06 --region cn-hangzhou",
   "method": "GET|POST",
@@ -35,7 +36,7 @@
     },
     {
       "example": "30",
-      "help_en": "The number of entries to return on each page. Valid values:\n\n30\n\n50\n\n100\n\nDefault value: 30",
+      "help_en": "The number of entries per page. Valid values:\n30\n50\n100\n\nDefault value: 30",
       "help_zh": "每页的记录数，取值：\n30\n50\n100\n\n默认为30",
       "location": "query",
       "name": "page_size",
@@ -48,7 +49,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number of the page to return. The value must be an integer that is greater than or equal to 0. Default value: 0",
+      "help_en": "The page number. The value must be greater than or equal to 0 and less than or equal to the maximum value of the Integer data type. Default value: 0",
       "help_zh": "页码，大于等于0且不超过Integer的最大值，默认值为：0",
       "location": "query",
       "name": "page_num",
@@ -61,7 +62,7 @@
     },
     {
       "example": "ETnLKlblzczshOTUbOCzxxxxxxx",
-      "help_en": "A token that you can use to ensure the idempotence of the request",
+      "help_en": "The client token that is used to ensure request idempotence and prevent duplicate submissions",
       "help_zh": "用于保证请求的幂等性，防止重复提交请求",
       "location": "query",
       "name": "client_token",
@@ -74,7 +75,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether to return the storage type of the backup set",
+      "help_en": "Specifies whether to display the storage type",
       "help_zh": "是否显示存储类型",
       "location": "query",
       "name": "show_storage_type",
@@ -100,7 +101,7 @@
     },
     {
       "example": "1676887100",
-      "help_en": "The beginning of the time range to query. This value is a UNIX timestamp representing the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+      "help_en": "The start time of the backup",
       "help_zh": "开始备份时间",
       "location": "query",
       "name": "start_timestamp",
@@ -113,7 +114,7 @@
     },
     {
       "example": "1676887128",
-      "help_en": "The end of the time range to query. This value is a UNIX timestamp representing the number of seconds that have elapsed since January 1, 1970, 00:00:00 UTC",
+      "help_en": "The end time of the backup",
       "help_zh": "结束备份时间",
       "location": "query",
       "name": "end_timestamp",
@@ -126,7 +127,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether to return real-time information about the backup progress",
+      "help_en": "Specifies whether to display the backup progress",
       "help_zh": "是否展示备份进度",
       "location": "query",
       "name": "show_progress",
@@ -139,7 +140,7 @@
     },
     {
       "example": "finish",
-      "help_en": "The status of the backup set. You can use this parameter to filter backup sets",
+      "help_en": "The status of the backup set",
       "help_zh": "备份集状态",
       "location": "query",
       "name": "backup_set_status",
@@ -157,25 +158,22 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The response parameters",
+        "description_en": "The response parameters are as follows",
         "description_zh": "返回参数详情如下",
         "properties": {
           "ErrCode": {
-            "backendName": "errCode",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "Param.NotFound",
             "type": "string"
           },
           "ErrMessage": {
-            "backendName": "errMessage",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "The specified parameter %s value is not valid.     ",
             "type": "string"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "HTTP状态码",
             "example": "200",
@@ -183,165 +181,210 @@
             "type": "integer"
           },
           "Items": {
-            "backendName": "items",
-            "itemName": "FullBackupFile",
-            "items": {
-              "properties": {
-                "BackupGatewayIdentifier": {
-                  "backendName": "backupGatewayIdentifier",
-                  "example": "TESTGATEWAY",
-                  "title_en": "备份网关唯一标识码",
-                  "title_zh": "备份网关唯一标识码",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "FullBackupFile": {
+                "description_en": "The details of the full backup tasks",
+                "description_zh": "全量备份任务详情",
+                "items": {
+                  "description_en": "The details of the full backup tasks",
+                  "description_zh": "全量备份任务详情",
+                  "properties": {
+                    "BackupGatewayIdentifier": {
+                      "description_en": "The unique identifier of the backup gateway",
+                      "description_zh": "备份网关唯一标识码",
+                      "example": "TESTGATEWAY",
+                      "title_en": "",
+                      "title_zh": "备份网关唯一标识码",
+                      "type": "string"
+                    },
+                    "BackupObjects": {
+                      "description_en": "The backup objects",
+                      "description_zh": "备份对象",
+                      "example": "[{\\\"DBName\\\":\\\"test\\\"}]",
+                      "type": "string"
+                    },
+                    "BackupSetExpiredTime": {
+                      "description_en": "The timestamp when the retention period of the backup set expires",
+                      "description_zh": "备份集保留到期时间戳",
+                      "example": "1677491900000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BackupSetId": {
+                      "description_en": "The ID of the backup set",
+                      "description_zh": "备份集ID",
+                      "example": "1iukx5h******",
+                      "type": "string"
+                    },
+                    "BackupSize": {
+                      "description_en": "The size of the backup",
+                      "description_zh": "备份大小",
+                      "example": "580",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BackupStatus": {
+                      "description_en": "The status of the backup task. Valid values:\nschedule: Initializing.\nrunning: Running.\nfinish: Completed.\nstop: Failed.\npause: Paused",
+                      "description_zh": "备份任务状态，取值：\nschedule：初始化中\nrunning：运行中\nfinish：完成\nstop：失败\npause：暂停",
+                      "example": "finish",
+                      "type": "string"
+                    },
+                    "CreateTime": {
+                      "description_en": "The timestamp when the task started",
+                      "description_zh": "任务开始时间戳",
+                      "example": "1676886947000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CrossAliyunId": {
+                      "description_en": "The ID of the Alibaba Cloud account for cross-account backup",
+                      "description_zh": "跨账号备份阿里云Id",
+                      "example": "2xxx7778xxxxxxxxxx",
+                      "title_en": "",
+                      "title_zh": "跨账号备份阿里云Id",
+                      "type": "string"
+                    },
+                    "CrossRoleName": {
+                      "description_en": "The name of the Resource Access Management (RAM) role for cross-account backup",
+                      "description_zh": "跨账号备份RAM角色名称",
+                      "example": "ram-for-dbs",
+                      "title_en": "",
+                      "title_zh": "跨账号备份RAM角色名称",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The timestamp when the backup ended",
+                      "description_zh": "备份结束时间戳",
+                      "example": "1676887128000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ErrMessage": {
+                      "description_en": "The error message",
+                      "description_zh": "错误信息",
+                      "example": "NULL",
+                      "type": "string"
+                    },
+                    "FinishTime": {
+                      "description_en": "The timestamp when the task ended",
+                      "description_zh": "任务结束时间戳",
+                      "example": "1676887128000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "LogicalFullBackupProgress": {
+                      "description_en": "The progress of the logical full backup",
+                      "description_zh": "逻辑备份全量备份进度",
+                      "example": "100",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "逻辑备份全量备份进度",
+                      "type": "integer"
+                    },
+                    "LogicalStructureBackupProgress": {
+                      "description_en": "The progress of the logical structure backup",
+                      "description_zh": "逻辑备份结构备份进度",
+                      "example": "100",
+                      "format": "int32",
+                      "title_en": "",
+                      "title_zh": "逻辑备份结构备份进度",
+                      "type": "integer"
+                    },
+                    "SourceEndpointEnableSsl": {
+                      "description_en": "Indicates whether a Secure Sockets Layer (SSL) secure connection is enabled for the source database",
+                      "description_zh": "备份源数据库是否开启SSL安全连接",
+                      "example": "true",
+                      "title_en": "",
+                      "title_zh": "备份源数据库是否开启SSL安全连接",
+                      "type": "string"
+                    },
+                    "SourceEndpointHost": {
+                      "description_en": "The database connection address of the source database for backup",
+                      "description_zh": "备份源数据库连接地址",
+                      "example": "127.0.0.1",
+                      "title_en": "",
+                      "title_zh": "备份源数据库连接地址",
+                      "type": "string"
+                    },
+                    "SourceEndpointInstanceId": {
+                      "description_en": "The ID of the source database instance",
+                      "description_zh": "备份源数据库实例Id",
+                      "example": "rm-testxx",
+                      "title_en": "",
+                      "title_zh": "备份源数据库实例Id",
+                      "type": "string"
+                    },
+                    "SourceEndpointInstanceType": {
+                      "description_en": "The instance type of the source database",
+                      "description_zh": "备份源数据库实例类型",
+                      "example": "rds",
+                      "title_en": "",
+                      "title_zh": "备份源数据库实例类型",
+                      "type": "string"
+                    },
+                    "SourceEndpointIpPort": {
+                      "description_en": "The database connection address",
+                      "description_zh": "数据库连接地址",
+                      "example": "121.XXX.XXX.144:3306",
+                      "type": "string"
+                    },
+                    "SourceEndpointPort": {
+                      "description_en": "The port of the source database",
+                      "description_zh": "备份源数据库端口",
+                      "example": "3306",
+                      "title_en": "",
+                      "title_zh": "备份源数据库端口",
+                      "type": "string"
+                    },
+                    "SourceEndpointRegion": {
+                      "description_en": "The region where the source database resides",
+                      "description_zh": "备份源数据库所在地域",
+                      "example": "cn-beijing",
+                      "title_en": "",
+                      "title_zh": "备份源数据库所在地域",
+                      "type": "string"
+                    },
+                    "SourceEndpointUserName": {
+                      "description_en": "The account of the source database",
+                      "description_zh": "备份源数据库账号",
+                      "example": "dbs_backup",
+                      "title_en": "",
+                      "title_zh": "备份源数据库账号",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The start time of the backup. The value is a UNIX timestamp in milliseconds",
+                      "description_zh": "备份开始时间，采用 UNIX 时间戳，单位为毫秒",
+                      "example": "1676887100000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "StorageEncryptMethod": {
+                      "description_en": "The encryption method for the backup storage",
+                      "description_zh": "备份存储加密方式",
+                      "example": "encrypted",
+                      "title_en": "",
+                      "title_zh": "备份存储加密方式",
+                      "type": "string"
+                    },
+                    "StorageMethod": {
+                      "description_en": "The storage type. Valid values:\nStandard: Standard storage.\nIA: Infrequent Access (IA) storage.\nArchive: Archive storage.\nUNKNOWN: Unknown. This value is typically returned when the task is not completed",
+                      "description_zh": "存储类型，取值：\nStandard：标准存储\nIA：低频访问存储\nArchive：归档存储\nUNKNOWN：未知，通常是任务未完成时的状态",
+                      "example": "Standard",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "BackupObjects": {
-                  "backendName": "backupObjects",
-                  "type": "string"
-                },
-                "BackupSetExpiredTime": {
-                  "backendName": "backupSetExpiredTime",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "BackupSetId": {
-                  "backendName": "backupSetId",
-                  "type": "string"
-                },
-                "BackupSize": {
-                  "backendName": "backupSize",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "BackupStatus": {
-                  "backendName": "backupStatus",
-                  "type": "string"
-                },
-                "CreateTime": {
-                  "backendName": "createTime",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "CrossAliyunId": {
-                  "backendName": "crossAliyunId",
-                  "example": "2xxx7778xxxxxxxxxx",
-                  "title_en": "跨账号备份阿里云Id",
-                  "title_zh": "跨账号备份阿里云Id",
-                  "type": "string"
-                },
-                "CrossRoleName": {
-                  "backendName": "crossRoleName",
-                  "example": "ram-for-dbs",
-                  "title_en": "跨账号备份RAM角色名称",
-                  "title_zh": "跨账号备份RAM角色名称",
-                  "type": "string"
-                },
-                "EndTime": {
-                  "backendName": "endTime",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "ErrMessage": {
-                  "backendName": "errMessage",
-                  "type": "string"
-                },
-                "FinishTime": {
-                  "backendName": "finishTime",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "LogicalFullBackupProgress": {
-                  "backendName": "logicalFullBackupProgress",
-                  "example": "100",
-                  "format": "int32",
-                  "title_en": "逻辑备份全量备份进度",
-                  "title_zh": "逻辑备份全量备份进度",
-                  "type": "integer"
-                },
-                "LogicalStructureBackupProgress": {
-                  "backendName": "logicalStructureBackupProgress",
-                  "example": "100",
-                  "format": "int32",
-                  "title_en": "逻辑备份结构备份进度",
-                  "title_zh": "逻辑备份结构备份进度",
-                  "type": "integer"
-                },
-                "SourceEndpointEnableSsl": {
-                  "backendName": "sourceEndpointEnableSsl",
-                  "example": "true",
-                  "title_en": "备份源数据库是否开启SSL安全连接",
-                  "title_zh": "备份源数据库是否开启SSL安全连接",
-                  "type": "string"
-                },
-                "SourceEndpointHost": {
-                  "backendName": "sourceEndpointHost",
-                  "example": "127.0.0.1",
-                  "title_en": "备份源数据库连接地址",
-                  "title_zh": "备份源数据库连接地址",
-                  "type": "string"
-                },
-                "SourceEndpointInstanceId": {
-                  "backendName": "sourceEndpointInstanceId",
-                  "example": "rm-testxx",
-                  "title_en": "备份源数据库实例Id",
-                  "title_zh": "备份源数据库实例Id",
-                  "type": "string"
-                },
-                "SourceEndpointInstanceType": {
-                  "backendName": "sourceEndpointInstanceType",
-                  "example": "rds",
-                  "title_en": "备份源数据库实例类型",
-                  "title_zh": "备份源数据库实例类型",
-                  "type": "string"
-                },
-                "SourceEndpointIpPort": {
-                  "backendName": "sourceEndpointIpPort",
-                  "type": "string"
-                },
-                "SourceEndpointPort": {
-                  "backendName": "sourceEndpointPort",
-                  "example": "3306",
-                  "title_en": "备份源数据库端口",
-                  "title_zh": "备份源数据库端口",
-                  "type": "string"
-                },
-                "SourceEndpointRegion": {
-                  "backendName": "sourceEndpointRegion",
-                  "example": "cn-beijing",
-                  "title_en": "备份源数据库所在地域",
-                  "title_zh": "备份源数据库所在地域",
-                  "type": "string"
-                },
-                "SourceEndpointUserName": {
-                  "backendName": "sourceEndpointUserName",
-                  "example": "dbs_backup",
-                  "title_en": "备份源数据库账号",
-                  "title_zh": "备份源数据库账号",
-                  "type": "string"
-                },
-                "StartTime": {
-                  "backendName": "startTime",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "StorageEncryptMethod": {
-                  "backendName": "storageEncryptMethod",
-                  "example": "encrypted",
-                  "title_en": "备份存储加密方式",
-                  "title_zh": "备份存储加密方式",
-                  "type": "string"
-                },
-                "StorageMethod": {
-                  "backendName": "storageMethod",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "PageNum": {
-            "backendName": "pageNum",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
@@ -349,7 +392,6 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "每页的记录数",
             "example": "10",
@@ -357,29 +399,25 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The request ID",
+            "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "636BC118-6080-4119-A6B5-C199CEC1037D",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue: The request was successful.\n\nfalse: The request failed",
+            "description_en": "Indicates whether the request was successful. Valid values:\ntrue: The request was successful.\nfalse: The request failed",
             "description_zh": "是否执行成功。返回值：\ntrue：执行成功。\nfalse：执行失败",
             "example": "true",
             "type": "boolean"
           },
           "TotalElements": {
-            "backendName": "totalElements",
-            "description_en": "The total number of full backup sets",
+            "description_en": "The total number of full backup tasks",
             "description_zh": "总全量备份任务数",
             "example": "1",
             "format": "int32",
             "type": "integer"
           },
           "TotalPages": {
-            "backendName": "totalPages",
             "description_en": "The total number of pages",
             "description_zh": "总页数",
             "example": "1",

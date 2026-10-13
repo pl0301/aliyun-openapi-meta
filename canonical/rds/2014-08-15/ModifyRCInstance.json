@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 60000,
   "camel_example": "aliyun rds ModifyRCInstance --region cn-hangzhou --RebootTime '2025-04-03T12:05Z' --BusinessInfo 'example-string' --InstanceId 'rm-uf62br2491p5l0000' --AutoUseCoupon true --PromotionCode 723298850000 --DryRun true --RegionId 'cn-hangzhou' --AutoPay true --InstanceType 'mysql.i8.large.2cm' --Direction Up --RebootWhenFinished true",
   "cmd_full_name": "rds modify-rc-instance",
   "cmd_name": "modify-rc-instance",
   "deprecated": false,
-  "description_en": "ModifyRCInstance",
+  "description_en": "Upgrades or downgrades the instance type of an RDS Custom instance",
   "description_zh": "调用ModifyRCInstance接口，升级或者降低一台RDS Custom实例的实例规格",
   "kebab_example": "aliyun rds modify-rc-instance --biz-region-id cn-hangzhou --instance-id rm-uf62br2491p5l0000 --instance-type mysql.i8.large.2cm --direction Up --auto-pay true --dry-run true --reboot-when-finished true --reboot-time 2025-04-03T12:05Z --auto-use-coupon true --promotion-code 723298850000 --business-info example-string --region cn-hangzhou",
   "method": "POST",
@@ -48,7 +49,7 @@
     },
     {
       "example": "mysql.i8.large.2cm\n",
-      "help_en": "The new instance type. For more information about the instance types that are supported by RDS Custom instances, see https://help.aliyun.com/document_detail/2844823.html",
+      "help_en": "The destination instance type. For more information about the instance types supported by RDS Target instances, see https://help.aliyun.com/document_detail/2844823.html",
       "help_zh": "需要变配的目标实例规格。RDS Custom实例支持的资源规格，请参见https://help.aliyun.com/document_detail/2844823.html",
       "location": "query",
       "name": "instance_type",
@@ -65,7 +66,7 @@
         "Down"
       ],
       "example": "Up",
-      "help_en": "The type of the change that you want to perform on the instance. Valid values:\n\nThis parameter is optional. The system can automatically determine whether the instance change is an upgrade or a downgrade. If you want to specify this parameter, take note of the following items:\n\nUpgrade (default): upgrades the instance type. Make sure that your account balance is sufficient.\nDown: downgrades the instance type. If the new instance type specified by InstanceType has lower specifications than the current instance type, set Direction to Down",
+      "help_en": "The instance upgrade or downgrade type. Valid values:\nYou do not need to specify this parameter. The system automatically determines whether to upgrade or downgrade the instance type. If you want to specify it, follow these rules:\nUp (default): upgrades the instance type. Make sure that your account balance is sufficient.\nDown: downgrades the instance type. When the instance type specified in InstanceType is lower than the current instance type, set Direction to Down",
       "help_zh": "实例变配类型，取值范围：\n该参数可无需上传，系统可自动判断升配还是降配；如要上传，请按照下面的逻辑规则操作。\nUp（默认）：升配实例规格。请确保您的账户支付方式余额充足。\nDown：降配实例规格。当InstanceType设置的实例规格低于当前实例规格时，设置Direction=down",
       "location": "query",
       "name": "direction",
@@ -78,7 +79,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether to enable the automatic payment feature. Valid values:\n\ntrue (default): enables the feature. You must make sure that your account balance is sufficient.\nfalse: disables the feature. An unpaid order is generated.\n\nIf your account balance is insufficient, you can set AutoPay to false. In this case, an unpaid order is generated. You can complete the payment in the Expenses and Costs console",
+      "help_en": "Specifies whether to enable automatic payment. Valid values:\ntrue (default): enables automatic payment. Make sure that your account balance is sufficient.\nfalse: generates an order without deducting fees.\nIf your account balance is insufficient, you can set the AutoPay parameter to false. An unpaid order is generated. You can log on to the ApsaraDB RDS console to complete the payment",
       "help_zh": "是否自动支付。取值范围：\ntrue（默认）：自动支付。您需要确保账户余额充足。\nfalse：只生成订单不扣费。\n如果您的支付方式余额不足，可以将参数AutoPay设置为false，此时会生成未支付订单，您可以登录RDS管理控制台自行支付",
       "location": "query",
       "name": "auto_pay",
@@ -91,7 +92,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether to perform only a dry run, without performing the actual request. Valid values:\n\ntrue: performs only a dry run. The system checks the request for potential issues, including missing parameter values, incorrect request syntax, service limits, and resource inventory.\nfalse: performs a dry run and performs the actual request. If the request passes the dry run, the operation is performed",
+      "help_en": "Specifies whether to perform a precheck on the instance creation operation. Valid values:\ntrue: performs a precheck without creating an instance. Check items include request parameters, request format, service limits, and inventory.\nfalse: sends a normal request and directly creates the instance after the request passes the precheck. This is the default value",
       "help_zh": "是否对本次创建实例的操作执行预检查，取值范围：\ntrue：执行预检查操作，不创建实例。检查项目包含请求参数、请求格式、业务限制和库存等。\nfalse（默认）：发送正常请求，通过检查后直接创建实例",
       "location": "query",
       "name": "dry_run",
@@ -104,7 +105,7 @@
     },
     {
       "example": "true",
-      "help_en": "Whether to restart the instance immediately after the upgrade/downgrade operation ends. Valid values:\ntrue (default): Yes.\nfalse: No.\nIf the instance is in the paused status, it remains in that status even if you set `RebootWhenFinished=true`, and the restart operation will not be executed",
+      "help_en": "Specifies whether to immediately restart the instance after the instance type change is complete. Valid values:\n\ntrue: restarts the instance immediately. This is the default value.\nfalse: does not restart the instance immediately.\n\nIf the instance is in the Stopped state, it remains in the Stopped state and is not restarted even if you set RebootWhenFinished to true",
       "help_zh": "实例变配结束后是否立即重启。取值范围：\n\ntrue（默认）：是。\nfalse：否。\n\n若实例处于已暂停状态，即使您设置了`RebootWhenFinished=true`，也会保持原状态不变，并不会执行重启操作",
       "location": "query",
       "name": "reboot_when_finished",
@@ -117,7 +118,7 @@
     },
     {
       "example": "2025-04-03T12:05Z",
-      "help_en": "The restart time of the instance.\n\nIf RebootWhenFinished is set to false, you must specify a restart time within 48 hours.\nThe time must follow the ISO 8601 standard in UTC+0. Format: `yyyy-MM-ddTHH:mmZ`",
+      "help_en": "The restart time of the instance.\n\nIf RebootWhenFinished is set to false and the instance is in the Running state, you must specify a restart time within 48 hours.\nSpecify the time in the ISO 8601 standard in the `yyyy-MM-ddTHH:mmZ` format. The time must be in UTC",
       "help_zh": "实例的重启时间。\n\nRebootWhenFinished设置为false且实例状态为Running时，必须设置48小时以内的重启时间。\n按照ISO 8601标准表示，使用UTC+0时间。格式为：`yyyy-MM-ddTHH:mmZ`",
       "location": "query",
       "name": "reboot_time",
@@ -130,7 +131,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether to automatically use a coupon. Valid values:\ntrue (default): Yes.\nfalse: No.\n\nIf you use a coupon and later decrease the quota, the amount offset by the coupon will not be refunded",
+      "help_en": "Specifies whether to automatically use coupons. Valid values:\ntrue: automatically uses coupons. This is the default value.\nfalse: does not automatically use coupons.\n\nIf you use a coupon and then downgrade the instance type, the amount deducted by the voucher is not refunded",
       "help_zh": "是否自动使用优惠券，取值：\ntrue（默认）：是。\nfalse：否。\n\n使用优惠券后，若需要进行降配操作，由代金券抵扣的金额将不会进行退款",
       "location": "query",
       "name": "auto_use_coupon",
@@ -173,11 +174,10 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The response parameters",
+        "description_en": "The list of response parameters",
         "description_zh": "返回参数列表",
         "properties": {
           "OrderId": {
-            "backendName": "data.orderId",
             "description_en": "The order ID",
             "description_zh": "订单ID",
             "example": "100789370230206",
@@ -185,16 +185,15 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "6EF82B07-28D2-48D1-B5D6-7E78FED277C7",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

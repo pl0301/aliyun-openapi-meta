@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun agentcore GET /workspaces/550e8400-e29b-41d4-a716-446655440000/agent-specs/my-agent/latest --region cn-hangzhou --header \"Content-Type=application/json\" --version 2026-08-04 --force",
   "cmd_full_name": "agentcore get-agent-spec-latest",
   "cmd_name": "get-agent-spec-latest",
@@ -57,54 +58,47 @@
         "description_zh": "RestResult<AgentSpecLatestDetailInfo>",
         "properties": {
           "data": {
-            "backendName": "data",
             "description_en": "The returned data",
             "description_zh": "返回数据",
             "properties": {
               "bizTags": {
-                "backendName": "bizTags",
                 "description_en": "The business tags",
                 "description_zh": "业务标签",
                 "example": "示例属性值",
                 "type": "string"
               },
               "content": {
-                "backendName": "content",
                 "description_en": "The content",
                 "description_zh": "内容",
                 "example": "示例内容",
                 "type": "string"
               },
               "description": {
-                "backendName": "description",
                 "description_en": "The description",
                 "description_zh": "描述",
                 "example": "用于说明资源用途的示例描述。",
                 "type": "string"
               },
               "downloadCount": {
-                "backendName": "downloadCount",
-                "description_en": "The download count",
+                "description_en": "The number of downloads",
                 "description_zh": "下载次数",
                 "example": "10",
                 "format": "int64",
                 "type": "integer"
               },
               "enable": {
-                "backendName": "enable",
                 "description_en": "Indicates whether the AgentSpec is enabled",
                 "description_zh": "是否启用",
                 "type": "boolean"
               },
               "mcpServers": {
-                "backendName": "mcpServers",
                 "description_en": "The list of MCP server references",
                 "description_zh": "MCP 服务引用列表",
-                "itemName": "McpServer",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "name": {
-                      "backendName": "name",
                       "description_en": "The name",
                       "description_zh": "名称",
                       "example": "agentspec-example",
@@ -116,7 +110,6 @@
                 "type": "array"
               },
               "name": {
-                "backendName": "name",
                 "description_en": "The name",
                 "description_zh": "名称",
                 "example": "agentspec-example",
@@ -128,7 +121,6 @@
                   "description_zh": "资源文件映射中的属性值",
                   "properties": {
                     "content": {
-                      "backendName": "content",
                       "description_en": "The content",
                       "description_zh": "内容",
                       "example": "示例内容",
@@ -141,20 +133,17 @@
                         "example": "示例属性值",
                         "type": "any"
                       },
-                      "backendName": "metadata",
                       "description_en": "The metadata",
                       "description_zh": "元数据",
                       "type": "object"
                     },
                     "name": {
-                      "backendName": "name",
                       "description_en": "The name",
                       "description_zh": "名称",
                       "example": "agentspec-example",
                       "type": "string"
                     },
                     "type": {
-                      "backendName": "type",
                       "description_en": "The type",
                       "description_zh": "类型",
                       "example": "file",
@@ -163,31 +152,71 @@
                   },
                   "type": "object"
                 },
-                "backendName": "resource",
                 "description_en": "The resource file mapping",
                 "description_zh": "资源文件映射",
                 "type": "object"
               },
               "scope": {
-                "backendName": "scope",
                 "description_en": "The visibility scope",
                 "description_zh": "可见范围",
                 "example": "PRIVATE",
                 "type": "string"
               },
               "skills": {
-                "backendName": "skills",
-                "description_en": "The list of skill references",
+                "description_en": "The list of Skill references",
                 "description_zh": "Skill 引用列表",
-                "itemName": "Skill",
                 "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
                     "name": {
-                      "backendName": "name",
                       "description_en": "The name",
                       "description_zh": "名称",
                       "example": "agentspec-example",
+                      "title_en": "",
+                      "title_zh": "Workspace AI Registry 中的 Skill 名称",
                       "type": "string"
+                    },
+                    "sourceType": {
+                      "description_en": "The Skill source type. Valid values:\nREFERENCE: references AI Registry.\nSTATIC: statically bundled with the package",
+                      "description_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
+                      "enum": [
+                        "REFERENCE",
+                        "STATIC"
+                      ],
+                      "example": "REFERENCE",
+                      "title_en": "",
+                      "title_zh": "Skill 来源类型：REFERENCE 引用 AI Registry、STATIC 随包静态提供",
+                      "type": "string"
+                    },
+                    "versionSelector": {
+                      "description_en": "The version selector for the reference. Defaults to LABEL/latest if omitted",
+                      "description_zh": "引用的版本选择器，省略时为 LABEL/latest",
+                      "properties": {
+                        "type": {
+                          "description_en": "The version selector type. Valid values:\nLABEL: selects by label.\nVERSION: selects by specific version",
+                          "description_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                          "enum": [
+                            "LABEL",
+                            "VERSION"
+                          ],
+                          "example": "LABEL",
+                          "title_en": "",
+                          "title_zh": "版本选择器类型：LABEL 按标签、VERSION 按具体版本",
+                          "type": "string"
+                        },
+                        "value": {
+                          "description_en": "The selector value. If the type is LABEL, this value is a label name such as latest. If the type is VERSION, this value is a specific version number",
+                          "description_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                          "example": "latest",
+                          "title_en": "",
+                          "title_zh": "选择器取值：LABEL 时为标签名（如 latest），VERSION 时为具体版本号",
+                          "type": "string"
+                        }
+                      },
+                      "title_en": "",
+                      "title_zh": "引用的版本选择器，省略时为 LABEL/latest",
+                      "type": "object"
                     }
                   },
                   "type": "object"
@@ -195,7 +224,6 @@
                 "type": "array"
               },
               "updateTime": {
-                "backendName": "updateTime",
                 "description_en": "The update time. This value is a UNIX timestamp in milliseconds",
                 "description_zh": "更新时间，Unix 时间戳，单位为毫秒",
                 "example": "1787671022000",
@@ -206,14 +234,13 @@
             "type": "object"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求 ID",
             "example": "A1B2C3D4-E5F6-47A8-90AB-CDEF12345678",
             "type": "string"
           }
         },
-        "title_en": "RestResult<AgentSpecLatestDetailInfo>",
+        "title_en": "",
         "title_zh": "RestResult<AgentSpecLatestDetailInfo>",
         "type": "object"
       }

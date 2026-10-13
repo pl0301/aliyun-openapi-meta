@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 6000,
   "camel_example": "aliyun mts QueryAnalysisJobList --region cn-hangzhou --AnalysisJobIds bb558c1cc25b45309aab5be44d190000",
   "cmd_full_name": "mts query-analysis-job-list",
   "cmd_name": "query-analysis-job-list",
   "deprecated": false,
-  "description_en": "Queries the template analysis job and returns a list of available preset templates when the template analysis job is complete",
+  "description_en": "Queries template analysis jobs and returns a list of available preset templates after the template analysis jobs are completed",
   "description_zh": "查询模板分析作业，模板分析作业完成后，返回可用的预置模板列表",
   "kebab_example": "aliyun mts query-analysis-job-list --analysis-job-ids bb558c1cc25b45309aab5be44d190000 --api-version 2014-06-18 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "bb558c1cc25b45309aab5be44d19****",
-      "help_en": "The template analysis job ID list",
+      "help_en": "The IDs of the template analysis jobs.\nYou can query up to 10 jobs at a time.\nSeparate multiple IDs with commas (,)",
       "help_zh": "模板分析作业ID列表。\n一次最多查询10个。\n多个使用半角逗号（,）作为分隔符",
       "location": "query",
       "name": "analysis_job_ids",
@@ -39,353 +40,493 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "AnalysisJobList": {
-            "backendName": "data.analysisJobList",
-            "itemName": "AnalysisJob",
-            "items": {
-              "properties": {
-                "AnalysisConfig": {
-                  "backendName": "analysisConfig",
-                  "nullToEmpty": false,
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "AnalysisJob": {
+                "description_en": "The list of template analysis jobs",
+                "description_zh": "模板分析作业列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
-                    "PropertiesControl": {
-                      "backendName": "propertiesControl",
-                      "nullToEmpty": false,
+                    "AnalysisConfig": {
+                      "description_en": "The job configurations",
+                      "description_zh": "作业配置",
                       "properties": {
-                        "Crop": {
-                          "backendName": "crop",
-                          "nullToEmpty": false,
+                        "PropertiesControl": {
+                          "description_en": "The property control configurations",
+                          "description_zh": "属性控制",
                           "properties": {
-                            "Height": {
-                              "backendName": "height",
-                              "type": "string"
+                            "Crop": {
+                              "description_en": "The video cropping configurations",
+                              "description_zh": "视频裁切配置",
+                              "properties": {
+                                "Height": {
+                                  "description_en": "The height after cropping.\n\nThis parameter becomes invalid if Mode is set to Auto or None",
+                                  "description_zh": "裁切后高。\n\n如果Mode为Auto或None，则此值失效",
+                                  "example": "8",
+                                  "type": "string"
+                                },
+                                "Left": {
+                                  "description_en": "The left margin for cropping.\n\nThis parameter becomes invalid if Mode is set to Auto or None",
+                                  "description_zh": "裁切左边距。\n\n如果Mode为Auto或None，则此值失效",
+                                  "example": "8",
+                                  "type": "string"
+                                },
+                                "Mode": {
+                                  "description_en": "The cropping method. Valid values:\n\nAuto: automatic.\nForce: forced.\nNone: no forced cropping.\nThis parameter is required if Crop is not an empty JSON object {}",
+                                  "description_zh": "裁切方式。取值：\n\nAuto：自动。\nForce：强制。\nNone：强制不做。\n如Crop不是空JSON{}，则此值必填",
+                                  "example": "Auto",
+                                  "type": "string"
+                                },
+                                "Top": {
+                                  "description_en": "The top margin for cropping.\n\nThis parameter becomes invalid if Mode is set to Auto or None",
+                                  "description_zh": "裁切上边距。\n\n如果Mode为Auto或None，则此值失效",
+                                  "example": "8",
+                                  "type": "string"
+                                },
+                                "Width": {
+                                  "description_en": "The width after cropping.\n\nThis parameter becomes invalid if Mode is set to Auto or None",
+                                  "description_zh": "裁切后宽。\n\n如果Mode为Auto或None，则此值失效",
+                                  "example": "8",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
                             },
-                            "Left": {
-                              "backendName": "left",
-                              "type": "string"
-                            },
-                            "Mode": {
-                              "backendName": "mode",
-                              "type": "string"
-                            },
-                            "Top": {
-                              "backendName": "top",
-                              "type": "string"
-                            },
-                            "Width": {
-                              "backendName": "width",
+                            "Deinterlace": {
+                              "description_en": "The forced scan mode determination. Valid values:\n\nAuto: automatic.\nForce: forced deinterlacing.\nNone: no forced deinterlacing",
+                              "description_zh": "强制扫描模式判定。\n\nAuto：自动。\nForce：强制做deinterlace。\nNone：强制不做deinterlace",
+                              "example": "Auto",
                               "type": "string"
                             }
                           },
                           "type": "object"
                         },
-                        "Deinterlace": {
-                          "backendName": "deinterlace",
-                          "type": "string"
+                        "QualityControl": {
+                          "description_en": "The output quality control configurations",
+                          "description_zh": "输出质量控制",
+                          "properties": {
+                            "MethodStreaming": {
+                              "description_en": "The playback method. Valid values:\n\nnetwork: online playback.\n\nlocal: local playback.\n\nDefault value: network",
+                              "description_zh": "播放方式。\n\nnetwork：在线。\n\nlocal：本地。\n\n默认值：network",
+                              "example": "network",
+                              "type": "string"
+                            },
+                            "RateQuality": {
+                              "description_en": "The output quality level. Default value: 25",
+                              "description_zh": "输出质量等级。默认值：25",
+                              "example": "25",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
                     },
-                    "QualityControl": {
-                      "backendName": "qualityControl",
-                      "nullToEmpty": false,
+                    "Code": {
+                      "description_en": "The error code returned when the analysis fails",
+                      "description_zh": "分析失败时错误码",
+                      "example": "InvalidParameter.ResourceNotFound",
+                      "type": "string"
+                    },
+                    "CreationTime": {
+                      "description_en": "The time when the job was added. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "作业添加时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2014-01-10T12:00:00Z",
+                      "type": "string"
+                    },
+                    "Id": {
+                      "description_en": "The ID of the template analysis job",
+                      "description_zh": "模板分析作业ID",
+                      "example": "57f6aa3f84824309bcba67231b406****",
+                      "type": "string"
+                    },
+                    "InputFile": {
+                      "description_en": "The job input",
+                      "description_zh": "作业输入",
                       "properties": {
-                        "MethodStreaming": {
-                          "backendName": "methodStreaming",
+                        "Bucket": {
+                          "description_en": "The OSS bucket of the input file",
+                          "description_zh": "输入文件的OSS Bucket",
+                          "example": "example-bucket",
                           "type": "string"
                         },
-                        "RateQuality": {
-                          "backendName": "rateQuality",
+                        "Location": {
+                          "description_en": "The OSS region",
+                          "description_zh": "OSS的服务区域",
+                          "example": "oss-cn-hangzhou",
+                          "type": "string"
+                        },
+                        "Object": {
+                          "description_en": "The OSS object",
+                          "description_zh": "OSS的Object",
+                          "example": "example.flv",
                           "type": "string"
                         }
                       },
                       "type": "object"
-                    }
-                  },
-                  "type": "object"
-                },
-                "Code": {
-                  "backendName": "code",
-                  "type": "string"
-                },
-                "CreationTime": {
-                  "backendName": "creationTime",
-                  "type": "string"
-                },
-                "Id": {
-                  "backendName": "id",
-                  "type": "string"
-                },
-                "InputFile": {
-                  "backendName": "inputFile",
-                  "properties": {
-                    "Bucket": {
-                      "backendName": "bucket",
-                      "type": "string"
                     },
-                    "Location": {
-                      "backendName": "location",
-                      "type": "string"
-                    },
-                    "Object": {
-                      "backendName": "object",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "MNSMessageResult": {
-                  "backendName": "mnsMessageResult",
-                  "properties": {
-                    "ErrorCode": {
-                      "backendName": "errorCode",
-                      "type": "string"
-                    },
-                    "ErrorMessage": {
-                      "backendName": "errorMessage",
-                      "type": "string"
-                    },
-                    "MessageId": {
-                      "backendName": "messageId",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "Message": {
-                  "backendName": "message",
-                  "type": "string"
-                },
-                "Percent": {
-                  "backendName": "percent",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "PipelineId": {
-                  "backendName": "pipelineId",
-                  "type": "string"
-                },
-                "Priority": {
-                  "backendName": "priority",
-                  "type": "string"
-                },
-                "State": {
-                  "backendName": "state",
-                  "type": "string"
-                },
-                "TemplateList": {
-                  "backendName": "templateList",
-                  "itemName": "Template",
-                  "items": {
-                    "properties": {
-                      "Audio": {
-                        "backendName": "audio",
-                        "nullToEmpty": false,
-                        "properties": {
-                          "Bitrate": {
-                            "backendName": "bitrate",
-                            "type": "string"
-                          },
-                          "Channels": {
-                            "backendName": "channels",
-                            "type": "string"
-                          },
-                          "Codec": {
-                            "backendName": "codec",
-                            "type": "string"
-                          },
-                          "Profile": {
-                            "backendName": "profile",
-                            "type": "string"
-                          },
-                          "Qscale": {
-                            "backendName": "qscale",
-                            "type": "string"
-                          },
-                          "Samplerate": {
-                            "backendName": "samplerate",
-                            "type": "string"
-                          }
+                    "MNSMessageResult": {
+                      "description_en": "The result of the Message Service (MNS) notification sent to the user upon job completion",
+                      "description_zh": "MNS通知用户作业完成的结果",
+                      "properties": {
+                        "ErrorCode": {
+                          "description_en": "The error code returned when the job fails. This parameter is not returned when the analysis is successful",
+                          "description_zh": "失败时错误码。分析成功时不返回此参数",
+                          "example": "InvalidParameter.ResourceNotFound",
+                          "type": "string"
                         },
-                        "type": "object"
-                      },
-                      "Container": {
-                        "backendName": "container",
-                        "nullToEmpty": false,
-                        "properties": {
-                          "Format": {
-                            "backendName": "format",
-                            "type": "string"
-                          }
+                        "ErrorMessage": {
+                          "description_en": "The error message returned when the job fails. This parameter is not returned when the analysis is successful",
+                          "description_zh": "失败时错误信息。分析成功时不返回此参数",
+                          "example": "The resource operated \\\"PipelineId\\\" cannot be found",
+                          "type": "string"
                         },
-                        "type": "object"
+                        "MessageId": {
+                          "description_en": "The ID of the message returned when the job is successful. This parameter is not returned when the analysis fails",
+                          "description_zh": "成功时消息ID。分析失败时不返回此参数",
+                          "example": "3ca84a39a9024f19853b21be9cf9****",
+                          "type": "string"
+                        }
                       },
-                      "Id": {
-                        "backendName": "id",
-                        "type": "string"
-                      },
-                      "MuxConfig": {
-                        "backendName": "muxConfig",
-                        "nullToEmpty": false,
-                        "properties": {
-                          "Gif": {
-                            "backendName": "gif",
-                            "nullToEmpty": false,
+                      "type": "object"
+                    },
+                    "Message": {
+                      "description_en": "The error message returned when the analysis fails",
+                      "description_zh": "分析失败时错误信息",
+                      "example": "The resource operated \\\"PipelineId\\\" cannot be found",
+                      "type": "string"
+                    },
+                    "Percent": {
+                      "description_en": "The transcoding progress",
+                      "description_zh": "转码进度",
+                      "example": "86",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "PipelineId": {
+                      "description_en": "The ID of the MPS queue",
+                      "description_zh": "管道ID",
+                      "example": "bb558c1cc25b45309aab5be44d19****",
+                      "type": "string"
+                    },
+                    "Priority": {
+                      "description_en": "The priority of the job in the corresponding MPS queue.\nValid values: [1,10]. A value of 10 indicates the highest priority.\nDefault value: 10",
+                      "description_zh": "任务在其对应管道内的优先级。\n取值范围：[1,10]。10为最高优先级。\n默认值：10",
+                      "example": "8",
+                      "type": "string"
+                    },
+                    "State": {
+                      "description_en": "The status of the job. Valid values:\n\nSubmitted: The job is submitted.\n\nAnalyzing: The job is being analyzed.\n\nSuccess: The job is successful.\n\nFail: The job failed",
+                      "description_zh": "作业状态。\n\nSubmitted：已提交。\n\nAnalyzing：分析中。\n\nSuccess：成功。\n\nFail：失败",
+                      "example": "Success",
+                      "type": "string"
+                    },
+                    "TemplateList": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Template": {
+                          "description_en": "The list of preset templates output by the job",
+                          "description_zh": "作业输出的预置模板列表",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
                             "properties": {
-                              "FinalDelay": {
-                                "backendName": "finalDelay",
+                              "Audio": {
+                                "description_en": "The audio codec configurations",
+                                "description_zh": "音频编解码配置",
+                                "properties": {
+                                  "Bitrate": {
+                                    "description_en": "The audio bitrate of the output file.\nValid values: 8 to 1000.\nUnit: Kbps.\nDefault value: 128",
+                                    "description_zh": "输出文件的音频码率。\n取值范围：8~1000。\n单位：Kbps。\n默认值：128",
+                                    "example": "128",
+                                    "type": "string"
+                                  },
+                                  "Channels": {
+                                    "description_en": "The number of sound channels. Default value: 2",
+                                    "description_zh": "声道数。默认值：2",
+                                    "example": "2",
+                                    "type": "string"
+                                  },
+                                  "Codec": {
+                                    "description_en": "The audio codec format. Default value: aac. Valid values:\n\naac\n\nmp3\n\nvorbis\n\nflac",
+                                    "description_zh": "音频编解码格式。默认值：aac。可取值：\n\naac\n\nmp3\n\nvorbis\n\nflac",
+                                    "example": "aac",
+                                    "type": "string"
+                                  },
+                                  "Profile": {
+                                    "description_en": "The audio encoding preset. Valid values when Codec is set to aac:\n\naac_low\n\naac_he\n\naac_he_v2\n\naac_ld\n\naac_eld",
+                                    "description_zh": "音频编码预置。当Codec为aac时可取值：\n\naac_low\n\naac_he\n\naac_he_v2\n\naac_ld\n\naac_eld",
+                                    "example": "aac_low",
+                                    "type": "string"
+                                  },
+                                  "Qscale": {
+                                    "description_en": "The audio quality control level",
+                                    "description_zh": "音频质量控制度",
+                                    "example": "15",
+                                    "type": "string"
+                                  },
+                                  "Samplerate": {
+                                    "description_en": "The sampling rate.\nUnit: Hz.\nDefault value: 44100",
+                                    "description_zh": "采样率。\n单位：Hz。\n默认值：44100",
+                                    "example": "44100",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "Container": {
+                                "description_en": "The container",
+                                "description_zh": "容器",
+                                "properties": {
+                                  "Format": {
+                                    "description_en": "The container format",
+                                    "description_zh": "容器格式",
+                                    "example": "flv",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "Id": {
+                                "description_en": "The ID of the transcoding template",
+                                "description_zh": "转码模板ID",
+                                "example": "S00000000-00****",
                                 "type": "string"
                               },
-                              "Loop": {
-                                "backendName": "loop",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          },
-                          "Segment": {
-                            "backendName": "segment",
-                            "nullToEmpty": false,
-                            "properties": {
-                              "Duration": {
-                                "backendName": "duration",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "Name": {
-                        "backendName": "name",
-                        "type": "string"
-                      },
-                      "State": {
-                        "backendName": "state",
-                        "type": "string"
-                      },
-                      "TransConfig": {
-                        "backendName": "transConfig",
-                        "nullToEmpty": false,
-                        "properties": {
-                          "TransMode": {
-                            "backendName": "transMode",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "Video": {
-                        "backendName": "video",
-                        "nullToEmpty": false,
-                        "properties": {
-                          "Bitrate": {
-                            "backendName": "bitrate",
-                            "type": "string"
-                          },
-                          "BitrateBnd": {
-                            "backendName": "bitrateBnd",
-                            "nullToEmpty": false,
-                            "properties": {
-                              "Max": {
-                                "backendName": "max",
+                              "MuxConfig": {
+                                "description_en": "The transcoding muxing configurations",
+                                "description_zh": "转码封包配置",
+                                "properties": {
+                                  "Gif": {
+                                    "description_en": "The GIF format configurations",
+                                    "description_zh": "gif格式",
+                                    "properties": {
+                                      "FinalDelay": {
+                                        "description_en": "The loop interval of the GIF. Unit: 10 milliseconds. For example, a value of 500 indicates an interval of 5 seconds",
+                                        "description_zh": "gif的loop间隔，单位为百分之一秒，比如500代表间隔为5秒",
+                                        "example": "0",
+                                        "type": "string"
+                                      },
+                                      "Loop": {
+                                        "description_en": "The number of loops for GIF and WebP. By default, no loop is performed",
+                                        "description_zh": "gif与webp循环次数，默认不循环",
+                                        "example": "0",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Segment": {
+                                    "description_en": "The segment configurations",
+                                    "description_zh": "切片配置",
+                                    "properties": {
+                                      "Duration": {
+                                        "description_en": "The segment duration. Unit: seconds",
+                                        "description_zh": "分片时长。单位：秒",
+                                        "example": "10",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "Name": {
+                                "description_en": "The name of the template",
+                                "description_zh": "模板名称",
+                                "example": "FLV-UD",
                                 "type": "string"
                               },
-                              "Min": {
-                                "backendName": "min",
+                              "State": {
+                                "description_en": "The status of the template. Valid values:\n\nNormal: The template is normal.\n\nDeleted: The template is deleted",
+                                "description_zh": "模板的状态。\n\nNormal：正常。\n\nDeleted：已删除",
+                                "example": "Normal",
                                 "type": "string"
+                              },
+                              "TransConfig": {
+                                "description_en": "The general transcoding configurations",
+                                "description_zh": "转码通用配置",
+                                "properties": {
+                                  "TransMode": {
+                                    "description_en": "The transcoding mode. Default value: onepass. Valid values:\n\nonepass\n\ntwopass\n\nCBR",
+                                    "description_zh": "转码模式。默认值：onepass。可选范围：\n\nonepass\n\ntwopass\n\nCBR",
+                                    "example": "onepass",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "Video": {
+                                "description_en": "The video codec configurations",
+                                "description_zh": "视频编解码配置",
+                                "properties": {
+                                  "Bitrate": {
+                                    "description_en": "The average video bitrate. Unit: Kbps",
+                                    "description_zh": "视频平均码率。单位：Kbps",
+                                    "example": "1000",
+                                    "type": "string"
+                                  },
+                                  "BitrateBnd": {
+                                    "description_en": "The range of the average video bitrate",
+                                    "description_zh": "视频平均码率范围",
+                                    "properties": {
+                                      "Max": {
+                                        "description_en": "The upper limit of the total bitrate. Unit: Kbps",
+                                        "description_zh": "总码率上限。单位：Kbps",
+                                        "example": "1500",
+                                        "type": "string"
+                                      },
+                                      "Min": {
+                                        "description_en": "The lower limit of the total bitrate. Unit: Kbps",
+                                        "description_zh": "总码率下限。单位：Kbps",
+                                        "example": "800",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "Bufsize": {
+                                    "description_en": "The buffer size.\n\nUnit: KB.\nDefault value: 6000",
+                                    "description_zh": "缓冲区大小。\n\n单位：Kb。\n默认值：6000",
+                                    "example": "6000",
+                                    "type": "string"
+                                  },
+                                  "Codec": {
+                                    "description_en": "The codec format. H.264 and H.265 are supported. Default value: H.264",
+                                    "description_zh": "编解码格式。支持H.264、H.265。 默认值：H.264",
+                                    "example": "H.264",
+                                    "type": "string"
+                                  },
+                                  "Crf": {
+                                    "description_en": "The constant rate factor (CRF) for bitrate-quality control.\nDefault value: If the encoding format is H.264, the default value is 23. If the encoding format is H.265, the default value is 26.\nIf Crf is set, the settings for Bitrate become invalid",
+                                    "description_zh": "码率-质量控制因子。\n默认值：编码格式为H264，默认值为23。编码格式为H265，默认值为26。\n如果设置了Crf，则Bitrate的设置失效",
+                                    "example": "26",
+                                    "type": "string"
+                                  },
+                                  "Degrain": {
+                                    "description_en": "The strength of the independent denoising algorithm",
+                                    "description_zh": "独立去噪算法强度",
+                                    "example": "5",
+                                    "type": "string"
+                                  },
+                                  "Fps": {
+                                    "description_en": "The frame rate.\nIf the frame rate of the input file exceeds 60, the value 60 is used.\nDefault value: the frame rate of the input file",
+                                    "description_zh": "帧率。\n当输入文件帧率超过60时取60。\n默认值：取输入文件帧率",
+                                    "example": "25",
+                                    "type": "string"
+                                  },
+                                  "Gop": {
+                                    "description_en": "The maximum number of frames between keyframes. Default value: 250",
+                                    "description_zh": "关键帧间最大帧数。默认值：250",
+                                    "example": "250",
+                                    "type": "string"
+                                  },
+                                  "Height": {
+                                    "description_en": "The video height.\nUnit: pixel.\nDefault value: the original height of the video",
+                                    "description_zh": "视频高。\n单位：px。\n默认值：视频原始高度",
+                                    "example": "720",
+                                    "type": "string"
+                                  },
+                                  "Maxrate": {
+                                    "description_en": "The peak video bitrate.\n\nValid values: [10,50000].\nUnit: Kbps",
+                                    "description_zh": "视频码率峰值。\n\n取值范围：[10,50000]。\n单位：Kbps",
+                                    "example": "2000",
+                                    "type": "string"
+                                  },
+                                  "PixFmt": {
+                                    "description_en": "The video color format. Standard color formats such as yuv420p and yuvj420p are supported",
+                                    "description_zh": "视频颜色格式。包含yuv420p，yuvj420p等标准颜色格式",
+                                    "example": "yuv420p",
+                                    "type": "string"
+                                  },
+                                  "Preset": {
+                                    "description_en": "The video algorithm preset. Valid values: veryfast, fast, medium, slow, and slower. Default value: medium",
+                                    "description_zh": "视频算法器预置。支持veryfast（超快）、fast（快）、medium（中等）、slow（慢）、slower（超慢）。 默认值：medium",
+                                    "example": "medium",
+                                    "type": "string"
+                                  },
+                                  "Profile": {
+                                    "description_en": "The encoding profile. Valid values:\nbaseline: for mobile devices.\nmain: for standard resolution devices.\nhigh: for high resolution devices.\nDefault value: high",
+                                    "description_zh": "编码级别。\nbaseline：针对移动设备。\nmain：针对标准分辨率设备。\nhigh：针对高分辨率设备。\n默认值：high",
+                                    "example": "high",
+                                    "type": "string"
+                                  },
+                                  "Qscale": {
+                                    "description_en": "The video quality control level",
+                                    "description_zh": "视频质量控制度",
+                                    "example": "15",
+                                    "type": "string"
+                                  },
+                                  "ScanMode": {
+                                    "description_en": "The scan mode. Valid values:\n\ninterlaced: interlaced scanning.\n\nprogressive: progressive scanning",
+                                    "description_zh": "扫描模式。取值：\n\ninterlaced：交叉扫描。\n\nprogressive：顺序扫描",
+                                    "example": "interlaced",
+                                    "type": "string"
+                                  },
+                                  "Width": {
+                                    "description_en": "The video width.\nUnit: pixel.\nDefault value: the original width of the video",
+                                    "description_zh": "视频宽。\n单位：px。\n默认值：视频原始宽度",
+                                    "example": "1280",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
                               }
                             },
                             "type": "object"
                           },
-                          "Bufsize": {
-                            "backendName": "bufsize",
-                            "type": "string"
-                          },
-                          "Codec": {
-                            "backendName": "codec",
-                            "type": "string"
-                          },
-                          "Crf": {
-                            "backendName": "crf",
-                            "type": "string"
-                          },
-                          "Degrain": {
-                            "backendName": "degrain",
-                            "type": "string"
-                          },
-                          "Fps": {
-                            "backendName": "fps",
-                            "type": "string"
-                          },
-                          "Gop": {
-                            "backendName": "gop",
-                            "type": "string"
-                          },
-                          "Height": {
-                            "backendName": "height",
-                            "type": "string"
-                          },
-                          "Maxrate": {
-                            "backendName": "maxrate",
-                            "type": "string"
-                          },
-                          "PixFmt": {
-                            "backendName": "pixFmt",
-                            "type": "string"
-                          },
-                          "Preset": {
-                            "backendName": "preset",
-                            "type": "string"
-                          },
-                          "Profile": {
-                            "backendName": "profile",
-                            "type": "string"
-                          },
-                          "Qscale": {
-                            "backendName": "qscale",
-                            "type": "string"
-                          },
-                          "ScanMode": {
-                            "backendName": "scanMode",
-                            "type": "string"
-                          },
-                          "Width": {
-                            "backendName": "width",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      }
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "type": "object"
+                    "UserData": {
+                      "description_en": "The custom user data",
+                      "description_zh": "用户自定义数据",
+                      "example": "testid-001",
+                      "type": "string"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "UserData": {
-                  "backendName": "userData",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "NonExistAnalysisJobIds": {
-            "backendName": "data.nonExistAnalysisJobIds",
-            "itemName": "String",
-            "items": {
-              "backendName": "data.nonExistAnalysisJobIds",
-              "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "String": {
+                "description_en": "The non-existent template analysis jobs",
+                "description_zh": "不存在的模板分析作业",
+                "items": {
+                  "description_en": "The list of IDs of the non-existent template analysis jobs. This structure is not returned if no data is available",
+                  "description_zh": "不存在的模板分析作业ID列表，无数据时该结构不返回",
+                  "example": "null",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "parseType": "null",
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The status of the job. Valid values:\n\nSubmitted: The job has been submitted.\nAnalyzing: The job is being run.\nSuccess: The job is successful.\nFail: The job fails",
+            "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "5CA6E020-4102-4FFF-AA56-5ED7ECD811A1",
             "type": "string"

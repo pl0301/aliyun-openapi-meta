@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun imm DetectImageLabels --region cn-hangzhou --ProjectName 'test-project' --SourceURI 'oss://test-bucket/test-object.jpg'",
   "cmd_full_name": "imm detect-image-labels",
   "cmd_name": "detect-image-labels",
@@ -9,7 +10,6 @@
         "description_zh": "事件片段",
         "properties": {
           "TimeRange": {
-            "backendName": "TimeRange",
             "description_en": "The time range of the event clip",
             "description_zh": "事件片段时间范围",
             "items": {
@@ -29,7 +29,6 @@
         "description_zh": "标签信息",
         "properties": {
           "CentricScore": {
-            "backendName": "CentricScore",
             "description_en": "The centric score of the tag. This indicates whether the tag is the main subject in the image. The value ranges from 0 to 1. A higher value indicates higher confidence that the tag is the main subject of the image",
             "description_zh": "标签的中心值分数，指该标签在图片中是否为主体，取值范围为0~1，数值越高表示该标签为图片主体的置信度越高",
             "example": "0.877",
@@ -38,7 +37,6 @@
             "type": "number"
           },
           "Clips": {
-            "backendName": "Clips",
             "description_en": "Event clips",
             "description_zh": "事件片段",
             "items": {
@@ -49,14 +47,12 @@
             "type": "array"
           },
           "LabelAlias": {
-            "backendName": "LabelAlias",
             "description_en": "The tag alias",
             "description_zh": "标签别名",
             "example": "座椅",
             "type": "string"
           },
           "LabelConfidence": {
-            "backendName": "LabelConfidence",
             "description_en": "The tag confidence level. The value ranges from 0 (lowest confidence) to 1 (highest confidence)",
             "description_zh": "标签置信度，取值范围为0（表示置信度最低）~1（表示置信度最高）",
             "example": "0.95",
@@ -65,7 +61,6 @@
             "type": "number"
           },
           "LabelLevel": {
-            "backendName": "LabelLevel",
             "description_en": "The tag level. Valid values are 1, 2, and 3, representing first-level, second-level, and third-level tags, respectively",
             "description_zh": "标签等级，当前标签等级可以取1、2、3，分别表示该标签为第一、二、三级标签",
             "example": "2",
@@ -74,7 +69,6 @@
             "type": "integer"
           },
           "LabelName": {
-            "backendName": "LabelName",
             "description_en": "The tag name",
             "description_zh": "标签名称",
             "example": "椅子",
@@ -82,7 +76,6 @@
             "type": "string"
           },
           "Language": {
-            "backendName": "Language",
             "description_en": "The tag language, in BCP 47 format",
             "description_zh": "标签语言，格式为BCP 47",
             "example": "zh-Hans",
@@ -90,7 +83,6 @@
             "type": "string"
           },
           "ParentLabelName": {
-            "backendName": "ParentLabelName",
             "description_en": "The parent tag name",
             "description_zh": "父级标签名称",
             "example": "家具",
@@ -163,6 +155,30 @@
     {
       "fields": [
         {
+          "example": "AliyunSTSAssumeForIMMServiceRole",
+          "help_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
+          "help_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
+          "name": "service_role",
+          "options": [
+            "--service-role"
+          ],
+          "raw_name": "ServiceRole",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
+          "help_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
+          "help_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
+          "name": "policy",
+          "options": [
+            "--policy"
+          ],
+          "raw_name": "Policy",
+          "required": false,
+          "type": "string"
+        },
+        {
           "element": {
             "fields": [
               {
@@ -213,30 +229,6 @@
           "raw_name": "Chain",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "{\"Statement\": [{\"Action\": \"oss:*\",\"Effect\": \"Allow\",\"Resource\": \"*\"}],\"Version\": \"1\"}",
-          "help_en": "The policy that is attached to the role specified by the ServiceRole parameter. For example, the policy allows access to OSS. This parameter is optional",
-          "help_zh": "ServiceRole参数的角色所需配置的权限策略，例如允许访问OSS。可选",
-          "name": "policy",
-          "options": [
-            "--policy"
-          ],
-          "raw_name": "Policy",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "AliyunSTSAssumeForIMMServiceRole",
-          "help_en": "The service role in the account that is used to call an IMM API operation. The role must have the `sts:AssumeRole` permission. You can configure permissions for the role in the Resource Access Management (RAM) console",
-          "help_zh": "服务角色，调用IMM接口的账号需要创建的一个角色，必须包含 `sts:AssumeRole` 权限，可以通过RAM控制台进行配置",
-          "name": "service_role",
-          "options": [
-            "--service-role"
-          ],
-          "raw_name": "ServiceRole",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "If you have no special requirements, leave this parameter empty.\n\nThe authorization chain settings. For more information, see https://help.aliyun.com/document_detail/465340.html",
@@ -262,30 +254,27 @@
         "description_zh": "图片检测结果",
         "properties": {
           "Labels": {
-            "backendName": "Labels",
             "description_en": "The list of labels detected",
             "description_zh": "内容标签列表",
-            "itemName": "Labels",
             "items": {
               "$ref": "#/components/schemas/Label",
               "description_en": "The labels",
               "description_zh": "内容标签识别结果列表"
             },
-            "title_en": "内容标签列表",
+            "title_en": "",
             "title_zh": "内容标签列表",
             "type": "array"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "当次请求的Request ID",
             "example": "91AC8C98-0F36-49D2-8290-742E24DF1F69",
-            "title_en": "请求唯一ID",
+            "title_en": "",
             "title_zh": "请求唯一ID",
             "type": "string"
           }
         },
-        "title_en": "图片检测结果",
+        "title_en": "",
         "title_zh": "图片检测结果",
         "type": "object"
       }

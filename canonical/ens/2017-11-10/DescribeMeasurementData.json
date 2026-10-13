@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ens DescribeMeasurementData --region cn-hangzhou --StartDate '2019-06-01T00:00:00Z' --EndDate '2019-08-30T00:00:00Z'",
   "cmd_full_name": "ens describe-measurement-data",
   "cmd_name": "describe-measurement-data",
   "deprecated": false,
-  "description_en": "Queries the metering data of the user",
+  "description_en": "Retrieves user metering data",
   "description_zh": "调用DescribeMeasurementData获取用户计量数据",
   "kebab_example": "aliyun ens describe-measurement-data --start-date 2019-06-01T00:00:00Z --end-date 2019-08-30T00:00:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "2019-06-01T00:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time in UTC. The format is yyyy-MM-ddTHH:mm:ssZ",
       "help_zh": "开始时间，使用UTC时间格式，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "start_date",
@@ -34,7 +35,7 @@
     },
     {
       "example": "2019-08-30T00:00:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The end time in UTC. The format is yyyy-MM-ddTHH:mm:ssZ",
       "help_zh": "结束时间，使用UTC时间格式，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "end_date",
@@ -52,113 +53,167 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "MeasurementDatas": {
-            "backendName": "data.MeasurementData",
-            "itemName": "MeasurementData",
-            "items": {
-              "properties": {
-                "BandWidthFeeDatas": {
-                  "backendName": "BandWidthFeeData",
-                  "itemName": "BandWidthFeeData",
-                  "items": {
-                    "properties": {
-                      "CostCode": {
-                        "backendName": "CostCode",
-                        "type": "string"
-                      },
-                      "CostName": {
-                        "backendName": "CostName",
-                        "type": "string"
-                      },
-                      "CostVal": {
-                        "backendName": "CostVal",
-                        "format": "int32",
-                        "type": "integer"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "ChargeModel": {
-                  "backendName": "ChargeModel",
-                  "type": "string"
-                },
-                "CostCycle": {
-                  "backendName": "Costcycle",
-                  "type": "string"
-                },
-                "CostEndTime": {
-                  "backendName": "CostEndTime",
-                  "type": "string"
-                },
-                "CostStartTime": {
-                  "backendName": "CostStartTime",
-                  "type": "string"
-                },
-                "ResourceFeeData": {
-                  "backendName": "ResourceFeeData",
-                  "nullToEmpty": true,
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "MeasurementData": {
+                "description_en": "The metering data",
+                "description_zh": "计量数据",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
                   "properties": {
-                    "Memory": {
-                      "backendName": "Memory",
-                      "format": "int32",
-                      "nullToEmpty": true,
-                      "type": "integer"
+                    "BandWidthFeeDatas": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "BandWidthFeeData": {
+                          "description_en": "The bandwidth data",
+                          "description_zh": "带宽数据",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "CostCode": {
+                                "description_en": "The bandwidth code",
+                                "description_zh": "带宽代码",
+                                "example": "cn-cmcc-1",
+                                "type": "string"
+                              },
+                              "CostName": {
+                                "description_en": "The bandwidth name",
+                                "description_zh": "带宽名称",
+                                "example": "北上广移动",
+                                "type": "string"
+                              },
+                              "CostVal": {
+                                "description_en": "The bandwidth consumption value. Unit: bit/s",
+                                "description_zh": "带宽消费值，单位：bit/second",
+                                "example": "16486",
+                                "format": "int32",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
                     },
-                    "Storage": {
-                      "backendName": "Storage",
-                      "format": "int32",
-                      "nullToEmpty": true,
-                      "type": "integer"
+                    "ChargeModel": {
+                      "description_en": "The billing method. Valid values:\nChargeByUnified: Unified billing.\nChargeByGrade: Tiered billing",
+                      "description_zh": "计费类型。\nChargeByUnified：统一计费。\n\nChargeByGrade：分档计费",
+                      "example": "ChargeByGrade",
+                      "type": "string"
                     },
-                    "Vcpu": {
-                      "backendName": "Vcpu",
-                      "format": "int32",
-                      "nullToEmpty": true,
-                      "type": "integer"
+                    "CostCycle": {
+                      "description_en": "The billing cycle",
+                      "description_zh": "消费周期",
+                      "example": "2019-07-30",
+                      "type": "string"
+                    },
+                    "CostEndTime": {
+                      "description_en": "The end time of the billing cycle in UTC. The format is YYYY-MM-DDTHH:mm:ssZ",
+                      "description_zh": "消费结束时间，采用 ISO 8601 UTC 时间格式，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2019-07-30T16:00:00Z",
+                      "type": "string"
+                    },
+                    "CostStartTime": {
+                      "description_en": "The start time of the billing cycle in UTC. The format is YYYY-MM-DDTHH:mm:ssZ",
+                      "description_zh": "消费开始时间，采用 ISO 8601 UTC 时间格式，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2019-07-29T16:00:00Z",
+                      "type": "string"
+                    },
+                    "ResourceFeeData": {
+                      "description_en": "The compute resources",
+                      "description_zh": "计算资源",
+                      "properties": {
+                        "Memory": {
+                          "description_en": "The memory. Unit: GB",
+                          "description_zh": "内存，单位：GB",
+                          "example": "24",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Storage": {
+                          "description_en": "The storage. Unit: GB",
+                          "description_zh": "存储，单位：GB",
+                          "example": "60",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "Vcpu": {
+                          "description_en": "The number of vCPUs",
+                          "description_zh": "vcpu个数",
+                          "example": "12",
+                          "format": "int32",
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ResourceFeeDataDetails": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "ResourceFeeDataDetail": {
+                          "description_en": "The computing resources",
+                          "description_zh": "算力资源",
+                          "items": {
+                            "description_en": "",
+                            "description_zh": "",
+                            "properties": {
+                              "CostCode": {
+                                "description_en": "The resource code",
+                                "description_zh": "资源代码",
+                                "example": "vCPU",
+                                "type": "string"
+                              },
+                              "CostName": {
+                                "description_en": "The resource name",
+                                "description_zh": "资源名称",
+                                "example": "vCPU",
+                                "type": "string"
+                              },
+                              "CostVal": {
+                                "description_en": "The resource consumption value.\nMemory unit: GB.\nCPU unit: cores.\nStorage unit: GB",
+                                "description_zh": "资源消费值。\n内存单位：GB。\ncpu单位：核\n存储单位：GB",
+                                "example": "55",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "ResourceType": {
+                                "description_en": "The resource type",
+                                "description_zh": "资源类型",
+                                "example": "vCPU",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "type": "object"
                 },
-                "ResourceFeeDataDetails": {
-                  "backendName": "ResourceFeeDataDetail",
-                  "itemName": "ResourceFeeDataDetail",
-                  "items": {
-                    "properties": {
-                      "CostCode": {
-                        "backendName": "CostCode",
-                        "type": "string"
-                      },
-                      "CostName": {
-                        "backendName": "CostName",
-                        "type": "string"
-                      },
-                      "CostVal": {
-                        "backendName": "CostVal",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "ResourceType": {
-                        "backendName": "ResourceType",
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "125B04C7-3D0D-4245-AF96-14E3758E3F06",
             "type": "string"

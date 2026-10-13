@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun r-kvstore DescribeRoleZoneInfo --region cn-hangzhou --InstanceId 'r-t4nlenc2p04uvb0000'",
   "cmd_full_name": "r-kvstore describe-role-zone-info",
   "cmd_name": "describe-role-zone-info",
   "deprecated": false,
-  "description_en": "Queries the role, type, minor version, and zone of each node in a Tair (Redis OSS-compatible) instance",
+  "description_en": "Queries the role, type, minor version, and active zone of each node in a Tair (Redis® OSS-Compatible) instance",
   "description_zh": "查询云数据库 Tair（兼容 Redis）实例中各节点的角色、类型、小版本和所属的可用区",
   "kebab_example": "aliyun r-kvstore describe-role-zone-info --instance-id r-t4nlenc2p04uvb0000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "r-t4nlenc2p04uvb****",
-      "help_en": "The ID of the instance. You can call the https://help.aliyun.com/document_detail/473778.html operation to query instance IDs",
+      "help_en": "The instance ID. You can call the https://help.aliyun.com/document_detail/473778.html operation to query the instance ID",
       "help_zh": "实例ID，可调用https://help.aliyun.com/document_detail/473778.html接口获取",
       "location": "query",
       "name": "instance_id",
@@ -36,7 +37,7 @@
     },
     {
       "example": "0",
-      "help_en": "The type of the node to query. Default value: 1. Valid values:\n\n0: proxy node\n\n    **\n\n    Note This parameter is supported only for cluster instances and read/write splitting instances.\n\n1: data node",
+      "help_en": "The type of node to query. Valid values:\n0: proxy node.\nThis parameter is supported only for cluster and read/write splitting instances.\n\n\n1: data node. This is the default value",
       "help_zh": "查询的目标节点类型，取值：\n0：Proxy（代理）节点。\n该参数仅支持集群与读写分离架构实例。\n\n\n1：数据节点，默认值",
       "location": "query",
       "name": "query_type",
@@ -49,7 +50,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. The value must be an integer that is greater than 0 and less than or equal to the maximum value supported by the integer data type. Default value: 1",
+      "help_en": "The page number. The value must be greater than 0 and cannot exceed the maximum value of the Integer data type. Default value: 1",
       "help_zh": "页码，大于0且不超过Integer数据类型的最大值，默认值为1",
       "location": "query",
       "minimum": "1",
@@ -72,7 +73,7 @@
         "1"
       ],
       "example": "10",
-      "help_en": "The number of entries per page. Valid values: 10, 20, and 50. Default value: 10",
+      "help_en": "The number of records per page. Valid values: 10, 20, and 50. Default value: 10",
       "help_zh": "每页可展示的记录数，取值：10、20、50，默认值为10",
       "location": "query",
       "name": "page_size",
@@ -90,133 +91,131 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Node": {
-            "backendName": "data.node",
-            "itemName": "NodeInfo",
-            "items": {
-              "properties": {
-                "CurrentBandWidth": {
-                  "backendName": "currentBandWidth",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "CurrentMinorVersion": {
-                  "backendName": "currentMinorVersion",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CustinsId": {
-                  "backendName": "custinsId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DefaultBandWidth": {
-                  "backendName": "defaultBandWidth",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "InsName": {
-                  "backendName": "insName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "InsType": {
-                  "backendName": "insType",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "IsLatestVersion": {
-                  "backendName": "isLatestVersion",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "IsOpenBandWidthService": {
-                  "backendName": "isOpenBandWidthService",
-                  "type": "boolean",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "false",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "true",
-                        "value": "1"
-                      }
-                    ]
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "NodeInfo": {
+                "description_en": "The details of each node in the instance",
+                "description_zh": "实例中各节点的详细信息",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CurrentBandWidth": {
+                      "description_en": "The current bandwidth of the node. Unit: MB/s. This value is the sum of the default bandwidth and the additional bandwidth.\nYou can call the [EnableAdditionalBandwidth]（https://help.aliyun.com/document_detail/473771.html） operation to configure additional bandwidth.\nYou can also use this parameter to calculate the additional bandwidth. For example, if the default bandwidth of the node is 96 MB/s and this parameter returns 100, the additional bandwidth is 4 MB/s",
+                      "description_zh": "节点当前的带宽，单位为MB/s，由节点的默认带宽和增加的带宽组成。\n您可以调用[EnableAdditionalBandwidth]（https://help.aliyun.com/document_detail/473771.html）接口设置要增加的带宽。\n通过本参数也可推算出增加的带宽大小，例如节点默认带宽为96 MB/s，本参数返回值为100，则增加了4 MB/s的带宽",
+                      "example": "100",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "CurrentMinorVersion": {
+                      "description_en": "The current minor version of the node",
+                      "description_zh": "节点当前的小版本",
+                      "example": "redis-5.0_0.3.10",
+                      "type": "string"
+                    },
+                    "CustinsId": {
+                      "description_en": "The ID of the data shard node",
+                      "description_zh": "数据分片节点ID",
+                      "example": "30381****",
+                      "type": "string"
+                    },
+                    "DefaultBandWidth": {
+                      "description_en": "The default bandwidth of the node. Unit: MB/s",
+                      "description_zh": "节点默认的默认带宽，单位为MB/s",
+                      "example": "96",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "InsName": {
+                      "description_en": "The node ID",
+                      "description_zh": "节点ID",
+                      "example": "r-t4nlenc2p04uvb****",
+                      "type": "string"
+                    },
+                    "InsType": {
+                      "description_en": "Indicates whether the node is a read-only node. If the node is a read-only node, the return value is 3.\nIf the node is not a read-only node, this parameter is not returned",
+                      "description_zh": "是否为只读节点，如果为只读节点，本参数返回值为3。\n如果不是只读节点，不返回本参数",
+                      "example": "3",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "IsLatestVersion": {
+                      "description_en": "Indicates whether the node runs the latest minor version. Valid values:\n0: The node does not run the latest version.\n1: The node runs the latest version.\n\nTo upgrade the minor version, call the [ModifyInstanceMinorVersion]（https://help.aliyun.com/document_detail/473777.html） operation",
+                      "description_zh": "是否为最新的小版本，返回值：\n0：不是最新版本。\n1：是最新版本。\n\n如需升级小版本，请调用[ModifyInstanceMinorVersion]（https://help.aliyun.com/document_detail/473777.html）接口",
+                      "example": "1",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "IsOpenBandWidthService": {
+                      "description_en": "Indicates whether additional bandwidth has been added to the node. Valid values:\ntrue: No additional bandwidth has been added.\nfalse: Additional bandwidth has been added",
+                      "description_zh": "该节点是否增加了带宽，取值：\ntrue：未增加带宽。\nfalse：已增加带宽",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "NodeId": {
+                      "description_en": "This parameter is used only for internal maintenance of the instance",
+                      "description_zh": "本参数仅作为实例内部维护使用",
+                      "example": "10065****",
+                      "type": "string"
+                    },
+                    "NodeType": {
+                      "description_en": "The node type. Valid values:\ndb: data node.\nproxy: proxy node.\nnormal: standard node. This value is returned for standard architecture instances",
+                      "description_zh": "节点类型，返回值：\ndb：数据节点。\nproxy：代理节点。\nnormal：普通节点（标准架构的实例会返回该值）",
+                      "example": "normal",
+                      "type": "string"
+                    },
+                    "Role": {
+                      "description_en": "The role of the node. Valid values:\nmaster: primary node.\nslave: secondary node",
+                      "description_zh": "节点角色，返回值：\nmaster：主节点。\nslave：备节点",
+                      "example": "master",
+                      "type": "string"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID",
+                      "description_zh": "可用区ID",
+                      "example": "cn-hangzhou-b",
+                      "type": "string"
+                    }
                   },
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "NodeId": {
-                  "backendName": "nodeId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "NodeType": {
-                  "backendName": "nodeType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Role": {
-                  "backendName": "role",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ZoneId": {
-                  "backendName": "zoneId",
-                  "mappingResourcePropertyName": "$.ZoneId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
-            "description_en": "The number of the returned page",
+            "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
-            "description_en": "The number of entries returned per page",
+            "description_en": "The number of records per page",
             "description_zh": "每页可展示的记录数",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "224B97FB-A275-4EAC-86E9-8922FEA2****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.totalCount",
-            "description_en": "The total number of entries returned",
+            "description_en": "The total number of records",
             "description_zh": "总记录数",
             "example": "2",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

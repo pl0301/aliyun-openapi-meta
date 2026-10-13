@@ -1,10 +1,11 @@
 {
+  "backend_timeout_ms": 9000,
   "cmd_full_name": "cms update-addon-release",
   "cmd_name": "update-addon-release",
   "deprecated": false,
   "description_en": "Upgrades an access component",
   "description_zh": "升级接入组件",
-  "kebab_example": "aliyun cms update-addon-release --release-name test-gpu-integration-name --addon-version 0.0.2 --dry-run true --values '{\"install\":{\"mode\":\"auto-install\",\"listenPort\":\"9400\"},\"discoverMode\":\"instances\",\"discover\":{\"instances\":\"worker-k8s-for-cs-c126d87c76218487e83ab322017f11b44\"},\"scrapeInterval\":\"15\",\"enableSecuritecs-nodeyGroupInjection\":\"true\",\"metricTags\":\"example-string\"}' --entity-rules example-string --policy-id policy-xxxxxxxxxxxx --api-version 2024-03-30 --region cn-hangzhou",
+  "kebab_example": "aliyun cms update-addon-release --release-name test-gpu-integration-name --policy-id policy-xxxxxxxxxxxx --api-version 2024-03-30 --region cn-hangzhou",
   "method": "PUT",
   "multi_version": true,
   "name": "UpdateAddonRelease",
@@ -55,6 +56,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "true",
+        "false"
+      ],
       "example": "true",
       "help_en": "Specifies whether to perform a dry run. Valid values:\ntrue: Performs a dry run.\nfalse: Does not perform a dry run",
       "help_zh": "是否预检本次请求",
@@ -69,10 +74,85 @@
       "type": "bool"
     },
     {
+      "example": "{\"install\":{\"mode\":\"auto-install\",\"listenPort\":\"9400\"},\"discoverMode\":\"instances\",\"discover\":{\"instances\":\"worker-k8s-for-cs-c126d87c76218487e83ab322017f11b44\"},\"scrapeInterval\":\"15\",\"enableSecuritecs-nodeyGroupInjection\":\"true\",\"metricTags\":\"\"}",
+      "help_en": "The metadata",
+      "help_zh": "元数据",
+      "location": "body",
+      "name": "values",
+      "options": [
+        "--values"
+      ],
+      "param_style": "json",
+      "raw_name": "values",
+      "required": false,
+      "type": "string"
+    },
+    {
       "fields": [
+        {
+          "example": "rg-acfm2m7atreujs1",
+          "help_en": "The resource group ID",
+          "help_zh": "资源组ID",
+          "name": "resource_group_id",
+          "options": [
+            "--resource-group-id"
+          ],
+          "raw_name": "resourceGroupId",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "fields": [
+            {
+              "example": "ecs_ip",
+              "help_en": "The property key of the IP address",
+              "help_zh": "IP 的属性 Key",
+              "name": "ip_field_key",
+              "options": [
+                "--ip-field-key"
+              ],
+              "raw_name": "ipFieldKey",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "192.168.0.0/16",
+              "help_en": "The CIDR block of the IP address",
+              "help_zh": "IP 的网段 CIDR",
+              "name": "ip_cidr",
+              "options": [
+                "--ip-cidr"
+              ],
+              "raw_name": "ipCIDR",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "help_en": "The collection of IP matching rules",
+          "help_zh": "IP匹配规则集合",
+          "name": "ip_match_rule",
+          "options": [
+            "--ip-match-rule"
+          ],
+          "raw_name": "ipMatchRule",
+          "required": false,
+          "type": "object"
+        },
         {
           "element": {
             "fields": [
+              {
+                "example": "project",
+                "help_en": "The key of the tag",
+                "help_zh": "Tag的Key",
+                "name": "tag_key",
+                "options": [
+                  "--tag-key"
+                ],
+                "raw_name": "tagKey",
+                "required": false,
+                "type": "string"
+              },
               {
                 "example": "in",
                 "help_en": "The operation",
@@ -86,23 +166,11 @@
                 "type": "string"
               },
               {
-                "example": "instanceId",
-                "help_en": "The key of the annotation",
-                "help_zh": "注解的Key",
-                "name": "tag_key",
-                "options": [
-                  "--tag-key"
-                ],
-                "raw_name": "tagKey",
-                "required": false,
-                "type": "string"
-              },
-              {
                 "element": {
                   "type": "string"
                 },
-                "help_en": "The collection of annotation values",
-                "help_zh": "注解的值集合",
+                "help_en": "The collection of tag values",
+                "help_zh": "Tag的值集合",
                 "name": "tag_values",
                 "options": [
                   "--tag-values"
@@ -114,13 +182,27 @@
             ],
             "type": "object"
           },
-          "help_en": "The collection of annotation matching rules",
-          "help_zh": "注解匹配集合",
-          "name": "annotations",
+          "help_en": "The tag-based service discovery settings",
+          "help_zh": "通过Tag进行服务发现",
+          "name": "tags",
           "options": [
-            "--annotations"
+            "--tags"
           ],
-          "raw_name": "annotations",
+          "raw_name": "tags",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "type": "string"
+          },
+          "help_en": "The collection of instance IDs",
+          "help_zh": "实例ID集合",
+          "name": "instance_ids",
+          "options": [
+            "--instance-ids"
+          ],
+          "raw_name": "instanceIds",
           "required": false,
           "type": "array"
         },
@@ -140,124 +222,21 @@
         },
         {
           "element": {
-            "fields": [
-              {
-                "example": "instanceId",
-                "help_en": "The key of the property",
-                "help_zh": "属性的Key",
-                "name": "field_key",
-                "options": [
-                  "--field-key"
-                ],
-                "raw_name": "fieldKey",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "element": {
-                  "type": "string"
-                },
-                "help_en": "The collection of property values",
-                "help_zh": "属性的值集合",
-                "name": "field_values",
-                "options": [
-                  "--field-values"
-                ],
-                "raw_name": "fieldValues",
-                "required": false,
-                "type": "array"
-              },
-              {
-                "example": "in",
-                "help_en": "The operation",
-                "help_zh": "操作",
-                "name": "op",
-                "options": [
-                  "--op"
-                ],
-                "raw_name": "op",
-                "required": false,
-                "type": "string"
-              }
-            ],
-            "type": "object"
-          },
-          "help_en": "The property matching rules",
-          "help_zh": "属性匹配规则",
-          "name": "field_rules",
-          "options": [
-            "--field-rules"
-          ],
-          "raw_name": "fieldRules",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "element": {
             "type": "string"
           },
-          "help_en": "The collection of instance IDs",
-          "help_zh": "实例ID集合",
-          "name": "instance_ids",
+          "help_en": "The collection of region IDs",
+          "help_zh": "地域ID集合",
+          "name": "region_ids",
           "options": [
-            "--instance-ids"
+            "--region-ids"
           ],
-          "raw_name": "instanceIds",
+          "raw_name": "regionIds",
           "required": false,
           "type": "array"
         },
         {
-          "fields": [
-            {
-              "example": "192.168.0.0/16",
-              "help_en": "The CIDR block of the IP address",
-              "help_zh": "IP 的网段 CIDR",
-              "name": "ip_cidr",
-              "options": [
-                "--ip-cidr"
-              ],
-              "raw_name": "ipCIDR",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "example": "ecs_ip",
-              "help_en": "The property key of the IP address",
-              "help_zh": "IP 的属性 Key",
-              "name": "ip_field_key",
-              "options": [
-                "--ip-field-key"
-              ],
-              "raw_name": "ipFieldKey",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "The collection of IP matching rules",
-          "help_zh": "IP匹配规则集合",
-          "name": "ip_match_rule",
-          "options": [
-            "--ip-match-rule"
-          ],
-          "raw_name": "ipMatchRule",
-          "required": false,
-          "type": "object"
-        },
-        {
           "element": {
             "fields": [
-              {
-                "example": "in",
-                "help_en": "The operation",
-                "help_zh": "操作",
-                "name": "op",
-                "options": [
-                  "--op"
-                ],
-                "raw_name": "op",
-                "required": false,
-                "type": "string"
-              },
               {
                 "example": "project",
                 "help_en": "The key of the label",
@@ -267,6 +246,18 @@
                   "--tag-key"
                 ],
                 "raw_name": "tagKey",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "in",
+                "help_en": "The operation",
+                "help_zh": "操作",
+                "name": "op",
+                "options": [
+                  "--op"
+                ],
+                "raw_name": "op",
                 "required": false,
                 "type": "string"
               },
@@ -299,33 +290,19 @@
         },
         {
           "element": {
-            "type": "string"
-          },
-          "help_en": "The collection of region IDs",
-          "help_zh": "地域ID集合",
-          "name": "region_ids",
-          "options": [
-            "--region-ids"
-          ],
-          "raw_name": "regionIds",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "example": "rg-acfm2m7atreujs1",
-          "help_en": "The resource group ID",
-          "help_zh": "资源组ID",
-          "name": "resource_group_id",
-          "options": [
-            "--resource-group-id"
-          ],
-          "raw_name": "resourceGroupId",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "element": {
             "fields": [
+              {
+                "example": "instanceId",
+                "help_en": "The key of the annotation",
+                "help_zh": "注解的Key",
+                "name": "tag_key",
+                "options": [
+                  "--tag-key"
+                ],
+                "raw_name": "tagKey",
+                "required": false,
+                "type": "string"
+              },
               {
                 "example": "in",
                 "help_en": "The operation",
@@ -339,23 +316,11 @@
                 "type": "string"
               },
               {
-                "example": "project",
-                "help_en": "The key of the tag",
-                "help_zh": "Tag的Key",
-                "name": "tag_key",
-                "options": [
-                  "--tag-key"
-                ],
-                "raw_name": "tagKey",
-                "required": false,
-                "type": "string"
-              },
-              {
                 "element": {
                   "type": "string"
                 },
-                "help_en": "The collection of tag values",
-                "help_zh": "Tag的值集合",
+                "help_en": "The collection of annotation values",
+                "help_zh": "注解的值集合",
                 "name": "tag_values",
                 "options": [
                   "--tag-values"
@@ -367,13 +332,67 @@
             ],
             "type": "object"
           },
-          "help_en": "The tag-based service discovery settings",
-          "help_zh": "通过Tag进行服务发现",
-          "name": "tags",
+          "help_en": "The collection of annotation matching rules",
+          "help_zh": "注解匹配集合",
+          "name": "annotations",
           "options": [
-            "--tags"
+            "--annotations"
           ],
-          "raw_name": "tags",
+          "raw_name": "annotations",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "fields": [
+              {
+                "example": "instanceId",
+                "help_en": "The key of the property",
+                "help_zh": "属性的Key",
+                "name": "field_key",
+                "options": [
+                  "--field-key"
+                ],
+                "raw_name": "fieldKey",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "in",
+                "help_en": "The operation",
+                "help_zh": "操作",
+                "name": "op",
+                "options": [
+                  "--op"
+                ],
+                "raw_name": "op",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "element": {
+                  "type": "string"
+                },
+                "help_en": "The collection of property values",
+                "help_zh": "属性的值集合",
+                "name": "field_values",
+                "options": [
+                  "--field-values"
+                ],
+                "raw_name": "fieldValues",
+                "required": false,
+                "type": "array"
+              }
+            ],
+            "type": "object"
+          },
+          "help_en": "The property matching rules",
+          "help_zh": "属性匹配规则",
+          "name": "field_rules",
+          "options": [
+            "--field-rules"
+          ],
+          "raw_name": "fieldRules",
           "required": false,
           "type": "array"
         }
@@ -389,20 +408,6 @@
       "raw_name": "entityRules",
       "required": false,
       "type": "object"
-    },
-    {
-      "example": "{\"install\":{\"mode\":\"auto-install\",\"listenPort\":\"9400\"},\"discoverMode\":\"instances\",\"discover\":{\"instances\":\"worker-k8s-for-cs-c126d87c76218487e83ab322017f11b44\"},\"scrapeInterval\":\"15\",\"enableSecuritecs-nodeyGroupInjection\":\"true\",\"metricTags\":\"\"}",
-      "help_en": "The metadata",
-      "help_zh": "元数据",
-      "location": "body",
-      "name": "values",
-      "options": [
-        "--values"
-      ],
-      "param_style": "json",
-      "raw_name": "values",
-      "required": false,
-      "type": "string"
     },
     {
       "example": "policy-xxxxxxxxxxxx",
@@ -428,16 +433,15 @@
         "description_zh": "返回数据",
         "properties": {
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "9F00A7AF-2728-5424-B321-79D39C00A1EC",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

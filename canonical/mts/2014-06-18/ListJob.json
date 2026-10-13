@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 6000,
   "camel_example": "aliyun mts ListJob --region cn-hangzhou --EndOfJobCreatedTimeRange '2014-01-11T12:00:00Z' --NextPageToken 16f01ad6175e4230ac42bb5182cd0000 --State All --StartOfJobCreatedTimeRange '2014-01-10T12:00:00Z' --MaximumPageSize 10 --PipelineId 88c6ca184c0e424d5w5b665e2a120000",
   "cmd_full_name": "mts list-job",
   "cmd_name": "list-job",
   "deprecated": false,
-  "description_en": "Traverses transcoding jobs",
+  "description_en": "Lists transcoding jobs",
   "description_zh": "遍历转码作业",
   "kebab_example": "aliyun mts list-job --next-page-token 16f01ad6175e4230ac42bb5182cd0000 --maximum-page-size 10 --state All --start-of-job-created-time-range 2014-01-10T12:00:00Z --end-of-job-created-time-range 2014-01-11T12:00:00Z --pipeline-id 88c6ca184c0e424d5w5b665e2a120000 --api-version 2014-06-18 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,7 +22,7 @@
   "parameters": [
     {
       "example": "16f01ad6175e4230ac42bb5182cd****",
-      "help_en": "The token that is used to retrieve the next page of the query results. You do not need to specify this parameter for the first request. You must specify the token that is obtained from the previous query as the value of NextPageToken",
+      "help_en": "The token for the next page. You do not need to specify this parameter in the first request. The service returns this token, which you can include in subsequent requests",
       "help_zh": "下一页标识。第一次请求无需传入，服务会返回，第二次请求传入即可",
       "location": "query",
       "name": "next_page_token",
@@ -34,7 +35,7 @@
     },
     {
       "example": "10",
-      "help_en": "The number of entries per page.\n\nDefault value: 10.\nValid values: 1 to 100",
+      "help_en": "The maximum number of media workflow execution instances to return per page.\n\nDefault value: 10.\nValid values: 1 to 100",
       "help_zh": "单页最大可返回媒体工作流执行实例。\n\n默认值：10。\n取值范围：1~100",
       "location": "query",
       "maximum": "100",
@@ -49,7 +50,7 @@
     },
     {
       "example": "All",
-      "help_en": "The state of the transcoding job. Default value: All. Valid values:\n\nAll\nSubmitted\nTranscoding\nTranscodeSuccess\nTranscodeFail\nTranscodeCancelled",
+      "help_en": "The status of the transcoding job. Default value: All. Valid values:\n\nAll: All statuses.\nSubmitted: The job is submitted.\nTranscoding: The job is being transcoded.\nTranscodeSuccess: The transcoding succeeded.\nTranscodeFail: The transcoding failed.\nTranscodeCancelled: The transcoding is canceled",
       "help_zh": "转码任务状态。默认为All（所有状态）。可取值：\n\nAll：所有状态。\nSubmitted：作业已提交。\nTranscoding：转码中。\nTranscodeSuccess：转码成功。\nTranscodeFail：转码失败。\nTranscodeCancelled：转码取消",
       "location": "query",
       "name": "state",
@@ -62,7 +63,7 @@
     },
     {
       "example": "2014-01-10T12:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the `YYYY-MM-DDThh:mm:ssZ` format. The time must be in UTC",
+      "help_en": "The start time of the time range during which the transcoding jobs were created. Specify the time in the ISO 8601 standard in the `YYYY-MM-DDThh:mm:ssZ` format. The time must be in UTC",
       "help_zh": "创建转码作业时间范围中的下限值。日期格式按照ISO8601标准表示，并需要使用UTC时间。格式为：`YYYY-MM-DDThh:mm:ssZ`",
       "location": "query",
       "name": "start_of_job_created_time_range",
@@ -75,7 +76,7 @@
     },
     {
       "example": "2014-01-11T12:00:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the `YYYY-MM-DDThh:mm:ssZ` format. The time must be in UTC",
+      "help_en": "The end time of the time range during which the transcoding jobs were created. Specify the time in the ISO 8601 standard in the `YYYY-MM-DDThh:mm:ssZ` format. The time must be in UTC",
       "help_zh": "创建转码作业时间的上限。日期格式按照ISO8601标准表示，并需要使用UTC时间。格式为：`YYYY-MM-DDThh:mm:ssZ`",
       "location": "query",
       "name": "end_of_job_created_time_range",
@@ -88,7 +89,7 @@
     },
     {
       "example": "88c6ca184c0e424d5w5b665e2a12****",
-      "help_en": "The ID of the MPS queue to which the job is submitted. To obtain the ID of an MPS queue, you can log on to the MPS console (https://mps.console.aliyun.com/overview) and choose Global Settings > MPS Queue and Callback in the left-side navigation pane",
+      "help_en": "The ID of the MPS queue. You can query the ID by choosing Global Settings > Pipelines and Callbacks in the MPS console (https://mps.console.aliyun.com/overview)",
       "help_zh": "管道ID。可以通过MPS控制台 (https://mps.console.aliyun.com/overview) > 全局设置 > 管道及回调查询",
       "location": "query",
       "name": "pipeline_id",
@@ -110,645 +111,1144 @@
         "description_zh": "返回参数",
         "properties": {
           "JobList": {
-            "backendName": "data.jobList",
-            "itemName": "Job",
-            "items": {
-              "properties": {
-                "Code": {
-                  "backendName": "code",
-                  "type": "string"
-                },
-                "CreationTime": {
-                  "backendName": "creationTime",
-                  "type": "string"
-                },
-                "FinishTime": {
-                  "backendName": "finishTime",
-                  "type": "string"
-                },
-                "Input": {
-                  "backendName": "input",
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Job": {
+                "description_en": "The collection of transcoding jobs",
+                "description_zh": "转码作业集合",
+                "items": {
+                  "description_en": "The details of the transcoding job",
+                  "description_zh": "转码作业详细信息",
                   "properties": {
-                    "Bucket": {
-                      "backendName": "bucket",
+                    "Code": {
+                      "description_en": "The error code returned when the job fails. This parameter is not returned when the job is successful",
+                      "description_zh": "任务失败时的错误码。任务成功时不返回",
+                      "example": "InternalError",
                       "type": "string"
                     },
-                    "Location": {
-                      "backendName": "location",
+                    "CreationTime": {
+                      "description_en": "The time when the job was added. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "作业添加时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2014-01-10T12:00:00Z",
                       "type": "string"
                     },
-                    "Object": {
-                      "backendName": "object",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "JobId": {
-                  "backendName": "jobId",
-                  "type": "string"
-                },
-                "MNSMessageResult": {
-                  "backendName": "mnsMessageResult",
-                  "properties": {
-                    "ErrorCode": {
-                      "backendName": "errorCode",
+                    "FinishTime": {
+                      "description_en": "The time when the job was completed. The time is displayed in UTC and follows the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format",
+                      "description_zh": "作业完成时间，采用 ISO 8601 格式的 UTC 时间，格式为 YYYY-MM-DDTHH:mm:ssZ",
+                      "example": "2014-01-10T12:20:25Z",
                       "type": "string"
                     },
-                    "ErrorMessage": {
-                      "backendName": "errorMessage",
-                      "type": "string"
-                    },
-                    "MessageId": {
-                      "backendName": "messageId",
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "Message": {
-                  "backendName": "message",
-                  "type": "string"
-                },
-                "Output": {
-                  "backendName": "output",
-                  "properties": {
-                    "Audio": {
-                      "backendName": "audio",
-                      "properties": {
-                        "Bitrate": {
-                          "backendName": "bitrate",
-                          "type": "string"
-                        },
-                        "Channels": {
-                          "backendName": "channels",
-                          "type": "string"
-                        },
-                        "Codec": {
-                          "backendName": "codec",
-                          "type": "string"
-                        },
-                        "Profile": {
-                          "backendName": "profile",
-                          "type": "string"
-                        },
-                        "Qscale": {
-                          "backendName": "qscale",
-                          "type": "string"
-                        },
-                        "Samplerate": {
-                          "backendName": "samplerate",
-                          "type": "string"
-                        },
-                        "Volume": {
-                          "backendName": "volume",
-                          "properties": {
-                            "Level": {
-                              "backendName": "level",
-                              "type": "string"
-                            },
-                            "Method": {
-                              "backendName": "method",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "AudioStreamMap": {
-                      "backendName": "audioStreamMap",
-                      "type": "string"
-                    },
-                    "Clip": {
-                      "backendName": "clip",
-                      "properties": {
-                        "TimeSpan": {
-                          "backendName": "timeSpan",
-                          "properties": {
-                            "Duration": {
-                              "backendName": "duration",
-                              "type": "string"
-                            },
-                            "Seek": {
-                              "backendName": "seek",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "Container": {
-                      "backendName": "container",
-                      "properties": {
-                        "Format": {
-                          "backendName": "format",
-                          "type": "string"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "DeWatermark": {
-                      "backendName": "deWatermark",
-                      "type": "string"
-                    },
-                    "Encryption": {
-                      "backendName": "encryptionConfig",
-                      "properties": {
-                        "Id": {
-                          "backendName": "id",
-                          "type": "string"
-                        },
-                        "Key": {
-                          "backendName": "key",
-                          "type": "string"
-                        },
-                        "KeyType": {
-                          "backendName": "keyType",
-                          "type": "string"
-                        },
-                        "KeyUri": {
-                          "backendName": "keyUri",
-                          "type": "string"
-                        },
-                        "SkipCnt": {
-                          "backendName": "skipCnt",
-                          "type": "string"
-                        },
-                        "Type": {
-                          "backendName": "type",
-                          "type": "string"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "M3U8NonStandardSupport": {
-                      "backendName": "m3U8NonStandardSupportDTO",
-                      "properties": {
-                        "TS": {
-                          "backendName": "tsSupportDTO",
-                          "properties": {
-                            "Md5Support": {
-                              "backendName": "md5Support",
-                              "type": "boolean"
-                            },
-                            "SizeSupport": {
-                              "backendName": "sizeSupport",
-                              "type": "boolean"
-                            }
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "MergeConfigUrl": {
-                      "backendName": "mergeConfigUrl",
-                      "type": "string"
-                    },
-                    "MergeList": {
-                      "backendName": "mergeList",
-                      "itemName": "Merge",
-                      "items": {
-                        "properties": {
-                          "Duration": {
-                            "backendName": "duration",
-                            "type": "string"
-                          },
-                          "MergeURL": {
-                            "backendName": "mergeURL",
-                            "type": "string"
-                          },
-                          "RoleArn": {
-                            "backendName": "roleArn",
-                            "type": "string"
-                          },
-                          "Start": {
-                            "backendName": "start",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    },
-                    "MuxConfig": {
-                      "backendName": "muxConfig",
-                      "properties": {
-                        "Gif": {
-                          "backendName": "gif",
-                          "properties": {
-                            "DitherMode": {
-                              "backendName": "ditherMode",
-                              "type": "string"
-                            },
-                            "FinalDelay": {
-                              "backendName": "finalDelay",
-                              "type": "string"
-                            },
-                            "IsCustomPalette": {
-                              "backendName": "isCustomPalette",
-                              "type": "string"
-                            },
-                            "Loop": {
-                              "backendName": "loop",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "Segment": {
-                          "backendName": "segment",
-                          "properties": {
-                            "Duration": {
-                              "backendName": "duration",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        },
-                        "Webp": {
-                          "backendName": "webp",
-                          "nullToEmpty": false,
-                          "properties": {
-                            "Loop": {
-                              "backendName": "loop",
-                              "type": "string"
-                            }
-                          },
-                          "type": "object"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "OpeningList": {
-                      "backendName": "openingDTOList",
-                      "itemName": "Opening",
-                      "items": {
-                        "properties": {
-                          "Height": {
-                            "backendName": "height",
-                            "type": "string"
-                          },
-                          "Start": {
-                            "backendName": "start",
-                            "type": "string"
-                          },
-                          "Width": {
-                            "backendName": "width",
-                            "type": "string"
-                          },
-                          "openUrl": {
-                            "backendName": "openUrl",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    },
-                    "OutSubtitleList": {
-                      "backendName": "subtitle",
-                      "itemName": "OutSubtitle",
-                      "items": {
-                        "properties": {
-                          "Map": {
-                            "backendName": "map",
-                            "type": "string"
-                          },
-                          "Message": {
-                            "backendName": "message",
-                            "type": "string"
-                          },
-                          "OutSubtitleFile": {
-                            "backendName": "output",
-                            "properties": {
-                              "Bucket": {
-                                "backendName": "bucket",
-                                "type": "string"
-                              },
-                              "Location": {
-                                "backendName": "location",
-                                "type": "string"
-                              },
-                              "Object": {
-                                "backendName": "object",
-                                "type": "string"
-                              },
-                              "RoleArn": {
-                                "backendName": "roleArn",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          },
-                          "Success": {
-                            "backendName": "success",
-                            "type": "boolean"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    },
-                    "OutputFile": {
-                      "backendName": "outputFile",
+                    "Input": {
+                      "description_en": "The job input",
+                      "description_zh": "作业输入",
                       "properties": {
                         "Bucket": {
-                          "backendName": "bucket",
+                          "description_en": "The OSS bucket of the job input",
+                          "description_zh": "作业输入的OSS Bucket",
+                          "example": "example-bucket",
                           "type": "string"
                         },
                         "Location": {
-                          "backendName": "location",
+                          "description_en": "The OSS location of the job input",
+                          "description_zh": "作业输入的OSS Location",
+                          "example": "oss-cn-hangzhou",
                           "type": "string"
                         },
                         "Object": {
-                          "backendName": "object",
-                          "type": "string"
-                        },
-                        "RoleArn": {
-                          "backendName": "roleArn",
+                          "description_en": "The OSS object of the job input",
+                          "description_zh": "作业输入的OSS Object",
+                          "example": "example.flv",
                           "type": "string"
                         }
                       },
                       "type": "object"
                     },
-                    "Priority": {
-                      "backendName": "priority",
+                    "JobId": {
+                      "description_en": "The job ID",
+                      "description_zh": "任务ID",
+                      "example": "31fa3c9ca8134fb4b0b0f7878301****",
                       "type": "string"
                     },
-                    "Properties": {
-                      "backendName": "properties",
+                    "MNSMessageResult": {
+                      "description_en": "The result of the MNS message sent to notify the user that the job is complete",
+                      "description_zh": "MNS通知用户作业完成的消息结果",
                       "properties": {
-                        "Bitrate": {
-                          "backendName": "bitrate",
+                        "ErrorCode": {
+                          "description_en": "The error code returned when the notification fails. This parameter is not returned when the notification is successful",
+                          "description_zh": "失败时错误码。成功时此参数不返回",
+                          "example": "InvalidParameter.ResourceNotFound",
                           "type": "string"
                         },
-                        "Duration": {
-                          "backendName": "duration",
+                        "ErrorMessage": {
+                          "description_en": "The error message returned when the notification fails. This parameter is not returned when the notification is successful",
+                          "description_zh": "失败时错误信息。成功时此参数不返回",
+                          "example": "The resource operated “%s” cannot be found.",
                           "type": "string"
                         },
-                        "FileFormat": {
-                          "backendName": "fileFormat",
+                        "MessageId": {
+                          "description_en": "The message ID returned when the notification is successful",
+                          "description_zh": "成功时消息ID",
+                          "example": "123",
                           "type": "string"
-                        },
-                        "FileSize": {
-                          "backendName": "fileSize",
-                          "type": "string"
-                        },
-                        "Format": {
-                          "backendName": "format",
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Message": {
+                      "description_en": "The error message returned when the job fails. This parameter is not returned when the job is successful",
+                      "description_zh": "任务失败时的消息。任务成功时不返回",
+                      "example": "The operation has failed due to some unknown error, exception or failure.",
+                      "type": "string"
+                    },
+                    "Output": {
+                      "description_en": "The job output",
+                      "description_zh": " 作业输出",
+                      "properties": {
+                        "Audio": {
+                          "description_en": "The audio configurations",
+                          "description_zh": "音频配置",
                           "properties": {
                             "Bitrate": {
-                              "backendName": "bitrate",
+                              "description_en": "The audio bitrate of the output file.\n\nUnit: Kbps.\n\nDefault value: 128",
+                              "description_zh": "输出文件的音频码率。\n\n单位：Kbps。\n\n默认值：128",
+                              "example": "128",
                               "type": "string"
                             },
-                            "Duration": {
-                              "backendName": "duration",
+                            "Channels": {
+                              "description_en": "The number of sound channels.\n\nWhen Codec is set to mp3, only 1 and 2 are supported.\n\nWhen Codec is set to aac, only 1, 2, 4, 5, 6, and 8 are supported.\n\nDefault value: 2",
+                              "description_zh": "声道数。\n\n当Codec设置为mp3时，声道数只支持1、2。\n\n当Codec设置为aac时，声道数只支持1、2、4、5、6、8。\n\n默认值：2",
+                              "example": "2",
                               "type": "string"
                             },
-                            "FormatLongName": {
-                              "backendName": "formatLongName",
+                            "Codec": {
+                              "description_en": "The audio encoding format. Valid values: aac, mp3, vorbis, and flac. Default value: aac",
+                              "description_zh": "音频编解码格式。\n\n支持aac、mp3、vorbis、flac。\n\n默认值：aac",
+                              "example": "aac",
                               "type": "string"
                             },
-                            "FormatName": {
-                              "backendName": "formatName",
+                            "Profile": {
+                              "description_en": "The audio encoding preset. When Codec is set to aac, valid values are aaclow, aache, aachev2, aacld, and aaceld",
+                              "description_zh": "音频编码预置。当Codec为aac时可取值：aaclow、aache、aachev2、aacld、aaceld",
+                              "example": "aaclow",
                               "type": "string"
                             },
-                            "NumPrograms": {
-                              "backendName": "numPrograms",
+                            "Qscale": {
+                              "description_en": "The audio quality control factor",
+                              "description_zh": "音频质量控制度",
+                              "example": "15",
                               "type": "string"
                             },
-                            "NumStreams": {
-                              "backendName": "numStreams",
+                            "Samplerate": {
+                              "description_en": "The sampling rate. Valid values: 22050, 32000, 44100, 48000, and 96000. Unit: Hz. Default value: 44100. If the video container format is FLV and the audio encoding format is MP3, the sampling rates 32000, 48000, and 96000 are not supported. If the audio encoding format is MP3, the sampling rate 96000 is not supported",
+                              "description_zh": "采样率。\n\n支持22050、32000、44100、48000、96000。\n\n单位：Hz。\n\n默认值：44100。\n\n若视频容器格式为flv，音频编解码格式选择为mp3时，采样率不支持32000、48000、96000；音频编解码格式为mp3时，采样率不支持96000",
+                              "example": "44100",
                               "type": "string"
                             },
-                            "Size": {
-                              "backendName": "size",
-                              "type": "string"
-                            },
-                            "StartTime": {
-                              "backendName": "startTime",
+                            "Volume": {
+                              "description_en": "The volume configurations",
+                              "description_zh": "音量配置",
+                              "properties": {
+                                "Level": {
+                                  "description_en": "The volume adjustment level.\n\nUnit: dB.\n\nDefault value: -20 dB",
+                                  "description_zh": "音量调整幅度。\n\n单位：db。\n\n默认：-20db",
+                                  "example": "-20",
+                                  "type": "string"
+                                },
+                                "Method": {
+                                  "description_en": "The volume adjustment method. Valid values:\n\nauto: automatic adjustment.\n\ndynamic: dynamic adjustment.\n\nlinear: linear adjustment",
+                                  "description_zh": "音量调整方式。可取值：\n\nauto：自动调整。\n\ndynamic：动态调整。\n\nlinear：线性调整",
+                                  "example": "auto",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "AudioStreamMap": {
+                          "description_en": "The audio stream index.\n\nFormat: `0:a:{index}`.\n\nThe index starts from 0 and indicates the subscript of the audio stream list. If this parameter is not set, the default audio stream is selected",
+                          "description_zh": "音频流序号。\n\n格式：`0:a:{序号}`。\n\n序号从0开始，序号的含义是音频流列表的下标，若不设置，选择默认的音频流",
+                          "example": "0:a:0",
+                          "type": "string"
+                        },
+                        "Clip": {
+                          "description_en": "The clip",
+                          "description_zh": "剪辑片段",
+                          "properties": {
+                            "TimeSpan": {
+                              "description_en": "The time span of the clip",
+                              "description_zh": "剪辑时间段",
+                              "properties": {
+                                "Duration": {
+                                  "description_en": "The duration.\n\nFormat: `hh:mm:ss[.SSS]` or `sssss[.SSS]`.\nValid values: `[00:00:00.000,23:59:59.999]` or `[0.000,86399.999]`.\n\nExample: 01:00:59.999 or 32000.23",
+                                  "description_zh": "持续时长。\n\n格式：`hh:mm:ss[.SSS]`或`sssss[.SSS]`。\n取值范围 ：`[00:00:00.000,23:59:59.999]`或`[0.000，86399.999]`。\n\n示例：01:00:59.999或32000.23",
+                                  "example": "01:00:59.999",
+                                  "type": "string"
+                                },
+                                "Seek": {
+                                  "description_en": "The start time.  \n\nFormat: `hh:mm:ss[.SSS]` or `sssss[.SSS]`.\nValid values: `[00:00:00.000,23:59:59.999]` or `[0.000,86399.999]`.\n\nExample: 01:59:59.999 or 32000.23",
+                                  "description_zh": "开始时间点。  \n\n格式：`hh:mm:ss[.SSS]`或`sssss[.SSS]`。\n取值范围 ：`[00:00:00.000,23:59:59.999]`或`[0.000，86399.999]`。\n\n示例：01:59:59.999或32000.23",
+                                  "example": "01:00:59.999",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Container": {
+                          "description_en": "The container",
+                          "description_zh": "容器",
+                          "properties": {
+                            "Format": {
+                              "description_en": "The container format.\n\nDefault value: mp4.\n\nValid values for video transcoding: flv, mp4, HLS (m3u8+ts), and MPEG-DASH (MPD+fMP4).\n\nValid values for audio transcoding: mp3, mp4, ogg, flac, and m4a.\n\nValid values for images: gif and WEBP.\n\nIf the container format is gif, the VideoCodec parameter must be set to GIF.\n\nIf the container format is webp, the VideoCodec parameter must be set to WEBP.\n\nIf the container format is flv, the VideoCodec parameter cannot be set to H265",
+                              "description_zh": "容器格式。\n\n默认值：mp4。\n\n视频转码可取值flv、mp4、HLS（m3u8+ts）、MPEG-DASH（MPD+fMP4）。\n\n音频转码可取值mp3、mp4、ogg、flac、m4a。\n\n图片可取值gif、WEBP。\n\n容器格式为gif时，VideoCodec设置只能设置为GIF。\n\n容器格式为webp时，VideoCodec设置只能设置为WEBP。\n\n容器格式为flv时，VideoCodec不能设置为H265",
+                              "example": "flv",
                               "type": "string"
                             }
                           },
                           "type": "object"
                         },
-                        "Fps": {
-                          "backendName": "fps",
+                        "DeWatermark": {
+                          "description_en": "The blurring settings. This is a JSON object. For more information, see the blurring details in [Parameter details]（https://help.aliyun.com/document_detail/29253.html）",
+                          "description_zh": "模糊处理，JSON对象。更多信息请参见[参数详情]（https://help.aliyun.com/document_detail/29253.html）中的模糊处理详情",
+                          "example": "{\"0\": [{\"l\": 10,\"t\": 10,\"w\": 10,\"h\": 10},{\"l\": 100,\"t\": 0.1,\"w\": 10,\"h\": 10}],\"128000\": [],\"250000\": [{\"l\": 0.2,\"t\": 0.1,\"w\": 0.01,\"h\": 0.05}]}",
                           "type": "string"
                         },
-                        "Height": {
-                          "backendName": "height",
-                          "type": "string"
-                        },
-                        "Streams": {
-                          "backendName": "streams",
+                        "Encryption": {
+                          "description_en": "The data encryption settings. Only output in M3U8 format is supported",
+                          "description_zh": "数据加密，只支持m3u8格式的输出",
                           "properties": {
-                            "AudioStreamList": {
-                              "backendName": "audioStreamList",
-                              "itemName": "AudioStream",
+                            "Id": {
+                              "description_en": "The encryption ID",
+                              "description_zh": "加密ID",
+                              "example": "31fa3c9ca8134f9cec2b4b0b0f78****",
+                              "type": "string"
+                            },
+                            "Key": {
+                              "description_en": "The key used to encrypt the video",
+                              "description_zh": "加密视频的密钥",
+                              "example": "encryptionkey128",
+                              "type": "string"
+                            },
+                            "KeyType": {
+                              "description_en": "The secret key encryption method. Valid values: Base64 and KMS.\n\nIf the key is `\"encryptionkey128\"`, the value is `Base64(\"encryptionkey128\")` or `KMS(Base64(\"encryptionkey128\"))`",
+                              "description_zh": "密钥加密方式，可取值Base64、KMS。\n\n如密钥为`\"encryptionkey128”`, 则`Base64(“encryptionkey128”)`或 `KMS(Base64(“encryptionkey128”)`",
+                              "example": "Base64",
+                              "type": "string"
+                            },
+                            "KeyUri": {
+                              "description_en": "The URL used to access the key. The URL is Base64-encoded",
+                              "description_zh": "密钥的访问URL，使用BASE64进行编码",
+                              "example": "https://1161758785*****.cn-shanghai.fc.aliyuncs.com/2016-08-15/proxy/HLS-decyptServer/decyptServer/",
+                              "type": "string"
+                            },
+                            "SkipCnt": {
+                              "description_en": "The number of unencrypted segments at the beginning of the video. This allows the video to start playing quickly",
+                              "description_zh": "前面不加密的片数（视频能快速播放起来）",
+                              "example": "3",
+                              "type": "string"
+                            },
+                            "Type": {
+                              "description_en": "The encryption type. Valid value: hls-aes-128",
+                              "description_zh": "加密类型。取值：hls-aes-128",
+                              "example": "hls-aes-128",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "M3U8NonStandardSupport": {
+                          "description_en": "The non-standard M3U8 support settings. This is a JSON object. For more information, see the non-standard M3U8 parameter support details in [Parameter details]（https://help.aliyun.com/document_detail/29253.html）",
+                          "description_zh": "M3U8非标准支持，JSON对象。更多信息请参见[参数详情]（https://help.aliyun.com/document_detail/29253.html）中的M3U8非标准参数支持详情",
+                          "properties": {
+                            "TS": {
+                              "description_en": "The non-standard TS file support settings. This is a JSON object. For more information, see the TS parameter support details in [Parameter details]（https://help.aliyun.com/document_detail/29253.html）",
+                              "description_zh": "JSON对象，TS文件相关非标准支持。更多信息请参见[参数详情]（https://help.aliyun.com/document_detail/29253.html）中的TS参数支持详情",
+                              "properties": {
+                                "Md5Support": {
+                                  "description_en": "Specifies whether to output the MD5 hash value of the TS file in the M3U8 file. Valid values:\n\ntrue: supported.\n\nfalse: not supported",
+                                  "description_zh": "是否支持在M3U8文件中输出TS的md5值。可取值：\n\ntrue：支持。\n\nfalse：不支持",
+                                  "example": "true",
+                                  "type": "boolean"
+                                },
+                                "SizeSupport": {
+                                  "description_en": "Specifies whether to output the size of the TS file in the M3U8 file. Valid values:\n\ntrue: supported.\n\nfalse: not supported",
+                                  "description_zh": "是否支持在M3U8文件中输出ts文件的大小。\n\ntrue：支持。\n\nfalse：不支持。 ",
+                                  "example": "true",
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "MergeConfigUrl": {
+                          "description_en": "The URL of the merging configuration file. You can specify only one of the MergeList and MergeConfigUrl parameters.\n\nThe configuration file specified by MergeConfigUrl supports a maximum of 50 merged clips.\n\nMergeConfigUrl specifies the URL of the merging configuration file.\n\nOnly configuration files stored in OSS are supported, and you must ensure that authorization and access permissions are granted to MPS. For the internal content of the file, refer to the merging parameter details.\n\nExample of the internal content of the mergeConfigfile: `{\"MergeList\":[{\"MergeURL\":\"http://exampleBucket****.oss-cn-hangzhou.aliyuncs.com/video_01.mp4\"}]}`",
+                          "description_zh": "拼接配置文件URL地址。MergeList与MergeConfigUrl两个参数只支持二选一。\n\nMergeConfigUrl指定的配置文件允许50个拼接片段上限。\n\nMergeConfigUrl是拼接配置文件URL地址。\n\n只支持存放在OSS上的配置文件，且需要保证有授权给MPS可访问权限，文件内部内容参见拼接参数详情。\n\nmergeConfigfile文件内部内容示例：`{\"MergeList\":[{\"MergeURL\":\"http://exampleBucket****.oss-cn-hangzhou.aliyuncs.com/video_01.mp4\"}]}`",
+                          "example": "{\"MergeList\":[{\"MergeURL\":\"http://exampleBucket****.oss-cn-hangzhou.aliyuncs.com/video_01.mp4\"}]}",
+                          "type": "string"
+                        },
+                        "MergeList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Merge": {
+                              "description_en": "The video merging configuration",
+                              "description_zh": "视频拼接配置",
                               "items": {
+                                "description_en": "The details of the video merging configuration",
+                                "description_zh": "视频拼接配置详细信息",
                                 "properties": {
-                                  "Bitrate": {
-                                    "backendName": "bitrate",
-                                    "type": "string"
-                                  },
-                                  "ChannelLayout": {
-                                    "backendName": "channelLayout",
-                                    "type": "string"
-                                  },
-                                  "Channels": {
-                                    "backendName": "channels",
-                                    "type": "string"
-                                  },
-                                  "CodecLongName": {
-                                    "backendName": "codecLongName",
-                                    "type": "string"
-                                  },
-                                  "CodecName": {
-                                    "backendName": "codecName",
-                                    "type": "string"
-                                  },
-                                  "CodecTag": {
-                                    "backendName": "codecTag",
-                                    "type": "string"
-                                  },
-                                  "CodecTagString": {
-                                    "backendName": "codecTagString",
-                                    "type": "string"
-                                  },
-                                  "CodecTimeBase": {
-                                    "backendName": "codecTimeBase",
-                                    "type": "string"
-                                  },
                                   "Duration": {
-                                    "backendName": "duration",
+                                    "description_en": "The start time.\n\nFormat: `hh:mm:ss[.SSS]` or `sssss[.SSS]`.\n\nExample: 01:59:59.999 or 32000.23",
+                                    "description_zh": "起始时间点。\n\n格式：`hh:mm:ss[.SSS]`或者`sssss[.SSS]`。\n\n示例：01:59:59.999或者32000.23",
+                                    "example": "01:59:59.999",
                                     "type": "string"
                                   },
-                                  "Index": {
-                                    "backendName": "index",
+                                  "MergeURL": {
+                                    "description_en": "The URL of the clip to be merged.\n\nExample: `http://example-bucket-****.oss-cn-hangzhou.aliyuncs.com/example-object.flv`.\n\nThe object name must be URL-encoded and use UTF-8 encoding",
+                                    "description_zh": "拼接片段地址。\n\n示例：`http://example-bucket-****.oss-cn-hangzhou.aliyuncs.com/example-object.flv`。\n\nObject需要经过URLEncode，采用UTF-8编码",
+                                    "example": "http://example-bucket.oss-cn-hangzhou.aliyuncs.com/example-object.flv",
                                     "type": "string"
                                   },
-                                  "Lang": {
-                                    "backendName": "lang",
+                                  "RoleArn": {
+                                    "description_en": "The ARN of the RAM role used for authorization",
+                                    "description_zh": "代理授权使用的角色信息",
+                                    "example": "acs:ram::<your uid>:role/<your role name>",
                                     "type": "string"
                                   },
-                                  "NumFrames": {
-                                    "backendName": "numFrames",
-                                    "type": "string"
-                                  },
-                                  "SampleFmt": {
-                                    "backendName": "sampleFmt",
-                                    "type": "string"
-                                  },
-                                  "Samplerate": {
-                                    "backendName": "samplerate",
-                                    "type": "string"
-                                  },
-                                  "StartTime": {
-                                    "backendName": "startTime",
-                                    "type": "string"
-                                  },
-                                  "Timebase": {
-                                    "backendName": "timebase",
+                                  "Start": {
+                                    "description_en": "The start time.\n\nFormat: `hh:mm:ss[.SSS]` or `sssss[.SSS]`.\n\nExample: 01:59:59.999 or 32000.23",
+                                    "description_zh": "起始时间点。\n\n格式：`hh:mm:ss[.SSS]`或者`sssss[.SSS]`。\n\n示例：01:59:59.999或者32000.23",
+                                    "example": "01:59:59.999或者32000.23",
                                     "type": "string"
                                   }
                                 },
                                 "type": "object"
                               },
                               "type": "array"
-                            },
-                            "SubtitleStreamList": {
-                              "backendName": "subtitleStreamList",
-                              "itemName": "SubtitleStream",
-                              "items": {
-                                "properties": {
-                                  "Index": {
-                                    "backendName": "index",
-                                    "type": "string"
-                                  },
-                                  "Lang": {
-                                    "backendName": "lang",
-                                    "type": "string"
-                                  }
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "MuxConfig": {
+                          "description_en": "The muxing configuration",
+                          "description_zh": "转码封包配置",
+                          "properties": {
+                            "Gif": {
+                              "description_en": "The muxing configuration for GIF",
+                              "description_zh": "Gif对应的封包配置",
+                              "properties": {
+                                "DitherMode": {
+                                  "description_en": "The color dithering mode of the palette. Valid values: sierra and bayer",
+                                  "description_zh": "调色板颜色抖动方式。可取值：sierra、bayer",
+                                  "example": "bayer",
+                                  "type": "string"
                                 },
-                                "type": "object"
+                                "FinalDelay": {
+                                  "description_en": "The pause time of the final frame. Unit: centiseconds",
+                                  "description_zh": "终帧暂停时间，单位：厘秒",
+                                  "example": "0",
+                                  "type": "string"
+                                },
+                                "IsCustomPalette": {
+                                  "description_en": "Specifies whether to use a custom palette. Valid values:\n\ntrue: Custom palette.\n\nfalse: Default palette",
+                                  "description_zh": "自定义调色板功能。可取值：\n\ntrue：自定义。\n\nfalse：非自定义",
+                                  "example": "true",
+                                  "type": "string"
+                                },
+                                "Loop": {
+                                  "description_en": "The number of loops",
+                                  "description_zh": "循环次数",
+                                  "example": "0",
+                                  "type": "string"
+                                }
                               },
-                              "type": "array"
+                              "type": "object"
                             },
-                            "VideoStreamList": {
-                              "backendName": "videoStreamList",
-                              "itemName": "VideoStream",
+                            "Segment": {
+                              "description_en": "The segment configuration. It is a JSON object",
+                              "description_zh": "切片配置，JSON对象",
+                              "properties": {
+                                "Duration": {
+                                  "description_en": "The segment duration. It is an integer. Unit: seconds.\n\nValid values: [1,10].\n\nDefault value: 10",
+                                  "description_zh": "分片时长。整数，单位：秒。\n\n可取值范围：[1,10]。\n\n默认值：10秒",
+                                  "example": "10",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "Webp": {
+                              "description_en": "The muxing configuration for WebP",
+                              "description_zh": "Webp对应的封包配置",
+                              "properties": {
+                                "Loop": {
+                                  "description_en": "The number of loops",
+                                  "description_zh": "循环次数",
+                                  "example": "0",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "OpeningList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Opening": {
+                              "description_en": "The list of opening slates",
+                              "description_zh": "开板列表",
                               "items": {
+                                "description_en": "The details of the opening slates",
+                                "description_zh": "开板列表详细信息",
                                 "properties": {
-                                  "AvgFPS": {
-                                    "backendName": "avgFPS",
-                                    "type": "string"
-                                  },
-                                  "Bitrate": {
-                                    "backendName": "bitrate",
-                                    "type": "string"
-                                  },
-                                  "CodecLongName": {
-                                    "backendName": "codecLongName",
-                                    "type": "string"
-                                  },
-                                  "CodecName": {
-                                    "backendName": "codecName",
-                                    "type": "string"
-                                  },
-                                  "CodecTag": {
-                                    "backendName": "codecTag",
-                                    "type": "string"
-                                  },
-                                  "CodecTagString": {
-                                    "backendName": "codecTagString",
-                                    "type": "string"
-                                  },
-                                  "CodecTimeBase": {
-                                    "backendName": "codecTimeBase",
-                                    "type": "string"
-                                  },
-                                  "Dar": {
-                                    "backendName": "dar",
-                                    "type": "string"
-                                  },
-                                  "Duration": {
-                                    "backendName": "duration",
-                                    "type": "string"
-                                  },
-                                  "Fps": {
-                                    "backendName": "fps",
-                                    "type": "string"
-                                  },
-                                  "HasBFrames": {
-                                    "backendName": "hasBFrames",
-                                    "type": "string"
-                                  },
                                   "Height": {
-                                    "backendName": "height",
+                                    "description_en": "The height. Valid values: (0,4096), -1, and full.\n\nDefault value: -1.\n\n-1 indicates the value of the source video.\n\nfull indicates filling the entire screen",
+                                    "description_zh": "高。可取值：(0,4096)、-1、full。\n\n默认值：-1。\n\n-1代表片源的值。\n\nfull表示填满画面",
+                                    "example": "-1",
                                     "type": "string"
                                   },
-                                  "Index": {
-                                    "backendName": "index",
+                                  "Start": {
+                                    "description_en": "The start time relative to the main video. The opening video is displayed after a delay starting from 0.\n\nUnit: seconds.\n\nDefault value: 0",
+                                    "description_zh": "相对正片视频的开始时间。从0开始延迟多长时间后，显示开板视频。\n\n单位：秒。\n\n默认值：0",
+                                    "example": "0",
                                     "type": "string"
                                   },
-                                  "Lang": {
-                                    "backendName": "lang",
+                                  "Width": {
+                                    "description_en": "The width. Valid values: (0,4096), -1, and full.\n\nDefault value: -1.\n\n-1 indicates the value of the source video.\n\nfull indicates filling the entire screen",
+                                    "description_zh": "宽。可取值：(0,4096)、-1、full。\n\n默认值：-1。\n\n-1代表片源的值。\n\nfull表示填满画面",
+                                    "example": "-1",
                                     "type": "string"
                                   },
-                                  "Level": {
-                                    "backendName": "level",
+                                  "openUrl": {
+                                    "description_en": "The OSS URL of the opening video",
+                                    "description_zh": "开板视频的OSS URL地址",
+                                    "example": "http://example-bucket-****.oss-cn-hangzhou.aliyuncs.com/opening_01.flv",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "OutSubtitleList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "OutSubtitle": {
+                              "description_en": "The list of output captions",
+                              "description_zh": "输出字幕列表",
+                              "items": {
+                                "description_en": "The details of the output captions",
+                                "description_zh": "输出字幕详细信息",
+                                "properties": {
+                                  "Map": {
+                                    "description_en": "The video track. Format: `0:{stream}:{stream_index}`, which is `0:v:{video_index}`. The stream value is `v` for video streams. The index indicates the subscript of the video stream list and starts from 0",
+                                    "description_zh": "视频轨。格式：0:{流}:{流序号} ，即0:v:{video_index}。流取值为v: video音频流，序号的含义是音频流列表的下标，序号从0开始",
+                                    "example": "0:v:0",
                                     "type": "string"
                                   },
-                                  "NetworkCost": {
-                                    "backendName": "networkCost",
+                                  "Message": {
+                                    "description_en": "The error message returned when the job fails to be created. This parameter is not returned if the job is created",
+                                    "description_zh": "创建作业失败时错误消息。创建成功时此参数不返回",
+                                    "example": "The specified parameter “%s” cannot be null.",
+                                    "type": "string"
+                                  },
+                                  "OutSubtitleFile": {
+                                    "description_en": "The details of the output file",
+                                    "description_zh": "输出文件详细信息",
                                     "properties": {
-                                      "AvgBitrate": {
-                                        "backendName": "avgBitrate",
+                                      "Bucket": {
+                                        "description_en": "The OSS bucket of the input file",
+                                        "description_zh": "输入文件的OSS Bucket",
+                                        "example": "example-bucket-****",
                                         "type": "string"
                                       },
-                                      "CostBandwidth": {
-                                        "backendName": "costBandwidth",
+                                      "Location": {
+                                        "description_en": "The OSS location of the output file",
+                                        "description_zh": "输出文件的OSS Location",
+                                        "example": "oss-cn-hangzhou",
                                         "type": "string"
                                       },
-                                      "PreloadTime": {
-                                        "backendName": "preloadTime",
+                                      "Object": {
+                                        "description_en": "The OSS object of the output file",
+                                        "description_zh": "输出文件的OSS Object",
+                                        "example": "example-output.flv",
+                                        "type": "string"
+                                      },
+                                      "RoleArn": {
+                                        "description_en": "The ARN of the RAM role used for authorization",
+                                        "description_zh": "代理授权使用的角色信息",
+                                        "example": "acs:ram::<your uid>:role/<your role name>",
                                         "type": "string"
                                       }
                                     },
                                     "type": "object"
                                   },
-                                  "NumFrames": {
-                                    "backendName": "numFrames",
+                                  "Success": {
+                                    "description_en": "Indicates whether the operation is successful. Valid values:\n\ntrue: Successful.\n\nfalse: Failed",
+                                    "description_zh": "是否成功。可取值：\n\ntrue：成功。\n\nfalse：失败",
+                                    "example": "true",
+                                    "type": "boolean"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "OutputFile": {
+                          "description_en": "The output file",
+                          "description_zh": "输出文件",
+                          "properties": {
+                            "Bucket": {
+                              "description_en": "The OSS bucket of the input file",
+                              "description_zh": "输入文件的OSS Bucket",
+                              "example": "example-bucket",
+                              "type": "string"
+                            },
+                            "Location": {
+                              "description_en": "The OSS location of the output file",
+                              "description_zh": "输出文件的OSS Location",
+                              "example": "oss-cn-hangzhou",
+                              "type": "string"
+                            },
+                            "Object": {
+                              "description_en": "The OSS object of the output file",
+                              "description_zh": "输出文件的OSS Object",
+                              "example": "example-output.flv",
+                              "type": "string"
+                            },
+                            "RoleArn": {
+                              "description_en": "The ARN of the RAM role used for authorization",
+                              "description_zh": "代理授权使用的角色信息",
+                              "example": "acs:ram::<your uid>:role/<your role name>",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Priority": {
+                          "description_en": "The priority of the job in its corresponding MPS queue.\n\nHighest priority: 10.\n\nDefault value: 6",
+                          "description_zh": "任务在其对应管道内的优先级。\n\n最高优先级：10。\n\n默认值：6",
+                          "example": "6",
+                          "type": "string"
+                        },
+                        "Properties": {
+                          "description_en": "The media properties",
+                          "description_zh": "媒体属性",
+                          "properties": {
+                            "Bitrate": {
+                              "description_en": "The bitrate",
+                              "description_zh": "码率",
+                              "example": "490",
+                              "type": "string"
+                            },
+                            "Duration": {
+                              "description_en": "The duration",
+                              "description_zh": "时长",
+                              "example": "17",
+                              "type": "string"
+                            },
+                            "FileFormat": {
+                              "description_en": "The file format",
+                              "description_zh": "文件格式",
+                              "example": "mp4",
+                              "type": "string"
+                            },
+                            "FileSize": {
+                              "description_en": "The file size",
+                              "description_zh": "文件大小",
+                              "example": "1057273",
+                              "type": "string"
+                            },
+                            "Format": {
+                              "description_en": "The format information",
+                              "description_zh": "格式信息",
+                              "properties": {
+                                "Bitrate": {
+                                  "description_en": "The total bitrate",
+                                  "description_zh": "总码率",
+                                  "example": "490.784",
+                                  "type": "string"
+                                },
+                                "Duration": {
+                                  "description_en": "The total duration",
+                                  "description_zh": "总时长",
+                                  "example": "17.234000",
+                                  "type": "string"
+                                },
+                                "FormatLongName": {
+                                  "description_en": "The long name of the container format",
+                                  "description_zh": "容器、封装格式长述名",
+                                  "example": "QuickTime / MOV",
+                                  "type": "string"
+                                },
+                                "FormatName": {
+                                  "description_en": "The short name of the container format. Valid values: mov, mp4, m4a, 3gp, 3g2, and mj2",
+                                  "description_zh": "容器、封装格式简述名。可取值：mov、mp4、m4a、3gp、3g2、mj2",
+                                  "example": "mov",
+                                  "type": "string"
+                                },
+                                "NumPrograms": {
+                                  "description_en": "The total number of program streams",
+                                  "description_zh": "节目流总数",
+                                  "example": "0",
+                                  "type": "string"
+                                },
+                                "NumStreams": {
+                                  "description_en": "The total number of media streams",
+                                  "description_zh": "媒体流总数",
+                                  "example": "2",
+                                  "type": "string"
+                                },
+                                "Size": {
+                                  "description_en": "The file size",
+                                  "description_zh": "文件大小",
+                                  "example": "1057273",
+                                  "type": "string"
+                                },
+                                "StartTime": {
+                                  "description_en": "The start time",
+                                  "description_zh": "起始时间",
+                                  "example": "0.064000",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "Fps": {
+                              "description_en": "The frame rate",
+                              "description_zh": "帧率",
+                              "example": "30",
+                              "type": "string"
+                            },
+                            "Height": {
+                              "description_en": "The video height",
+                              "description_zh": "视频长",
+                              "example": "1280",
+                              "type": "string"
+                            },
+                            "Streams": {
+                              "description_en": "The stream information",
+                              "description_zh": "流信息",
+                              "properties": {
+                                "AudioStreamList": {
+                                  "description_en": "",
+                                  "description_zh": "",
+                                  "itemNode": true,
+                                  "properties": {
+                                    "AudioStream": {
+                                      "description_en": "The list of audio streams",
+                                      "description_zh": "音频流列表",
+                                      "items": {
+                                        "description_en": "The audio stream details",
+                                        "description_zh": "音频流详细信息",
+                                        "properties": {
+                                          "Bitrate": {
+                                            "description_en": "The bitrate",
+                                            "description_zh": "码率",
+                                            "example": "64.136",
+                                            "type": "string"
+                                          },
+                                          "ChannelLayout": {
+                                            "description_en": "The channel layout",
+                                            "description_zh": "声道输出样式",
+                                            "example": "mono",
+                                            "type": "string"
+                                          },
+                                          "Channels": {
+                                            "description_en": "The number of channels",
+                                            "description_zh": "声道数",
+                                            "example": "1",
+                                            "type": "string"
+                                          },
+                                          "CodecLongName": {
+                                            "description_en": "The long name of the encoding format",
+                                            "description_zh": "编码格式长述名",
+                                            "example": "AAC (Advanced Audio Coding)",
+                                            "type": "string"
+                                          },
+                                          "CodecName": {
+                                            "description_en": "The short name of the encoding format",
+                                            "description_zh": "编码格式简述名",
+                                            "example": "aac",
+                                            "type": "string"
+                                          },
+                                          "CodecTag": {
+                                            "description_en": "The encoding format mark",
+                                            "description_zh": "编码格式标记",
+                                            "example": "0x6134706d",
+                                            "type": "string"
+                                          },
+                                          "CodecTagString": {
+                                            "description_en": "The encoding format mark text",
+                                            "description_zh": "编码格式标记文本",
+                                            "example": "mp4a",
+                                            "type": "string"
+                                          },
+                                          "CodecTimeBase": {
+                                            "description_en": "The codec time base",
+                                            "description_zh": "编码时基",
+                                            "example": "1/32000",
+                                            "type": "string"
+                                          },
+                                          "Duration": {
+                                            "description_en": "The duration",
+                                            "description_zh": "时长",
+                                            "example": "17.223562",
+                                            "type": "string"
+                                          },
+                                          "Index": {
+                                            "description_en": "The index of the audio stream, which indicates the position of the audio stream among all media streams",
+                                            "description_zh": "音频流序号，标识音频流在整个媒体流中的位置",
+                                            "example": "1",
+                                            "type": "string"
+                                          },
+                                          "Lang": {
+                                            "description_en": "The language. For more information, see FFmpeg language definitions (https://www.ffmpeg.org/ffmpeg-all.html#Metadata) and ISO-639 (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)",
+                                            "description_zh": "语言。更多信息，请参见FFmeg语言定义 (https://www.ffmpeg.org/ffmpeg-all.html#Metadata)、ISO-639 (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)",
+                                            "example": "und",
+                                            "type": "string"
+                                          },
+                                          "NumFrames": {
+                                            "description_en": "The total number of frames",
+                                            "description_zh": "总帧数",
+                                            "example": "30",
+                                            "type": "string"
+                                          },
+                                          "SampleFmt": {
+                                            "description_en": "The sample format",
+                                            "description_zh": "采样格式",
+                                            "example": "fltp",
+                                            "type": "string"
+                                          },
+                                          "Samplerate": {
+                                            "description_en": "The sample rate",
+                                            "description_zh": "采样率",
+                                            "example": "32000",
+                                            "type": "string"
+                                          },
+                                          "StartTime": {
+                                            "description_en": "The start time",
+                                            "description_zh": "开始时间",
+                                            "example": "0.000000",
+                                            "type": "string"
+                                          },
+                                          "Timebase": {
+                                            "description_en": "The time base",
+                                            "description_zh": "时基",
+                                            "example": "1/32000",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "SubtitleStreamList": {
+                                  "description_en": "",
+                                  "description_zh": "",
+                                  "itemNode": true,
+                                  "properties": {
+                                    "SubtitleStream": {
+                                      "description_en": "The list of subtitle streams",
+                                      "description_zh": "字幕流列表",
+                                      "items": {
+                                        "description_en": "The subtitle stream details",
+                                        "description_zh": "字幕流详细信息",
+                                        "properties": {
+                                          "Index": {
+                                            "description_en": "The index of the subtitle stream, which indicates the position of the subtitle stream among all media streams",
+                                            "description_zh": "字幕流序号。\n标识字幕流在整个媒体流中的位置",
+                                            "example": "1",
+                                            "type": "string"
+                                          },
+                                          "Lang": {
+                                            "description_en": "The language",
+                                            "description_zh": "语言",
+                                            "example": "und",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "VideoStreamList": {
+                                  "description_en": "",
+                                  "description_zh": "",
+                                  "itemNode": true,
+                                  "properties": {
+                                    "VideoStream": {
+                                      "description_en": "The list of video streams",
+                                      "description_zh": "视频流列表",
+                                      "items": {
+                                        "description_en": "The video stream details",
+                                        "description_zh": "视频流详细信息",
+                                        "properties": {
+                                          "AvgFPS": {
+                                            "description_en": "The average frame rate",
+                                            "description_zh": "平均帧率",
+                                            "example": "30.0",
+                                            "type": "string"
+                                          },
+                                          "Bitrate": {
+                                            "description_en": "The bitrate",
+                                            "description_zh": "码率",
+                                            "example": "421.117",
+                                            "type": "string"
+                                          },
+                                          "CodecLongName": {
+                                            "description_en": "The long name of the encoding format",
+                                            "description_zh": "编码格式长述名",
+                                            "example": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+                                            "type": "string"
+                                          },
+                                          "CodecName": {
+                                            "description_en": "The short name of the encoding format",
+                                            "description_zh": "编码格式简述名",
+                                            "example": "h264",
+                                            "type": "string"
+                                          },
+                                          "CodecTag": {
+                                            "description_en": "The encoding format mark",
+                                            "description_zh": "编码格式标记",
+                                            "example": "0x31637661",
+                                            "type": "string"
+                                          },
+                                          "CodecTagString": {
+                                            "description_en": "The encoding format mark text",
+                                            "description_zh": "编码格式标记文本",
+                                            "example": "avc1",
+                                            "type": "string"
+                                          },
+                                          "CodecTimeBase": {
+                                            "description_en": "The codec time base",
+                                            "description_zh": "编码时基",
+                                            "example": "1/60",
+                                            "type": "string"
+                                          },
+                                          "Dar": {
+                                            "description_en": "The display aspect ratio",
+                                            "description_zh": "视频显示分辨率比",
+                                            "example": "9:16",
+                                            "type": "string"
+                                          },
+                                          "Duration": {
+                                            "description_en": "The duration",
+                                            "description_zh": "时长",
+                                            "example": "17.233333",
+                                            "type": "string"
+                                          },
+                                          "Fps": {
+                                            "description_en": "The frame rate",
+                                            "description_zh": "帧率",
+                                            "example": "30.0",
+                                            "type": "string"
+                                          },
+                                          "HasBFrames": {
+                                            "description_en": "Indicates whether the video stream contains B-frames",
+                                            "description_zh": "是否有B帧",
+                                            "example": "2",
+                                            "type": "string"
+                                          },
+                                          "Height": {
+                                            "description_en": "The height of the video",
+                                            "description_zh": "视频分辨率长",
+                                            "example": "1280",
+                                            "type": "string"
+                                          },
+                                          "Index": {
+                                            "description_en": "The index of the video stream, which indicates the position of the video stream among all media streams",
+                                            "description_zh": "视频流序号，标识视频流在整个媒体流中的位置",
+                                            "example": "0",
+                                            "type": "string"
+                                          },
+                                          "Lang": {
+                                            "description_en": "The language. For more information, see FFmpeg language definitions (https://www.ffmpeg.org/ffmpeg-all.html#Metadata) and ISO-639 (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)",
+                                            "description_zh": "语言。更多信息，请参见FFmeg语言定义 (https://www.ffmpeg.org/ffmpeg-all.html#Metadata)、ISO-639 (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)",
+                                            "example": "und",
+                                            "type": "string"
+                                          },
+                                          "Level": {
+                                            "description_en": "The encoding level",
+                                            "description_zh": "编码等级",
+                                            "example": "31",
+                                            "type": "string"
+                                          },
+                                          "NetworkCost": {
+                                            "description_en": "The network bandwidth consumption",
+                                            "description_zh": "网络带宽消耗",
+                                            "properties": {
+                                              "AvgBitrate": {
+                                                "description_en": "The average bitrate",
+                                                "description_zh": "平均码率",
+                                                "example": "300",
+                                                "type": "string"
+                                              },
+                                              "CostBandwidth": {
+                                                "description_en": "The maximum bandwidth consumption",
+                                                "description_zh": "最大消耗带宽",
+                                                "example": "10",
+                                                "type": "string"
+                                              },
+                                              "PreloadTime": {
+                                                "description_en": "The preload time",
+                                                "description_zh": "预加载时间",
+                                                "example": "8",
+                                                "type": "string"
+                                              }
+                                            },
+                                            "type": "object"
+                                          },
+                                          "NumFrames": {
+                                            "description_en": "The total number of frames",
+                                            "description_zh": "总帧率",
+                                            "example": "30",
+                                            "type": "string"
+                                          },
+                                          "PixFmt": {
+                                            "description_en": "The pixel format",
+                                            "description_zh": "像素格式",
+                                            "example": "yuv420p",
+                                            "type": "string"
+                                          },
+                                          "Profile": {
+                                            "description_en": "The codec profile",
+                                            "description_zh": "编码预置",
+                                            "example": "high",
+                                            "type": "string"
+                                          },
+                                          "Sar": {
+                                            "description_en": "The sample aspect ratio",
+                                            "description_zh": "编码信号分辨率比",
+                                            "example": "1:1",
+                                            "type": "string"
+                                          },
+                                          "StartTime": {
+                                            "description_en": "The start time",
+                                            "description_zh": "开始时间",
+                                            "example": "0.000000",
+                                            "type": "string"
+                                          },
+                                          "Timebase": {
+                                            "description_en": "The time base",
+                                            "description_zh": "时基",
+                                            "example": "1/15360",
+                                            "type": "string"
+                                          },
+                                          "Width": {
+                                            "description_en": "The width of the video",
+                                            "description_zh": "视频分辨率宽，数字",
+                                            "example": "720",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "type": "object"
+                                      },
+                                      "type": "array"
+                                    }
+                                  },
+                                  "type": "object"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "Width": {
+                              "description_en": "The video width",
+                              "description_zh": "视频宽",
+                              "example": "720",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "Rotate": {
+                          "description_en": "The video rotation angle",
+                          "description_zh": "视频旋转角度",
+                          "example": "90",
+                          "type": "string"
+                        },
+                        "SubtitleConfig": {
+                          "description_en": "The caption configuration",
+                          "description_zh": "字幕配置",
+                          "properties": {
+                            "ExtSubtitleList": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "itemNode": true,
+                              "properties": {
+                                "ExtSubtitle": {
+                                  "description_en": "The list of external captions. It is a JSON array",
+                                  "description_zh": "外部字幕列表，JSON数组",
+                                  "items": {
+                                    "description_en": "The details of the captions",
+                                    "description_zh": "字幕详细信息",
+                                    "properties": {
+                                      "CharEnc": {
+                                        "description_en": "The character encoding of the external captions.\n\nValid values: UTF-8, GBK, BIG5, and auto.\n\nDefault value: auto.\n\nWhen the character encoding of external captions is set to auto, false detection may occur. Specify a specific character encoding",
+                                        "description_zh": "外部字幕字符编码。\n\n范围：UTF-8、GBK、BIG5、auto。\n\n默认：auto。\n\n外部字幕字符编码设置为auto时，存在误检情况，建议您指定具体的字符编码",
+                                        "example": "auto",
+                                        "type": "string"
+                                      },
+                                      "FontName": {
+                                        "description_en": "The font name used when external captions are converted to hard-coded captions",
+                                        "description_zh": "外挂字幕转换成硬字幕对应的字体名称",
+                                        "example": "\"WenQuanYi Zen Hei\", \"Yuanti SC Regular\", \"SimSun\"",
+                                        "type": "string"
+                                      },
+                                      "Input": {
+                                        "description_en": "The external input caption file.\n\nCurrently, srt and ass formats are supported. For more information, see the Input parameter in [Parameter details]（https://help.aliyun.com/document_detail/29253.html）.\nExample: `{\"Bucket\":\"example-bucket\",\"Location\":\"oss-cn-hangzhou\",\"Object\":\"example.srt\"}`",
+                                        "description_zh": "外部输入字幕文件。\n\n目前支持srt、ass格式。更多信息请参见[参数详情]（https://help.aliyun.com/document_detail/29253.html）中的Input参数。\n示例：`{“Bucket”:”example-bucket”,“Location”:”oss-cn-hangzhou”,“Object”:”example.srt”}`",
+                                        "properties": {
+                                          "Bucket": {
+                                            "description_en": "The OSS bucket of the input file",
+                                            "description_zh": "输入文件所在的OSS Bucket",
+                                            "example": "example-bucket-****",
+                                            "type": "string"
+                                          },
+                                          "Location": {
+                                            "description_en": "The OSS location of the input file",
+                                            "description_zh": "输入文件所在的OSS Location",
+                                            "example": "oss-cn-hangzhou",
+                                            "type": "string"
+                                          },
+                                          "Object": {
+                                            "description_en": "The OSS object of the input file",
+                                            "description_zh": "输入文件的OSS Object",
+                                            "example": "example-output.flv",
+                                            "type": "string"
+                                          }
+                                        },
+                                        "type": "object"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "type": "array"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "SubtitleList": {
+                              "description_en": "",
+                              "description_zh": "",
+                              "itemNode": true,
+                              "properties": {
+                                "Subtitle": {
+                                  "description_en": "The list of captions",
+                                  "description_zh": "字幕列表",
+                                  "items": {
+                                    "description_en": "The details of the captions",
+                                    "description_zh": "字幕详细信息",
+                                    "properties": {
+                                      "Map": {
+                                        "description_en": "The video stream index. The index starts from 0 and indicates the subscript of the video stream list. If this parameter is not set, the default video stream is selected",
+                                        "description_zh": "视频流序号。序号从0开始，序号的含义是视频流列表的下标，若未设置，选择默认的视频流",
+                                        "example": "0",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "type": "array"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "SuperReso": {
+                          "description_en": "The configuration for matching the source resolution",
+                          "description_zh": "分辨率随源",
+                          "properties": {
+                            "IsHalfSample": {
+                              "description_en": "Specifies whether to obtain sampling rate-related parameters. Valid values:\n\ntrue: Yes.\n\nfalse: No",
+                              "description_zh": "是否获取采样率相关参数。可取值：\n\ntrue：是。\n\nfalse：否",
+                              "example": "true",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "TailSlateList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "TailSlate": {
+                              "description_en": "The list of tail slates",
+                              "description_zh": "尾板列表",
+                              "items": {
+                                "description_en": "The details of the tail slates",
+                                "description_zh": "尾板列表详细信息",
+                                "properties": {
+                                  "BgColor": {
+                                    "description_en": "The background color used to fill the blank space when the width and height of the tail slate video are smaller than those of the main video. Default value: White. For more information, see bgcolor (https://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/29253/cn_zh/1502784952344/color.txt?spm=a2c4g.11186623.2.63.1df840f74IH4Eq&file=color.txt)",
+                                    "description_zh": "如果尾板视频的宽、高小于正片时，设置空白处填充的背景色。默认为White，更多信息请参见bgcolor (https://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/attach/29253/cn_zh/1502784952344/color.txt?spm=a2c4g.11186623.2.63.1df840f74IH4Eq&file=color.txt)",
+                                    "example": "White",
                                     "type": "string"
                                   },
-                                  "PixFmt": {
-                                    "backendName": "pixFmt",
+                                  "BlendDuration": {
+                                    "description_en": "The duration of the transition between the main video and the tail slate video. The transition effect is fade-in and fade-out: the main video displays its last frame while the tail slate video starts playing. The last frame of the main video gradually darkens, and the tail slate video gradually brightens. Unit: seconds. Default value: 0",
+                                    "description_zh": "正片视频和尾板视频过渡的时长。过渡的效果是淡入淡出：正片显示最后一帧，同时播放尾板视频，正片最后一帧逐步变暗，尾板视频逐步变亮。单位秒，默认0",
+                                    "example": "0",
                                     "type": "string"
                                   },
-                                  "Profile": {
-                                    "backendName": "profile",
+                                  "Height": {
+                                    "description_en": "The height. Valid values: (0,4096), -1, and full.\n\n-1 indicates the value of the source video.\nfull indicates filling the entire screen.\nDefault value: -1",
+                                    "description_zh": "高，范围（0，4096）、-1、full\n\n-1代表片源的值。\nfull表示填满画面。\n默认为-1",
+                                    "example": "-1",
                                     "type": "string"
                                   },
-                                  "Sar": {
-                                    "backendName": "sar",
+                                  "IsMergeAudio": {
+                                    "description_en": "Specifies whether to merge the audio content of the tail slate video. Valid values:\n\ntrue: Yes.\n\nfalse: No",
+                                    "description_zh": "是否要拼接尾板视频的音频内容。可取值：\n\ntrue：拼接。\n\nfalse：不拼接",
+                                    "example": "true",
+                                    "type": "boolean"
+                                  },
+                                  "Start": {
+                                    "description_en": "The start time",
+                                    "description_zh": "开始时间",
+                                    "example": "1",
                                     "type": "string"
                                   },
-                                  "StartTime": {
-                                    "backendName": "startTime",
-                                    "type": "string"
-                                  },
-                                  "Timebase": {
-                                    "backendName": "timebase",
+                                  "TailUrl": {
+                                    "description_en": "The OSS URL of the tail slate video",
+                                    "description_zh": "尾板视频的OSS URL地址",
+                                    "example": "http://example-bucket-****.oss-cn-hangzhou.aliyuncs.com/opening_01.flv",
                                     "type": "string"
                                   },
                                   "Width": {
-                                    "backendName": "width",
+                                    "description_en": "The width. Valid values: (0,4096), -1, and full.\n\n-1 indicates the value of the source video. full indicates filling the entire screen.\n\nDefault value: -1",
+                                    "description_zh": "宽。可取值：（0，4096）、-1、full。\n\n-1代表片源的值，full表示填满画面。\n\n默认为-1",
+                                    "example": "-1",
                                     "type": "string"
                                   }
                                 },
@@ -759,357 +1259,349 @@
                           },
                           "type": "object"
                         },
-                        "Width": {
-                          "backendName": "width",
-                          "type": "string"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "Rotate": {
-                      "backendName": "rotate",
-                      "type": "string"
-                    },
-                    "SubtitleConfig": {
-                      "backendName": "subtitleConfig",
-                      "properties": {
-                        "ExtSubtitleList": {
-                          "backendName": "extSubtitleList",
-                          "itemName": "ExtSubtitle",
-                          "items": {
-                            "properties": {
-                              "CharEnc": {
-                                "backendName": "charEnc",
-                                "type": "string"
-                              },
-                              "FontName": {
-                                "backendName": "fontName",
-                                "type": "string"
-                              },
-                              "Input": {
-                                "backendName": "input",
-                                "properties": {
-                                  "Bucket": {
-                                    "backendName": "bucket",
-                                    "type": "string"
-                                  },
-                                  "Location": {
-                                    "backendName": "location",
-                                    "type": "string"
-                                  },
-                                  "Object": {
-                                    "backendName": "object",
-                                    "type": "string"
-                                  }
-                                },
-                                "type": "object"
-                              }
-                            },
-                            "type": "object"
-                          },
-                          "type": "array"
-                        },
-                        "SubtitleList": {
-                          "backendName": "subtitleList",
-                          "itemName": "Subtitle",
-                          "items": {
-                            "properties": {
-                              "Map": {
-                                "backendName": "map",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          },
-                          "type": "array"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "SuperReso": {
-                      "backendName": "superReso",
-                      "properties": {
-                        "IsHalfSample": {
-                          "backendName": "isHalfSample",
-                          "type": "string"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "TailSlateList": {
-                      "backendName": "tailSlateDTOList",
-                      "itemName": "TailSlate",
-                      "items": {
-                        "properties": {
-                          "BgColor": {
-                            "backendName": "bgColor",
-                            "type": "string"
-                          },
-                          "BlendDuration": {
-                            "backendName": "blendDuration",
-                            "type": "string"
-                          },
-                          "Height": {
-                            "backendName": "height",
-                            "type": "string"
-                          },
-                          "IsMergeAudio": {
-                            "backendName": "isMergeAudio",
-                            "type": "boolean"
-                          },
-                          "Start": {
-                            "backendName": "start",
-                            "type": "string"
-                          },
-                          "TailUrl": {
-                            "backendName": "tailUrl",
-                            "type": "string"
-                          },
-                          "Width": {
-                            "backendName": "width",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    },
-                    "TemplateId": {
-                      "backendName": "templateId",
-                      "type": "string"
-                    },
-                    "TransConfig": {
-                      "backendName": "transConfig",
-                      "properties": {
-                        "AdjDarMethod": {
-                          "backendName": "adjDarMethod",
+                        "TemplateId": {
+                          "description_en": "The template ID",
+                          "description_zh": "模板ID",
+                          "example": "S00000000-000010",
                           "type": "string"
                         },
-                        "IsCheckAudioBitrate": {
-                          "backendName": "isCheckAudioBitrate",
-                          "type": "string"
-                        },
-                        "IsCheckAudioBitrateFail": {
-                          "backendName": "isCheckAudioBitrateFail",
-                          "type": "string"
-                        },
-                        "IsCheckReso": {
-                          "backendName": "isCheckReso",
-                          "type": "string"
-                        },
-                        "IsCheckResoFail": {
-                          "backendName": "isCheckResoFail",
-                          "type": "string"
-                        },
-                        "IsCheckVideoBitrate": {
-                          "backendName": "isCheckVideoBitrate",
-                          "type": "string"
-                        },
-                        "IsCheckVideoBitrateFail": {
-                          "backendName": "isCheckVideoBitrateFail",
-                          "type": "string"
-                        },
-                        "TransMode": {
-                          "backendName": "transMode",
-                          "type": "string"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "UserData": {
-                      "backendName": "userData",
-                      "type": "string"
-                    },
-                    "Video": {
-                      "backendName": "video",
-                      "properties": {
-                        "Bitrate": {
-                          "backendName": "bitrate",
-                          "type": "string"
-                        },
-                        "BitrateBnd": {
-                          "backendName": "bitrateBnd",
+                        "TransConfig": {
+                          "description_en": "The general transcoding configurations. If this value is specified in the request parameters, it overwrites the corresponding parameter in the specified transcoding template",
+                          "description_zh": "转码通用配置。如果请求参数中设置了该值，则覆盖指定转码模板中的对应参数。  ",
                           "properties": {
-                            "Max": {
-                              "backendName": "max",
+                            "AdjDarMethod": {
+                              "description_en": "The resolution adjustment method. Default value: none. Valid values: rescale, crop, pad, and none",
+                              "description_zh": "分辨率改写方式。默认值：none。可选范围：rescale、crop、pad、none",
+                              "example": "none",
                               "type": "string"
                             },
-                            "Min": {
-                              "backendName": "min",
+                            "IsCheckAudioBitrate": {
+                              "description_en": "Specifies whether to check the audio bitrate. If the output audio bitrate is greater than the source audio bitrate, the output audio bitrate is considered equal to the source audio bitrate, and the specified audio bitrate parameter does not take effect. The priority of this parameter is lower than that of IsCheckAudioBitrateFail. Valid values:\ntrue: checks the audio bitrate.\nfalse: does not check the audio bitrate.\nDefault value:\n    - If this parameter is empty and the codec is different from that of the input source: false.\n    - If this parameter is empty and the codec is the same as that of the input source: true",
+                              "description_zh": "是否检查音频码率。当输出音频码率大于媒体源音频码率时，则视为输出音频码率等于媒体源音频码率，即设置的音频码率参数不会生效。此值优先级小于IsCheckAudioBitrateFail。\ntrue表示检查。\nfalse表示不检查。\n默认值：\n    - 参数为空，并且codec和输入源不一样：false。\n    - 参数为空，并且codec和输入源一样：true",
+                              "example": "false",
+                              "type": "string"
+                            },
+                            "IsCheckAudioBitrateFail": {
+                              "description_en": "Specifies whether to check the audio bitrate. If the output audio bitrate is greater than the source audio bitrate, transcoding is not performed and a transcoding failure is returned. The priority of this parameter is higher than that of IsCheckAudioBitrate. Valid values:\n\nfalse: checks the audio bitrate.\n\ntrue: does not check the audio bitrate",
+                              "description_zh": "是否检查音频码率。当输出音频码率大于媒体源音频码率时，则不进行转码，直接返回转码失败，此值优先级大于IsCheckAudioBitrate。\n\nfalse：检查。\n\ntrue：不检查",
+                              "example": "false",
+                              "type": "string"
+                            },
+                            "IsCheckReso": {
+                              "description_en": "Specifies whether to check the resolution. If the output resolution is greater than the input resolution in width or height, the output resolution is adjusted to the input resolution. Valid values:\n\ntrue: checks the resolution.\n\nfalse: does not check the resolution.\n\nDefault value: false",
+                              "description_zh": "是否检查分辨率。如果输出分辨率大于输入分辨率（判断条件是宽或高），则输出分辨率等于输入分辨率。\n\ntrue表示检查。\n\nfalse表示不检查。\n\n默认值：false",
+                              "example": "false",
+                              "type": "string"
+                            },
+                            "IsCheckResoFail": {
+                              "description_en": "Specifies whether to check the resolution. If the output resolution is greater than the input resolution in width or height, a transcoding failure is returned. Valid values:\n\ntrue: checks the resolution.\n\nfalse: does not check the resolution.\n\nDefault value: false",
+                              "description_zh": "是否检查分辨率。如果输出分辨率大于输入分辨率（判断条件是宽或高），则返回转码失败。\n\ntrue表示检查。\n\nfalse表示不检查。\n\n默认值：false",
+                              "example": "false",
+                              "type": "string"
+                            },
+                            "IsCheckVideoBitrate": {
+                              "description_en": "Specifies whether to check the video bitrate. If the output video bitrate is greater than the input video bitrate, the output video bitrate is considered equal to the input video bitrate. Valid values:\n\ntrue: checks the video bitrate.\n\nfalse: does not check the video bitrate.\n\nDefault value: false",
+                              "description_zh": "是否检查视频码率。如果视频输出码率大于视频输入码率，则视为视频输出码率等于视频输入码率。\n\ntrue表示检查。\n\nfalse表示不检查。\n\n默认值：false",
+                              "example": "false",
+                              "type": "string"
+                            },
+                            "IsCheckVideoBitrateFail": {
+                              "description_en": "Specifies whether to check the bitrate. If the output video bitrate is greater than the source video bitrate, transcoding is not performed and a transcoding failure is returned. The priority of this parameter is higher than that of IsCheckVideoBitrate. Valid values:\n\ntrue: checks the bitrate.\n\nfalse: does not check the bitrate.\n\nDefault value: false",
+                              "description_zh": "是否检查码率。当输出视频码率大于媒体源视频码率时，则不进行转码，直接返回转码失败。此值优先级大于IsCheckVideoBitrate。\n\ntrue表示检查。\n\nfalse表示不检查。\n\n默认值：false",
+                              "example": "false",
+                              "type": "string"
+                            },
+                            "TransMode": {
+                              "description_en": "The transcoding mode. Valid values: onepass, twopass, and CBR. Default value: onepass",
+                              "description_zh": "转码模式。\n\n可选范围onepass、twopass、CBR。\n默认值：onepass",
+                              "example": "onepass",
                               "type": "string"
                             }
                           },
                           "type": "object"
                         },
-                        "Bufsize": {
-                          "backendName": "bufsize",
+                        "UserData": {
+                          "description_en": "The custom user data",
+                          "description_zh": "用户自定义数据",
+                          "example": "test-001",
                           "type": "string"
                         },
-                        "Codec": {
-                          "backendName": "codec",
+                        "Video": {
+                          "description_en": "The video configurations",
+                          "description_zh": " 视频配置",
+                          "properties": {
+                            "Bitrate": {
+                              "description_en": "The average video bitrate. Unit: Kbit/s",
+                              "description_zh": "视频平均码率。单位：Kbps",
+                              "example": "428",
+                              "type": "string"
+                            },
+                            "BitrateBnd": {
+                              "description_en": "The video bitrate range",
+                              "description_zh": "视频码率范围",
+                              "properties": {
+                                "Max": {
+                                  "description_en": "The maximum bitrate. Unit: Kbit/s",
+                                  "description_zh": "最大码率。单位：Kbps",
+                                  "example": "1000",
+                                  "type": "string"
+                                },
+                                "Min": {
+                                  "description_en": "The minimum bitrate. Unit: Kbit/s",
+                                  "description_zh": "最小码率。单位：Kbps",
+                                  "example": "200",
+                                  "type": "string"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "Bufsize": {
+                              "description_en": "The buffer size",
+                              "description_zh": "缓冲区大小",
+                              "example": "6000",
+                              "type": "string"
+                            },
+                            "Codec": {
+                              "description_en": "The encoding format. Valid values: H.264, H.265, GIF, and WEBP",
+                              "description_zh": "编解码格式。可取值H.264、H.265、GIF、WEBP",
+                              "example": "H.264",
+                              "type": "string"
+                            },
+                            "Crf": {
+                              "description_en": "The constant rate factor (CRF) for bitrate and quality control. If Crf is specified, the Bitrate setting becomes invalid. Default value: 26",
+                              "description_zh": "码率-质量控制因子。如果设置了Crf，则Bitrate的设置失效。默认值：26",
+                              "example": "26",
+                              "type": "string"
+                            },
+                            "Crop": {
+                              "description_en": "The video cropping settings. Two methods are supported:\nAutomatically detect and crop black borders. Set this parameter to border.\nCustom cropping. Parameter format: width:height:left:top. Example: 1280:800:0:140",
+                              "description_zh": "视频画面裁剪。支持2种方式。\n自动检测黑边并裁切，设置为border。\n自定义裁切，参数格式：width:height:left:top。示例：1280:800:0:140",
+                              "example": "border",
+                              "type": "string"
+                            },
+                            "Degrain": {
+                              "description_en": "The strength of the independent denoising algorithm",
+                              "description_zh": "独立去噪算法强度",
+                              "example": "5",
+                              "type": "string"
+                            },
+                            "Fps": {
+                              "description_en": "The frame rate.\n\nIf the frame rate of the input file exceeds 60, the value 60 is used.\nDefault value: the frame rate of the input file",
+                              "description_zh": "帧率。\n\n当输入文件帧率超过60时取60。\n默认值：取输入文件帧率",
+                              "example": "25",
+                              "type": "string"
+                            },
+                            "Gop": {
+                              "description_en": "The maximum number of frames between keyframes. Default value: 250",
+                              "description_zh": "关键帧间最大帧数。默认值：250",
+                              "example": "250",
+                              "type": "string"
+                            },
+                            "Height": {
+                              "description_en": "The height.\n\nUnit: px.\nDefault value: the original height of the video",
+                              "description_zh": "高。\n\n单位：px。\n默认值：视频原始高度",
+                              "example": "720",
+                              "type": "string"
+                            },
+                            "MaxFps": {
+                              "description_en": "The maximum frame rate",
+                              "description_zh": "最大帧率",
+                              "example": "60",
+                              "type": "string"
+                            },
+                            "Maxrate": {
+                              "description_en": "The peak video bitrate. Unit: Kbit/s",
+                              "description_zh": "视频码率峰值。单位：Kbps",
+                              "example": "1000",
+                              "type": "string"
+                            },
+                            "Pad": {
+                              "description_en": "The black borders added to the video. Unit: px.\n\nParameter format: width:height:left:top.\nExample: 1280:800:0:140",
+                              "description_zh": "视频贴黑边。单位：px。\n\n参数格式：width:height:left:top。\n示例：1280:800:0:140",
+                              "example": "1280:800:0:140",
+                              "type": "string"
+                            },
+                            "PixFmt": {
+                              "description_en": "The video color format. Valid values: standard color formats such as yuv420p and yuvj420p",
+                              "description_zh": "视频颜色格式。范围：yuv420p，yuvj420p等标准颜色格式",
+                              "example": "yuv420p",
+                              "type": "string"
+                            },
+                            "Preset": {
+                              "description_en": "The video algorithm preset. Default value: medium. Valid values:\n\nveryfast: ultra-fast.\n\nfast: fast.\n\nmedium: medium.\n\nslow: slow.\n\nslower: ultra-slow",
+                              "description_zh": "视频算法器预置。默认值：medium。可取值：\n\nveryfast：超快。\n\nfast：快。\n\nmedium：中等。\n\nslow：慢。\n\nslower：超慢",
+                              "example": "medium",
+                              "type": "string"
+                            },
+                            "Profile": {
+                              "description_en": "The encoding profile. Valid values:\n\nbaseline: for mobile devices.\nmain: for standard-resolution devices.\nhigh: for high-resolution devices.\nDefault value: high",
+                              "description_zh": "编码级别。\n\nbaseline：针对移动设备。\nmain：针对标准分辨率设备。\nhigh：针对高分辨率设备。\n默认值：high",
+                              "example": "high",
+                              "type": "string"
+                            },
+                            "Qscale": {
+                              "description_en": "The video quality control factor",
+                              "description_zh": "视频质量控制度",
+                              "example": "15",
+                              "type": "string"
+                            },
+                            "ResoPriority": {
+                              "description_en": "The resource priority",
+                              "description_zh": "资源优先级",
+                              "example": "1",
+                              "type": "string"
+                            },
+                            "ScanMode": {
+                              "description_en": "The scan mode. Valid values:\nNot specified: uses the raw mode of the input file.\nauto: automatic deinterlacing.\nprogressive: progressive scan.\ninterlaced: interlaced scan.\nDefault value: empty, which means not specified.\n\nBest practice: Although interlaced scan consumes less data than progressive scan, it results in lower image quality. Therefore, progressive scan is widely used in mainstream video production.\nIf you set progressive scan or interlaced scan but the mode does not match the original video mode, transcoding fails.\nSet the original video mode or automatic deinterlacing to improve compatibility",
+                              "description_zh": "扫描模式。取值如下：\n不设置：按输入文件的原始模式。\nauto：自动去隔行。\nprogressive：顺序扫描（逐行扫描）。\ninterlaced：交叉扫描（隔行扫描）。\n默认值：空，即不设置。\n\n最佳实践：交叉扫描虽然比顺序扫描更节省数据量，但画质不佳，所以现在主流视频制作都采用顺序扫描。\n如果您设置了顺序扫描或交叉扫描，但与原视频模式不符，会导致转码失败。\n建议您设置原视频模式或自动去隔行，以提高兼容性",
+                              "example": "interlaced",
+                              "type": "string"
+                            },
+                            "Width": {
+                              "description_en": "The width.\n\nUnit: px.\nDefault value: the original width of the video",
+                              "description_zh": "宽。\n\n单位：px。\n默认值：视频原始宽度",
+                              "example": "1280",
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "VideoStreamMap": {
+                          "description_en": "The video stream index.\n\nFormat: `0:v:{index}`. Example: `0:v:0`.\n\nThe index starts from 0 and indicates the subscript of the video stream list.\n\nIf this parameter is not set, the default video stream is selected",
+                          "description_zh": "视频流序号。\n\n格式：0:a:{序号}，示例：0:a:0。\n\n序号从0开始，序号的含义是视频流列表的下标。\n\n若不设置，选择默认的视频流",
+                          "example": "0:a:0",
                           "type": "string"
                         },
-                        "Crf": {
-                          "backendName": "crf",
+                        "WaterMarkConfigUrl": {
+                          "description_en": "The URL of the watermark configuration file",
+                          "description_zh": "水印配置文件URL",
+                          "example": "http://example.com/configure",
                           "type": "string"
                         },
-                        "Crop": {
-                          "backendName": "crop",
-                          "type": "string"
-                        },
-                        "Degrain": {
-                          "backendName": "degrain",
-                          "type": "string"
-                        },
-                        "Fps": {
-                          "backendName": "fps",
-                          "type": "string"
-                        },
-                        "Gop": {
-                          "backendName": "gop",
-                          "type": "string"
-                        },
-                        "Height": {
-                          "backendName": "height",
-                          "type": "string"
-                        },
-                        "MaxFps": {
-                          "backendName": "maxFps",
-                          "type": "string"
-                        },
-                        "Maxrate": {
-                          "backendName": "maxrate",
-                          "type": "string"
-                        },
-                        "Pad": {
-                          "backendName": "pad",
-                          "type": "string"
-                        },
-                        "PixFmt": {
-                          "backendName": "pixFmt",
-                          "type": "string"
-                        },
-                        "Preset": {
-                          "backendName": "preset",
-                          "type": "string"
-                        },
-                        "Profile": {
-                          "backendName": "profile",
-                          "type": "string"
-                        },
-                        "Qscale": {
-                          "backendName": "qscale",
-                          "type": "string"
-                        },
-                        "ResoPriority": {
-                          "backendName": "resoPriority",
-                          "type": "string"
-                        },
-                        "ScanMode": {
-                          "backendName": "scanMode",
-                          "type": "string"
-                        },
-                        "Width": {
-                          "backendName": "width",
-                          "type": "string"
+                        "WaterMarkList": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "WaterMark": {
+                              "description_en": "The watermark list",
+                              "description_zh": "水印列表",
+                              "items": {
+                                "description_en": "The details of the watermark",
+                                "description_zh": "水印详细信息",
+                                "properties": {
+                                  "Dx": {
+                                    "description_en": "The horizontal offset of the watermark image relative to the output video. If this parameter is specified in the request parameters, it overwrites the corresponding parameter in the watermark template. Default value: 0. The value can be in one of the following formats:\n\nInteger: represents the offset in pixels.\n\n    - Valid values: [8, 4096].\n\n    - Unit: px.\n\nDecimal: represents the ratio of the horizontal offset to the width of the output resolution.\n\n    - Valid values: (0, 1).\n\n    - Up to four decimal places are supported. For example, 0.9999. Extra decimal places are automatically discarded",
+                                    "description_zh": "水印图片相对输出视频的水平偏移量。如果请求参数中设置了此值，则覆盖水印模板对应参数。默认值为0。值有两种形式：\n\n整数型：代表偏移像素值。\n\n    - 范围：[8,4096]。\n\n    - 单位：px。\n\n小数型：代表水平偏移量与输出分辨率宽的比率。\n\n    - 范围：（0,1)。\n\n    - 支持四位小数，例如：0.9999，超出部分系统自动丢弃",
+                                    "example": "100",
+                                    "type": "string"
+                                  },
+                                  "Dy": {
+                                    "description_en": "The vertical offset of the watermark image relative to the output video. If this parameter is specified in the request parameters, it overwrites the corresponding parameter in the watermark template. The value can be in one of the following formats:\n\nInteger: represents the vertical offset of the watermark image relative to the output video in pixels.\n\n    - Valid values: [8, 4096].\n\n    - Unit: px.\n\nDecimal: represents the ratio of the vertical offset of the watermark image relative to the output video.\n\n    - Valid values: (0, 1).\n\n    - Up to four decimal places are supported. For example, 0.9999. Extra decimal places are automatically discarded",
+                                    "description_zh": "水印图片相对输出视频的垂直偏移量。如果在请求参数中设置了此值，则覆盖水印模板对应水印图片相对输出视频的垂直偏移量。值有两种形式：\n\n整数型：代表水印图片相对输出视频的垂直偏移量像素。\n\n    - 范围：[8，4096]。\n\n    - 单位：px。\n\n小数型：代表水印图片相对输出视频的垂直偏移量比率。\n\n    - 范围：(0,1)。\n\n    - 支持4位小数，例如：0.9999，超出部分系统自动丢弃",
+                                    "example": "100",
+                                    "type": "string"
+                                  },
+                                  "Height": {
+                                    "description_en": "The height of the watermark image. If this parameter is specified in the request parameters, it overwrites the corresponding parameter in the watermark template. The value can be in one of the following formats:\n\nInteger: represents the height of the watermark image in pixels.\n\n    - Valid values: [8, 4096].\n\n    - Unit: px.\n\nDecimal: represents the ratio of the watermark image height to the height of the output video resolution.\n\n    - Valid values: (0, 1).\n\n    - Up to four decimal places are supported. For example, 0.9999. Extra decimal places are automatically discarded",
+                                    "description_zh": "水印图片高。如果在请求参数中设置了此值，则覆盖水印模板对应水印图片高。值有两种形式：\n\n整数型：代表水印图片高的像素值。\n\n    - 范围：[8，4096]。\n\n    - 单位：px。\n\n小数型：代表相对输出视频分辨率高的比率。\n\n    - 范围：(0,1)。\n\n    - 支持4位小数，例如：0.9999，超出部分系统自动丢弃",
+                                    "example": "50",
+                                    "type": "string"
+                                  },
+                                  "InputFile": {
+                                    "description_en": "The input file for the watermark",
+                                    "description_zh": "水印输入文件",
+                                    "properties": {
+                                      "Bucket": {
+                                        "description_en": "The OSS bucket of the input file",
+                                        "description_zh": "输入文件的OSS Bucket",
+                                        "example": "example-bucket",
+                                        "type": "string"
+                                      },
+                                      "Location": {
+                                        "description_en": "The OSS location of the input file",
+                                        "description_zh": "输入文件的OSS Location",
+                                        "example": "oss-cn-hangzhou",
+                                        "type": "string"
+                                      },
+                                      "Object": {
+                                        "description_en": "The OSS object of the input file",
+                                        "description_zh": "输入文件的OSS Object",
+                                        "example": "example-logo-****.png",
+                                        "type": "string"
+                                      }
+                                    },
+                                    "type": "object"
+                                  },
+                                  "ReferPos": {
+                                    "description_en": "The position of the watermark. Valid values:\n\nTopRight: upper right.\n\nTopLeft: upper left.\n\nBottomRight: lower right.\n\nBottomLeft: lower left",
+                                    "description_zh": "水印的位置。\n\nTopRight：右上。\n\nTopLeft：左上。\n\nBottomRight：右下。\n\nBottomLeft：左下",
+                                    "example": "TopRight",
+                                    "type": "string"
+                                  },
+                                  "Type": {
+                                    "description_en": "The watermark type. If this parameter is specified in the request parameters, it overwrites the corresponding parameter in the watermark template. For more information, see [Parameter details]（https://help.aliyun.com/document_detail/29253.html）. Valid values:\n\nImage: image watermark.\n\nText: text watermark",
+                                    "description_zh": "水印类型。如果请求参数中设置了此参数，则此值覆盖水印模板对应参数。更多信息，请参见[参数详情]（https://help.aliyun.com/document_detail/29253.html）。可取值：\n\nImage：图片水印。\n\nText：文字水印",
+                                    "example": "Image",
+                                    "type": "string"
+                                  },
+                                  "WaterMarkTemplateId": {
+                                    "description_en": "The ID of the watermark template",
+                                    "description_zh": "水印模板ID",
+                                    "example": "88c6ca184c0e47098a5b665e2a12****",
+                                    "type": "string"
+                                  },
+                                  "Width": {
+                                    "description_en": "The width of the watermark image. If this parameter is specified in the request parameters, it overwrites the corresponding parameter in the watermark template. The value can be in one of the following formats:\n\nInteger: represents the width of the watermark image in pixels.\n\n    - Valid values: [8, 4096].\n\n    - Unit: px.\n\nDecimal: represents the ratio of the watermark image width to the width of the output video resolution.\n\n    - Valid values: (0, 1).\n\n    - Up to four decimal places are supported. For example, 0.9999. Extra decimal places are automatically discarded",
+                                    "description_zh": "水印图片宽。如果在请求参数中设置了此值，则覆盖水印模板对应水印图片宽。值有两种形式：\n\n整数型：代表水印图片宽的像素值。\n\n    - 范围：[8，4096]。\n\n    - 单位：px。\n\n小数型：代表相对输出视频分辨率宽的比率。\n\n    - 范围：(0,1)。\n\n    - 支持4位小数，例如：0.9999，超出部分系统自动丢弃",
+                                    "example": "50",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
                     },
-                    "VideoStreamMap": {
-                      "backendName": "videoStreamMap",
+                    "Percent": {
+                      "description_en": "The transcoding progress",
+                      "description_zh": "转码进度",
+                      "example": "100",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "PipelineId": {
+                      "description_en": "The ID of the MPS queue",
+                      "description_zh": "管道ID",
+                      "example": "88c6ca184c0e47b665e2a1267971****",
                       "type": "string"
                     },
-                    "WaterMarkConfigUrl": {
-                      "backendName": "waterMarkConfigUrl",
+                    "State": {
+                      "description_en": "The job status. Valid values:\n\nSubmitted: The job is submitted.\nTranscoding: The job is being transcoded.\nTranscodeSuccess: The transcoding is successful.\nTranscodeFail: The transcoding fails.\nTranscodeCancelled: The transcoding is canceled",
+                      "description_zh": "作业状态：\n\nSubmitted：作业已提交。\nTranscoding：转码中。\nTranscodeSuccess：转码成功。\nTranscodeFail：转码失败。\nTranscodeCancelled：转码取消",
+                      "example": "TranscodeSuccess",
                       "type": "string"
-                    },
-                    "WaterMarkList": {
-                      "backendName": "waterMarkList",
-                      "itemName": "WaterMark",
-                      "items": {
-                        "properties": {
-                          "Dx": {
-                            "backendName": "dx",
-                            "type": "string"
-                          },
-                          "Dy": {
-                            "backendName": "dy",
-                            "type": "string"
-                          },
-                          "Height": {
-                            "backendName": "height",
-                            "type": "string"
-                          },
-                          "InputFile": {
-                            "backendName": "inputFile",
-                            "properties": {
-                              "Bucket": {
-                                "backendName": "bucket",
-                                "type": "string"
-                              },
-                              "Location": {
-                                "backendName": "location",
-                                "type": "string"
-                              },
-                              "Object": {
-                                "backendName": "object",
-                                "type": "string"
-                              }
-                            },
-                            "type": "object"
-                          },
-                          "ReferPos": {
-                            "backendName": "referPos",
-                            "type": "string"
-                          },
-                          "Type": {
-                            "backendName": "type",
-                            "type": "string"
-                          },
-                          "WaterMarkTemplateId": {
-                            "backendName": "waterMarkTemplateId",
-                            "type": "string"
-                          },
-                          "Width": {
-                            "backendName": "width",
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
                     }
                   },
                   "type": "object"
                 },
-                "Percent": {
-                  "backendName": "percent",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "PipelineId": {
-                  "backendName": "pipelineId",
-                  "type": "string"
-                },
-                "State": {
-                  "backendName": "state",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "NextPageToken": {
-            "backendName": "data.nextPageToken",
-            "description_en": "The pagination token. It can be used in the next request to retrieve a new page of results",
+            "description_en": "The token for the next page. Record this token and pass it in the next request",
             "description_zh": "下一页标识。需记录下来，在下一次请求时传入即可",
             "example": "16f01ad6175e4230ac42bb5182cd****",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "BC860F04-778A-472F-AB39-E1BF329C1EA8",

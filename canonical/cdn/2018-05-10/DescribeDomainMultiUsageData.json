@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun cdn DescribeDomainMultiUsageData --region cn-hangzhou --EndTime '2017-12-10T21:00:00Z' --DomainName 'example.com' --StartTime '2017-12-10T20:00:00Z'",
   "cmd_full_name": "cdn describe-domain-multi-usage-data",
   "cmd_name": "describe-domain-multi-usage-data",
   "deprecated": false,
-  "description_en": "Queries the traffic data and the number of requests for multiple accelerated domain names at a time",
+  "description_en": "Queries the traffic and request counts for accelerated domain names at a 5-minute granularity in batches",
   "description_zh": "调用DescribeDomainMultiUsageData批量查询加速域名的流量和请求数类五分钟粒度的数据",
   "kebab_example": "aliyun cdn describe-domain-multi-usage-data --domain-name example.com --start-time 2017-12-10T20:00:00Z --end-time 2017-12-10T21:00:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "example.com",
-      "help_en": "The accelerated domain name. Separate multiple accelerated domain names with commas (,).\n\nYou can specify a maximum of 30 domain names at a time.\nIf this parameter is not set, data of all your accelerated domain names is queried",
+      "help_en": "The accelerated domain names. Separate multiple domain names with commas (,).\n\nYou can specify up to 30 domain names in a single query.\nIf this parameter is left empty, the grouped data of all accelerated domain names is returned by default",
       "help_zh": "加速域名，多个域名用半角逗号（,）分隔。\n\n单次查询最多可添加30个域名。\n若参数为空，默认返回所有加速域名分组数据",
       "location": "query",
       "name": "domain_name",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2017-12-10T20:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "获取数据起始时间点。日期格式按照ISO 8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "start_time",
@@ -48,7 +49,7 @@
     },
     {
       "example": "2017-12-10T21:00:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the data to retrieve. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取数据的结束时间点。日期格式按照ISO 8601表示法，并使用UTC时间，格式为yyyy-MM-ddTHH:mm:ssZ。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -66,87 +67,122 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "EndTime": {
-            "backendName": "data.endTime",
-            "description_en": "The end of the time range that was queried",
-            "description_zh": "查询用量的结束时间",
+            "description_en": "The end time of the queried usage data. The time is in UTC and follows the ISO 8601 standard",
+            "description_zh": "查询用量的结束时间。时间格式为 ISO 8601，使用 UTC 时间",
             "example": "2017-12-10T21:00:00Z",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "3C6CCEC4-6B88-4D4A-93E4-D47B3D92CF8F",
             "type": "string"
           },
           "RequestPerInterval": {
-            "backendName": "data.content.data.request",
-            "itemName": "RequestDataModule",
-            "items": {
-              "properties": {
-                "Domain": {
-                  "backendName": "domain",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "RequestDataModule": {
+                "description_en": "The list of request metering data for each 5-minute interval",
+                "description_zh": "每五分钟各请求计量数据列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Domain": {
+                      "description_en": "The accelerated domain name",
+                      "description_zh": "加速域名信息",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "Request": {
+                      "description_en": "The number of requests",
+                      "description_zh": "请求数，单位：个",
+                      "example": "11288111",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TimeStamp": {
+                      "description_en": "The start time of the time frame during which the requests are counted in the returned data. The time is in UTC and follows the ISO 8601 standard",
+                      "description_zh": "返回数据中，请求数所在时间片段起始时刻。时间格式为 ISO 8601，使用 UTC 时间",
+                      "example": "2017-12-10T20:00:00Z",
+                      "type": "string"
+                    },
+                    "Type": {
+                      "description_en": "The type.\n\nFor Alibaba Cloud CDN, only Simple is supported",
+                      "description_zh": "类型。\n\nCDN产品只有Simple",
+                      "example": "Simple",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Request": {
-                  "backendName": "request",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "TimeStamp": {
-                  "backendName": "time_stp",
-                  "type": "string"
-                },
-                "Type": {
-                  "backendName": "type",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "StartTime": {
-            "backendName": "data.startTime",
-            "description_en": "The start of the time range that was queried",
-            "description_zh": "查询用量的开始时间",
+            "description_en": "The start time of the queried usage data. The time is in UTC and follows the ISO 8601 standard",
+            "description_zh": "查询用量的开始时间。时间格式为 ISO 8601，使用 UTC 时间",
             "example": "2017-12-10T20:00:00Z",
             "type": "string"
           },
           "TrafficPerInterval": {
-            "backendName": "data.content.data.traffic",
-            "itemName": "TrafficDataModule",
-            "items": {
-              "properties": {
-                "Area": {
-                  "backendName": "area",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "TrafficDataModule": {
+                "description_en": "The list of traffic metering data for each 5-minute interval",
+                "description_zh": "每五分钟各流量计量数据列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Area": {
+                      "description_en": "The region name",
+                      "description_zh": "大区名称",
+                      "example": "CN",
+                      "type": "string"
+                    },
+                    "Bps": {
+                      "description_en": "The bit rate. Unit: bit/s",
+                      "description_zh": "比特率，单位：bit/second",
+                      "example": "11288111.1",
+                      "format": "float",
+                      "type": "number"
+                    },
+                    "Domain": {
+                      "description_en": "The domain name",
+                      "description_zh": "域名名称",
+                      "example": "example.com",
+                      "type": "string"
+                    },
+                    "TimeStamp": {
+                      "description_en": "The start time of the time frame to which the usage data belongs in the returned data. The time is in UTC and follows the ISO 8601 standard",
+                      "description_zh": "返回数据中，用量数据所在时间片段起始时刻。时间格式为 ISO 8601，使用 UTC 时间",
+                      "example": "2017-12-10T20:00:00Z",
+                      "type": "string"
+                    },
+                    "Type": {
+                      "description_en": "The type of requests. Valid values:\n\nStaticHttps: HTTPS request for static content.\nDynamicHttps: HTTPS request for dynamic content.\nDynamicHttp: HTTP request for dynamic content.\nStaticQuic: QUIC request for static content (resources).\nDynamicQuic: QUIC request for dynamic content (resources)",
+                      "description_zh": "请求数类型。取值：\n\nStaticHttps：静态HTTPS请求数。\nDynamicHttps：动态HTTPS请求数。\nDynamicHttp：动态HTTP请求数。\nStaticQuic：静态QUIC请求数。\nDynamicQuic：动态QUIC请求数",
+                      "example": "DynamicHttp",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "Bps": {
-                  "backendName": "bps",
-                  "format": "float",
-                  "type": "number"
-                },
-                "Domain": {
-                  "backendName": "domain",
-                  "type": "string"
-                },
-                "TimeStamp": {
-                  "backendName": "time_stp",
-                  "type": "string"
-                },
-                "Type": {
-                  "backendName": "type",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

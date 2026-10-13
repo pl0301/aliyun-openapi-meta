@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun paistudio PUT /api/v1/quotas/quotamtl37ge7gkvdz/action/scale --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"Min\":\"example-string\",\"ResourceGroupIds\":[\"rg-aek2nxrabqavely\"]}",
+  "backend_timeout_ms": 30000,
+  "camel_example": "aliyun paistudio PUT /api/v1/quotas/quotamtl37ge7gkvdz/action/scale --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"Min\":{\"NodeSpecs\":[{\"Type\":\"ecs.g6.4xlarge\",\"BindingPolicy\":{\"IncludeNodes\":[\"lrnabc\"],\"ExcludeNodes\":[\"lrndef\"],\"NodeSpecCount\":5},\"HyperType\":\"example-string\",\"Count\":10}]},\"ResourceGroupIds\":[\"rg-aek2nxrabqavely\"]}'",
   "cmd_full_name": "paistudio scale-quota",
   "cmd_name": "scale-quota",
   "deprecated": false,
   "description_en": "Use ScaleQuota to scale resource quotas",
   "description_zh": "您可以通过ScaleQuota扩缩容资源配额",
-  "kebab_example": "aliyun paistudio scale-quota --quota-id quotamtl37ge7gkvdz --resource-group-ids rg-aek2nxrabqavely --min example-string --api-version 2022-01-12 --region cn-hangzhou",
+  "kebab_example": "aliyun paistudio scale-quota --quota-id quotamtl37ge7gkvdz --resource-group-ids rg-aek2nxrabqavely --min '{\"NodeSpecs\":[{\"Type\":\"ecs.g6.4xlarge\",\"BindingPolicy\":{\"IncludeNodes\":[\"lrnabc\"],\"ExcludeNodes\":[\"lrndef\"],\"NodeSpecCount\":5},\"HyperType\":\"example-string\",\"Count\":10}]}' --api-version 2022-01-12 --region cn-hangzhou",
   "method": "PUT",
   "multi_version": true,
   "name": "ScaleQuota",
@@ -39,25 +40,63 @@
       "type": "string"
     },
     {
+      "element": {
+        "type": "string"
+      },
+      "help_en": "Resource group IDs",
+      "help_zh": "资源组列表",
+      "location": "body",
+      "name": "resource_group_ids",
+      "options": [
+        "--resource-group-ids"
+      ],
+      "param_style": "json",
+      "raw_name": "ResourceGroupIds",
+      "required": false,
+      "type": "array"
+    },
+    {
       "fields": [
         {
           "element": {
             "fields": [
               {
+                "example": "ecs.g6.4xlarge",
+                "help_en": "Type of the resource node specification",
+                "help_zh": "资源节点规格类型",
+                "name": "type",
+                "options": [
+                  "--type"
+                ],
+                "raw_name": "Type",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "10",
+                "help_en": "Number of resource nodes with this specification",
+                "help_zh": "资源节点规格数量",
+                "name": "count",
+                "options": [
+                  "--count"
+                ],
+                "raw_name": "Count",
+                "required": false,
+                "type": "int"
+              },
+              {
                 "fields": [
                   {
-                    "element": {
-                      "type": "string"
-                    },
-                    "help_en": "A list of node IDs to exclude from scheduling",
-                    "help_zh": "不可包含的节点名称列表",
-                    "name": "exclude_nodes",
+                    "example": "5",
+                    "help_en": "The number of nodes to be selected by the scheduler",
+                    "help_zh": "由调度器选择节点数量",
+                    "name": "node_spec_count",
                     "options": [
-                      "--exclude-nodes"
+                      "--node-spec-count"
                     ],
-                    "raw_name": "ExcludeNodes",
+                    "raw_name": "NodeSpecCount",
                     "required": false,
-                    "type": "array"
+                    "type": "int"
                   },
                   {
                     "element": {
@@ -74,16 +113,18 @@
                     "type": "array"
                   },
                   {
-                    "example": "5",
-                    "help_en": "The number of nodes to be selected by the scheduler",
-                    "help_zh": "由调度器选择节点数量",
-                    "name": "node_spec_count",
+                    "element": {
+                      "type": "string"
+                    },
+                    "help_en": "A list of node IDs to exclude from scheduling",
+                    "help_zh": "不可包含的节点名称列表",
+                    "name": "exclude_nodes",
                     "options": [
-                      "--node-spec-count"
+                      "--exclude-nodes"
                     ],
-                    "raw_name": "NodeSpecCount",
+                    "raw_name": "ExcludeNodes",
                     "required": false,
-                    "type": "int"
+                    "type": "array"
                   }
                 ],
                 "help_en": "The policy for binding nodes",
@@ -97,18 +138,6 @@
                 "type": "object"
               },
               {
-                "example": "10",
-                "help_en": "Number of resource nodes with this specification",
-                "help_zh": "资源节点规格数量",
-                "name": "count",
-                "options": [
-                  "--count"
-                ],
-                "raw_name": "Count",
-                "required": false,
-                "type": "int"
-              },
-              {
                 "help_en": "Type of supernode to use. You cannot specify both a node specification and a supernode type",
                 "help_zh": "使用的超节点规格。指定规格时，节点规格与超节点不可同时指定",
                 "name": "hyper_type",
@@ -116,18 +145,6 @@
                   "--hyper-type"
                 ],
                 "raw_name": "HyperType",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "ecs.g6.4xlarge",
-                "help_en": "Type of the resource node specification",
-                "help_zh": "资源节点规格类型",
-                "name": "type",
-                "options": [
-                  "--type"
-                ],
-                "raw_name": "Type",
                 "required": false,
                 "type": "string"
               }
@@ -156,22 +173,6 @@
       "raw_name": "Min",
       "required": false,
       "type": "object"
-    },
-    {
-      "element": {
-        "type": "string"
-      },
-      "help_en": "Resource group IDs",
-      "help_zh": "资源组列表",
-      "location": "body",
-      "name": "resource_group_ids",
-      "options": [
-        "--resource-group-ids"
-      ],
-      "param_style": "json",
-      "raw_name": "ResourceGroupIds",
-      "required": false,
-      "type": "array"
     }
   ],
   "pathPattern": "/api/v1/quotas/[QuotaId]/action/scale",
@@ -187,8 +188,7 @@
             "description_en": "Quota ID",
             "description_zh": "Quota ID",
             "example": "quotamtl37ge7gkvdz",
-            "mappingResourcePropertyName": "$.QuotaId",
-            "title_en": "Quota Id",
+            "title_en": "",
             "title_zh": "Quota Id",
             "type": "string"
           },
@@ -196,12 +196,12 @@
             "description_en": "Request ID",
             "description_zh": "请求ID",
             "example": "F2D0392B-D749-5C48-A98A-3FAE5C9444A6",
-            "title_en": "请求Id",
+            "title_en": "",
             "title_zh": "请求Id",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

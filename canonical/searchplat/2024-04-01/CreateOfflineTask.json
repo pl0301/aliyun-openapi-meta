@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun searchplat POST /openapi/platform/workspaces/default/offline-tasks/video --region cn-hangzhou --dryRun false --regionId 'cn-shanghai' --draft false --header \"Content-Type=application/json\" --body '{\"meta\":{\"apiKey\":\"OS-xxx\",\"regionId\":\"cn-shanghai\",\"taskName\":\"test\",\"computeResource\":\"small\",\"labels\":[\"name\"]},\"sink\":[{\"schema\":[\"example-string\"],\"name\":\"table2\",\"type\":\"swift\",\"parameters\":{\"key\":\"example-string\"},\"primaryKey\":\"id\"}],\"source\":[{\"schema\":[\"example-string\"],\"name\":\"table1\",\"type\":\"swift\",\"parameters\":{\"key1\":\"value1\",\"key2\":\"value2\"},\"primaryKey\":\"id\"}],\"processors\":[{\"output\":{\"vector\":\"syh_image_uri_multi-modal-embedding\"},\"input\":{\"key\":\"content\"},\"name\":\"processor1\",\"type\":\"document-analyze\",\"parameters\":{\"service_id\":\"xxx\"}}],\"parameters\":{\"parameter2\":{\"key\":\"value\"},\"parameter1\":{\"key\":\"value\"}},\"status\":{\"createTime\":1744941600000,\"deleteTime\":1744941600000,\"errorMessage\":\"example-string\",\"status\":\"RUNNING\"}}' --version 2024-04-01 --force",
   "cmd_full_name": "searchplat create-offline-task",
   "cmd_name": "create-offline-task",
@@ -110,6 +111,30 @@
           "type": "string"
         },
         {
+          "example": "cn-shanghai",
+          "help_en": "The region ID",
+          "help_zh": "地域ID",
+          "name": "region_id",
+          "options": [
+            "--biz-region-id"
+          ],
+          "raw_name": "regionId",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "test",
+          "help_en": "The task name",
+          "help_zh": "任务名称",
+          "name": "task_name",
+          "options": [
+            "--task-name"
+          ],
+          "raw_name": "taskName",
+          "required": false,
+          "type": "string"
+        },
+        {
           "example": "small",
           "help_en": "The billing specification",
           "help_zh": "计费规格",
@@ -134,30 +159,6 @@
           "raw_name": "labels",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "cn-shanghai",
-          "help_en": "The region ID",
-          "help_zh": "地域ID",
-          "name": "region_id",
-          "options": [
-            "--biz-region-id"
-          ],
-          "raw_name": "regionId",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "test",
-          "help_en": "The task name",
-          "help_zh": "任务名称",
-          "name": "task_name",
-          "options": [
-            "--task-name"
-          ],
-          "raw_name": "taskName",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The task metadata",
@@ -173,44 +174,12 @@
       "type": "object"
     },
     {
-      "example": "{\n  \"parameter1\": {\n       \"key\": \"value\"\n    },\n    \"parameter2\": {\n         \"key\": \"value\"\n     }\n}",
-      "help_en": "The task processing parameters",
-      "help_zh": "任务处理参数",
-      "location": "body",
-      "name": "parameters",
-      "options": [
-        "--parameters"
-      ],
-      "param_style": "json",
-      "raw_name": "parameters",
-      "required": false,
-      "type": "map",
-      "value": {
-        "type": "any"
-      }
-    },
-    {
       "element": {
         "fields": [
           {
-            "example": "{\n  \"key\": \"content\"\n}",
-            "help_en": "The input parameters",
-            "help_zh": "输入参数",
-            "name": "input",
-            "options": [
-              "--input"
-            ],
-            "raw_name": "input",
-            "required": false,
-            "type": "map",
-            "value": {
-              "type": "any"
-            }
-          },
-          {
-            "example": "processor1",
-            "help_en": "The name",
-            "help_zh": "名称",
+            "example": "table1",
+            "help_en": "The data source name",
+            "help_zh": "数据源名",
             "name": "name",
             "options": [
               "--name"
@@ -220,24 +189,21 @@
             "type": "string"
           },
           {
-            "example": "{\n\"vector\": \"syh_image_uri_multi-modal-embedding\"\n}",
-            "help_en": "The output parameters",
-            "help_zh": "输出参数",
-            "name": "output",
+            "example": "swift",
+            "help_en": "The data source type",
+            "help_zh": "数据源类型",
+            "name": "type",
             "options": [
-              "--output"
+              "--type"
             ],
-            "raw_name": "output",
+            "raw_name": "type",
             "required": false,
-            "type": "map",
-            "value": {
-              "type": "any"
-            }
+            "type": "string"
           },
           {
-            "example": "{\n  \"service_id\": \"xxx\"\n}",
-            "help_en": "The processor parameters",
-            "help_zh": "processor处理参数",
+            "example": "{\n  \"key1\": \"value1\",\n   \"key2\": \"value2\"\n}",
+            "help_en": "The datasource config parameters, which are determined by the type",
+            "help_zh": "数据源配置参数，由type决定",
             "name": "parameters",
             "options": [
               "--parameters"
@@ -246,33 +212,50 @@
             "required": false,
             "type": "map",
             "value": {
-              "type": "any"
+              "type": "string"
             }
           },
           {
-            "example": "document-analyze",
-            "help_en": "The type",
-            "help_zh": "类型",
-            "name": "type",
+            "element": {
+              "type": "map",
+              "value": {
+                "type": "string"
+              }
+            },
+            "help_en": "The data source schema",
+            "help_zh": "数据源Schema",
+            "name": "schema",
             "options": [
-              "--type"
+              "--schema"
             ],
-            "raw_name": "type",
+            "raw_name": "schema",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "id",
+            "help_en": "The primary key field of the data source",
+            "help_zh": "数据源主键字段",
+            "name": "primary_key",
+            "options": [
+              "--primary-key"
+            ],
+            "raw_name": "primaryKey",
             "required": false,
             "type": "string"
           }
         ],
         "type": "object"
       },
-      "help_en": "The processing pipeline operators",
-      "help_zh": "处理流程算子",
+      "help_en": "The data source information",
+      "help_zh": "数据源信息",
       "location": "body",
-      "name": "processors",
+      "name": "source",
       "options": [
-        "--processors"
+        "--source"
       ],
       "param_style": "json",
-      "raw_name": "processors",
+      "raw_name": "source",
       "required": false,
       "type": "array"
     },
@@ -292,6 +275,18 @@
             "type": "string"
           },
           {
+            "example": "swift",
+            "help_en": "The data sink type",
+            "help_zh": "数据汇类型",
+            "name": "type",
+            "options": [
+              "--type"
+            ],
+            "raw_name": "type",
+            "required": false,
+            "type": "string"
+          },
+          {
             "help_en": "The data sink configuration parameters, which are determined by the type",
             "help_zh": "数据汇配置参数，由type决定",
             "name": "parameters",
@@ -304,18 +299,6 @@
             "value": {
               "type": "string"
             }
-          },
-          {
-            "example": "id",
-            "help_en": "The primary key field of the data sink",
-            "help_zh": "数据汇主键字段",
-            "name": "primary_key",
-            "options": [
-              "--primary-key"
-            ],
-            "raw_name": "primaryKey",
-            "required": false,
-            "type": "string"
           },
           {
             "element": {
@@ -335,14 +318,14 @@
             "type": "array"
           },
           {
-            "example": "swift",
-            "help_en": "The data sink type",
-            "help_zh": "数据汇类型",
-            "name": "type",
+            "example": "id",
+            "help_en": "The primary key field of the data sink",
+            "help_zh": "数据汇主键字段",
+            "name": "primary_key",
             "options": [
-              "--type"
+              "--primary-key"
             ],
-            "raw_name": "type",
+            "raw_name": "primaryKey",
             "required": false,
             "type": "string"
           }
@@ -365,9 +348,9 @@
       "element": {
         "fields": [
           {
-            "example": "table1",
-            "help_en": "The data source name",
-            "help_zh": "数据源名",
+            "example": "processor1",
+            "help_en": "The name",
+            "help_zh": "名称",
             "name": "name",
             "options": [
               "--name"
@@ -377,9 +360,36 @@
             "type": "string"
           },
           {
-            "example": "{\n  \"key1\": \"value1\",\n   \"key2\": \"value2\"\n}",
-            "help_en": "The datasource config parameters, which are determined by the type",
-            "help_zh": "数据源配置参数，由type决定",
+            "example": "document-analyze",
+            "help_en": "The type",
+            "help_zh": "类型",
+            "name": "type",
+            "options": [
+              "--type"
+            ],
+            "raw_name": "type",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "{\n  \"key\": \"content\"\n}",
+            "help_en": "The input parameters",
+            "help_zh": "输入参数",
+            "name": "input",
+            "options": [
+              "--input"
+            ],
+            "raw_name": "input",
+            "required": false,
+            "type": "map",
+            "value": {
+              "type": "any"
+            }
+          },
+          {
+            "example": "{\n  \"service_id\": \"xxx\"\n}",
+            "help_en": "The processor parameters",
+            "help_zh": "processor处理参数",
             "name": "parameters",
             "options": [
               "--parameters"
@@ -388,67 +398,82 @@
             "required": false,
             "type": "map",
             "value": {
-              "type": "string"
+              "type": "any"
             }
           },
           {
-            "example": "id",
-            "help_en": "The primary key field of the data source",
-            "help_zh": "数据源主键字段",
-            "name": "primary_key",
+            "example": "{\n\"vector\": \"syh_image_uri_multi-modal-embedding\"\n}",
+            "help_en": "The output parameters",
+            "help_zh": "输出参数",
+            "name": "output",
             "options": [
-              "--primary-key"
+              "--output"
             ],
-            "raw_name": "primaryKey",
+            "raw_name": "output",
             "required": false,
-            "type": "string"
-          },
-          {
-            "element": {
-              "type": "map",
-              "value": {
-                "type": "string"
-              }
-            },
-            "help_en": "The data source schema",
-            "help_zh": "数据源Schema",
-            "name": "schema",
-            "options": [
-              "--schema"
-            ],
-            "raw_name": "schema",
-            "required": false,
-            "type": "array"
-          },
-          {
-            "example": "swift",
-            "help_en": "The data source type",
-            "help_zh": "数据源类型",
-            "name": "type",
-            "options": [
-              "--type"
-            ],
-            "raw_name": "type",
-            "required": false,
-            "type": "string"
+            "type": "map",
+            "value": {
+              "type": "any"
+            }
           }
         ],
         "type": "object"
       },
-      "help_en": "The data source information",
-      "help_zh": "数据源信息",
+      "help_en": "The processing pipeline operators",
+      "help_zh": "处理流程算子",
       "location": "body",
-      "name": "source",
+      "name": "processors",
       "options": [
-        "--source"
+        "--processors"
       ],
       "param_style": "json",
-      "raw_name": "source",
+      "raw_name": "processors",
       "required": false,
       "type": "array"
     },
     {
+      "example": "{\n  \"parameter1\": {\n       \"key\": \"value\"\n    },\n    \"parameter2\": {\n         \"key\": \"value\"\n     }\n}",
+      "help_en": "The task processing parameters",
+      "help_zh": "任务处理参数",
+      "location": "body",
+      "name": "parameters",
+      "options": [
+        "--parameters"
+      ],
+      "param_style": "json",
+      "raw_name": "parameters",
+      "required": false,
+      "type": "map",
+      "value": {
+        "type": "any"
+      }
+    },
+    {
       "fields": [
+        {
+          "example": "RUNNING",
+          "help_en": "The task status",
+          "help_zh": "任务状态",
+          "name": "status",
+          "options": [
+            "--status"
+          ],
+          "raw_name": "status",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "\"\"",
+          "help_en": "The error message",
+          "help_zh": "错误信息",
+          "name": "error_message",
+          "options": [
+            "--error-message"
+          ],
+          "raw_name": "errorMessage",
+          "required": false,
+          "type": "string"
+        },
         {
           "example": "1744941600000",
           "help_en": "The task start time",
@@ -472,30 +497,6 @@
           "raw_name": "deleteTime",
           "required": false,
           "type": "int"
-        },
-        {
-          "example": "\"\"",
-          "help_en": "The error message",
-          "help_zh": "错误信息",
-          "name": "error_message",
-          "options": [
-            "--error-message"
-          ],
-          "raw_name": "errorMessage",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "RUNNING",
-          "help_en": "The task status",
-          "help_zh": "任务状态",
-          "name": "status",
-          "options": [
-            "--status"
-          ],
-          "raw_name": "status",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The task status",
@@ -524,7 +525,7 @@
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "B7C901ED-2BC1-5CFB-BE23-242DE5E3BA5C",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
@@ -560,7 +561,6 @@
               "processors": {
                 "description_en": "The processing pipeline operators",
                 "description_zh": "处理流程算子",
-                "itemName": "processors",
                 "items": {
                   "description_en": "The processing pipeline operators",
                   "description_zh": "处理流程算子",
@@ -596,7 +596,6 @@
               "sink": {
                 "description_en": "The output destination information",
                 "description_zh": "输出端信息",
-                "itemName": "sink",
                 "items": {
                   "description_en": "The output destination information",
                   "description_zh": "输出端信息",
@@ -627,7 +626,6 @@
                     "schema": {
                       "description_en": "The data sink schema",
                       "description_zh": "数据汇Schema",
-                      "itemName": "schema",
                       "items": {
                         "additionalProperties": {
                           "description_en": "key为String类型",
@@ -655,7 +653,6 @@
               "source": {
                 "description_en": "The data source information",
                 "description_zh": "数据源信息",
-                "itemName": "source",
                 "items": {
                   "description_en": "The data source information",
                   "description_zh": "数据源信息",
@@ -686,7 +683,6 @@
                     "schema": {
                       "description_en": "The data source schema",
                       "description_zh": "数据源Schema",
-                      "itemName": "schema",
                       "items": {
                         "additionalProperties": {
                           "description_en": "key为String类型",
@@ -746,7 +742,7 @@
             "type": "object"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ecs DescribeDiagnosticReportAttributes --region cn-hangzhou --ReportId 'dr-i-uf6i0tv2refv8wz00000' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs describe-diagnostic-report-attributes",
   "cmd_name": "describe-diagnostic-report-attributes",
   "deprecated": false,
-  "description_en": "Queries the details of a resource diagnostic report",
+  "description_en": "Queries the details of a resource diagnostic report by calling DescribeDiagnosticReportAttributes",
   "description_zh": "调用DescribeDiagnosticReportAttributes查询资源诊断详情",
   "kebab_example": "aliyun ecs describe-diagnostic-report-attributes --biz-region-id cn-hangzhou --report-id dr-i-uf6i0tv2refv8wz00000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -35,7 +36,7 @@
     },
     {
       "example": "dr-i-uf6i0tv2refv8wz*****",
-      "help_en": "The diagnostic report ID",
+      "help_en": "The ID of the diagnostic report",
       "help_zh": "诊断报告ID",
       "location": "query",
       "name": "report_id",
@@ -57,162 +58,183 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Attributes": {
-            "backendName": "data.attributes",
             "description_en": "The extended attributes of the diagnostic report",
             "description_zh": "诊断报告的扩展属性",
             "example": "{\"OfflineDiagReportStatus\":\"CONFIRMED\"}",
             "type": "string"
           },
           "CreationTime": {
-            "backendName": "data.createTime",
-            "description_en": "The time when the diagnostic report was created",
-            "description_zh": "诊断报告创建时间",
+            "description_en": "The time when the diagnostic report was created. The time is in ISO 8601 format in UTC",
+            "description_zh": "诊断报告创建时间。格式为 ISO 8601，时区为 UTC",
             "example": "2022-07-11T12:00:00Z",
             "type": "string"
           },
           "EndTime": {
-            "backendName": "data.endTime",
-            "description_en": "The end time. This parameter was specified when you called the [CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html） operation to create the diagnostic report",
-            "description_zh": "结束时间。调用[CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html）接口创建诊断报告时传入的参数",
+            "description_en": "The end time. This is the parameter passed in when you called the [CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html） operation to create the diagnostic report. The time is in ISO 8601 format in UTC",
+            "description_zh": "结束时间。调用[CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html）接口创建诊断报告时传入的参数。格式为 ISO 8601，时区为 UTC",
             "example": "2022-07-11T14:00:00Z",
-            "mappingResourcePropertyName": "$.EndTime",
             "type": "string"
           },
           "FinishedTime": {
-            "backendName": "data.finishedTime",
-            "description_en": "The time when the diagnostic report was completed",
-            "description_zh": "诊断报告完成时间",
+            "description_en": "The time when the diagnostic report was completed. The time is in ISO 8601 format in UTC",
+            "description_zh": "诊断报告完成时间。格式为 ISO 8601，时区为 UTC",
             "example": "2022-07-11T14:00:00Z",
             "type": "string"
           },
           "MetricResults": {
-            "backendName": "data.metricResults",
-            "itemName": "MetricResult",
-            "items": {
-              "properties": {
-                "Issues": {
-                  "backendName": "issues",
-                  "itemName": "Issue",
-                  "items": {
-                    "properties": {
-                      "Additional": {
-                        "backendName": "message",
-                        "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "MetricResult": {
+                "description_en": "The diagnostic results of all metrics in the diagnostic set",
+                "description_zh": "诊断集合中所有指标的诊断结果",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Issues": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Issue": {
+                          "description_en": "The list of diagnostic issues",
+                          "description_zh": "诊断问题列表",
+                          "items": {
+                            "description_en": "The list of diagnostic issues",
+                            "description_zh": "诊断问题列表",
+                            "properties": {
+                              "Additional": {
+                                "description_en": "The additional data associated with the diagnostic issue. This data helps you understand more information about the issue. The data is in JSON string format",
+                                "description_zh": "诊断问题携带的额外数据，帮助理解问题更多信息，数据格式为JSON的字符串",
+                                "example": "{\n  \"TotalPercent\": 95,\n  \"TopUtilizationProcesses\": [\n    {\n      \"Pid\": \"1223\",\n      \"CommandName\": \"/usr/bin/mem.py\",\n      \"PhysicalMemoryPercent\": 50\n    }\n  ]\n}",
+                                "type": "string"
+                              },
+                              "IssueId": {
+                                "description_en": "The unique identifier of the diagnostic issue",
+                                "description_zh": "诊断问题的唯一识别码",
+                                "example": "GuestOS.CPU.HighUtiliz*****",
+                                "type": "string"
+                              },
+                              "OccurrenceTime": {
+                                "description_en": "The time when the issue occurred. The time is in ISO 8601 format in UTC",
+                                "description_zh": "问题发生的时间。格式为 ISO 8601，时区为 UTC",
+                                "example": "2022-07-11T14:00:00Z",
+                                "type": "string"
+                              },
+                              "RepairStatus": {
+                                "description_en": "The repair status. This field has a value after a repair operation is performed. Valid values:\nInProgress: The repair is in progress.\nFailed: The repair failed.\nFinished: The repair is complete",
+                                "description_zh": "修复状态，执行修复操作后有值。取值范围：\nInProgress：修复中。\nFailed：修复失败。\nFinished：修复完成",
+                                "title_en": "",
+                                "title_zh": "修复状态，执行修复操作后有值。取值范围：\nInProgress：修复中。\nFailed：修复失败。\nFinished：修复完成。",
+                                "type": "string"
+                              },
+                              "Repairable": {
+                                "description_en": "Indicates whether the issue can be automatically repaired. Valid values: false (not repairable) and true (repairable)",
+                                "description_zh": "是否可自动化修复：false-不可修复，true-可修复",
+                                "title_en": "",
+                                "title_zh": "是否可自动化修复：false-不可修复，true-可修复",
+                                "type": "boolean"
+                              },
+                              "Severity": {
+                                "description_en": "The severity level of the diagnostic issue. The severity levels in ascending order are:\n\nInfo: Related information is available and may be associated with an exception.\nWarn: Related information is available and may cause an exception.\nCritical: A critical exception exists",
+                                "description_zh": "诊断问题严重程度，严重等级由轻到重如下：\n\nInfo：有关联信息，可能与异常相关。\nWarn：有关联信息，可能导致异常。\nCritical：有关键异常",
+                                "example": "Info",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
                       },
-                      "IssueId": {
-                        "backendName": "issueId",
-                        "type": "string"
-                      },
-                      "OccurrenceTime": {
-                        "backendName": "occurrenceTime",
-                        "type": "string"
-                      },
-                      "RepairStatus": {
-                        "backendName": "repairStatus",
-                        "title_en": "修复状态，执行修复操作后有值。取值范围：\nInProgress：修复中。\nFailed：修复失败。\nFinished：修复完成。",
-                        "title_zh": "修复状态，执行修复操作后有值。取值范围：\nInProgress：修复中。\nFailed：修复失败。\nFinished：修复完成。",
-                        "type": "string"
-                      },
-                      "Repairable": {
-                        "backendName": "repairable",
-                        "title_en": "是否可自动化修复：false-不可修复，true-可修复",
-                        "title_zh": "是否可自动化修复：false-不可修复，true-可修复",
-                        "type": "boolean"
-                      },
-                      "Severity": {
-                        "backendName": "severity",
-                        "type": "string"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
+                    "MetricCategory": {
+                      "description_en": "The category of the diagnostic metric",
+                      "description_zh": "诊断指标分类",
+                      "example": "CPU",
+                      "type": "string"
+                    },
+                    "MetricId": {
+                      "description_en": "The ID of the diagnostic metric",
+                      "description_zh": "诊断指标ID",
+                      "example": "GuestOS.WinFirewall",
+                      "type": "string"
+                    },
+                    "Severity": {
+                      "description_en": "The severity level of the diagnostic metric. Valid values:\n\nUnknown: The initial state. The diagnosis has not started, or the diagnostic process exited abnormally. No diagnostic conclusion is available.\nNormal: The diagnosis is normal. No issues were found.\nInfo: Related information is available and may be associated with an exception.\nNotSupport: The guest OS version does not support diagnosing this item.\nWarn: Related information is available and may cause an exception.\nCritical: A critical exception exists",
+                      "description_zh": "诊断指标严重等级。可能值：\n\nUnknown：初始状态，表示未开始诊断或者诊断过程程序异常退出，无诊断结论。\nNormal：诊断正常，没有发现问题。\nInfo：有关联信息，可能与异常相关。\nNotSupport：GuestOS版本不支持诊断该项目。\nWarn：有关联信息，可能导致异常。\nCritical：有关键异常",
+                      "example": "Normal",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The diagnostic status of the metric. Valid values:\n\nInProgress: The diagnosis is in progress.\nFinished: The diagnosis is complete.\nFailed: The diagnosis failed",
+                      "description_zh": "指标诊断状态。可能值：\n\nInProgress：诊断中。\nFinished：诊断完成。\nFailed：诊断失败",
+                      "example": "Finished",
+                      "type": "string"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "MetricCategory": {
-                  "backendName": "metricCategory",
-                  "type": "string"
-                },
-                "MetricId": {
-                  "backendName": "metricId",
-                  "type": "string"
-                },
-                "Severity": {
-                  "backendName": "severity",
-                  "type": "string"
-                },
-                "Status": {
-                  "backendName": "status",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "MetricSetId": {
-            "backendName": "data.metricSetId",
             "description_en": "The ID of the diagnostic metric set",
             "description_zh": "诊断指标集合ID",
             "example": "dms-bp17p0qwtr72zmu*****",
-            "mappingResourcePropertyName": "$.MetricSetId",
             "type": "string"
           },
           "ReportId": {
-            "backendName": "data.reportId",
-            "description_en": "The diagnostic report ID. The unique identifier of the resource diagnostic report",
+            "description_en": "The ID of the diagnostic report. This is the unique identifier of the resource diagnostic report",
             "description_zh": "诊断报告ID。资源诊断报告的唯一标志",
             "example": "dr-uf6i0tv2refv8wz*****",
-            "mappingResourcePropertyName": "$.DiagnosticReportId",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "ResourceId": {
-            "backendName": "data.resourceId",
             "description_en": "The resource ID",
             "description_zh": "资源ID",
             "example": "i-uf6i0tv2refv8wz*****",
-            "mappingResourcePropertyName": "$.ResourceId",
             "type": "string"
           },
           "ResourceType": {
-            "backendName": "data.resourceType",
             "description_en": "The resource type. The supported type is instance",
             "description_zh": "资源类型。支持的类型为instance",
             "example": "instance",
             "type": "string"
           },
           "Severity": {
-            "backendName": "data.severity",
-            "description_en": "The severity level of the report. This value represents the most severe level among all metrics. The severity levels in ascending order are:\n\nUnknown: The initial state, which indicates that the diagnosis has not started or the diagnosis process exited abnormally. No diagnostic conclusion is available.\nNormal: The diagnosis is normal. No issues were found.\nInfo: Related information is available and may be associated with an exception.\nWarn: Related information is available and may cause an exception.\nCritical: A critical exception exists",
+            "description_en": "The severity level of the report. This is the most severe level among all metrics. The severity levels in ascending order are:\n\nUnknown: The initial state. The diagnosis has not started, or the diagnostic process exited abnormally. No diagnostic conclusion is available.\nNormal: The diagnosis is normal. No issues were found.\nInfo: Related information is available and may be associated with an exception.\nWarn: Related information is available and may cause an exception.\nCritical: A critical exception exists",
             "description_zh": "报告严重等级。所有指标中最严重的等级，严重等级由轻到重如下：\n\nUnknown：初始状态，表示未开始诊断或者诊断过程程序异常退出，无诊断结论。\nNormal：诊断正常，没有发现问题。\nInfo：有关联信息，可能与异常相关。\nWarn：有关联信息，可能导致异常。\nCritical：有关键异常",
             "example": "Normal",
             "type": "string"
           },
           "StartTime": {
-            "backendName": "data.startTime",
-            "description_en": "The start time. This parameter was specified when you called the [CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html） operation to create the diagnostic report",
-            "description_zh": "开始时间。调用[CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html）接口创建诊断报告时传入的参数",
+            "description_en": "The start time. This is the parameter passed in when you called the [CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html） operation to create the diagnostic report. The time is in ISO 8601 format in UTC",
+            "description_zh": "开始时间。调用[CreateDiagnosticReport]（https://help.aliyun.com/document_detail/442490.html）接口创建诊断报告时传入的参数。格式为 ISO 8601，时区为 UTC",
             "example": "2022-07-11T12:00:00Z",
-            "mappingResourcePropertyName": "$.StartTime",
             "type": "string"
           },
           "Status": {
-            "backendName": "data.status",
             "description_en": "The status of the diagnostic report. Valid values:\n\nInProgress: The diagnosis is in progress.\nFinished: The diagnosis is complete.\nFailed: The diagnosis failed",
             "description_zh": "诊断报告状态。可能值：\n\nInProgress：诊断中。\nFinished：诊断完成。\nFailed：诊断失败",
             "example": "Finished",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

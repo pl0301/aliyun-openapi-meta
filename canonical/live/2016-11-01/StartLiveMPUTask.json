@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun live StartLiveMPUTask --region cn-hangzhou --TaskId yourTaskId --MixMode 0 --AppId yourAppId --ChannelId yourChannelId",
   "cmd_full_name": "live start-live-mpu-task",
   "cmd_name": "start-live-mpu-task",
@@ -89,18 +90,6 @@
       "element": {
         "fields": [
           {
-            "example": "false",
-            "help_en": "Specifies whether to ingest the stream to Alibaba Cloud CDN.\n\nfalse: Ingest to a non-Alibaba Cloud CDN.\n\ntrue: Ingest to Alibaba Cloud CDN.\n\nThe default value is false",
-            "help_zh": "是否转推到阿里云CDN。\nfalse为转推非阿里云CDN。\ntrue为转推阿里云CDN。\n\n该参数默认为false",
-            "name": "is_ali_cdn",
-            "options": [
-              "--is-ali-cdn"
-            ],
-            "raw_name": "IsAliCdn",
-            "required": false,
-            "type": "bool"
-          },
-          {
             "example": "rtmp://example.com/live/stream****",
             "help_en": "The live ingest URL. Only the RTMP protocol is supported. The maximum length is 2048 characters. For information about how to generate the URL, see https://help.aliyun.com/document_detail/199339.html",
             "help_zh": "直播推流地址，仅支持RTMP协议，最大长度不超过2048个字符。生成规则请参见https://help.aliyun.com/document_detail/199339.html",
@@ -111,6 +100,18 @@
             "raw_name": "URL",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "false",
+            "help_en": "Specifies whether to ingest the stream to Alibaba Cloud CDN.\n\nfalse: Ingest to a non-Alibaba Cloud CDN.\n\ntrue: Ingest to Alibaba Cloud CDN.\n\nThe default value is false",
+            "help_zh": "是否转推到阿里云CDN。\nfalse为转推非阿里云CDN。\ntrue为转推阿里云CDN。\n\n该参数默认为false",
+            "name": "is_ali_cdn",
+            "options": [
+              "--is-ali-cdn"
+            ],
+            "raw_name": "IsAliCdn",
+            "required": false,
+            "type": "bool"
           }
         ],
         "type": "object"
@@ -246,6 +247,18 @@
         {
           "fields": [
             {
+              "example": "false",
+              "help_en": "Specifies whether the stream is audio-only. Valid values:\n\ntrue: Audio-only. You only need to set audio-related parameters.\n\nfalse (default): Not audio-only. All parameters except VideoCodec and EnhancedParam must be specified",
+              "help_zh": "是否为纯音频，取值：\ntrue：纯音频，仅需要设置音频相关参数。\nfalse（默认值）：非纯音频，除VideoCodec参数与EnhancedParam参数外，其它参数均不能为空",
+              "name": "audio_only",
+              "options": [
+                "--audio-only"
+              ],
+              "raw_name": "AudioOnly",
+              "required": false,
+              "type": "string"
+            },
+            {
               "example": "128",
               "help_en": "The audio bitrate. Unit: kbps. The value must be in the range of [8, 500]",
               "help_zh": "音频码率，取值范围：[8, 500]，单位：kbps",
@@ -270,18 +283,6 @@
               "type": "string"
             },
             {
-              "example": "false",
-              "help_en": "Specifies whether the stream is audio-only. Valid values:\n\ntrue: Audio-only. You only need to set audio-related parameters.\n\nfalse (default): Not audio-only. All parameters except VideoCodec and EnhancedParam must be specified",
-              "help_zh": "是否为纯音频，取值：\ntrue：纯音频，仅需要设置音频相关参数。\nfalse（默认值）：非纯音频，除VideoCodec参数与EnhancedParam参数外，其它参数均不能为空",
-              "name": "audio_only",
-              "options": [
-                "--audio-only"
-              ],
-              "raw_name": "AudioOnly",
-              "required": false,
-              "type": "string"
-            },
-            {
               "example": "44100",
               "help_en": "The audio sampling rate. Unit: Hz. Valid values: 8000, 16000, 32000, 44100, 48000",
               "help_zh": "音频采样率，取值：8000、16000、32000、44100、48000，单位：Hz",
@@ -294,14 +295,14 @@
               "type": "string"
             },
             {
-              "example": "{\"profile\": \"high\", \"preset\": \"veryfast\"}",
-              "help_en": "The enhanced encoding parameters. This is a JSON string. The supported optional configurations include \\`profile\\` and \\`preset\\`.\n\n\\`profile\\`: The encoding profile. If the video encoding format is H.264, valid values for \\`profile\\` include \"baseline\", \"main\", and \"high\". If the video encoding format is H.265, the valid value for \\`profile\\` is \"main\".\n\n\\`preset\\`: Balances encoding speed and quality. Valid values for \\`preset\\` include \"ultrafast\", \"superfast\", \"veryfast\", \"faster\", \"fast\", \"medium\", \"slow\", \"slower\", \"veryslow\", and \"placebo\". Each value represents a strategy for balancing encoding speed and output video quality, from \"ultrafast\" (fastest encoding speed) to \"placebo\" (highest quality, slowest encoding speed).\n\nFor example, \"superfast\" is mainly used for real-time communication. If you are not an expert in encoders, do not set this option",
-              "help_zh": "编码增强参数，JSON字符串，目前支持的可选配置包括profile与preset。\nprofile：编码级别。当视频编码格式为H.264时，profile支持的可选值包括：\"baseline\", \"main\", \"high\"；当视频编码格式为H.265时，profile支持的可选值包括：\"main\"。\n\npreset：调节编码速度和质量的平衡。preset支持的可选值包括：\"ultrafast\", \"superfast\", \"veryfast\", \"faster\", \"fast\", \"medium\", \"slow\", \"slower\", \"veryslow\" \"placebo\"。每个值代表了一种编码速度与输出视频质量的策略，从\"ultrafast\"（极快，编码速度优先）到\"placebo\"（追求极致质量，编码极慢）。\n\n例如设置superfast，主要用于实时通讯领域。建议非编码器专业技术人员，不设置该选项",
-              "name": "enhanced_param",
+              "example": "H.264",
+              "help_en": "The video encoding format. Valid values:\n\nH.264 (default).\n\nH.265",
+              "help_zh": "视频编码格式。取值：\nH.264（默认值）。\nH.265",
+              "name": "video_codec",
               "options": [
-                "--enhanced-param"
+                "--video-codec"
               ],
-              "raw_name": "EnhancedParam",
+              "raw_name": "VideoCodec",
               "required": false,
               "type": "string"
             },
@@ -314,18 +315,6 @@
                 "--video-bitrate"
               ],
               "raw_name": "VideoBitrate",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "example": "H.264",
-              "help_en": "The video encoding format. Valid values:\n\nH.264 (default).\n\nH.265",
-              "help_zh": "视频编码格式。取值：\nH.264（默认值）。\nH.265",
-              "name": "video_codec",
-              "options": [
-                "--video-codec"
-              ],
-              "raw_name": "VideoCodec",
               "required": false,
               "type": "string"
             },
@@ -376,6 +365,18 @@
               "raw_name": "VideoWidth",
               "required": false,
               "type": "string"
+            },
+            {
+              "example": "{\"profile\": \"high\", \"preset\": \"veryfast\"}",
+              "help_en": "The enhanced encoding parameters. This is a JSON string. The supported optional configurations include \\`profile\\` and \\`preset\\`.\n\n\\`profile\\`: The encoding profile. If the video encoding format is H.264, valid values for \\`profile\\` include \"baseline\", \"main\", and \"high\". If the video encoding format is H.265, the valid value for \\`profile\\` is \"main\".\n\n\\`preset\\`: Balances encoding speed and quality. Valid values for \\`preset\\` include \"ultrafast\", \"superfast\", \"veryfast\", \"faster\", \"fast\", \"medium\", \"slow\", \"slower\", \"veryslow\", and \"placebo\". Each value represents a strategy for balancing encoding speed and output video quality, from \"ultrafast\" (fastest encoding speed) to \"placebo\" (highest quality, slowest encoding speed).\n\nFor example, \"superfast\" is mainly used for real-time communication. If you are not an expert in encoders, do not set this option",
+              "help_zh": "编码增强参数，JSON字符串，目前支持的可选配置包括profile与preset。\nprofile：编码级别。当视频编码格式为H.264时，profile支持的可选值包括：\"baseline\", \"main\", \"high\"；当视频编码格式为H.265时，profile支持的可选值包括：\"main\"。\n\npreset：调节编码速度和质量的平衡。preset支持的可选值包括：\"ultrafast\", \"superfast\", \"veryfast\", \"faster\", \"fast\", \"medium\", \"slow\", \"slower\", \"veryslow\" \"placebo\"。每个值代表了一种编码速度与输出视频质量的策略，从\"ultrafast\"（极快，编码速度优先）到\"placebo\"（追求极致质量，编码极慢）。\n\n例如设置superfast，主要用于实时通讯领域。建议非编码器专业技术人员，不设置该选项",
+              "name": "enhanced_param",
+              "options": [
+                "--enhanced-param"
+              ],
+              "raw_name": "EnhancedParam",
+              "required": false,
+              "type": "string"
             }
           ],
           "help_en": "The encoding parameters for the output stream",
@@ -394,55 +395,7 @@
               "element": {
                 "fields": [
                   {
-                    "example": "yourImageUrl",
-                    "help_en": "The URL of the background image for the video pane. The maximum length is 2048 characters. When a user turns off their camera or has not joined the channel, this image is displayed in their layout position",
-                    "help_zh": "子画面的背景图URL，最大长度不超过2048个字符。当用户关闭摄像头或未进入房间时，会在布局位置填充为此图片",
-                    "name": "background_image_url",
-                    "options": [
-                      "--background-image-url"
-                    ],
-                    "raw_name": "BackgroundImageUrl",
-                    "required": false,
-                    "type": "string"
-                  },
-                  {
-                    "example": "0.2632",
-                    "help_en": "The height of the pane, as a normalized percentage",
-                    "help_zh": "窗格高，归一化百分比",
-                    "name": "height",
-                    "options": [
-                      "--height"
-                    ],
-                    "raw_name": "Height",
-                    "required": false,
-                    "type": "string"
-                  },
-                  {
-                    "example": "1",
-                    "help_en": "The display mode of the output video pane. Valid values:\n\n0: Scale and display a black background.\n\n1 (default): Clip",
-                    "help_zh": "子画面输出时的显示模式，取值：\n0：缩放并显示黑底。\n1（默认值）：裁剪",
-                    "name": "render_mode",
-                    "options": [
-                      "--render-mode"
-                    ],
-                    "raw_name": "RenderMode",
-                    "required": false,
-                    "type": "string"
-                  },
-                  {
                     "fields": [
-                      {
-                        "example": "yourChannelId",
-                        "help_en": "The ID of the channel where the user is located. You do not need to set this parameter for users in the same channel. For cross-channel stream mixing, set this parameter",
-                        "help_zh": "混流用户所在的频道ID，同频道内混流的用户可不填，跨频道混流时建议填写该参数",
-                        "name": "channel_id",
-                        "options": [
-                          "--channel-id"
-                        ],
-                        "raw_name": "ChannelId",
-                        "required": false,
-                        "type": "string"
-                      },
                       {
                         "example": "camera",
                         "help_en": "The type of video input stream in stream mixing and transcoding mode. This parameter is valid only for video streams (StreamType=2). Valid values:\n\ncamera (default): Camera stream.\n\nshareScreen: Screen sharing stream",
@@ -452,6 +405,18 @@
                           "--source-type"
                         ],
                         "raw_name": "SourceType",
+                        "required": false,
+                        "type": "string"
+                      },
+                      {
+                        "example": "yourChannelId",
+                        "help_en": "The ID of the channel where the user is located. You do not need to set this parameter for users in the same channel. For cross-channel stream mixing, set this parameter",
+                        "help_zh": "混流用户所在的频道ID，同频道内混流的用户可不填，跨频道混流时建议填写该参数",
+                        "name": "channel_id",
+                        "options": [
+                          "--channel-id"
+                        ],
+                        "raw_name": "ChannelId",
                         "required": false,
                         "type": "string"
                       },
@@ -477,6 +442,18 @@
                     "raw_name": "UserInfo",
                     "required": false,
                     "type": "object"
+                  },
+                  {
+                    "example": "0.2632",
+                    "help_en": "The height of the pane, as a normalized percentage",
+                    "help_zh": "窗格高，归一化百分比",
+                    "name": "height",
+                    "options": [
+                      "--height"
+                    ],
+                    "raw_name": "Height",
+                    "required": false,
+                    "type": "string"
                   },
                   {
                     "example": "0.3564",
@@ -525,6 +502,30 @@
                     "raw_name": "ZOrder",
                     "required": false,
                     "type": "string"
+                  },
+                  {
+                    "example": "yourImageUrl",
+                    "help_en": "The URL of the background image for the video pane. The maximum length is 2048 characters. When a user turns off their camera or has not joined the channel, this image is displayed in their layout position",
+                    "help_zh": "子画面的背景图URL，最大长度不超过2048个字符。当用户关闭摄像头或未进入房间时，会在布局位置填充为此图片",
+                    "name": "background_image_url",
+                    "options": [
+                      "--background-image-url"
+                    ],
+                    "raw_name": "BackgroundImageUrl",
+                    "required": false,
+                    "type": "string"
+                  },
+                  {
+                    "example": "1",
+                    "help_en": "The display mode of the output video pane. Valid values:\n\n0: Scale and display a black background.\n\n1 (default): Clip",
+                    "help_zh": "子画面输出时的显示模式，取值：\n0：缩放并显示黑底。\n1（默认值）：裁剪",
+                    "name": "render_mode",
+                    "options": [
+                      "--render-mode"
+                    ],
+                    "raw_name": "RenderMode",
+                    "required": false,
+                    "type": "string"
                   }
                 ],
                 "type": "object"
@@ -554,18 +555,6 @@
           "element": {
             "fields": [
               {
-                "example": "yourChannelId",
-                "help_en": "The ID of the channel where the subscribed user is located. You do not need to set this parameter for users in the same channel. For cross-channel stream mixing, set this parameter",
-                "help_zh": "混流时订阅用户所在的频道ID，同频道内混流的用户可不填，跨频道混流时建议填写该参数",
-                "name": "channel_id",
-                "options": [
-                  "--channel-id"
-                ],
-                "raw_name": "ChannelId",
-                "required": false,
-                "type": "string"
-              },
-              {
                 "example": "camera",
                 "help_en": "The type of video input stream to subscribe to for stream mixing. This parameter is valid only for video streams (StreamType=2). Valid values:\n\ncamera (default): Camera stream.\n\nshareScreen: Screen sharing stream",
                 "help_zh": "混流时订阅的视频输入流类型，仅针对视频流（StreamType=2）有效。取值：\ncamera（默认值）：摄像头。\nshareScreen：屏幕共享",
@@ -586,6 +575,18 @@
                   "--stream-type"
                 ],
                 "raw_name": "StreamType",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "yourChannelId",
+                "help_en": "The ID of the channel where the subscribed user is located. You do not need to set this parameter for users in the same channel. For cross-channel stream mixing, set this parameter",
+                "help_zh": "混流时订阅用户所在的频道ID，同频道内混流的用户可不填，跨频道混流时建议填写该参数",
+                "name": "channel_id",
+                "options": [
+                  "--channel-id"
+                ],
+                "raw_name": "ChannelId",
                 "required": false,
                 "type": "string"
               },
@@ -763,7 +764,6 @@
         "description_zh": "请求ID",
         "properties": {
           "RequestId": {
-            "backendName": "content.requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "0F72851F-5DC1-1979-9B2C-450040316C3E",

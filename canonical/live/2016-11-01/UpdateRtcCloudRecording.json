@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun live UpdateRtcCloudRecording --region cn-hangzhou --TaskId '00000073-8501-0000-8ac1-72295a000000' --SubscribeParams '{\"SubscribeUserIdList\":[{}]}'",
   "cmd_full_name": "live update-rtc-cloud-recording",
   "cmd_name": "update-rtc-cloud-recording",
@@ -39,20 +40,16 @@
           "element": {
             "fields": [
               {
-                "enum": [
-                  "0",
-                  "1"
-                ],
-                "example": "0",
-                "help_en": "The video input stream type of the UserId. This parameter takes effect only when the video stream is subscribed (StreamType=2). Valid values:\n\n0: camera. (Default)\n\n1: screen sharing",
-                "help_zh": "该UserId的视频输入流类型，仅针对订阅视频流时（StreamType=2）有效。取值：\n\n0：摄像头。（默认值）\n\n1：屏幕共享",
-                "name": "source_type",
+                "example": "userA",
+                "help_en": "The subscribed UserId",
+                "help_zh": "订阅的UserId",
+                "name": "user_id",
                 "options": [
-                  "--source-type"
+                  "--user-id"
                 ],
-                "raw_name": "SourceType",
-                "required": false,
-                "type": "int"
+                "raw_name": "UserId",
+                "required": true,
+                "type": "string"
               },
               {
                 "enum": [
@@ -72,16 +69,20 @@
                 "type": "int"
               },
               {
-                "example": "userA",
-                "help_en": "The subscribed UserId",
-                "help_zh": "订阅的UserId",
-                "name": "user_id",
-                "options": [
-                  "--user-id"
+                "enum": [
+                  "0",
+                  "1"
                 ],
-                "raw_name": "UserId",
-                "required": true,
-                "type": "string"
+                "example": "0",
+                "help_en": "The video input stream type of the UserId. This parameter takes effect only when the video stream is subscribed (StreamType=2). Valid values:\n\n0: camera. (Default)\n\n1: screen sharing",
+                "help_zh": "该UserId的视频输入流类型，仅针对订阅视频流时（StreamType=2）有效。取值：\n\n0：摄像头。（默认值）\n\n1：屏幕共享",
+                "name": "source_type",
+                "options": [
+                  "--source-type"
+                ],
+                "raw_name": "SourceType",
+                "required": false,
+                "type": "int"
               }
             ],
             "type": "object"
@@ -157,14 +158,14 @@
           "element": {
             "fields": [
               {
-                "example": "0.5",
-                "help_en": "The pane height as a normalized percentage. The value must be in the range of [0, 1]. (Default: 0)",
-                "help_zh": "窗格高度，归一化百分比。取值范围须在[0,1]内。(默认为0)",
-                "name": "height",
+                "example": "userA",
+                "help_en": "The UserId corresponding to this window.\nIf UserId is not specified, windows are filled in the order in which subscribed users join the channel.\nThe combination of UserId and SourceType specified here must be included in SubscribeUserIdList.\nAudio-only streams cannot be added to the layout",
+                "help_zh": "该窗口对应的UserId。\n不设置UserId时，会按照订阅的用户进入频道的顺序依次填入窗口。\n这里设置的UserId与SourceType的组合必须包含在SubscribeUserIdList中。\n订阅纯音频流是不能加入到布局中的",
+                "name": "user_id",
                 "options": [
-                  "--height"
+                  "--user-id"
                 ],
-                "raw_name": "Height",
+                "raw_name": "UserId",
                 "required": false,
                 "type": "string"
               },
@@ -185,56 +186,14 @@
                 "type": "int"
               },
               {
-                "fields": [
-                  {
-                    "enum": [
-                      "0",
-                      "1"
-                    ],
-                    "example": "0",
-                    "help_en": "The display mode for the sub-pane output. Valid values:\n0: crop. (Default)\n1: scale and display with black borders",
-                    "help_zh": "子画面输出时的显示模式。取值：\n0：裁剪。（默认值）\n1：缩放并显示黑底",
-                    "name": "render_mode",
-                    "options": [
-                      "--render-mode"
-                    ],
-                    "raw_name": "RenderMode",
-                    "required": false,
-                    "type": "int"
-                  },
-                  {
-                    "example": "https://xxxx.com/photos/my-test-pane-picture.png\n",
-                    "help_en": "The URL of the background image. The maximum length is 2048 characters",
-                    "help_zh": "背景图URL，最大长度不超过2048个字符",
-                    "max_length": "2048",
-                    "name": "url",
-                    "options": [
-                      "--url"
-                    ],
-                    "raw_name": "Url",
-                    "required": false,
-                    "type": "string"
-                  }
-                ],
-                "help_en": "The sub-pane background image. When a user turns off the camera, has not started stream ingest after joining, or leaves the channel midway, the corresponding image is displayed at the layout position",
-                "help_zh": "子画面背景图，当用户关闭摄像头、或入会后未推流、或入会后中途离会时，会在布局位置填充为对应的图片",
-                "name": "sub_background",
+                "example": "0.5",
+                "help_en": "The pane height as a normalized percentage. The value must be in the range of [0, 1]. (Default: 0)",
+                "help_zh": "窗格高度，归一化百分比。取值范围须在[0,1]内。(默认为0)",
+                "name": "height",
                 "options": [
-                  "--sub-background"
+                  "--height"
                 ],
-                "raw_name": "SubBackground",
-                "required": false,
-                "type": "object"
-              },
-              {
-                "example": "userA",
-                "help_en": "The UserId corresponding to this window.\nIf UserId is not specified, windows are filled in the order in which subscribed users join the channel.\nThe combination of UserId and SourceType specified here must be included in SubscribeUserIdList.\nAudio-only streams cannot be added to the layout",
-                "help_zh": "该窗口对应的UserId。\n不设置UserId时，会按照订阅的用户进入频道的顺序依次填入窗口。\n这里设置的UserId与SourceType的组合必须包含在SubscribeUserIdList中。\n订阅纯音频流是不能加入到布局中的",
-                "name": "user_id",
-                "options": [
-                  "--user-id"
-                ],
-                "raw_name": "UserId",
+                "raw_name": "Height",
                 "required": false,
                 "type": "string"
               },
@@ -285,6 +244,48 @@
                 "raw_name": "ZOrder",
                 "required": false,
                 "type": "int"
+              },
+              {
+                "fields": [
+                  {
+                    "enum": [
+                      "0",
+                      "1"
+                    ],
+                    "example": "0",
+                    "help_en": "The display mode for the sub-pane output. Valid values:\n0: crop. (Default)\n1: scale and display with black borders",
+                    "help_zh": "子画面输出时的显示模式。取值：\n0：裁剪。（默认值）\n1：缩放并显示黑底",
+                    "name": "render_mode",
+                    "options": [
+                      "--render-mode"
+                    ],
+                    "raw_name": "RenderMode",
+                    "required": false,
+                    "type": "int"
+                  },
+                  {
+                    "example": "https://xxxx.com/photos/my-test-pane-picture.png\n",
+                    "help_en": "The URL of the background image. The maximum length is 2048 characters",
+                    "help_zh": "背景图URL，最大长度不超过2048个字符",
+                    "max_length": "2048",
+                    "name": "url",
+                    "options": [
+                      "--url"
+                    ],
+                    "raw_name": "Url",
+                    "required": false,
+                    "type": "string"
+                  }
+                ],
+                "help_en": "The sub-pane background image. When a user turns off the camera, has not started stream ingest after joining, or leaves the channel midway, the corresponding image is displayed at the layout position",
+                "help_zh": "子画面背景图，当用户关闭摄像头、或入会后未推流、或入会后中途离会时，会在布局位置填充为对应的图片",
+                "name": "sub_background",
+                "options": [
+                  "--sub-background"
+                ],
+                "raw_name": "SubBackground",
+                "required": false,
+                "type": "object"
               }
             ],
             "type": "object"
@@ -323,23 +324,21 @@
         "description_zh": "Schema of Response",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求id",
             "example": "******58-5876-****-83CA-B56278******\n",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "TaskId": {
-            "backendName": "taskId",
             "description_en": "The task ID",
             "description_zh": "任务id",
             "example": "******73-8501-****-8ac1-72295a******\n",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

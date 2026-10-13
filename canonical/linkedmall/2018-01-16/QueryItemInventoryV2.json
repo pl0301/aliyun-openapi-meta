@@ -1,8 +1,10 @@
 {
+  "backend_timeout_ms": 5000,
   "cmd_full_name": "linkedmall query-item-inventory-v2",
   "cmd_name": "query-item-inventory-v2",
   "deprecated": false,
-  "description_zh": "QueryItemInventoryV2",
+  "description_en": "Queries the inventory of items",
+  "description_zh": "用于查询商品库存",
   "kebab_example": "aliyun linkedmall query-item-inventory-v2 --biz-id LMALL2000000001 --division-code 520300 --item-list '[{\"LmItemId\":\"10000035-619366460000\",\"SkuIdList\":[4890674122805],\"ItemId\":608438420000}]' --api-version 2018-01-16 --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": true,
@@ -21,7 +23,7 @@
     {
       "doc_required": true,
       "example": "LMALL20******01",
-      "help_en": "Business ID",
+      "help_en": "The business ID",
       "help_zh": "业务Id",
       "location": "query",
       "name": "biz_id",
@@ -35,7 +37,7 @@
     {
       "doc_required": true,
       "example": "520300",
-      "help_en": "Level-4 delivery area code used to query the inventory in the specified area. You can obtain this field by calling the queryAddress operation",
+      "help_en": "The level-4 delivery area code used to query the inventory in the area. You can obtain this field by calling the queryAddress operation",
       "help_zh": "四级配送区域编码，查询该区域库存。该字段通过queryAddress接⼝获取",
       "location": "query",
       "name": "division_code",
@@ -63,6 +65,18 @@
       "element": {
         "fields": [
           {
+            "example": "10000035-61936646****",
+            "help_en": "The item ID on the LM side",
+            "help_zh": "lm侧商品ID",
+            "name": "lm_item_id",
+            "options": [
+              "--lm-item-id"
+            ],
+            "raw_name": "LmItemId",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "60843842****",
             "help_en": "The item ID",
             "help_zh": "商品id",
@@ -75,22 +89,10 @@
             "type": "int"
           },
           {
-            "example": "10000035-61936646****",
-            "help_en": "The item ID on the LinkedMall side",
-            "help_zh": "lm侧商品ID",
-            "name": "lm_item_id",
-            "options": [
-              "--lm-item-id"
-            ],
-            "raw_name": "LmItemId",
-            "required": false,
-            "type": "string"
-          },
-          {
             "element": {
               "type": "int"
             },
-            "help_en": "The list of SKU IDs in JSON string format",
+            "help_en": "The SKU ID list, which is a JSON string",
             "help_zh": "skuid列表，为json字符串",
             "name": "sku_id_list",
             "options": [
@@ -103,7 +105,7 @@
         ],
         "type": "object"
       },
-      "help_en": "The query list. A maximum of 20 item IDs can be queried at a time",
+      "help_en": "The query list. You can query up to 20 item IDs at a time",
       "help_zh": "查询列表，一次查询itemId最多20个",
       "location": "query",
       "name": "item_list",
@@ -122,114 +124,118 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
-            "description_en": "The response code. A value of SUCCESS indicates that the request was successful",
+            "description_en": "The response code. A value of SUCCESS indicates that the request is successful",
             "description_zh": "SUCCESS表示成功",
             "example": "SUCCESS",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "ItemList": {
-            "backendName": "model",
-            "itemName": "Item",
-            "items": {
-              "properties": {
-                "ItemId": {
-                  "backendName": "itemId",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "LmItemId": {
-                  "backendName": "lmItemId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SkuList": {
-                  "backendName": "skuList",
-                  "itemName": "Sku",
-                  "items": {
-                    "properties": {
-                      "Inventory": {
-                        "backendName": "inventory",
-                        "properties": {
-                          "Quantity": {
-                            "backendName": "quantity",
-                            "format": "int64",
-                            "type": "integer",
-                            "visibility": "Public"
-                          }
-                        },
-                        "type": "object",
-                        "visibility": "Public"
-                      },
-                      "SkuId": {
-                        "backendName": "skuId",
-                        "format": "int64",
-                        "type": "integer",
-                        "visibility": "Public"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Item": {
+                "description_en": "The item list",
+                "description_zh": "商品列表",
+                "items": {
+                  "description_en": "The item list information",
+                  "description_zh": "商品列表信息",
+                  "properties": {
+                    "ItemId": {
+                      "description_en": "The item ID",
+                      "description_zh": "商品id",
+                      "example": "65671280****",
+                      "format": "int64",
+                      "type": "integer"
                     },
-                    "type": "object"
+                    "LmItemId": {
+                      "description_en": "The item ID on the LM side",
+                      "description_zh": "lm侧商品id",
+                      "example": "10016572-654408058233\n",
+                      "type": "string"
+                    },
+                    "SkuList": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Sku": {
+                          "description_en": "The SKU list of the item",
+                          "description_zh": "商品sku列表",
+                          "items": {
+                            "description_en": "The SKU list of the item",
+                            "description_zh": "商品sku列表",
+                            "properties": {
+                              "Inventory": {
+                                "description_en": "The inventory",
+                                "description_zh": "库存",
+                                "properties": {
+                                  "Quantity": {
+                                    "description_en": "The inventory quantity",
+                                    "description_zh": "库存数量",
+                                    "example": "10",
+                                    "format": "int64",
+                                    "type": "integer"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "SkuId": {
+                                "description_en": "skuid",
+                                "description_zh": "skuid",
+                                "example": "482694857****",
+                                "format": "int64",
+                                "type": "integer"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    }
                   },
-                  "type": "array",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                  "type": "object"
+                },
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
-            "description_en": "The error message returned when the request fails",
+            "description_en": "The specific cause returned when the request fails",
             "description_zh": "失败时，返回具体原因",
             "example": "The bizId or lmOrderId is mandatory for this action.",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求id",
             "example": "1718921E-C8D4-55E1-B8D4-114AE537C1B7",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "SubCode": {
-            "backendName": "subCode",
             "description_en": "The sub-error code",
             "description_zh": "子错误码",
             "example": "207",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "SubMessage": {
-            "backendName": "subMessage",
             "description_en": "The sub-error message",
             "description_zh": "子错误信息",
             "example": "成功",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful. A value of SUCCESS indicates that the request was successful",
+            "description_en": "Indicates whether the request is successful. A value of SUCCESS indicates success",
             "description_zh": "SUCCESS\n表示成功",
             "example": "SUCCESS",
-            "nullToEmpty": true,
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           }
         },
         "type": "object"

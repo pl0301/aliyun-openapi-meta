@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun rds DescribeAccounts --region cn-hangzhou --DBInstanceId 'rm-bp1v6z81ho9000000'",
   "cmd_full_name": "rds describe-accounts",
   "cmd_name": "describe-accounts",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "rm-bp1v6z81ho9******",
-      "help_en": "The instance ID. You can call https://help.aliyun.com/document_detail/610396.html to query the instance ID.\nSQL Server 2017 Cluster Edition instances are not supported",
+      "help_en": "The instance ID. You can call DescribeDBInstances to obtain the instance ID.\nSQL Server 2017 Cluster Edition instances are not supported",
       "help_zh": "实例ID。可调用DescribeDBInstances获取。\n暂不支持SQL Server 2017集群系列实例",
       "location": "query",
       "name": "db_instance_id",
@@ -88,204 +89,184 @@
         "description_zh": "返回参数详情",
         "properties": {
           "Accounts": {
-            "backendName": "data.accounts",
-            "itemName": "DBInstanceAccount",
-            "items": {
-              "properties": {
-                "AccountDescription": {
-                  "backendName": "accountDescription",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "AccountName": {
-                  "backendName": "accountName",
-                  "title_en": "",
-                  "title_zh": "",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "AccountStatus": {
-                  "backendName": "accountStatus",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Unavailable",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "Available",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "Unavailable",
-                        "value": "3"
-                      },
-                      {
-                        "targetValue": "Lock",
-                        "value": "5"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "AccountType": {
-                  "backendName": "accountType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Normal",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "Super",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "Sysadmin",
-                        "value": "4"
-                      },
-                      {
-                        "targetValue": "GlobalRO",
-                        "value": "5"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "BypassRLS": {
-                  "backendName": "bypassRLS",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CheckPolicy": {
-                  "backendName": "checkPolicy",
-                  "type": "boolean"
-                },
-                "CreateDB": {
-                  "backendName": "createDB",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CreateRole": {
-                  "backendName": "createRole",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBInstanceId": {
-                  "backendName": "dbInstanceName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DatabasePrivileges": {
-                  "backendName": "databasePrivileges",
-                  "itemName": "DatabasePrivilege",
-                  "items": {
-                    "properties": {
-                      "AccountPrivilege": {
-                        "backendName": "accountPrivilege",
-                        "type": "string",
-                        "visibility": "Public"
-                      },
-                      "AccountPrivilegeDetail": {
-                        "backendName": "accountPrivilegeDetail",
-                        "type": "string",
-                        "visibility": "Public"
-                      },
-                      "DBName": {
-                        "backendName": "dbName",
-                        "type": "string",
-                        "visibility": "Public"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DBInstanceAccount": {
+                "description_en": "The list of account information",
+                "description_zh": "账号信息列表",
+                "items": {
+                  "description_en": "The account details",
+                  "description_zh": "账号详情如下",
+                  "properties": {
+                    "AccountDescription": {
+                      "description_en": "The description of the account",
+                      "description_zh": "账号描述",
+                      "example": "测试数据库账号",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "AccountName": {
+                      "description_en": "The name of the database account",
+                      "description_zh": "数据库账号名称",
+                      "example": "test1",
+                      "title_en": "",
+                      "title_zh": "",
+                      "type": "string"
+                    },
+                    "AccountStatus": {
+                      "description_en": "The status of the account. Valid values:\nUnavailable: The account is unavailable.\nAvailable: The account is available",
+                      "description_zh": "账号状态，返回值如下：\nUnavailable：不可用\nAvailable：可用",
+                      "example": "Available",
+                      "type": "string"
+                    },
+                    "AccountType": {
+                      "description_en": "The type of the account. Valid values:\n\nNormal: standard account.\nSuper: privileged account.\nSysadmin (supported only for SQL Server): an account with super administrator (SA) permissions.\nGlobalRO (supported only for SQL Server): global read-only account",
+                      "description_zh": "账号类型，返回值如下：\n\nNormal：普通账号\nSuper：高权限账号\nSysadmin（仅SQL Server支持）：具备超级权限（SA）的账号\nGlobalRO（仅SQL Server支持）：全局只读账号",
+                      "example": "Normal",
+                      "type": "string"
+                    },
+                    "BypassRLS": {
+                      "description_en": "Indicates whether the account has the row-level security (RLS) policy permission. Valid values:\n\nt: Yes.\nf: No.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                      "description_zh": "是否拥有安全策略RLS权限，返回值如下：\n\nt：是\nf：否\n\n仅PostgreSQL实例返回该参数",
+                      "example": "f",
+                      "type": "string"
+                    },
+                    "CheckPolicy": {
+                      "description_en": "Indicates whether the password policy is applied.\nThis parameter is returned only for ApsaraDB RDS for SQL Server instances",
+                      "description_zh": "是否应用密码策略\n仅SQLServer实例返回该参数",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "CreateDB": {
+                      "description_en": "Indicates whether the account has the permission to create databases. Valid values:\n\nt: Yes.\nf: No.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                      "description_zh": "是否拥有创建数据库权限，返回值如下：\n\nt：是\nf：否\n\n仅PostgreSQL实例返回该参数",
+                      "example": "t",
+                      "type": "string"
+                    },
+                    "CreateRole": {
+                      "description_en": "Indicates whether the account has the permission to create roles. Valid values:\n\nt: Yes.\nf: No.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                      "description_zh": "是否拥有创建角色权限，返回值如下：\n\nt：是\nf：否\n\n仅PostgreSQL实例返回该参数",
+                      "example": "t",
+                      "type": "string"
+                    },
+                    "DBInstanceId": {
+                      "description_en": "The instance ID of the instance to which the account belongs",
+                      "description_zh": "账号所属实例ID",
+                      "example": "rm-bp1v6z81ho9******",
+                      "type": "string"
+                    },
+                    "DatabasePrivileges": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DatabasePrivilege": {
+                          "description_en": "The list of database permissions that the account has",
+                          "description_zh": "账号拥有的数据库权限列表",
+                          "items": {
+                            "description_en": "The details of the database permissions that the account has",
+                            "description_zh": "账号拥有的数据库权限详情",
+                            "properties": {
+                              "AccountPrivilege": {
+                                "description_en": "The type of the account permission. Valid values:\nReadWrite: read and write.\nReadOnly: read-only.\nDDLOnly: DDL only.\nDMLOnly: DML only.\nCustom: custom (can be modified by using SQL statements)",
+                                "description_zh": "账号的权限类型，返回值如下：\nReadWrite：读写\nReadOnly：只读\nDDLOnly：仅DDL\nDMLOnly：只DML\nCustom：自定义（可以通过SQL命令修改）",
+                                "example": "ReadWrite",
+                                "type": "string"
+                              },
+                              "AccountPrivilegeDetail": {
+                                "description_en": "The specific permissions corresponding to the account permission type. For more information, see [Account permissions]（https://help.aliyun.com/document_detail/146395.html）",
+                                "description_zh": "账号权限类型对应的具体权限。请参见[账号权限列表]（https://help.aliyun.com/document_detail/146395.html）",
+                                "example": "SELECT,INSERT",
+                                "type": "string"
+                              },
+                              "DBName": {
+                                "description_en": "The name of the database",
+                                "description_zh": "数据库名称",
+                                "example": "test1",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "PasswordExpireTime": {
+                      "description_en": "The expiration time of the password.\nThis parameter is returned only for ApsaraDB RDS for SQL Server instances",
+                      "description_zh": "密码过期时间\n仅SQLServer实例返回该参数",
+                      "example": "2024-10-21",
+                      "type": "string"
+                    },
+                    "PrivExceeded": {
+                      "description_en": "Indicates whether the number of databases managed by the account exceeds the upper limit. Valid values:\n1: Yes.\n0: No",
+                      "description_zh": "账号管理的数据库是否超过最大数量限制，返回值如下：\n1：是\n0：否",
+                      "example": "0",
+                      "title_en": "",
+                      "title_zh": "",
+                      "type": "string"
+                    },
+                    "Replication": {
+                      "description_en": "Indicates whether the account has the replication permission. Valid values:\n\nt: Yes.\nf: No.\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                      "description_zh": "是否拥有复制权限，返回值如下：\n\nt：是\nf：否\n\n仅PostgreSQL实例返回该参数",
+                      "example": "t",
+                      "type": "string"
+                    },
+                    "ValidUntil": {
+                      "description_en": "The expiration time of the password. Valid values:\n\ninfinity: The password never expires.\nEmpty: The expiration time is not specified.\nActual expiration time: For example, 2022-10-01T00:00:00Z. The time is in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format (UTC).\n\nThis parameter is returned only for ApsaraDB RDS for PostgreSQL instances",
+                      "description_zh": "密码失效时间，返回值如下：\n\ninfinity：永不过期。\n返回为空：未设置。\n返回实际密码失效时间。例如：2022-10-01T00:00:00Z，格式为：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）\n\n仅PostgreSQL实例返回该参数",
+                      "example": "2022-10-01T00:00:00Z",
+                      "title_en": "",
+                      "title_zh": "",
+                      "type": "string"
+                    }
                   },
-                  "type": "array",
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "PasswordExpireTime": {
-                  "backendName": "passwordExpireTime",
-                  "type": "string"
-                },
-                "PrivExceeded": {
-                  "backendName": "privExceeded",
-                  "title_en": "",
-                  "title_zh": "",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Replication": {
-                  "backendName": "replication",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ValidUntil": {
-                  "backendName": "validUntil",
-                  "title_en": "",
-                  "title_zh": "",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "17F2EA6C-3CA2-528D-A263-DC29707AD652",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "ResourceGroupId": {
-            "backendName": "data.resourceGroupId",
             "description_en": "The resource group ID",
             "description_zh": "资源组ID",
             "example": "rg-acfmy****",
             "type": "string"
           },
           "SystemAdminAccountFirstActivationTime": {
-            "backendName": "data.sysadminAccountFirstActivationTime",
-            "description_en": "The time when the privileged account was first enabled. The time follows the ISO 8601 standard in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format (UTC)",
+            "description_en": "The time when the super administrator (SA) account was first activated. The time is in the <i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z format (UTC).\n\nThis parameter is returned only for ApsaraDB RDS for SQL Server instances",
             "description_zh": "超级权限账号首次启用时间。格式：<i>yyyy-MM-dd</i>T<i>HH:mm:ss</i>Z（UTC时间）。\n\n仅SQL Server实例返回该参数",
             "example": "2023-10-17T07:51:22Z",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "SystemAdminAccountStatus": {
-            "backendName": "data.sysadminAccountStatus",
-            "description_en": "Indicates whether the privileged account is enabled. Valid values:",
+            "description_en": "Indicates whether the super administrator (SA) account is activated. Valid values:\n\nTrue: Activated.\nFalse: Not activated.\n\n\nOnly ApsaraDB RDS for SQL Server instances support the [super administrator (SA) account]（https://help.aliyun.com/document_detail/170736.html）, and this parameter has a return value. For instances of other engines, the return value is empty",
             "description_zh": "超级权限账号是否启用，返回值如下：\n\nTrue：已启用\nFalse：未启用\n\n\n仅SQL Server实例支持[超级权限账号]（https://help.aliyun.com/document_detail/170736.html），该参数有返回值。其他引擎实例的返回值为空",
             "example": "True",
-            "nullToEmpty": true,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecordCount",
             "description_en": "The total number of records",
             "description_zh": "总记录数",
             "example": "3",
             "format": "int32",
-            "nullToEmpty": false,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

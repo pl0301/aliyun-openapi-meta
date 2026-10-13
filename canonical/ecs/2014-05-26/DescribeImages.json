@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 12000,
   "camel_example": "aliyun ecs DescribeImages --region cn-hangzhou --ImageOwnerAlias self --ActionType CreateEcs --PageSize 10 --ResourceGroupId 'rg-bp67acfmxazb4p0000' --DryRun false --ShowExpired false --PageNumber 1 --Usable true --IsPublic false --ImageId 'm-bp1g7004ksh0oeuc0000' --InstanceType 'ecs.g5.large' --Tag.1.key 'example-string' --Status Available --Usage instance --Architecture i386 --ImageOwnerId 201693514356660000 --Filter.1.Value '2017-12-05T22:40Z' --ImageFamily 'hangzhou-daily-update' --IsSupportIoOptimized true --Filter.1.Key CreationStartTime --IsSupportCloudinit true --SnapshotId 's-bp17ot2q7x72ggtw0000' --ImageName testImageName --OSType linux --Tag.1.Value TestValue --RegionId 'cn-hangzhou'",
   "cmd_full_name": "ecs describe-images",
   "cmd_name": "describe-images",
@@ -87,7 +88,7 @@
     },
     {
       "example": "testImageName",
-      "help_en": "The name of the image. Fuzzy search is supported",
+      "help_en": "The image name. Fuzzy search is supported",
       "help_zh": "镜像名称。支持模糊搜索",
       "location": "query",
       "name": "image_name",
@@ -139,7 +140,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether the image is available.\nAn available image indicates that the image can be immediately used to create instances. For more availability scenarios, see https://help.aliyun.com/document_detail/3044728.html",
+      "help_en": "Specifies whether the image is available.\nAn available image indicates that the image can be used immediately to create an instance. For more availability scenarios, see https://help.aliyun.com/document_detail/3044728.html",
       "help_zh": "镜像是否可用。\n镜像可用表示支持该镜像立即用于创建实例，更多可用场景请参见https://help.aliyun.com/document_detail/3044728.html",
       "location": "query",
       "name": "usable",
@@ -218,7 +219,7 @@
     },
     {
       "example": "10",
-      "help_en": "The number of entries per page for a paging query. Settings this parameter to specify the number of entries to return on each page.\n\nMaximum value: 100.\n\nDefault value: 10",
+      "help_en": "The number of entries per page for paging queries. Settings this parameter to specify the number of entries to return on each page.\n\nMaximum value: 100.\n\nDefault value: 10",
       "help_zh": "分页查询时设置的每页行数。\n\n最大值：100。\n\n默认值：10",
       "location": "query",
       "maximum": "100",
@@ -233,7 +234,7 @@
     },
     {
       "example": "instance",
-      "help_en": "Specifies whether the image is running on ECS instances. Valid values:\n\ninstance: The image is in use and running on ECS instances.\nnone: The image is idle and not running on any ECS instances",
+      "help_en": "Specifies whether the image is running on ECS instances. Valid values:\n\ninstance: The image is in use by ECS instances.\nnone: The image is idle and not used by any ECS instances",
       "help_zh": "镜像是否已经运行在ECS实例中。取值范围：\n\ninstance：镜像处于运行状态，有ECS实例使用。\nnone：镜像处于闲置状态，暂无ECS实例使用",
       "location": "query",
       "name": "usage",
@@ -246,7 +247,7 @@
     },
     {
       "example": "false",
-      "help_en": "Specifies whether to perform only a dry run, without performing the actual request.\n         \ntrue: Only a dry run is performed. The system checks whether your AccessKey pair is valid, whether Resource Access Management (RAM) user authorization is granted, and whether the required parameters are specified. If the check fails, the corresponding error is returned. If the check succeeds, the DryRunOperation error code is returned. The request does not send the actual query.\nfalse: A normal request is sent. If the check succeeds, a 2XX HTTP status code is returned and the resource status is directly queried. \n\nDefault value: false",
+      "help_en": "Specifies whether to perform only a dry run, without performing the actual request.\n         \ntrue: Only a dry run is performed. The system checks whether your AccessKey pair is valid, whether the Resource Access Management (RAM) user is granted the required authorization, and whether the required parameters are specified. If the check fails, the corresponding error is returned. If the check succeeds, the DryRunOperation error code is returned. No request is sent.\nfalse: A normal request is sent. If the check succeeds, a 2XX HTTP status code is returned and the resource status is queried directly. \n\nDefault value: false",
       "help_zh": "是否只预检此次请求。\n         \ntrue：发送检查请求，不会查询资源状况。检查项包括AccessKey是否有效、RAM用户的授权情况和是否填写了必需参数。如果检查不通过，则返回对应错误。如果检查通过，会返回错误码DryRunOperation。  \nfalse：发送正常请求，通过检查后返回2XX HTTP状态码并直接查询资源状况。 \n\n默认值：false",
       "location": "query",
       "name": "dry_run",
@@ -259,7 +260,7 @@
     },
     {
       "example": "CreateEcs",
-      "help_en": "The scenario in which the image is used. Valid values:\n\nCreateEcs (default): instance creation.\nChangeOS: system disk replacement or operating system replacement",
+      "help_en": "The scenario in which the image is to be used. Valid values:\n\nCreateEcs (default): instance creation.\nChangeOS: system disk replacement or operating system replacement",
       "help_zh": "镜像需要被使用到的场景。取值范围：\n\nCreateEcs（默认）：创建实例。\nChangeOS：更换系统盘/更换操作系统",
       "location": "query",
       "name": "action_type",
@@ -287,8 +288,20 @@
       "element": {
         "fields": [
           {
+            "example": "null",
+            "help_en": "The tag key of the image.\n\n[Deprecated] This parameter will be deprecated. For better compatibility, use Tag.N.Key instead",
+            "help_zh": "镜像的标签键。\n\n该参数即将被弃用，为提高兼容性，建议您使用另一个`Tag.N.Key`参数",
+            "name": "key",
+            "options": [
+              "--key"
+            ],
+            "raw_name": "key",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "TestKey",
-            "help_en": "The tag key of the image. Valid values of N: 1 to 20.\n\nIf you use a single tag to filter resources, the resource count with this tag cannot exceed 1000. If you use multiple tags to filter resources, the resource count that has all specified tags attached cannot exceed 1000. If the resource count exceeds 1000, call the https://help.aliyun.com/document_detail/110425.html operation to query resources",
+            "help_en": "The tag key of the image. Valid values of N: 1 to 20.\n\nWhen you use a single tag to filter resources, the resource count with this tag cannot exceed 1000. When you use multiple tags to filter resources, the resource count that are attached to all specified tags cannot exceed 1000. If the resource count exceeds 1000, call the https://help.aliyun.com/document_detail/110425.html operation to query resources",
             "help_zh": "镜像的标签键。N的取值范围：1~20。\n\n使用一个标签过滤资源，查询到该标签下的资源数量不能超过1000个；使用多个标签过滤资源，查询到同时绑定了多个标签的资源数量不能超过1000个。如果资源数量超过1000个，请使用https://help.aliyun.com/document_detail/110425.html接口进行查询",
             "name": "key",
             "options": [
@@ -312,19 +325,7 @@
           },
           {
             "example": "null",
-            "help_en": "The tag key of the image.\n\nThis parameter will be deprecated. For better compatibility, use Tag.N.Key instead",
-            "help_zh": "镜像的标签键。\n\n该参数即将被弃用，为提高兼容性，建议您使用另一个`Tag.N.Key`参数",
-            "name": "key",
-            "options": [
-              "--key"
-            ],
-            "raw_name": "key",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "null",
-            "help_en": "The tag value of the image.\n\nThis parameter will be deprecated. For better compatibility, use Tag.N.Value instead",
+            "help_en": "The tag value of the image.\n\n[Deprecated] This parameter will be deprecated. For better compatibility, use Tag.N.Value instead",
             "help_zh": "镜像的标签值。\n\n该参数即将被弃用，为提高兼容性，建议您使用另一个`Tag.N.Value`参数",
             "name": "value",
             "options": [
@@ -354,7 +355,7 @@
         "fields": [
           {
             "example": "CreationStartTime",
-            "help_en": "The filter key used to query resources. Valid values:\n\nWhen this parameter is set to `CreationStartTime`, you can query resources created after the specified time point (`Filter.N.Value`).\nWhen this parameter is set to `CreationEndTime`, you can query resources created before the specified time point (`Filter.N.Value`).\nWhen this parameter is set to `NetworkType`, you can query resources of the specified network type.\nWhen this parameter is set to any of `CpuOnlineUpgrade`, `CpuOnlineDowngrade`, `MemoryOnlineUpgrade`, or `MemoryOnlineDowngrade`, you can query the CPU or memory hot-plugging support of the specified image.\n\nDefault value: null",
+            "help_en": "The filter key when querying resources. Valid values:\n\nWhen this parameter is set to `CreationStartTime`, you can query resources created after the specified time point (`Filter.N.Value`).\nWhen this parameter is set to `CreationEndTime`, you can query resources created before the specified time point (`Filter.N.Value`).\nWhen this parameter is set to `NetworkType`, you can query resources of the specified network type.\nWhen this parameter is set to any of `CpuOnlineUpgrade`, `CpuOnlineDowngrade`, `MemoryOnlineUpgrade`, or `MemoryOnlineDowngrade`, you can query the CPU or memory hot-plugging support of the specified image.\n\nDefault value: null",
             "help_zh": "查询资源时的筛选键。取值范围：\n\n当该参数取值为`CreationStartTime`时，可以查询在指定时间点（`Filter.N.Value`）后创建的资源信息。\n当该参数取值为`CreationEndTime`时，可以查询在指定时间点（`Filter.N.Value`）前创建的资源信息。\n当该参数取值为`NetworkType`时，可以查询指定网络类型的资源信息。\n当该参数取值为`CpuOnlineUpgrade`、`CpuOnlineDowngrade`、`MemoryOnlineUpgrade`、`MemoryOnlineDowngrade`中的任何一个值时，可以查询指定镜像的CPU或内存的热插拔支持情况。\n\n默认值：null",
             "name": "key",
             "options": [
@@ -366,7 +367,7 @@
           },
           {
             "example": "2017-12-05T22:40Z",
-            "help_en": "The filter value used to query resources.\nWhen `Filter.N.Key` is set to `CreationStartTime` or `CreationEndTime`, the format is `yyyy-MM-ddTHH:mmZ`, in UTC+0 time zone.\nWhen `Filter.N.Key` is set to `NetworkType`, valid network type values include `vpc` and `classic`.\n\nWhen `Filter.N.Key` is set to `CpuOnlineUpgrade`, `CpuOnlineDowngrade`, `MemoryOnlineUpgrade`, or `MemoryOnlineDowngrade`, valid values are `supported` and `unsupported`.\n\nDefault value: null",
+            "help_en": "The filter value when querying resources.\nWhen `Filter.N.Key` is set to `CreationStartTime` or `CreationEndTime`, the format is `yyyy-MM-ddTHH:mmZ`, using the UTC+0 time zone.\nWhen `Filter.N.Key` is set to `NetworkType`, valid network type values include `vpc` and `classic`.\n\nWhen `Filter.N.Key` is set to `CpuOnlineUpgrade`, `CpuOnlineDowngrade`, `MemoryOnlineUpgrade`, or `MemoryOnlineDowngrade`, valid values are `supported` and `unsupported`.\n\nDefault value: null",
             "help_zh": "查询资源时的筛选值。\n当（`Filter.N.Key`）为`CreationStartTime`或`CreationEndTime`时，格式为：`yyyy-MM-ddTHH:mmZ`，采用 UTC+0 时区。\n当（`Filter.N.Key`）为`NetworkType`时，可以指定网络类型的值有：`vpc`、`classic`等。\n\n当（`Filter.N.Key`）取值为`CpuOnlineUpgrade`、`CpuOnlineDowngrade`、`MemoryOnlineUpgrade`、`MemoryOnlineDowngrade`时，该值可以取`supported`或`unsupported`。\n\n默认值：null",
             "name": "value",
             "options": [
@@ -379,7 +380,7 @@
         ],
         "type": "object"
       },
-      "help_en": "The list of filter conditions used to query resources",
+      "help_en": "The list of filter conditions when querying resources",
       "help_zh": "查询资源时的筛选条件列表",
       "location": "query",
       "name": "filter",
@@ -424,378 +425,468 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Images": {
-            "backendName": "data.data",
-            "itemName": "Image",
-            "items": {
-              "properties": {
-                "Architecture": {
-                  "backendName": "architecture",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "BootMode": {
-                  "backendName": "bootMode",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "CreationTime": {
-                  "backendName": "gmtCreated",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Description": {
-                  "backendName": "remark",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "DetectionOptions": {
-                  "backendName": "checkOptions",
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Image": {
+                "description_en": "The collection of image information",
+                "description_zh": "镜像信息Images组成的集合",
+                "items": {
+                  "description_en": "The image information",
+                  "description_zh": "镜像信息",
                   "properties": {
-                    "Items": {
-                      "backendName": "checkProperties",
-                      "itemName": "Item",
-                      "items": {
-                        "properties": {
-                          "Name": {
-                            "backendName": "name",
-                            "type": "string"
+                    "Architecture": {
+                      "description_en": "The system architecture type of the image. Valid values:\n\ni386\nx86_64\narm64",
+                      "description_zh": "镜像系统架构类型。可能值：\n\ni386。\nx86_64。\narm64",
+                      "example": "x86_64",
+                      "type": "string"
+                    },
+                    "BootMode": {
+                      "description_en": "The boot mode of the image. Valid values:\nBIOS: BIOS boot mode.\nUEFI: UEFI boot mode.\n\nUEFI-Preferred: dual boot mode.\n\nFor more information about image boot modes, see [Image boot mode](~~2244655#b9caa9b8bb1wf~~)",
+                      "description_zh": "镜像的启动模式。可能值：\nBIOS：BIOS启动模式。\nUEFI：UEFI启动模式。\n\nUEFI-Preferred：双启动模式。\n\n更多关于镜像的启动模式说明，请参见[镜像启动模式](~~2244655#b9caa9b8bb1wf~~)",
+                      "example": "BIOS",
+                      "type": "string"
+                    },
+                    "CreationTime": {
+                      "description_en": "The time when the image was created. The time follows the ISO 8601 standard in UTC",
+                      "description_zh": "镜像的创建时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2019-11-15T06:07:05Z",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The description of the image",
+                      "description_zh": "描述信息",
+                      "example": "Archive log for Oracle",
+                      "type": "string"
+                    },
+                    "DetectionOptions": {
+                      "description_en": "The image detection results",
+                      "description_zh": "镜像检测相关结果",
+                      "properties": {
+                        "Items": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Item": {
+                              "description_en": "The list of image detection items",
+                              "description_zh": "镜像检测项列表",
+                              "items": {
+                                "description_en": "The image detection item",
+                                "description_zh": "镜像检测项",
+                                "properties": {
+                                  "Name": {
+                                    "description_en": "The name of the image detection item",
+                                    "description_zh": "镜像检测项名称",
+                                    "example": "Nvme",
+                                    "type": "string"
+                                  },
+                                  "RiskCode": {
+                                    "description_en": "The potential defect of the detection item",
+                                    "description_zh": "检测项可能存在的缺陷",
+                                    "example": "NVMe.NotInstalled",
+                                    "type": "string"
+                                  },
+                                  "RiskLevel": {
+                                    "description_en": "The risk level of the imported custom image detection item. This field is returned only when a risk exists.\n\nValid values:\n\nHigh: Critical. The risk affects whether the instance can start successfully. We strongly recommend that you fix this issue.\n\nMedium: Important. The risk affects instance startup performance or instance configurations. We recommend that you optimize this item",
+                                    "description_zh": "导入的自定义镜像检测项是否存在风险，如果存在风险返回此字段，不存在风险则不返回。\n\n风险等级可能值：\n\nHigh：严重，影响实例能否启动成功，强烈建议修复。\n\nMedium：重要，影响实例启动性能或者实例配置等，建议优化",
+                                    "example": "High",
+                                    "type": "string"
+                                  },
+                                  "Value": {
+                                    "description_en": "The result of the image detection item",
+                                    "description_zh": "镜像检测项结果",
+                                    "example": "Supported",
+                                    "type": "string"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
                           },
-                          "RiskCode": {
-                            "backendName": "riskCode",
-                            "type": "string"
-                          },
-                          "RiskLevel": {
-                            "backendName": "riskLevel",
-                            "type": "string"
-                          },
-                          "Value": {
-                            "backendName": "value",
-                            "type": "string"
-                          }
+                          "type": "object"
                         },
-                        "type": "object"
+                        "Status": {
+                          "description_en": "The status of the image detection task. Valid values:\n\nProcessing: Detection in progress.\n\nFinished: Detection completed",
+                          "description_zh": "镜像检测任务状态。可能值：\n\nProcessing：检测中。\n\nFinished：检测完成",
+                          "example": "Processing",
+                          "type": "string"
+                        }
                       },
-                      "type": "array"
+                      "type": "object"
+                    },
+                    "DiskDeviceMappings": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "DiskDeviceMapping": {
+                          "description_en": "The collection of disk-to-snapshot mapping relationships in the image",
+                          "description_zh": "镜像下包含云盘和快照的映射关系集合",
+                          "items": {
+                            "description_en": "The disk-to-snapshot mapping relationship in the image",
+                            "description_zh": "镜像下包含云盘和快照的映射关系",
+                            "properties": {
+                              "Device": {
+                                "description_en": "The device name of the disk, such as /dev/xvdb",
+                                "description_zh": "云盘的设备信息，例如/dev/xvdb",
+                                "example": "/dev/xvda",
+                                "type": "string"
+                              },
+                              "Encrypted": {
+                                "description_en": "Indicates whether the image is encrypted",
+                                "description_zh": "是否为加密镜像",
+                                "example": "true",
+                                "type": "boolean"
+                              },
+                              "Format": {
+                                "description_en": "The format of the image",
+                                "description_zh": "镜像格式",
+                                "example": "qcow2",
+                                "type": "string"
+                              },
+                              "ImportOSSBucket": {
+                                "description_en": "The OSS bucket that contains the imported image",
+                                "description_zh": "导入镜像所属OSS的bucket",
+                                "example": "testEcsImport",
+                                "type": "string"
+                              },
+                              "ImportOSSObject": {
+                                "description_en": "The OSS object that contains the imported image",
+                                "description_zh": "导入镜像所属OSS的object",
+                                "example": "imageImport",
+                                "type": "string"
+                              },
+                              "Progress": {
+                                "description_en": "The progress of the image copy task for an image that is being copied",
+                                "description_zh": "对于复制中的镜像，返回复制任务的进度",
+                                "example": "32%",
+                                "type": "string"
+                              },
+                              "RemainTime": {
+                                "description_en": "The remaining time of the image copy task for an image that is being copied. Unit: seconds",
+                                "description_zh": "对于复制中的镜像，返回复制任务的剩余时间，单位：秒",
+                                "example": "233",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "Size": {
+                                "description_en": "The size of the disk. Unit: GiB",
+                                "description_zh": "云盘的大小。单位为GiB",
+                                "example": "60",
+                                "type": "string"
+                              },
+                              "SnapshotId": {
+                                "description_en": "The snapshot ID",
+                                "description_zh": "快照ID",
+                                "example": "s-bp17ot2q7x72ggtw****",
+                                "type": "string"
+                              },
+                              "Type": {
+                                "description_en": "The type of the image",
+                                "description_zh": "镜像的类型",
+                                "example": "system",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Features": {
+                      "description_en": "The feature-related properties of the image",
+                      "description_zh": "镜像特性相关属性",
+                      "properties": {
+                        "CpuOnlineDowngrade": {
+                          "description_en": "Indicates whether online CPU downgrade is supported. Valid values:\n \nsupported: Supported.\nunsupported: Not supported",
+                          "description_zh": "是否支持CPU热降配。可能值：\n \nsupported：支持。\nunsupported：不支持",
+                          "example": "supported",
+                          "type": "string"
+                        },
+                        "CpuOnlineUpgrade": {
+                          "description_en": "Indicates whether online CPU upgrade is supported. Valid values:\n \nsupported: Supported.\nunsupported: Not supported",
+                          "description_zh": "是否支持CPU热升配。可能值：\n \nsupported：支持。\nunsupported：不支持",
+                          "example": "supported",
+                          "type": "string"
+                        },
+                        "ImdsSupport": {
+                          "description_en": "The metadata access mode of the image. Valid values:\nv1: When you create an ECS instance from this image, you cannot set the metadata access mode to \"security hardened mode only\".\nv2: When you create an ECS instance from this image, you can set the metadata access mode to \"security hardened mode only\".\n\n\n[Instance metadata overview]（https://help.aliyun.com/document_detail/108460.html）",
+                          "description_zh": "镜像的元数据访问模式，可能值：\nv1：通过该镜像创建ECS实例时，不支持将元数据访问模式设置为“仅加固模式”。\nv2：通过该镜像创建ECS实例时，支持将元数据访问模式设置为“仅加固模式”。\n\n\n[实例元数据概述]（https://help.aliyun.com/document_detail/108460.html）",
+                          "example": "v2",
+                          "type": "string"
+                        },
+                        "MemoryOnlineDowngrade": {
+                          "description_en": "Indicates whether online memory downgrade is supported. Valid values:\n \nsupported: Supported.\nunsupported: Not supported",
+                          "description_zh": "是否支持内存热降配。可能值：\n \nsupported：支持。\nunsupported：不支持",
+                          "example": "unsupported",
+                          "type": "string"
+                        },
+                        "MemoryOnlineUpgrade": {
+                          "description_en": "Indicates whether online memory upgrade is supported. Valid values:\n \nsupported: Supported.\nunsupported: Not supported",
+                          "description_zh": "是否支持内存热升配。可能值：\n \nsupported：支持。\nunsupported：不支持",
+                          "example": "unsupported",
+                          "type": "string"
+                        },
+                        "NvmeSupport": {
+                          "description_en": "Indicates whether the image supports NVMe. Valid values:\n\nsupported: Supported. Instances created from this image support the NVMe protocol.\n\nunsupported: Not supported. Instances created from this image do not support the NVMe protocol",
+                          "description_zh": "镜像是否支持NVMe。可能值：\n\nsupported：支持。表示以该镜像创建的实例支持NVMe协议。\n\nunsupported：不支持。表示以该镜像创建的实例不支持NVMe协议",
+                          "example": "supported",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "ImageFamily": {
+                      "description_en": "The name of the image family",
+                      "description_zh": "镜像族系名称",
+                      "example": "hangzhou-daily-update",
+                      "type": "string"
+                    },
+                    "ImageId": {
+                      "description_en": "The image ID",
+                      "description_zh": "镜像ID",
+                      "example": "m-bp1g7004ksh0oeuc****",
+                      "type": "string"
+                    },
+                    "ImageName": {
+                      "description_en": "The name of the image",
+                      "description_zh": "镜像的名称",
+                      "example": "testImageName",
+                      "type": "string"
+                    },
+                    "ImageOwnerAlias": {
+                      "description_en": "The source of the image. Valid values:\n\nsystem: a public image provided by Alibaba Cloud.\nself: a custom image that you created.\nothers: a shared image or community image provided by other Alibaba Cloud users.\nmarketplace: an Alibaba Cloud Marketplace image",
+                      "description_zh": "镜像来源。可能值：\n\nsystem：阿里云提供的公共镜像。\nself：您创建的自定义镜像。\nothers：其他阿里云用户提供的共享镜像或社区镜像。\nmarketplace：云市场镜像提供的镜像",
+                      "example": "self",
+                      "type": "string"
+                    },
+                    "ImageOwnerId": {
+                      "description_en": "The Alibaba Cloud account ID to which the image belongs. This parameter takes effect only when you query shared images or community images",
+                      "description_zh": "镜像所属的阿里云账号ID。该参数仅在查询共享镜像以及社区镜像时生效",
+                      "example": "1234567890",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "ImageVersion": {
+                      "description_en": "The image version",
+                      "description_zh": "镜像版本",
+                      "example": "2",
+                      "type": "string"
+                    },
+                    "IsCopied": {
+                      "description_en": "Indicates whether the image is a copy of another image",
+                      "description_zh": "是否是拷贝的镜像",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "IsPublic": {
+                      "description_en": "Indicates whether the image is public. Public images include public images provided by Alibaba Cloud and custom images that you have published as community images. Valid values:\n\ntrue: The image is a public image.\nfalse: The image is not a public image",
+                      "description_zh": "是否为公开镜像。公开镜像包括阿里云提供的公共镜像以及您已发布为社区镜像的自定义镜像。可能值：\n\ntrue：公开镜像。\nfalse：非公开镜像",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "IsSelfShared": {
+                      "description_en": "Indicates whether the custom image has been shared with other users",
+                      "description_zh": "是否共享过该自定义镜像给其他用户",
+                      "example": "true",
+                      "type": "string"
+                    },
+                    "IsSubscribed": {
+                      "description_en": "Indicates whether you have subscribed to the terms of service for the Alibaba Cloud Marketplace image associated with the product code",
+                      "description_zh": "是否订阅了该镜像的商品码对应的镜像商品的服务条款",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "IsSupportCloudinit": {
+                      "description_en": "Indicates whether cloud-init is supported",
+                      "description_zh": "是否支持Cloud Init",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "IsSupportIoOptimized": {
+                      "description_en": "Indicates whether the image can be used on I/O optimized instances",
+                      "description_zh": "是否可以在I/O优化实例上运行",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "LicenseType": {
+                      "description_en": "The license type. This property determines the billing method and activation logic for ECS instances created from this image. This property is meaningful only for Windows Server images. Valid values:\nAliyun: Alibaba Cloud official license. Instances created from this image include the Windows Server license fee and are automatically activated by Alibaba Cloud after startup.\nBYOL: Bring Your Own License. Instances created from this image do not include the Windows Server license fee. After startup, the instances are not automatically activated. You must manually activate them by using your own valid license",
+                      "description_zh": "许可证类型。该属性决定了基于此镜像创建ECS实例的计费方式和激活逻辑，仅对 Windows Server 类型镜像具有业务参考意义。可能值：\nAliyun：阿里云官方许可。 基于此镜像创建的实例，将包含 Windows Server许可费用，实例启动后由阿里云自动激活。\nBYOL：自带许可（Bring Your Own License）。基于此镜像创建的实例，不包含 Windows Server许可费用。实例启动后不会被自动激活，需使用自有合法许可手动激活",
+                      "example": "BYOL",
+                      "type": "string"
+                    },
+                    "LoginAsNonRootSupported": {
+                      "description_en": "Indicates whether the image supports logon as a non-root user. Valid values:\n\ntrue: Supported.\n\nfalse: Not supported",
+                      "description_zh": "当前镜像是否支持非root用户登录。可能值：\n\ntrue：支持。\n\nfalse：不支持",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "OSName": {
+                      "description_en": "The Chinese name of the operating system",
+                      "description_zh": "操作系统的中文显示名称",
+                      "example": "Windows Server  2016 数据中心版 64位中文版",
+                      "type": "string"
+                    },
+                    "OSNameEn": {
+                      "description_en": "The English name of the operating system",
+                      "description_zh": "操作系统的英文显示名称",
+                      "example": "Windows Server  2016 Data Center Edition 64bit Chinese Edition",
+                      "type": "string"
+                    },
+                    "OSType": {
+                      "description_en": "The type of the operating system. Valid values:\n\nwindows\nlinux",
+                      "description_zh": "操作系统类型。可能值：\n\nwindows。\nlinux",
+                      "example": "windows",
+                      "type": "string"
+                    },
+                    "Platform": {
+                      "description_en": "The operating system platform",
+                      "description_zh": "操作系统平台",
+                      "example": "Windows Server 2016",
+                      "type": "string"
+                    },
+                    "ProductCode": {
+                      "description_en": "The product code of the Alibaba Cloud Marketplace image",
+                      "description_zh": "云市场镜像中的镜像商品标识",
+                      "example": "test000****",
+                      "type": "string"
+                    },
+                    "Progress": {
+                      "description_en": "The image creation progress, in percentage",
+                      "description_zh": "镜像完成的进度，单位为百分比",
+                      "example": "100%",
+                      "type": "string"
+                    },
+                    "ResourceGroupId": {
+                      "description_en": "The ID of the resource group to which the image belongs",
+                      "description_zh": "镜像所在的企业资源组ID",
+                      "example": "rg-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "SecureBootOptions": {
+                      "description_en": "The Secure Boot-related parameters",
+                      "description_zh": "安全启动相关参数",
+                      "properties": {
+                        "SecureBootSupport": {
+                          "description_en": "Indicates whether the image supports Secure Boot. Valid values:\nsupported: Secure Boot is supported.\nunsupported: Secure Boot is not supported",
+                          "description_zh": "镜像是否支持安全启动。可能值：\nsupported：支持安全启动。\nunsupported：不支持安全启动",
+                          "example": "supported",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "Size": {
+                      "description_en": "The size of the image. Unit: GiB.\n<notice>\nIf the image contains data disks, this parameter indicates only the size of the system disk snapshot associated with the image.\n</notice>",
+                      "description_zh": "镜像大小，单位：GiB。\n<notice>\n如果镜像包含数据盘，此参数仅代表镜像关联的系统盘快照大小。\n</notice>",
+                      "example": "60",
+                      "format": "int32",
+                      "type": "integer"
                     },
                     "Status": {
-                      "backendName": "status",
+                      "description_en": "The status of the image. Valid values:\n\nUnAvailable: unavailable.\nAvailable: available.\nCreating: being created.\nCreateFailed: failed to be created",
+                      "description_zh": "镜像的状态。可能值：\n\nUnAvailable：不可用。\nAvailable：可用。\nCreating：创建中。\nCreateFailed：创建失败",
+                      "example": "Available",
                       "type": "string"
-                    }
-                  },
-                  "type": "object"
-                },
-                "DiskDeviceMappings": {
-                  "backendName": "diskDeviceMappings",
-                  "itemName": "DiskDeviceMapping",
-                  "items": {
-                    "properties": {
-                      "Device": {
-                        "backendName": "device",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Encrypted": {
-                        "backendName": "encrypted",
-                        "type": "boolean"
-                      },
-                      "Format": {
-                        "backendName": "format",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "ImportOSSBucket": {
-                        "backendName": "importOSSBucket",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "ImportOSSObject": {
-                        "backendName": "importOSSObject",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Progress": {
-                        "backendName": "progress",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "RemainTime": {
-                        "backendName": "leftTime",
-                        "format": "int32",
-                        "nullToEmpty": true,
-                        "type": "integer"
-                      },
-                      "Size": {
-                        "backendName": "size",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "SnapshotId": {
-                        "backendName": "snapshotId",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "Type": {
-                        "backendName": "diskType",
-                        "nullToEmpty": true,
-                        "type": "string",
-                        "valueMapping": {
-                          "cases": [
-                            {
-                              "targetValue": "data",
-                              "value": "DATA"
+                    },
+                    "SupplierName": {
+                      "description_en": "The name of the enterprise that is verified for the community image",
+                      "description_zh": "社区镜像认证企业名称",
+                      "example": "TestName",
+                      "type": "string"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The list of tag key-value pairs of the image",
+                          "description_zh": "镜像的标签对信息列表",
+                          "items": {
+                            "description_en": "The tag key-value pair of the image",
+                            "description_zh": "镜像的标签对信息",
+                            "properties": {
+                              "TagKey": {
+                                "description_en": "The tag key of the image",
+                                "description_zh": "镜像的标签键",
+                                "example": "DTS",
+                                "type": "string"
+                              },
+                              "TagValue": {
+                                "description_en": "The tag value of the image",
+                                "description_zh": "镜像的标签值",
+                                "example": "Oracle",
+                                "type": "string"
+                              }
                             },
-                            {
-                              "targetValue": "system",
-                              "value": "SYSTEM"
-                            }
-                          ]
+                            "type": "object"
+                          },
+                          "type": "array"
                         }
-                      }
+                      },
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "Features": {
-                  "backendName": "features",
-                  "properties": {
-                    "CpuOnlineDowngrade": {
-                      "backendName": "cpuHotPlugOut",
-                      "type": "string"
+                    "Usable": {
+                      "description_en": "Indicates whether the image is usable. Valid values:\n \ntrue: The image is immediately usable for creating instances and other operations.\nfalse: The image is temporarily not usable for creating instances and other operations",
+                      "description_zh": "镜像是否可用。可能值：\n \ntrue：该镜像立即可用于创建实例等功能。\nfalse：该镜像暂不可用于创建实例等功能",
+                      "example": "true",
+                      "type": "boolean"
                     },
-                    "CpuOnlineUpgrade": {
-                      "backendName": "cpuHotPlugIn",
-                      "type": "string"
-                    },
-                    "ImdsSupport": {
-                      "backendName": "imdsSupport",
-                      "type": "string"
-                    },
-                    "MemoryOnlineDowngrade": {
-                      "backendName": "memHotPlugOut",
-                      "type": "string"
-                    },
-                    "MemoryOnlineUpgrade": {
-                      "backendName": "memHotPlugIn",
-                      "type": "string"
-                    },
-                    "NvmeSupport": {
-                      "backendName": "nvmeSupport",
+                    "Usage": {
+                      "description_en": "The type of resource that references the image. Valid values:\n\ninstance: one or more ECS instances have been created from the image.\nnone: no ECS instances have been created from the image",
+                      "description_zh": "有引用关系的资源类型。可能值：\n\ninstance：创建了一台或多台ECS实例。\nnone：未创建过ECS实例",
+                      "example": "none",
                       "type": "string"
                     }
                   },
                   "type": "object"
                 },
-                "ImageFamily": {
-                  "backendName": "imageFamily",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ImageId": {
-                  "backendName": "resourceId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ImageName": {
-                  "backendName": "name",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ImageOwnerAlias": {
-                  "backendName": "imageCategory",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ImageOwnerId": {
-                  "backendName": "imageOwnerId",
-                  "format": "int64",
-                  "type": "integer"
-                },
-                "ImageVersion": {
-                  "backendName": "version",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "IsCopied": {
-                  "backendName": "isCopied",
-                  "nullToEmpty": true,
-                  "type": "boolean"
-                },
-                "IsPublic": {
-                  "backendName": "publicImage",
-                  "type": "boolean"
-                },
-                "IsSelfShared": {
-                  "backendName": "isSelfShared",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "IsSubscribed": {
-                  "backendName": "subscribed",
-                  "nullToEmpty": true,
-                  "type": "boolean"
-                },
-                "IsSupportCloudinit": {
-                  "backendName": "isSupportCloudinit",
-                  "nullToEmpty": true,
-                  "type": "boolean"
-                },
-                "IsSupportIoOptimized": {
-                  "backendName": "isSupportIoOptimized",
-                  "nullToEmpty": true,
-                  "type": "boolean"
-                },
-                "LicenseType": {
-                  "backendName": "licenseType",
-                  "type": "string"
-                },
-                "LoginAsNonRootSupported": {
-                  "backendName": "loginAsNonRootSupported",
-                  "type": "boolean"
-                },
-                "OSName": {
-                  "backendName": "osName",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "OSNameEn": {
-                  "backendName": "osNameEn",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "OSType": {
-                  "backendName": "osType",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Platform": {
-                  "backendName": "platform",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ProductCode": {
-                  "backendName": "productCode",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Progress": {
-                  "backendName": "progress",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ResourceGroupId": {
-                  "backendName": "resourceGroupId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "SecureBootOptions": {
-                  "backendName": "secureBootOptions",
-                  "properties": {
-                    "SecureBootSupport": {
-                      "backendName": "secureBootSupport",
-                      "type": "string",
-                      "visibility": "Public"
-                    }
-                  },
-                  "type": "object",
-                  "visibility": "Public"
-                },
-                "Size": {
-                  "backendName": "imageSize",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer"
-                },
-                "Status": {
-                  "backendName": "status",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "SupplierName": {
-                  "backendName": "owner",
-                  "type": "string"
-                },
-                "Tags": {
-                  "backendName": "tags",
-                  "itemName": "Tag",
-                  "items": {
-                    "properties": {
-                      "TagKey": {
-                        "backendName": "tagKey",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "TagValue": {
-                        "backendName": "tagValue",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "nullToEmpty": true,
-                  "type": "array"
-                },
-                "Usable": {
-                  "backendName": "usable",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "Usage": {
-                  "backendName": "usage",
-                  "nullToEmpty": true,
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNo",
             "description_en": "The page number",
             "description_zh": "当前页码",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "data.pageSize",
             "description_en": "The number of entries per page",
             "description_zh": "当前分页包含多少条目",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "RegionId": {
-            "backendName": "data.regionNo",
             "description_en": "The region ID of the image",
             "description_zh": "镜像所属地域ID",
             "example": "cn-hangzhou",
-            "nullToEmpty": true,
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "66189103-EDB2-43E2-BB60-BFF2B62F4EB8",
-            "nullToEmpty": true,
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.total",
             "description_en": "The total number of images",
             "description_zh": "镜像总数",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           }
         },

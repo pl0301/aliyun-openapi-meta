@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun dcdn DescribeDcdnDomainIspData --region cn-hangzhou --EndTime '2019-12-06T12:00:00Z' --DomainName 'example.com' --StartTime '2019-12-05T12:00:00Z'",
   "cmd_full_name": "dcdn describe-dcdn-domain-isp-data",
   "cmd_name": "describe-dcdn-domain-isp-data",
   "deprecated": false,
-  "description_en": "Call DescribeDcdnDomainIspData to query daily statistics on carrier distribution for an accelerated domain name. You can query data from the last 90 days",
+  "description_en": "Queries the daily statistics on the distribution of Internet service providers (ISPs) for accelerated domain names. You can query data collected within the last 90 days",
   "description_zh": "调用DescribeDcdnDomainIspData查询加速域名天粒度的用户运营商分布数据统计，支持获取最近90天的数据",
   "kebab_example": "aliyun dcdn describe-dcdn-domain-isp-data --domain-name example.com --start-time 2019-12-05T12:00:00Z --end-time 2019-12-06T12:00:00Z --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "example.com",
-      "help_en": "The accelerated domain name. You can query data for only a single domain name.\n\nIf you leave this parameter empty, data for all domain names that belong to your account is queried",
+      "help_en": "The accelerated domain name. Only a single domain name is supported.\n\nBy default, all domain names under your account are queried",
       "help_zh": "加速域名，仅支持查询单个域名。\n\n默认查询当前用户下所有域名",
       "location": "query",
       "name": "domain_name",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2019-12-05T12:00:00Z",
-      "help_en": "The beginning of the time range to query. Specify the time in the ISO 8601 standard in the YYYY-MM-DDThh:mm:ssZ format. The time must be in UTC",
+      "help_en": "The start time of the data to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "获取数据起始时间点。日期格式按照ISO8601表示法，并使用UTC时间，格式为YYYY-MM-DDThh:mm:ssZ",
       "location": "query",
       "name": "start_time",
@@ -48,7 +49,7 @@
     },
     {
       "example": "2019-12-06T12:00:00Z",
-      "help_en": "The end of the time range to query. Specify the time in the ISO 8601 standard in the YYYY-MM-DDThh:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the data to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取数据结束时间。日期格式按照ISO8601表示法，并使用UTC时间，格式为YYYY-MM-DDThh:mm:ssZ。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -66,96 +67,124 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DataInterval": {
-            "backendName": "data.content.dataInterval",
-            "description_en": "The time interval between data records. Unit: seconds",
+            "description_en": "The time interval of each record. Unit: seconds",
             "description_zh": "每条记录的时间间隔，单位：秒",
             "example": "86400",
             "type": "string"
           },
           "DomainName": {
-            "backendName": "data.domainName",
-            "description_en": "The accelerated domain name",
+            "description_en": "The information about the accelerated domain name",
             "description_zh": "加速域名信息",
             "example": "example.com",
             "type": "string"
           },
           "EndTime": {
-            "backendName": "data.endTime",
-            "description_en": "The end of the time range",
-            "description_zh": "结束时间",
+            "description_en": "The end time.\n\nThe time is in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format and in UTC",
+            "description_zh": "结束时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
             "example": "2019-12-06T12:00:00Z",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "2E5AD83F-BD7B-462E-8319-2E30E305519A",
             "type": "string"
           },
           "StartTime": {
-            "backendName": "data.startTime",
-            "description_en": "The beginning of the time range",
-            "description_zh": "开始时间",
+            "description_en": "The start time.\n\nThe time is in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format and in UTC",
+            "description_zh": "开始时间。\n\n时间采用 ISO 8601 格式的 UTC 时间，格式为 yyyy-MM-ddTHH:mm:ssZ",
             "example": "2019-12-05T12:00:00Z",
             "type": "string"
           },
           "Value": {
-            "backendName": "data.content.ispDatas",
-            "itemName": "IspProportionData",
-            "items": {
-              "properties": {
-                "AvgObjectSize": {
-                  "backendName": "avgObjectSize",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "IspProportionData": {
+                "description_en": "The list of access proportion data by ISP",
+                "description_zh": "各运营商访问占比数据列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "AvgObjectSize": {
+                      "description_en": "The average response size. Unit: bytes",
+                      "description_zh": "响应平均大小，单位：byte",
+                      "example": "800019.0",
+                      "type": "string"
+                    },
+                    "AvgResponseRate": {
+                      "description_en": "The average response speed. Unit: bytes per millisecond",
+                      "description_zh": "平均响应速度，单位：byte/毫秒",
+                      "example": "154.3345765545624",
+                      "type": "string"
+                    },
+                    "AvgResponseTime": {
+                      "description_en": "The average response time. Unit: milliseconds",
+                      "description_zh": "平均响应时间，单位：毫秒",
+                      "example": "5183.666666666667",
+                      "type": "string"
+                    },
+                    "Bps": {
+                      "description_en": "The bandwidth. Unit: bit/s",
+                      "description_zh": "带宽。单位：bit/s",
+                      "example": "380.9614285714286",
+                      "type": "string"
+                    },
+                    "BytesProportion": {
+                      "description_en": "The proportion of the total traffic. For example, a value of 90 indicates 90%",
+                      "description_zh": "总流量占比。例如：返回90即为90%",
+                      "example": "0.003544181046236794",
+                      "type": "string"
+                    },
+                    "Isp": {
+                      "description_en": "The ISP information",
+                      "description_zh": "运营商信息",
+                      "example": "联通",
+                      "type": "string"
+                    },
+                    "IspEname": {
+                      "description_en": "The English name of the ISP",
+                      "description_zh": "运营商英文名称",
+                      "example": "unicom",
+                      "type": "string"
+                    },
+                    "Proportion": {
+                      "description_en": "The proportion of the usage data",
+                      "description_zh": "占比使用数据",
+                      "example": "0.01155980271270037",
+                      "type": "string"
+                    },
+                    "Qps": {
+                      "description_en": "The queries per second (QPS)",
+                      "description_zh": "每秒查询率",
+                      "example": "5.9523809523809524E-5",
+                      "type": "string"
+                    },
+                    "TotalBytes": {
+                      "description_en": "The total traffic",
+                      "description_zh": "总流量",
+                      "example": "2400057",
+                      "type": "string"
+                    },
+                    "TotalQuery": {
+                      "description_en": "The total number of requests",
+                      "description_zh": "总请求次数",
+                      "example": "3",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "AvgResponseRate": {
-                  "backendName": "avgResponseRate",
-                  "type": "string"
-                },
-                "AvgResponseTime": {
-                  "backendName": "avgResponseTime",
-                  "type": "string"
-                },
-                "Bps": {
-                  "backendName": "bps",
-                  "type": "string"
-                },
-                "BytesProportion": {
-                  "backendName": "totalBytesPer",
-                  "type": "string"
-                },
-                "Isp": {
-                  "backendName": "isp",
-                  "type": "string"
-                },
-                "IspEname": {
-                  "backendName": "ispEname",
-                  "type": "string"
-                },
-                "Proportion": {
-                  "backendName": "totalQueryPer",
-                  "type": "string"
-                },
-                "Qps": {
-                  "backendName": "qps",
-                  "type": "string"
-                },
-                "TotalBytes": {
-                  "backendName": "totalBytes",
-                  "type": "string"
-                },
-                "TotalQuery": {
-                  "backendName": "totalQuery",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           }
         },
         "type": "object"

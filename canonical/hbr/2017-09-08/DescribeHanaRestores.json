@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun hbr DescribeHanaRestores --region cn-hangzhou --ClusterId 'cl-000b000000soejg'",
   "cmd_full_name": "hbr describe-hana-restores",
   "cmd_name": "describe-hana-restores",
@@ -150,264 +151,253 @@
       "schema": {
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The response code. The status code 200 indicates that the request was successful",
             "description_zh": "返回码，200表示成功",
             "example": "200",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "HanaRestore": {
-            "backendName": "hanaRestores",
-            "itemName": "HanaRestores",
-            "items": {
-              "properties": {
-                "BackupID": {
-                  "backendName": "backupID",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
+            "itemNode": true,
+            "properties": {
+              "HanaRestores": {
+                "description_en": "The information about restore jobs",
+                "description_zh": "恢复任务列表",
+                "items": {
+                  "description_en": "The restore job",
+                  "description_zh": "恢复任务",
+                  "properties": {
+                    "BackupID": {
+                      "description_en": "The backup ID",
+                      "description_zh": "备份ID",
+                      "example": "1635315505",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "BackupPrefix": {
+                      "description_en": "The backup prefix",
+                      "description_zh": "备份前缀",
+                      "example": "INC_DATA_BACKUP",
+                      "type": "string"
+                    },
+                    "CheckAccess": {
+                      "description_en": "Indicates whether the differential backup and log backup are validated. Valid values:\n\ntrue: Cloud Backup checks whether the required differential backup and log backup are available before the restore job starts. If the differential backup or log backup is unavailable, Cloud Backup does not start the restore job.\nfalse: Cloud Backup does not check whether the required differential backup and log backup are available before the restore job starts",
+                      "description_zh": "检查差异和日志备份可用性。\n\ntrue：在恢复开始时，系统会检查所需的差异备份和日志备份是否都可用。 如果缺少差异备份或日志备份，在更改数据之前会停止恢复。\nfalse：不开启检查",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ClearLog": {
+                      "description_en": "Indicates whether all log entries are deleted from the log area after the log entries are restored. Valid values: true and false. If the return value is false, all log entries are deleted from the log area after the log entries are restored",
+                      "description_zh": "恢复后，日志条目将从日志区中删除。初始化日志区域，如果不想恢复驻留在日志区中的日志段，请选择true，否则选择false",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ClusterId": {
+                      "description_en": "The ID of the SAP HANA instance that is restored",
+                      "description_zh": "待恢复的SAP HANA实例ID",
+                      "example": "cl-000923yu******p00j4",
+                      "type": "string"
+                    },
+                    "CurrentPhase": {
+                      "description_en": "The current recovery phase. This value is obtained from SAP HANA",
+                      "description_zh": "当前恢复阶段，该值直接从SAP HANA获取",
+                      "example": "2",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "CurrentProgress": {
+                      "description_en": "The current progress. This value is obtained from SAP HANA",
+                      "description_zh": "当前进度，该值直接从SAP HANA获取",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DatabaseName": {
+                      "description_en": "The database name",
+                      "description_zh": "数据库的名称",
+                      "example": "BWD",
+                      "type": "string"
+                    },
+                    "DatabaseRestoreId": {
+                      "description_en": "The ID of the database recovery",
+                      "description_zh": "数据库恢复ID",
+                      "example": "1644038961030",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "EndTime": {
+                      "description_en": "The time when the restore job ends. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "恢复任务结束时间。UNIX时间，单位为秒",
+                      "example": "1634356382",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "LogPosition": {
+                      "description_en": "The log position to which the database is restored. This parameter is returned only if the value of the Mode parameter is RECOVERY_TO_LOG_POSITION",
+                      "description_zh": "日志位置，仅选择RECOVERY_TO_LOG_POSITION恢复方式时有效",
+                      "example": "0",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "MaxPhase": {
+                      "description_en": "The maximum recovery phase. This value is obtained from SAP HANA",
+                      "description_zh": "最大阶段，该值直接从SAP HANA获取",
+                      "example": "4",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "MaxProgress": {
+                      "description_en": "The maximum progress. This value is obtained from SAP HANA",
+                      "description_zh": "最大进度，该值直接从SAP HANA获取",
+                      "example": "1",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Message": {
+                      "description_en": "The details of the recovery phase",
+                      "description_zh": "恢复阶段详情",
+                      "example": "SQL Error 448 - recovery could not be completed:",
+                      "type": "string"
+                    },
+                    "Mode": {
+                      "description_en": "The recovery mode. Valid values:\n\nRECOVERY_TO_MOST_RECENT: The database is restored to the recently available state to which the database has been backed up.\nRECOVERY_TO_POINT_IN_TIME: The database is restored to a specified point in time.\nRECOVERY_TO_SPECIFIC_BACKUP: The database is restored to a specified backup.\nRECOVERY_TO_LOG_POSITION: The database is restored to a specified log position",
+                      "description_zh": "恢复方式。\nRECOVERY_TO_MOST_RECENT： 将数据库恢复到已备份的最近可用状态。\nRECOVERY_TO_POINT_IN_TIME：将数据库恢复到特定时间点。\nRECOVERY_TO_SPECIFIC_BACKUP：将数据库恢复到指定的数据库备份。\nRECOVERY_TO_LOG_POSITION：将数据库还原到指定日志位置",
+                      "example": "RECOVERY_TO_SPECIFIC_BACKUP",
+                      "type": "string"
+                    },
+                    "Phase": {
+                      "description_en": "The recovery phase",
+                      "description_zh": "恢复阶段",
+                      "example": "restart",
+                      "type": "string"
+                    },
+                    "ReachedTime": {
+                      "description_en": "The point in time at which the database is restored",
+                      "description_zh": "恢复的实际时间点",
+                      "example": "1635315505",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "RecoveryPointInTime": {
+                      "description_en": "The point in time to which the database is restored. This parameter is returned only if the value of the Mode parameter is RECOVERY_TO_POINT_IN_TIME. Cloud Backup restores the database to a state closest to the specified point in time",
+                      "description_zh": "选择需要恢复到的时间点。仅选择RECOVERY_TO_POINT_IN_TIME恢复方式时有效，系统会将数据库恢复到离这个时间最近的状态",
+                      "example": "1649851200",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "RestoreId": {
+                      "description_en": "The ID of the restore job",
+                      "description_zh": "恢复任务ID",
+                      "example": "r-000c1en183ayn9sesgqh",
+                      "type": "string"
+                    },
+                    "Source": {
+                      "description_en": "The name of the source system. This parameter indicates the name of the source database that is restored. Format: `<Source database name>@SID`",
+                      "description_zh": "源系统名。表示需要恢复的源数据库名，格式为`源数据库名@SID`",
+                      "example": "PRD@H4P",
+                      "type": "string"
+                    },
+                    "SourceClusterId": {
+                      "description_en": "The ID of the source SAP HANA instance",
+                      "description_zh": "源SAP HANA实例ID",
+                      "example": "cl-0000g3mvy******5cj",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The time when the restore job starts. This value is a UNIX timestamp. Unit: seconds",
+                      "description_zh": "恢复任务开始时间。UNIX时间，单位为秒",
+                      "example": "1636970413",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "State": {
+                      "description_en": "The recovery status. This value is obtained from SAP HANA",
+                      "description_zh": "状态，该值直接从SAP HANA获取",
+                      "example": "successful",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status of the restore job. Valid values:\n\nRUNNING: The job is running.\nCOMPLETE: The job is completed.\nPARTIAL_COMPLETE: The job is partially completed.\nFAILED: The job failed.\nCANCELED: The job is canceled.\nEXPIRED: The job timed out",
+                      "description_zh": "恢复任务状态。\nRUNNING：运行中\nCOMPLETE：成功\nPARTIAL_COMPLETE：部分成功\nFAILED：失败\nCANCELED：已取消\nEXPIRED：已超时",
+                      "example": "COMPLETE",
+                      "type": "string"
+                    },
+                    "SystemCopy": {
+                      "description_en": "Indicates whether the database is restored to a different instance. Valid values:\n\ntrue: The database is restored to a different instance.\nfalse: The database is restored within the same instance",
+                      "description_zh": "是否是跨实例恢复。\n\ntrue：跨实例恢复\nfalse：非跨实例恢复",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "UseCatalog": {
+                      "description_en": "Indicates whether a catalog backup is used to restore the database. This parameter is returned only if the value of the Mode parameter is RECOVERY_TO_SPECIFIC_BACKUP. If the return value is false, Cloud Backup finds the backup file based on the specified prefix and then restores the backup file",
+                      "description_zh": "是否从Catalog中查找备份。仅选择RECOVERY_TO_SPECIFIC_BACKUP恢复方式时有效。如果不使用Catalog，需要指定一个备份前缀，云备份服务会根据备份前缀进行恢复",
+                      "example": "false",
+                      "type": "boolean"
+                    },
+                    "UseDelta": {
+                      "description_en": "Indicates whether a differential backup or an incremental backup is used to restore the database. Valid values: true and false. If the return value is true, Cloud Backup uses a differential backup or an incremental backup to restore the database. If the return value is false, Cloud Backup uses a log backup to restore the database",
+                      "description_zh": "是否使用差异备份。如果您需要使用差异备份或增量备份执行恢复，请选择true。如果选择在不使用差异备份或增量备份的情况下执行恢复，则使用日志备份进行恢复",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "VaultId": {
+                      "description_en": "The ID of the backup vault",
+                      "description_zh": "备份仓库ID",
+                      "example": "v-000g9acf******gta",
+                      "type": "string"
+                    },
+                    "VolumeId": {
+                      "description_en": "The ID of the volume that is restored. This parameter is returned only if the value of the Mode parameter is RECOVERY_TO_LOG_POSITION",
+                      "description_zh": "要恢复的Volume ID。仅选择RECOVERY_TO_LOG_POSITION恢复方式时有效",
+                      "example": "0",
+                      "format": "int32",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 },
-                "BackupPrefix": {
-                  "backendName": "backupPrefix",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CheckAccess": {
-                  "backendName": "checkAccess",
-                  "nullToEmpty": true,
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "ClearLog": {
-                  "backendName": "clearLog",
-                  "nullToEmpty": true,
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "ClusterId": {
-                  "backendName": "clusterId",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "CurrentPhase": {
-                  "backendName": "currentPhase",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "CurrentProgress": {
-                  "backendName": "currentProgress",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "DatabaseName": {
-                  "backendName": "databaseName",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DatabaseRestoreId": {
-                  "backendName": "databaseRestoreId",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "EndTime": {
-                  "backendName": "endTime",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "LogPosition": {
-                  "backendName": "logPosition",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxPhase": {
-                  "backendName": "maxPhase",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "MaxProgress": {
-                  "backendName": "maxProgress",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Message": {
-                  "backendName": "message",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Mode": {
-                  "backendName": "mode",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Phase": {
-                  "backendName": "phase",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ReachedTime": {
-                  "backendName": "reachedTime",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "RecoveryPointInTime": {
-                  "backendName": "recoveryPointInTime",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "RestoreId": {
-                  "backendName": "restoreId",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Source": {
-                  "backendName": "source",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SourceClusterId": {
-                  "backendName": "sourceClusterId",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StartTime": {
-                  "backendName": "startTime",
-                  "format": "int64",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "State": {
-                  "backendName": "state",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Status": {
-                  "backendName": "status",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SystemCopy": {
-                  "backendName": "systemCopy",
-                  "nullToEmpty": true,
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "UseCatalog": {
-                  "backendName": "useCatalog",
-                  "nullToEmpty": true,
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "UseDelta": {
-                  "backendName": "useDelta",
-                  "nullToEmpty": true,
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "VaultId": {
-                  "backendName": "vaultId",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VolumeId": {
-                  "backendName": "volumeId",
-                  "format": "int32",
-                  "nullToEmpty": true,
-                  "type": "integer",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The returned message. If the request was successful, \"successful\" is returned. If the request failed, an error message is returned",
             "description_zh": "返回信息描述，成功一般返回successful，错误时会返回相应错误信息",
             "example": "successful",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "PageNumber": {
-            "backendName": "pageNumber",
             "description_en": "The page number. Pages start from page 1. Default value: 1",
             "description_zh": "分页页码。从1开始，默认值为1",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "The number of entries per page. Valid values: 1 to 99. Default value: 10",
             "description_zh": "分页大小。最小值为1，最大值为99，默认值为10",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": true,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "7DEFC897-8F05-5C05-912C-C9A9510FBFF1",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful. Valid values:\n\ntrue\nfalse",
             "description_zh": "请求是否成功。\n\ntrue：成功\nfalse：失败",
             "example": "true",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           },
           "TotalCount": {
-            "backendName": "totalCount",
             "description_en": "The total number of entries returned",
             "description_zh": "总记录数",
             "example": "19",
             "format": "int32",
-            "nullToEmpty": true,
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

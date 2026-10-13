@@ -1,8 +1,9 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "ecd list-skills",
   "cmd_name": "list-skills",
   "deprecated": false,
-  "description_en": "Queries the list of skills",
+  "description_en": "Queries a list of skills",
   "description_zh": "查询技能列表",
   "kebab_example": "aliyun ecd list-skills --supplier-type WUYING --skill-channel BUSINESS --api-version 2021-06-02 --region cn-hangzhou",
   "method": "GET|POST",
@@ -21,8 +22,12 @@
   "parameters": [
     {
       "doc_required": true,
+      "enum": [
+        "WUYING",
+        "TENANT"
+      ],
       "example": "WUYING",
-      "help_en": "The supply type",
+      "help_en": "The supplier type",
       "help_zh": "供应类型",
       "location": "query",
       "name": "supplier_type",
@@ -30,11 +35,15 @@
         "--supplier-type"
       ],
       "raw_name": "SupplierType",
-      "required": false,
+      "required": true,
       "type": "string"
     },
     {
       "doc_required": true,
+      "enum": [
+        "ENTERPRISE",
+        "BUSINESS"
+      ],
       "example": "BUSINESS",
       "help_en": "The skill channel",
       "help_zh": "技能渠道",
@@ -81,7 +90,7 @@
     },
     {
       "example": "20",
-      "help_en": "The maximum number of rows per page in a paged query. Default value: 20",
+      "help_en": "The maximum number of rows per page for paging. Default value: 20",
       "help_zh": "分页查询时，每页最大行数。（默认20行）",
       "location": "query",
       "name": "page_size",
@@ -94,7 +103,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number of the current page in a paged query",
+      "help_en": "The page number for paging",
       "help_zh": "分页查询时，当前页的页码",
       "location": "query",
       "name": "page_number",
@@ -112,64 +121,59 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1CBAFFAB-B697-4049-A9B1-67E1FC5F****",
-            "nullToEmpty": false,
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Skills": {
-            "backendName": "data",
             "description_en": "The list of skill details",
             "description_zh": "技能详情列表",
-            "itemName": "Skill",
             "items": {
-              "description_en": "The skill details object",
+              "description_en": "The skill detail object",
               "description_zh": "技能详情对象",
               "properties": {
                 "ApiKey": {
-                  "backendName": "apiKey",
                   "description_en": "The API key of the skill",
                   "description_zh": "技能API Key",
                   "example": "akm-98f66829***",
                   "type": "string"
                 },
                 "Author": {
-                  "backendName": "author",
                   "description_en": "The author",
                   "description_zh": "作者",
                   "example": "Li***",
                   "type": "string"
                 },
                 "DefaultVersion": {
-                  "backendName": "defaultVersion",
-                  "description_en": "The currently effective version number. If no version is effective, an empty value is returned",
+                  "description_en": "The current effective version number. If no effective version is available, an empty value is returned",
                   "description_zh": "当前生效版本号，如果没有生效版本，则返回空",
                   "example": "1.0.0",
                   "type": "string"
                 },
                 "Description": {
-                  "backendName": "description",
-                  "description_en": "The skill description",
+                  "description_en": "The detailed description of the skill",
                   "description_zh": "技能详情描述",
                   "example": "This skill is used for****",
                   "type": "string"
                 },
                 "DisplayName": {
-                  "backendName": "displayName",
                   "description_en": "The display name",
                   "description_zh": "显示名称",
                   "example": "name****",
                   "type": "string"
                 },
                 "Enable": {
-                  "backendName": "enable",
                   "description_en": "Indicates whether the skill is enabled",
                   "description_zh": "技能是否启用",
+                  "enumValueTitles": {
+                    "false": "否",
+                    "true": "是"
+                  },
                   "example": "true",
                   "type": "boolean"
                 },
@@ -180,72 +184,79 @@
                     "example": "{\\\"key\\\":\\\"value\\\",\\\"key\\\":\\\"value\\\"}\n",
                     "type": "string"
                   },
-                  "backendName": "envVars",
                   "description_en": "The environment variables",
                   "description_zh": "环境变量",
                   "type": "object"
                 },
                 "GmtCreated": {
-                  "backendName": "gmtCreated",
                   "description_en": "The creation time",
                   "description_zh": "创建时间",
                   "example": "2026-04-28T10:32:53Z",
                   "type": "string"
                 },
                 "SkillIconUrl": {
-                  "backendName": "skillIconUrl",
                   "description_en": "The URL of the skill icon",
                   "description_zh": "技能图标Url",
                   "example": "https://***-***-****",
                   "type": "string"
                 },
                 "SkillId": {
-                  "backendName": "skillId",
                   "description_en": "The unique identifier of the skill",
                   "description_zh": "技能唯一标识符ID",
                   "example": "s-04rj8mzqj1fu****\n",
                   "type": "string"
                 },
                 "SkillName": {
-                  "backendName": "skillName",
                   "description_en": "The name in the SKILL.md file",
                   "description_zh": "SKILL.md文件内名称",
                   "example": "name****",
                   "type": "string"
                 },
                 "SkillVersions": {
-                  "backendName": "skillVersions",
-                  "itemName": "SkillVersion",
+                  "description_en": "The list of skill versions",
+                  "description_zh": "技能版本列表",
                   "items": {
+                    "description_en": "",
+                    "description_zh": "",
                     "properties": {
                       "ChangeLog": {
-                        "backendName": "changeLog",
+                        "description_en": "The changelog of the skill version",
+                        "description_zh": "技能版本变更说明",
                         "type": "string"
                       },
                       "CreatedAt": {
-                        "backendName": "createdAt",
+                        "description_en": "The creation time of the skill version",
+                        "description_zh": "技能版本创建时间",
+                        "example": "0",
                         "format": "int64",
                         "type": "integer"
                       },
                       "PublishStatus": {
-                        "backendName": "publishStatus",
+                        "description_en": "The publish status of the skill version",
+                        "description_zh": "技能版本发布状态",
                         "type": "string"
                       },
                       "SecurityScanFailReason": {
-                        "backendName": "securityScanFailReason",
+                        "description_en": "The reason for the security scan failure of the skill version",
+                        "description_zh": "技能版本安全扫描失败原因",
                         "type": "string"
                       },
                       "SecurityScanScore": {
-                        "backendName": "securityScanScore",
+                        "description_en": "The security scan score of the skill version",
+                        "description_zh": "技能版本安全扫描得分",
+                        "example": "0",
                         "format": "int32",
                         "type": "integer"
                       },
                       "SecurityScanStatus": {
-                        "backendName": "securityScanStatus",
+                        "description_en": "The security scan status of the skill version",
+                        "description_zh": "技能版本安全扫描状态",
                         "type": "string"
                       },
                       "Version": {
-                        "backendName": "version",
+                        "description_en": "The skill version number",
+                        "description_zh": "技能版本号",
+                        "example": "1.0.0",
                         "type": "string"
                       }
                     },
@@ -254,44 +265,54 @@
                   "type": "array"
                 },
                 "Slug": {
-                  "backendName": "slug",
-                  "description_en": "The skill slug identifier, which is user-defined and unique within the tenant dimension",
+                  "description_en": "The slug identifier of the skill, which is user-defined and unique within a tenant",
                   "description_zh": "技能 Slug 标识符，用户自定义，租户维度唯一",
                   "example": "find-skills****",
                   "type": "string"
                 },
                 "SourceMarket": {
-                  "backendName": "sourceMarket",
-                  "description_en": "The source marketplace code",
+                  "description_en": "The code of the source market",
                   "description_zh": "来源市场Code",
+                  "enumValueTitles": {
+                    "ALIYUN": "阿里云",
+                    "CLAWHUB": "ClawHub",
+                    "DINGTALK_AI": "钉钉AI能力中心",
+                    "MODELSCOPE": "ModelScope"
+                  },
                   "example": "CLAWHUB",
                   "type": "string"
                 },
                 "SourceMarketName": {
-                  "backendName": "sourceMarketName",
-                  "description_en": "The source marketplace name",
+                  "description_en": "The name of the source market",
                   "description_zh": "来源市场名称",
                   "example": "ClawHub",
                   "type": "string"
                 },
                 "SupplierType": {
-                  "backendName": "supplierType",
-                  "description_en": "The supply type",
+                  "description_en": "The supplier type",
                   "description_zh": "供应类型",
+                  "enumValueTitles": {
+                    "TENANT": "租户上传",
+                    "WUYING": "无影上传"
+                  },
                   "example": "TENANT",
                   "type": "string"
                 },
                 "SupportAgentList": {
-                  "backendName": "supportAgentList",
-                  "itemName": "supportAgentList",
+                  "description_en": "The list of agent tags that support this skill",
+                  "description_zh": "支持使用该技能的 Agent 标签列表",
                   "items": {
+                    "description_en": "",
+                    "description_zh": "",
                     "properties": {
                       "TagId": {
-                        "backendName": "tagId",
+                        "description_en": "The agent tag ID",
+                        "description_zh": "Agent 标签 ID",
                         "type": "string"
                       },
                       "TagValue": {
-                        "backendName": "tagValue",
+                        "description_en": "The agent tag value",
+                        "description_zh": "Agent 标签值",
                         "type": "string"
                       }
                     },
@@ -305,8 +326,7 @@
             "type": "array"
           },
           "TotalCount": {
-            "backendName": "totalCount",
-            "description_en": "The total number of query results",
+            "description_en": "The total number of results",
             "description_zh": "查询结果总数",
             "example": "15",
             "format": "int64",

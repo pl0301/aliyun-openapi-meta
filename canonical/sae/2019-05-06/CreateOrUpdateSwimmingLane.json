@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun sae POST /pop/v1/cas/gray/createOrUpdateSwimmingLane --region cn-hangzhou --LaneTag g1 --AppEntryRule '{\"ConditionJoiner\":\"AND\",\"Percentage\":50,\"PercentageByPath\":{\"key\":\"example-string\"},\"IndependentPercentageEnable\":true,\"Paths\":[\"/A\"],\"Conditions\":[{\"Condition\":\"==\",\"Type\":\"Header\",\"Value\":\"g1\",\"Name\":\"t\"}]}' --LaneName test --Enable true --NamespaceId 'cn-beijing:test' --CanaryModel 0 --LaneId 13857 --GroupId 1 --MseGatewayEntryRule '{\"ConditionJoiner\":\"AND\",\"RouteIds\":[78830],\"Percentage\":100,\"IndependentPercentageEnable\":true,\"PercentageByRoute\":{\"key\":\"example-string\"},\"Conditions\":[{\"Condition\":\"==\",\"Type\":\"header\",\"Value\":\"g1\",\"Name\":\"test\"}]}' --header \"Content-Type=application/json\"",
   "cmd_full_name": "sae create-or-update-swimming-lane",
   "cmd_name": "create-or-update-swimming-lane",
@@ -114,6 +115,32 @@
     {
       "fields": [
         {
+          "element": {
+            "type": "string"
+          },
+          "help_en": "The request paths to match",
+          "help_zh": "匹配的请求路径",
+          "name": "paths",
+          "options": [
+            "--paths"
+          ],
+          "raw_name": "Paths",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "example": "50",
+          "help_en": "The traffic percentage for percentage-based routing. Valid values: 0 to 100",
+          "help_zh": "流量比例，按比例路由使用，取值0-100",
+          "name": "percentage",
+          "options": [
+            "--percentage"
+          ],
+          "raw_name": "Percentage",
+          "required": false,
+          "type": "int"
+        },
+        {
           "example": "AND",
           "help_en": "The logical operator used to combine conditions.\n\n`AND`: All conditions must be met.\n\n`OR`: At least one of the conditions must be met",
           "help_zh": "条件之间的逻辑连接符：\n\nAND：同时满足所有条件\nOR：满足任意条件",
@@ -129,14 +156,14 @@
           "element": {
             "fields": [
               {
-                "example": "==",
-                "help_en": "The matching rule.\n\n`==`: Exact match. The attribute's value must be identical to the value specified.\n\n`!=`: Negated exact match. The attribute's value must not be identical to the value specified.\n\n`in`: Inclusion match. The attribute's value must be present in the specified comma-separated list of values.\n\n`percentage`: Percentage-based match. The expression `hash(get(key)) % 100 < value` must be true.\n\n`regex`: Regular expression match. The attribute's value must match the specified regular expression",
-                "help_zh": "匹配规则：\n\n==：精确匹配，流量值与条件值需要完全相等。\n!=：精确匹配，流量值与条件值需要完全相等。\nin：包含匹配，流量值需要在指定的列表中时满足条件。\n百分比：百分比匹配，原理：满足`hash(get(key)) % 100 < value` 成立时满足条件。\n正则匹配：正则表达式匹配，按照正则表达式规则匹配时满足条件",
-                "name": "condition",
+                "example": "Header",
+                "help_en": "The type of the request attribute to match.\n\n`header`: A request header.\n\n`param`: A request parameter.\n\n`cookie`: A request cookie",
+                "help_zh": "参数类型：\n\nheader：Header\nparam：Parameter\n\ncookie：Cookie",
+                "name": "type",
                 "options": [
-                  "--condition"
+                  "--type"
                 ],
-                "raw_name": "Condition",
+                "raw_name": "Type",
                 "required": false,
                 "type": "string"
               },
@@ -153,14 +180,14 @@
                 "type": "string"
               },
               {
-                "example": "Header",
-                "help_en": "The type of the request attribute to match.\n\n`header`: A request header.\n\n`param`: A request parameter.\n\n`cookie`: A request cookie",
-                "help_zh": "参数类型：\n\nheader：Header\nparam：Parameter\n\ncookie：Cookie",
-                "name": "type",
+                "example": "==",
+                "help_en": "The matching rule.\n\n`==`: Exact match. The attribute's value must be identical to the value specified.\n\n`!=`: Negated exact match. The attribute's value must not be identical to the value specified.\n\n`in`: Inclusion match. The attribute's value must be present in the specified comma-separated list of values.\n\n`percentage`: Percentage-based match. The expression `hash(get(key)) % 100 < value` must be true.\n\n`regex`: Regular expression match. The attribute's value must match the specified regular expression",
+                "help_zh": "匹配规则：\n\n==：精确匹配，流量值与条件值需要完全相等。\n!=：精确匹配，流量值与条件值需要完全相等。\nin：包含匹配，流量值需要在指定的列表中时满足条件。\n百分比：百分比匹配，原理：满足`hash(get(key)) % 100 < value` 成立时满足条件。\n正则匹配：正则表达式匹配，按照正则表达式规则匹配时满足条件",
+                "name": "condition",
                 "options": [
-                  "--type"
+                  "--condition"
                 ],
-                "raw_name": "Type",
+                "raw_name": "Condition",
                 "required": false,
                 "type": "string"
               },
@@ -202,32 +229,6 @@
           "type": "bool"
         },
         {
-          "element": {
-            "type": "string"
-          },
-          "help_en": "The request paths to match",
-          "help_zh": "匹配的请求路径",
-          "name": "paths",
-          "options": [
-            "--paths"
-          ],
-          "raw_name": "Paths",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "example": "50",
-          "help_en": "The traffic percentage for percentage-based routing. Valid values: 0 to 100",
-          "help_zh": "流量比例，按比例路由使用，取值0-100",
-          "name": "percentage",
-          "options": [
-            "--percentage"
-          ],
-          "raw_name": "Percentage",
-          "required": false,
-          "type": "int"
-        },
-        {
           "help_en": "An object that maps request paths to traffic percentages",
           "help_zh": "流量配置",
           "name": "percentage_by_path",
@@ -257,6 +258,32 @@
     {
       "fields": [
         {
+          "element": {
+            "type": "int"
+          },
+          "help_en": "The route IDs",
+          "help_zh": "路由ID",
+          "name": "route_ids",
+          "options": [
+            "--route-ids"
+          ],
+          "raw_name": "RouteIds",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "example": "100",
+          "help_en": "The traffic mirroring percentage. Valid values: 0 to 100",
+          "help_zh": "流量复制比例（%），取值 0-100",
+          "name": "percentage",
+          "options": [
+            "--percentage"
+          ],
+          "raw_name": "Percentage",
+          "required": false,
+          "type": "int"
+        },
+        {
           "example": "AND",
           "help_en": "The logical operator used to combine conditions.\n\n`AND`: All conditions must be met.\n\n`OR`: At least one of the conditions must be met",
           "help_zh": "条件之间的逻辑连接符：\n\nAND：同时满足所有条件\nOR：满足任意条件",
@@ -272,14 +299,14 @@
           "element": {
             "fields": [
               {
-                "example": "==",
-                "help_en": "The matching rule.\n\n`==`: Exact match. The attribute's value must be identical to the value specified.\n\n`!=`: Negated exact match. The attribute's value must not be identical to the value specified.\n\n`in`: Inclusion match. The attribute's value must be present in the specified comma-separated list of values.\n\n`percentage`: Percentage-based match. The expression `hash(get(key)) % 100 < value` must be true.\n\n`regex`: Regular expression match. The attribute's value must match the specified regular expression",
-                "help_zh": "匹配规则。\n\n==：精确匹配。\n!=：精确匹配。\nin：包含匹配。\n百分比：百分比匹配。\n正则匹配：正则表达式匹配",
-                "name": "condition",
+                "example": "header ",
+                "help_en": "The type of the request attribute to match.\n\n`header`: A request header.\n\n`param`: A request parameter.\n\n`cookie`: A request cookie",
+                "help_zh": "参数类型：\n\nheader：Header\n\nparam：Parameter\n\ncookie：Cookie",
+                "name": "type",
                 "options": [
-                  "--condition"
+                  "--type"
                 ],
-                "raw_name": "Condition",
+                "raw_name": "Type",
                 "required": false,
                 "type": "string"
               },
@@ -296,14 +323,14 @@
                 "type": "string"
               },
               {
-                "example": "header ",
-                "help_en": "The type of the request attribute to match.\n\n`header`: A request header.\n\n`param`: A request parameter.\n\n`cookie`: A request cookie",
-                "help_zh": "参数类型：\n\nheader：Header\n\nparam：Parameter\n\ncookie：Cookie",
-                "name": "type",
+                "example": "==",
+                "help_en": "The matching rule.\n\n`==`: Exact match. The attribute's value must be identical to the value specified.\n\n`!=`: Negated exact match. The attribute's value must not be identical to the value specified.\n\n`in`: Inclusion match. The attribute's value must be present in the specified comma-separated list of values.\n\n`percentage`: Percentage-based match. The expression `hash(get(key)) % 100 < value` must be true.\n\n`regex`: Regular expression match. The attribute's value must match the specified regular expression",
+                "help_zh": "匹配规则。\n\n==：精确匹配。\n!=：精确匹配。\nin：包含匹配。\n百分比：百分比匹配。\n正则匹配：正则表达式匹配",
+                "name": "condition",
                 "options": [
-                  "--type"
+                  "--condition"
                 ],
-                "raw_name": "Type",
+                "raw_name": "Condition",
                 "required": false,
                 "type": "string"
               },
@@ -345,18 +372,6 @@
           "type": "bool"
         },
         {
-          "example": "100",
-          "help_en": "The traffic mirroring percentage. Valid values: 0 to 100",
-          "help_zh": "流量复制比例（%），取值 0-100",
-          "name": "percentage",
-          "options": [
-            "--percentage"
-          ],
-          "raw_name": "Percentage",
-          "required": false,
-          "type": "int"
-        },
-        {
           "help_en": "An object that maps route IDs to traffic percentages",
           "help_zh": "流量配置",
           "name": "percentage_by_route",
@@ -369,20 +384,6 @@
           "value": {
             "type": "int"
           }
-        },
-        {
-          "element": {
-            "type": "int"
-          },
-          "help_en": "The route IDs",
-          "help_zh": "路由ID",
-          "name": "route_ids",
-          "options": [
-            "--route-ids"
-          ],
-          "raw_name": "RouteIds",
-          "required": false,
-          "type": "array"
         }
       ],
       "help_en": "Configuration for the MSE gateway route.\n\nThis parameter is required if the EntryAppType parameter is set to apig or mse-gw",

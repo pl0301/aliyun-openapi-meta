@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun csas ListVirusFileStatuses --region cn-hangzhou --PageSize 10 --CurrentPage 1",
   "cmd_full_name": "csas list-virus-file-statuses",
   "cmd_name": "list-virus-file-statuses",
@@ -118,6 +119,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "windows",
+        "macOS"
+      ],
       "example": "windows",
       "help_en": "The operating system type of the user terminal device. Valid values:\nwindows: Windows.\nmacOS: macOS",
       "help_zh": "用户终端设备的操作系统类型。取值：\nwindows：Windows系统。\nmacOS：macOS系统",
@@ -170,6 +175,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "Pending",
+        "Processed"
+      ],
       "example": "Pending",
       "help_en": "Filters by disposition status. If this parameter is not specified, no filtering by disposition status is applied. Valid values:\nPending: Pending disposition.\nProcessed: Disposed",
       "help_zh": "按处置状态过滤。不传则不按处置状态过滤。取值：\nPending：待处置。\nProcessed：已处置",
@@ -248,72 +257,69 @@
         "description_zh": "Schema of Response",
         "properties": {
           "FileStatuses": {
-            "backendName": "data.dataList",
             "description_en": "The list of virus files",
             "description_zh": "病毒文件列表",
-            "itemName": "dataList",
             "items": {
               "description_en": "The virus file and its disposition status",
               "description_zh": "病毒文件及其处置状态",
               "properties": {
                 "ConsoleOperationTime": {
-                  "backendName": "consoleOperationTime",
                   "description_en": "The time when the administrator initiated the disposition, in the format yyyy-MM-dd HH:mm:ss (UTC+8). An empty string is returned when the disposition was not initiated by an administrator",
                   "description_zh": "管理员发起处置的时间，格式为yyyy-MM-dd HH:mm:ss，使用UTC+8时区。未由管理员发起处置时返回空字符串",
                   "example": "2026-08-21 09:30:12",
                   "type": "string"
                 },
                 "Department": {
-                  "backendName": "department",
                   "description_en": "The name of the department to which the user belongs. Multiple departments are separated by commas (,). The nearest department name in the organizational structure is returned, not the full path",
                   "description_zh": "用户所属部门名称，多个部门用半角逗号（,）分隔。取组织架构中距离用户最近的一级部门名称，不返回完整路径",
                   "example": "研发部,安全组",
                   "type": "string"
                 },
                 "DevTag": {
-                  "backendName": "devTag",
                   "description_en": "The unique identifier of the user's endpoint device that detected this virus file",
                   "description_zh": "检出该病毒文件的用户终端设备的唯一标识",
                   "example": "36efa42d-2c32-c4dc-e3fc-8541e33a****",
                   "type": "string"
                 },
                 "DevType": {
-                  "backendName": "devType",
                   "description_en": "The operating system type of the user terminal device. Valid values:\nwindows: Windows.\nmacOS: macOS",
                   "description_zh": "用户终端设备的操作系统类型。取值：\nwindows：Windows系统。\nmacOS：macOS系统",
+                  "enumValueTitles": {
+                    "macOS": "macOS系统",
+                    "windows": "Windows系统"
+                  },
                   "example": "windows",
                   "type": "string"
                 },
                 "DiscoveryTime": {
-                  "backendName": "discoveryTime",
                   "description_en": "The time when the virus file was discovered, in the format yyyy-MM-dd HH:mm:ss (UTC+8). A hyphen (-) is returned when no record exists",
                   "description_zh": "病毒文件的发现时间，格式为yyyy-MM-dd HH:mm:ss，使用UTC+8时区。无记录时返回短横线（-）",
                   "example": "2026-08-21 03:12:07",
                   "type": "string"
                 },
                 "FileMd5": {
-                  "backendName": "fileMd5",
                   "description_en": "The MD5 hash of the virus file",
                   "description_zh": "病毒文件的MD5值",
                   "example": "d41d8cd98f00b204e9800998ecf8427e",
                   "type": "string"
                 },
                 "FilePath": {
-                  "backendName": "filePath",
                   "description_en": "The absolute path of the virus file on the user's endpoint device",
                   "description_zh": "病毒文件在用户终端设备上的绝对路径",
                   "example": "C:\\Users\\Public\\Downloads\\setup.exe",
                   "type": "string"
                 },
                 "FileProcessStatus": {
-                  "backendName": "fileProcessStatus",
                   "description_en": "The disposition status. Valid values:\nPending: Pending disposition.\nProcessed: Disposed",
                   "description_zh": "处置状态。取值：\nPending：待处置。\nProcessed：已处置",
+                  "enumValueTitles": {
+                    "Pending": "待处置",
+                    "Processed": "已处置"
+                  },
                   "example": "Pending",
                   "type": "string"
                 },
                 "FileSize": {
-                  "backendName": "fileSize",
                   "description_en": "The size of the virus file, in bytes",
                   "description_zh": "病毒文件大小，单位为字节",
                   "example": "20480",
@@ -321,72 +327,107 @@
                   "type": "integer"
                 },
                 "Hostname": {
-                  "backendName": "hostname",
                   "description_en": "The hostname of the user's endpoint device",
                   "description_zh": "用户终端设备的主机名",
                   "example": "DESKTOP-8A3F",
                   "type": "string"
                 },
                 "Operation": {
-                  "backendName": "operation",
                   "description_en": "The disposition action that has been performed. An empty string is returned when no disposition has been performed. Valid values:\nAdminQuarantine: Quarantined by administrator.\nAdminTrust: Trusted by administrator.\nUserQuarantine: Quarantined by endpoint user.\nUserTrust: Trusted by endpoint user.\nAutoQuarantine: Automatically quarantined based on policy.\nFail: Disposition failed",
                   "description_zh": "已执行的处置动作。未处置时返回空字符串。取值：\nAdminQuarantine：管理员隔离。\nAdminTrust：管理员信任。\nUserQuarantine：终端用户隔离。\nUserTrust：终端用户信任。\nAutoQuarantine：按策略自动隔离。\nFail：处置失败",
+                  "enumValueTitles": {
+                    "AdminQuarantine": "管理员隔离",
+                    "AdminTrust": "管理员信任",
+                    "AutoQuarantine": "按策略自动隔离",
+                    "Fail": "处置失败",
+                    "UserQuarantine": "终端用户隔离",
+                    "UserTrust": "终端用户信任"
+                  },
                   "example": "AdminQuarantine",
                   "type": "string"
                 },
                 "OperationTime": {
-                  "backendName": "operationTime",
                   "description_en": "The effective period of the disposition, in the format yyyy-MM-dd HH:mm:ss (UTC+8). The later of the actual disposition time on the user's endpoint device and the time when the administrator initiated the disposition is used. A hyphen (-) is returned when no disposition has been performed",
                   "description_zh": "处置生效时间，格式为yyyy-MM-dd HH:mm:ss，使用UTC+8时区。取用户终端设备实际处置时间与管理员发起处置时间中较晚的一个。未处置时返回短横线（-）",
                   "example": "2026-08-21 09:31:45",
                   "type": "string"
                 },
                 "RiskLevel": {
-                  "backendName": "riskLevel",
                   "description_en": "The risk level. Valid values:\nHigh: High risk.\nMid: Medium risk.\nLow: Low risk",
                   "description_zh": "风险等级。取值：\nHigh：高危。\nMid：中危。\nLow：低危",
+                  "enumValueTitles": {
+                    "High": "高危",
+                    "Low": "低危",
+                    "Mid": "中危"
+                  },
                   "example": "High",
                   "type": "string"
                 },
                 "SaseUserId": {
-                  "backendName": "saseUserId",
                   "description_en": "The user ID",
                   "description_zh": "用户ID",
                   "example": "su_e8f218fb171edd167c2ad917d21f53148bdefc510ca1f3c3cc0249d3643d****",
                   "type": "string"
                 },
                 "ScanTaskId": {
-                  "backendName": "scanTaskId",
                   "description_en": "The ID of the virus scan task that detected this virus file. An empty string is returned when the file is detected by real-time protection",
                   "description_zh": "检出该病毒文件的病毒扫描任务ID。由实时防御检出时返回空字符串",
                   "example": "v1:1024772",
                   "type": "string"
                 },
                 "TaskExecutionInfo": {
-                  "backendName": "taskExecutionInfo",
                   "description_en": "The execution result description of the disposition or scan, reported by the user's endpoint device. If a disposition record exists, the execution result of the disposition task is returned. Otherwise, the execution result of the scan task is returned",
                   "description_zh": "处置或扫描的执行结果描述，由用户终端设备上报。存在处置记录时返回处置任务的执行结果，否则返回扫描任务的执行结果",
                   "example": "quarantine success",
                   "type": "string"
                 },
                 "Username": {
-                  "backendName": "username",
                   "description_en": "The username",
                   "description_zh": "用户名",
                   "example": "王先生",
                   "type": "string"
                 },
                 "VirusFileSource": {
-                  "backendName": "virusFileSource",
                   "description_en": "The detection source of the virus file. Valid values:\nTask: Detected by a virus scan task.\nDownload: Detected by real-time protection during file download.\nProcess: Detected by real-time protection during process execution",
                   "description_zh": "病毒文件的检出来源。取值：\nTask：由病毒扫描任务检出。\nDownload：由实时防御在文件下载时检出。\nProcess：由实时防御在进程运行时检出",
+                  "enumValueTitles": {
+                    "Download": "实时防御下载时检出",
+                    "Process": "实时防御进程运行时检出",
+                    "Task": "病毒扫描任务检出"
+                  },
                   "example": "Task",
                   "type": "string"
                 },
                 "VirusType": {
-                  "backendName": "virusType",
                   "description_en": "The virus type. Valid values:\nBackdoor: Backdoor program.\nDDoS: DDoS Trojan.\nDownloader: Downloader Trojan.\nEngtest: DPI engine test program.\nHacktool: Hacking tool.\nTrojan: Self-mutating Trojan.\nMalbaseware: Contaminated base software.\nMalScript: Malicious script.\nMalware: Malicious program.\nMiner: Mining programs.\nProxytool: Proxy tool.\nRansomWare: Ransomware.\nRiskWare: Risky software.\nRootkit: Kernel-hidden program.\nStealer: Credential-stealing tool.\nScanner: Scanner.\nSuspicious: Suspicious program.\nVirus: File-infecting virus.\nWebShell: Web shell.\nWorm: Worms.\nBlackList: File that hit the blacklist.\nExp: Vulnerability exploits program.\nPatcher: Cracking program.\nGametool: Private server tool.\nAdWare: Adware.\nMaldoc: Malicious document",
                   "description_zh": "病毒类型。取值：\nBackdoor：后门程序。\nDDoS：DDoS木马。\nDownloader：下载器木马。\nEngtest：引擎测试程序。\nHacktool：黑客工具。\nTrojan：自变异木马。\nMalbaseware：被污染的基础软件。\nMalScript：恶意脚本。\nMalware：恶意程序。\nMiner：挖矿程序。\nProxytool：代理工具。\nRansomWare：勒索病毒。\nRiskWare：风险软件。\nRootkit：内核隐藏程序。\nStealer：窃密工具。\nScanner：扫描器。\nSuspicious：可疑程序。\nVirus：感染型病毒。\nWebShell：网站后门。\nWorm：蠕虫病毒。\nBlackList：命中黑名单的文件。\nExp：漏洞利用程序。\nPatcher：破解程序。\nGametool：私服工具。\nAdWare：广告程序。\nMaldoc：恶意文档",
+                  "enumValueTitles": {
+                    "AdWare": "广告程序",
+                    "Backdoor": "后门程序",
+                    "BlackList": "黑名单的文件",
+                    "DDoS": "DDoS木马",
+                    "Downloader": "下载器木马",
+                    "Engtest": "引擎测试程序",
+                    "Exp": "漏洞利用程序",
+                    "Gametool": "私服工具",
+                    "Hacktool": "黑客工具",
+                    "MalScript": "恶意脚本",
+                    "Malbaseware": "被污染的基础软件",
+                    "Maldoc": "恶意文档",
+                    "Miner": "挖矿程序",
+                    "Patcher": "破解程序",
+                    "Proxytool": "代理工具",
+                    "RansomWare": "勒索病毒",
+                    "RiskWare": "风险软件",
+                    "Rootkit": "内核隐藏程序",
+                    "Scanner": "扫描器",
+                    "Stealer": "窃密工具",
+                    "Suspicious": "可疑程序",
+                    "Trojan": "木马",
+                    "Virus": "感染型病毒",
+                    "WebShell": "网站后门",
+                    "Worm": "蠕虫病毒"
+                  },
                   "example": "Virus",
                   "type": "string"
                 }
@@ -396,23 +437,21 @@
             "type": "array"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "本次请求的ID",
             "example": "3D7EC0AF-DB2A-5D9C-90EC-F090A6BAAEA7",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "TotalNum": {
-            "backendName": "data.totalNum",
             "description_en": "The total number of virus files that match the query conditions",
             "description_zh": "符合查询条件的病毒文件总数",
             "example": "37",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

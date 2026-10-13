@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun sas AddContainerDefenseRule --region cn-hangzhou --RuleSwitch 1 --Description 'test-proc-defense' --Scope.1.ClusterId 8e200075b --RuleId 500018 --RuleAction 1 --Whitelist '{\"Path\":[\"/test/worker.sh\"],\"Hash\":[\"hashcode\"],\"Image\":[\"repo:tag\"]}' --RuleType 2 --RuleName 'auto-test-rule-lt9umq' --Scope.1.Namespaces.1 default --Scope.1.AllNamespace 0",
   "cmd_full_name": "sas add-container-defense-rule",
   "cmd_name": "add-container-defense-rule",
@@ -34,6 +35,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "1",
+        "2"
+      ],
       "example": "1",
       "help_en": "The action to take when the rule is matched. Valid values:\n\n1: Alert.\n\n2: Block",
       "help_zh": "规则命中时执行操作。取值：\n\n1：告警。\n\n2：阻断",
@@ -47,6 +52,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "1",
       "help_en": "The rule switch. Valid values:\n\n0: Disabled.\n\n1: Enabled",
       "help_zh": "规则开关。取值：\n\n0：关闭。\n\n1：开启",
@@ -118,20 +127,6 @@
           "element": {
             "type": "string"
           },
-          "help_en": "The list of images to whitelist",
-          "help_zh": "需要加白的镜像列表",
-          "name": "image",
-          "options": [
-            "--image"
-          ],
-          "raw_name": "Image",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "element": {
-            "type": "string"
-          },
           "help_en": "The list of file paths to whitelist",
           "help_zh": "需要加白的文件路径列表",
           "name": "path",
@@ -139,6 +134,20 @@
             "--path"
           ],
           "raw_name": "Path",
+          "required": false,
+          "type": "array"
+        },
+        {
+          "element": {
+            "type": "string"
+          },
+          "help_en": "The list of images to whitelist",
+          "help_zh": "需要加白的镜像列表",
+          "name": "image",
+          "options": [
+            "--image"
+          ],
+          "raw_name": "Image",
           "required": false,
           "type": "array"
         }
@@ -159,18 +168,6 @@
       "element": {
         "fields": [
           {
-            "example": "0",
-            "help_en": "Specifies whether to include all namespaces. Valid values:\n\n0: Specifies the namespaces to include by using the Namespaces parameter.\n\n1: Includes all namespaces",
-            "help_zh": "是否包含所有命名空间。取值：\n\n0：（用Namespaces参数）指定需要包含的命名空间。\n\n1：包含所有命名空间",
-            "name": "all_namespace",
-            "options": [
-              "--all-namespace"
-            ],
-            "raw_name": "AllNamespace",
-            "required": false,
-            "type": "int"
-          },
-          {
             "example": "8e2***75b",
             "help_en": "The cluster ID.\nYou can call the https://help.aliyun.com/document_detail/182997.html operation to obtain this parameter",
             "help_zh": "集群ID。\n您可以调用https://help.aliyun.com/document_detail/182997.html接口获取该参数",
@@ -181,6 +178,22 @@
             "raw_name": "ClusterId",
             "required": false,
             "type": "string"
+          },
+          {
+            "enum": [
+              "0",
+              "1"
+            ],
+            "example": "0",
+            "help_en": "Specifies whether to include all namespaces. Valid values:\n\n0: Specifies the namespaces to include by using the Namespaces parameter.\n\n1: Includes all namespaces",
+            "help_zh": "是否包含所有命名空间。取值：\n\n0：（用Namespaces参数）指定需要包含的命名空间。\n\n1：包含所有命名空间",
+            "name": "all_namespace",
+            "options": [
+              "--all-namespace"
+            ],
+            "raw_name": "AllNamespace",
+            "required": false,
+            "type": "int"
           },
           {
             "element": {
@@ -222,23 +235,19 @@
         "description_zh": "PlainResult<Long>",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The result code. A value of 200 indicates success. Any other value indicates failure. You can use this field to determine the cause of the failure",
             "description_zh": "结果代码，200表示成功，若为别的值则表示失败，调用方可根据此字段判断失败原因",
             "example": "200",
             "type": "string"
           },
           "Data": {
-            "backendName": "data",
             "description_en": "The returned result, which is the ID of the successfully created rule",
             "description_zh": "返回结果，创建成功的规则ID",
             "example": "182",
             "format": "int64",
-            "mappingResourcePropertyName": "$.RuleId",
             "type": "integer"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code of the request result",
             "description_zh": "请求数据结果的HTTP状态码",
             "example": "200",
@@ -246,28 +255,29 @@
             "type": "integer"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The message returned for the API request",
             "description_zh": "接口请求返回的信息",
             "example": "There was an error with your request.",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID, which is a unique identifier generated by Alibaba Cloud for the request. You can use this ID to troubleshoot issues",
             "description_zh": "本次调用请求的ID，是由阿里云为该请求生成的唯一标识符，可用于排查和定位问题",
             "example": "8C376***AE74FB4",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the API call was successful. Valid values:\ntrue: Successful.\nfalse: Failed",
             "description_zh": "接口调用是否成功。取值：\ntrue：成功\nfalse：失败",
+            "enumValueTitles": {
+              "false": "接口调用失败",
+              "true": "接口调用成功"
+            },
             "example": "true",
             "type": "boolean"
           }
         },
-        "title_en": "PlainResult<Long>",
+        "title_en": "",
         "title_zh": "PlainResult<Long>",
         "type": "object"
       }

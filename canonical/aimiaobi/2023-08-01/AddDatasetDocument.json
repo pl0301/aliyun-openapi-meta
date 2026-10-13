@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 20000,
   "camel_example": "aliyun aimiaobi AddDatasetDocument --region cn-hangzhou --WorkspaceId 'llm-xx' --Document '{\"DocId\":\"xx\",\"DisableHandleMultimodalMedia\":false,\"Metadata\":{},\"Title\":\"标题\",\"SourceFrom\":\"xxx媒体\",\"MultimodalIndexName\":\"xxxx\",\"CategoryUuid\":\"xx\",\"PubTime\":\"2024-12-09_13:35:40\",\"Url\":\"http://xxx\",\"Extend1\":\"xxx\",\"Content\":\"正文\",\"Summary\":\"文章摘要\",\"Extend3\":\"xxx\",\"MultimodalMedias\":[{}],\"Extend2\":\"xxxx\",\"DocUuid\":\"xxxx\",\"DocType\":\"image\",\"Tags\":[\"xx\"]}' --version 2023-08-01 --method POST --force",
   "cmd_full_name": "aimiaobi add-dataset-document",
   "cmd_name": "add-dataset-document",
@@ -24,7 +25,7 @@
   "parameters": [
     {
       "example": "llm-xx",
-      "help_en": "The unique identifier of the Model Studio workspace. For more information, see https://help.aliyun.com/document_detail/2782167.html",
+      "help_en": "The unique identifier of the Alibaba Cloud Bailian workspace. For more information, see https://help.aliyun.com/document_detail/2782167.html",
       "help_zh": "阿里云百炼业务空间唯一标识：https://help.aliyun.com/document_detail/2782167.html",
       "location": "formData",
       "name": "workspace_id",
@@ -64,20 +65,32 @@
     {
       "fields": [
         {
-          "example": "xx",
-          "help_en": "The unique identifier of the category",
-          "help_zh": "类目唯一标识",
-          "name": "category_uuid",
+          "example": "xxxx",
+          "help_en": "The system-generated unique ID of the document. This value is automatically generated. We do not recommend that you specify this parameter",
+          "help_zh": "文档系统唯一ID：自动生成，不建议传入",
+          "name": "doc_uuid",
           "options": [
-            "--category-uuid"
+            "--doc-uuid"
           ],
-          "raw_name": "CategoryUuid",
+          "raw_name": "DocUuid",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "http://xxx",
+          "help_en": "The URL of the document. The URL must be publicly accessible",
+          "help_zh": "文章URL：公网可访问地址",
+          "name": "url",
+          "options": [
+            "--url"
+          ],
+          "raw_name": "Url",
           "required": false,
           "type": "string"
         },
         {
           "example": "正文",
-          "help_en": "The content",
+          "help_en": "The content of the document",
           "help_zh": "内容",
           "name": "content",
           "options": [
@@ -88,8 +101,68 @@
           "type": "string"
         },
         {
+          "example": "文章摘要",
+          "help_en": "The summary of the document",
+          "help_zh": "文章摘要",
+          "name": "summary",
+          "options": [
+            "--summary"
+          ],
+          "raw_name": "Summary",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "标题",
+          "help_en": "The title of the document",
+          "help_zh": "文档标题",
+          "name": "title",
+          "options": [
+            "--title"
+          ],
+          "raw_name": "Title",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "2024-12-09 13:35:40",
+          "help_en": "The publish time in the format of YYYY-MM-DD HH:mm:ss",
+          "help_zh": "发布时间，格式为 YYYY-MM-DD HH:mm:ss",
+          "name": "pub_time",
+          "options": [
+            "--pub-time"
+          ],
+          "raw_name": "PubTime",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "xxx媒体",
+          "help_en": "The source of the document",
+          "help_zh": "来源",
+          "name": "source_from",
+          "options": [
+            "--source-from"
+          ],
+          "raw_name": "SourceFrom",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "xxxx",
+          "help_en": "[Deprecated] This parameter is no longer available",
+          "help_zh": "废弃：不可用",
+          "name": "multimodal_index_name",
+          "options": [
+            "--multimodal-index-name"
+          ],
+          "raw_name": "MultimodalIndexName",
+          "required": false,
+          "type": "string"
+        },
+        {
           "example": "false",
-          "help_en": "Specifies whether to disable the indexing of multimodal data, such as images and videos, in the current record. The default value is true",
+          "help_en": "Specifies whether multimodal data (images and videos) in the current record is indexed in the multimodal index. Default value: true",
           "help_zh": "当前记录多模态数据（图片、视频）是否落索引库，默认true",
           "name": "disable_handle_multimodal_media",
           "options": [
@@ -100,8 +173,60 @@
           "type": "bool"
         },
         {
+          "element": {
+            "fields": [
+              {
+                "example": "xxxx",
+                "help_en": "The unique identifier of the multimodal data. We do not recommend that you specify this parameter because the system automatically generates this value",
+                "help_zh": "多模态数据唯一标识：不建议传入，系统会自动生成",
+                "name": "media_id",
+                "options": [
+                  "--media-id"
+                ],
+                "raw_name": "MediaId",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "image",
+                "help_en": "The type of the multimodal data. Valid values:\nimage: image\nvideo: video",
+                "help_zh": "多模态数据类型：\nimage：图片\nvideo：视频",
+                "name": "media_type",
+                "options": [
+                  "--media-type"
+                ],
+                "raw_name": "MediaType",
+                "required": false,
+                "type": "string"
+              },
+              {
+                "example": "http://xxx",
+                "help_en": "The URL of the file. The URL must be publicly accessible",
+                "help_zh": "文件地址：公网可访问",
+                "name": "file_url",
+                "options": [
+                  "--file-url"
+                ],
+                "raw_name": "FileUrl",
+                "required": false,
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          },
+          "help_en": "The list of multimodal data in the document:\nIf the document is a rich text document that contains multimodal data (images or videos), you can pass the data through this field so that the data can be recalled through the search API.\nIf the document itself is multimodal data, leave this field empty and specify the data by using docType and url",
+          "help_zh": "文档中多模态数据列表：\n仅富文本等文档中存在多模态数据（图片、视频）时，可以通过这个字段传入，进而可以在搜索接口召回对应数据。\n文档本身为多模态数据时，此字段为空，通过docType+url指定数据即可",
+          "name": "multimodal_medias",
+          "options": [
+            "--multimodal-medias"
+          ],
+          "raw_name": "MultimodalMedias",
+          "required": false,
+          "type": "array"
+        },
+        {
           "example": "xx",
-          "help_en": "The unique business ID of the document",
+          "help_en": "The unique business-side ID of the document",
           "help_zh": "文档业务侧唯一ID",
           "name": "doc_id",
           "options": [
@@ -113,7 +238,7 @@
         },
         {
           "example": "image",
-          "help_en": "The type of the document.\n\nplainText: plain text. The content parameter is required.\n\nrichText: rich text in HTML format. The content parameter is required.\n\ntext: a text file. The url parameter is required.\n\npdf: a PDF file. The url parameter is required.\n\nword: a Word document. The url parameter is required.\n\nimage: an image. The url parameter is required. Most common image formats are supported, such as GIF, PNG, JPG, and JPEG.\n\nvideo: a video. The url parameter is required. Most common video formats are supported, such as MP4, AVI, WMV, and MOV",
+          "help_en": "The type of the document. Valid values:\nplainText: plain text. The content parameter is required.\nrichText: rich text in HTML format. The content parameter is required.\ntext: text file. The url parameter is required.\npdf: PDF file. The url parameter is required.\nword: Word file. The url parameter is required.\nimage: image. The url parameter is required. Most common image formats are supported, such as GIF, PNG, JPG, and JPEG.\nvideo: video. The url parameter is required. Most common video formats are supported, such as MP4, AVI, WMV, and MOV",
           "help_zh": "文档类型：\nplainText：纯文本，content必选\nrichText：富文本：html，content必选\ntext：文本文件，url必选\npdf：url必选\nword：url必选\nimage：图片，url必选，支持gif、png、jpg、jpeg等大多数常见图片格式\nvideo：视频，url必选，支持MP4、AVI、WMV、MOV等大多数常见视频格式",
           "name": "doc_type",
           "options": [
@@ -124,20 +249,8 @@
           "type": "string"
         },
         {
-          "example": "xxxx",
-          "help_en": "The unique system ID of the document. The system automatically generates this ID. You do not need to specify this parameter",
-          "help_zh": "文档系统唯一ID：自动生成，不建议传入",
-          "name": "doc_uuid",
-          "options": [
-            "--doc-uuid"
-          ],
-          "raw_name": "DocUuid",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "xxx",
-          "help_en": "Extension field 1",
+          "help_en": "The first extension field",
           "help_zh": "扩展字段1",
           "name": "extend_1",
           "options": [
@@ -149,7 +262,7 @@
         },
         {
           "example": "xxxx",
-          "help_en": "Extension field 2",
+          "help_en": "The second extension field",
           "help_zh": "扩展字段2",
           "name": "extend_2",
           "options": [
@@ -161,7 +274,7 @@
         },
         {
           "example": "xxx",
-          "help_en": "Extension field 3",
+          "help_en": "The third extension field",
           "help_zh": "扩展字段3",
           "name": "extend_3",
           "options": [
@@ -177,124 +290,8 @@
               "element": {
                 "fields": [
                   {
-                    "example": "2000",
-                    "help_en": "The end time in milliseconds",
-                    "help_zh": "技术时间：毫秒",
-                    "name": "end_time",
-                    "options": [
-                      "--end-time"
-                    ],
-                    "raw_name": "EndTime",
-                    "required": false,
-                    "type": "int"
-                  },
-                  {
                     "example": "1000",
-                    "help_en": "The start time in milliseconds",
-                    "help_zh": "开始时间：毫秒",
-                    "name": "start_time",
-                    "options": [
-                      "--start-time"
-                    ],
-                    "raw_name": "StartTime",
-                    "required": false,
-                    "type": "int"
-                  },
-                  {
-                    "example": "xxx",
-                    "help_en": "The speech or caption information",
-                    "help_zh": "语音或者字幕信息",
-                    "name": "text",
-                    "options": [
-                      "--text"
-                    ],
-                    "raw_name": "Text",
-                    "required": false,
-                    "type": "string"
-                  }
-                ],
-                "type": "object"
-              },
-              "help_en": "The speech or caption information",
-              "help_zh": "语音或者字幕信息",
-              "name": "asr_sentences",
-              "options": [
-                "--asr-sentences"
-              ],
-              "raw_name": "AsrSentences",
-              "required": false,
-              "type": "array"
-            },
-            {
-              "element": {
-                "fields": [
-                  {
-                    "example": "xx",
-                    "help_en": "The name",
-                    "help_zh": "名称",
-                    "name": "key",
-                    "options": [
-                      "--key"
-                    ],
-                    "raw_name": "Key",
-                    "required": false,
-                    "type": "string"
-                  },
-                  {
-                    "example": "xx",
-                    "help_en": "The parameter value",
-                    "help_zh": "参数值",
-                    "name": "value",
-                    "options": [
-                      "--value"
-                    ],
-                    "raw_name": "Value",
-                    "required": false,
-                    "type": "string"
-                  }
-                ],
-                "type": "object"
-              },
-              "help_en": "The metadata in a key-value structure",
-              "help_zh": "keyValue结构metadata",
-              "name": "key_values",
-              "options": [
-                "--key-values"
-              ],
-              "raw_name": "KeyValues",
-              "required": false,
-              "type": "array"
-            },
-            {
-              "example": "xxx",
-              "help_en": "The description of the metadata. This field is deprecated",
-              "help_zh": "meta描述信息：废弃字段",
-              "name": "text",
-              "options": [
-                "--text"
-              ],
-              "raw_name": "Text",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "element": {
-                "fields": [
-                  {
-                    "example": "2000",
-                    "help_en": "The end time in milliseconds",
-                    "help_zh": "结束时间：毫秒",
-                    "name": "end_time",
-                    "options": [
-                      "--end-time"
-                    ],
-                    "raw_name": "EndTime",
-                    "required": false,
-                    "type": "int"
-                  },
-                  {
-                    "example": "1000",
-                    "help_en": "The start time in milliseconds",
+                    "help_en": "The start time. Unit: milliseconds",
                     "help_zh": "开始时间；毫秒",
                     "name": "start_time",
                     "options": [
@@ -305,8 +302,20 @@
                     "type": "int"
                   },
                   {
+                    "example": "2000",
+                    "help_en": "The end time. Unit: milliseconds",
+                    "help_zh": "结束时间：毫秒",
+                    "name": "end_time",
+                    "options": [
+                      "--end-time"
+                    ],
+                    "raw_name": "EndTime",
+                    "required": false,
+                    "type": "int"
+                  },
+                  {
                     "example": "xxx",
-                    "help_en": "The text information from the video shot analysis",
+                    "help_en": "The text information from the shot analysis",
                     "help_zh": "分镜分析文本信息",
                     "name": "text",
                     "options": [
@@ -328,9 +337,113 @@
               "raw_name": "VideoShots",
               "required": false,
               "type": "array"
+            },
+            {
+              "element": {
+                "fields": [
+                  {
+                    "example": "1000",
+                    "help_en": "The start time. Unit: milliseconds",
+                    "help_zh": "开始时间：毫秒",
+                    "name": "start_time",
+                    "options": [
+                      "--start-time"
+                    ],
+                    "raw_name": "StartTime",
+                    "required": false,
+                    "type": "int"
+                  },
+                  {
+                    "example": "2000",
+                    "help_en": "The end time. Unit: milliseconds",
+                    "help_zh": "技术时间：毫秒",
+                    "name": "end_time",
+                    "options": [
+                      "--end-time"
+                    ],
+                    "raw_name": "EndTime",
+                    "required": false,
+                    "type": "int"
+                  },
+                  {
+                    "example": "xxx",
+                    "help_en": "The speech or subtitle information",
+                    "help_zh": "语音或者字幕信息",
+                    "name": "text",
+                    "options": [
+                      "--text"
+                    ],
+                    "raw_name": "Text",
+                    "required": false,
+                    "type": "string"
+                  }
+                ],
+                "type": "object"
+              },
+              "help_en": "The speech or subtitle information",
+              "help_zh": "语音或者字幕信息",
+              "name": "asr_sentences",
+              "options": [
+                "--asr-sentences"
+              ],
+              "raw_name": "AsrSentences",
+              "required": false,
+              "type": "array"
+            },
+            {
+              "example": "xxx",
+              "help_en": "[Deprecated] The metadata description information. This field is deprecated",
+              "help_zh": "meta描述信息：废弃字段",
+              "name": "text",
+              "options": [
+                "--text"
+              ],
+              "raw_name": "Text",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "element": {
+                "fields": [
+                  {
+                    "example": "xx",
+                    "help_en": "The key name",
+                    "help_zh": "名称",
+                    "name": "key",
+                    "options": [
+                      "--key"
+                    ],
+                    "raw_name": "Key",
+                    "required": false,
+                    "type": "string"
+                  },
+                  {
+                    "example": "xx",
+                    "help_en": "The value",
+                    "help_zh": "参数值",
+                    "name": "value",
+                    "options": [
+                      "--value"
+                    ],
+                    "raw_name": "Value",
+                    "required": false,
+                    "type": "string"
+                  }
+                ],
+                "type": "object"
+              },
+              "help_en": "The metadata in key-value structure",
+              "help_zh": "keyValue结构metadata",
+              "name": "key_values",
+              "options": [
+                "--key-values"
+              ],
+              "raw_name": "KeyValues",
+              "required": false,
+              "type": "array"
             }
           ],
-          "help_en": "The metadata",
+          "help_en": "The metadata information",
           "help_zh": "meta信息",
           "name": "metadata",
           "options": [
@@ -341,102 +454,14 @@
           "type": "object"
         },
         {
-          "example": "xxxx",
-          "help_en": "Deprecated. This parameter is not available",
-          "help_zh": "废弃：不可用",
-          "name": "multimodal_index_name",
+          "example": "xx",
+          "help_en": "The unique identifier of the category",
+          "help_zh": "类目唯一标识",
+          "name": "category_uuid",
           "options": [
-            "--multimodal-index-name"
+            "--category-uuid"
           ],
-          "raw_name": "MultimodalIndexName",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "element": {
-            "fields": [
-              {
-                "example": "http://xxx",
-                "help_en": "The URL of the file. The URL must be accessible over the public network",
-                "help_zh": "文件地址：公网可访问",
-                "name": "file_url",
-                "options": [
-                  "--file-url"
-                ],
-                "raw_name": "FileUrl",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "xxxx",
-                "help_en": "The unique identifier of the multimodal data. The system automatically generates this ID. You do not need to specify this parameter",
-                "help_zh": "多模态数据唯一标识：不建议传入，系统会自动生成",
-                "name": "media_id",
-                "options": [
-                  "--media-id"
-                ],
-                "raw_name": "MediaId",
-                "required": false,
-                "type": "string"
-              },
-              {
-                "example": "image",
-                "help_en": "The type of the multimodal data.\n\nimage: an image\n\nvideo: a video",
-                "help_zh": "多模态数据类型：\nimage：图片\nvideo：视频",
-                "name": "media_type",
-                "options": [
-                  "--media-type"
-                ],
-                "raw_name": "MediaType",
-                "required": false,
-                "type": "string"
-              }
-            ],
-            "type": "object"
-          },
-          "help_en": "A list of multimodal data in the document.\n\nIf a document, such as a rich text document, contains multimodal data like images or videos, you can pass the data using this parameter. This allows the data to be retrieved in search results.\n\nIf the document itself is multimodal data, leave this field empty and specify the data using the docType and url parameters",
-          "help_zh": "文档中多模态数据列表：\n仅富文本等文档中存在多模态数据（图片、视频）时，可以通过这个字段传入，进而可以在搜索接口召回对应数据。\n文档本身为多模态数据时，此字段为空，通过docType+url指定数据即可",
-          "name": "multimodal_medias",
-          "options": [
-            "--multimodal-medias"
-          ],
-          "raw_name": "MultimodalMedias",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "example": "2024-12-09 13:35:40",
-          "help_en": "The publishing time",
-          "help_zh": "发布时间",
-          "name": "pub_time",
-          "options": [
-            "--pub-time"
-          ],
-          "raw_name": "PubTime",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "xxx媒体",
-          "help_en": "The source",
-          "help_zh": "来源",
-          "name": "source_from",
-          "options": [
-            "--source-from"
-          ],
-          "raw_name": "SourceFrom",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "文章摘要",
-          "help_en": "The summary of the article",
-          "help_zh": "文章摘要",
-          "name": "summary",
-          "options": [
-            "--summary"
-          ],
-          "raw_name": "Summary",
+          "raw_name": "CategoryUuid",
           "required": false,
           "type": "string"
         },
@@ -444,7 +469,7 @@
           "element": {
             "type": "string"
           },
-          "help_en": "The tag name",
+          "help_en": "The tag names",
           "help_zh": "标签名称",
           "name": "tags",
           "options": [
@@ -453,30 +478,6 @@
           "raw_name": "Tags",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "标题",
-          "help_en": "The title of the document",
-          "help_zh": "文档标题",
-          "name": "title",
-          "options": [
-            "--title"
-          ],
-          "raw_name": "Title",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "http://xxx",
-          "help_en": "The URL of the article. The URL must be accessible over the public network",
-          "help_zh": "文章URL：公网可访问地址",
-          "name": "url",
-          "options": [
-            "--url"
-          ],
-          "raw_name": "Url",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The document",
@@ -500,107 +501,96 @@
       "description_en": "成功",
       "description_zh": "成功",
       "schema": {
-        "description_en": "The response",
+        "description_en": "The response result",
         "description_zh": "响应结果",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The status code",
             "description_zh": "状态码",
             "example": "NoData",
-            "title_en": "状态码",
+            "title_en": "",
             "title_zh": "状态码",
             "type": "string"
           },
           "Data": {
-            "backendName": "data",
             "description_en": "The business data",
             "description_zh": "业务数据",
             "properties": {
               "DocId": {
-                "backendName": "docId",
-                "description_en": "The unique business ID of the document",
+                "description_en": "The unique business identifier of the document",
                 "description_zh": "文档业务侧唯一标识",
                 "example": "xxx",
-                "title_en": "文档业务唯一标识",
+                "title_en": "",
                 "title_zh": "文档业务唯一标识",
                 "type": "string"
               },
               "DocUuid": {
-                "backendName": "docUuid",
-                "description_en": "The unique system ID of the document",
+                "description_en": "The unique identifier of the document in the system",
                 "description_zh": "文档系统唯一标识",
                 "example": "8df2d69d63a247b6b52ff455b2d426b6",
                 "type": "string"
               },
               "ErrorCode": {
-                "backendName": "errorCode",
-                "description_en": "The error code for the exception",
+                "description_en": "The error code",
                 "description_zh": "异常错误码",
                 "example": "Success",
                 "type": "string"
               },
               "ErrorMessage": {
-                "backendName": "errorMessage",
                 "description_en": "The error message",
                 "description_zh": "错误信息",
                 "example": "错误信息",
                 "type": "string"
               },
               "Status": {
-                "backendName": "status",
-                "description_en": "The status.\n\n1: created\n\n2: text index built\n\n3: multimodal index built\n\n100: full build completed\n\n0: failed",
+                "description_en": "The status. Valid values:\n1: Creation completed.\n2: Text index building completed.\n3: Multimodal index building completed.\n100: Full building completed.\n0: Failed",
                 "description_zh": "状态：\n1：创建完成\n2：文本索引构建完成\n3：多模态索引构建完成\n100：全量构建完成\n0：失败",
                 "example": "1",
                 "format": "int32",
-                "title_en": "状态：",
+                "title_en": "",
                 "title_zh": "状态：",
                 "type": "integer"
               }
             },
-            "title_en": "业务数据",
+            "title_en": "",
             "title_zh": "业务数据",
             "type": "object"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "http状态码",
             "example": "200",
             "format": "int32",
-            "title_en": "http状态码",
+            "title_en": "",
             "title_zh": "http状态码",
             "type": "integer"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The error description",
             "description_zh": "错误说明",
             "example": "success",
-            "title_en": "错误说明",
+            "title_en": "",
             "title_zh": "错误说明",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The unique ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求唯一标识",
             "example": "1813ceee-7fe5-41b4-87e5-982a4d18cca5",
-            "title_en": "请求唯一标识",
+            "title_en": "",
             "title_zh": "请求唯一标识",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
-            "description_en": "Indicates whether the request was successful. A value of true indicates success. A value of false indicates failure",
+            "description_en": "Indicates whether the request was successful. Valid values:\ntrue: Successful.\nfalse: Failed",
             "description_zh": "是否成功：true 成功，false 失败",
             "example": "true",
-            "title_en": "是否成功：true 成功，false 失败",
+            "title_en": "",
             "title_zh": "是否成功：true 成功，false 失败",
             "type": "boolean"
           }
         },
-        "title_en": "响应结果",
+        "title_en": "",
         "title_zh": "响应结果",
         "type": "object"
       }

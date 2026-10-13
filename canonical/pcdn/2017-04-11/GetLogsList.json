@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun pcdn GetLogsList --region cn-hangzhou --EndTime '2016-10-20T04:01:00Z' --StartTime '2016-10-20T04:00:00Z' --Domain 'example.com' --Date '2016-10-20' --version 2017-04-11 --force",
   "cmd_full_name": "pcdn get-logs-list",
   "cmd_name": "get-logs-list",
   "deprecated": false,
-  "description_en": "Queries the log list for a specified time range of the current user for viewing and downloading",
+  "description_en": "Retrieves a list of logs for a specified time period for viewing and downloading",
   "description_zh": "获取当前用户选定时间的日志列表，供用户查看与下载",
   "kebab_example": "aliyun pcdn get-logs-list --domain example.com --date 2016-10-20 --start-time 2016-10-20T04:00:00Z --end-time 2016-10-20T04:01:00Z --region cn-hangzhou",
   "method": "GET",
@@ -21,21 +22,8 @@
   },
   "parameters": [
     {
-      "doc_required": true,
-      "help_en": "The Version",
-      "help_zh": "The Version",
-      "location": "query",
-      "name": "version",
-      "options": [
-        "--biz-version"
-      ],
-      "raw_name": "Version",
-      "required": true,
-      "type": "string"
-    },
-    {
       "example": "example.com",
-      "help_en": "The content to search for. If this parameter is left empty, all results are displayed",
+      "help_en": "The search content. If this parameter is left empty, all logs are displayed",
       "help_zh": "搜索传入的内容，如果为空显示全部",
       "location": "query",
       "name": "domain",
@@ -48,8 +36,8 @@
     },
     {
       "example": "2016-10-20",
-      "help_en": "The log date",
-      "help_zh": "日志日期",
+      "help_en": "The log date in the YYYY-MM-DD format",
+      "help_zh": "日志日期，格式为 YYYY-MM-DD",
       "location": "query",
       "name": "date",
       "options": [
@@ -61,7 +49,7 @@
     },
     {
       "example": "2016-10-20T04:00:00Z",
-      "help_en": "The beginning of the time range to query for logs. Specify the time in the ISO 8601 standard in the UTC time zone",
+      "help_en": "The start time of the logs to retrieve. Specify the time in the ISO 8601 standard in UTC",
       "help_zh": "获取日志的起始时间点。日期格式按照ISO8601表示法，并使用UTC时间",
       "location": "query",
       "name": "start_time",
@@ -74,7 +62,7 @@
     },
     {
       "example": "2016-10-20T04:01:00Z",
-      "help_en": "The end of the time range to query for logs. Specify the time in the ISO 8601 standard in the UTC time zone.\n\nThe end time must be later than the start time",
+      "help_en": "The end time of the logs to retrieve. Specify the time in the ISO 8601 standard in UTC.\n\nThe end time must be later than the start time",
       "help_zh": "获取日志的结束时间点。日期格式按照ISO8601表示法，并使用UTC时间。\n\n结束时间需大于起始时间",
       "location": "query",
       "name": "end_time",
@@ -92,54 +80,65 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "The response",
+        "description_zh": "返回结果",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The business code. A value of 0 indicates success",
             "description_zh": "业务码，成功返回0",
             "example": "0",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "LogList": {
-            "backendName": "data",
-            "itemName": "Log",
-            "items": {
-              "properties": {
-                "EndDate": {
-                  "backendName": "endDate",
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Log": {
+                "description_en": "The list of returned logs",
+                "description_zh": "返回日志的信息列表",
+                "items": {
+                  "description_en": "The log file record",
+                  "description_zh": "单条日志文件记录",
+                  "properties": {
+                    "EndDate": {
+                      "description_en": "The end time in the YYYY-MM-DD HH:mm:ss format",
+                      "description_zh": "结束时间，格式为 YYYY-MM-DD HH:mm:ss",
+                      "example": "2017-05-07 21:59:59",
+                      "type": "string"
+                    },
+                    "FileName": {
+                      "description_en": "The file name",
+                      "description_zh": "文件名称",
+                      "example": "ccd_cdn.xxxx.com.cn_2017-05-03_07.tar.gz",
+                      "type": "string"
+                    },
+                    "StartDate": {
+                      "description_en": "The start time in the YYYY-MM-DD HH:mm:ss format",
+                      "description_zh": "开始时间，格式为 YYYY-MM-DD HH:mm:ss",
+                      "example": "2017-05-07 21:00:00",
+                      "type": "string"
+                    },
+                    "Url": {
+                      "description_en": "The URL",
+                      "description_zh": "链接路径",
+                      "example": "http://pcdn-log.oss-cn-shanghai.aliyuncs.com/xxxx/2017-05-07/xxxx",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "FileName": {
-                  "backendName": "fileName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "StartDate": {
-                  "backendName": "startDate",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Url": {
-                  "backendName": "url",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "B40C0B7C-C90E-43CD-963A-1B6AC6BCF6FF",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

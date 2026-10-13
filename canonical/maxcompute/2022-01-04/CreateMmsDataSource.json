@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 15000,
   "camel_example": "aliyun maxcompute POST /api/v1/mms/datasources --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"networklink\":\"vpc-uf6pc2vordian33gobzfr:cn-shanghai\",\"name\":\"demo\",\"type\":\"BIGQUERY\",\"config\":{\"key\":\"example-string\"}}'",
   "cmd_full_name": "maxcompute create-mms-data-source",
   "cmd_name": "create-mms-data-source",
   "deprecated": false,
-  "description_en": "Creates a data source to migrate data to MaxCompute using MaxCompute Migration Assist (MMA)",
+  "description_en": "Creates a data source to perform data migration from the data source to MaxCompute through Migration Service (MMA 4.0)",
   "description_zh": "创建数据源，通过MMA将数据源的数据迁移到MaxCompute",
   "kebab_example": "aliyun maxcompute create-mms-data-source --name demo --type BIGQUERY --networklink vpc-uf6pc2vordian33gobzfr:cn-shanghai --config '{\"key\":\"example-string\"}' --region cn-hangzhou",
   "method": "POST",
@@ -29,22 +30,6 @@
   },
   "parameters": [
     {
-      "help_en": "The configurations of the data source",
-      "help_zh": "数据源相关配置",
-      "location": "body",
-      "name": "config",
-      "options": [
-        "--config"
-      ],
-      "param_style": "json",
-      "raw_name": "config",
-      "required": false,
-      "type": "map",
-      "value": {
-        "type": "any"
-      }
-    },
-    {
       "example": "demo",
       "help_en": "The name of the data source",
       "help_zh": "数据源名称",
@@ -55,6 +40,24 @@
       ],
       "param_style": "json",
       "raw_name": "name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "enum": [
+        "BIGQUERY",
+        "HIVE"
+      ],
+      "example": "BIGQUERY",
+      "help_en": "The type of the data source",
+      "help_zh": "数据源类型",
+      "location": "body",
+      "name": "type",
+      "options": [
+        "--type"
+      ],
+      "param_style": "json",
+      "raw_name": "type",
       "required": false,
       "type": "string"
     },
@@ -73,18 +76,20 @@
       "type": "string"
     },
     {
-      "example": "BIGQUERY",
-      "help_en": "The type of the data source",
-      "help_zh": "数据源类型",
+      "help_en": "The data source configurations. Call ListMmsDataSourceConfigItems first to retrieve the valid and required configuration items for the target data source type, and then construct this object accordingly",
+      "help_zh": "数据源相关配置。请先调用 ListMmsDataSourceConfigItems，并按目标数据源类型获取有效配置项及必填项后构造该对象",
       "location": "body",
-      "name": "type",
+      "name": "config",
       "options": [
-        "--type"
+        "--config"
       ],
       "param_style": "json",
-      "raw_name": "type",
+      "raw_name": "config",
       "required": false,
-      "type": "string"
+      "type": "map",
+      "value": {
+        "type": "any"
+      }
     }
   ],
   "pathPattern": "/api/v1/mms/datasources",
@@ -93,17 +98,15 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "ApiRes",
+        "description_en": "ApiRes<SourceIdDTO>",
         "description_zh": "ApiRes<SourceIdDTO>",
         "properties": {
           "data": {
-            "backendName": "data",
-            "description_en": "The returned results",
+            "description_en": "The returned result",
             "description_zh": "返回结果",
             "properties": {
               "dataSourceId": {
-                "backendName": "dataSourceId",
-                "description_en": "The ID of the data source",
+                "description_en": "The data source ID",
                 "description_zh": "数据源ID",
                 "example": "18",
                 "format": "int64",
@@ -113,14 +116,13 @@
             "type": "object"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求id",
             "example": "B42CA730-8187-50F1-9FE0-6733297036DB",
             "type": "string"
           }
         },
-        "title_en": "ApiRes<SourceIdDTO>",
+        "title_en": "",
         "title_zh": "ApiRes<SourceIdDTO>",
         "type": "object"
       }

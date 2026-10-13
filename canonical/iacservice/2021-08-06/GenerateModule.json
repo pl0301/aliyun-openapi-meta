@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun iacservice POST /explorer/generate/module --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"template\":\"terraform\",\"terraformResourceType\":\"alicloud_vpc\",\"generateSource\":\"Resource\",\"regionId\":\"cn-beijing\",\"syntax\":\"hcl\",\"terraformProviderVersion\":\"1.260.0\",\"parameters\":{\"key\":\"example-string\"}}'",
   "cmd_full_name": "iacservice generate-module",
   "cmd_name": "generate-module",
@@ -32,20 +33,6 @@
   },
   "parameters": [
     {
-      "example": "Resource",
-      "help_en": "The generation source. Valid values:\nResource: Generates a Terraform HCL template based on resource properties.\nVariableToCode: Generates a final Terraform HCL template by combining variables with an existing Terraform HCL template.\nCodeToVariable: Extracts variable information from a Terraform HCL template.\nModule: Generates Terraform Module code based on variables",
-      "help_zh": "生成来源，枚举：\nResource：根据资源属性生成Terraform HCL模版\nVariableToCode：根据变量和Terraform HCL模版生成最终结合后的Terraform HCL模版\nCodeToVariable：根据Terraform HCL模版提取其中的变量信息\nModule：根据变量生成Terraform Module代码；",
-      "location": "body",
-      "name": "generate_source",
-      "options": [
-        "--generate-source"
-      ],
-      "param_style": "json",
-      "raw_name": "generateSource",
-      "required": false,
-      "type": "string"
-    },
-    {
       "help_en": "The collection of parameters, passed in key:value format, such as {\"vpc_name\":\"vpc-test\"}",
       "help_zh": "参数集合，通过key:value的格式传参，比如{\"vpc_name\":\"vpc-test\"}",
       "location": "body",
@@ -76,6 +63,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "hcl"
+      ],
       "example": "hcl",
       "help_en": "The syntax. Valid values:\nhcl (default)",
       "help_zh": "语法\nhcl（默认）",
@@ -86,20 +76,6 @@
       ],
       "param_style": "json",
       "raw_name": "syntax",
-      "required": false,
-      "type": "string"
-    },
-    {
-      "example": "terraform {\n}",
-      "help_en": "The existing Terraform HCL template content",
-      "help_zh": "原有的Terraform HCL模版内容",
-      "location": "body",
-      "name": "template",
-      "options": [
-        "--template"
-      ],
-      "param_style": "json",
-      "raw_name": "template",
       "required": false,
       "type": "string"
     },
@@ -130,6 +106,40 @@
       "raw_name": "terraformResourceType",
       "required": false,
       "type": "string"
+    },
+    {
+      "enum": [
+        "Resource",
+        "VariableToCode",
+        "CodeToVariable",
+        "Module"
+      ],
+      "example": "Resource",
+      "help_en": "The generation source. Valid values:\nResource: Generates a Terraform HCL template based on resource properties.\nVariableToCode: Generates a final Terraform HCL template by combining variables with an existing Terraform HCL template.\nCodeToVariable: Extracts variable information from a Terraform HCL template.\nModule: Generates Terraform Module code based on variables",
+      "help_zh": "生成来源，枚举：\nResource：根据资源属性生成Terraform HCL模版\nVariableToCode：根据变量和Terraform HCL模版生成最终结合后的Terraform HCL模版\nCodeToVariable：根据Terraform HCL模版提取其中的变量信息\nModule：根据变量生成Terraform Module代码；",
+      "location": "body",
+      "name": "generate_source",
+      "options": [
+        "--generate-source"
+      ],
+      "param_style": "json",
+      "raw_name": "generateSource",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "example": "terraform {\n}",
+      "help_en": "The existing Terraform HCL template content",
+      "help_zh": "原有的Terraform HCL模版内容",
+      "location": "body",
+      "name": "template",
+      "options": [
+        "--template"
+      ],
+      "param_style": "json",
+      "raw_name": "template",
+      "required": false,
+      "type": "string"
     }
   ],
   "pathPattern": "/explorer/generate/module",
@@ -142,7 +152,6 @@
         "description_zh": "响应体",
         "properties": {
           "module": {
-            "backendName": "module.code",
             "description_en": "The generated Terraform HCL template code content",
             "description_zh": "生成的Terraform HCL模版代码内容",
             "example": "terraform {\n  required_providers {\n    alicloud = {\n      source   = \"aliyun/alicloud\"\n      version  = \"1.260.0\"\n    }\n  }\n}\n\nresource \"alicloud_vpc\" \"default\" {\n vpc_name = \"vpc-test\"\n}",
@@ -150,25 +159,23 @@
             "type": "string"
           },
           "properties": {
-            "backendName": "module.properties",
             "description_en": "The variables and resource properties in the generated template code",
             "description_zh": "生成的模版代码中的变量和资源属性；",
             "example": "{\"vpc_name\":\"vpc-test\"}",
             "type": "object"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "6B40D088-E929-504B-8802-C1759A993FA2",
             "readOnly": false,
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
         "readOnly": false,
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

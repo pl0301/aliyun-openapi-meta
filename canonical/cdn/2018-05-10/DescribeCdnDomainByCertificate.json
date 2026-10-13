@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 16000,
   "camel_example": "aliyun cdn DescribeCdnDomainByCertificate --region cn-hangzhou --SSLPub 000000",
   "cmd_full_name": "cdn describe-cdn-domain-by-certificate",
   "cmd_name": "describe-cdn-domain-by-certificate",
   "deprecated": false,
-  "description_en": "Queries accelerated domain names by SSL certificate",
+  "description_en": "Retrieves accelerated domain names based on certificate information",
   "description_zh": "调用DescribeCdnDomainByCertificate根据证书信息获取加速域名",
   "kebab_example": "aliyun cdn describe-cdn-domain-by-certificate --ssl-pub 000000 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "******",
-      "help_en": "The public key of the SSL certificate. You must encode the public key in Base64 and then call the encodeURIComponent function to encode the public key again.\n\nThe public key must be in the PEM format",
+      "help_en": "The public key of the certificate. The key must be Base64-encoded before being URL-encoded by using encodeURIComponent. PEM format is supported",
       "help_zh": "证书公钥，需要base64编码后再进行encodeURIComponent。\n\n支持pem格式",
       "location": "query",
       "name": "ssl_pub",
@@ -35,7 +36,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether the domain name list to return contains only domain names with HTTPS enabled or disabled.\n\ntrue: The domain name list contains only domain names with HTTPS enabled.\n\nfalse: The domain name list contains only domain names with HTTPS disabled",
+      "help_en": "Specifies whether the returned domain name list includes only domain names with HTTPS enabled or disabled. Valid values:\ntrue: Enabled.\nfalse: Disabled",
       "help_zh": "表示返回的域名列表只包含开启或关闭HTTPS的域名。\n\ntrue：开启\nfalse：关闭",
       "location": "query",
       "name": "ssl_status",
@@ -48,7 +49,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether the domain name list to return match the SSL certificate.\n\ntrue: The domain name list match the SSL certificate.\n\nfalse: The domain name list do not match the SSL certificate",
+      "help_en": "Specifies whether the returned domain name list exactly matches the certificate. Valid values:\ntrue: Enabled.\nfalse: Disabled",
       "help_zh": "表示返回的域名列表是否与证书精准匹配。\ntrue：开启\nfalse：关闭",
       "location": "query",
       "name": "exact",
@@ -66,57 +67,85 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "CertInfos": {
-            "backendName": "data.content",
-            "itemName": "CertInfo",
-            "items": {
-              "properties": {
-                "CertCaIsLegacy": {
-                  "backendName": "cert_ca_is_legacy",
-                  "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "CertInfo": {
+                "description_en": "The list of certificate information",
+                "description_zh": "证书信息列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CertCaIsLegacy": {
+                      "description_en": "The deprecation status of the certificate CA. Valid values:\n\nyes: Deprecated.\n\nno: Normal and not deprecated",
+                      "description_zh": "证书CA废弃状态。取值：\n\nyes：已废弃。\n\nno：正常，未废弃",
+                      "example": "yes",
+                      "type": "string"
+                    },
+                    "CertExpireTime": {
+                      "description_en": "The expiration time of the certificate. The time format is MMM DD HH:mm:ss YYYY GMT",
+                      "description_zh": "证书过期时间。时间格式为 MMM DD HH:mm:ss YYYY GMT",
+                      "example": "Nov 29 00:00:00 2016 GMT",
+                      "type": "string"
+                    },
+                    "CertExpired": {
+                      "description_en": "The expiration status of the certificate. Valid values:\n\nyes: Expired.\n\nno: Not expired",
+                      "description_zh": "证书过期状态。 取值：\n\nyes：已过期。\n\nno：未过期",
+                      "example": "yes",
+                      "type": "string"
+                    },
+                    "CertStartTime": {
+                      "description_en": "The start time of the certificate. The time format is MMM DD HH:mm:ss YYYY GMT",
+                      "description_zh": "证书开始时间。时间格式为 MMM DD HH:mm:ss YYYY GMT",
+                      "example": "Nov 29 23:59:59 2017 GMT",
+                      "type": "string"
+                    },
+                    "CertSubjectCommonName": {
+                      "description_en": "The name of the certificate owner",
+                      "description_zh": "证书所有者名称",
+                      "example": "owner",
+                      "type": "string"
+                    },
+                    "CertType": {
+                      "description_en": "The type of the certificate. Valid values: RSA, DSA, and ECDSA",
+                      "description_zh": "证书类型，取值：RSA、DSA、ECDSA",
+                      "example": "RSA",
+                      "type": "string"
+                    },
+                    "DomainList": {
+                      "description_en": "The list of domain names matched against the certificate. If this value is not empty, multiple domain names are separated by commas (,)",
+                      "description_zh": "如果该返回值不为空，则将该列表与证书做匹配，多个用英文逗号（,）分隔",
+                      "example": "example.com,aliyundoc.com",
+                      "type": "string"
+                    },
+                    "DomainNames": {
+                      "description_en": "The domain names matched by the certificate, which are specified in the DNS field. Multiple domain names are separated by commas (,)",
+                      "description_zh": "证书匹配的域名（DNS字段），多个用英文逗号（,）分隔",
+                      "example": "*.example.com,aliyundoc.com",
+                      "type": "string"
+                    },
+                    "Issuer": {
+                      "description_en": "The certificate issuer",
+                      "description_zh": "证书颁发机构",
+                      "example": "C=US, O=Symantec Corporation, OU=Symantec Trust Network, OU=Domain Validated SSL, CN=Symantec Basic DV SSL CA - G1",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "CertExpireTime": {
-                  "backendName": "validity_not_after",
-                  "type": "string"
-                },
-                "CertExpired": {
-                  "backendName": "cert_expired",
-                  "type": "string"
-                },
-                "CertStartTime": {
-                  "backendName": "validity_not_before",
-                  "type": "string"
-                },
-                "CertSubjectCommonName": {
-                  "backendName": "cert_subject_common_name",
-                  "type": "string"
-                },
-                "CertType": {
-                  "backendName": "cert_type",
-                  "type": "string"
-                },
-                "DomainList": {
-                  "backendName": "cert_domain_list",
-                  "type": "string"
-                },
-                "DomainNames": {
-                  "backendName": "cert_domains",
-                  "type": "string"
-                },
-                "Issuer": {
-                  "backendName": "issuer",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "ASAF2FDS-12SADSA-DDSAE3D-DSADCD4C-CDADS2D",
             "type": "string"

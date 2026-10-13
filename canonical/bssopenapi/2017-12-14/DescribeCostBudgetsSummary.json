@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun bssopenapi DescribeCostBudgetsSummary --region cn-hangzhou --BudgetStatus notOverdue --NextToken 'eyJwYWdlTnVtIjoyLCJwYWdlU2l6ZSI6NH0=' --MaxResults 5 --BudgetName '全年预算' --BudgetType cost",
   "cmd_full_name": "bssopenapi describe-cost-budgets-summary",
   "cmd_name": "describe-cost-budgets-summary",
@@ -34,6 +35,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "notOverdue",
+        "overdue"
+      ],
       "example": "notOverdue",
       "help_en": "The status of the budget. If you do not specify this parameter, budgets in all statuses are returned",
       "help_zh": "预算状态，枚举值：overdue（已过期）,notOverdue（未过期）。不填写则默认取全部",
@@ -47,6 +52,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "cost",
+        "byquantity",
+        "asset"
+      ],
       "example": "cost",
       "help_en": "The type of the budget. If you do not specify this parameter, budgets of all types are returned",
       "help_zh": "预算类型。枚举值：cost(费用预算), byquantity（按量编制预算）, asset（使用率及覆盖率预算）。\n不填写则默认取全部",
@@ -96,72 +106,62 @@
         "description_zh": "BssResult<CostBudgetResponse>",
         "properties": {
           "Code": {
-            "backendName": "code",
             "description_en": "The status code",
             "description_zh": "状态码",
             "example": "Success",
             "type": "string"
           },
           "Data": {
-            "backendName": "data",
             "description_en": "The data that is returned",
             "description_zh": "返回数据",
             "properties": {
               "HostId": {
-                "backendName": "hostId",
                 "description_en": "The website",
                 "description_zh": "站点名称",
                 "example": "cn",
-                "title_en": "站点名称",
+                "title_en": "",
                 "title_zh": "站点名称",
                 "type": "string"
               },
               "Items": {
-                "backendName": "items",
                 "description_en": "The list of items",
                 "description_zh": "列表信息",
-                "itemName": "Item",
                 "items": {
                   "description_en": "The list of budgets",
                   "description_zh": "预算列表",
                   "properties": {
                     "Budget": {
-                      "backendName": "budget",
                       "description_en": "Information about the budget.\n\nBudgetCycleType: The budget period. Valid values: daily, monthly, quarterly, and yearly.\n\nTotalBudgetAmount: The total budget amount.\n\nBudgetMemo: The notes for the budget",
                       "description_zh": "预算相关信息，其中：\n\nBudgetCycleType是滚动周期，枚举值：daily（日），monthly（月），quarterly（季），yearly(年)；\n\nTotalBudgetAmount是预算总额；\n\nBudgetMemo是预算备注",
+                      "enumValueTitles": {},
                       "example": "{           \"budgetCycleType\": \"monthly\",           \"budgetMemo\": \"\",           \"totalBudgetAmount\": 220         }",
                       "type": "object"
                     },
                     "BudgetName": {
-                      "backendName": "budgetName",
                       "description_en": "The name of the budget",
                       "description_zh": "预算名称",
                       "example": "全年预算",
                       "type": "string"
                     },
                     "BudgetStatus": {
-                      "backendName": "budgetStatus",
                       "description_en": "The status of the budget",
                       "description_zh": "预算状态",
                       "example": "overdue",
                       "type": "string"
                     },
                     "BudgetType": {
-                      "backendName": "budgetType",
                       "description_en": "The type of the budget",
                       "description_zh": "预算类型",
                       "example": "cost",
                       "type": "string"
                     },
                     "CalculatedValues": {
-                      "backendName": "calculatedValues",
                       "description_en": "Information about the estimate-to-actual comparison.\n\nActualConsumeSum: The accumulated actual consumption.\n\nActualAddForecastedAmount: The sum of the accumulated actual value and the predicted value. For a cost budget, this value represents the actual spending to date plus the forecasted spending until the budget period ends.\n\nActualAndBudgetComparison: The comparison of the actual consumption to the budget. This value is calculated using the following formula: (Accumulated actual value / Total budget amount) × 100%",
                       "description_zh": "预实分析相关信息，其中：\n\nActualConsumeSum是累计实际值；\n\nActualAddForecastedAmount是累计实际与预测之和。当预算类型为费用预算时，累计实际与预测之和为从预算开始日期至当前日期的实际发生额加上从当前日期至预算截止日期的预测值。若当前日期至预算截止日期超过一年，则不会包含超过一年的预测金额部分；当预算类型为使用率及覆盖率预算时，累计实际与预测之和为从预算开始日期至预算截止日期的使用率或覆盖率，不含超过一年的预测部分。\n\nActualAndBudgetComparison是预实对比，累计实际值/预算总额*100%；",
                       "example": "{           \"actualConsumeSum\": 88.6,           \"actualAddForecastedAmount\": 89.6,           \"actualAndBudgetComparison\": \"20.73%\"         }",
                       "type": "object"
                     },
                     "ConsumePeriod": {
-                      "backendName": "consumePeriod",
                       "description_en": "Information about the billing cycle.\n\nConsumePeriodBegin: The start date of the budget.\n\nConsumePeriodEnd: The end date of the budget",
                       "description_zh": "账期相关信息。其中：\n\nConsumePeriodBegin是预算起始日期；\n\nConsumePeriodEnd是预算截止日期",
                       "example": "{           \"consumePeriodBegin\": \"2022-10\",           \"consumePeriodEnd\": \"2022-11\"         }",
@@ -173,31 +173,28 @@
                 "type": "array"
               },
               "MaxResults": {
-                "backendName": "maxResults",
                 "description_en": "The maximum number of entries returned on the current page",
                 "description_zh": "本次请求所返回的最大记录条数",
                 "example": "5",
                 "format": "int32",
-                "title_en": "本次请求所返回的最大记录条数。",
+                "title_en": "",
                 "title_zh": "本次请求所返回的最大记录条数。",
                 "type": "integer"
               },
               "NextToken": {
-                "backendName": "nextToken",
                 "description_en": "The token for the next page of results",
                 "description_zh": "下页token",
                 "example": "eyJwYWdlTnVtIjoyLCJwYWdlU2l6ZSI6NH0=",
-                "title_en": "下页token",
+                "title_en": "",
                 "title_zh": "下页token",
                 "type": "string"
               },
               "TotalCount": {
-                "backendName": "totalCount",
                 "description_en": "The total number of entries",
                 "description_zh": "总记录数",
                 "example": "20",
                 "format": "int32",
-                "title_en": "总记录数。",
+                "title_en": "",
                 "title_zh": "总记录数。",
                 "type": "integer"
               }
@@ -205,21 +202,18 @@
             "type": "object"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "Successful!",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The ID of the request",
             "description_zh": "请求ID",
             "example": "3BFC23FE-A182-4D96-A1E4-7521B30B8E43",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "是否成功",
             "example": "true",

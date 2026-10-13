@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 1200000,
   "camel_example": "aliyun pairecservice POST /api/v1/conversations/chat --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"ConversationId\":\"e47cfae9-c0cc-42e1-91e2-e67cdb0e7b96\",\"InstanceId\":\"learn-pairec-xxx\",\"Content\":\"校验引擎配置\",\"Config\":\"{}\"}' --version 2022-12-13 --force",
   "cmd_full_name": "pairecservice chat-conversation",
   "cmd_name": "chat-conversation",
   "deprecated": false,
-  "description_en": "Sends a conversation message to an agent. Supports Server-Sent Events (SSE). Creates a new session or continues a conversation in an existing session",
+  "description_en": "Sends a conversation message to an agent. Supports Server-Sent Events (SSE). Creates a new session or continues an existing one",
   "description_zh": "向智能体发送对话消息，支持SSE，可创建新会话或在已有会话中继续对话",
   "kebab_example": "aliyun pairecservice chat-conversation --instance-id learn-pairec-xxx --conversation-id e47cfae9-c0cc-42e1-91e2-e67cdb0e7b96 --content '校验引擎配置' --config '{}' --region cn-hangzhou",
   "method": "POST",
@@ -30,16 +31,30 @@
   },
   "parameters": [
     {
-      "example": "{}",
-      "help_en": "The additional information input in JSON format",
-      "help_zh": "额外信息输入，JSON格式",
+      "example": "learn-pairec-xxx",
+      "help_en": "The instance ID",
+      "help_zh": "实例ID",
       "location": "body",
-      "name": "config",
+      "name": "instance_id",
       "options": [
-        "--config"
+        "--instance-id"
       ],
       "param_style": "json",
-      "raw_name": "Config",
+      "raw_name": "InstanceId",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "e47cfae9-c0cc-42e1-91e2-e67cdb0e7b96",
+      "help_en": "The session ID. If not provided, a new session is created. If provided, the conversation continues within the existing session context",
+      "help_zh": "会话ID。不传则创建新会话，传入则在已有会话上下文中继续对话",
+      "location": "body",
+      "name": "conversation_id",
+      "options": [
+        "--conversation-id"
+      ],
+      "param_style": "json",
+      "raw_name": "ConversationId",
       "required": false,
       "type": "string"
     },
@@ -58,31 +73,17 @@
       "type": "string"
     },
     {
-      "example": "e47cfae9-c0cc-42e1-91e2-e67cdb0e7b96",
-      "help_en": "The session ID. If this parameter is not specified, a new session is created. If this parameter is specified, the conversation continues in the context of the existing session",
-      "help_zh": "会话ID。不传则创建新会话，传入则在已有会话上下文中继续对话",
+      "example": "{}",
+      "help_en": "The additional input information. The value must be in JSON format",
+      "help_zh": "额外信息输入，JSON格式",
       "location": "body",
-      "name": "conversation_id",
+      "name": "config",
       "options": [
-        "--conversation-id"
+        "--config"
       ],
       "param_style": "json",
-      "raw_name": "ConversationId",
+      "raw_name": "Config",
       "required": false,
-      "type": "string"
-    },
-    {
-      "example": "learn-pairec-xxx",
-      "help_en": "The instance ID",
-      "help_zh": "实例ID",
-      "location": "body",
-      "name": "instance_id",
-      "options": [
-        "--instance-id"
-      ],
-      "param_style": "json",
-      "raw_name": "InstanceId",
-      "required": true,
       "type": "string"
     }
   ],
@@ -99,7 +100,7 @@
             "description_en": "The reply content",
             "description_zh": "回复内容",
             "example": "FeatureDB近7天读写量为xxx",
-            "title_en": "回复内容。",
+            "title_en": "",
             "title_zh": "回复内容。",
             "type": "string"
           },
@@ -107,7 +108,7 @@
             "description_en": "The call ID",
             "description_zh": "调用ID",
             "example": "\"\"",
-            "title_en": "调用ID。",
+            "title_en": "",
             "title_zh": "调用ID。",
             "type": "string"
           },
@@ -115,7 +116,7 @@
             "description_en": "The session ID",
             "description_zh": "会话ID",
             "example": "e47cfae9-c0cc-42e1-91e2-e67cdb0e7b96",
-            "title_en": "会话ID。",
+            "title_en": "",
             "title_zh": "会话ID。",
             "type": "string"
           },
@@ -123,7 +124,7 @@
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "SERVER_ERROR",
-            "title_en": "错误码。",
+            "title_en": "",
             "title_zh": "错误码。",
             "type": "string"
           },
@@ -131,7 +132,7 @@
             "description_en": "The error message",
             "description_zh": "错误消息",
             "example": "connection failed",
-            "title_en": "错误消息。",
+            "title_en": "",
             "title_zh": "错误消息。",
             "type": "string"
           },
@@ -139,7 +140,7 @@
             "description_en": "The event",
             "description_zh": "事件",
             "example": "message",
-            "title_en": "事件。",
+            "title_en": "",
             "title_zh": "事件。",
             "type": "string"
           },
@@ -147,15 +148,15 @@
             "description_en": "The function name",
             "description_zh": "函数名称",
             "example": "\"\"",
-            "title_en": "函数名称",
+            "title_en": "",
             "title_zh": "函数名称",
             "type": "string"
           },
           "GmtCreateTime": {
-            "description_en": "The creation time",
-            "description_zh": "创建时间",
+            "description_en": "The creation time. The value is in ISO 8601 format and includes a time zone offset",
+            "description_zh": "创建时间。格式为 ISO 8601，并包含时区偏移",
             "example": "2021-12-15T23:24:33.132+08:00",
-            "title_en": "创建时间。",
+            "title_en": "",
             "title_zh": "创建时间。",
             "type": "string"
           },
@@ -163,7 +164,7 @@
             "description_en": "The message ID",
             "description_zh": "消息ID",
             "example": "chat-abcdefg",
-            "title_en": "消息ID。",
+            "title_en": "",
             "title_zh": "消息ID。",
             "type": "string"
           },
@@ -171,7 +172,7 @@
             "description_en": "The request ID",
             "description_zh": "请求id",
             "example": "728C5E01-ABF6-5AA8-B9FC-B3BA05DECC77",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
@@ -179,12 +180,12 @@
             "description_en": "The skill name",
             "description_zh": "skill 名称",
             "example": "\"\"",
-            "title_en": "skill 名称。",
+            "title_en": "",
             "title_zh": "skill 名称。",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

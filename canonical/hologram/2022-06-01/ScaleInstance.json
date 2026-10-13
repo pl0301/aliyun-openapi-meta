@@ -1,13 +1,14 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun hologram POST /api/v1/instances/hgprecn-cn-xxxxxxx/scale --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "hologram scale-instance",
   "cmd_name": "scale-instance",
   "deprecated": false,
-  "description_en": "Changes the specifications and storage space of a Hologres instance",
+  "description_en": "Modifies the specifications and storage space of an instance",
   "description_zh": "该接口用于变更实例的规格和存储空间",
   "kebab_example": "aliyun hologram scale-instance --instance-id hgprecn-cn-xxxxxxx --region cn-hangzhou",
   "method": "POST",
-  "multi_version": false,
+  "multi_version": true,
   "name": "ScaleInstance",
   "operation": {
     "action": "ScaleInstance",
@@ -32,8 +33,8 @@
   "parameters": [
     {
       "example": "hgprecn-cn-xxxxxxx",
-      "help_en": "The instance ID",
-      "help_zh": "实例id",
+      "help_en": "The ID of the Hologres instance",
+      "help_zh": "Hologres 实例 ID",
       "location": "path",
       "name": "instance_id",
       "options": [
@@ -44,22 +45,8 @@
       "type": "string"
     },
     {
-      "example": "1000G",
-      "help_en": "The cold storage space of the instance. Unit: GB.\n\nThis parameter is ignored for pay-as-you-go instances",
-      "help_zh": "实例低频存储空间。单位：GB。\n\n按量付费（PostPaid）实例会忽略此参数",
-      "location": "body",
-      "name": "cold_storage_size",
-      "options": [
-        "--cold-storage-size"
-      ],
-      "param_style": "json",
-      "raw_name": "coldStorageSize",
-      "required": false,
-      "type": "int"
-    },
-    {
       "example": "128",
-      "help_en": "The instance specifications. Valid values:\n\n`16`: 16 vCPUs and 64 GB of memory (1 compute node)\n\n`32`: 32 vCPUs and 128 GB of memory (2 compute nodes)\n\n`64`: 64 vCPUs and 256 GB of memory (4 compute nodes)\n\n`96`: 96 vCPUs and 384 GB memory (6 compute nodes)\n\n`128`: 128 vCPUs and 512 GB memory (8 compute nodes)\n\nand so on.\n\nSpecify the number of vCPUs.\n\nTo purchase an instance type with more than 1024 vCPUs, submit a ticket.\n\nSkip this parameter for shared instances",
+      "help_en": "The instance specifications. Valid values:\n16 cores and 64 GB (number of compute nodes: 1)\n32 cores and 128 GB (number of compute nodes: 2)\n64 cores and 256 GB (number of compute nodes: 4)\n96 cores and 384 GB (number of compute nodes: 6)\n128 cores and 512 GB (number of compute nodes: 8)\nOther values\n\n\nSpecify only the number of cores.\nTo purchase specifications with more than 1,024 cores, submit a ticket.\nYou do not need to specify specifications for shared instances",
       "help_zh": "实例规格。取值：\n16核64 GB （计算节点数量：1）\n32核128 GB（计算节点数量：2）\n64核256 GB（计算节点数量：4）\n96核384 GB（计算节点数量：6）\n128核512 GB（计算节点数量：8）\n等\n\n\n填写核数即可。\n购买1024以上规格请提交工单申请。\nShared实例类型无需指定规格",
       "location": "body",
       "name": "cpu",
@@ -72,22 +59,54 @@
       "type": "int"
     },
     {
-      "example": "true",
-      "help_en": "Specifies whether to enable Serverless Computing",
-      "help_zh": "是否开启ServerlessComputing",
+      "example": "1000",
+      "help_en": "The standard storage space of the instance. Unit: GB.\n\nThis parameter is ignored for pay-as-you-go instances",
+      "help_zh": "实例标准存储空间。单位：GB。\n\n按量付费（PostPaid）实例会忽略此参数",
       "location": "body",
-      "name": "enable_serverless_computing",
+      "name": "storage_size",
       "options": [
-        "--enable-serverless-computing"
+        "--storage-size"
       ],
       "param_style": "json",
-      "raw_name": "enableServerlessComputing",
+      "raw_name": "storageSize",
       "required": false,
-      "type": "bool"
+      "type": "int"
+    },
+    {
+      "example": "1000",
+      "help_en": "The infrequent access storage space of the instance. Unit: GB.\n\nThis parameter is ignored for pay-as-you-go instances",
+      "help_zh": "实例低频存储空间。单位：GB。\n\n按量付费（PostPaid）实例会忽略此参数",
+      "location": "body",
+      "name": "cold_storage_size",
+      "options": [
+        "--cold-storage-size"
+      ],
+      "param_style": "json",
+      "raw_name": "coldStorageSize",
+      "required": false,
+      "type": "int"
+    },
+    {
+      "enum": [
+        "UPGRADE",
+        "DOWNGRADE"
+      ],
+      "example": "UPGRADE",
+      "help_en": "The type of specification change. Valid values:\nUPGRADE: upgrades the specifications.\nDOWNGRADE: downgrades the specifications.\n\nWhen you upgrade specifications, the new specifications cannot be lower than the original specifications. Empty fields indicate that the original specifications remain unchanged. At least one specification must be higher than the original specification.\nWhen you downgrade specifications, the new specifications cannot be higher than the original specifications. Empty fields indicate that the original specifications remain unchanged. At least one specification must be lower than the original specification",
+      "help_zh": "变配类型。取值：\nUPGRADE：升配\nDOWNGRADE：降配\n\n升配规格不能小于原规格，为空的字段表示维持原规格不变，在此基础上，至少一项规格比原规格大。\n降配规格不能大于原规格，为空的字段表示维持原规格不变，在此基础上，至少一项规格比原规格小",
+      "location": "body",
+      "name": "scale_type",
+      "options": [
+        "--scale-type"
+      ],
+      "param_style": "json",
+      "raw_name": "scaleType",
+      "required": true,
+      "type": "string"
     },
     {
       "example": "4",
-      "help_en": "The number of gateways. Valid values: [2, 50].\n\nThis parameter applies only to virtual warehouse instances",
+      "help_en": "The number of gateways. Valid values: 2 to 50.\n\nThis parameter is required only for the Warehouse type",
       "help_zh": "网关数量，取值[2, 50]。\n\n只有Warehouse类型需要指定该参数",
       "location": "body",
       "name": "gateway_count",
@@ -101,35 +120,21 @@
     },
     {
       "enum": [
-        "UPGRADE",
-        "DOWNGRADE"
+        "false",
+        "true"
       ],
-      "example": "UPGRADE",
-      "help_en": "The scaling type.\n\nUPGRADE: Upgrades the instance.\n\nDOWNGRADE: Downgrades the instance.\n\nUpgrade an instance: New specifications must be equal to or greater than original specifications. Leaving a parameter empty retains its original specification. At least one specification must be increased.\n\nDowngrade an instance: New specifications must be equal to or less than original specifications. Leaving a parameter empty retains its original specification. At least one specification must be decreased",
-      "help_zh": "变配类型。取值：\nUPGRADE：升配\nDOWNGRADE：降配\n\n升配规格不能小于原规格，为空的字段表示维持原规格不变，在此基础上，至少一项规格比原规格大。\n降配规格不能大于原规格，为空的字段表示维持原规格不变，在此基础上，至少一项规格比原规格小",
+      "example": "true",
+      "help_en": "Specifies whether to enable serverless computing",
+      "help_zh": "是否开启ServerlessComputing",
       "location": "body",
-      "name": "scale_type",
+      "name": "enable_serverless_computing",
       "options": [
-        "--scale-type"
+        "--enable-serverless-computing"
       ],
       "param_style": "json",
-      "raw_name": "scaleType",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "1000G",
-      "help_en": "The standard storage space of the instance. Unit: GB.\n\nThis parameter is ignored for pay-as-you-go instances",
-      "help_zh": "实例标准存储空间。单位：GB。\n\n按量付费（PostPaid）实例会忽略此参数",
-      "location": "body",
-      "name": "storage_size",
-      "options": [
-        "--storage-size"
-      ],
-      "param_style": "json",
-      "raw_name": "storageSize",
+      "raw_name": "enableServerlessComputing",
       "required": false,
-      "type": "int"
+      "type": "bool"
     }
   ],
   "pathPattern": "/api/v1/instances/[instanceId]/scale",
@@ -138,39 +143,38 @@
   "responses": {
     "200": {
       "schema": {
-        "description_en": "The response schema",
+        "description_en": "Schema of Response",
         "description_zh": "Schema of Response",
         "properties": {
           "Data": {
-            "backendName": "data",
-            "description_en": "The returned results",
+            "description_en": "The returned result",
             "description_zh": "返回结果",
             "properties": {
               "Code": {
-                "backendName": "code",
                 "description_en": "The error code",
                 "description_zh": "错误码",
                 "example": "InvalidScaleType.Unsupported",
                 "type": "string"
               },
               "Message": {
-                "backendName": "message",
-                "description_en": "The details of the error",
+                "description_en": "The detailed error message",
                 "description_zh": "错误详细信息",
                 "example": "Invalid scale type",
                 "type": "string"
               },
               "OrderId": {
-                "backendName": "orderId",
                 "description_en": "The order ID",
                 "description_zh": "订单Id",
                 "example": "219183853450000",
                 "type": "string"
               },
               "Success": {
-                "backendName": "success",
-                "description_en": "Indicates whether the scaling was successful",
+                "description_en": "Indicates whether the specification change was successful",
                 "description_zh": "变配是否成功",
+                "enumValueTitles": {
+                  "false": "失败",
+                  "true": "成功"
+                },
                 "example": "true",
                 "type": "boolean"
               }
@@ -178,37 +182,33 @@
             "type": "object"
           },
           "ErrorCode": {
-            "backendName": "errorCode",
             "description_en": "The error code",
             "description_zh": "错误码",
             "example": "null",
             "type": "string"
           },
           "ErrorMessage": {
-            "backendName": "errorMessage",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "null",
             "type": "string"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "The HTTP status code",
             "description_zh": "http状态码",
             "example": "200",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
-            "description_zh": "Id of the request",
+            "description_en": "The request ID",
+            "description_zh": "请求 ID",
             "example": "D3AE84AB-0873-5FC7-A4C4-8CF869D2FA70",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

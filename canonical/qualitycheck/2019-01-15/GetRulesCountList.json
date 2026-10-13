@@ -1,5 +1,5 @@
 {
-  "camel_example": "aliyun qualitycheck GetRulesCountList --region cn-hangzhou --TypeName '全部类别' --SchemeId 123 --PageSize 10 --EndTime '2022-10-08_23:59:59' --SourceType 0 --RequireInfos.1 ConditionInfo --BusinessRange 1 --RuleScoreSingleType 1 --CountTotal true --LastUpdateEmpid 63 --PageNumber 1 --UpdateUserId 63 --RuleIdOrRuleName 123 --Status 1 --BaseMeAgentId 1 --BusinessName '电话业务' --UpdateStartTime '2022-10-07_00:00:00' --StartTime '2022-10-07_00:00:00' --CreateUserId 63 --RuleType 1 --CreateEmpid 63 --Rid 123 --Type 1 --CurrentPage 1 --UpdateEndTime '2022-10-08_23:59:59' --CategoryName '分类名称A' --version 2019-01-15 --method POST --force",
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "qualitycheck get-rules-count-list",
   "cmd_name": "get-rules-count-list",
   "deprecated": false,
@@ -7,7 +7,7 @@
   "description_zh": "对应前端功能位置：质检规则配置-列表。专有云URL：ip:port/api/rule/GetRulesCountList.json",
   "kebab_example": "aliyun qualitycheck get-rules-count-list --rid 123 --rule-id-or-rule-name 123 --business-name '电话业务' --type 1 --type-name '全部类别' --business-range 1 --create-empid 63 --create-user-id 63 --update-user-id 63 --last-update-empid 63 --status 1 --category-name '分类名称A' --source-type 0 --rule-type 1 --update-start-time 2022-10-07_00:00:00 --update-end-time 2022-10-08_23:59:59 --scheme-id 123 --require-infos ConditionInfo --rule-score-single-type 1 --page-number 1 --current-page 1 --page-size 10 --count-total true --start-time 2022-10-07_00:00:00 --end-time 2022-10-08_23:59:59 --base-me-agent-id 1 --api-version 2019-01-15 --region cn-hangzhou",
   "method": "GET|POST",
-  "multi_version": false,
+  "multi_version": true,
   "name": "GetRulesCountList",
   "operation": {
     "action": "GetRulesCountList",
@@ -151,6 +151,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
       "example": "1",
       "help_en": "Rule status:",
       "help_zh": "规则状态：",
@@ -177,6 +183,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "0",
       "help_en": "Source type",
       "help_zh": "来源类型",
@@ -190,6 +200,10 @@
       "type": "int"
     },
     {
+      "enum": [
+        "0",
+        "1"
+      ],
       "example": "1",
       "help_en": "Rule category",
       "help_zh": "规则类别",
@@ -258,6 +272,12 @@
       "type": "array"
     },
     {
+      "enum": [
+        "1",
+        "2",
+        "4",
+        "8"
+      ],
       "example": "1",
       "help_en": "Scoring type",
       "help_zh": "评分类型",
@@ -373,7 +393,6 @@
         "description_zh": "RulePageResult<RuleCountInfo>",
         "properties": {
           "BusinessType": {
-            "backendName": "businessType",
             "description_en": "Business type. This field has no practical meaning and can be ignored",
             "description_zh": "业务类型，无实际意义，忽略",
             "example": "忽略",
@@ -381,14 +400,12 @@
             "type": "integer"
           },
           "Code": {
-            "backendName": "code",
             "description_en": "Result code. 200 indicates success. Any other value indicates failure. Use this field to identify the cause of failure",
             "description_zh": "结果代码，200表示成功，若为别的值则表示失败，调用方可根据此字段判断失败原因",
             "example": "200",
             "type": "string"
           },
           "Count": {
-            "backendName": "count",
             "description_en": "Total number of entries",
             "description_zh": "总条数",
             "example": "20",
@@ -396,7 +413,6 @@
             "type": "integer"
           },
           "CurrentPage": {
-            "backendName": "currentPage",
             "description_en": "Current page number",
             "description_zh": "当前页码",
             "example": "1",
@@ -404,15 +420,24 @@
             "type": "integer"
           },
           "Data": {
-            "backendName": "data",
-            "itemName": "Data",
-            "items": {
-              "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Data": {
+                "description_en": "Response results",
+                "description_zh": "返回结果",
+                "items": {
+                  "description_en": "Response results. See additional notes",
+                  "description_zh": "返回结果，参考补充说明",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "HttpStatusCode": {
-            "backendName": "httpStatusCode",
             "description_en": "HTTP status code",
             "description_zh": "HTTP状态码",
             "example": "200",
@@ -420,22 +445,31 @@
             "type": "integer"
           },
           "Message": {
-            "backendName": "message",
             "description_en": "Error details if the request failed. Returns \"successful\" on success",
             "description_zh": "出错时表示出错详情，成功时为successful",
             "example": "successful",
             "type": "string"
           },
           "Messages": {
-            "backendName": "messages",
-            "itemName": "Message",
-            "items": {
-              "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "Message": {
+                "description_en": "Error details if the request failed. Used when multiple messages are returned",
+                "description_zh": "出错时表示出错详情，当输出多条信息时使用",
+                "items": {
+                  "description_en": "Error details if the request failed. Used when multiple messages are returned",
+                  "description_zh": "出错时表示出错详情，当输出多条信息时使用",
+                  "example": "无",
+                  "type": "string"
+                },
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "pageNumber",
             "description_en": "Current page",
             "description_zh": "当前页",
             "example": "1",
@@ -443,7 +477,6 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "Number of rows per page",
             "description_zh": "每页行数",
             "example": "10",
@@ -451,21 +484,18 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "Request ID",
             "description_zh": "请求ID",
             "example": "9987D326-83D9-4A42-B9A5-0B27F9B40539",
             "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request succeeded. Use this field to determine request success: true means success; false or null means failure",
             "description_zh": "请求是否成功，调用方可根据此字段来判断请求是否成功：true表示成功；false/null表示失败",
             "example": "true",
             "type": "boolean"
           },
           "TotalCount": {
-            "backendName": "totalCount",
             "description_en": "Total number of entries",
             "description_zh": "数据总数",
             "example": "7",
@@ -473,7 +503,7 @@
             "type": "integer"
           }
         },
-        "title_en": "RulePageResult<RuleCountInfo>",
+        "title_en": "",
         "title_zh": "RulePageResult<RuleCountInfo>",
         "type": "object"
       }

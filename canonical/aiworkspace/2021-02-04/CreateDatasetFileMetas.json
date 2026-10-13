@@ -1,5 +1,6 @@
 {
-  "camel_example": "aliyun aiworkspace POST /api/v1/datasets/d-lfd60v0p0000ujtsdx/datasetfilemetas --region cn-hangzhou --header \"Content-Type=application/json\" --body {\"DatasetFileMetas\":[\"example-string\"],\"WorkspaceId\":\"47800\",\"DatasetVersion\":\"v1\"}",
+  "backend_timeout_ms": 5000,
+  "camel_example": "aliyun aiworkspace POST /api/v1/datasets/d-lfd60v0p0000ujtsdx/datasetfilemetas --region cn-hangzhou --header \"Content-Type=application/json\"",
   "cmd_full_name": "aiworkspace create-dataset-file-metas",
   "cmd_name": "create-dataset-file-metas",
   "components": {
@@ -9,7 +10,6 @@
         "description_zh": "单个文件元数据操的作返回结果",
         "properties": {
           "DatasetFileMetaId": {
-            "backendName": "DatasetFileMetaId",
             "description_en": "The metadata ID of the dataset file",
             "description_zh": "文件元数据ID",
             "example": "07914c9534586e4e7aa6e9dbca5009082df*******8a0d857b33296c59bf6",
@@ -18,7 +18,6 @@
             "type": "string"
           },
           "Result": {
-            "backendName": "Result",
             "description_en": "The description of the reason why the metadata operation failed",
             "description_zh": "文件元数据操作失败原因描述",
             "example": "Not Found",
@@ -27,7 +26,6 @@
             "type": "string"
           },
           "Uri": {
-            "backendName": "Uri",
             "description_en": "The file URI",
             "description_zh": "文件的URI",
             "example": "oss://l*****-test/dataset/1653421.jpg",
@@ -44,7 +42,7 @@
   "deprecated": false,
   "description_en": "Creates file metadata records in a dataset in batches",
   "description_zh": "批量创建数据集下的文件元数据记录",
-  "kebab_example": "aliyun aiworkspace create-dataset-file-metas --dataset-id d-lfd60v0p0000ujtsdx --workspace-id 47800 --dataset-version v1 --dataset-file-metas example-string --region cn-hangzhou",
+  "kebab_example": "aliyun aiworkspace create-dataset-file-metas --dataset-id d-lfd60v0p0000ujtsdx --region cn-hangzhou",
   "method": "POST",
   "multi_version": false,
   "name": "CreateDatasetFileMetas",
@@ -80,8 +78,60 @@
       "type": "string"
     },
     {
+      "example": "478**",
+      "help_en": "The ID of the workspace where the dataset resides. For information about how to obtain the workspace ID, see https://help.aliyun.com/document_detail/449124.html",
+      "help_zh": "数据集所在工作空间ID。如何获取工作空间ID，请参见https://help.aliyun.com/document_detail/449124.html",
+      "location": "body",
+      "name": "workspace_id",
+      "options": [
+        "--workspace-id"
+      ],
+      "param_style": "json",
+      "raw_name": "WorkspaceId",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "example": "v1",
+      "help_en": "The dataset version name",
+      "help_zh": "数据集版本名称",
+      "location": "body",
+      "name": "dataset_version",
+      "options": [
+        "--dataset-version"
+      ],
+      "param_style": "json",
+      "raw_name": "DatasetVersion",
+      "required": true,
+      "type": "string"
+    },
+    {
       "element": {
         "fields": [
+          {
+            "example": "00001.jpeg",
+            "help_en": "The file name",
+            "help_zh": "文件名",
+            "name": "file_name",
+            "options": [
+              "--file-name"
+            ],
+            "raw_name": "FileName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "oss://*****-test/dataset/1653421.jpg\nnas://0e25d***dff/dataset/1653421.jpg",
+            "help_en": "The unique URI of the file. Used to record the unique file path. Supports file paths in OSS and NAS.\n<details>\n<summary>OSS</summary>\noss://${bucket}/${path}\n</details>\n<details>\n<summary>NAS</summary>\nnas://${fileSystemId}/${path}\n</details>",
+            "help_zh": "文件唯一URI。用于记录文件唯一路径。支持OSS、NAS下的文件路径。\n<details>\n<summary>OSS</summary>\noss://${bucket}/${path}\n</details>\n<details>\n<summary>NAS</summary>\nnas://${fileSystemId}/${path}\n</details>",
+            "name": "uri",
+            "options": [
+              "--uri"
+            ],
+            "raw_name": "Uri",
+            "required": true,
+            "type": "string"
+          },
           {
             "example": "The first image file in the dataset.",
             "help_en": "The file comment",
@@ -95,14 +145,38 @@
             "type": "string"
           },
           {
-            "example": "image/jpeg",
-            "help_en": "The MIME type of the file. Contains Type and SubType",
-            "help_zh": "文件的MIME类型。包含Type和SubType",
-            "name": "content_type",
+            "example": "2025-01-12T14:36:01Z",
+            "help_en": "The file creation time in ISO 8601 format",
+            "help_zh": "文件创建时间，格式：ISO8601格式",
+            "name": "file_create_time",
             "options": [
-              "--content-type"
+              "--file-create-time"
             ],
-            "raw_name": "ContentType",
+            "raw_name": "FileCreateTime",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "2025-01-12T14:36:01Z",
+            "help_en": "The last modification time of the file in ISO 8601 format",
+            "help_zh": "文件最后修改时间，格式：ISO8601格式",
+            "name": "file_update_time",
+            "options": [
+              "--file-update-time"
+            ],
+            "raw_name": "FileUpdateTime",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "example": "D41D8CD98F*****E9800998ECF8",
+            "help_en": "The file fingerprint value. Used to determine the uniqueness of file content. This value changes when the file content is modified. OSS files use ETag, and NAS files use MD5 values",
+            "help_zh": "文件指纹值。用于确定文件内容的唯一性，文件内容修改后该值会发生变化。OSS文件使用ETag，NAS文件使用MD5值",
+            "name": "file_finger_print",
+            "options": [
+              "--file-finger-print"
+            ],
+            "raw_name": "FileFingerPrint",
             "required": true,
             "type": "string"
           },
@@ -119,42 +193,13 @@
             "type": "int"
           },
           {
-            "example": "2025-01-12T14:36:01Z",
-            "help_en": "The file creation time in ISO 8601 format",
-            "help_zh": "文件创建时间，格式：ISO8601格式",
-            "name": "file_create_time",
-            "options": [
-              "--file-create-time"
+            "enum": [
+              "image",
+              "application",
+              "audio",
+              "video",
+              "text"
             ],
-            "raw_name": "FileCreateTime",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "D41D8CD98F*****E9800998ECF8",
-            "help_en": "The file fingerprint value. Used to determine the uniqueness of file content. This value changes when the file content is modified. OSS files use ETag, and NAS files use MD5 values",
-            "help_zh": "文件指纹值。用于确定文件内容的唯一性，文件内容修改后该值会发生变化。OSS文件使用ETag，NAS文件使用MD5值",
-            "name": "file_finger_print",
-            "options": [
-              "--file-finger-print"
-            ],
-            "raw_name": "FileFingerPrint",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "example": "00001.jpeg",
-            "help_en": "The file name",
-            "help_zh": "文件名",
-            "name": "file_name",
-            "options": [
-              "--file-name"
-            ],
-            "raw_name": "FileName",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "image",
             "help_en": "The file type. Same as MIME Type",
             "help_zh": "文件类型。与MIME Type相同",
@@ -167,14 +212,25 @@
             "type": "string"
           },
           {
-            "example": "2025-01-12T14:36:01Z",
-            "help_en": "The last modification time of the file in ISO 8601 format",
-            "help_zh": "文件最后修改时间，格式：ISO8601格式",
-            "name": "file_update_time",
-            "options": [
-              "--file-update-time"
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/tiff",
+              "image/bmp",
+              "image/gif",
+              "image/x-icon",
+              "image/svg+xml",
+              "image/webp",
+              "image/heic "
             ],
-            "raw_name": "FileUpdateTime",
+            "example": "image/jpeg",
+            "help_en": "The MIME type of the file. Contains Type and SubType",
+            "help_zh": "文件的MIME类型。包含Type和SubType",
+            "name": "content_type",
+            "options": [
+              "--content-type"
+            ],
+            "raw_name": "ContentType",
             "required": true,
             "type": "string"
           },
@@ -201,18 +257,6 @@
             "raw_name": "Tags",
             "required": false,
             "type": "string"
-          },
-          {
-            "example": "oss://*****-test/dataset/1653421.jpg\nnas://0e25d***dff/dataset/1653421.jpg",
-            "help_en": "The unique URI of the file. Used to record the unique file path. Supports file paths in OSS and NAS.\n<details>\n<summary>OSS</summary>\noss://${bucket}/${path}\n</details>\n<details>\n<summary>NAS</summary>\nnas://${fileSystemId}/${path}\n</details>",
-            "help_zh": "文件唯一URI。用于记录文件唯一路径。支持OSS、NAS下的文件路径。\n<details>\n<summary>OSS</summary>\noss://${bucket}/${path}\n</details>\n<details>\n<summary>NAS</summary>\nnas://${fileSystemId}/${path}\n</details>",
-            "name": "uri",
-            "options": [
-              "--uri"
-            ],
-            "raw_name": "Uri",
-            "required": true,
-            "type": "string"
           }
         ],
         "type": "object"
@@ -228,34 +272,6 @@
       "raw_name": "DatasetFileMetas",
       "required": true,
       "type": "array"
-    },
-    {
-      "example": "v1",
-      "help_en": "The dataset version name",
-      "help_zh": "数据集版本名称",
-      "location": "body",
-      "name": "dataset_version",
-      "options": [
-        "--dataset-version"
-      ],
-      "param_style": "json",
-      "raw_name": "DatasetVersion",
-      "required": true,
-      "type": "string"
-    },
-    {
-      "example": "478**",
-      "help_en": "The ID of the workspace where the dataset resides. For information about how to obtain the workspace ID, see https://help.aliyun.com/document_detail/449124.html",
-      "help_zh": "数据集所在工作空间ID。如何获取工作空间ID，请参见https://help.aliyun.com/document_detail/449124.html",
-      "location": "body",
-      "name": "workspace_id",
-      "options": [
-        "--workspace-id"
-      ],
-      "param_style": "json",
-      "raw_name": "WorkspaceId",
-      "required": true,
-      "type": "string"
     }
   ],
   "pathPattern": "/api/v1/datasets/[DatasetId]/datasetfilemetas",
@@ -268,10 +284,8 @@
         "description_zh": "请求结果",
         "properties": {
           "FailedDetails": {
-            "backendName": "FailedDetails",
             "description_en": "The list of file metadata entries that failed to be created",
             "description_zh": "创建失败的文件元数据列表",
-            "itemName": "FailedDetails",
             "items": {
               "$ref": "#/components/schemas/DatasetFileMetaResponse",
               "description_en": "The details of a file metadata entry that failed to be created",
@@ -280,25 +294,26 @@
             "type": "array"
           },
           "RequestId": {
-            "backendName": "RequestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "5A14FA81-DD4E-******-6343FE44B941",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "Status": {
-            "backendName": "Status",
             "description_en": "The status of the batch metadata creation result. A value of true indicates that all entries are created. If the value is false, check FailedDetails",
             "description_zh": "本批元数据创建结果的状态。全部成功为true，如果为false，需要查看FailedDetails",
+            "enumValueTitles": {
+              "false": "失败",
+              "true": "成功"
+            },
             "example": "true",
             "type": "boolean"
           },
           "SucceedDetails": {
             "description_en": "The list of file metadata entries that were created",
             "description_zh": "创建成功的文件元数据列表",
-            "itemName": "SucceedDetails",
             "items": {
               "$ref": "#/components/schemas/DatasetFileMetaResponse",
               "description_en": "The details of a file metadata entry that was created",
@@ -307,7 +322,7 @@
             "type": "array"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

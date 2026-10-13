@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun ververica POST /api/v2/namespaces/default-namespace/sql-statement/execute --region cn-hangzhou --header \"workspace=710d6a64d8c34d\" --header \"Content-Type=application/json\"",
   "cmd_full_name": "ververica execute-sql-statement",
   "cmd_name": "execute-sql-statement",
@@ -9,7 +10,6 @@
         "description_zh": "Sql作业代码校验错误细节",
         "properties": {
           "columnNumber": {
-            "backendName": "column_number",
             "description_en": "The number of the column at which the error starts",
             "description_zh": "错误开始列数",
             "example": "2",
@@ -17,7 +17,6 @@
             "type": "string"
           },
           "endColumnNumber": {
-            "backendName": "end_column_number",
             "description_en": "The number of the column at which the error ends",
             "description_zh": "错误结束列数",
             "example": "11",
@@ -25,7 +24,6 @@
             "type": "string"
           },
           "endLineNumber": {
-            "backendName": "end_line_number",
             "description_en": "The number of the row at which the error ends",
             "description_zh": "错误结束行数",
             "example": "5",
@@ -33,7 +31,6 @@
             "type": "string"
           },
           "invalidflinkConf": {
-            "backendName": "invalid_flink_conf",
             "description_en": "The list of invalid configurations of Realtime Compute for Apache Flink",
             "description_zh": "无效flink conf列表",
             "items": {
@@ -46,7 +43,6 @@
             "type": "array"
           },
           "lineNumber": {
-            "backendName": "line_number",
             "description_en": "The number the row at which the error starts",
             "description_zh": "错误开始行数",
             "example": "3",
@@ -54,7 +50,6 @@
             "type": "string"
           },
           "message": {
-            "backendName": "message",
             "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "\"\"",
@@ -71,12 +66,10 @@
         "properties": {
           "errorDetails": {
             "$ref": "#/components/schemas/ErrorDetails",
-            "backendName": "errorDetails",
             "description_en": "The error details returned",
             "description_zh": "执行错误信息"
           },
           "executeSuccess": {
-            "backendName": "executeSuccess",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "是否执行成功",
             "example": "true",
@@ -84,7 +77,6 @@
             "type": "boolean"
           },
           "statement": {
-            "backendName": "statement",
             "description_en": "The statement that was executed",
             "description_zh": "执行语句",
             "example": "“show create table order”",
@@ -151,32 +143,17 @@
       "type": "string"
     },
     {
-      "element": {
-        "type": "string"
-      },
-      "help_en": "The additional dependencies",
-      "help_zh": "附加依赖",
+      "example": "CREATE TEMPORARY TABLE datagen_source (\n    name VARCHAR,\n    score BIGINT\n) WITH (\n   'connector' = 'datagen'\n);",
+      "help_en": "The code of the deployment",
+      "help_zh": "代码内容",
       "location": "body",
-      "name": "additional_dependencies",
+      "name": "statement",
       "options": [
-        "--additional-dependencies"
+        "--statement"
       ],
-      "raw_name": "additionalDependencies",
-      "required": false,
-      "type": "array"
-    },
-    {
-      "example": "false",
-      "help_en": "Specifies whether the deployment is a batch deployment",
-      "help_zh": "是否为批作业",
-      "location": "body",
-      "name": "batch_mode",
-      "options": [
-        "--batch-mode"
-      ],
-      "raw_name": "batchMode",
+      "raw_name": "statement",
       "required": true,
-      "type": "bool"
+      "type": "string"
     },
     {
       "help_en": "The Realtime Compute for Apache Flink configuration",
@@ -194,17 +171,17 @@
       }
     },
     {
-      "example": "CREATE TEMPORARY TABLE datagen_source (\n    name VARCHAR,\n    score BIGINT\n) WITH (\n   'connector' = 'datagen'\n);",
-      "help_en": "The code of the deployment",
-      "help_zh": "代码内容",
+      "example": "false",
+      "help_en": "Specifies whether the deployment is a batch deployment",
+      "help_zh": "是否为批作业",
       "location": "body",
-      "name": "statement",
+      "name": "batch_mode",
       "options": [
-        "--statement"
+        "--batch-mode"
       ],
-      "raw_name": "statement",
+      "raw_name": "batchMode",
       "required": true,
-      "type": "string"
+      "type": "bool"
     },
     {
       "example": "vvr-8.0.6-flink-1.17",
@@ -218,6 +195,21 @@
       "raw_name": "versionName",
       "required": false,
       "type": "string"
+    },
+    {
+      "element": {
+        "type": "string"
+      },
+      "help_en": "The additional dependencies",
+      "help_zh": "附加依赖",
+      "location": "body",
+      "name": "additional_dependencies",
+      "options": [
+        "--additional-dependencies"
+      ],
+      "raw_name": "additionalDependencies",
+      "required": false,
+      "type": "array"
     }
   ],
   "pathPattern": "/api/v2/namespaces/[namespace]/sql-statement/execute",
@@ -235,53 +227,48 @@
             "description_zh": "元数据SQL执行结果"
           },
           "errorCode": {
-            "backendName": "errorCode",
             "description_en": "If success is false, a business error code is returned.\n \nIf success is true, an empty value is returned",
             "description_zh": "当success为false，返回业务错误码；\n \n当success为true，返回空值",
             "example": "\"\"",
-            "title_en": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空。",
+            "title_en": "",
             "title_zh": "当success为false时，该值不为空，表示业务错误码；当success为true时，该值为空。",
             "type": "string"
           },
           "errorMessage": {
-            "backendName": "errorMessage",
             "description_en": "If success is false, a business error message is returned.\n\nIf success is true, an empty value is returned",
             "description_zh": "当success为false，返回业务错误信息；\n\n当success为true，返回空值",
             "example": "\"\"",
-            "title_en": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空。",
+            "title_en": "",
             "title_zh": "当success为false时，该值不为空，表示业务错误信息；当success为true时，该值为空。",
             "type": "string"
           },
           "httpCode": {
-            "backendName": "httpCode",
             "description_en": "The HTTP status code, which is always 200. Use the success field to determine whether the request was successful",
             "description_zh": "业务状态码，统一为200；使用success表示业务请求是否成功",
             "example": "200",
             "format": "int32",
-            "title_en": "业务状态码，统一为200；使用success表示业务请求是否成功。",
+            "title_en": "",
             "title_zh": "业务状态码，统一为200；使用success表示业务请求是否成功。",
             "type": "integer"
           },
           "requestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "CBC799F0-AS7S-1D30-8A4F-882ED4DD****",
-            "title_en": "请求ID。",
+            "title_en": "",
             "title_zh": "请求ID。",
             "type": "string"
           },
           "success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request was successful",
             "description_zh": "表示业务请求是否成功",
             "example": "true",
-            "title_en": "表示业务请求是否成功。",
+            "title_en": "",
             "title_zh": "表示业务请求是否成功。",
             "type": "boolean"
           }
         },
-        "title_en": "响应数据。",
+        "title_en": "",
         "title_zh": "响应数据。",
         "type": "object"
       }

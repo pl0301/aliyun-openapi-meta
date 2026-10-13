@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun polardb DescribeAIDBClusters --region cn-hangzhou --Tag.1.Key testKey --PageSize 30 --DBClusterIds 'pc-000000000000000' --PageNumber 1 --DBClusterStatus Running --AiNodeType 'vnode,container' --Tag.1.Value testValueData --DBClusterDescription 'pc-0000000000000000' --PayType Prepaid --RegionId 'cn-hangzhou'",
   "cmd_full_name": "polardb describe-aidb-clusters",
   "cmd_name": "describe-aidb-clusters",
   "deprecated": false,
-  "description_en": "Queries the list of custom AI clusters",
+  "description_en": "Queries the list of custom clusters",
   "description_zh": "查看custom集群列表",
   "kebab_example": "aliyun polardb describe-aidb-clusters --db-cluster-ids pc-000000000000000 --page-size 30 --page-number 1 --db-cluster-description pc-0000000000000000 --db-cluster-status Running --pay-type Prepaid --biz-region-id cn-hangzhou --ai-node-type vnode,container --tag Value=testValueData Key=testKey --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "pc-***************",
-      "help_en": "The cluster ID. Separate multiple cluster IDs with commas (,)",
+      "help_en": "The cluster IDs. Separate multiple cluster IDs with commas (,)",
       "help_zh": " 集群ID。多个集群ID间用英文逗号（,）隔开",
       "location": "query",
       "name": "db_cluster_ids",
@@ -35,7 +36,7 @@
     },
     {
       "example": "30",
-      "help_en": "The number of entries per page. Valid values: 30, 50, and 100.\n                              \nDefault value: 30",
+      "help_en": "The number of entries to return on each page. Valid values: 30, 50, and 100.\n                              \nDefault value: 30",
       "help_zh": "每页记录数，取值为30、50或100。\n                              \n默认值为30。 ",
       "location": "query",
       "name": "page_size",
@@ -61,7 +62,7 @@
     },
     {
       "example": "pc-****************",
-      "help_en": "The cluster description. Fuzzy match is supported",
+      "help_en": "The description of the cluster. Fuzzy match is supported",
       "help_zh": "集群描述，可模糊查询",
       "location": "query",
       "name": "db_cluster_description",
@@ -74,7 +75,7 @@
     },
     {
       "example": "Running",
-      "help_en": "The cluster status. Valid values:\n\nCreating: being created.\nRunning: running.\nDeleting: being released.\nRebooting: being restarted.\nDBNodeCreating: a node is being added (increase).\nDBNodeDeleting: a node is being deleted.\nClassChanging: node specifications are being changed.\nNetAddressCreating: a network connectivity is being created.\nNetAddressDeleting: a network connectivity is being deleted.\nNetAddressModifying: a network connectivity is being modified. \nDeleted: released.\nClassChanged: resources are being revoked after a decrease the quota operation",
+      "help_en": "The status of the cluster. Valid values:\n\nCreating: The cluster is being created.\nRunning: The cluster is running.\nDeleting: The cluster is being released.\nRebooting: The cluster is being restarted.\nDBNodeCreating: Nodes are being increased.\nDBNodeDeleting: Nodes are being deleted.\nClassChanging: The node specifications are being changed.\nNetAddressCreating: The network connectivity is being created.\nNetAddressDeleting: The network connectivity is being deleted.\nNetAddressModifying: The network connectivity is being modified. \nDeleted: The cluster is released.\nClassChanged: Resources are being revoked after you upgrade or decrease the quota",
       "help_zh": "集群状态，取值范围如下：\n\nCreating：创建中\nRunning：运行中\nDeleting：释放中\nRebooting：重启中\nDBNodeCreating：正在增加节点\nDBNodeDeleting：正在删除节点\nClassChanging：正在变更节点规格\nNetAddressCreating：正在创建网络连接\nNetAddressDeleting：正在删除网络连接\nNetAddressModifying：正在修改网络连接 \nDeleted：已释放\nClassChanged：升降配结束资源回收中",
       "location": "query",
       "name": "db_cluster_status",
@@ -113,7 +114,7 @@
     },
     {
       "example": "vnode,container",
-      "help_en": "The node type. Multiple types are supported. Separate two values with a comma (,).\n\nvnode: managed by Kubernetes.\ncontainer: logon-enabled container.\nmaas: model service",
+      "help_en": "The node type. You can specify multiple types separated by commas (,). Valid values:\n\nvnode: managed by Kubernetes.\ncontainer: logon-enabled container.\nmaas: model service",
       "help_zh": "节点类型。支持多个类型搜索，两个值用逗号隔离：\n\nvnode： K8s纳管\ncontainer：可登录容器\nmaas: 模型服务",
       "location": "query",
       "name": "ai_node_type",
@@ -129,7 +130,7 @@
         "fields": [
           {
             "example": "testKey",
-            "help_en": "The tag key. You can filter the cluster list by tag. You can specify up to 20 tag pairs. The number n for each tag pair must be unique and must be a consecutive integer starting from 1. The value of Tag.n.Key corresponds to Tag.n.Value",
+            "help_en": "The tag key. You can filter clusters by tag. You can specify up to 20 tag key-value pairs. The number n in each tag pair must be unique and must be a consecutive integer starting from 1. The value of Tag.n.Key is Tag.n.Value",
             "help_zh": "标签键，可以根据标签过滤集群列表。最多20对标签，各个标签对的数字n必须不同，且必须是从1开始的连续整数。Tag.n.Key对应的值为Tag.n.Value",
             "name": "key",
             "options": [
@@ -154,7 +155,7 @@
         ],
         "type": "object"
       },
-      "help_en": "The list of tags",
+      "help_en": "The tag list",
       "help_zh": "标签列表",
       "location": "query",
       "name": "tag",
@@ -177,252 +178,202 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Items": {
-            "backendName": "data.items",
-            "itemName": "DBCluster",
-            "items": {
-              "properties": {
-                "AiNodeType": {
-                  "backendName": "aiNodeType",
-                  "type": "string"
-                },
-                "CreateTime": {
-                  "backendName": "gmtCreated",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "DBClusterDescription": {
-                  "backendName": "dbClusterDescription",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBClusterId": {
-                  "backendName": "dbClusterId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBClusterStatus": {
-                  "backendName": "dbClusterStatus",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Creating",
-                        "value": "CREATING"
-                      },
-                      {
-                        "targetValue": "Running",
-                        "value": "ACTIVATION"
-                      },
-                      {
-                        "targetValue": "Deleting",
-                        "value": "DELETING"
-                      },
-                      {
-                        "targetValue": "Rebooting",
-                        "value": "RESTARTING"
-                      },
-                      {
-                        "targetValue": "Maintaining",
-                        "value": "INS_MAINTAINING"
-                      },
-                      {
-                        "targetValue": "Deleted",
-                        "value": "DELETED"
-                      },
-                      {
-                        "targetValue": "Stopped",
-                        "value": "STOPED"
-                      },
-                      {
-                        "targetValue": "Starting",
-                        "value": "STARTING"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "DBNodeClass": {
-                  "backendName": "dbInstanceClass",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBType": {
-                  "backendName": "relativeDbType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "mysql",
-                        "value": "polardb_mysql"
-                      },
-                      {
-                        "targetValue": "postgresql",
-                        "value": "polardb_pg"
-                      }
-                    ]
-                  }
-                },
-                "ExpireTime": {
-                  "backendName": "expireTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Expired": {
-                  "backendName": "expired",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "KubeClusterId": {
-                  "backendName": "kubeClusterId",
-                  "type": "string"
-                },
-                "LockMode": {
-                  "backendName": "lockMode",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Unlock",
-                        "value": "0"
-                      },
-                      {
-                        "targetValue": "ManualLock",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "LockByExpiration",
-                        "value": "2"
-                      },
-                      {
-                        "targetValue": "LockByRestoration",
-                        "value": "3"
-                      },
-                      {
-                        "targetValue": "LockByDiskQuota",
-                        "value": "4"
-                      },
-                      {
-                        "targetValue": "LockReaderByDiskQuota",
-                        "value": "5"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "ModelSpace": {
-                  "backendName": "modelSpace",
-                  "title_en": "模型空间信息",
-                  "title_zh": "模型空间信息",
-                  "type": "string"
-                },
-                "ModelType": {
-                  "backendName": "modelType",
-                  "type": "string"
-                },
-                "PayType": {
-                  "backendName": "payType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Postpaid",
-                        "value": "postpay"
-                      },
-                      {
-                        "targetValue": "Postpaid",
-                        "value": "postpaid"
-                      },
-                      {
-                        "targetValue": "Prepaid",
-                        "value": "prepay"
-                      },
-                      {
-                        "targetValue": "Prepaid",
-                        "value": "prepaid"
-                      }
-                    ]
-                  },
-                  "visibility": "Public"
-                },
-                "RegionId": {
-                  "backendName": "regionId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "RelativeDBClusterId": {
-                  "backendName": "relativeDbClusterId",
-                  "example": "pc-**************",
-                  "title_en": "融合集群实例ID。",
-                  "title_zh": "融合集群实例ID。",
-                  "type": "string"
-                },
-                "RunType": {
-                  "backendName": "kubeType",
-                  "type": "string"
-                },
-                "StorageSpace": {
-                  "backendName": "storageSpace",
-                  "format": "int32",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "StorageType": {
-                  "backendName": "storageType",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Tags": {
-                  "backendName": "tags",
-                  "itemName": "Tag",
-                  "items": {
-                    "properties": {
-                      "Key": {
-                        "backendName": "key",
-                        "title_en": "标签键。",
-                        "title_zh": "标签键。",
-                        "type": "string"
-                      },
-                      "Value": {
-                        "backendName": "value",
-                        "title_en": "标签值。",
-                        "title_zh": "标签值。",
-                        "type": "string"
-                      }
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DBCluster": {
+                "description_en": "The list of AI clusters",
+                "description_zh": "AI集群实例列表",
+                "items": {
+                  "description_en": "The attributes of the AI cluster",
+                  "description_zh": "AI集群实例属性",
+                  "properties": {
+                    "AiNodeType": {
+                      "description_en": "The node type. Valid values:\n\nvnode: managed by Kubernetes.\ncontainer: logon-enabled container.\nmaas: model service",
+                      "description_zh": "节点类型。可选：\n\nvnode： K8s纳管\ncontainer：可登录容器\nmaas: 模型服务",
+                      "example": "vnode",
+                      "type": "string"
                     },
-                    "title_en": "标签键，可以根据标签过滤集群列表。最多20对标签，各个标签对的数字n必须不同，且必须是从1开始的连续整数。Tag.n.Key对应的值为Tag.n.Value。",
-                    "title_zh": "标签键，可以根据标签过滤集群列表。最多20对标签，各个标签对的数字n必须不同，且必须是从1开始的连续整数。Tag.n.Key对应的值为Tag.n.Value。",
-                    "type": "object"
+                    "CreateTime": {
+                      "description_en": "The time when the cluster was created. The creation time of the AI cluster is displayed in the ISO 8601 UTC format (YYYY-MM-DDThh:mm:ssZ)",
+                      "description_zh": "集群创建时间。AI 集群创建时间，采用 ISO 8601 UTC 格式（YYYY-MM-DDThh:mm:ssZ）",
+                      "example": "2021-09-13T15:45:27Z",
+                      "type": "string"
+                    },
+                    "DBClusterDescription": {
+                      "description_en": "The cluster description",
+                      "description_zh": "集群描述",
+                      "example": "ocpx",
+                      "type": "string"
+                    },
+                    "DBClusterId": {
+                      "description_en": "The cluster ID",
+                      "description_zh": "集群ID",
+                      "example": "pc-**************",
+                      "type": "string"
+                    },
+                    "DBClusterStatus": {
+                      "description_en": "The cluster status",
+                      "description_zh": "集群状态",
+                      "example": "Creating",
+                      "type": "string"
+                    },
+                    "DBNodeClass": {
+                      "description_en": "The node specifications",
+                      "description_zh": "节点规格",
+                      "example": "\npolar.pg.g8.8xlarge.gu30",
+                      "type": "string"
+                    },
+                    "DBType": {
+                      "description_en": "The database engine type. Only polardb_ai is supported",
+                      "description_zh": "数据库引擎类型，当前仅支持polardb_ai类型",
+                      "example": "polardb_ai",
+                      "type": "string"
+                    },
+                    "ExpireTime": {
+                      "description_en": "The expiration time.\nThis parameter is returned only for subscription clusters. For pay-as-you-go clusters, an empty value is returned. The expiration time of the AI cluster is displayed in the ISO 8601 UTC format (YYYY-MM-DDThh:mm:ssZ)",
+                      "description_zh": "到期时间。\n仅付费方式为Prepaid（包年包月）的集群会返回具体参数值，Postpaid（按量付费）集群则返回空值。AI 集群到期时间，采用 ISO 8601 UTC 格式（YYYY-MM-DDThh:mm:ssZ）",
+                      "example": "2028-09-01T16:00:00Z",
+                      "type": "string"
+                    },
+                    "Expired": {
+                      "description_en": "Indicates whether the cluster has expired. Valid values:\n\ntrue\nfalse",
+                      "description_zh": "是否集群已过期。取值范围如下：\n\ntrue\n\nfalse",
+                      "example": "False",
+                      "type": "boolean"
+                    },
+                    "KubeClusterId": {
+                      "description_en": "The ACK cluster ID",
+                      "description_zh": "ACK集群ID",
+                      "example": "xxxxxxxxxxxx",
+                      "type": "string"
+                    },
+                    "LockMode": {
+                      "description_en": "The lock status of the cluster. Valid values: \n\nUnlock: The cluster is not locked. \nManualLock: The cluster is manually locked. \nLockByExpiration: The cluster is automatically locked due to expiration",
+                      "description_zh": "集群的锁定状态，取值范围如下： \n\nUnlock：正常。 \nManualLock：手动触发锁定。 \nLockByExpiration：集群过期自动锁定",
+                      "example": "Unlock",
+                      "type": "string"
+                    },
+                    "ModelSpace": {
+                      "description_en": "The model space information",
+                      "description_zh": "模型空间信息",
+                      "title_en": "",
+                      "title_zh": "模型空间信息",
+                      "type": "string"
+                    },
+                    "ModelType": {
+                      "description_en": "The model type",
+                      "description_zh": "模型类型",
+                      "example": "custom",
+                      "type": "string"
+                    },
+                    "PayType": {
+                      "description_en": "The billing method. Valid values: \n\nPostpaid: pay-as-you-go.\nPrepaid: subscription",
+                      "description_zh": "付费类型。取值范围： \n\nPostpaid：按量付费。\nPrepaid：包年包月（预付费）。 ",
+                      "example": "Postpaid",
+                      "type": "string"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID",
+                      "description_zh": "地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "RelativeDBClusterId": {
+                      "description_en": "The integrated cluster instance ID",
+                      "description_zh": "融合集群实例ID",
+                      "example": "pc-**************",
+                      "title_en": "",
+                      "title_zh": "融合集群实例ID。",
+                      "type": "string"
+                    },
+                    "RunType": {
+                      "description_en": "The run type. Valid values:\n\ncontainer: container.\ndefault: node",
+                      "description_zh": "运行类型。可选：\ncontainer： 容器\ndefault：节点",
+                      "example": "container",
+                      "type": "string"
+                    },
+                    "StorageSpace": {
+                      "description_en": "The storage space after the change. Unit: GB",
+                      "description_zh": "变更后的存储空间。单位：GB",
+                      "example": "10",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "StorageType": {
+                      "description_en": "The storage type. Valid values:\n\nessdpl0\nessdpl1\nessdpl2\nessdpl3",
+                      "description_zh": "存储类型取值如下：\nessdpl0\nessdpl1\nessdpl2\nessdpl3",
+                      "example": "essdpl0",
+                      "type": "string"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The tag list",
+                          "description_zh": "标签列表",
+                          "items": {
+                            "description_en": "The tag key. You can filter clusters by tag. You can specify up to 20 tag key-value pairs. The number n in each tag pair must be unique and must be a consecutive integer starting from 1. The value of Tag.n.Key is Tag.n.Value",
+                            "description_zh": "标签键，可以根据标签过滤集群列表。最多20对标签，各个标签对的数字n必须不同，且必须是从1开始的连续整数。Tag.n.Key对应的值为Tag.n.Value",
+                            "properties": {
+                              "Key": {
+                                "description_en": "The tag key",
+                                "description_zh": "标签键",
+                                "example": "testKey",
+                                "title_en": "",
+                                "title_zh": "标签键。",
+                                "type": "string"
+                              },
+                              "Value": {
+                                "description_en": "The tag value",
+                                "description_zh": "标签值",
+                                "example": "testValueData",
+                                "title_en": "",
+                                "title_zh": "标签值。",
+                                "type": "string"
+                              }
+                            },
+                            "title_en": "",
+                            "title_zh": "标签键，可以根据标签过滤集群列表。最多20对标签，各个标签对的数字n必须不同，且必须是从1开始的连续整数。Tag.n.Key对应的值为Tag.n.Value。",
+                            "type": "object"
+                          },
+                          "title_en": "",
+                          "title_zh": "标签列表",
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "VpcId": {
+                      "description_en": "The ID of the virtual private cloud (VPC) where the endpoint resides",
+                      "description_zh": "访问端点所在的专有网络ID",
+                      "example": "vpc-***************",
+                      "type": "string"
+                    },
+                    "VswitchId": {
+                      "description_en": "The vSwitch ID",
+                      "description_zh": "虚拟交换机ID",
+                      "example": "vsw-**************",
+                      "type": "string"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID",
+                      "description_zh": "可用区ID",
+                      "example": "cn-hangzhou-j",
+                      "type": "string"
+                    }
                   },
-                  "nullToEmpty": true,
-                  "title_en": "标签列表",
-                  "title_zh": "标签列表",
-                  "type": "array",
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "VpcId": {
-                  "backendName": "vpcId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "VswitchId": {
-                  "backendName": "vswitchId",
-                  "type": "string"
-                },
-                "ZoneId": {
-                  "backendName": "zoneId",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "data.pageNumber",
             "description_en": "The page number. Default value: 1",
             "description_zh": "查询页码，默认值为1",
             "example": "1",
@@ -430,32 +381,29 @@
             "type": "integer"
           },
           "PageRecordCount": {
-            "backendName": "data.pageRecordCount",
-            "description_en": "The number of records on the current page",
+            "description_en": "The number of entries returned on the current page",
             "description_zh": "当前页面记录数",
             "example": "7",
             "format": "int32",
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "Id of the request",
             "description_zh": "Id of the request",
             "example": "9D6CE7C6-1C52-5BF6-B3D7-10977D44542C",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           },
           "TotalRecordCount": {
-            "backendName": "data.totalRecordCount",
-            "description_en": "The total number of records",
+            "description_en": "The total number of entries",
             "description_zh": "总记录数",
             "example": "5",
             "format": "int32",
             "type": "integer"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

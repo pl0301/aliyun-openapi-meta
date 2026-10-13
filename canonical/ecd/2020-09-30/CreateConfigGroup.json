@@ -1,4 +1,6 @@
 {
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun ecd CreateConfigGroup --region cn-hangzhou --Type Timer --ProductType CLOUD_DESKTOP --RegionId 'cn-hangzhou' --Name '定时任务组' --version 2020-09-30 --method POST --force",
   "cmd_full_name": "ecd create-config-group",
   "cmd_name": "create-config-group",
   "deprecated": false,
@@ -20,6 +22,9 @@
   },
   "parameters": [
     {
+      "enum": [
+        "cn-shanghai"
+      ],
       "example": "cn-shanghai",
       "help_en": "The region ID. This feature is not region-specific. Set this parameter to `cn-shanghai`",
       "help_zh": "地域ID。该功能无地域属性，该字段固定填写`cn-shanghai`",
@@ -79,6 +84,9 @@
       "type": "string"
     },
     {
+      "enum": [
+        "CLOUD_DESKTOP"
+      ],
       "example": "CLOUD_DESKTOP",
       "help_en": "The product type used by the configuration group",
       "help_zh": "配置组使用的产品类型",
@@ -95,16 +103,27 @@
       "element": {
         "fields": [
           {
-            "example": "true",
-            "help_en": "Specifies whether to allow end users to configure scheduled tasks",
-            "help_zh": "是否允许终端用户自行配置定时任务",
-            "name": "allow_client_setting",
-            "options": [
-              "--allow-client-setting"
+            "enum": [
+              "NoOperationDisconnect",
+              "NoConnect",
+              "TimerBoot",
+              "TimerReset",
+              "NoOperationShutdown",
+              "NoOperationHibernate",
+              "TimerShutdown",
+              "NoOperationReboot",
+              "TimerReboot"
             ],
-            "raw_name": "AllowClientSetting",
-            "required": false,
-            "type": "bool"
+            "example": "TIMER_BOOT",
+            "help_en": "The type of the scheduled task",
+            "help_zh": "定时任务类型",
+            "name": "timer_type",
+            "options": [
+              "--timer-type"
+            ],
+            "raw_name": "TimerType",
+            "required": true,
+            "type": "string"
           },
           {
             "example": "0 0 16 ? * 1,2,3,4,5,6,7",
@@ -119,18 +138,6 @@
             "type": "string"
           },
           {
-            "example": "true",
-            "help_en": "Specifies whether to forcefully execute the task",
-            "help_zh": "是否强制执行",
-            "name": "enforce",
-            "options": [
-              "--enforce"
-            ],
-            "raw_name": "Enforce",
-            "required": false,
-            "type": "bool"
-          },
-          {
             "example": "10",
             "help_en": "The time interval. Unit: minutes",
             "help_zh": "时间间隔，单位为分钟",
@@ -143,18 +150,51 @@
             "type": "int"
           },
           {
-            "example": "300",
-            "help_en": "The advance notification time before the scheduled task is executed. Unit: seconds",
-            "help_zh": "定时任务执行前的通知提前时间。单位：秒",
-            "name": "notification_time",
+            "example": "true",
+            "help_en": "Specifies whether to forcefully execute the task",
+            "help_zh": "是否强制执行",
+            "name": "enforce",
             "options": [
-              "--notification-time"
+              "--enforce"
             ],
-            "raw_name": "NotificationTime",
+            "raw_name": "Enforce",
             "required": false,
-            "type": "int"
+            "type": "bool"
           },
           {
+            "enum": [
+              "RESET_TYPE_SYSTEM",
+              "RESET_TYPE_USER_DISK",
+              "RESET_TYPE_BOTH"
+            ],
+            "example": "RESET_TYPE_SYSTEM",
+            "help_en": "The reset type of the cloud desktop",
+            "help_zh": "云电脑重置类型",
+            "name": "reset_type",
+            "options": [
+              "--reset-type"
+            ],
+            "raw_name": "ResetType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "true",
+            "help_en": "Specifies whether to allow end users to configure scheduled tasks",
+            "help_zh": "是否允许终端用户自行配置定时任务",
+            "name": "allow_client_setting",
+            "options": [
+              "--allow-client-setting"
+            ],
+            "raw_name": "AllowClientSetting",
+            "required": false,
+            "type": "bool"
+          },
+          {
+            "enum": [
+              "Hibernate",
+              "Shutdown"
+            ],
             "example": "Shutdown",
             "help_en": "The operation type of the scheduled task. Currently, only disconnect scheduled tasks support this parameter",
             "help_zh": "定时任务操作类型，目前仅断连定时任务支持",
@@ -163,6 +203,22 @@
               "--operation-type"
             ],
             "raw_name": "OperationType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "enum": [
+              "Advanced",
+              "Standard"
+            ],
+            "example": "Standard",
+            "help_en": "The trigger configuration type for no-operation scheduled tasks",
+            "help_zh": "无操作定时任务触发配置类型",
+            "name": "trigger_type",
+            "options": [
+              "--trigger-type"
+            ],
+            "raw_name": "TriggerType",
             "required": false,
             "type": "string"
           },
@@ -181,42 +237,43 @@
             "type": "array"
           },
           {
-            "example": "RESET_TYPE_SYSTEM",
-            "help_en": "The reset type of the cloud desktop",
-            "help_zh": "云电脑重置类型",
-            "name": "reset_type",
+            "example": "300",
+            "help_en": "The advance notification time before the scheduled task is executed. Unit: seconds",
+            "help_zh": "定时任务执行前的通知提前时间。单位：秒",
+            "name": "notification_time",
             "options": [
-              "--reset-type"
+              "--notification-time"
             ],
-            "raw_name": "ResetType",
+            "raw_name": "NotificationTime",
             "required": false,
-            "type": "string"
+            "type": "int"
           },
           {
             "element": {
               "fields": [
                 {
-                  "example": "1764660600967",
-                  "help_en": "The appointment timer used for executing scheduled tasks at specified time points",
-                  "help_zh": "定点执行定时任务使用，指定后可以按照指定时间点执行定时任务",
-                  "name": "appointment_timer",
+                  "example": "Shutdown",
+                  "help_en": "The operation type of the scheduled task. Currently, only disconnect scheduled tasks support this parameter",
+                  "help_zh": "定时任务操作类型，目前仅断连定时任务支持",
+                  "name": "operation_type",
                   "options": [
-                    "--appointment-timer"
+                    "--operation-type"
                   ],
-                  "raw_name": "AppointmentTimer",
+                  "raw_name": "OperationType",
                   "required": false,
-                  "type": "int"
+                  "type": "string"
                 },
                 {
-                  "help_en": "Specifies whether to create a snapshot",
-                  "help_zh": "是否创建快照",
-                  "name": "create_snapshot",
+                  "example": "0 0 8 ? * 1-5",
+                  "help_en": "The cron expression for the start of the scheduled task execution",
+                  "help_zh": "定时任务开始执行的 Cron 表达式",
+                  "name": "start_cron_expression",
                   "options": [
-                    "--create-snapshot"
+                    "--start-cron-expression"
                   ],
-                  "raw_name": "CreateSnapshot",
+                  "raw_name": "StartCronExpression",
                   "required": false,
-                  "type": "bool"
+                  "type": "string"
                 },
                 {
                   "example": "0 0 18 ? * 1-5",
@@ -227,29 +284,6 @@
                     "--end-cron-expression"
                   ],
                   "raw_name": "EndCronExpression",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "help_en": "Specifies whether to forcefully execute the task. If set to true, the scheduled task is forcefully executed regardless of the desktop and connection status",
-                  "help_zh": "是否强制执行。为true表示忽略桌面及连接状态检测，强制执行定时任务",
-                  "name": "enforce",
-                  "options": [
-                    "--enforce"
-                  ],
-                  "raw_name": "Enforce",
-                  "required": false,
-                  "type": "bool"
-                },
-                {
-                  "example": "m-4zfb6zj728hhr****",
-                  "help_en": "The image ID",
-                  "help_zh": "镜像ID",
-                  "name": "image_id",
-                  "options": [
-                    "--image-id"
-                  ],
-                  "raw_name": "ImageId",
                   "required": false,
                   "type": "string"
                 },
@@ -266,64 +300,14 @@
                   "type": "int"
                 },
                 {
-                  "element": {
-                    "type": "string"
-                  },
-                  "help_en": "The list of effective IP CIDR blocks",
-                  "help_zh": "生效的 IP 网段列表",
-                  "name": "ip_segments",
+                  "example": "Standard",
+                  "help_en": "The trigger configuration type for no-operation scheduled tasks",
+                  "help_zh": "无操作定时任务触发配置类型",
+                  "name": "trigger_type",
                   "options": [
-                    "--ip-segments"
+                    "--trigger-type"
                   ],
-                  "raw_name": "IpSegments",
-                  "required": false,
-                  "type": "array"
-                },
-                {
-                  "example": "5",
-                  "help_en": "The duration of inactivity before the screen is locked, used by the no-operation lock screen feature. Unit: minutes. Only AD cloud desktops are supported",
-                  "help_zh": "无操作锁屏功能使用，指定无操作后触发锁屏的时长。单位：分钟。仅 AD 云电脑支持",
-                  "name": "lock_screen_time",
-                  "options": [
-                    "--lock-screen-time"
-                  ],
-                  "raw_name": "LockScreenTime",
-                  "required": false,
-                  "type": "int"
-                },
-                {
-                  "example": "300",
-                  "help_en": "The advance notification time before the scheduled task is executed. Unit: seconds",
-                  "help_zh": "定时任务执行前的通知提前时间。单位：秒",
-                  "name": "notification_time",
-                  "options": [
-                    "--notification-time"
-                  ],
-                  "raw_name": "NotificationTime",
-                  "required": false,
-                  "type": "int"
-                },
-                {
-                  "example": "Shutdown",
-                  "help_en": "The operation type of the scheduled task. Currently, only disconnect scheduled tasks support this parameter",
-                  "help_zh": "定时任务操作类型，目前仅断连定时任务支持",
-                  "name": "operation_type",
-                  "options": [
-                    "--operation-type"
-                  ],
-                  "raw_name": "OperationType",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "KB5082063",
-                  "help_en": "The patch ID",
-                  "help_zh": "补丁ID",
-                  "name": "patch_id",
-                  "options": [
-                    "--patch-id"
-                  ],
-                  "raw_name": "PatchId",
+                  "raw_name": "TriggerType",
                   "required": false,
                   "type": "string"
                 },
@@ -342,28 +326,16 @@
                   "type": "array"
                 },
                 {
-                  "example": "1",
-                  "help_en": "The reset type, which determines whether to reset and the scope of cloud disks to reset",
-                  "help_zh": "重置类型，决定是否重置，以及要重置的磁盘范围",
-                  "name": "reset_type",
+                  "example": "300",
+                  "help_en": "The advance notification time before the scheduled task is executed. Unit: seconds",
+                  "help_zh": "定时任务执行前的通知提前时间。单位：秒",
+                  "name": "notification_time",
                   "options": [
-                    "--reset-type"
+                    "--notification-time"
                   ],
-                  "raw_name": "ResetType",
+                  "raw_name": "NotificationTime",
                   "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "0 0 8 ? * 1-5",
-                  "help_en": "The cron expression for the start of the scheduled task execution",
-                  "help_zh": "定时任务开始执行的 Cron 表达式",
-                  "name": "start_cron_expression",
-                  "options": [
-                    "--start-cron-expression"
-                  ],
-                  "raw_name": "StartCronExpression",
-                  "required": false,
-                  "type": "string"
+                  "type": "int"
                 },
                 {
                   "example": "1",
@@ -390,16 +362,98 @@
                   "type": "string"
                 },
                 {
-                  "example": "Standard",
-                  "help_en": "The trigger configuration type for no-operation scheduled tasks",
-                  "help_zh": "无操作定时任务触发配置类型",
-                  "name": "trigger_type",
+                  "help_en": "Specifies whether to forcefully execute the task. If set to true, the scheduled task is forcefully executed regardless of the desktop and connection status",
+                  "help_zh": "是否强制执行。为true表示忽略桌面及连接状态检测，强制执行定时任务",
+                  "name": "enforce",
                   "options": [
-                    "--trigger-type"
+                    "--enforce"
                   ],
-                  "raw_name": "TriggerType",
+                  "raw_name": "Enforce",
+                  "required": false,
+                  "type": "bool"
+                },
+                {
+                  "example": "1",
+                  "help_en": "The reset type, which determines whether to reset and the scope of cloud disks to reset",
+                  "help_zh": "重置类型，决定是否重置，以及要重置的磁盘范围",
+                  "name": "reset_type",
+                  "options": [
+                    "--reset-type"
+                  ],
+                  "raw_name": "ResetType",
                   "required": false,
                   "type": "string"
+                },
+                {
+                  "example": "m-4zfb6zj728hhr****",
+                  "help_en": "The image ID",
+                  "help_zh": "镜像ID",
+                  "name": "image_id",
+                  "options": [
+                    "--image-id"
+                  ],
+                  "raw_name": "ImageId",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "example": "5",
+                  "help_en": "The duration of inactivity before the screen is locked, used by the no-operation lock screen feature. Unit: minutes. Only AD cloud desktops are supported",
+                  "help_zh": "无操作锁屏功能使用，指定无操作后触发锁屏的时长。单位：分钟。仅 AD 云电脑支持",
+                  "name": "lock_screen_time",
+                  "options": [
+                    "--lock-screen-time"
+                  ],
+                  "raw_name": "LockScreenTime",
+                  "required": false,
+                  "type": "int"
+                },
+                {
+                  "example": "1764660600967",
+                  "help_en": "The appointment timer used for executing scheduled tasks at specified time points",
+                  "help_zh": "定点执行定时任务使用，指定后可以按照指定时间点执行定时任务",
+                  "name": "appointment_timer",
+                  "options": [
+                    "--appointment-timer"
+                  ],
+                  "raw_name": "AppointmentTimer",
+                  "required": false,
+                  "type": "int"
+                },
+                {
+                  "example": "KB5082063",
+                  "help_en": "The patch ID",
+                  "help_zh": "补丁ID",
+                  "name": "patch_id",
+                  "options": [
+                    "--patch-id"
+                  ],
+                  "raw_name": "PatchId",
+                  "required": false,
+                  "type": "string"
+                },
+                {
+                  "help_en": "Specifies whether to create a snapshot",
+                  "help_zh": "是否创建快照",
+                  "name": "create_snapshot",
+                  "options": [
+                    "--create-snapshot"
+                  ],
+                  "raw_name": "CreateSnapshot",
+                  "required": false,
+                  "type": "bool"
+                },
+                {
+                  "example": "600",
+                  "help_en": "The verification wait duration. Unit: seconds",
+                  "help_zh": "校验等待时长。单位：秒",
+                  "name": "verification_time",
+                  "options": [
+                    "--verification-time"
+                  ],
+                  "raw_name": "VerificationTime",
+                  "required": false,
+                  "type": "int"
                 },
                 {
                   "example": "300",
@@ -414,16 +468,18 @@
                   "type": "int"
                 },
                 {
-                  "example": "600",
-                  "help_en": "The verification wait duration. Unit: seconds",
-                  "help_zh": "校验等待时长。单位：秒",
-                  "name": "verification_time",
+                  "element": {
+                    "type": "string"
+                  },
+                  "help_en": "The list of effective IP CIDR blocks",
+                  "help_zh": "生效的 IP 网段列表",
+                  "name": "ip_segments",
                   "options": [
-                    "--verification-time"
+                    "--ip-segments"
                   ],
-                  "raw_name": "VerificationTime",
+                  "raw_name": "IpSegments",
                   "required": false,
-                  "type": "int"
+                  "type": "array"
                 }
               ],
               "type": "object"
@@ -437,30 +493,6 @@
             "raw_name": "SegmentTimers",
             "required": false,
             "type": "array"
-          },
-          {
-            "example": "TIMER_BOOT",
-            "help_en": "The type of the scheduled task",
-            "help_zh": "定时任务类型",
-            "name": "timer_type",
-            "options": [
-              "--timer-type"
-            ],
-            "raw_name": "TimerType",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "example": "Standard",
-            "help_en": "The trigger configuration type for no-operation scheduled tasks",
-            "help_zh": "无操作定时任务触发配置类型",
-            "name": "trigger_type",
-            "options": [
-              "--trigger-type"
-            ],
-            "raw_name": "TriggerType",
-            "required": false,
-            "type": "string"
           }
         ],
         "type": "object"
@@ -488,30 +520,27 @@
         "description_zh": "创建结果",
         "properties": {
           "GroupId": {
-            "backendName": "data",
             "description_en": "The configuration group ID",
             "description_zh": "配置组ID",
             "example": "ccg-0ctwi5zbswtql****",
             "type": "string"
           },
           "Message": {
-            "backendName": "description",
             "description_en": "The creation result",
             "description_zh": "创建结果",
             "example": "success",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "EE9472BC-0B5D-5458-85CD-C52BDD******",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

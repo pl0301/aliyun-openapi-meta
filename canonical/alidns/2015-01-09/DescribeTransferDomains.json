@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun alidns DescribeTransferDomains --region cn-hangzhou --TransferType IN",
   "cmd_full_name": "alidns describe-transfer-domains",
   "cmd_name": "describe-transfer-domains",
   "deprecated": false,
-  "description_en": "Queries the domain names transferred between accounts based on the specified input parameters",
+  "description_en": "Queries the list of cross-account DNS transfers based on the specified parameters",
   "description_zh": "根据传入参数获取跨账号转移DNS列表",
   "kebab_example": "aliyun alidns describe-transfer-domains --transfer-type IN --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "en",
-      "help_en": "The language of the response.\n\nValid values:\n\nzh: Chinese\n\nen: English\n\nThe default value is zh",
+      "help_en": "The language of the request and response. Valid values:\nzh: Chinese.\nen: English.\nDefault value: zh",
       "help_zh": "请求和接收消息的语言类型。\n\n取值：\n\nzh：中文 \n\nen：英文\n\n   默认取值为zh",
       "location": "query",
       "name": "lang",
@@ -35,7 +36,7 @@
     },
     {
       "example": "1",
-      "help_en": "The page number. The value starts from 1. The default value is 1",
+      "help_en": "The number of the current page. Pages start from 1. Default value: 1",
       "help_zh": "当前页数，起始值为1，默认为1",
       "location": "query",
       "minimum": "1",
@@ -49,7 +50,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of entries per page. The maximum value is 100. The default value is 20",
+      "help_en": "The Settings for the number of entries per page during paging in a paged query. Maximum value: 100. Default value: 20",
       "help_zh": "分页查询时设置的每页行数，最大值100，默认为20",
       "location": "query",
       "maximum": "100",
@@ -65,7 +66,7 @@
     {
       "doc_required": true,
       "example": "IN",
-      "help_en": "The type of transfer. Valid values:\n\nIN: The list of domain names transferred to the current account.\n\nOUT: The list of domain names transferred from the current account",
+      "help_en": "The transfer type. Valid values:\nIN: domain names transferred to the current account.\nOUT: domain names transferred from the current account",
       "help_zh": "转移类型。取值范围：\n\nIN：转入到本账号的列表\nOUT：本账号转出的列表",
       "location": "query",
       "name": "transfer_type",
@@ -78,7 +79,7 @@
     },
     {
       "example": "example.top",
-      "help_en": "The domain name. Use this parameter to query the transfer records of a specific domain name",
+      "help_en": "The domain name. Specify a domain name to query its transfer records",
       "help_zh": "域名名称，查询指定域名的转移记录",
       "location": "query",
       "name": "domain_name",
@@ -91,7 +92,7 @@
     },
     {
       "example": "1*******",
-      "help_en": "The ID of the source account. Use this parameter to query the list of domain names transferred from this account to the current account",
+      "help_en": "The ID of the source account. Specify this parameter to view the list of domain names transferred from the specified account to the current account",
       "help_zh": "域名来源账号ID，查看从该ID账号转移给本账号的域名列表",
       "location": "query",
       "name": "from_user_id",
@@ -104,7 +105,7 @@
     },
     {
       "example": "1*******",
-      "help_en": "The ID of the destination account. Use this parameter to query the list of domain names transferred from the current account to this account",
+      "help_en": "The ID of the destination account. Specify this parameter to view the list of domain names transferred from the current account to the specified account",
       "help_zh": "域名去处账号ID，查看从本账号转移给该ID账号的域名列表",
       "location": "query",
       "name": "target_user_id",
@@ -122,87 +123,95 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "DomainTransfers": {
-            "backendName": "module.data",
-            "itemName": "DomainTransfer",
-            "items": {
-              "properties": {
-                "CreateTime": {
-                  "backendName": "createTime",
-                  "type": "string",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "DomainTransfer": {
+                "description_en": "The list of cross-account DNS transfers",
+                "description_zh": "跨账号转移DNS列表",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "CreateTime": {
+                      "description_en": "The time when the transfer record was created. The time is displayed in UTC in the YYYY-MM-DDTHH:mmZ format",
+                      "description_zh": "创建时间，采用 UTC 时间，格式为 YYYY-MM-DDTHH:mmZ",
+                      "example": "2019-10-30T07:16Z",
+                      "type": "string"
+                    },
+                    "CreateTimestamp": {
+                      "description_en": "The time when the transfer record was created. The value is a UNIX timestamp",
+                      "description_zh": "创建时间（时间戳）",
+                      "example": "1572419764000",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "DomainName": {
+                      "description_en": "The domain name",
+                      "description_zh": "域名",
+                      "example": "example.top",
+                      "type": "string"
+                    },
+                    "FromUserId": {
+                      "description_en": "The ID of the source user from which the domain name is transferred",
+                      "description_zh": "域名转出的原始用户ID",
+                      "example": "2*******",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "Id": {
+                      "description_en": "The ID of the transfer record",
+                      "description_zh": "转移记录的ID",
+                      "example": "1*******",
+                      "format": "int64",
+                      "type": "integer"
+                    },
+                    "TargetUserId": {
+                      "description_en": "The ID of the destination user to whom the domain name is transferred",
+                      "description_zh": "转移到的目标用户ID",
+                      "example": "1*******",
+                      "format": "int64",
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
                 },
-                "CreateTimestamp": {
-                  "backendName": "createTimestamp",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "DomainName": {
-                  "backendName": "domainName",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "FromUserId": {
-                  "backendName": "fromUserId",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "Id": {
-                  "backendName": "id",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                },
-                "TargetUserId": {
-                  "backendName": "targetUserId",
-                  "format": "int64",
-                  "type": "integer",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "PageNumber": {
-            "backendName": "module.pageNumber",
-            "description_en": "The page number. The value starts from 1. The default value is 1",
+            "description_en": "The number of the current page. Pages start from 1. Default value: 1",
             "description_zh": "当前页数，起始值为1，默认为1",
             "example": "1",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "module.pageSize",
-            "description_en": "The number of entries per page. The maximum value is 100. The default value is 20",
+            "description_en": "The Settings for the number of entries per page during paging in a paged query. Maximum value: 100. Default value: 20",
             "description_zh": "分页查询时设置的每页行数，最大值100，默认为20",
             "example": "20",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The unique request ID",
+            "description_en": "The unique ID of the request",
             "description_zh": "唯一请求识别码",
             "example": "536E9CAD-DB30-4647-AC87-AA5CC38C5382",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "TotalCount": {
-            "backendName": "module.totalItems",
-            "description_en": "The total number of entries",
+            "description_en": "The total number of entries returned",
             "description_zh": "列表总数",
             "example": "1",
             "format": "int64",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

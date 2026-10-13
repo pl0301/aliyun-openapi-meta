@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "cmd_full_name": "ess modify-scaling-configuration",
   "cmd_name": "modify-scaling-configuration",
   "deprecated": false,
@@ -574,6 +575,18 @@
       "element": {
         "fields": [
           {
+            "example": "PL1",
+            "help_en": "The performance level of the data cloud disk when the disk is an ESSD. Valid values:\n\nPL0: A single ESSD can deliver up to 10,000 random read/write IOPS.\nPL1: A single ESSD can deliver up to 50,000 random read/write IOPS.\nPL2: A single ESSD can deliver up to 100,000 random read/write IOPS.\nPL3: A single ESSD can deliver up to 1,000,000 random read/write IOPS.\n\nFor more information about how to select an ESSD performance level, see https://help.aliyun.com/document_detail/122389.html",
+            "help_zh": "当数据盘为ESSD云盘时，设置云盘的性能等级。可能值：\n\nPL0：单盘最高随机读写IOPS 1万。\nPL1：单盘最高随机读写IOPS 5万。\nPL2：单盘最高随机读写IOPS 10万。\nPL3：单盘最高随机读写IOPS 100万。\n\n关于如何选择ESSD云盘性能等级，请参见https://help.aliyun.com/document_detail/122389.html",
+            "name": "performance_level",
+            "options": [
+              "--performance-level"
+            ],
+            "raw_name": "PerformanceLevel",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "sp-bp19nq9enxqkomib****",
             "help_en": "The ID of the automatic snapshot policy applied to the data cloud disk",
             "help_zh": "数据盘使用的自动快照策略ID",
@@ -587,15 +600,39 @@
           },
           {
             "example": "false",
-            "help_en": "Specifies whether to enable the burst feature for the data cloud disk. Valid values:\n\ntrue: enables the burst feature.\nfalse: does not enable the burst feature.\nThis parameter is supported only when `SystemDisk.Category` is set to `cloud_auto`.\n\n<props=\"china\">For more information, see https://help.aliyun.com/document_detail/368372.html.</props>",
-            "help_zh": "系统盘是否开启Burst（性能突发）。可能值：\n\ntrue：开启。\nfalse：未开启。\n当`SystemDisk.Category`取值为`cloud_auto`时才支持设置该参数。\n\n<props=\"china\">更多信息，请参见https://help.aliyun.com/document_detail/368372.html。</props>",
-            "name": "bursting_enabled",
+            "help_en": "Specifies whether to encrypt the data cloud disk. Valid values:\n\ntrue: encrypts the data cloud disk.\nfalse: does not encrypt the data cloud disk",
+            "help_zh": "是否加密系统盘。可能值：\n\ntrue：加密。\nfalse：不加密",
+            "name": "encrypted",
             "options": [
-              "--bursting-enabled"
+              "--encrypted"
             ],
-            "raw_name": "BurstingEnabled",
+            "raw_name": "Encrypted",
             "required": false,
-            "type": "bool"
+            "type": "string"
+          },
+          {
+            "example": "Test data disk.\t\n",
+            "help_en": "The description of the system cloud disk. The description must be 2 to 256 characters in length and cannot start with `http://` or `https://`",
+            "help_zh": "系统盘的描述。长度为2~256个英文或中文字符，不能以`http://`和`https://`开头",
+            "name": "description",
+            "options": [
+              "--description"
+            ],
+            "raw_name": "Description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "s-snapshot****\t\n",
+            "help_en": "The ID of the snapshot used to create the data cloud disk. After this parameter is specified, DataDisk.Size is ignored, and the size of the created disk is the size of the specified snapshot.\n\nIf the snapshot was created on or before July 15, 2013, the request is rejected and the error message InvalidSnapshot.TooOld is returned",
+            "help_zh": "创建数据盘时使用的快照。指定该参数后，DataDisk.Size会被忽略，实际创建的磁盘大小为指定快照的大小。\n\n如果该快照创建于2013年7月15日或之前，调用会被拒绝，返回参数中会提示InvalidSnapshot.TooOld",
+            "name": "snapshot_id",
+            "options": [
+              "--snapshot-id"
+            ],
+            "raw_name": "SnapshotId",
+            "required": false,
+            "type": "string"
           },
           {
             "element": {
@@ -612,40 +649,16 @@
             "type": "array"
           },
           {
-            "example": "cloud_ssd",
-            "help_en": "The category of the data cloud disk. Valid values:\ncloud: basic cloud disk. The DeleteWithInstance attribute of a basic cloud disk created along with the instance is set to true.\ncloud_efficiency: ultra cloud disk.\ncloud_ssd: standard SSD.\ncloud_essd: ESSD.\nephemeral_ssd: local SSD.\ncloud_auto: ESSD AutoPL.\ncloud_regional_disk_auto: regional ESSD.\n\nThis parameter cannot be specified together with `DataDisk.Categories`. If neither this parameter nor `DataDisk.Categories` is specified, the default value is used:\n\nFor I/O optimized instances, the default value is cloud_efficiency.\n\nFor non-I/O optimized instances, the default value is cloud",
-            "help_zh": "数据盘的磁盘种类。可能值：\ncloud：普通云盘。随实例创建的普通云盘的DeleteWithInstance属性为true。\ncloud_efficiency：高效云盘。\ncloud_ssd：SSD云盘。\ncloud_essd：ESSD云盘。\nephemeral_ssd：本地SSD盘。\ncloud_auto：ESSD AutoPL 云盘。\ncloud_regional_disk_auto：ESSD 同城冗余云盘。\n\n该参数不能与`DataDisk.Categories`同时指定。当该参数与`DataDisk.Categories`都未指定时，该参数默认值：\n\n对于I/O优化实例，默认值为cloud_efficiency。\n\n对于非I/O优化实例，默认值为cloud",
-            "name": "category",
+            "example": "100",
+            "help_en": "The size of the data cloud disk. Unit: GiB. Valid values:\n\ncloud: 5 to 2000.\ncloud_efficiency: 20 to 32768.\ncloud_ssd: 20 to 32768.\ncloud_essd: 20 to 32768.\nephemeral_ssd: 5 to 800.\n\nAfter you specify this parameter, the disk size must be greater than or equal to the size of the snapshot specified by SnapshotId",
+            "help_zh": "数据盘的磁盘大小，内存单位为GiB。取值范围：\n\ncloud：5~2000。\ncloud_efficiency：20~32768。\ncloud_ssd：20~32768。\ncloud_essd：20~32768。\nephemeral_ssd：5~800。\n\n指定该参数后，磁盘大小必须大于等于快照大小（快照通过SnapshotId指定）",
+            "name": "size",
             "options": [
-              "--category"
+              "--size"
             ],
-            "raw_name": "Category",
+            "raw_name": "Size",
             "required": false,
-            "type": "string"
-          },
-          {
-            "example": "true",
-            "help_en": "Specifies whether the data cloud disk is released when the instance is released. Valid values:\n\ntrue: The data cloud disk is released when the instance is released.\nfalse: The data cloud disk is retained when the instance is released.\n\nThis parameter can be set only for independent cloud disks (DataDisk.Category is set to cloud, cloud_efficiency, cloud_ssd, cloud_essd, or cloud_auto). Otherwise, an error is returned",
-            "help_zh": "指定数据盘是否随实例释放。可能值：\n\ntrue：释放实例时，该磁盘随实例一起释放。\nfalse：释放实例时，该磁盘保留不释放。\n\n该参数只可对独立云盘设置（DataDisk.Category为cloud、cloud_efficiency、cloud_ssd、cloud_essd或者cloud_auto），否则会出现报错",
-            "name": "delete_with_instance",
-            "options": [
-              "--delete-with-instance"
-            ],
-            "raw_name": "DeleteWithInstance",
-            "required": false,
-            "type": "bool"
-          },
-          {
-            "example": "Test data disk.\t\n",
-            "help_en": "The description of the system cloud disk. The description must be 2 to 256 characters in length and cannot start with `http://` or `https://`",
-            "help_zh": "系统盘的描述。长度为2~256个英文或中文字符，不能以`http://`和`https://`开头",
-            "name": "description",
-            "options": [
-              "--description"
-            ],
-            "raw_name": "Description",
-            "required": false,
-            "type": "string"
+            "type": "int"
           },
           {
             "example": "/dev/xvdd",
@@ -672,16 +685,28 @@
             "type": "string"
           },
           {
-            "example": "false",
-            "help_en": "Specifies whether to encrypt the data cloud disk. Valid values:\n\ntrue: encrypts the data cloud disk.\nfalse: does not encrypt the data cloud disk",
-            "help_zh": "是否加密系统盘。可能值：\n\ntrue：加密。\nfalse：不加密",
-            "name": "encrypted",
+            "example": "cloud_ssd",
+            "help_en": "The category of the data cloud disk. Valid values:\ncloud: basic cloud disk. The DeleteWithInstance attribute of a basic cloud disk created along with the instance is set to true.\ncloud_efficiency: ultra cloud disk.\ncloud_ssd: standard SSD.\ncloud_essd: ESSD.\nephemeral_ssd: local SSD.\ncloud_auto: ESSD AutoPL.\ncloud_regional_disk_auto: regional ESSD.\n\nThis parameter cannot be specified together with `DataDisk.Categories`. If neither this parameter nor `DataDisk.Categories` is specified, the default value is used:\n\nFor I/O optimized instances, the default value is cloud_efficiency.\n\nFor non-I/O optimized instances, the default value is cloud",
+            "help_zh": "数据盘的磁盘种类。可能值：\ncloud：普通云盘。随实例创建的普通云盘的DeleteWithInstance属性为true。\ncloud_efficiency：高效云盘。\ncloud_ssd：SSD云盘。\ncloud_essd：ESSD云盘。\nephemeral_ssd：本地SSD盘。\ncloud_auto：ESSD AutoPL 云盘。\ncloud_regional_disk_auto：ESSD 同城冗余云盘。\n\n该参数不能与`DataDisk.Categories`同时指定。当该参数与`DataDisk.Categories`都未指定时，该参数默认值：\n\n对于I/O优化实例，默认值为cloud_efficiency。\n\n对于非I/O优化实例，默认值为cloud",
+            "name": "category",
             "options": [
-              "--encrypted"
+              "--category"
             ],
-            "raw_name": "Encrypted",
+            "raw_name": "Category",
             "required": false,
             "type": "string"
+          },
+          {
+            "example": "true",
+            "help_en": "Specifies whether the data cloud disk is released when the instance is released. Valid values:\n\ntrue: The data cloud disk is released when the instance is released.\nfalse: The data cloud disk is retained when the instance is released.\n\nThis parameter can be set only for independent cloud disks (DataDisk.Category is set to cloud, cloud_efficiency, cloud_ssd, cloud_essd, or cloud_auto). Otherwise, an error is returned",
+            "help_zh": "指定数据盘是否随实例释放。可能值：\n\ntrue：释放实例时，该磁盘随实例一起释放。\nfalse：释放实例时，该磁盘保留不释放。\n\n该参数只可对独立云盘设置（DataDisk.Category为cloud、cloud_efficiency、cloud_ssd、cloud_essd或者cloud_auto），否则会出现报错",
+            "name": "delete_with_instance",
+            "options": [
+              "--delete-with-instance"
+            ],
+            "raw_name": "DeleteWithInstance",
+            "required": false,
+            "type": "bool"
           },
           {
             "example": "0e478b7a-4262-4802-b8cb-00d3fb40****",
@@ -692,18 +717,6 @@
               "--kms-key-id"
             ],
             "raw_name": "KMSKeyId",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "PL1",
-            "help_en": "The performance level of the data cloud disk when the disk is an ESSD. Valid values:\n\nPL0: A single ESSD can deliver up to 10,000 random read/write IOPS.\nPL1: A single ESSD can deliver up to 50,000 random read/write IOPS.\nPL2: A single ESSD can deliver up to 100,000 random read/write IOPS.\nPL3: A single ESSD can deliver up to 1,000,000 random read/write IOPS.\n\nFor more information about how to select an ESSD performance level, see https://help.aliyun.com/document_detail/122389.html",
-            "help_zh": "当数据盘为ESSD云盘时，设置云盘的性能等级。可能值：\n\nPL0：单盘最高随机读写IOPS 1万。\nPL1：单盘最高随机读写IOPS 5万。\nPL2：单盘最高随机读写IOPS 10万。\nPL3：单盘最高随机读写IOPS 100万。\n\n关于如何选择ESSD云盘性能等级，请参见https://help.aliyun.com/document_detail/122389.html",
-            "name": "performance_level",
-            "options": [
-              "--performance-level"
-            ],
-            "raw_name": "PerformanceLevel",
             "required": false,
             "type": "string"
           },
@@ -720,28 +733,16 @@
             "type": "int"
           },
           {
-            "example": "100",
-            "help_en": "The size of the data cloud disk. Unit: GiB. Valid values:\n\ncloud: 5 to 2000.\ncloud_efficiency: 20 to 32768.\ncloud_ssd: 20 to 32768.\ncloud_essd: 20 to 32768.\nephemeral_ssd: 5 to 800.\n\nAfter you specify this parameter, the disk size must be greater than or equal to the size of the snapshot specified by SnapshotId",
-            "help_zh": "数据盘的磁盘大小，内存单位为GiB。取值范围：\n\ncloud：5~2000。\ncloud_efficiency：20~32768。\ncloud_ssd：20~32768。\ncloud_essd：20~32768。\nephemeral_ssd：5~800。\n\n指定该参数后，磁盘大小必须大于等于快照大小（快照通过SnapshotId指定）",
-            "name": "size",
+            "example": "false",
+            "help_en": "Specifies whether to enable the burst feature for the data cloud disk. Valid values:\n\ntrue: enables the burst feature.\nfalse: does not enable the burst feature.\nThis parameter is supported only when `SystemDisk.Category` is set to `cloud_auto`.\n\n<props=\"china\">For more information, see https://help.aliyun.com/document_detail/368372.html.</props>",
+            "help_zh": "系统盘是否开启Burst（性能突发）。可能值：\n\ntrue：开启。\nfalse：未开启。\n当`SystemDisk.Category`取值为`cloud_auto`时才支持设置该参数。\n\n<props=\"china\">更多信息，请参见https://help.aliyun.com/document_detail/368372.html。</props>",
+            "name": "bursting_enabled",
             "options": [
-              "--size"
+              "--bursting-enabled"
             ],
-            "raw_name": "Size",
+            "raw_name": "BurstingEnabled",
             "required": false,
-            "type": "int"
-          },
-          {
-            "example": "s-snapshot****\t\n",
-            "help_en": "The ID of the snapshot used to create the data cloud disk. After this parameter is specified, DataDisk.Size is ignored, and the size of the created disk is the size of the specified snapshot.\n\nIf the snapshot was created on or before July 15, 2013, the request is rejected and the error message InvalidSnapshot.TooOld is returned",
-            "help_zh": "创建数据盘时使用的快照。指定该参数后，DataDisk.Size会被忽略，实际创建的磁盘大小为指定快照的大小。\n\n如果该快照创建于2013年7月15日或之前，调用会被拒绝，返回参数中会提示InvalidSnapshot.TooOld",
-            "name": "snapshot_id",
-            "options": [
-              "--snapshot-id"
-            ],
-            "raw_name": "SnapshotId",
-            "required": false,
-            "type": "string"
+            "type": "bool"
           }
         ],
         "type": "object"
@@ -762,18 +763,6 @@
       "element": {
         "fields": [
           {
-            "example": "ecs.g6.large\t\n",
-            "help_en": "The instance type of the spot instance. This parameter takes effect only when SpotStrategy is set to SpotWithPriceLimit",
-            "help_zh": "抢占式实例的实例规格。SpotStrategy取值为SpotWithPriceLimit时生效",
-            "name": "instance_type",
-            "options": [
-              "--instance-type"
-            ],
-            "raw_name": "InstanceType",
-            "required": false,
-            "type": "string"
-          },
-          {
             "example": "0.125\t\n",
             "help_en": "The bid price for the spot instance. This parameter takes effect only when SpotStrategy is set to SpotWithPriceLimit",
             "help_zh": "抢占式实例对应的出价。SpotStrategy取值为SpotWithPriceLimit时生效",
@@ -784,6 +773,18 @@
             "raw_name": "PriceLimit",
             "required": false,
             "type": "float"
+          },
+          {
+            "example": "ecs.g6.large\t\n",
+            "help_en": "The instance type of the spot instance. This parameter takes effect only when SpotStrategy is set to SpotWithPriceLimit",
+            "help_zh": "抢占式实例的实例规格。SpotStrategy取值为SpotWithPriceLimit时生效",
+            "name": "instance_type",
+            "options": [
+              "--instance-type"
+            ],
+            "raw_name": "InstanceType",
+            "required": false,
+            "type": "string"
           }
         ],
         "type": "object"
@@ -878,6 +879,54 @@
       "element": {
         "fields": [
           {
+            "example": "2",
+            "help_en": "The number of vCPU cores of the instance type in intelligent configuration mode, used to filter instance types that meet the requirements. For more information, see https://help.aliyun.com/document_detail/25378.html.\n\nNote the following information:\n\nThe InstancePatternInfo parameter applies only to scaling groups whose network type is VPC.\n\nYou must specify both InstancePatternInfo.Cores and InstancePatternInfo.Memory.\n\nIf you have specified instance types by using the InstanceType or InstanceTypes parameter, Auto Scaling preferentially uses the specified instance types for scale-out. When the specified instance types are out of stock, Auto Scaling selects the lowest-priced instance type from those that match the InstancePatternInfo parameter values",
+            "help_zh": "智能配置模式下，实例规格的vCPU内核数目，用于筛选符合要求的实例规格范围。更多信息，请参见https://help.aliyun.com/document_detail/25378.html。\n\n请注意以下信息：\n\nInstancePatternInfo参数仅适用于伸缩组的网络类型为专有网络。\n\nInstancePatternInfo参数必须同时配置InstancePatternInfo.Cores和InstancePatternInfo.Memory。\n\n如果您已经通过InstanceType或InstanceTypes参数指定了实例规格，弹性伸缩优先使用您指定的实例规格扩容，当指定的实例规格无库存时，再从符合InstancePatternInfo参数值的实例规格中优先使用价格最低的实例规格扩容",
+            "name": "cores",
+            "options": [
+              "--cores"
+            ],
+            "raw_name": "Cores",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "EnterpriseLevel",
+            "help_en": "The level of the instance family, used to filter instance types that meet the requirements. This parameter takes effect when `CostOptimization` is enabled. Valid values:\n\nEntryLevel: entry level, which refers to shared instance types. These instance types are more cost-effective but cannot guarantee stable computing performance. They are suitable for scenarios with low CPU utilization. For more information, see https://help.aliyun.com/document_detail/108489.html.\nEnterpriseLevel: enterprise level. These instance types provide stable performance and dedicated resources. They are suitable for scenarios that require high stability. For more information, see https://help.aliyun.com/document_detail/25378.html.\nCreditEntryLevel: credit entry level, which refers to burstable instances. These instance types use CPU credits to ensure computing performance. They are suitable for scenarios with low average CPU utilization and occasional bursts. For more information, see https://help.aliyun.com/document_detail/59977.html",
+            "help_zh": "实例规格族级别，用于筛选符合要求的实例规格范围，当`CostOptimization`开启时生效。可能值：\n\nEntryLevel：入门级，即共享型实例规格。成本更低，但是无法保证实例计算性能的稳定。适用于平时CPU使用率低的业务场景。更多信息，请参见https://help.aliyun.com/document_detail/108489.html。\nEnterpriseLevel：企业级。性能稳定且资源独享，适用于对稳定性要求高的业务场景。更多信息，请参见https://help.aliyun.com/document_detail/25378.html。\nCreditEntryLevel：积分入门级，即突发性能实例。通过CPU积分来保证计算性能，适用于平时CPU使用率低、偶有突发CPU使用率的业务场景。更多信息，请参见https://help.aliyun.com/document_detail/59977.html",
+            "name": "instance_family_level",
+            "options": [
+              "--instance-family-level"
+            ],
+            "raw_name": "InstanceFamilyLevel",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "2",
+            "help_en": "The maximum hourly price for pay-as-you-go or spot instances in intelligent configuration mode, used to filter instance types that meet the requirements.\n\nThis parameter is required when SpotStrategy is set to SpotWithPriceLimit. In other cases, this parameter is optional",
+            "help_zh": "智能配置模式下，按量付费实例或者抢占式实例可接受的每小时最高价格，用于筛选符合要求的实例规格范围。\n\nSpotStrategy设置为SpotWithPriceLimit时，该参数必选。其他情况下，该参数可选",
+            "name": "max_price",
+            "options": [
+              "--max-price"
+            ],
+            "raw_name": "MaxPrice",
+            "required": false,
+            "type": "float"
+          },
+          {
+            "example": "4",
+            "help_en": "The memory size of the instance type in intelligent configuration mode. Unit: GiB. This parameter is used to filter instance types that meet the requirements",
+            "help_zh": "智能配置模式下，实例规格的内存大小，单位为GiB，用于筛选符合要求的实例规格范围",
+            "name": "memory",
+            "options": [
+              "--memory"
+            ],
+            "raw_name": "Memory",
+            "required": false,
+            "type": "float"
+          },
+          {
             "element": {
               "type": "string"
             },
@@ -904,32 +953,6 @@
             "type": "string"
           },
           {
-            "example": "2",
-            "help_en": "The number of vCPU cores of the instance type in intelligent configuration mode, used to filter instance types that meet the requirements. For more information, see https://help.aliyun.com/document_detail/25378.html.\n\nNote the following information:\n\nThe InstancePatternInfo parameter applies only to scaling groups whose network type is VPC.\n\nYou must specify both InstancePatternInfo.Cores and InstancePatternInfo.Memory.\n\nIf you have specified instance types by using the InstanceType or InstanceTypes parameter, Auto Scaling preferentially uses the specified instance types for scale-out. When the specified instance types are out of stock, Auto Scaling selects the lowest-priced instance type from those that match the InstancePatternInfo parameter values",
-            "help_zh": "智能配置模式下，实例规格的vCPU内核数目，用于筛选符合要求的实例规格范围。更多信息，请参见https://help.aliyun.com/document_detail/25378.html。\n\n请注意以下信息：\n\nInstancePatternInfo参数仅适用于伸缩组的网络类型为专有网络。\n\nInstancePatternInfo参数必须同时配置InstancePatternInfo.Cores和InstancePatternInfo.Memory。\n\n如果您已经通过InstanceType或InstanceTypes参数指定了实例规格，弹性伸缩优先使用您指定的实例规格扩容，当指定的实例规格无库存时，再从符合InstancePatternInfo参数值的实例规格中优先使用价格最低的实例规格扩容",
-            "name": "cores",
-            "options": [
-              "--cores"
-            ],
-            "raw_name": "Cores",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The CPU architectures of the instance. Valid values:\n\nN indicates that you can specify multiple CPU architectures. Valid values of N: 1 to 2.\n\nX86.\nARM",
-            "help_zh": "实例的CPU架构。可能值：\n\nN表示可以设置多个CPU架构，N的取值范围：1~2。\n\nX86。\nARM",
-            "name": "cpu_architectures",
-            "options": [
-              "--cpu-architectures"
-            ],
-            "raw_name": "CpuArchitectures",
-            "required": false,
-            "type": "array"
-          },
-          {
             "element": {
               "type": "string"
             },
@@ -942,6 +965,44 @@
             "raw_name": "ExcludedInstanceTypes",
             "required": false,
             "type": "array"
+          },
+          {
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The instance families to query. N indicates that you can specify multiple instance families. Valid values of N: 1 to 10",
+            "help_zh": "指定查询的实例规格族。N 表示可以设置多个实例规格族，N 的取值范围：1~10",
+            "name": "instance_type_families",
+            "options": [
+              "--instance-type-families"
+            ],
+            "raw_name": "InstanceTypeFamilies",
+            "required": false,
+            "type": "array"
+          },
+          {
+            "example": "2",
+            "help_en": "The minimum number of vCPU cores of the instance",
+            "help_zh": "实例的最小vCPU内核数目",
+            "name": "minimum_cpu_core_count",
+            "options": [
+              "--minimum-cpu-core-count"
+            ],
+            "raw_name": "MinimumCpuCoreCount",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "4",
+            "help_en": "The maximum number of vCPU cores of the instance type.\n\nMaximumCpuCoreCount cannot exceed 4 times the value of MinimumCpuCoreCount",
+            "help_zh": "实例规格的最大vCPU内核数目。\n\nMaximumCpuCoreCount不支持超过MinimumCpuCoreCount的4倍",
+            "name": "maximum_cpu_core_count",
+            "options": [
+              "--maximum-cpu-core-count"
+            ],
+            "raw_name": "MaximumCpuCoreCount",
+            "required": false,
+            "type": "int"
           },
           {
             "element": {
@@ -972,124 +1033,42 @@
             "type": "array"
           },
           {
-            "example": "EnterpriseLevel",
-            "help_en": "The level of the instance family, used to filter instance types that meet the requirements. This parameter takes effect when `CostOptimization` is enabled. Valid values:\n\nEntryLevel: entry level, which refers to shared instance types. These instance types are more cost-effective but cannot guarantee stable computing performance. They are suitable for scenarios with low CPU utilization. For more information, see https://help.aliyun.com/document_detail/108489.html.\nEnterpriseLevel: enterprise level. These instance types provide stable performance and dedicated resources. They are suitable for scenarios that require high stability. For more information, see https://help.aliyun.com/document_detail/25378.html.\nCreditEntryLevel: credit entry level, which refers to burstable instances. These instance types use CPU credits to ensure computing performance. They are suitable for scenarios with low average CPU utilization and occasional bursts. For more information, see https://help.aliyun.com/document_detail/59977.html",
-            "help_zh": "实例规格族级别，用于筛选符合要求的实例规格范围，当`CostOptimization`开启时生效。可能值：\n\nEntryLevel：入门级，即共享型实例规格。成本更低，但是无法保证实例计算性能的稳定。适用于平时CPU使用率低的业务场景。更多信息，请参见https://help.aliyun.com/document_detail/108489.html。\nEnterpriseLevel：企业级。性能稳定且资源独享，适用于对稳定性要求高的业务场景。更多信息，请参见https://help.aliyun.com/document_detail/25378.html。\nCreditEntryLevel：积分入门级，即突发性能实例。通过CPU积分来保证计算性能，适用于平时CPU使用率低、偶有突发CPU使用率的业务场景。更多信息，请参见https://help.aliyun.com/document_detail/59977.html",
-            "name": "instance_family_level",
+            "element": {
+              "type": "string"
+            },
+            "help_en": "The CPU architectures of the instance. Valid values:\n\nN indicates that you can specify multiple CPU architectures. Valid values of N: 1 to 2.\n\nX86.\nARM",
+            "help_zh": "实例的CPU架构。可能值：\n\nN表示可以设置多个CPU架构，N的取值范围：1~2。\n\nX86。\nARM",
+            "name": "cpu_architectures",
             "options": [
-              "--instance-family-level"
+              "--cpu-architectures"
             ],
-            "raw_name": "InstanceFamilyLevel",
+            "raw_name": "CpuArchitectures",
             "required": false,
-            "type": "string"
+            "type": "array"
           },
           {
             "element": {
               "type": "string"
             },
-            "help_en": "The instance families to query. N indicates that you can specify multiple instance families. Valid values of N: 1 to 10",
-            "help_zh": "指定查询的实例规格族。N 表示可以设置多个实例规格族，N 的取值范围：1~10",
-            "name": "instance_type_families",
+            "help_en": "The processor models of the instance. N indicates that you can specify multiple processor models. Valid values of N: 1 to 10",
+            "help_zh": "实例的处理器型号。N表示可以设置多个处理器型号，N的取值范围：1~10",
+            "name": "physical_processor_models",
             "options": [
-              "--instance-type-families"
+              "--physical-processor-models"
             ],
-            "raw_name": "InstanceTypeFamilies",
+            "raw_name": "PhysicalProcessorModels",
             "required": false,
             "type": "array"
           },
           {
             "example": "2",
-            "help_en": "The maximum hourly price for pay-as-you-go or spot instances in intelligent configuration mode, used to filter instance types that meet the requirements.\n\nThis parameter is required when SpotStrategy is set to SpotWithPriceLimit. In other cases, this parameter is optional",
-            "help_zh": "智能配置模式下，按量付费实例或者抢占式实例可接受的每小时最高价格，用于筛选符合要求的实例规格范围。\n\nSpotStrategy设置为SpotWithPriceLimit时，该参数必选。其他情况下，该参数可选",
-            "name": "max_price",
+            "help_en": "The minimum number of elastic network interfaces (ENIs) supported by the instance",
+            "help_zh": "实例最小支持挂载的弹性网卡上限",
+            "name": "minimum_eni_quantity",
             "options": [
-              "--max-price"
+              "--minimum-eni-quantity"
             ],
-            "raw_name": "MaxPrice",
-            "required": false,
-            "type": "float"
-          },
-          {
-            "example": "4",
-            "help_en": "The maximum number of vCPU cores of the instance type.\n\nMaximumCpuCoreCount cannot exceed 4 times the value of MinimumCpuCoreCount",
-            "help_zh": "实例规格的最大vCPU内核数目。\n\nMaximumCpuCoreCount不支持超过MinimumCpuCoreCount的4倍",
-            "name": "maximum_cpu_core_count",
-            "options": [
-              "--maximum-cpu-core-count"
-            ],
-            "raw_name": "MaximumCpuCoreCount",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "2",
-            "help_en": "The maximum number of GPUs of the instance. Valid values: positive integers",
-            "help_zh": "实例最大GPU数目。取值范围：正整数",
-            "name": "maximum_gpu_amount",
-            "options": [
-              "--maximum-gpu-amount"
-            ],
-            "raw_name": "MaximumGpuAmount",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "4",
-            "help_en": "The maximum memory size of the instance. Unit: GiB",
-            "help_zh": "实例最大内存。单位：GiB",
-            "name": "maximum_memory_size",
-            "options": [
-              "--maximum-memory-size"
-            ],
-            "raw_name": "MaximumMemorySize",
-            "required": false,
-            "type": "float"
-          },
-          {
-            "example": "4",
-            "help_en": "The memory size of the instance type in intelligent configuration mode. Unit: GiB. This parameter is used to filter instance types that meet the requirements",
-            "help_zh": "智能配置模式下，实例规格的内存大小，单位为GiB，用于筛选符合要求的实例规格范围",
-            "name": "memory",
-            "options": [
-              "--memory"
-            ],
-            "raw_name": "Memory",
-            "required": false,
-            "type": "float"
-          },
-          {
-            "example": "12",
-            "help_en": "The minimum baseline vCPU computing performance (sum of all vCPUs) for burstable instances (t5 and t6)",
-            "help_zh": "实例最小突发性能实例t5、t6的基准vCPU计算性能（所有vCPU之和）",
-            "name": "minimum_baseline_credit",
-            "options": [
-              "--minimum-baseline-credit"
-            ],
-            "raw_name": "MinimumBaselineCredit",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "2",
-            "help_en": "The minimum number of vCPU cores of the instance",
-            "help_zh": "实例的最小vCPU内核数目",
-            "name": "minimum_cpu_core_count",
-            "options": [
-              "--minimum-cpu-core-count"
-            ],
-            "raw_name": "MinimumCpuCoreCount",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "1",
-            "help_en": "The minimum upper limit of IPv6 addresses on a single elastic network interfaces (ENIs) of the instance",
-            "help_zh": "实例最小单块弹性网卡的IPv6地址上限",
-            "name": "minimum_eni_ipv6_address_quantity",
-            "options": [
-              "--minimum-eni-ipv6-address-quantity"
-            ],
-            "raw_name": "MinimumEniIpv6AddressQuantity",
+            "raw_name": "MinimumEniQuantity",
             "required": false,
             "type": "int"
           },
@@ -1106,26 +1085,14 @@
             "type": "int"
           },
           {
-            "example": "2",
-            "help_en": "The minimum number of elastic network interfaces (ENIs) supported by the instance",
-            "help_zh": "实例最小支持挂载的弹性网卡上限",
-            "name": "minimum_eni_quantity",
+            "example": "1",
+            "help_en": "The minimum upper limit of IPv6 addresses on a single elastic network interfaces (ENIs) of the instance",
+            "help_zh": "实例最小单块弹性网卡的IPv6地址上限",
+            "name": "minimum_eni_ipv6_address_quantity",
             "options": [
-              "--minimum-eni-quantity"
+              "--minimum-eni-ipv6-address-quantity"
             ],
-            "raw_name": "MinimumEniQuantity",
-            "required": false,
-            "type": "int"
-          },
-          {
-            "example": "2",
-            "help_en": "The minimum number of GPUs of the instance. Valid values: positive integers",
-            "help_zh": "实例最小GPU数目。取值范围：正整数",
-            "name": "minimum_gpu_amount",
-            "options": [
-              "--minimum-gpu-amount"
-            ],
-            "raw_name": "MinimumGpuAmount",
+            "raw_name": "MinimumEniIpv6AddressQuantity",
             "required": false,
             "type": "int"
           },
@@ -1142,6 +1109,18 @@
             "type": "int"
           },
           {
+            "example": "12",
+            "help_en": "The minimum baseline vCPU computing performance (sum of all vCPUs) for burstable instances (t5 and t6)",
+            "help_zh": "实例最小突发性能实例t5、t6的基准vCPU计算性能（所有vCPU之和）",
+            "name": "minimum_baseline_credit",
+            "options": [
+              "--minimum-baseline-credit"
+            ],
+            "raw_name": "MinimumBaselineCredit",
+            "required": false,
+            "type": "int"
+          },
+          {
             "example": "4",
             "help_en": "The minimum memory size of the instance. Unit: GiB",
             "help_zh": "实例最小内存。单位：GiB",
@@ -1154,18 +1133,40 @@
             "type": "float"
           },
           {
-            "element": {
-              "type": "string"
-            },
-            "help_en": "The processor models of the instance. N indicates that you can specify multiple processor models. Valid values of N: 1 to 10",
-            "help_zh": "实例的处理器型号。N表示可以设置多个处理器型号，N的取值范围：1~10",
-            "name": "physical_processor_models",
+            "example": "4",
+            "help_en": "The maximum memory size of the instance. Unit: GiB",
+            "help_zh": "实例最大内存。单位：GiB",
+            "name": "maximum_memory_size",
             "options": [
-              "--physical-processor-models"
+              "--maximum-memory-size"
             ],
-            "raw_name": "PhysicalProcessorModels",
+            "raw_name": "MaximumMemorySize",
             "required": false,
-            "type": "array"
+            "type": "float"
+          },
+          {
+            "example": "2",
+            "help_en": "The minimum number of GPUs of the instance. Valid values: positive integers",
+            "help_zh": "实例最小GPU数目。取值范围：正整数",
+            "name": "minimum_gpu_amount",
+            "options": [
+              "--minimum-gpu-amount"
+            ],
+            "raw_name": "MinimumGpuAmount",
+            "required": false,
+            "type": "int"
+          },
+          {
+            "example": "2",
+            "help_en": "The maximum number of GPUs of the instance. Valid values: positive integers",
+            "help_zh": "实例最大GPU数目。取值范围：正整数",
+            "name": "maximum_gpu_amount",
+            "options": [
+              "--maximum-gpu-amount"
+            ],
+            "raw_name": "MaximumGpuAmount",
+            "required": false,
+            "type": "int"
           }
         ],
         "type": "object"
@@ -1386,18 +1387,6 @@
             "type": "string"
           },
           {
-            "example": "1",
-            "help_en": "The number of randomly generated IPv6 addresses for the primary ENI. Note the following items:\n\nThis parameter takes effect only when NetworkInterface.InstanceType is set to Primary. If NetworkInterface.InstanceType is set to Secondary or left empty, you cannot specify this parameter.\n\nAfter you specify this parameter, you cannot specify Ipv6AddressCount",
-            "help_zh": "为主网卡指定随机生成的 IPv6 地址数量。 您需要注意：\n\nNetworkInterface.InstanceType取值为Primary时，设置该参数才会生效。如果NetworkInterface.InstanceType取值为Secondary或空值，则不能设置该参数。\n\n设置该参数后，您不能再设置Ipv6AddressCount",
-            "name": "ipv6_address_count",
-            "options": [
-              "--ipv6-address-count"
-            ],
-            "raw_name": "Ipv6AddressCount",
-            "required": false,
-            "type": "int"
-          },
-          {
             "example": "HighPerformance",
             "help_en": "The communication mode of the network interface controller (NIC). Valid values:\n\nStandard: uses the TCP communication mode.\nHighPerformance: enables the Elastic RDMA Interface (ERI) and uses the RDMA communication mode.\n\nDefault value: Standard.\n\nThe number of elastic network interfaces (ENIs) in RDMA mode cannot exceed the limit of the instance family. For more information, see https://help.aliyun.com/document_detail/25378.html",
             "help_zh": "网卡的通讯模式。可能值：\n\nStandard：使用TCP通讯模式。\nHighPerformance：开启ERI（Elastic RDMA Interface）接口，使用RDMA通讯模式。\n\n默认值：Standard。\n\nRDMA模式的弹性网卡数量不能超过该实例规格族的限制。更多信息，请参见https://help.aliyun.com/document_detail/25378.html",
@@ -1410,14 +1399,14 @@
             "type": "string"
           },
           {
-            "example": "6",
-            "help_en": "The number of secondary private IPv4 addresses to assign to the ENI. Valid values: 1 to 49.\n\nThe value cannot exceed the limit on the number of IP addresses for the instance type. For more information, see Instance families (https://www.alibabacloud.com/help/en/ecs/user-guide/overview-of-instance-families).\n\nNetworkInterface.N.SecondaryPrivateIpAddressCount specifies the number of secondary private IPv4 addresses to assign to the ENI (excluding the primary private IP address of the ENI). The system randomly assigns IP addresses from the available CIDR block of the vSwitch (NetworkInterface.N.VSwitchId) to which the ENI belongs",
-            "help_zh": "为网卡指定辅助私网 IPv4 地址数量。取值范围：1~49。\n\n取值不能超过该实例规格对于ip 数量的限制。更多信息，请参见实例规格族 (https://help.aliyun.com/zh/ecs/user-guide/overview-of-instance-families)。\n\nNetworkInterface.N.SecondaryPrivateIpAddressCount用于为网卡分配辅助私网IPv4 地址数量（不包含该网卡的主私网 IP），系统将从该网卡所在虚拟交换机（NetworkInterface.N.VSwitchId）的可用网段中随机分配",
-            "name": "secondary_private_ip_address_count",
+            "example": "1",
+            "help_en": "The number of randomly generated IPv6 addresses for the primary ENI. Note the following items:\n\nThis parameter takes effect only when NetworkInterface.InstanceType is set to Primary. If NetworkInterface.InstanceType is set to Secondary or left empty, you cannot specify this parameter.\n\nAfter you specify this parameter, you cannot specify Ipv6AddressCount",
+            "help_zh": "为主网卡指定随机生成的 IPv6 地址数量。 您需要注意：\n\nNetworkInterface.InstanceType取值为Primary时，设置该参数才会生效。如果NetworkInterface.InstanceType取值为Secondary或空值，则不能设置该参数。\n\n设置该参数后，您不能再设置Ipv6AddressCount",
+            "name": "ipv6_address_count",
             "options": [
-              "--secondary-private-ip-address-count"
+              "--ipv6-address-count"
             ],
-            "raw_name": "SecondaryPrivateIpAddressCount",
+            "raw_name": "Ipv6AddressCount",
             "required": false,
             "type": "int"
           },
@@ -1434,6 +1423,18 @@
             "raw_name": "SecurityGroupIds",
             "required": false,
             "type": "array"
+          },
+          {
+            "example": "6",
+            "help_en": "The number of secondary private IPv4 addresses to assign to the ENI. Valid values: 1 to 49.\n\nThe value cannot exceed the limit on the number of IP addresses for the instance type. For more information, see Instance families (https://www.alibabacloud.com/help/en/ecs/user-guide/overview-of-instance-families).\n\nNetworkInterface.N.SecondaryPrivateIpAddressCount specifies the number of secondary private IPv4 addresses to assign to the ENI (excluding the primary private IP address of the ENI). The system randomly assigns IP addresses from the available CIDR block of the vSwitch (NetworkInterface.N.VSwitchId) to which the ENI belongs",
+            "help_zh": "为网卡指定辅助私网 IPv4 地址数量。取值范围：1~49。\n\n取值不能超过该实例规格对于ip 数量的限制。更多信息，请参见实例规格族 (https://help.aliyun.com/zh/ecs/user-guide/overview-of-instance-families)。\n\nNetworkInterface.N.SecondaryPrivateIpAddressCount用于为网卡分配辅助私网IPv4 地址数量（不包含该网卡的主私网 IP），系统将从该网卡所在虚拟交换机（NetworkInterface.N.VSwitchId）的可用网段中随机分配",
+            "name": "secondary_private_ip_address_count",
+            "options": [
+              "--secondary-private-ip-address-count"
+            ],
+            "raw_name": "SecondaryPrivateIpAddressCount",
+            "required": false,
+            "type": "int"
           },
           {
             "element": {
@@ -1546,6 +1547,18 @@
     {
       "fields": [
         {
+          "example": "PrivatePoolFirst",
+          "help_en": "Resource pools include private pools generated after elasticity assurance or capacity reservation takes effect, and public pools, which are available for instance startup. Valid values:\n\nPrivatePoolFirst: private pool first. When this strategy is selected, if ResourcePoolOptions.PrivatePoolIds is specified or PrivatePoolTags conditions are met, the corresponding private pools are used first. If no private pool is specified or the specified private pool has insufficient capacity, open-type private pools are automatically matched. If no eligible private pool is available, the public pool is used to create instances.\n\nPrivatePoolOnly: private pool only. When this strategy is selected, you must specify ResourcePoolOptions.PrivatePoolIds. If the specified private pool has insufficient capacity, the instance fails to start.\n\nPublicPoolFirst: public pool first. The public pool is used first to create instances. When public pool resources are insufficient, private pool resources are used as a supplement. Open-type private pools are automatically matched first. If no eligible private pool is available, the Target-type private pools specified by ResourcePoolOptions.PrivatePoolIds or matching PrivatePoolTags conditions are used. (This strategy is in invitational preview and is not available for use.)\n\nNone: does not use a resource pool strategy.\n\nDefault value: None",
+          "help_zh": "资源池包括弹性保障服务或容量预定服务生效后生成的私有池以及公共池，供实例启动时选择。取值范围：\n\nPrivatePoolFirst：私有池优先。选择此种策略时，当指定了 ResourcePoolOptions.PrivatePoolIds或满足PrivatePoolTags条件，优先使用对应的私有池。如果未指定私有池或指定的私有池容量不足，将自动匹配开放类型的私有池。如果没有符合条件的私有池，则使用公共池创建实例。\n\nPrivatePoolOnly：仅限私有池。选择此种策略时，必须指定ResourcePoolOptions.PrivatePoolIds。如果指定的私有池容量不足，则实例会启动失败。\n\nPublicPoolFirst：公有池资源优先。优先使用公共池创建实例，当公有池资源不足时，采用私有池资源进行补充。优先自动匹配开放类型的私有池，如果没有符合条件的私有池，则使用指定的 ResourcePoolOptions.PrivatePoolIds或满足PrivatePoolTags条件的Target类型私有池。（该策略正在邀测中，暂不支持使用。）\n\nNone：不使用资源池策略。\n\n默认值：None",
+          "name": "strategy",
+          "options": [
+            "--strategy"
+          ],
+          "raw_name": "Strategy",
+          "required": false,
+          "type": "string"
+        },
+        {
           "element": {
             "type": "string"
           },
@@ -1598,18 +1611,6 @@
           "raw_name": "PrivatePoolTags",
           "required": false,
           "type": "array"
-        },
-        {
-          "example": "PrivatePoolFirst",
-          "help_en": "Resource pools include private pools generated after elasticity assurance or capacity reservation takes effect, and public pools, which are available for instance startup. Valid values:\n\nPrivatePoolFirst: private pool first. When this strategy is selected, if ResourcePoolOptions.PrivatePoolIds is specified or PrivatePoolTags conditions are met, the corresponding private pools are used first. If no private pool is specified or the specified private pool has insufficient capacity, open-type private pools are automatically matched. If no eligible private pool is available, the public pool is used to create instances.\n\nPrivatePoolOnly: private pool only. When this strategy is selected, you must specify ResourcePoolOptions.PrivatePoolIds. If the specified private pool has insufficient capacity, the instance fails to start.\n\nPublicPoolFirst: public pool first. The public pool is used first to create instances. When public pool resources are insufficient, private pool resources are used as a supplement. Open-type private pools are automatically matched first. If no eligible private pool is available, the Target-type private pools specified by ResourcePoolOptions.PrivatePoolIds or matching PrivatePoolTags conditions are used. (This strategy is in invitational preview and is not available for use.)\n\nNone: does not use a resource pool strategy.\n\nDefault value: None",
-          "help_zh": "资源池包括弹性保障服务或容量预定服务生效后生成的私有池以及公共池，供实例启动时选择。取值范围：\n\nPrivatePoolFirst：私有池优先。选择此种策略时，当指定了 ResourcePoolOptions.PrivatePoolIds或满足PrivatePoolTags条件，优先使用对应的私有池。如果未指定私有池或指定的私有池容量不足，将自动匹配开放类型的私有池。如果没有符合条件的私有池，则使用公共池创建实例。\n\nPrivatePoolOnly：仅限私有池。选择此种策略时，必须指定ResourcePoolOptions.PrivatePoolIds。如果指定的私有池容量不足，则实例会启动失败。\n\nPublicPoolFirst：公有池资源优先。优先使用公共池创建实例，当公有池资源不足时，采用私有池资源进行补充。优先自动匹配开放类型的私有池，如果没有符合条件的私有池，则使用指定的 ResourcePoolOptions.PrivatePoolIds或满足PrivatePoolTags条件的Target类型私有池。（该策略正在邀测中，暂不支持使用。）\n\nNone：不使用资源池策略。\n\n默认值：None",
-          "name": "strategy",
-          "options": [
-            "--strategy"
-          ],
-          "raw_name": "Strategy",
-          "required": false,
-          "type": "string"
         }
       ],
       "help_en": "The resource pool policy used when creating instances. After you specify this parameter, note the following items:\n\nThis parameter takes effect only when pay-as-you-go instances are created.\n\nThis parameter cannot be specified together with PrivatePoolOptions.MatchCriteria or PrivatePoolOptions.Id",
@@ -1626,44 +1627,6 @@
     },
     {
       "fields": [
-        {
-          "element": {
-            "type": "string"
-          },
-          "help_en": "The CIDR blocks for optional vSwitches when supplementing vSwitches in other zones",
-          "help_zh": "允许补充其他可用区交换机时，需要指定可选的交换机的网段",
-          "name": "allow_cidr_blocks",
-          "options": [
-            "--allow-cidr-blocks"
-          ],
-          "raw_name": "AllowCidrBlocks",
-          "required": false,
-          "type": "array"
-        },
-        {
-          "example": "true",
-          "help_en": "Specifies whether to allow supplementing vSwitches in other zones.\nThe instance type remains unchanged. Only alternative zones are selected. When all selected zones of the scaling group cannot be used for scale-out due to issues such as insufficient inventory, new zone vSwitches are automatically added to the scaling group based on this configuration.\nFor example, if the scaling group is configured with the cn-hangzhou-h and cn-hangzhou-g zones, and neither zone can be used for scale-out, Auto Scaling may create a vSwitch in cn-hangzhou-k based on real-time inventory and add it to the scaling group",
-          "help_zh": "是否允许补充其他可用区的交换机。\n规格不变，仅备选新的可用区。当伸缩组由于库存等问题导致所有已选可用区均无法扩容时，会根据此配置自动增加新的可用区交换机到伸缩组中。\n例如，伸缩组配置了cn-hangzhou-h和cn-hangzhou-g可用区，当两个可用区均无法扩容时ESS可能会根据实时库存状况创建一个cn-hangzhou-k的交换机并添加到伸缩组中",
-          "name": "allow_cross_az",
-          "options": [
-            "--allow-cross-az"
-          ],
-          "raw_name": "AllowCrossAz",
-          "required": false,
-          "type": "bool"
-        },
-        {
-          "example": "true",
-          "help_en": "Specifies whether to allow supplementing instance types from other generations.\n\nFor example, if the current instance type is ecs.c7.large, enabling this option allows fallback to instance types such as ecs.c6.large and ecs.c8.large",
-          "help_zh": "是否允许补充其他代系的实例规格。\n\n例如当前规格为ecs.c7.large，开启后可备选ecs.c6.large和ecs.c8.large等规格",
-          "name": "allow_different_generation",
-          "options": [
-            "--allow-different-generation"
-          ],
-          "raw_name": "AllowDifferentGeneration",
-          "required": false,
-          "type": "bool"
-        },
         {
           "example": "true",
           "help_en": "Specifies whether to enable the fallback mode",
@@ -1687,6 +1650,44 @@
           "raw_name": "MaxPrice",
           "required": false,
           "type": "float"
+        },
+        {
+          "example": "true",
+          "help_en": "Specifies whether to allow supplementing instance types from other generations.\n\nFor example, if the current instance type is ecs.c7.large, enabling this option allows fallback to instance types such as ecs.c6.large and ecs.c8.large",
+          "help_zh": "是否允许补充其他代系的实例规格。\n\n例如当前规格为ecs.c7.large，开启后可备选ecs.c6.large和ecs.c8.large等规格",
+          "name": "allow_different_generation",
+          "options": [
+            "--allow-different-generation"
+          ],
+          "raw_name": "AllowDifferentGeneration",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "example": "true",
+          "help_en": "Specifies whether to allow supplementing vSwitches in other zones.\nThe instance type remains unchanged. Only alternative zones are selected. When all selected zones of the scaling group cannot be used for scale-out due to issues such as insufficient inventory, new zone vSwitches are automatically added to the scaling group based on this configuration.\nFor example, if the scaling group is configured with the cn-hangzhou-h and cn-hangzhou-g zones, and neither zone can be used for scale-out, Auto Scaling may create a vSwitch in cn-hangzhou-k based on real-time inventory and add it to the scaling group",
+          "help_zh": "是否允许补充其他可用区的交换机。\n规格不变，仅备选新的可用区。当伸缩组由于库存等问题导致所有已选可用区均无法扩容时，会根据此配置自动增加新的可用区交换机到伸缩组中。\n例如，伸缩组配置了cn-hangzhou-h和cn-hangzhou-g可用区，当两个可用区均无法扩容时ESS可能会根据实时库存状况创建一个cn-hangzhou-k的交换机并添加到伸缩组中",
+          "name": "allow_cross_az",
+          "options": [
+            "--allow-cross-az"
+          ],
+          "raw_name": "AllowCrossAz",
+          "required": false,
+          "type": "bool"
+        },
+        {
+          "element": {
+            "type": "string"
+          },
+          "help_en": "The CIDR blocks for optional vSwitches when supplementing vSwitches in other zones",
+          "help_zh": "允许补充其他可用区交换机时，需要指定可选的交换机的网段",
+          "name": "allow_cidr_blocks",
+          "options": [
+            "--allow-cidr-blocks"
+          ],
+          "raw_name": "AllowCidrBlocks",
+          "required": false,
+          "type": "array"
         }
       ],
       "help_en": "After the fallback mode is enabled, when issues such as insufficient inventory are encountered, similar instance types of the same size are supplemented based on the currently selected instance types, or vSwitches in alternative zones are created and added to the scaling group",
@@ -1725,12 +1726,10 @@
         "description_zh": "修改伸缩配置后的返回信息",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

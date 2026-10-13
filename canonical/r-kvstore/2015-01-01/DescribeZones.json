@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun r-kvstore DescribeZones --region cn-hangzhou --AcceptLanguage 'en-US' --RegionId 'cn-hangzhou'",
   "cmd_full_name": "r-kvstore describe-zones",
   "cmd_name": "describe-zones",
   "deprecated": false,
-  "description_en": "Queries the zones that support Tair (Redis OSS-compatible) in a specific region. To query the zones where Tair (Redis OSS-compatible) instances can be purchased, call the DescribeAvailableResource operation",
+  "description_en": "Queries the zones supported by Tair (Redis® OSS-Compatible) in a specified region. To query the zones that are active for purchase, call the DescribeAvailableResource operation",
   "description_zh": "查询指定地域下，云数据库 Tair（兼容 Redis）支持的可用区。若要查询当前可购买的可用区，请使用\"DescribeAvailableResource\"接口获取",
   "kebab_example": "aliyun r-kvstore describe-zones --biz-region-id cn-hangzhou --accept-language en-US --region cn-hangzhou",
   "method": "GET|POST",
@@ -34,7 +35,7 @@
     },
     {
       "example": "en-US",
-      "help_en": "The display language of the zone names to return. Valid values:\n\nzh-CN (default): Chinese\nen-US: English",
+      "help_en": "The language of the zone names in the response. Valid values:\n\nzh-CN (default): Chinese.\nen-US: English",
       "help_zh": "设置返回后可用区名称的语言，取值：\nzh-CN（默认）：中文。\nen-US：英文",
       "location": "query",
       "name": "accept_language",
@@ -52,56 +53,70 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "1D42F072-72FE-4DC4-BB8E-64B1D298****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Zones": {
-            "backendName": "data.zones",
-            "itemName": "KVStoreZone",
-            "items": {
-              "properties": {
-                "Disabled": {
-                  "backendName": "disabled",
-                  "type": "boolean",
-                  "visibility": "Public"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "KVStoreZone": {
+                "description_en": "The collection of zones",
+                "description_zh": "可用区的集合",
+                "items": {
+                  "description_en": "",
+                  "description_zh": "",
+                  "properties": {
+                    "Disabled": {
+                      "description_en": "Indicates whether instance creation is supported in the zone. Valid values:\n\ntrue: Instance creation is not supported.\nfalse: Instance creation is supported",
+                      "description_zh": "当前可用区是否支持创建实例，返回值：\ntrue：不支持。\nfalse：支持",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "IsRds": {
+                      "description_en": "Indicates whether the instance is managed by ApsaraDB RDS. For Tair (Redis® OSS-Compatible) instances, the return value of this parameter is always true",
+                      "description_zh": "是否属于RDS管控，云数据库 Tair（兼容 Redis）实例中该参数的返回值固定为true",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID",
+                      "description_zh": "该地域的ID",
+                      "example": "cn-huhehaote",
+                      "type": "string"
+                    },
+                    "SwitchNetwork": {
+                      "description_en": "Indicates whether network transition is supported to switch the instance from the classic network to a virtual private cloud (VPC). Valid values:\n\ntrue: Supported.\nfalse: Not supported",
+                      "description_zh": "是否支持将实例从经典网络切换为专有网络，返回值：\ntrue：支持。\nfalse：不支持",
+                      "example": "true",
+                      "type": "boolean"
+                    },
+                    "ZoneId": {
+                      "description_en": "The zone ID in the region",
+                      "description_zh": "该地域下的某可用区的ID",
+                      "example": "cn-huhehaote-b",
+                      "type": "string"
+                    },
+                    "ZoneName": {
+                      "description_en": "The name of the zone in the region",
+                      "description_zh": "该地域下的某可用区的名称",
+                      "example": "呼和浩特 可用区B",
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
-                "IsRds": {
-                  "backendName": "isRds",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "RegionId": {
-                  "backendName": "regionId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "SwitchNetwork": {
-                  "backendName": "switchNetwork",
-                  "type": "boolean",
-                  "visibility": "Public"
-                },
-                "ZoneId": {
-                  "backendName": "zoneId",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "ZoneName": {
-                  "backendName": "name",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           }
         },
         "type": "object"

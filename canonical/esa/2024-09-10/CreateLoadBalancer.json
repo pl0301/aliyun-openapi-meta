@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun esa CreateLoadBalancer --region cn-hangzhou --FallbackPool 123 --RegionPools 'ENAM_:_123456780000_,_WNAM_:_234567890000,_234567890000' --SiteId 1234567890000 --Description Load_Balancer_Description --DefaultPools '[952238180270000]' --Enabled true --Rules '[{\"RuleEnable\":\"on\",\"Overrides\":\"adaptive_routing_:_failover_across_pools_:_true_,_sub_region_pools_:_AL,AT_:_922980248980000,_923043478040000_,_BG,BY_:_922980248980000_,_default_pools_:_922980248980000,_923043478040000_,_fallback_pool_:_922980248980000,_location_strategy_:_mode_:_resolver_ip_,_prefer_ecs_:_always_,_random_steering_:_default_weight_:_0.3,_pool_weights_:_922980248980000_:_0.7,_923043478040000_:_0.8_,_region_pools_:_CN,SEAS_:_922980248980000,_923043478040000_,_SAF,SAS_:_923043478040000_,_session_affinity_:_ip_,_steering_policy_:_geo_,_ttl_:_30\",\"Rule\":\"http.request.method_eq_GET_and_http.request.version_eq_HTTP/1.0_or_ip.geoip.country_eq_CN_or_http.host_eq_www.example.com\",\"Sequence\":1,\"Terminates\":true,\"RuleName\":\"rule_1\",\"FixedResponse\":{\"status_code\":0,\"content_type\":\"application/json\",\"message_body\":\"Testing_Hello\",\"location\":\"www.example.com\"}}]' --Ttl 300 --SubRegionPools 'AL,MO_:_922980248980000_,_CN-SH,CN-SX,CN-SC_:_923043478040000,928435369080000' --Name 'lb.example.com' --SteeringPolicy order --Monitor order --SessionAffinity ip --AdaptiveRouting true --RandomSteering 123",
+  "backend_timeout_ms": 10000,
+  "camel_example": "aliyun esa CreateLoadBalancer --region cn-hangzhou --FallbackPool 123 --SteeringPolicy order --SiteId 1234567890000 --Monitor '{\"Path\":\"/health\",\"Type\":\"HTTP\",\"Header\":\"{\\\"host\\\":[\\\"example1.com\\\",\\\"example2.com\\\"]}\",\"ExpectedCodes\":\"200\",\"FollowRedirects\":true,\"Timeout\":5,\"Port\":1921,\"ConsecutiveUp\":3,\"ConsecutiveDown\":5,\"MonitoringRegion\":\"Global\",\"Method\":\"GET\",\"Interval\":60}' --DefaultPools '[952238180270000]' --Name 'lb.example.com'",
   "cmd_full_name": "esa create-load-balancer",
   "cmd_name": "create-load-balancer",
   "deprecated": false,
   "description_en": "Creates a load balancer instance that supports custom routing policies, session persistence, monitoring configurations, and other advanced features",
   "description_zh": "用于创建一个新的负载均衡器实例，支持自定义路由策略、会话保持、监控配置等高级功能",
-  "kebab_example": "aliyun esa create-load-balancer --name lb.example.com --enabled true --site-id 1234567890000 --adaptive-routing true --default-pools 952238180270000 --fallback-pool 123 --random-steering 123 --rules '[{\"RuleEnable\":\"on\",\"Overrides\":\"adaptive_routing_:_failover_across_pools_:_true_,_sub_region_pools_:_AL,AT_:_922980248980000,_923043478040000_,_BG,BY_:_922980248980000_,_default_pools_:_922980248980000,_923043478040000_,_fallback_pool_:_922980248980000,_location_strategy_:_mode_:_resolver_ip_,_prefer_ecs_:_always_,_random_steering_:_default_weight_:_0.3,_pool_weights_:_922980248980000_:_0.7,_923043478040000_:_0.8_,_region_pools_:_CN,SEAS_:_922980248980000,_923043478040000_,_SAF,SAS_:_923043478040000_,_session_affinity_:_ip_,_steering_policy_:_geo_,_ttl_:_30\",\"Rule\":\"http.request.method_eq_GET_and_http.request.version_eq_HTTP/1.0_or_ip.geoip.country_eq_CN_or_http.host_eq_www.example.com\",\"Sequence\":1,\"Terminates\":true,\"RuleName\":\"rule_1\",\"FixedResponse\":{\"status_code\":0,\"content_type\":\"application/json\",\"message_body\":\"Testing_Hello\",\"location\":\"www.example.com\"}}]' --session-affinity ip --steering-policy order --description Load_Balancer_Description --ttl 300 --monitor order --sub-region-pools AL,MO_:_922980248980000_,_CN-SH,CN-SX,CN-SC_:_923043478040000,928435369080000 --region-pools ENAM_:_123456780000_,_WNAM_:_234567890000,_234567890000 --region cn-hangzhou",
+  "kebab_example": "aliyun esa create-load-balancer --name lb.example.com --site-id 1234567890000 --default-pools 952238180270000 --fallback-pool 123 --steering-policy order --monitor '{\"Path\":\"/health\",\"Type\":\"HTTP\",\"Header\":\"{\\\"host\\\":[\\\"example1.com\\\",\\\"example2.com\\\"]}\",\"ExpectedCodes\":\"200\",\"FollowRedirects\":true,\"Timeout\":5,\"Port\":1921,\"ConsecutiveUp\":3,\"ConsecutiveDown\":5,\"MonitoringRegion\":\"Global\",\"Method\":\"GET\",\"Interval\":60}' --region cn-hangzhou",
   "method": "POST",
   "multi_version": false,
   "name": "CreateLoadBalancer",
@@ -34,6 +35,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "true",
+        "false"
+      ],
       "example": "true",
       "help_en": "Specifies whether the load balancer is enabled. Valid values:\n\ntrue: Enabled.\nfalse: Not enabled",
       "help_zh": "负载均衡器是否启用。\n\ntrue：启用。\nfalse：不启用",
@@ -175,6 +180,42 @@
       "element": {
         "fields": [
           {
+            "example": "rule_1",
+            "help_en": "The rule name. This parameter is not required when you add a global configuration",
+            "help_zh": "规则名称。添加全局配置的时候不需要设置该参数",
+            "name": "rule_name",
+            "options": [
+              "--rule-name"
+            ],
+            "raw_name": "RuleName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "(http.request.method eq \"GET\" and http.request.version eq \"HTTP/1.0\") or (ip.geoip.country eq \"CN\") or (http.host eq \"www.example.com\")",
+            "help_en": "The rule content that uses conditional expressions to match user requests. This parameter is not required when you add a global configuration. Two scenarios are supported:\nMatch all incoming requests: Set the value to true.\nMatch specified requests: Set the value to a custom expression, such as (http.host eq \\\"video.example.com\\\")",
+            "help_zh": "规则内容，使用条件表达式来匹配用户请求。添加全局配置的时候不需要设置该参数。存在两种使用场景：\n匹配所有传入请求：值设置为true\n匹配指定请求：值设置为自定义表达式，例如：(http.host eq \\\"video.example.com\\\")",
+            "name": "rule",
+            "options": [
+              "--rule"
+            ],
+            "raw_name": "Rule",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "example": "on",
+            "help_en": "The rule switch. This parameter is not required when you add a global configuration. Valid values:\non: Enabled.\noff: Disabled",
+            "help_zh": "规则开关。添加全局配置的时候不需要设置该参数。取值范围：\non：开启。\noff：关闭",
+            "name": "rule_enable",
+            "options": [
+              "--rule-enable"
+            ],
+            "raw_name": "RuleEnable",
+            "required": false,
+            "type": "string"
+          },
+          {
             "example": "{\"content_type\": \"application/json\", \"location\": \"www.example.com\", \"message_body\": \"Testing Hello\", \"status_code\": 0}",
             "fields": [
               {
@@ -247,42 +288,6 @@
             "raw_name": "Overrides",
             "required": false,
             "type": "any"
-          },
-          {
-            "example": "(http.request.method eq \"GET\" and http.request.version eq \"HTTP/1.0\") or (ip.geoip.country eq \"CN\") or (http.host eq \"www.example.com\")",
-            "help_en": "The rule content that uses conditional expressions to match user requests. This parameter is not required when you add a global configuration. Two scenarios are supported:\nMatch all incoming requests: Set the value to true.\nMatch specified requests: Set the value to a custom expression, such as (http.host eq \\\"video.example.com\\\")",
-            "help_zh": "规则内容，使用条件表达式来匹配用户请求。添加全局配置的时候不需要设置该参数。存在两种使用场景：\n匹配所有传入请求：值设置为true\n匹配指定请求：值设置为自定义表达式，例如：(http.host eq \\\"video.example.com\\\")",
-            "name": "rule",
-            "options": [
-              "--rule"
-            ],
-            "raw_name": "Rule",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "on",
-            "help_en": "The rule switch. This parameter is not required when you add a global configuration. Valid values:\non: Enabled.\noff: Disabled",
-            "help_zh": "规则开关。添加全局配置的时候不需要设置该参数。取值范围：\non：开启。\noff：关闭",
-            "name": "rule_enable",
-            "options": [
-              "--rule-enable"
-            ],
-            "raw_name": "RuleEnable",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "example": "rule_1",
-            "help_en": "The rule name. This parameter is not required when you add a global configuration",
-            "help_zh": "规则名称。添加全局配置的时候不需要设置该参数",
-            "name": "rule_name",
-            "options": [
-              "--rule-name"
-            ],
-            "raw_name": "RuleName",
-            "required": false,
-            "type": "string"
           },
           {
             "example": "1",
@@ -380,26 +385,74 @@
       "example": "order",
       "fields": [
         {
-          "example": "5",
-          "help_en": "The number of consecutive failed probes required to consider the check failed, such as `5`",
-          "help_zh": "连续探测多少次失败算失败，如`5`",
-          "name": "consecutive_down",
+          "example": "HTTP",
+          "help_en": "The monitor protocol type used for health checks. A value of off indicates that health checks are disabled. Valid values:\n\nTCP\nUDP\nSMTP\nHTTPS\nHTTP\nICMP Ping\noff",
+          "help_zh": "监视器协议类型，如HTTP，用于健康检查，值为off时，表示不进行检查。\n\nTCP\nUDP\nSMTP\nHTTPS\nHTTP\nICMP Ping\noff",
+          "name": "type",
           "options": [
-            "--consecutive-down"
+            "--type"
           ],
-          "raw_name": "ConsecutiveDown",
+          "raw_name": "Type",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "GET",
+          "help_en": "The monitor request method, such as `GET`. This is the HTTP method used for health checks",
+          "help_zh": "监视器请求方法，如`GET`，HTTP协议中的方法",
+          "name": "method",
+          "options": [
+            "--method"
+          ],
+          "raw_name": "Method",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "1921",
+          "help_en": "The origin server port",
+          "help_zh": "源站端口",
+          "name": "port",
+          "options": [
+            "--port"
+          ],
+          "raw_name": "Port",
           "required": false,
           "type": "int"
         },
         {
-          "example": "3",
-          "help_en": "The number of consecutive successful probes required to consider the check successful, such as `3`",
-          "help_zh": "连续探测多少次成功算成功，如`3`",
-          "name": "consecutive_up",
+          "example": "/health",
+          "help_en": "The monitor check path, such as `/healthcheck`. This is the URI of the request",
+          "help_zh": "监视器检查路径，如`/healthcheck`，HTTP请求路径",
+          "name": "path",
           "options": [
-            "--consecutive-up"
+            "--path"
           ],
-          "raw_name": "ConsecutiveUp",
+          "raw_name": "Path",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "60",
+          "help_en": "The monitoring interval in seconds, such as `60`. This specifies the check frequency",
+          "help_zh": "监视间隔，如`60`秒，检查频率",
+          "name": "interval",
+          "options": [
+            "--interval"
+          ],
+          "raw_name": "Interval",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "5",
+          "help_en": "The health check timeout period. Unit: seconds. Valid values: 1 to 10",
+          "help_zh": "应用健康检查超时时间，单位为秒，取值范围：1-10",
+          "name": "timeout",
+          "options": [
+            "--timeout"
+          ],
+          "raw_name": "Timeout",
           "required": false,
           "type": "int"
         },
@@ -428,6 +481,30 @@
           "type": "bool"
         },
         {
+          "example": "3",
+          "help_en": "The number of consecutive successful probes required to consider the check successful, such as `3`",
+          "help_zh": "连续探测多少次成功算成功，如`3`",
+          "name": "consecutive_up",
+          "options": [
+            "--consecutive-up"
+          ],
+          "raw_name": "ConsecutiveUp",
+          "required": false,
+          "type": "int"
+        },
+        {
+          "example": "5",
+          "help_en": "The number of consecutive failed probes required to consider the check failed, such as `5`",
+          "help_zh": "连续探测多少次失败算失败，如`5`",
+          "name": "consecutive_down",
+          "options": [
+            "--consecutive-down"
+          ],
+          "raw_name": "ConsecutiveDown",
+          "required": false,
+          "type": "int"
+        },
+        {
           "example": " {\n        \"host\": [\n            \"example1.com\",\n            \"example2.com\"\n        ]\n    }",
           "help_en": "The header information included in the probe request. This is the HTTP header",
           "help_zh": "探测时所带头部信息，HTTP头",
@@ -440,30 +517,11 @@
           "type": "any"
         },
         {
-          "example": "60",
-          "help_en": "The monitoring interval in seconds, such as `60`. This specifies the check frequency",
-          "help_zh": "监视间隔，如`60`秒，检查频率",
-          "name": "interval",
-          "options": [
-            "--interval"
+          "enum": [
+            "OutsideChineseMainland",
+            "ChineseMainland",
+            "Global"
           ],
-          "raw_name": "Interval",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "GET",
-          "help_en": "The monitor request method, such as `GET`. This is the HTTP method used for health checks",
-          "help_zh": "监视器请求方法，如`GET`，HTTP协议中的方法",
-          "name": "method",
-          "options": [
-            "--method"
-          ],
-          "raw_name": "Method",
-          "required": false,
-          "type": "string"
-        },
-        {
           "example": "Global",
           "help_en": "The region where the probe nodes are located. Default value: Global. Valid values:\n\nGlobal: worldwide.\nChineseMainland: the Chinese mainland.\nOutsideChineseMainland: worldwide (excluding the Chinese mainland)",
           "help_zh": "探测点所在区域，默认为Global，\n\nGlobal: 全球。\nChineseMainland: 中国内地。\nOutsideChineseMainland: 全球（不包括中国内地）",
@@ -472,54 +530,6 @@
             "--monitoring-region"
           ],
           "raw_name": "MonitoringRegion",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "/health",
-          "help_en": "The monitor check path, such as `/healthcheck`. This is the URI of the request",
-          "help_zh": "监视器检查路径，如`/healthcheck`，HTTP请求路径",
-          "name": "path",
-          "options": [
-            "--path"
-          ],
-          "raw_name": "Path",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "1921",
-          "help_en": "The origin server port",
-          "help_zh": "源站端口",
-          "name": "port",
-          "options": [
-            "--port"
-          ],
-          "raw_name": "Port",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "5",
-          "help_en": "The health check timeout period. Unit: seconds. Valid values: 1 to 10",
-          "help_zh": "应用健康检查超时时间，单位为秒，取值范围：1-10",
-          "name": "timeout",
-          "options": [
-            "--timeout"
-          ],
-          "raw_name": "Timeout",
-          "required": false,
-          "type": "int"
-        },
-        {
-          "example": "HTTP",
-          "help_en": "The monitor protocol type used for health checks. A value of off indicates that health checks are disabled. Valid values:\n\nTCP\nUDP\nSMTP\nHTTPS\nHTTP\nICMP Ping\noff",
-          "help_zh": "监视器协议类型，如HTTP，用于健康检查，值为off时，表示不进行检查。\n\nTCP\nUDP\nSMTP\nHTTPS\nHTTP\nICMP Ping\noff",
-          "name": "type",
-          "options": [
-            "--type"
-          ],
-          "raw_name": "Type",
           "required": false,
           "type": "string"
         }
@@ -573,7 +583,6 @@
         "description_zh": "Schema of Response",
         "properties": {
           "Id": {
-            "backendName": "data.content.id",
             "description_en": "The load balancer ID",
             "description_zh": "负载均衡器ID",
             "example": "99867648760****",
@@ -581,16 +590,15 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "EEEBE525-F576-1196-8DAF-2D70CA3F4D2F\n",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

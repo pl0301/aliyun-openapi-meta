@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 6000,
   "camel_example": "aliyun eas POST /api/v2/groups --region cn-hangzhou --header \"Content-Type=application/json\" --body '{\"WorkSpaceId\":\"12xx34\",\"Network\":{\"VpcId\":\"vpc-bp1xxxxxx0qrykjr9b\",\"VSwitchId\":\"vsw-bp1xxxxxxwmssgq28gye8\",\"SecurityGroupId\":\"sg-584xxxxxx7h08llvoww5tv5gl\",\"GatewayId\":\"gw-248xxxxxxvlkhtbrda\"},\"Labels\":{\"key\":\"example-string\"},\"Name\":\"foo\"}'",
   "cmd_full_name": "eas create-group",
   "cmd_name": "create-group",
@@ -29,25 +30,9 @@
   },
   "parameters": [
     {
-      "help_en": "The user-defined labels",
-      "help_zh": "用户定义标签",
-      "location": "body",
-      "name": "labels",
-      "options": [
-        "--labels"
-      ],
-      "param_style": "json",
-      "raw_name": "Labels",
-      "required": false,
-      "type": "map",
-      "value": {
-        "type": "string"
-      }
-    },
-    {
       "example": "foo",
-      "help_en": "The name of the group",
-      "help_zh": "Group名字",
+      "help_en": "The name of the service group. Only lowercase letters, digits, and underscores are allowed. The value must match the regular expression [a-z0-9_]+",
+      "help_zh": "服务群组名称。仅允许小写字母、数字和下划线，格式为 [a-z0-9_]+",
       "location": "body",
       "name": "name",
       "options": [
@@ -59,28 +44,30 @@
       "type": "string"
     },
     {
+      "example": "12xx34",
+      "help_en": "The workspace ID",
+      "help_zh": "工作空间id",
+      "location": "body",
+      "name": "work_space_id",
+      "options": [
+        "--work-space-id"
+      ],
+      "param_style": "json",
+      "raw_name": "WorkSpaceId",
+      "required": false,
+      "type": "string"
+    },
+    {
       "fields": [
         {
-          "example": "gw-248xxxxxxvlkhtbrda",
-          "help_en": "The dedicated gateway ID",
-          "help_zh": "专属网关ID",
-          "name": "gateway_id",
+          "example": "vpc-bp1xxxxxx0qrykjr9b",
+          "help_en": "The VPC ID. This parameter is required when GatewayId is set to an ALB gateway. You must specify the ID of the VPC that is associated with the gateway. You can call the ListGatewayIntranetLinkedVpc operation to query the association",
+          "help_zh": "专有网络ID。当 GatewayId 指定 ALB 类型网关时，此参数必填，且必须填写与该网关关联的 VPC ID。可通过 ListGatewayIntranetLinkedVpc 查询关联关系",
+          "name": "vpc_id",
           "options": [
-            "--gateway-id"
+            "--vpc-id"
           ],
-          "raw_name": "GatewayId",
-          "required": false,
-          "type": "string"
-        },
-        {
-          "example": "sg-584xxxxxx7h08llvoww5tv5gl",
-          "help_en": "The security group ID",
-          "help_zh": "安全组ID",
-          "name": "security_group_id",
-          "options": [
-            "--security-group-id"
-          ],
-          "raw_name": "SecurityGroupId",
+          "raw_name": "VpcId",
           "required": false,
           "type": "string"
         },
@@ -97,19 +84,31 @@
           "type": "string"
         },
         {
-          "example": "vpc-bp1xxxxxx0qrykjr9b",
-          "help_en": "The VPC ID",
-          "help_zh": "专有网络的ID",
-          "name": "vpc_id",
+          "example": "sg-584xxxxxx7h08llvoww5tv5gl",
+          "help_en": "The security group ID",
+          "help_zh": "安全组ID",
+          "name": "security_group_id",
           "options": [
-            "--vpc-id"
+            "--security-group-id"
           ],
-          "raw_name": "VpcId",
+          "raw_name": "SecurityGroupId",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "example": "gw-248xxxxxxvlkhtbrda",
+          "help_en": "The dedicated gateway ID. This parameter is required. If this parameter is not specified, the request fails",
+          "help_zh": "专属网关ID。此参数为必填项；未提供时请求失败",
+          "name": "gateway_id",
+          "options": [
+            "--gateway-id"
+          ],
+          "raw_name": "GatewayId",
           "required": false,
           "type": "string"
         }
       ],
-      "help_en": "The virtual private cloud (VPC) configuration",
+      "help_en": "The VPC configuration",
       "help_zh": "专有网络配置",
       "location": "body",
       "name": "network",
@@ -122,18 +121,20 @@
       "type": "object"
     },
     {
-      "example": "12xx34",
-      "help_en": "The workspace ID",
-      "help_zh": "工作空间id",
+      "help_en": "The user-defined labels",
+      "help_zh": "用户定义标签",
       "location": "body",
-      "name": "work_space_id",
+      "name": "labels",
       "options": [
-        "--work-space-id"
+        "--labels"
       ],
       "param_style": "json",
-      "raw_name": "WorkSpaceId",
+      "raw_name": "Labels",
       "required": false,
-      "type": "string"
+      "type": "map",
+      "value": {
+        "type": "string"
+      }
     }
   ],
   "pathPattern": "/api/v2/groups",
@@ -146,7 +147,7 @@
         "description_zh": "返回结果",
         "properties": {
           "Message": {
-            "description_en": "The response message",
+            "description_en": "The message returned in the response",
             "description_zh": "请求返回信息",
             "example": "Create service group foo successfully",
             "type": "string"
@@ -155,12 +156,12 @@
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "40325405-579C-4D82****",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

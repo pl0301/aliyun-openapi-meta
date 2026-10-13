@@ -1,11 +1,12 @@
 {
-  "camel_example": "aliyun esa EditSiteWafSettings --region cn-hangzhou --SiteId 1 --SiteVersion 0 --Settings 'example-string'",
+  "backend_timeout_ms": 9000,
+  "camel_example": "aliyun esa EditSiteWafSettings --region cn-hangzhou --SiteId 1 --SiteVersion 0 --Settings '{\"AddBotProtectionHeaders\":{\"Enable\":true},\"ClientIpIdentifier\":{\"Headers\":[\"X-Forwarded-For\"],\"Mode\":\"headers\"},\"AddSecurityHeaders\":{\"Enable\":true},\"DisableSecurityModule\":{\"Status\":\"on\"},\"SecurityLevel\":{\"Value\":\"low\",\"Id\":1},\"BandwidthAbuseProtection\":{\"Status\":\"on\",\"Action\":\"deny\",\"Id\":10000001},\"BotManagement\":{\"DefiniteBots\":{\"Action\":\"captcha\",\"Id\":20000001},\"LikelyBots\":{\"Action\":\"deny\",\"Id\":20000002},\"JSDetection\":{\"Enable\":true},\"VerifiedBots\":{\"Action\":\"bypass\",\"Id\":20000003},\"EffectOnStatic\":{\"Enable\":true}},\"RequestBodyInspection\":{\"Action\":\"allow\",\"SizeLimit\":\"16KB\",\"Id\":10000001}}'",
   "cmd_full_name": "esa edit-site-waf-settings",
   "cmd_name": "edit-site-waf-settings",
   "deprecated": false,
   "description_en": "Modifies the Web Application Firewall (WAF) configuration of a site. You can call this operation to update WAF settings for a site, such as modifying the client IP address identified by WAF",
   "description_zh": "该接口用于编辑站点的Web应用防火墙（WAF）配置。用户可以通过此接口修改站点的WAF设置，如修改WAF识别的客户端IP等",
-  "kebab_example": "aliyun esa edit-site-waf-settings --site-id 1 --site-version 0 --settings example-string --region cn-hangzhou",
+  "kebab_example": "aliyun esa edit-site-waf-settings --site-id 1 --site-version 0 --settings '{\"AddBotProtectionHeaders\":{\"Enable\":true},\"ClientIpIdentifier\":{\"Headers\":[\"X-Forwarded-For\"],\"Mode\":\"headers\"},\"AddSecurityHeaders\":{\"Enable\":true},\"DisableSecurityModule\":{\"Status\":\"on\"},\"SecurityLevel\":{\"Value\":\"low\",\"Id\":1},\"BandwidthAbuseProtection\":{\"Status\":\"on\",\"Action\":\"deny\",\"Id\":10000001},\"BotManagement\":{\"DefiniteBots\":{\"Action\":\"captcha\",\"Id\":20000001},\"LikelyBots\":{\"Action\":\"deny\",\"Id\":20000002},\"JSDetection\":{\"Enable\":true},\"VerifiedBots\":{\"Action\":\"bypass\",\"Id\":20000003},\"EffectOnStatic\":{\"Enable\":true}},\"RequestBodyInspection\":{\"Action\":\"allow\",\"SizeLimit\":\"16KB\",\"Id\":10000001}}' --region cn-hangzhou",
   "method": "GET|POST",
   "multi_version": false,
   "name": "EditSiteWafSettings",
@@ -50,6 +51,49 @@
     },
     {
       "fields": [
+        {
+          "fields": [
+            {
+              "enum": [
+                "headers",
+                "connection_ip"
+              ],
+              "example": "headers",
+              "help_en": "The identification mode",
+              "help_zh": "识别模式",
+              "name": "mode",
+              "options": [
+                "--mode"
+              ],
+              "raw_name": "Mode",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "element": {
+                "type": "string"
+              },
+              "help_en": "The specified headers",
+              "help_zh": "指定headers",
+              "name": "headers",
+              "options": [
+                "--headers"
+              ],
+              "raw_name": "Headers",
+              "required": false,
+              "type": "array"
+            }
+          ],
+          "help_en": "The client IP identification",
+          "help_zh": "客户端IP识别",
+          "name": "client_ip_identifier",
+          "options": [
+            "--client-ip-identifier"
+          ],
+          "raw_name": "ClientIpIdentifier",
+          "required": false,
+          "type": "object"
+        },
         {
           "fields": [
             {
@@ -101,21 +145,8 @@
         {
           "fields": [
             {
-              "example": "deny",
-              "help_en": "The action of the bandwidth abuse protection rule",
-              "help_zh": "防盗刷规则的执行动作",
-              "name": "action",
-              "options": [
-                "--action"
-              ],
-              "raw_name": "Action",
-              "required": false,
-              "type": "string"
-            },
-            {
-              "example": "10000001",
-              "help_en": "The ID of the bandwidth abuse protection rule",
-              "help_zh": "防盗刷规则的ID",
+              "help_en": "The Id",
+              "help_zh": "安全级别规则ID",
               "name": "id",
               "options": [
                 "--id"
@@ -125,25 +156,33 @@
               "type": "int"
             },
             {
-              "example": "on",
-              "help_en": "The switch status of the bandwidth abuse protection rule",
-              "help_zh": "防盗刷规则的开关状态",
-              "name": "status",
-              "options": [
-                "--status"
+              "enum": [
+                "high",
+                "low",
+                "under_attack",
+                "medium",
+                "essentially_off",
+                "off"
               ],
-              "raw_name": "Status",
+              "example": "low",
+              "help_en": "The security level value",
+              "help_zh": "安全级别值",
+              "name": "value",
+              "options": [
+                "--value"
+              ],
+              "raw_name": "Value",
               "required": false,
               "type": "string"
             }
           ],
-          "help_en": "The bandwidth abuse protection",
-          "help_zh": "防盗刷",
-          "name": "bandwidth_abuse_protection",
+          "help_en": "The security level",
+          "help_zh": "安全级别",
+          "name": "security_level",
           "options": [
-            "--bandwidth-abuse-protection"
+            "--security-level"
           ],
-          "raw_name": "BandwidthAbuseProtection",
+          "raw_name": "SecurityLevel",
           "required": false,
           "type": "object"
         },
@@ -151,18 +190,6 @@
           "fields": [
             {
               "fields": [
-                {
-                  "example": "captcha",
-                  "help_en": "The action",
-                  "help_zh": "动作",
-                  "name": "action",
-                  "options": [
-                    "--action"
-                  ],
-                  "raw_name": "Action",
-                  "required": false,
-                  "type": "string"
-                },
                 {
                   "example": "20000001",
                   "help_en": "The rule ID",
@@ -174,6 +201,18 @@
                   "raw_name": "Id",
                   "required": false,
                   "type": "int"
+                },
+                {
+                  "example": "captcha",
+                  "help_en": "The action",
+                  "help_zh": "动作",
+                  "name": "action",
+                  "options": [
+                    "--action"
+                  ],
+                  "raw_name": "Action",
+                  "required": false,
+                  "type": "string"
                 }
               ],
               "help_en": "The definite bots",
@@ -189,25 +228,74 @@
             {
               "fields": [
                 {
-                  "example": "true",
-                  "help_en": "The switch",
-                  "help_zh": "开关",
-                  "name": "enable",
+                  "example": "20000002",
+                  "help_en": "The rule ID",
+                  "help_zh": "规则ID",
+                  "name": "id",
                   "options": [
-                    "--enable"
+                    "--id"
                   ],
-                  "raw_name": "Enable",
+                  "raw_name": "Id",
                   "required": false,
-                  "type": "bool"
+                  "type": "int"
+                },
+                {
+                  "example": "deny",
+                  "help_en": "The action",
+                  "help_zh": "动作",
+                  "name": "action",
+                  "options": [
+                    "--action"
+                  ],
+                  "raw_name": "Action",
+                  "required": false,
+                  "type": "string"
                 }
               ],
-              "help_en": "Specifies whether the rule applies to static resource requests",
-              "help_zh": "对静态资源请求生效",
-              "name": "effect_on_static",
+              "help_en": "The likely bots",
+              "help_zh": "可能是Bot",
+              "name": "likely_bots",
               "options": [
-                "--effect-on-static"
+                "--likely-bots"
               ],
-              "raw_name": "EffectOnStatic",
+              "raw_name": "LikelyBots",
+              "required": false,
+              "type": "object"
+            },
+            {
+              "fields": [
+                {
+                  "example": "20000003",
+                  "help_en": "The rule ID",
+                  "help_zh": "规则ID",
+                  "name": "id",
+                  "options": [
+                    "--id"
+                  ],
+                  "raw_name": "Id",
+                  "required": false,
+                  "type": "int"
+                },
+                {
+                  "example": "bypass",
+                  "help_en": "The action",
+                  "help_zh": "动作",
+                  "name": "action",
+                  "options": [
+                    "--action"
+                  ],
+                  "raw_name": "Action",
+                  "required": false,
+                  "type": "string"
+                }
+              ],
+              "help_en": "The verified bots",
+              "help_zh": "已通过验证的Bot",
+              "name": "verified_bots",
+              "options": [
+                "--verified-bots"
+              ],
+              "raw_name": "VerifiedBots",
               "required": false,
               "type": "object"
             },
@@ -238,74 +326,25 @@
             {
               "fields": [
                 {
-                  "example": "deny",
-                  "help_en": "The action",
-                  "help_zh": "动作",
-                  "name": "action",
+                  "example": "true",
+                  "help_en": "The switch",
+                  "help_zh": "开关",
+                  "name": "enable",
                   "options": [
-                    "--action"
+                    "--enable"
                   ],
-                  "raw_name": "Action",
+                  "raw_name": "Enable",
                   "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "20000002",
-                  "help_en": "The rule ID",
-                  "help_zh": "规则ID",
-                  "name": "id",
-                  "options": [
-                    "--id"
-                  ],
-                  "raw_name": "Id",
-                  "required": false,
-                  "type": "int"
+                  "type": "bool"
                 }
               ],
-              "help_en": "The likely bots",
-              "help_zh": "可能是Bot",
-              "name": "likely_bots",
+              "help_en": "Specifies whether the rule applies to static resource requests",
+              "help_zh": "对静态资源请求生效",
+              "name": "effect_on_static",
               "options": [
-                "--likely-bots"
+                "--effect-on-static"
               ],
-              "raw_name": "LikelyBots",
-              "required": false,
-              "type": "object"
-            },
-            {
-              "fields": [
-                {
-                  "example": "bypass",
-                  "help_en": "The action",
-                  "help_zh": "动作",
-                  "name": "action",
-                  "options": [
-                    "--action"
-                  ],
-                  "raw_name": "Action",
-                  "required": false,
-                  "type": "string"
-                },
-                {
-                  "example": "20000003",
-                  "help_en": "The rule ID",
-                  "help_zh": "规则ID",
-                  "name": "id",
-                  "options": [
-                    "--id"
-                  ],
-                  "raw_name": "Id",
-                  "required": false,
-                  "type": "int"
-                }
-              ],
-              "help_en": "The verified bots",
-              "help_zh": "已通过验证的Bot",
-              "name": "verified_bots",
-              "options": [
-                "--verified-bots"
-              ],
-              "raw_name": "VerifiedBots",
+              "raw_name": "EffectOnStatic",
               "required": false,
               "type": "object"
             }
@@ -323,39 +362,49 @@
         {
           "fields": [
             {
-              "element": {
-                "type": "string"
-              },
-              "help_en": "The specified headers",
-              "help_zh": "指定headers",
-              "name": "headers",
+              "example": "10000001",
+              "help_en": "The ID of the bandwidth abuse protection rule",
+              "help_zh": "防盗刷规则的ID",
+              "name": "id",
               "options": [
-                "--headers"
+                "--id"
               ],
-              "raw_name": "Headers",
+              "raw_name": "Id",
               "required": false,
-              "type": "array"
+              "type": "int"
             },
             {
-              "example": "headers",
-              "help_en": "The identification mode",
-              "help_zh": "识别模式",
-              "name": "mode",
+              "example": "on",
+              "help_en": "The switch status of the bandwidth abuse protection rule",
+              "help_zh": "防盗刷规则的开关状态",
+              "name": "status",
               "options": [
-                "--mode"
+                "--status"
               ],
-              "raw_name": "Mode",
+              "raw_name": "Status",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "example": "deny",
+              "help_en": "The action of the bandwidth abuse protection rule",
+              "help_zh": "防盗刷规则的执行动作",
+              "name": "action",
+              "options": [
+                "--action"
+              ],
+              "raw_name": "Action",
               "required": false,
               "type": "string"
             }
           ],
-          "help_en": "The client IP identification",
-          "help_zh": "客户端IP识别",
-          "name": "client_ip_identifier",
+          "help_en": "The bandwidth abuse protection",
+          "help_zh": "防盗刷",
+          "name": "bandwidth_abuse_protection",
           "options": [
-            "--client-ip-identifier"
+            "--bandwidth-abuse-protection"
           ],
-          "raw_name": "ClientIpIdentifier",
+          "raw_name": "BandwidthAbuseProtection",
           "required": false,
           "type": "object"
         },
@@ -387,18 +436,6 @@
         {
           "fields": [
             {
-              "example": "allow",
-              "help_en": "The action to take when the request body size exceeds `SizeLimit`.\n\nCommon values (the complete enumeration is subject to the server-side configuration):\n`allow`: Allow directly without performing deep packet inspection on the excess portion.\n\nThe complete enum is subject to the WAF server-side configuration",
-              "help_zh": "请求体大小超过 `SizeLimit` 时的处置动作。\n\n常用取值（完整枚举以服务端为准）：\n`allow`：直接放行，不对超过部分做深包检测\n\n完整 enum 以 WAF 服务端为准",
-              "name": "action",
-              "options": [
-                "--action"
-              ],
-              "raw_name": "Action",
-              "required": false,
-              "type": "string"
-            },
-            {
               "example": "10000001",
               "help_en": "The request body inspection rule ID (unique identifier of the built-in rule). When request body inspection is enabled, the server uses this ID to associate the matching logic of the built-in inspection rule. The ID value is subject to the WAF built-in rule list",
               "help_zh": "请求体检测规则 ID（内置规则的唯一标识）。当开启请求体检测时，服务端使用该 ID 关联内置检测规则的匹配逻辑。ID 取值以 WAF 内置规则列表为准",
@@ -421,6 +458,18 @@
               "raw_name": "SizeLimit",
               "required": false,
               "type": "string"
+            },
+            {
+              "example": "allow",
+              "help_en": "The action to take when the request body size exceeds `SizeLimit`.\n\nCommon values (the complete enumeration is subject to the server-side configuration):\n`allow`: Allow directly without performing deep packet inspection on the excess portion.\n\nThe complete enum is subject to the WAF server-side configuration",
+              "help_zh": "请求体大小超过 `SizeLimit` 时的处置动作。\n\n常用取值（完整枚举以服务端为准）：\n`allow`：直接放行，不对超过部分做深包检测\n\n完整 enum 以 WAF 服务端为准",
+              "name": "action",
+              "options": [
+                "--action"
+              ],
+              "raw_name": "Action",
+              "required": false,
+              "type": "string"
             }
           ],
           "help_en": "The request body inspection configuration. Controls the deep packet inspection behavior of WAF for HTTP request bodies. After this feature is enabled, content-based matching rules such as SQL injection and XSS detection take effect on request bodies.\n\nThis configuration can contain the following fields:\n`Id`: The unique identifier of the built-in inspection rule.\n`SizeLimit`: The maximum size of the request body to inspect.\n`Action`: The action to take when the request body exceeds the size limit",
@@ -430,42 +479,6 @@
             "--request-body-inspection"
           ],
           "raw_name": "RequestBodyInspection",
-          "required": false,
-          "type": "object"
-        },
-        {
-          "fields": [
-            {
-              "help_en": "安全级别规则ID",
-              "help_zh": "安全级别规则ID",
-              "name": "id",
-              "options": [
-                "--id"
-              ],
-              "raw_name": "Id",
-              "required": false,
-              "type": "int"
-            },
-            {
-              "example": "low",
-              "help_en": "The security level value",
-              "help_zh": "安全级别值",
-              "name": "value",
-              "options": [
-                "--value"
-              ],
-              "raw_name": "Value",
-              "required": false,
-              "type": "string"
-            }
-          ],
-          "help_en": "The security level",
-          "help_zh": "安全级别",
-          "name": "security_level",
-          "options": [
-            "--security-level"
-          ],
-          "raw_name": "SecurityLevel",
           "required": false,
           "type": "object"
         }
@@ -493,16 +506,15 @@
         "description_zh": "Schema of Response",
         "properties": {
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "36af3fcc-43d0-441c-86b1-428951dc8225",
-            "title_en": "Id of the request",
+            "title_en": "",
             "title_zh": "Id of the request",
             "type": "string"
           }
         },
-        "title_en": "Schema of Response",
+        "title_en": "",
         "title_zh": "Schema of Response",
         "type": "object"
       }

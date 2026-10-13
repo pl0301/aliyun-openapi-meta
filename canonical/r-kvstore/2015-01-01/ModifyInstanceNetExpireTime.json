@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun r-kvstore ModifyInstanceNetExpireTime --region cn-hangzhou --ClassicExpiredDays 14 --InstanceId 'r-bp1zxszhcgatnx0000' --ConnectionString 'r-bp1zxszhcgatnx0000.redis.rds.aliyuncs.com'",
   "cmd_full_name": "r-kvstore modify-instance-net-expire-time",
   "cmd_name": "modify-instance-net-expire-time",
   "deprecated": false,
-  "description_en": "Extends the retention period of the classic network endpoint of a Tair (Redis OSS-compatible) instance. You can call this operation after you change the network type of the Tair (Redis OSS-compatible) instance from classic network to Virtual Private Cloud (VPC) with the classic network endpoint retained",
+  "description_en": "If a Tair (Redis® OSS-Compatible) database instance previously completed a switch from the classic network to a VPC and retained the classic network endpoint, you can call this operation to extend the retention period of the classic network endpoint",
   "description_zh": "若云数据库 Tair（兼容 Redis）实例之前执行过由经典网络向VPC网络切换，并保留了经典网络连接地址，则可调用本接口延长经典网络连接地址的保留时间",
   "kebab_example": "aliyun r-kvstore modify-instance-net-expire-time --instance-id r-bp1zxszhcgatnx0000 --connection-string r-bp1zxszhcgatnx0000.redis.rds.aliyuncs.com --classic-expired-days 14 --region cn-hangzhou",
   "method": "GET|POST",
@@ -23,7 +24,7 @@
     {
       "doc_required": true,
       "example": "r-bp1zxszhcgatnx****",
-      "help_en": "The ID of the instance",
+      "help_en": "The instance ID",
       "help_zh": "实例ID",
       "location": "query",
       "name": "instance_id",
@@ -37,7 +38,7 @@
     {
       "doc_required": true,
       "example": "r-bp1zxszhcgatnx****.redis.rds.aliyuncs.com",
-      "help_en": "The endpoint of the classic network",
+      "help_en": "The classic network endpoint of the instance",
       "help_zh": "实例的经典网络连接地址",
       "location": "query",
       "name": "connection_string",
@@ -51,7 +52,7 @@
     {
       "doc_required": true,
       "example": "14",
-      "help_en": "The extension period to retain the classic network endpoint of the instance. Unit: days. Valid values: 14, 30, 60, and 120",
+      "help_en": "The number of days to extend the retention period of the classic network endpoint. Valid values: 14, 30, 60, and 120. Unit: days",
       "help_zh": "延长经典网络连接地址的保留时间。取值：14、30、60或120，单位为天",
       "location": "query",
       "name": "classic_expired_days",
@@ -69,71 +70,70 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "InstanceId": {
-            "backendName": "data.dbInstanceId",
-            "description_en": "The ID of the instance",
+            "description_en": "The instance ID",
             "description_zh": "实例ID",
             "example": "r-bp1zxszhcgatnx****",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "NetInfoItems": {
-            "backendName": "data.netInfoItems",
-            "itemName": "NetInfoItem",
-            "items": {
-              "properties": {
-                "ConnectionString": {
-                  "backendName": "connectionString",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "DBInstanceNetType": {
-                  "backendName": "dbInstanceNetType",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Classic",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "VPC",
-                        "value": "2"
-                      }
-                    ]
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "NetInfoItem": {
+                "description_en": "The details of the classic network endpoint retention extension",
+                "description_zh": "经典网络连接地址延长时间的详情",
+                "items": {
+                  "description_en": "The classic network information of the instance",
+                  "description_zh": "实例的经典网络信息列表",
+                  "properties": {
+                    "ConnectionString": {
+                      "description_en": "The classic network endpoint",
+                      "description_zh": "经典网络连接地址",
+                      "example": "r-bp1zxszhcgatnx****.redis.rds.aliyuncs.com",
+                      "type": "string"
+                    },
+                    "DBInstanceNetType": {
+                      "description_en": "The network type. The value is Classic",
+                      "description_zh": "网络类型，返回值为Classic（经典网络）",
+                      "example": "Classic",
+                      "type": "string"
+                    },
+                    "ExpiredTime": {
+                      "description_en": "The expiration time of the classic network endpoint",
+                      "description_zh": "经典网络地址的过期时间",
+                      "example": "2019-08-01T09:29:18Z",
+                      "type": "string"
+                    },
+                    "IPAddress": {
+                      "description_en": "The IP address of the instance in the classic network",
+                      "description_zh": "实例在经典网络中的IP地址",
+                      "example": "100.118.142.***",
+                      "type": "string"
+                    },
+                    "Port": {
+                      "description_en": "The service port of the instance",
+                      "description_zh": "实例的服务端口",
+                      "example": "6379",
+                      "type": "string"
+                    }
                   },
-                  "visibility": "Public"
+                  "type": "object"
                 },
-                "ExpiredTime": {
-                  "backendName": "expiredTime",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "IPAddress": {
-                  "backendName": "ipAddress",
-                  "type": "string",
-                  "visibility": "Public"
-                },
-                "Port": {
-                  "backendName": "port",
-                  "type": "string",
-                  "visibility": "Public"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "nullToEmpty": true,
-            "type": "array",
-            "visibility": "Public"
+            "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "9C4AF387-1EA3-4C84-8013-3F6B973EDDF5",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           }
         },
         "type": "object"

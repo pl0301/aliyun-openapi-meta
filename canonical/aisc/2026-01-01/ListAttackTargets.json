@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 3000,
   "camel_example": "aliyun aisc ListAttackTargets --region cn-hangzhou --PageSize 10 --PageNumber 1 --version 2026-01-01 --method POST --force",
   "cmd_full_name": "aisc list-attack-targets",
   "cmd_name": "list-attack-targets",
@@ -60,6 +61,17 @@
       "type": "string"
     },
     {
+      "enum": [
+        "agentkit",
+        "openai",
+        "dify",
+        "bailian",
+        "agentrun",
+        "custom",
+        "anthropic",
+        "pai",
+        "openclaw"
+      ],
       "example": "bailian",
       "help_en": "Filters targets by the exact business label of the model or agent provider. This parameter is decoupled from ConnectionMethod (technical protocol)",
       "help_zh": "按模型/Agent 提供商业务标签精确过滤；与 ConnectionMethod（技术协议）解耦",
@@ -73,6 +85,12 @@
       "type": "string"
     },
     {
+      "enum": [
+        "running",
+        "never",
+        "completed",
+        "failed"
+      ],
       "example": "completed",
       "help_en": "Filters targets by the status of the most recent scan task",
       "help_zh": "按最近一次扫描任务的检测状态过滤",
@@ -86,6 +104,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "agent",
+        "model"
+      ],
       "example": "model",
       "help_en": "Filters targets by the exact scan target type",
       "help_zh": "按扫描目标类型精确过滤",
@@ -99,6 +121,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "high",
+        "low",
+        "medium"
+      ],
       "example": "high",
       "help_en": "Filters targets by the risk level derived from the most recent completed scan task. Targets that have never been scanned do not have a risk level and are not matched by any value",
       "help_zh": "按最近一次已完成扫描任务派生的风险等级过滤；从未扫描的目标无风险等级，不会被任何取值命中",
@@ -112,6 +139,11 @@
       "type": "string"
     },
     {
+      "enum": [
+        "lastScanTime",
+        "firstScanTime",
+        "scanCount"
+      ],
       "example": "lastScanTime",
       "help_en": "The field used for sorting. Only the following three aggregate fields are supported. Sorting is performed in memory. If this parameter is not specified, no additional sorting is applied",
       "help_zh": "排序字段，仅支持以下三个聚合字段，排序在内存中完成；不传则不额外排序",
@@ -125,6 +157,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "asc",
+        "desc"
+      ],
       "example": "desc",
       "help_en": "The sort order. Targets with null aggregate values are always placed last regardless of the sort order",
       "help_zh": "排序方向；聚合值为空的目标无论方向都排在最后",
@@ -196,30 +232,34 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Data": {
-            "backendName": "data",
             "description_en": "The list of scan targets on the current page",
             "description_zh": "当前页的扫描目标列表",
-            "itemName": "Data",
             "items": {
+              "description_en": "",
+              "description_zh": "",
               "properties": {
                 "ConnectionConfig": {
-                  "backendName": "connectionConfig",
                   "description_en": "The advanced connection configuration for the target (JSON character string). For common fields and provider configuration templates, see the ConnectionConfig parameter description of the CreateAttackTarget operation",
                   "description_zh": "目标连接高级配置（JSON 字符串），常见字段与 provider 配置模板参见 CreateAttackTarget 的 ConnectionConfig 参数说明",
                   "example": "{\\\"httpMethod\\\":\\\"POST\\\",\\\"authType\\\":\\\"bearer\\\",\\\"timeoutMs\\\":30000,\\\"requestTemplate\\\":\\\"{\\\\\\\"input\\\\\\\":{\\\\\\\"prompt\\\\\\\":\\\\\\\"{{prompt}}\\\\\\\"},\\\\\\\"parameters\\\\\\\":{\\\\\\\"incremental_output\\\\\\\":true},\\\\\\\"debug\\\\\\\":{}}\\\",\\\"messageJsonPath\\\":\\\"$.output.text\\\",\\\"requestHeaders\\\":\\\"{\\\\\\\"X-DashScope-SSE\\\\\\\": \\\\\\\"enable\\\\\\\" }\\\",\\\"stream\\\":true,\\\"customAuthHeaderName\\\":\\\"\\\"}",
                   "type": "string"
                 },
                 "ConnectionMethod": {
-                  "backendName": "connectionMethod",
                   "description_en": "The connection protocol type of the target service",
                   "description_zh": "目标服务的连接协议类型",
+                  "enumValueTitles": {
+                    "anthropic": "Anthropic Messages API 协议",
+                    "enterprise_relay": "企业内网 Agent 接入（轮询拉取模式）",
+                    "openai": "OpenAI 兼容协议"
+                  },
                   "example": "openai",
                   "type": "string"
                 },
                 "CreateTime": {
-                  "backendName": "createTime",
                   "description_en": "The time when the target was created. The value is a millisecond-level UNIX timestamp",
                   "description_zh": "目标创建时间，毫秒时间戳（Unix epoch 毫秒）",
                   "example": "1735689600000",
@@ -227,21 +267,18 @@
                   "type": "integer"
                 },
                 "Description": {
-                  "backendName": "description",
                   "description_en": "The description of the scan target",
                   "description_zh": "扫描目标的用途备注说明",
                   "example": "生产环境百炼应用",
                   "type": "string"
                 },
                 "Endpoint": {
-                  "backendName": "endpoint",
                   "description_en": "The HTTP or HTTPS endpoint address of the target model service",
                   "description_zh": "目标模型服务的 HTTP/HTTPS 端点地址",
                   "example": "https://dashscope.aliyuncs.com/compatible-mode/v1",
                   "type": "string"
                 },
                 "FirstScanTime": {
-                  "backendName": "firstScanTime",
                   "description_en": "The time when the first scan was performed. The value is a millisecond-level UNIX timestamp. This parameter is null if no scan has been performed",
                   "description_zh": "首次扫描时间，毫秒时间戳（Unix epoch 毫秒）；从未扫描时为 null",
                   "example": "1735689600000",
@@ -249,21 +286,24 @@
                   "type": "integer"
                 },
                 "LastScanFailMessage": {
-                  "backendName": "lastScanFailMessage",
                   "description_en": "The failure reason of the most recent scan task. This parameter is empty if the most recent scan did not fail",
                   "description_zh": "最近一次扫描任务的失败原因；最近一次扫描未失败时为空",
                   "example": "扫描执行器连接超时",
                   "type": "string"
                 },
                 "LastScanStatus": {
-                  "backendName": "lastScanStatus",
                   "description_en": "The detection status of the most recent scan task",
                   "description_zh": "最近一次扫描任务的检测状态",
+                  "enumValueTitles": {
+                    "completed": "扫描完成",
+                    "failed": "扫描失败",
+                    "never": "从未扫描",
+                    "running": "扫描中"
+                  },
                   "example": "completed",
                   "type": "string"
                 },
                 "LastScanTime": {
-                  "backendName": "lastScanTime",
                   "description_en": "The time when the last scan was performed. The value is a millisecond-level UNIX timestamp. This parameter is null if no scan has been performed",
                   "description_zh": "最后扫描时间，毫秒时间戳（Unix epoch 毫秒）；从未扫描时为 null",
                   "example": "1735689600000",
@@ -271,21 +311,18 @@
                   "type": "integer"
                 },
                 "LastVerifyMessage": {
-                  "backendName": "lastVerifyMessage",
                   "description_en": "The detailed message of the most recent connectivity verification. If the verification succeeded, the value is a response content snippet returned by the target service. If the verification failed, the value is the error reason",
                   "description_zh": "最近一次连通性验证的详细消息；验证通过时为目标服务返回的响应内容片段，失败时为错误原因",
                   "example": "连通性验证成功",
                   "type": "string"
                 },
                 "ModelName": {
-                  "backendName": "modelName",
                   "description_en": "The name of the target model",
                   "description_zh": "目标模型的名称",
                   "example": "qwen-flash",
                   "type": "string"
                 },
                 "ModifyTime": {
-                  "backendName": "modifyTime",
                   "description_en": "The time when the target was last modified. The value is a millisecond-level UNIX timestamp",
                   "description_zh": "目标最后修改时间，毫秒时间戳（Unix epoch 毫秒）",
                   "example": "1735689600000",
@@ -293,21 +330,34 @@
                   "type": "integer"
                 },
                 "Provider": {
-                  "backendName": "provider",
                   "description_en": "The business label of the model or agent provider",
                   "description_zh": "模型/Agent 提供商业务标签",
+                  "enumValueTitles": {
+                    "agentkit": "AgentKit 平台",
+                    "agentrun": "AgentRun 平台",
+                    "anthropic": "Anthropic 服务",
+                    "bailian": "阿里云百炼",
+                    "custom": "其他或自研",
+                    "dify": "Dify 平台",
+                    "openai": "OpenAI 服务",
+                    "openclaw": "OpenClaw 平台",
+                    "pai": "阿里云 PAI"
+                  },
                   "example": "bailian",
                   "type": "string"
                 },
                 "RiskLevel": {
-                  "backendName": "riskLevel",
                   "description_en": "The risk level derived from the most recent completed scan task. This parameter is null if no scan has been performed",
                   "description_zh": "最近一次已完成扫描任务派生的风险等级；从未扫描时为 null",
+                  "enumValueTitles": {
+                    "high": "高风险",
+                    "low": "低风险",
+                    "medium": "中风险"
+                  },
                   "example": "high",
                   "type": "string"
                 },
                 "ScanCount": {
-                  "backendName": "scanCount",
                   "description_en": "The total number of scans performed. The value is 0 if no scan has been performed",
                   "description_zh": "累计扫描次数；从未扫描时为 0",
                   "example": "12",
@@ -315,30 +365,34 @@
                   "type": "integer"
                 },
                 "TargetId": {
-                  "backendName": "targetId",
                   "description_en": "The unique identifier of the scan target",
                   "description_zh": "扫描目标的唯一标识",
                   "example": "target-abc123def4567",
                   "type": "string"
                 },
                 "TargetName": {
-                  "backendName": "targetName",
                   "description_en": "The display name of the scan target",
                   "description_zh": "扫描目标的展示名称",
                   "example": "我的百炼靶标",
                   "type": "string"
                 },
                 "TargetType": {
-                  "backendName": "targetType",
                   "description_en": "The type of the scan target",
                   "description_zh": "扫描目标的类型",
+                  "enumValueTitles": {
+                    "agent": "智能体（Agent）",
+                    "model": "模型"
+                  },
                   "example": "model",
                   "type": "string"
                 },
                 "VerifyStatus": {
-                  "backendName": "verifyStatus",
                   "description_en": "The connectivity verification status of the target",
                   "description_zh": "目标的连通性验证状态",
+                  "enumValueTitles": {
+                    "failed": "连通性验证失败",
+                    "verified": "连通性验证通过"
+                  },
                   "example": "verified",
                   "type": "string"
                 }
@@ -348,7 +402,6 @@
             "type": "array"
           },
           "PageNumber": {
-            "backendName": "pageNumber",
             "description_en": "The normalized page number that takes effect. The value may differ from the input parameter",
             "description_zh": "归一化后的实际生效页码，不一定等于入参",
             "example": "1",
@@ -356,7 +409,6 @@
             "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
             "description_en": "The normalized number of entries per page that takes effect. The value may differ from the input parameter",
             "description_zh": "归一化后的实际生效每页条数，不一定等于入参",
             "example": "10",
@@ -364,14 +416,12 @@
             "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID. You can use this ID for troubleshooting and log tracing",
             "description_zh": "本次请求的唯一标识，用于问题排查与日志追踪",
             "example": "1EBD0C05-6C1F-4C95-9C63-xxxx",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "totalCount",
             "description_en": "The total number of scan targets that match the filter conditions. In post-filtering scenarios, this value is the total count after in-memory filtering",
             "description_zh": "满足过滤条件的扫描目标总数；后置过滤场景为内存过滤后的总数",
             "example": "42",

@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun bssopenapi QueryResourcePackageInstances --region cn-hangzhou --IncludePartner true --ExpiryTimeStart '2020-02-02T12:00:00Z' --PageNum 1 --PageSize 20 --ProductCode rds --ExpiryTimeEnd '2020-02-02T13:00:00Z'",
   "cmd_full_name": "bssopenapi query-resource-package-instances",
   "cmd_name": "query-resource-package-instances",
   "deprecated": false,
-  "description_en": "Queries the instances of a resource plan. You can query the resource plans that are valid",
+  "description_en": "Queries the instances of a specific resource plan for a user. Only valid resource plans are supported",
   "description_zh": "查询用户某个资源包的实例，仅支持查询有效的资源包",
   "kebab_example": "aliyun bssopenapi query-resource-package-instances --product-code rds --expiry-time-start 2020-02-02T12:00:00Z --expiry-time-end 2020-02-02T13:00:00Z --page-num 1 --page-size 20 --include-partner true --api-version 2017-12-14 --region cn-hangzhou",
   "method": "GET|POST",
@@ -22,7 +23,7 @@
   "parameters": [
     {
       "example": "rds",
-      "help_en": "The code of the service",
+      "help_en": "The product code",
       "help_zh": "产品代码",
       "location": "query",
       "name": "product_code",
@@ -35,7 +36,7 @@
     },
     {
       "example": "2020-02-02T12:00:00Z",
-      "help_en": "The beginning of the expiration time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The expiration start time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "失效起始时间。日期格式按照ISO8601标准表示，并需要使用UTC时间。格式为：yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "expiry_time_start",
@@ -48,7 +49,7 @@
     },
     {
       "example": "2020-02-02T13:00:00Z",
-      "help_en": "The end of the expiration time range to query. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
+      "help_en": "The expiration end time. Specify the time in the ISO 8601 standard in the yyyy-MM-ddTHH:mm:ssZ format. The time must be in UTC",
       "help_zh": "失效结束时间。日期格式按照ISO8601标准表示，并需要使用UTC时间。格式为：yyyy-MM-ddTHH:mm:ssZ",
       "location": "query",
       "name": "expiry_time_end",
@@ -61,7 +62,7 @@
     },
     {
       "example": "1",
-      "help_en": "The number of the page to return. Default value: 1",
+      "help_en": "The page number. Default value: 1",
       "help_zh": "页码，默认为1",
       "location": "query",
       "name": "page_num",
@@ -74,7 +75,7 @@
     },
     {
       "example": "20",
-      "help_en": "The number of entries to return on each page. Default value: 20. Maximum value: 300",
+      "help_en": "The number of entries per page. Default value: 20. Maximum value: 300",
       "help_zh": "每页条数，默认值20，最大300",
       "location": "query",
       "name": "page_size",
@@ -87,7 +88,7 @@
     },
     {
       "example": "true",
-      "help_en": "Specifies whether partners are involved",
+      "help_en": "Specifies whether to include partners",
       "help_zh": "是否包含合作伙伴",
       "location": "query",
       "name": "include_partner",
@@ -105,194 +106,201 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "Code": {
-            "backendName": "code",
-            "description_en": "The status code returned",
+            "description_en": "The status code",
             "description_zh": "状态码",
             "example": "Success",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Data": {
-            "backendName": "data",
-            "description_en": "The data returned",
+            "description_en": "The returned data",
             "description_zh": "返回数据",
             "properties": {
               "HostId": {
-                "backendName": "hostId",
-                "description_en": "The ID of the host",
+                "description_en": "The host ID",
                 "description_zh": "主机ID",
                 "example": "cn",
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "Instances": {
-                "backendName": "instances",
-                "itemName": "Instance",
-                "items": {
-                  "properties": {
-                    "ApplicableProducts": {
-                      "backendName": "resourceTypes",
-                      "itemName": "Product",
-                      "items": {
-                        "backendName": "resourceTypes",
-                        "type": "string",
-                        "visibility": "Public"
+                "description_en": "",
+                "description_zh": "",
+                "itemNode": true,
+                "properties": {
+                  "Instance": {
+                    "description_en": "The array of instance details",
+                    "description_zh": "实例详情数组",
+                    "items": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "properties": {
+                        "ApplicableProducts": {
+                          "description_en": "",
+                          "description_zh": "",
+                          "itemNode": true,
+                          "properties": {
+                            "Product": {
+                              "description_en": "The list of applicable products",
+                              "description_zh": "适用产品列表",
+                              "items": {
+                                "description_en": "The applicable product of the resource plan",
+                                "description_zh": "资源包适用产品",
+                                "example": "{\"Product\": [\"oss\"] }",
+                                "type": "string"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "CommodityCode": {
+                          "description_en": "The commodity code",
+                          "description_zh": "商品code",
+                          "example": "rds",
+                          "type": "string"
+                        },
+                        "DeductType": {
+                          "description_en": "The deduction type. Valid value: Absolute",
+                          "description_zh": "扣费类型：Absolute",
+                          "example": "Absolute",
+                          "type": "string"
+                        },
+                        "EffectiveTime": {
+                          "description_en": "The effective period in the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format. The time is in UTC",
+                          "description_zh": "生效时间，格式为 ISO 8601 UTC 时间（YYYY-MM-DDTHH:mm:ssZ）",
+                          "example": "2018-09-12T09:51:56Z",
+                          "type": "string"
+                        },
+                        "ExpiryTime": {
+                          "description_en": "The expiration time in the ISO 8601 standard in the YYYY-MM-DDTHH:mm:ssZ format. The time is in UTC",
+                          "description_zh": "失效时间，格式为 ISO 8601 UTC 时间（YYYY-MM-DDTHH:mm:ssZ）",
+                          "example": "2019-03-12T16:00:00Z",
+                          "type": "string"
+                        },
+                        "InstanceId": {
+                          "description_en": "The instance ID",
+                          "description_zh": "实例ID",
+                          "example": "OSSBAG-cn-v0h1s4hma01",
+                          "type": "string"
+                        },
+                        "PackageType": {
+                          "description_en": "The type of the resource plan",
+                          "description_zh": "资源包类型",
+                          "example": "FPT_ossbag_absolute_Storage_sh",
+                          "type": "string"
+                        },
+                        "Region": {
+                          "description_en": "The region",
+                          "description_zh": "地域",
+                          "example": "cn-hangzhou",
+                          "type": "string"
+                        },
+                        "RemainingAmount": {
+                          "description_en": "The remaining amount",
+                          "description_zh": "剩余量",
+                          "example": "40.000",
+                          "type": "string"
+                        },
+                        "RemainingAmountUnit": {
+                          "description_en": "The unit of the remaining amount",
+                          "description_zh": "剩余量单位",
+                          "example": "GB",
+                          "type": "string"
+                        },
+                        "Remark": {
+                          "description_en": "The remarks for the resource plan commodity. Only Chinese descriptions are provided",
+                          "description_zh": "资源包商品的备注说明，只提供中文说明",
+                          "example": "标准存储包(华东2)",
+                          "type": "string"
+                        },
+                        "Status": {
+                          "description_en": "The status of the resource plan. Valid values:\nAvailable: The resource plan is valid.\nExpired: The resource plan has expired",
+                          "description_zh": "资源包状态，取值：\nAvailable（有效）。\nExpired（失效）",
+                          "example": "Available",
+                          "type": "string"
+                        },
+                        "TotalAmount": {
+                          "description_en": "The total amount",
+                          "description_zh": "总量",
+                          "example": "40.000",
+                          "type": "string"
+                        },
+                        "TotalAmountUnit": {
+                          "description_en": "The unit of the total amount",
+                          "description_zh": "总量单位",
+                          "example": "GB",
+                          "type": "string"
+                        }
                       },
-                      "parseType": "null",
-                      "type": "array",
-                      "visibility": "Public"
+                      "type": "object"
                     },
-                    "CommodityCode": {
-                      "backendName": "commodityCode",
-                      "type": "string"
-                    },
-                    "DeductType": {
-                      "backendName": "deductType",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "EffectiveTime": {
-                      "backendName": "effectiveFrom",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "ExpiryTime": {
-                      "backendName": "effectiveTo",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "InstanceId": {
-                      "backendName": "instanceId",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "PackageType": {
-                      "backendName": "templateCode",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "Region": {
-                      "backendName": "region",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "RemainingAmount": {
-                      "backendName": "remainingAmount",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "RemainingAmountUnit": {
-                      "backendName": "remainingAmountUnit",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "Remark": {
-                      "backendName": "remark",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "Status": {
-                      "backendName": "status",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "TotalAmount": {
-                      "backendName": "totalAmount",
-                      "type": "string",
-                      "visibility": "Public"
-                    },
-                    "TotalAmountUnit": {
-                      "backendName": "totalAmountUnit",
-                      "type": "string",
-                      "visibility": "Public"
-                    }
-                  },
-                  "type": "object"
+                    "type": "array"
+                  }
                 },
-                "nullToEmpty": true,
-                "type": "array",
-                "visibility": "Public"
+                "type": "object"
               },
               "PageNum": {
-                "backendName": "pageNum",
-                "description_en": "The page number of the returned page",
+                "description_en": "The page number",
                 "description_zh": "页码",
                 "example": "1",
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "PageSize": {
-                "backendName": "pageSize",
-                "description_en": "The number of entries returned per page",
+                "description_en": "The number of entries per page",
                 "description_zh": "每页条数",
                 "example": "20",
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               },
               "TotalCount": {
-                "backendName": "totalCount",
-                "description_en": "The total number of returned entries",
+                "description_en": "The total number of records",
                 "description_zh": "总记录数",
                 "example": "12",
-                "type": "string",
-                "visibility": "Public"
+                "type": "string"
               }
             },
-            "type": "object",
-            "visibility": "Public"
+            "type": "object"
           },
           "Message": {
-            "backendName": "message",
-            "description_en": "The message returned",
+            "description_en": "The error message",
             "description_zh": "错误信息",
             "example": "Successful!",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Page": {
-            "backendName": "page",
-            "description_en": "The page number of the returned page",
+            "description_en": "The page number",
             "description_zh": "页码",
             "example": "1",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "PageSize": {
-            "backendName": "pageSize",
-            "description_en": "The number of entries returned per page",
+            "description_en": "The number of entries per page",
             "description_zh": "每页条数",
             "example": "20",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           },
           "RequestId": {
-            "backendName": "requestId",
-            "description_en": "The ID of the request",
+            "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "6000EE23-274B-4E07-A697-FF2E999520A4",
-            "type": "string",
-            "visibility": "Public"
+            "type": "string"
           },
           "Success": {
-            "backendName": "success",
             "description_en": "Indicates whether the request is successful",
             "description_zh": "是否成功",
             "example": "true",
-            "type": "boolean",
-            "visibility": "Public"
+            "type": "boolean"
           },
           "Total": {
-            "backendName": "total",
-            "description_en": "The total number of returned entries",
+            "description_en": "The total number of records",
             "description_zh": "总记录数",
             "example": "12",
             "format": "int32",
-            "type": "integer",
-            "visibility": "Public"
+            "type": "integer"
           }
         },
         "type": "object"

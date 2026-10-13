@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 30000,
   "camel_example": "aliyun eds-aic DescribeImageList --region cn-hangzhou --ImageType System --version 2023-09-30 --method POST --force",
   "cmd_full_name": "eds-aic describe-image-list",
   "cmd_name": "describe-image-list",
   "deprecated": false,
-  "description_en": "Queries a list of available images",
+  "description_en": "Queries a list of images",
   "description_zh": "查询镜像列表",
   "kebab_example": "aliyun eds-aic describe-image-list --image-type System --region cn-hangzhou",
   "method": "GET|POST",
@@ -36,6 +37,10 @@
       "type": "string"
     },
     {
+      "enum": [
+        "User",
+        "System"
+      ],
       "example": "System",
       "help_en": "The image type",
       "help_zh": "镜像类型",
@@ -49,7 +54,7 @@
       "type": "string"
     },
     {
-      "example": "Android 12 system image",
+      "example": "安卓12系统镜像",
       "help_en": "The image name",
       "help_zh": "镜像名称",
       "location": "formData",
@@ -62,6 +67,13 @@
       "type": "string"
     },
     {
+      "enum": [
+        "AVAILABLE",
+        "DELETE",
+        "INIT",
+        "CREATE_FAILED",
+        "CREATING"
+      ],
       "example": "AVAILABLE",
       "help_en": "The status of the image",
       "help_zh": "镜像的状态",
@@ -76,7 +88,7 @@
     },
     {
       "example": "AAAAAV3MpHK1AP0pfERHZN5pu6kw9dGL5jves2FS9RLq****",
-      "help_en": "The token that specifies the position from which to start the query. If you leave this parameter empty, the query starts from the beginning",
+      "help_en": "The position from which the read operation starts. An empty value indicates that the read operation starts from the beginning",
       "help_zh": "用来表示当前开始读取的位置。置空表示从头开始",
       "location": "formData",
       "name": "next_token",
@@ -89,7 +101,7 @@
     },
     {
       "example": "20",
-      "help_en": "The maximum number of entries to return on each page for a paged query. Valid values: 1 to 100. Default value: 20",
+      "help_en": "The maximum number of entries per page for a paged query. Valid values: 1 to 100. Default value: 20",
       "help_zh": "分页查询时每页的最大条目数。取值范围1～100，默认值为20",
       "location": "formData",
       "maximum": "100",
@@ -104,7 +116,7 @@
     },
     {
       "example": "null",
-      "help_en": "This parameter is not yet available",
+      "help_en": "This parameter is not yet available for public use",
       "help_zh": "该参数暂未对外开放使用",
       "location": "query",
       "name": "image_package_type",
@@ -158,7 +170,7 @@
         ],
         "type": "object"
       },
-      "help_en": "An array of tag objects",
+      "help_en": "The array of tag objects",
       "help_zh": "标签对象数组",
       "location": "query",
       "name": "image_biz_tags",
@@ -171,8 +183,8 @@
       "type": "array"
     },
     {
-      "help_en": "The SystemType",
-      "help_zh": "The SystemType",
+      "help_en": "The operating system type",
+      "help_zh": "操作系统类型",
       "location": "query",
       "name": "system_type",
       "options": [
@@ -193,61 +205,51 @@
         "description_zh": "返回参数",
         "properties": {
           "Data": {
-            "backendName": "data",
             "description_en": "The returned data",
             "description_zh": "返回数据",
-            "itemName": "Data",
             "items": {
               "description_en": "The returned data",
               "description_zh": "返回数据",
               "properties": {
                 "AliUid": {
-                  "backendName": "aliUid",
-                  "description_en": "The ID of the Alibaba Cloud account",
+                  "description_en": "The Alibaba Cloud account ID",
                   "description_zh": "阿里云账号ID",
                   "example": "117819727354****",
                   "format": "int64",
                   "type": "integer"
                 },
                 "Description": {
-                  "backendName": "description",
                   "description_en": "The description",
                   "description_zh": "描述",
                   "example": "description",
                   "type": "string"
                 },
                 "GmtCreate": {
-                  "backendName": "gmtCreate",
-                  "description_en": "The time when the image was created",
+                  "description_en": "The creation time",
                   "description_zh": "创建时间",
                   "example": "2024-02-01 10:56:36\n",
                   "type": "string"
                 },
                 "GmtModified": {
-                  "backendName": "gmtModified",
-                  "description_en": "The time when the image was last modified",
+                  "description_en": "The modification time",
                   "description_zh": "修改时间",
                   "example": "2024-02-01 10:56:36\n",
                   "type": "string"
                 },
                 "ImageBizTags": {
-                  "backendName": "imageTags",
-                  "description_en": "An array of tag objects",
+                  "description_en": "The array of tag objects",
                   "description_zh": "标签对象数组",
-                  "itemName": "imageTags",
                   "items": {
                     "description_en": "The tag object",
                     "description_zh": "标签对象",
                     "properties": {
                       "Key": {
-                        "backendName": "key",
                         "description_en": "The tag key",
                         "description_zh": "标签键",
                         "example": "key1",
                         "type": "string"
                       },
                       "Value": {
-                        "backendName": "value",
                         "description_en": "The tag value",
                         "description_zh": "标签值",
                         "example": "value1",
@@ -259,14 +261,12 @@
                   "type": "array"
                 },
                 "ImageId": {
-                  "backendName": "imageId",
                   "description_en": "The image ID",
                   "description_zh": "镜像ID",
                   "example": "imgc-075cllfeuazh****",
                   "type": "string"
                 },
                 "ImageName": {
-                  "backendName": "imageName",
                   "description_en": "The image name",
                   "description_zh": "镜像名称",
                   "example": "IMAGE",
@@ -278,38 +278,40 @@
                     "description_zh": "分发的信息",
                     "properties": {
                       "DistributeStatus": {
-                        "backendName": "distributeStatus",
                         "description_en": "The distribution status",
                         "description_zh": "分发状态",
+                        "enumValueTitles": {
+                          "AVAILABLE": "可用",
+                          "CREATE_FAILED": "创建失败",
+                          "CREATING": "创建中",
+                          "DELETE": "已删除",
+                          "INIT": "初始化中"
+                        },
                         "example": "AVAILABLE",
-                        "title_en": "分发状态",
+                        "title_en": "",
                         "title_zh": "分发状态",
                         "type": "string"
                       },
                       "Progress": {
-                        "backendName": "progress",
                         "description_en": "The distribution progress",
                         "description_zh": "分发进度",
                         "example": "100%",
-                        "title_en": "进度",
+                        "title_en": "",
                         "title_zh": "进度",
                         "type": "string"
                       }
                     },
                     "type": "object"
                   },
-                  "backendName": "imageRegionDistributeMap",
-                  "description_en": "The image distribution information by region. The key is the region and the value is the distribution information",
+                  "description_en": "The image distribution region information. The key is the region and the value is the distribution information",
                   "description_zh": "镜像分发地域信息，key为地域，value为分发信息",
-                  "title_en": "镜像分发地域Map",
+                  "title_en": "",
                   "title_zh": "镜像分发地域Map",
                   "type": "object"
                 },
                 "ImageRegionList": {
-                  "backendName": "imageRegionList",
                   "description_en": "The list of available regions",
                   "description_zh": "可用地域列表",
-                  "itemName": "ImageRegionList",
                   "items": {
                     "description_en": "The region",
                     "description_zh": "地域",
@@ -319,35 +321,34 @@
                   "type": "array"
                 },
                 "ImageType": {
-                  "backendName": "imageType",
                   "description_en": "The image type",
                   "description_zh": "镜像类型",
+                  "enumValueTitles": {
+                    "System": "系统镜像",
+                    "User": "自定义镜像"
+                  },
                   "example": "System",
                   "type": "string"
                 },
                 "ImageVersion": {
-                  "backendName": "imageVersion",
                   "description_en": "The image version",
                   "description_zh": "镜像版本",
                   "example": "20241204102337",
                   "type": "string"
                 },
                 "Language": {
-                  "backendName": "language",
                   "description_en": "The language",
                   "description_zh": "语言",
                   "example": "zh",
                   "type": "string"
                 },
                 "ReleaseTime": {
-                  "backendName": "releaseTime",
-                  "description_en": "The time when the image was published",
-                  "description_zh": "发布时间",
+                  "description_en": "The release time. The time format is YYYY-MM-DD HH:mm:ss",
+                  "description_zh": "发布时间。时间格式为 YYYY-MM-DD HH:mm:ss",
                   "example": "2024-07-25 10:06:45",
                   "type": "string"
                 },
                 "RenderingType": {
-                  "backendName": "renderingType",
                   "description_en": "The rendering type",
                   "description_zh": "渲染类型",
                   "enum": [
@@ -355,22 +356,32 @@
                     "GPULocal",
                     "GPURemote"
                   ],
+                  "enumValueTitles": {
+                    "CPU": "CPU",
+                    "GPULocal": "GPULocal",
+                    "GPURemote": "GPURemote"
+                  },
                   "example": "CPU",
                   "type": "string"
                 },
                 "Status": {
-                  "backendName": "status",
                   "description_en": "The image status",
                   "description_zh": "镜像状态",
+                  "enumValueTitles": {
+                    "AVAILABLE": "可用",
+                    "CREATE_FAILED": "创建失败",
+                    "CREATING": "创建中",
+                    "DELETE": "已删除",
+                    "INIT": "初始化中"
+                  },
                   "example": "AVAILABLE",
                   "type": "string"
                 },
                 "SystemType": {
-                  "backendName": "systemType",
                   "description_en": "The operating system type",
                   "description_zh": "操作系统类型",
                   "example": "Android 12",
-                  "title_en": "操作系统类型,android 9, android 12",
+                  "title_en": "",
                   "title_zh": "操作系统类型,android 9, android 12",
                   "type": "string"
                 }
@@ -380,21 +391,18 @@
             "type": "array"
           },
           "NextToken": {
-            "backendName": "nextToken",
-            "description_en": "The token that is used to start the next query. An empty value indicates that all data has been returned",
+            "description_en": "The position from which the current call returns the read data. An empty value indicates that all data has been read",
             "description_zh": "用来表示当前调用返回读取到的位置。空代表数据已经读取完毕",
             "example": "AAAAAV3MpHK1AP0pfERHZN5pu6l5V9uON****",
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "620740FF-492F-5956-B1BA-361E966C0269",
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "count",
             "description_en": "The total number of entries",
             "description_zh": "总条目数",
             "example": "30",
@@ -402,7 +410,7 @@
             "type": "integer"
           }
         },
-        "title_en": "NextTokenListResult<ImageDTO>",
+        "title_en": "",
         "title_zh": "NextTokenListResult<ImageDTO>",
         "type": "object"
       }

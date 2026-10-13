@@ -1,9 +1,10 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun ecs DescribeCapacityReservations --region cn-hangzhou --Status Active --Tag.1.Key TestKey --ResourceGroupId 'rg-bp67acfmxazb4p0000' --NextToken caeba0bbb2be03f84eb48b699f0a4883 --Platform linux --ZoneId 'cn-hangzhou-h' --InstanceChargeType PostPaid --MaxResults 10 --Tag.1.Value TestValue --PrivatePoolOptions.Ids 'crp-bp1gubrkqutenqdd0000_,_crp-bp67acfmxazb50000' --RegionId 'cn-hangzhou' --InstanceType 'ecs.c6.large'",
   "cmd_full_name": "ecs describe-capacity-reservations",
   "cmd_name": "describe-capacity-reservations",
   "deprecated": false,
-  "description_en": "Queries the details of one or more capacity reservations, such as the status, effective and expiration time, private pool mode, and number of used instances",
+  "description_en": "Queries the details of one or more capacity reservations, such as the status, effective and expiration time, private pool mode, and number of consumed instances",
   "description_zh": "查询一个或多个容量预定服务的详细信息，例如服务的状态、服务的生效与失效时间、私有池的模式和已使用的实例的数量等",
   "kebab_example": "aliyun ecs describe-capacity-reservations --biz-region-id cn-hangzhou --resource-group-id rg-bp67acfmxazb4p0000 --tag Value=TestValue Key=TestKey --max-results 10 --next-token caeba0bbb2be03f84eb48b699f0a4883 --private-pool-options-ids crp-bp1gubrkqutenqdd0000_,_crp-bp67acfmxazb50000 --platform linux --instance-type ecs.c6.large --zone-id cn-hangzhou-h --instance-charge-type PostPaid --status Active --region cn-hangzhou",
   "method": "GET|POST",
@@ -51,7 +52,7 @@
         "fields": [
           {
             "example": "TestKey",
-            "help_en": "The tag key. N indicates that you can set multiple tag keys for filtering. Valid values of N: 1 to 20.\n\nIf you use a single tag to filter resources, the resource count with the specified tag cannot exceed 1000. If you use multiple tags to filter resources, the resource count with all specified tags attached cannot exceed 1000. If the resource count exceeds 1000, call the https://help.aliyun.com/document_detail/110425.html operation to query resources",
+            "help_en": "The tag key. N specifies that you can set multiple tag keys for filtering. Valid values of N: 1 to 20.\n\nIf you use a single tag to filter resources, the resource count with the tag cannot exceed 1000. If you use multiple tags to filter resources, the resource count with all specified tags attached cannot exceed 1000. If the resource count exceeds 1000, call the https://help.aliyun.com/document_detail/110425.html operation to query resources",
             "help_zh": "标签键。N表示可以设置多个标签键进行过滤，N的取值范围为1~20。\n\n使用一个标签过滤资源，查询到该标签下的资源数量不能超过1000个；使用多个标签过滤资源，查询到同时绑定了多个标签的资源数量不能超过1000个。如果资源数量超过1000个，请使用https://help.aliyun.com/document_detail/110425.html接口进行查询",
             "name": "key",
             "options": [
@@ -63,7 +64,7 @@
           },
           {
             "example": "TestValue",
-            "help_en": "The tag value. N indicates that you can set multiple tag values for filtering. Valid values of N: 1 to 20",
+            "help_en": "The tag value. N specifies that you can set multiple tag values for filtering. Valid values of N: 1 to 20",
             "help_zh": "标签值。N表示可以设置多个标签值进行过滤，N的取值范围为1~20",
             "name": "value",
             "options": [
@@ -118,7 +119,7 @@
     },
     {
       "example": "[\"crp-bp1gubrkqutenqdd****\", \"crp-bp67acfmxazb5****\"]",
-      "help_en": "The list of capacity reservation IDs. The value can be a JSON array that consists of up to 100 IDs. Separate the IDs with commas (,)",
+      "help_en": "The list of capacity reservation IDs. The value can be a JSON array that consists of up to 100 IDs, separated by commas (,)",
       "help_zh": "容量预定服务ID列表。取值可以由多个ID组成一个JSON数组，最多支持100个ID，ID之间用半角逗号（,）隔开",
       "location": "query",
       "name": "private_pool_options_ids",
@@ -183,7 +184,7 @@
     },
     {
       "example": "Active",
-      "help_en": "The status of the capacity reservation. Valid values:\n\nAll: all states.\nPending: initializing. A capacity reservation that takes effect at a specified time enters the initializing state first.\nPreparing: being prepared. A capacity reservation that takes effect at a specified time is in the Preparing state during the resource delivery phase.\nPrepared: to take effect. A capacity reservation that takes effect at a specified time is in the Prepared state after resource delivery is complete but before the service takes effect.\nActive: active.\nReleased: released, including manual release and automatic release upon expiration.\n\nIf you do not specify this parameter, capacity reservations in all states except Pending and Released are queried",
+      "help_en": "The status of the capacity reservation. Valid values:\n\nAll: all states.\nPending: initializing. A capacity reservation that takes effect at a specified time enters the initializing state first.\nPreparing: being prepared. A capacity reservation that takes effect at a specified time is in the being prepared state during the resource delivery phase.\nPrepared: to take effect. A capacity reservation that takes effect at a specified time is in the to take effect state after resource delivery is complete but before the service officially takes effect.\nActive: active.\nReleased: released, including manual release and automatic release upon expiration.\n\nIf you do not specify this parameter, capacity reservations in all states except Pending and Released are queried",
       "help_zh": "容量预定服务的状态。取值范围：\n\nAll：所有状态。\nPending：初始化。指定时间生效的容量预定会先进入初始化状态。\nPreparing：准备中。指定时间生效的容量预定在资源交付进行阶段，处于准备中状态。\nPrepared：待生效。指定时间生效的容量预定在资源交付完成，服务正式生效之前，处于待生效状态。\nActive：生效中。\nReleased：已释放，包括手动释放与到期自动释放。\n\n若不指定，则查询除Pending、Released以外状态的容量预定",
       "location": "query",
       "name": "status",
@@ -201,267 +202,311 @@
   "responses": {
     "200": {
       "schema": {
+        "description_en": "",
+        "description_zh": "",
         "properties": {
           "CapacityReservationSet": {
-            "backendName": "data.data",
-            "itemName": "CapacityReservationItem",
-            "items": {
-              "properties": {
-                "AllocatedResources": {
-                  "backendName": "plannedResources",
-                  "itemName": "AllocatedResource",
-                  "items": {
-                    "properties": {
-                      "AvailableAmount": {
-                        "backendName": "availableAmount",
-                        "format": "int32",
-                        "type": "integer"
-                      },
-                      "CapacityReservationUsages": {
-                        "backendName": "capacityReservationUsages",
-                        "itemName": "CapacityReservationUsage",
-                        "items": {
-                          "nullToEmpty": false,
-                          "properties": {
-                            "AccountId": {
-                              "backendName": "accountId",
-                              "nullToEmpty": false,
-                              "type": "string"
+            "description_en": "",
+            "description_zh": "",
+            "itemNode": true,
+            "properties": {
+              "CapacityReservationItem": {
+                "description_en": "The details of the capacity reservations",
+                "description_zh": "容量预定服务详细信息组成的集合",
+                "items": {
+                  "description_en": "The details of the capacity reservation",
+                  "description_zh": "容量预定服务详细信息",
+                  "properties": {
+                    "AllocatedResources": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "AllocatedResource": {
+                          "description_en": "The list of resource allocation details",
+                          "description_zh": "资源分配详情列表",
+                          "items": {
+                            "description_en": "The resource allocation details",
+                            "description_zh": "资源分配详情",
+                            "properties": {
+                              "AvailableAmount": {
+                                "description_en": "The number of available instances",
+                                "description_zh": "可用的实例数量",
+                                "example": "2",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "CapacityReservationUsages": {
+                                "description_en": "",
+                                "description_zh": "",
+                                "itemNode": true,
+                                "properties": {
+                                  "CapacityReservationUsage": {
+                                    "description_en": "The list of consumed instance details",
+                                    "description_zh": "已使用的实例详情列表",
+                                    "items": {
+                                      "description_en": "The consumed instance details",
+                                      "description_zh": "已使用的实例详情",
+                                      "properties": {
+                                        "AccountId": {
+                                          "description_en": "The Alibaba Cloud account ID",
+                                          "description_zh": "阿里云账号ID",
+                                          "example": "105909559088****",
+                                          "type": "string"
+                                        },
+                                        "ServiceName": {
+                                          "description_en": "The Alibaba Cloud service name",
+                                          "description_zh": "阿里云服务名称",
+                                          "example": "maxcompute.aliyuncs.com",
+                                          "type": "string"
+                                        },
+                                        "UsedAmount": {
+                                          "description_en": "The number of instances consumed by the Alibaba Cloud account or service",
+                                          "description_zh": "该阿里云账号或服务已使用实例的数量",
+                                          "example": "20",
+                                          "format": "int32",
+                                          "type": "integer"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "type": "array"
+                                  }
+                                },
+                                "type": "object"
+                              },
+                              "FailedAmount": {
+                                "description_en": "The failed capacity",
+                                "description_zh": "失效容量",
+                                "example": "1",
+                                "format": "int32",
+                                "title_en": "",
+                                "title_zh": "失效容量",
+                                "type": "integer"
+                              },
+                              "InstanceType": {
+                                "description_en": "The instance type",
+                                "description_zh": "实例规格",
+                                "example": "ecs.c6.large",
+                                "type": "string"
+                              },
+                              "LockedAmount": {
+                                "description_en": "The locked capacity",
+                                "description_zh": "锁定容量",
+                                "example": "1",
+                                "format": "int32",
+                                "title_en": "",
+                                "title_zh": "锁定容量",
+                                "type": "integer"
+                              },
+                              "TotalAmount": {
+                                "description_en": "The total number of instances to be reserved for a specific instance type",
+                                "description_zh": "在一个实例规格内，需要预留的实例的总数量",
+                                "example": "2",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "UsedAmount": {
+                                "description_en": "The number of consumed instances",
+                                "description_zh": "已使用的实例的数量",
+                                "example": "2",
+                                "format": "int32",
+                                "type": "integer"
+                              },
+                              "zoneId": {
+                                "description_en": "The zone ID",
+                                "description_zh": "可用区ID",
+                                "example": "cn-hangzhou-h",
+                                "type": "string"
+                              }
                             },
-                            "ServiceName": {
-                              "backendName": "serviceName",
-                              "nullToEmpty": false,
-                              "type": "string"
-                            },
-                            "UsedAmount": {
-                              "backendName": "usedAmount",
-                              "format": "int32",
-                              "type": "integer"
-                            }
+                            "type": "object"
                           },
-                          "type": "object"
-                        },
-                        "nullToEmpty": false,
-                        "type": "array"
+                          "type": "array"
+                        }
                       },
-                      "FailedAmount": {
-                        "backendName": "failedAmount",
-                        "example": "1",
-                        "format": "int32",
-                        "title_en": "失效容量",
-                        "title_zh": "失效容量",
-                        "type": "integer",
-                        "visibility": "Public"
-                      },
-                      "InstanceType": {
-                        "backendName": "instanceType",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "LockedAmount": {
-                        "backendName": "lockedAmount",
-                        "example": "1",
-                        "format": "int32",
-                        "title_en": "锁定容量",
-                        "title_zh": "锁定容量",
-                        "type": "integer",
-                        "visibility": "Public"
-                      },
-                      "TotalAmount": {
-                        "backendName": "totalAmount",
-                        "format": "int32",
-                        "nullToEmpty": true,
-                        "type": "integer"
-                      },
-                      "UsedAmount": {
-                        "backendName": "usedAmount",
-                        "format": "int32",
-                        "nullToEmpty": true,
-                        "type": "integer"
-                      },
-                      "zoneId": {
-                        "backendName": "izId",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      }
+                      "type": "object"
                     },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "CapacityReservationOwnerId": {
-                  "backendName": "ownerId",
-                  "type": "string"
-                },
-                "DeliveryTime": {
-                  "backendName": "deliveryTime",
-                  "title_en": "交付时间",
-                  "title_zh": "交付时间",
-                  "type": "string"
-                },
-                "Description": {
-                  "backendName": "description",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "EndTime": {
-                  "backendName": "endTime",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "EndTimeType": {
-                  "backendName": "endTimeType",
-                  "nullToEmpty": true,
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Limited",
-                        "value": "limit"
-                      },
-                      {
-                        "targetValue": "Unlimited",
-                        "value": "unlimit"
-                      }
-                    ]
-                  }
-                },
-                "InstanceChargeType": {
-                  "backendName": "instanceChargeType",
-                  "type": "string"
-                },
-                "Platform": {
-                  "backendName": "platform",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "PrivatePoolOptionsId": {
-                  "backendName": "packageId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "PrivatePoolOptionsMatchCriteria": {
-                  "backendName": "packageMode",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "PrivatePoolOptionsName": {
-                  "backendName": "name",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "RegionId": {
-                  "backendName": "regionId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "ReservedInstanceId": {
-                  "backendName": "reservedInstanceId",
-                  "type": "string"
-                },
-                "ResourceGroupId": {
-                  "backendName": "resourceGroupId",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "SavingPlanId": {
-                  "backendName": "savingPlanId",
-                  "type": "string"
-                },
-                "StartTime": {
-                  "backendName": "startTime",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "StartTimeType": {
-                  "backendName": "efficientStatus",
-                  "type": "string",
-                  "valueMapping": {
-                    "cases": [
-                      {
-                        "targetValue": "Now",
-                        "value": "1"
-                      },
-                      {
-                        "targetValue": "Later",
-                        "value": "0"
-                      }
-                    ]
-                  }
-                },
-                "Status": {
-                  "backendName": "status",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "Tags": {
-                  "backendName": "tags",
-                  "itemName": "Tag",
-                  "items": {
-                    "properties": {
-                      "TagKey": {
-                        "backendName": "key",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      },
-                      "TagValue": {
-                        "backendName": "value",
-                        "nullToEmpty": true,
-                        "type": "string"
-                      }
+                    "CapacityReservationOwnerId": {
+                      "description_en": "The owner ID of the capacity reservation resource plan",
+                      "description_zh": "容量预定资源包所有者ID",
+                      "example": "100************7\n",
+                      "type": "string"
                     },
-                    "type": "object"
+                    "DeliveryTime": {
+                      "description_en": "The delivery time. The time follows the ISO 8601 standard in UTC",
+                      "description_zh": "交付时间，格式为 ISO 8601，时区为 UTC",
+                      "title_en": "",
+                      "title_zh": "交付时间",
+                      "type": "string"
+                    },
+                    "Description": {
+                      "description_en": "The description of the capacity reservation",
+                      "description_zh": "容量预定服务的描述",
+                      "example": "This is description.",
+                      "type": "string"
+                    },
+                    "EndTime": {
+                      "description_en": "The expiration time of the capacity reservation. The time follows the ISO 8601 standard in UTC",
+                      "description_zh": "容量预定服务的失效时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2021-02-19T03:02Z",
+                      "type": "string"
+                    },
+                    "EndTimeType": {
+                      "description_en": "The release mode of the capacity reservation. Valid values:\n\nLimited: released at a specified time.\nUnlimited: manual release. No time limit is imposed",
+                      "description_zh": "容量预定服务的失效方式。可能值：\n\nLimited：指定时间释放。\nUnlimited：手动释放。不限制时间",
+                      "example": "Unlimited",
+                      "type": "string"
+                    },
+                    "InstanceChargeType": {
+                      "description_en": "The billing method of instances in the capacity reservation. Valid values:\n\nPostPaid: pay-as-you-go.\nPrePaid: subscription",
+                      "description_zh": "容量预定服务中实例的付费类型。可能值：\n\nPostPaid：按量付费。\nPrePaid：包年包月",
+                      "example": "PostPaid",
+                      "type": "string"
+                    },
+                    "Platform": {
+                      "description_en": "The operating system of the matched instances. Valid values:\n\nwindows.\nlinux",
+                      "description_zh": "匹配的实例的操作系统。可能值：\n\nwindows。\nlinux",
+                      "example": "linux",
+                      "type": "string"
+                    },
+                    "PrivatePoolOptionsId": {
+                      "description_en": "The capacity reservation ID",
+                      "description_zh": "容量预定服务ID",
+                      "example": "crp-bp1gubrkqutenqdd****",
+                      "type": "string"
+                    },
+                    "PrivatePoolOptionsMatchCriteria": {
+                      "description_en": "The type of the private pool generated after the capacity reservation takes effect. Valid values:\n\nOpen: open mode. The system automatically matches the capacity of open private pools when you start an instance. If no matching private pool capacity is available, public pool resources are used to start the instance.\nTarget: targeted mode. The instance is started by using the capacity of the specified private pool. If the specified private pool capacity is unavailable, the instance fails to start",
+                      "description_zh": "容量预定服务生效后生成的私有资源池的类型。可能值：\n\nOpen：开放模式。启动实例时将自动匹配开放类型的私有池容量。如果没有符合条件的私有池容量，则使用公共池资源启动。\nTarget：专用模式。使用指定的私有池容量启动实例，如果该私有池容量不可用，则实例会启动失败",
+                      "example": "Open",
+                      "type": "string"
+                    },
+                    "PrivatePoolOptionsName": {
+                      "description_en": "The capacity reservation service name",
+                      "description_zh": "容量预定服务名称",
+                      "example": "crpTestName",
+                      "type": "string"
+                    },
+                    "RegionId": {
+                      "description_en": "The region ID of the capacity reservation",
+                      "description_zh": "容量预定服务所属地域ID",
+                      "example": "cn-hangzhou",
+                      "type": "string"
+                    },
+                    "ReservedInstanceId": {
+                      "description_en": "The reserved instance ID associated with the capacity reservation",
+                      "description_zh": "容量预定搭配的预留实例券ID",
+                      "example": "ri-bpzhex2ulpzf53****",
+                      "type": "string"
+                    },
+                    "ResourceGroupId": {
+                      "description_en": "The resource group ID of the capacity reservation",
+                      "description_zh": "容量预定服务所属的资源组ID",
+                      "example": "rg-bp67acfmxazb4p****",
+                      "type": "string"
+                    },
+                    "SavingPlanId": {
+                      "description_en": "The savings plan ID associated with the capacity reservation",
+                      "description_zh": "容量预定搭配的节省计划券ID",
+                      "example": "spn-c29b5e18pJMT****",
+                      "type": "string"
+                    },
+                    "StartTime": {
+                      "description_en": "The effective time of the capacity reservation. The time follows the ISO 8601 standard in UTC",
+                      "description_zh": "容量预定服务生效时间。格式为 ISO 8601，时区为 UTC",
+                      "example": "2021-02-19T02:01Z",
+                      "type": "string"
+                    },
+                    "StartTimeType": {
+                      "description_en": "The mode in which the capacity reservation takes effect. Valid values:\n\nNow: takes effect immediately.\nLater: takes effect at a specified time",
+                      "description_zh": "容量预定生效方式。可能值：\n\nNow：立即生效。\nLater：指定时间生效",
+                      "example": "Now",
+                      "type": "string"
+                    },
+                    "Status": {
+                      "description_en": "The status of the capacity reservation. Valid values:\n\nPending: initializing.\nPreparing: being prepared.\nPrepared: to take effect.\nActive: active.\nReleased: released, including manual release and automatic release upon expiration",
+                      "description_zh": "容量预定服务的状态。可能值：\n\nPending：初始化。\nPreparing：准备中。\nPrepared：待生效。\nActive：生效中。\nReleased：已释放，包括手动释放与到期自动释放",
+                      "example": "Active",
+                      "type": "string"
+                    },
+                    "Tags": {
+                      "description_en": "",
+                      "description_zh": "",
+                      "itemNode": true,
+                      "properties": {
+                        "Tag": {
+                          "description_en": "The list of tag key-value pairs bound to the capacity reservation",
+                          "description_zh": "容量预定服务绑定的标签键值对信息列表",
+                          "items": {
+                            "description_en": "The tag key-value pair bound to the capacity reservation",
+                            "description_zh": "容量预定服务绑定的标签键值对信息",
+                            "properties": {
+                              "TagKey": {
+                                "description_en": "The tag key",
+                                "description_zh": "标签键",
+                                "example": "TestKey",
+                                "type": "string"
+                              },
+                              "TagValue": {
+                                "description_en": "The tag value",
+                                "description_zh": "标签值",
+                                "example": "TestValue",
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "TimeSlot": {
+                      "description_en": "This parameter is in invitational preview and is not publicly available",
+                      "description_zh": "该参数正在邀测中，暂未开放使用",
+                      "example": "null",
+                      "type": "string"
+                    },
+                    "UnlockedTime": {
+                      "description_en": "The unlock time. The time follows the ISO 8601 standard in UTC",
+                      "description_zh": "解锁时间，格式为 ISO 8601，时区为 UTC",
+                      "title_en": "",
+                      "title_zh": "解锁时间",
+                      "type": "string"
+                    }
                   },
-                  "type": "array"
+                  "type": "object"
                 },
-                "TimeSlot": {
-                  "backendName": "timeSlot",
-                  "nullToEmpty": true,
-                  "type": "string"
-                },
-                "UnlockedTime": {
-                  "backendName": "unlockedTime",
-                  "title_en": "解锁时间",
-                  "title_zh": "解锁时间",
-                  "type": "string"
-                }
-              },
-              "type": "object"
+                "type": "array"
+              }
             },
-            "type": "array"
+            "type": "object"
           },
           "MaxResults": {
-            "backendName": "data.pageSize",
             "description_en": "The maximum number of entries per page",
             "description_zh": "容量预定服务每页显示行数",
             "example": "10",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           },
           "NextToken": {
-            "backendName": "data.nextToken",
             "description_en": "The pagination token for the next query",
             "description_zh": "容量预定服务下一个查询起始标志",
             "example": "caeba0bbb2be03f84eb48b699f0a****",
-            "nullToEmpty": true,
             "type": "string"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The request ID",
             "description_zh": "请求ID",
             "example": "473469C7-AA6F-4DC5-B3DB-A3DC0DE3****",
-            "nullToEmpty": true,
             "type": "string"
           },
           "TotalCount": {
-            "backendName": "data.total",
             "description_en": "The total number of entries that match the query conditions",
             "description_zh": "符合查询条件的记录条数",
             "example": "1",
             "format": "int32",
-            "nullToEmpty": true,
             "type": "integer"
           }
         },

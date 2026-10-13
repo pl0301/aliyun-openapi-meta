@@ -1,4 +1,5 @@
 {
+  "backend_timeout_ms": 10000,
   "camel_example": "aliyun bdrc GET /api/v1/tasks --region cn-hangzhou --NextToken cae0000000000699 --MaxResults 10 --TaskType UPDATE_RESOURCES --TaskStatus RUNNING --header \"Content-Type=application/json\"",
   "cmd_full_name": "bdrc describe-tasks",
   "cmd_name": "describe-tasks",
@@ -68,6 +69,12 @@
       "type": "int"
     },
     {
+      "enum": [
+        "PRECHECK_RESOURCE_COUNT",
+        "UPDATE_CROSS_ACCOUNTS",
+        "UPDATE_RESOURCES",
+        "CHECK_RULES"
+      ],
       "example": "UPDATE_RESOURCES",
       "help_en": "The task type. You can specify multiple task types separated by commas (,)",
       "help_zh": "任务类型。支持使用英文逗号（,）分隔传入多个任务类型",
@@ -91,21 +98,17 @@
         "description_zh": "响应",
         "properties": {
           "Data": {
-            "backendName": "data",
             "description_en": "The returned data",
             "description_zh": "返回数据",
             "properties": {
               "Content": {
-                "backendName": "content",
                 "description_en": "The collection of records returned in this request",
                 "description_zh": "本次请求所返回的记录集合",
-                "itemName": "Content",
                 "items": {
                   "description_en": "The content",
                   "description_zh": "内容",
                   "properties": {
                     "CompleteTime": {
-                      "backendName": "completeTime",
                       "description_en": "The task completion time in UNIX timestamp format. Unit: seconds",
                       "description_zh": "任务完成时间。Unix时间戳格式，单位：秒",
                       "example": "1724983927",
@@ -113,21 +116,18 @@
                       "type": "integer"
                     },
                     "ErrorMessage": {
-                      "backendName": "errorMessage",
                       "description_en": "The error message returned when the call fails",
                       "description_zh": "调用失败时，返回的错误信息",
                       "example": "device not online",
                       "type": "string"
                     },
                     "ExecutionId": {
-                      "backendName": "executionId",
                       "description_en": "The execution ID. This field is not currently used and returns an empty value",
                       "description_zh": "执行ID，暂未使用，返回空",
                       "example": "empty",
                       "type": "string"
                     },
                     "ExpireTime": {
-                      "backendName": "expireTime",
                       "description_en": "The expiration time in UNIX timestamp format. Unit: seconds",
                       "description_zh": "过期时间，格式为Unix时间戳，单位：秒",
                       "example": "1724983927",
@@ -135,7 +135,6 @@
                       "type": "integer"
                     },
                     "Progress": {
-                      "backendName": "progress",
                       "description_en": "The progress (0 to 10000)",
                       "description_zh": "进度（0 - 10000）",
                       "example": "100",
@@ -143,14 +142,12 @@
                       "type": "integer"
                     },
                     "RequestId": {
-                      "backendName": "requestId",
                       "description_en": "The request ID",
                       "description_zh": "请求ID",
                       "example": "AE43C4CB-8074-5EBD-9806-8CA6D12800B1",
                       "type": "string"
                     },
                     "StartTime": {
-                      "backendName": "startTime",
                       "description_en": "The start time in UNIX timestamp format. Unit: seconds",
                       "description_zh": "开始时间，格式为Unix时间戳，单位：秒",
                       "example": "1724983927",
@@ -158,53 +155,50 @@
                       "type": "integer"
                     },
                     "TaskDescription": {
-                      "backendName": "taskDescription",
                       "description_en": "The task description",
                       "description_zh": "任务描述",
                       "example": " empty",
                       "type": "string"
                     },
                     "TaskDetail": {
-                      "backendName": "taskDetail",
                       "description_en": "The task details",
                       "description_zh": "任务详情",
                       "example": "{\"resourceTypes\":[\"ACS::ECS::Instance\",\"ACS::OSS::Bucket\",\"ACS::OTS::Instance\",\"ACS::NAS::FileSystem\"]}",
                       "type": "string"
                     },
                     "TaskId": {
-                      "backendName": "taskId",
                       "description_en": "The task ID",
                       "description_zh": "任务ID",
                       "example": "t-0000e4w0u1v592zdf6s7",
                       "type": "string"
                     },
                     "TaskName": {
-                      "backendName": "taskName",
                       "description_en": "The task name",
                       "description_zh": "任务名称",
                       "example": " empty",
                       "type": "string"
                     },
                     "TaskPriority": {
-                      "backendName": "taskPriority",
                       "description_en": "The task priority",
                       "description_zh": "任务优先级",
+                      "enumValueTitles": {
+                        "HIGH": "高优先级，一般为用户前台触发的任务",
+                        "LOW": "低优先级，一般为后台任务"
+                      },
                       "example": "HIGH",
-                      "title_en": "HIGH: 高优先级，一般为用户前台触发的任务, LOW: 低优先级，一般为后台任务",
+                      "title_en": "",
                       "title_zh": "HIGH: 高优先级，一般为用户前台触发的任务, LOW: 低优先级，一般为后台任务",
                       "type": "string"
                     },
                     "TaskResult": {
-                      "backendName": "taskResult",
                       "description_en": "The task execution result",
                       "description_zh": "任务执行结果",
                       "example": "{\"resourceCounts\":[{\"resourceType\":\"ACS::OSS::Bucket\",\"count\":2},{\"resourceType\":\"ACS::NAS::FileSystem\",\"count\":3}]}",
-                      "title_en": "任务执行结果",
+                      "title_en": "",
                       "title_zh": "任务执行结果",
                       "type": "string"
                     },
                     "TaskStatus": {
-                      "backendName": "taskStatus",
                       "description_en": "The task status",
                       "description_zh": "任务状态",
                       "enum": [
@@ -216,17 +210,31 @@
                         "EXPIRED",
                         "CANCELED"
                       ],
+                      "enumValueTitles": {
+                        "CANCELED": "任务已取消",
+                        "COMPLETE": "任务成功完成",
+                        "CREATED": "任务已创建",
+                        "EXPIRED": "任务已过期",
+                        "FAILED": "任务执行失败",
+                        "QUEUED": "任务排队中",
+                        "RUNNING": "任务正在执行"
+                      },
                       "example": "RUNNING",
-                      "title_en": "CREATED: 创建, RUNNING: 正在执行, COMPLETE: 任务成功完成, FAILED: 任务执行失败, EXPIRED: 任务已过期, CANCELED: 任务已被取消",
+                      "title_en": "",
                       "title_zh": "CREATED: 创建, RUNNING: 正在执行, COMPLETE: 任务成功完成, FAILED: 任务执行失败, EXPIRED: 任务已过期, CANCELED: 任务已被取消",
                       "type": "string"
                     },
                     "TaskType": {
-                      "backendName": "taskType",
                       "description_en": "The task type",
                       "description_zh": "任务类型",
+                      "enumValueTitles": {
+                        "CHECK_RULES": "更新规则检查数据",
+                        "PRECHECK_RESOURCE_COUNT": "检查资源数量",
+                        "UPDATE_CROSS_ACCOUNTS": "更新跨账号纳管关系",
+                        "UPDATE_RESOURCES": "更新资源和状态"
+                      },
                       "example": "UPDATE_RESOURCES",
-                      "title_en": "TEST: 测试任务, UPDATE_RESOURCES: 更新资源和状态, CHECK_RULES",
+                      "title_en": "",
                       "title_zh": "TEST: 测试任务, UPDATE_RESOURCES: 更新资源和状态, CHECK_RULES",
                       "type": "string"
                     }
@@ -236,31 +244,28 @@
                 "type": "array"
               },
               "MaxResults": {
-                "backendName": "maxResults",
                 "description_en": "The maximum number of records returned in this request",
                 "description_zh": "本次请求所返回的最大记录条数",
                 "example": "10",
                 "format": "int32",
-                "title_en": "本次请求所返回的最大记录条数",
+                "title_en": "",
                 "title_zh": "本次请求所返回的最大记录条数",
                 "type": "integer"
               },
               "NextToken": {
-                "backendName": "nextToken",
                 "description_en": "The position to which the current call has read. An empty value indicates that all data has been read",
                 "description_zh": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
                 "example": "f4b8c2504545a3b41af5e75147d17d12e3818a0b9b2ff9a2",
-                "title_en": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
+                "title_en": "",
                 "title_zh": "用来表示当前调用返回读取到的位置，空代表数据已经读取完毕",
                 "type": "string"
               },
               "TotalCount": {
-                "backendName": "totalCount",
                 "description_en": "The total number of records that match the request conditions. This is an optional parameter and may not be returned by default",
                 "description_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
                 "example": "100",
                 "format": "int64",
-                "title_en": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
+                "title_en": "",
                 "title_zh": "本次请求条件下的数据总量，此参数为可选参数，默认可不返回",
                 "type": "integer"
               }
@@ -268,16 +273,15 @@
             "type": "object"
           },
           "RequestId": {
-            "backendName": "requestId",
             "description_en": "The unique identifier of the request",
             "description_zh": "请求的唯一标识",
             "example": "AE43C4CB-8074-5EBD-9806-8CA6D12800B1",
-            "title_en": "请求的唯一标识",
+            "title_en": "",
             "title_zh": "请求的唯一标识",
             "type": "string"
           }
         },
-        "title_en": "BaseResponse<ListResult<Task>>",
+        "title_en": "",
         "title_zh": "BaseResponse<ListResult<Task>>",
         "type": "object"
       }
